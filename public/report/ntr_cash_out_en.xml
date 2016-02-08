@@ -1,0 +1,199 @@
+<report reportkey="ntr_cash_out_en" nervatype="trans" transtype="cash" direction="out" 
+  repname="Petty Cash Voucher EN" description="Payment Voucher" filetype="ntr">
+  
+  <dataset name="head" engine=""><![CDATA[select t.transnumber, t.crdate, dir.groupvalue as direction, 
+case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber, 
+p.planumber, p.description as cdesk, p.curr, pm.paiddate, -pm.amount as amount, 
+case when t.notes is null then '' else t.notes end as notes, 
+case when t.fnote is null then '' else t.fnote end as fnote, 
+case when emp.empnumber is null then '' else emp.empnumber end as empnumber  
+from trans t
+inner join groups dir on dir.id=t.direction
+inner join place p on p.id=t.place_id
+inner join payment pm on pm.trans_id=t.id
+left join employee emp on emp.id=t.employee_id
+where t.id= @id]]></dataset>
+  <dataset name="head" engine="mssql"><![CDATA[select t.transnumber, dir.groupvalue as direction, 
+case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber, 
+p.planumber, p.description as cdesk, p.curr, -pm.amount as amount,
+CONVERT(VARCHAR(10), t.crdate, 120) as crdate,
+CONVERT(VARCHAR(10), pm.paiddate, 120) as paiddate, 
+case when t.notes is null then '' else t.notes end as notes, 
+case when t.fnote is null then '' else t.fnote end as fnote, 
+case when emp.empnumber is null then '' else emp.empnumber end as empnumber  
+from trans t
+inner join groups dir on dir.id=t.direction
+inner join place p on p.id=t.place_id
+inner join payment pm on pm.trans_id=t.id
+left join employee emp on emp.id=t.employee_id
+where t.id= @id]]></dataset>
+  <dataset name="trans" engine=""><![CDATA[select t.transnumber, t.curr,  
+cast(iamount.value as REAL) as amount, lrate.value as rate, 
+case when c.custname is null then '' else c.custname end as customer
+from link l
+left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+inner join groups g1 on g1.id=l.nervatype_1 and g1.groupname='nervatype' and g1.groupvalue='payment'
+inner join payment pm on pm.id=l.ref_id_1
+inner join groups g2 on g2.id=l.nervatype_2 and g2.groupname='nervatype' and g2.groupvalue='trans'
+inner join trans t on t.id=l.ref_id_2 and t.deleted=0
+left join customer c on t.customer_id=c.id
+where pm.trans_id= @id]]></dataset>
+  <dataset name="trans" engine="mysql"><![CDATA[select t.transnumber, t.curr,  
+cast(iamount.value as decimal) as amount, lrate.value as rate, 
+case when c.custname is null then '' else c.custname end as customer
+from link l
+left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+inner join groups g1 on g1.id=l.nervatype_1 and g1.groupname='nervatype' and g1.groupvalue='payment'
+inner join payment pm on pm.id=l.ref_id_1
+inner join groups g2 on g2.id=l.nervatype_2 and g2.groupname='nervatype' and g2.groupvalue='trans'
+inner join trans t on t.id=l.ref_id_2 and t.deleted=0
+left join customer c on t.customer_id=c.id
+where pm.trans_id= @id]]></dataset>
+  <dataset name="fieldvalue" engine=""><![CDATA[select df.description as fielddef,
+case when fg.groupvalue in ('bool') and fv.value = 'true' then '={{lb_yes}}'
+        when fg.groupvalue in ('bool') and fv.value = 'false' then '={{lb_no}}'
+        when fg.groupvalue in ('customer') then rf_customer.custnumber
+        when fg.groupvalue in ('tool') then rf_tool.serial
+        when fg.groupvalue in ('transitem','transmovement','transpayment') then rf_trans.transnumber
+        when fg.groupvalue in ('product') then rf_product.partnumber
+        when fg.groupvalue in ('project') then rf_project.pronumber
+        when fg.groupvalue in ('employee') then rf_employee.empnumber
+        when fg.groupvalue in ('place') then rf_place.planumber
+        else fv.value end as value,
+fv.notes as notes 
+from fieldvalue fv 
+inner join deffield df on fv.fieldname = df.fieldname and df.nervatype = (select id from groups where groupname='nervatype' and groupvalue='trans') 
+inner join groups fg on df.fieldtype = fg.id 
+left join customer rf_customer on fv.value = cast(rf_customer.id as char(150)) 
+left join tool rf_tool on fv.value = cast(rf_tool.id as char(150)) 
+left join trans rf_trans on fv.value = cast(rf_trans.id as char(150)) 
+left join product rf_product on fv.value = cast(rf_product.id as char(150)) 
+left join project rf_project on fv.value = cast(rf_project.id as char(150)) 
+left join employee rf_employee on fv.value = cast(rf_employee.id as char(150)) 
+left join place rf_place on fv.value = cast(rf_place.id as char(150)) 
+where fv.deleted = 0 and df.visible=1 and fv.ref_id = @id]]></dataset>
+  
+  <message secname="fieldvalue" fieldname="lb_no"><![CDATA[NO]]></message>
+  <message secname="fieldvalue" fieldname="lb_yes"><![CDATA[YES]]></message>
+  <message secname="report" fieldname="lb_amount"><![CDATA[Amount]]></message>
+  <message secname="report" fieldname="lb_approved"><![CDATA[APPROVED BY]]></message>
+  <message secname="report" fieldname="lb_cash_voucher"><![CDATA[PETTY CASH VOUCHER]]></message>
+  <message secname="report" fieldname="lb_cdesk"><![CDATA[Cash desk]]></message>
+  <message secname="report" fieldname="lb_comments"><![CDATA[Comments]]></message>
+  <message secname="report" fieldname="lb_currency"><![CDATA[Curr.]]></message>
+  <message secname="report" fieldname="lb_customer"><![CDATA[Customer]]></message>
+  <message secname="report" fieldname="lb_direction"><![CDATA[PAYMENT]]></message>
+  <message secname="report" fieldname="lb_empnumber"><![CDATA[Employee No.]]></message>
+  <message secname="report" fieldname="lb_invoices"><![CDATA[Invoices]]></message>
+  <message secname="report" fieldname="lb_no"><![CDATA[No.]]></message>
+  <message secname="report" fieldname="lb_paiddate"><![CDATA[Date]]></message>
+  <message secname="report" fieldname="lb_rate"><![CDATA[Rate]]></message>
+  <message secname="report" fieldname="lb_received"><![CDATA[RECEIVED BY]]></message>
+  <message secname="report" fieldname="lb_ref_no"><![CDATA[Ref.No.]]></message>
+  <message secname="report" fieldname="lb_trans_no"><![CDATA[Invoice No.]]></message>
+  <message secname="report" fieldname="lb_voucher_no"><![CDATA[Voucher No.]]></message>
+  <message secname="report" fieldname="web_link"><![CDATA[http://nervatura.com]]></message>
+  <message secname="report" fieldname="web_page"><![CDATA[www.nervatura.com]]></message>
+  
+  <template><![CDATA[<template>
+  <report title="PETTY CASH VOUCHER" left-margin="15" top-margin="15" right-margin="15" decode="utf-8" encode="latin_1" />
+  <header>
+    <row height="10">
+      <columns>
+        <image src="logo" />
+        <cell value="labels.lb_cash_voucher" font-style="bolditalic" font-size="26" color="#D8DBDA"/>
+        <cell value="labels.lb_direction" align="right" font-style="bold" font-size="26" />
+      </columns>
+    </row>
+    <hline border-color="218"/>
+    <vgap height="2"/>
+  </header>
+  <details>
+    <vgap height="2"/>
+    <row>
+      <columns>
+        <cell name="label" width="40" font-style="bold" value="labels.lb_voucher_no" border="LBT" border-color="218"/>
+        <cell name="label" width="30" font-style="bold" value="labels.lb_paiddate" border="LBT" border-color="218"/>
+        <cell name="label" width="25" font-style="bold" value="labels.lb_currency" border="LBT" border-color="218"/>
+        <cell name="label" width="40" font-style="bold" value="labels.lb_amount" border="LBT" border-color="218"/>
+        <cell name="label" font-style="bold" value="labels.lb_empnumber" border="LBTR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="transnumber" width="40" value="head.0.transnumber" border="LB" border-color="218"/>
+        <cell name="paiddate" align="center" width="30" value="head.0.paiddate" border="LB" border-color="218"/>
+        <cell name="curr" align="center" width="25" value="head.0.curr" border="LB" border-color="218"/>
+        <cell name="amount" align="right" width="40" value="head.0.amount" border="LB" border-color="218"/>
+        <cell name="empnumber" value="head.0.empnumber" border="LBR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="label" font-style="bold" value="labels.lb_ref_no" border="LB" border-color="218"/>
+        <cell name="ref_transnumber" width="50" value="head.0.ref_transnumber" border="LB" border-color="218"/>
+        <cell name="label" font-style="bold" value="labels.lb_cdesk" border="LB" border-color="218"/>
+        <cell name="cdesk" value="head.0.cdesk" border="LBR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="label" font-style="bold" value="labels.lb_comments" border="LB" border-color="218"/>
+        <cell name="notes" multiline="true" value="head.0.notes" border="LBR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="label" width="50%" font-style="bold" value="labels.lb_approved" border="L" border-color="218"/>
+        <cell name="label" font-style="bold" value="labels.lb_received" border="LR" border-color="218"/>
+      </columns>
+    </row>
+    <row height="25">
+      <columns>
+        <cell name="label" width="50%" value="" border="LB" border-color="218"/>
+        <cell name="label" font-style="bold" value="" border="LBR" border-color="218"/>
+      </columns>
+    </row>
+    <vgap height="2"/>
+    <datagrid name="fieldvalue" databind="fieldvalue" border="0" merge="1">
+      <columns>
+        <column fieldname="fielddef"/>
+        <column fieldname="value"/>
+        <column fieldname="notes"/>
+      </columns>  
+    </datagrid>
+    <vgap height="2"/>
+    <row visible="trans">
+      <columns>
+        <cell name="label" value="labels.lb_invoices" font-style="bold"/>
+      </columns>
+    </row>
+    <datagrid name="invoice" databind="trans" border="1" border-color="218">
+      <columns>        
+        <column width="6%" fieldname="counter" align="right" label="labels.lb_no" header-align="right"/>
+        <column width="20%" fieldname="transnumber" label="labels.lb_trans_no"/>
+        <column width="8%" fieldname="curr" align="center" label="labels.lb_currency"/>
+        <column width="18%" fieldname="amount" align="right" label="labels.lb_amount" header-align="right"/>
+        <column width="8%" fieldname="rate" align="right" label="labels.lb_rate" header-align="right"/>
+        <column fieldname="customer" label="labels.lb_customer"/>
+      </columns>  
+    </datagrid>
+    <vgap height="4"/>
+    <html fieldname="notes">={{head.0.fnote}}</html>    
+  </details>
+  <footer>
+    <vgap height="2"/>
+    <hline border-color="218"/>
+    <row height="10">
+      <columns>
+        <cell value="labels.web_page" link="labels.web_link" font-style="bolditalic" color="#2100FF"/>
+        <cell value="{{page}}" align="right" font-style="bold"/>
+      </columns>
+    </row>
+  </footer>
+  <data>    <logo>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wIExQZM+QLBuYAAAQ5SURBVEjHtZVJbJRlGMd/77fM0ul0ykynLQPtjEOZWjptSisuJRorF6ocjEaDoDGSYKLiFmIMxoPGg0viRY0cNB6IUQ+YYCJEBLXQWqZgK6GU2taWLrS0dDrdO0vn+14PlYSlQAH9357L+89/eZ9HHDp0iP8TyqXDCV9Iuivvkf8lgXbp8JjPxUfHfseXs1yGs52sd+VgpueJqQYdPRE8sxniZgnElRbF8p1yXW6AgWgbDeeOoJgCu8PJtFbAc2W1tEeaxC0rADDTKVZmO+kxKwjawmwO5pJIGhzpP8je7m5KbycDgKnEDEnDYEO+G10xeT3Sxu6eIYJuP5OJffT5ihbNKD/klzckWLWuSibjUSyahZn5NBtXerkj0059dy+rPaUs1wvoiH3GXjkgIy6nbPV65PEMQzaNN0qLu+j6GZTfX5P+NPKjuqXIj8sV4vR0gv7ZJP2zCUpsEEdhW7GfztFOBqf6cQmV5ByUFpfxyr6veHpZpbhuBk/91qw+lGrDwIfXbqfGbkVXVQCiyRQvNZ5hY0EeIW+IkDfEm83dvL82wHRqAkOz3TiDXdqUeGLDLg73xfj5r4PoqopkwVa3RefFkkKeaWgDYHfXENV5LhRFRVMsZFvl0kLuP/aLCM+p4tfeLs4MtyEQgEQRgrs8Th70OtkeaefE2BQPeF1ICQ6Lk9WOOKMrlssltQjAavdwdqQbACkXrHXoOllWnWgiiVNApq4g/nV9+/pXaWrfw3Dh1Q1blCAr3kO5v5K0hPHUPHt6hinZf4JILE6R005CUTBNSJkmFxIp4qbG25veY3LyKJ9Pj8iGDIf0lFfIRT9aVjBHBsaK8Wb4qBuJMTyTpNTtoP2RdQD8PTXHjuOdfNwxiFWBHKsFj1WjPEvDJjIJOBXuCxQzdqpFLLoqJjwTsrbkYSyKBVPTsF6qUUpSpqRuOMaT9e0cq11LiSsTgLd+eheLq4YXKqtpra8Ti1o06ByQwYLVHB05yoHz+2mM1jGWGAPJQqOEoGsmzmvNnXxZHaL2yEKrvjv9LarmY2t4/WWPX6bAnm+TZ40kAlB0GDfO08dJptNxnl+xnYrcClrHZ9g7MMqOkI8PTvejaBo5Np253k/I879MaLBDXDPk+HBC5I9KkTcqhXdIitBIvtiau5Nszc3Xnd8A8GdsmnfKAnhtVnYW2iE1y8GhcbQZlUeDBSy5phdxobVNhPVnUdU0J893scXvITYbpbGvgVh6iIlUgiqPixbWcqb+sFjSur4Sued6hc0WkJIoX/zRQyI1icvhJG0YhA2DmJJDoxqgZoVXrhnsFjel4CIy5Ep+ONXKpjXVlKXconBcF8Epmyidd4hlFpU37vTxYccIuVX3ylsiUDNWse3ux+k4fvU181t1Nvu9pE3J9+eiNz6Zi8FfWSX7WpqveSoHg2EpgHC2g1hLk7hpgtvBP6lBrRsE+ni7AAAAAElFTkSuQmCC</logo>
+  </data>
+</template>]]></template>
+</report>

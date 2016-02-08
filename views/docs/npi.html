@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Nervatura Programming Interface</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <style type="text/css">
+    .body {
+      background-color: #ffffff;
+      padding: 20pt 42.5pt 42.5pt 42.5pt;
+      font-family: sans-serif;
+      color: #444444;
+    }
+    a {
+        text-decoration: none;
+        color: #3B7687;
+    }
+    th,td {
+      padding: 5px;
+    }
+    .fhead {
+      background-color: #E5E5E5;
+      font-weight: bold;
+      color: #8B2500;
+    }
+    .fdesc {
+      font-style: italic;
+    }
+    .fname {
+      color: red;
+      background-color: #FFE7BA;
+    }
+    .ftype {
+      color: #000000;
+      font-weight: normal;
+    }
+    .defvalue {
+      color: #0F0F0F;
+      font-weight: normal;
+      font-style: italic;
+    }
+    .retpar {
+      font-weight: bold;
+      color: #8B2500;
+    }
+    .exblock {
+      background-color: #F5F5F5;
+      padding: 5px;
+    }
+    </style>
+  </head>
+<body class="body">
+  <h1 align="center">
+    Nervatura Programming Interface 
+  </h1>
+  <p align="center"><b><i><a href="http://en.wikipedia.org/wiki/JSON-RPC"
+          target="_blank">JSON</a> encoded version<br> Ver.No: <%= settings.version %></i></b></p>
+  
+  <p>
+    <b>Function Overview</b>
+  </p>
+  
+  <table
+    style="border-width: 1px; border-style: solid; border-collapse: collapse;"
+    border="1" cellpadding="2" cellspacing="0" width="100%">
+    <tbody>
+      <tr bgcolor="#E5E5E5">
+        <th>Name</th>
+        <th>Return type</th>
+        <th width="100%">Parameters</th>
+      </tr>
+      <tr>
+        <td><a href="#getLogin">getLogin</a></td>
+        <td>Object</td>
+        <td>database, username, password</td>
+      </tr>
+      <tr>
+        <td><a href="#callFunction">callFunction</a></td>
+        <td>Any type</td>
+        <td>login, functionName, paramList</td>
+      </tr>
+      <tr>
+        <td><a href="#executeSql">executeSql</a></td>
+        <td>Array</td>
+        <td>login, sqlStr, paramList</td>
+      </tr>
+      <tr>
+        <td><a href="#loadView">loadView</a></td>
+        <td>Array</td>
+        <td>login, sqlStr, whereStr, havingStr, paramList, orderStr</td>
+      </tr>
+      <tr>
+        <td><a href="#loadTable">loadTable</a></td>
+        <td>Array</td>
+        <td>login, tableName, filterStr, orderStr</td>
+      </tr>
+      <tr>
+        <td><a href="#loadDataSet">loadDataSet</a></td>
+        <td>Array</td>
+        <td>login, dataSetInfo</td>
+      </tr>
+      <tr>
+        <td><a href="#saveRecord">saveRecord</a></td>
+        <td>Object</td>
+        <td>login, record</td>
+      </tr>
+      <tr>
+        <td><a href="#saveRecordSet">saveRecordSet</a></td>
+        <td>Array</td>
+        <td>login, recordSet</td>
+      </tr>
+      <tr>
+        <td><a href="#deleteRecord">deleteRecord</a></td>
+        <td>Integer</td>
+        <td>login, record</td>
+      </tr>
+      <tr>
+        <td><a href="#deleteRecordSet">deleteRecordSet</a></td>
+        <td>Array</td>
+        <td>login, recordSet</td>
+      </tr>
+      <tr>
+        <td><a href="#saveDataSet">saveDataSet</a></td>
+        <td>Array</td>
+        <td>login, dataSet</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <p>
+    <b>Object Overview</b>
+  </p>
+  
+  <table
+    style="border-width: 1px; border-style: solid; border-collapse: collapse;"
+    border="1" cellpadding="2" cellspacing="0" width="100%">
+    <tbody>
+      <tr bgcolor="#E5E5E5">
+        <th>Name</th>
+        <th width="100%">Properties</th>
+      </tr>
+      <tr>
+        <td><a href="#validator">validator</a></td>
+        <td>valid, message, employee, audit, groupinput, transfilter, groups, menucmd, menufields, userlogin</td>
+      </tr>
+      <tr>
+        <td><a href="#login">login</a></td>
+        <td>database, username, password, appl</td>
+      </tr>
+      <tr>
+        <td><a href="#param">param</a></td>
+        <td>name, value, wheretype, type</td>
+      </tr>
+      <tr>
+        <td><a href="#recordSetInfo">recordSetInfo</a></td>
+        <td>infoName, infoType, tableName, filterStr, orderStr, sqlKey, sqlStr, whereStr, havingStr, paramList, functionName</td>
+      </tr>
+      <tr>
+        <td><a href="#infoSet">infoSet</a></td>
+        <td>infoName, recordSet</td>
+      </tr>
+      <tr>
+        <td><a href="#updateSetInfo">updateSetInfo</a></td>
+        <td>updateType, tableName, recordSet, functionName, paramList, value</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <p class="exblock">
+    <b>More Examples: </b><a href="/download/nwx.zip"" 
+    target="_blank"><b><i>Nervatura wxPython Client</i></b></a> and <a href="/download/npijson.zip" 
+    target="_blank"><b><i>Javascript RPC functions</i></b></a>
+  </p>
+  
+  <p>
+    <b>Function Details</b>
+  </p>
+
+	<table
+		style="border-width: 1px; border-style: solid; border-collapse: collapse;"
+		border="1" cellpadding="2" cellspacing="0" width="100%">
+		<tbody>
+			<tr class="fhead">
+				<td><a name="getLogin" class="fname">getLogin</a>(database<span
+					class="ftype">::String</span>, username<span class="ftype">::String</span>,
+					password<span class="ftype">::String</span>)<span
+					class="ftype">::Object</span></td>
+			</tr>
+			<tr>
+				<td>
+					<p class="fdesc"><u>Functions:</u> <b>getLogin</b>, <b>getLogin_json</b><br>
+					  Login rights control. Successful login
+						additional information is available.<br>
+						<span class="retpar">database</span>: <span class="fdesc">
+              an <b>NAS</b> alias set for a database</span><br>
+            <span class="retpar">username, password</span>: <span class="fdesc">
+              valid username and password for the database</span>
+				  </p>
+					<p>
+					  The result value is a <a href="#validator">validator</a> object.
+					</p>
+					<p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+					  data = {"id":1, "method":"getLogin", "jsonrpc":"2.0", <br>
+            &nbsp;&nbsp;"params":{"database":"demo","username":"demo","password":""}}<br><br>
+            
+            <b><i>Python:</i></b><br>
+            import json, requests<br><br>
+            response = requests.post("http://127.0.0.1:3000/npi/", <br>
+            &nbsp;&nbsp;data=json.dumps(data), headers={'content-type': 'application/json'}).json()<br>
+            if response.has_key("error"):<br>
+            &nbsp;&nbsp;return "error"<br>
+            else:<br>
+            &nbsp;&nbsp;return response["result"]<br>
+            
+            <br>
+            <b><i>Javascript:</i></b><br>
+            XMLHttpRequest<br>
+            or<br>
+            $.ajax({<br>
+            &nbsp;&nbsp;type: "post",<br>
+            &nbsp;&nbsp;url: "http://127.0.0.1:3000/npi/",<br>
+            &nbsp;&nbsp;data: JSON.stringify(data),<br>
+            &nbsp;&nbsp;contentType: "application/json",<br>
+            &nbsp;&nbsp;success: function(response){<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;response = JSON.parse(response);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if ("error" in response) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert(response.error.message);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(response.result);}}<br>
+            &nbsp;&nbsp;error: function(jqXHR, textStatus, errorThrown ) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;alert("POST ERROR");}<br>
+            });<br>					  
+					</p>
+					
+				</td>
+			</tr>	
+			<tr class="fhead">
+        <td><a name="callFunction" class="fname">callFunction</a>(<a href="#login">login</a><span
+          class="ftype">::Object</span>, functionName<span class="ftype">::String</span>,
+          paramList<span class="ftype">::Object</span>)<span
+          class="ftype">::Any type</span></td>
+      </tr>
+      <tr>
+				<td>
+					<p class="fdesc"><u>Functions:</u> <b>callFunction</b>, <b>callFunction_json</b><br>
+					  It calls for the <span class="retpar">functionName</span> server-side function. The
+						<span class="retpar">paramList</span> parameters are passed.
+					</p>
+					<p>The result for the called function result.</p>
+					
+					<p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+            <b><i>The next value from the numberdef table (customer, product, invoice etc.):</i></b><br>
+            <i>nextNumber(numberkey::String, step::Boolean, insert_key::Boolean)</i><br>
+            <br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"nextNumber",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"numberkey":"custnumber", "step":true, "insert_key":false}}};<br>
+            <br>
+            Sample result: "CUS/2016/00005"<br>
+            
+            <br>
+            <b><i>Product price (current date, all customer, all qty):</i></b><br>
+            <i>getPriceValue(vendorprice::Integer[0,1], product_id::Integer, posdate::Date, <br>
+            &nbsp;&nbsp;curr::String, qty::Float, customer_id::Integer)</i><br>
+            <br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"getPriceValue",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"vendorprice":0, "product_id":2, "curr":"EUR"}}};<br>
+            <br>
+            Sample result: {"price":25.0, "discount":0}<br>
+            
+            <br>
+            <b><i>Nervatura Report:</i></b><br>
+            <i>getReport(reportkey::String, report_id::Integer, <br>
+            &nbsp;&nbsp;filters::Object, nervatype::String, refnumber::String, <br>
+            &nbsp;&nbsp;output::String, orientation::String, size::String)</i><br>
+            <br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"getReport",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"report_id":12, "filters":{"@id":5}, "output":"tmp"}}};<br><br>
+            
+            Sample result(XML template and report data): {filetype:"ntr", template:"XML String", data:Object}<br>
+            <br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"getReport",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"reportkey":"ntr_invoice_en", "nervatype":"trans", refnumber:"DMINV/00001"<br>
+            &nbsp;&nbsp;"output":"pdf", "orientation":"p", "size":"a4"}}};<br><br>
+            
+            Sample result(server-side PDF): {filetype:"ntr", template:"PDF bytes", data:null}<br>
+            <br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"getReport",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"reportkey":"xls_vat_en", "filters":{"@date_from":"2014-01-01", "@curr":"EUR"}}}};<br><br>
+            
+            Sample result(server-side Excel): {filetype:"xls", template:"Excel bytes", data:null}<br>
+            <br>
+            <b><i>Server-side printing(ui_printqueue rows):</i></b><br>
+            <i>printQueue(printer::String, items::Array, orientation::String, size::String)</i><br>
+            <br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"printQueue",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"printer":"tool_serial", "items":[12,14,15], "orientation":"p", "size":"a4"}}};<br>
+            <br>
+            Sample result: true<br>
+          </p>   
+				</td>
+			</tr>
+			
+			<tr class="fhead">
+        <td><a name="executeSql" class="fname">executeSql</a>(<a href="#login">login</a><span
+          class="ftype">::Object</span>, sqlStr<span class="ftype">::String</span>,
+          paramList<span class="ftype">::Array</span>)<span
+          class="ftype">::Array</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>executeSql</b>, <b>executeSql_json</b><br>
+            Execute the <span class="retpar">sqlStr</span> statement on the database.<br>
+            <span class="retpar">paramList</span>: <span class="fdesc">
+              the list of <a href="#param">param</a> objects</span>
+          </p>
+          <p>The result of the SQL statement.</p>
+          
+          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+            <b><i>Close all customer order between 2011.01.01 and 2011.02.01, in EUR:</i></b><br>
+            sqlStr = "update trans set closed=1<br>
+            &nbsp;&nbsp;where deleted=0 and transtype =(select id from groups where groupvalue='order')<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;and direction =(select id from groups where groupvalue='out')<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;and curr=@curr and transdate>=@from_date and transdate<@to_date"<br>
+            <br>
+            data = {"id":5, "method":"executeSql", "jsonrpc":"2.0",<br>
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"sqlStr":sqlStr, "paramList":[<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"name":"@curr", "value":"EUR", "wheretype":"in", "type":"string"},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"name":"@from_date", "value":"2011-01-01", "wheretype":"in", "type":"date"},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"name":"@to_date", "value":"2011-02-01", "wheretype":"in", "type":"date"}]};<br>
+          </p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="loadView" class="fname">loadView</a>(<a href="#login">login</a><span
+          class="ftype">::Object</span>, sqlStr<span class="ftype">::String</span>,
+          whereStr<span class="ftype">::String</span>, havingStr<span class="ftype">::String</span>, 
+          paramList<span class="ftype">::Array</span>, 
+          orderStr<span class="ftype">::String</span><span class="defvalue">=""</span>)<span
+          class="ftype">::Array</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>loadView</b>, <b>loadView_json</b><br>
+            Loads the <span class="retpar">sqlStr</span> query from the database.<br>
+            <span class="retpar">whereStr</span>: <span class="fdesc">
+              the valid sql where filter string</span><br>
+            <span class="retpar">havingStr</span>: <span class="fdesc">
+              the valid sql having filter string</span><br>
+            <span class="retpar">paramList</span>: <span class="fdesc">
+              the list of <a href="#param">param</a> objects</span><br>
+            <span class="retpar">orderStr</span>: <span class="fdesc">
+              Optional. The valid sql orderby string. Default value: ""</span>
+          </p>
+          <p>The result for the execute query result.</p>
+          
+          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+            <b><i>All customer invoices from 2011.01.01, between 0 and 1 000 000, in EUR, order by duedate:</i></b><br>
+            sqlStr = "select t.transnumber, t.transdate <br>
+            &nbsp;&nbsp;from trans t <br>
+            &nbsp;&nbsp;inner join groups tt on t.transtype=tt.id and tt.groupvalue='invoice'<br>
+            &nbsp;&nbsp;inner join groups dt on t.direction=dt.id and dt.groupvalue='out'<br>
+            &nbsp;&nbsp;where t.deleted=0 @where_str <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;and t.id in(select trans_id from item where deleted=0 group by trans_id having @having_str)<br>
+            &nbsp;&nbsp;order by @orderby_str"<br>
+            whereStr="and t.curr=@curr and t.transdate>@from_date"<br>
+            havingStr="sum(amount)>=@from_amount and sum(amount)<=@to_amount"<br>
+            orderStr="duedate"<br>
+            <br>
+            data = {"id":2, "method":"loadView", "jsonrpc":"2.0",<br>
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"sqlStr":sqlStr, "whereStr":whereStr, "havingStr":havingStr, "orderStr":orderStr,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":[<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"name":"@curr", "value":"EUR", "wheretype":"where", "type":"string"},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"name":"@from_date", "value":"2011-01-01", "wheretype":"where", "type":"date"},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"name":"@from_amount", "value":0, "wheretype":"having", "type":"number"},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"name":"@to_amount", "value":1000000, "wheretype":"having", "type":"number"}]};<br>
+          </p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="loadTable" class="fname">loadTable</a>(<a href="#login">login</a><span
+          class="ftype">::Object</span>, tableName<span class="ftype">::String</span>, filterStr<span class="ftype">::String</span>,
+          orderStr<span class="ftype">::String</span>)<span
+          class="ftype">::Array</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>loadTable</b>, <b>loadTable_json</b><br>
+            Loads data from a database table.<br>
+            <span class="retpar">tableName</span>: <span class="fdesc">
+              a table name</span><br>
+            <span class="retpar">filterStr</span>: <span class="fdesc">
+              the valid sql having where string</span><br>
+            <span class="retpar">orderStr</span>: <span class="fdesc">
+              Optional. The valid sql orderby string. Default value: ""</span>
+          </p>
+          <p>The result table rows.</p>
+          
+          <p class="exblock"><b><u><i>Examples:</i></u></b><br>
+            <br>
+            data = {"id":3, "method":"loadTable", "jsonrpc":"2.0",<br>
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"tableName":"customer", "filterStr":"id=1", "orderStr":""};<br>
+          </p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="loadDataSet" class="fname">loadDataSet</a>(<a href="#login">login</a><span
+          class="ftype">::Object</span>, dataSetInfo<span class="ftype">::Array</span>)<span
+          class="ftype">::Array</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc">In a group, any number can be sent loadTable, loadView, executeSql and callFunction requests.<br>
+            <span class="retpar">dataSetInfo</span>: <span class="fdesc">
+              the list of <a href="#recordSetInfo">recordSetInfo</a> objects</span>
+          </p>
+          <p><u>Functions:</u> <b>loadDataSet</b>, <b>loadDataSet_json</b><br>
+            The result value a list of <a href="#infoSet">infoSet</a> objects.</p>
+          
+          <p class="exblock"><b><u><i>Examples:</i></u></b><br>
+            <br>
+            data = {"id":2, "method":"loadDataSet", "jsonrpc":"2.0",<br>
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"dataSetInfo":[<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"infoName":"groups", "infoType":"table", "tableName":"groups",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"filterStr":"deleted=0 and groupname in ('customer', 'nervatype', 'fieldtype', 'logstate', 'custtype')",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"orderStr":"groupname, groupvalue"},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"infoName":"deffield", "infoType":"table", "tableName":"deffield",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"filterStr":"deleted=0 and nervatype = (select id from groups where groupname = 'nervatype' and groupvalue = 'customer')",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"orderStr":"description"},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"infoName":"custnumber", "infoType":"function", "functionName":"nextNumber",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"paramList":{numberkey:"custnumber", step:false}}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;]}};<br>
+          </p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="saveRecord" class="fname">saveRecord</a>(<a href="#login">login</a>
+          <span class="ftype">::Object</span>, record<span class="ftype">::Object</span>)<span
+          class="ftype">::Object</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>saveRecord</b>, <b>saveRecord_json</b><br>
+            Insert or update a data row. A new <span class="retpar">record</span>, set the returned <b>id</b>.
+          </p>
+          <p>The result value of the input <span class="retpar">record</span> object.</p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="saveRecordSet" class="fname">saveRecordSet</a>(<a href="#login">login</a>
+          <span class="ftype">::Object</span>, recordSet<span class="ftype">::Array</span>)<span
+          class="ftype">::Array</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>saveRecordSet</b>, <b>saveRecordSet_json</b><br>
+            Insert or update multiple rows of data.<br>
+            <span class="retpar">recordSet</span>: <span class="fdesc">
+              the list of <span class="retpar">record</span> objects.
+              A new <span class="retpar">record</span>, set the returned <b>id</b>.</span>
+          </p>
+          <p>The result value of the input <span class="retpar">recordSet</span> list.</p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="deleteRecord" class="fname">deleteRecord</a>(<a href="#login">login</a>
+          <span class="ftype">::Object</span>, record<span class="ftype">::Typed Object</span>)<span
+          class="ftype">::Integer</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>deleteRecord</b>, <b>deleteRecord_json</b><br>
+            Delete a data row.
+          </p>
+          <p>record_id (if the deletion is successful).</p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="deleteRecordSet" class="fname">deleteRecordSet</a>(<a href="#login">login</a>
+          <span class="ftype">::Object</span>, recordSet<span class="ftype">::Array</span>)<span
+          class="ftype">::Array</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>deleteRecordSet</b>, <b>deleteRecordSet_json</b><br>
+            Delete multiple rows of data.<br>
+            <span class="retpar">recordSet</span>: <span class="fdesc">
+              the list of <span class="retpar">record</span> objects.</span>
+          </p>
+          <p>Array of record_id (if the all deletion is successful).</p>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="saveDataSet" class="fname">saveDataSet</a>(<a href="#login">login</a><span
+          class="ftype">::Object</span>, dataSetInfo<span class="ftype">::Array</span>)<span
+          class="ftype">::Array</span></td>
+      </tr>
+      <tr>
+        <td>
+          <p class="fdesc"><u>Functions:</u> <b>saveDataSet</b>, <b>saveDataSet_json</b><br>
+            In a group, any number can be sent saveRecordSet, deleteRecordSet and callFunction requests.<br>
+            <span class="retpar">dataSetInfo</span>: <span class="fdesc">
+              the list of <a href="#updateSetInfo">updateSetInfo</a> objects</span>
+          </p>
+          <p>The result value of the input <span class="retpar">dataSetInfo</span> list (with returned new id).</p>
+        </td>
+      </tr>
+		</tbody>
+	</table>
+    
+  <p>
+    <b>Object Properties</b>
+  </p>
+  
+  <table
+    style="border-width: 1px; border-style: solid; border-collapse: collapse;"
+    border="1" cellpadding="2" cellspacing="0" width="100%">
+    <tbody>
+      <tr class="fhead">
+        <td><a name="validator" class="fname">validator</a>
+          {valid<span class="ftype">::Boolean</span>, message<span class="ftype">::String</span>, 
+          engine<span class="ftype">::String</span>, employee<span class="ftype">::Object</span>,
+          audit<span class="ftype">::Array</span>, groupinput<span class="ftype">::Array</span>,
+          transfilter<span class="ftype">::Integer</span>, groups<span class="ftype">::Array</span>,
+          menucmd<span class="ftype">::Array</span>, menufields<span class="ftype">::Array</span>,
+          userlogin<span class="ftype">::String</span>}
+        </td>
+        <tr>
+        <td>
+          <span class="retpar">valid</span>: <span class="fdesc">
+            true or false</span><br>
+          <span class="retpar">message</span>: <span class="fdesc">
+            '' or error message</span><br><br>
+          <u>If valid === true:</u><br>
+          <span class="retpar">engine</span>: <span class="fdesc">
+            Database type (sqlite,mysql,postgres,mssql,...)</span><br>
+          <span class="retpar">employee</span>: <span class="fdesc">
+            Login user employee data</span><br>
+          <span class="retpar">audit</span>: <span class="fdesc">
+            Login user audit data</span><br>
+          <span class="retpar">transfilter</span>: <span class="fdesc">
+            Login user transfilter data or null</span><br>
+          <span class="retpar">groups</span>: <span class="fdesc">
+            All groups values: usergroup, nervatype, transtype, inputfilter, transfilter, department, logstate, fieldtype</span><br>
+          <span class="retpar">menucmd</span>: <span class="fdesc">
+            All ui_menu data</span><br>
+          <span class="retpar">menufields</span>: <span class="fdesc">
+            All ui_menufields</span><br>
+          <span class="retpar">userlogin</span>: <span class="fdesc">
+            'true' or 'false' from database settings</span>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="login" class="fname">login</a>{database<span
+          class="ftype">::String</span>, username<span class="ftype">::String</span>,
+          password<span class="ftype">::String</span>}</td>
+      </tr>
+      <tr>
+        <td>
+          <span class="retpar">database</span>: <span class="fdesc">
+              an <b>NAS</b> alias set for a database</span><br>
+          <span class="retpar">username, password</span>: <span class="fdesc">
+              valid username and password for the database</span>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="param" class="fname">param</a>{name<span
+          class="ftype">::String</span>, value<span class="ftype">::Object</span>,
+          wheretype<span class="ftype">::String</span>, type<span
+          class="ftype">::String</span>}</td>
+      </tr>
+      <tr>
+        <td>
+          <span class="retpar">name</span>: <span class="fdesc">
+              the replacement name</span><br>
+          <span class="retpar">value</span>: <span class="fdesc">
+              replacement value of the variable</span><br>
+          <span class="retpar">wheretype</span>: <span class="fdesc">
+              specifies which part replace the variable. Valid values: where, having, in.</span><br>
+          <span class="retpar">type</span>: <span class="fdesc">
+              set up the correct sql syntax. Valid values: string, date, integer, number, boolean.</span>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="recordSetInfo" class="fname">recordSetInfo</a>{infoName<span class="ftype">::String</span>,
+          infoType<span class="ftype">::String</span>, 
+          tableName<span class="ftype">::String</span><span class="defvalue">=null</span>,
+          filterStr<span class="ftype">::String</span><span class="defvalue">=null</span>, 
+          orderStr<span class="ftype">::String</span><span class="defvalue">=null</span>,
+          sqlStr<span class="ftype">::String</span><span class="defvalue">=null</span>, 
+          whereStr<span class="ftype">::String</span><span class="defvalue">=null</span>,
+          havingStr<span class="ftype">::String</span><span class="defvalue">=null</span>, 
+          paramList<span class="ftype">::Array</span><span class="defvalue">=null</span>,
+          functionName<span class="ftype">::String</span><span class="defvalue">=null</span>}</td>
+      </tr>
+      <tr>
+        <td>
+          <span class="retpar">infoName</span>: <span class="fdesc">
+              required. unique request identifier name</span><br>
+          <span class="retpar">infoType</span>: <span class="fdesc">
+              required. Valid values: table, view, execute, function</span><br>
+          <span class="retpar">functionName</span>: <span class="fdesc">
+              only if infoType = function, else null</span><br>
+          <span class="retpar">tableName</span>: <span class="fdesc">
+              only if infoType = table, else null</span><br>
+          <span class="retpar">filterStr</span>: <span class="fdesc">
+              only if infoType = table, else null</span><br>
+          <span class="retpar">orderStr</span>: <span class="fdesc">
+              only if infoType = table, else null</span><br>
+          <span class="retpar">sqlStr</span>: <span class="fdesc">
+              only if infoType = view or execute, else null</span><br>
+          <span class="retpar">whereStr</span>: <span class="fdesc">
+              only if infoType = view, else null</span><br>
+          <span class="retpar">havingStr</span>: <span class="fdesc">
+              only if infoType = view, else null</span><br>
+          <span class="retpar">paramList</span>: <span class="fdesc">
+              only if infoType = view, execute or function, else null</span><br>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="infoSet" class="fname">infoSet</a>{infoName<span class="ftype">::String</span>, 
+          recordSet<span class="ftype">::Array</span>}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="retpar">infoName</span>: <span class="fdesc">
+              request recordSetInfo.infoName</span><br>
+          <span class="retpar">recordSet</span>: <span class="fdesc">
+              recordSetInfo result value</span>
+        </td>
+      </tr>
+      
+      <tr class="fhead">
+        <td><a name="updateSetInfo" class="fname">updateSetInfo</a>{updateType<span class="ftype">::String</span>,
+          tableName<span class="ftype">::String</span><span class="defvalue">=null</span>,
+          recordSet<span class="ftype">::Array</span><span class="defvalue">=null</span>,
+          functionName<span class="ftype">::String</span><span class="defvalue">=null</span>,
+          paramList<span class="ftype">::Array</span><span class="defvalue">=null</span>,
+          value<span class="ftype">::Array</span><span class="defvalue">=null</span>}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="retpar">updateType</span>: <span class="fdesc">
+              required. Valid values: update, delete, function</span><br>
+          <span class="retpar">tableName</span>: <span class="fdesc">
+              only if updateType = update or delete, else null</span><br>
+          <span class="retpar">recordSet</span>: <span class="fdesc">
+              only if updateType = update or delete, else null</span><br>
+          <span class="retpar">functionName</span>: <span class="fdesc">
+              only if infoType = function, else null</span><br>
+          <span class="retpar">paramList</span>: <span class="fdesc">
+              only if infoType = function, else null</span><br>
+          <span class="retpar">value</span>: <span class="fdesc">
+              result value if infoType = function, else null</span><br>
+        </td>
+      </tr>
+      
+    </tbody>
+  </table>
+</body>
+</html>

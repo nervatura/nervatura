@@ -1,0 +1,252 @@
+<% include html_head.html %>
+<% include body_page_header.html %>
+<% include content_logo.html %>
+
+<p>The purpose of <b>Nervatura Framework</b> is to develop such data model,
+  tools and knowledge database which allows to build safe and flexible
+  management solutions quickly and at low cost.</p>
+<p>The project consists of several sub-projects which are all based on
+  Nervatura’s own object model and intended to support its use for
+  various applications. The developments are open-source projects -
+  except some dedicated applications - and can be used freely under the
+  scope of <a href="http://www.gnu.org/licenses/lgpl.html" target="_blank">LGPLv3
+    License</a>.</p>
+
+<hr />
+<h2><%= lang.title_overview %></h2>
+
+<ul>
+  <li>
+    <p style="color: #3B7687;">
+      <span class="sname">NOM</span>&nbsp;<b>Nervatura Object Model</b></p>
+    <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-collapsed-icon="info">
+      <div data-role="collapsible">
+        <h2 class="colhead">General data model, which can store all information generated during
+          the operation of a classic organization.</h2>
+        <div style="font-size:90%;">
+          <p>This includes all manufacturer, retailer and service companies (or
+            government units) which operation can be defined and described
+            within a GOODS (we want to sell or we supply) – CLIENT (we work for)
+            - RESOURCE (we possess for the task) triangle.</p>
+          <p>It is located between the applications, surfaces that are using
+            and creating the data and the real data storage layer. It defines
+            logical objects; data is stored in these freely defined attributes
+            and in relations between them. Its flexible structure allows
+            defining new properties or assigning events to our objects.</p>
+          <p>Mainly it was created with the aim to support developers in
+            focusing on the presentation layer i.e. an efficient and easy to use
+            user interface. There is no need for special database planning
+            knowledge and time saving benefit is gained. Though, they are
+            provided with a safe, scalable (flexibly following the increasing
+            data storage need and potential complexity) and easy to port
+            (database independent) device for data storage.</p>
+          <p>Other point of view was to realize an important management
+            development principle. Namely, to separate the management
+            applications from data generated in certain processes. The purpose
+            is to ensure that companies using the applications have complete
+            access to their own data in all cases. The physical possession of a
+            database is not a sufficient to reach this goal. The possibility of
+            proper interpretation and availability for further usage of stored
+            data must also be ensured.</p>
+          <p>Data stored in the <b>NOM</b> are independent from the applications
+            that are using them. This also means that in this sense the programs
+            written for <b>NOM</b> are also compatible with each other. This ensures
+            the easy change not only between two identical programs of the same
+            role. Companies having NOM can easily use variety of applications
+            written for different platforms (PC, mobile devices, data
+            gatherings, etc) and different technologies (HTML5, java, flash,
+            traditional programming languages, etc) in order to support their
+            processes.</p>
+          
+          <hr style="margin-bottom: 3px;">
+          <div class="info_div">
+            <b><i>For more information: </i></b>
+          </div>
+          <div class="info_div">
+            <a href="/docs/nom" target="_blank"><b><i>Nervatura Object Model</i></b></a>
+          </div>
+          <hr style="margin-top: 3px;">
+        </div>
+      </div>
+    </div>
+  </li>
+    
+  <li>
+    <p style="color: #3B7687;">
+      <span class="sname">NAS</span>&nbsp;<b>Nervatura Application Server</b></p>
+    <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-collapsed-icon="info">
+      <div data-role="collapsible">
+        <h2 class="colhead">Receives and revises data sent by applications, passes them on to the
+          client layer in charge.</h2>
+        <div style="font-size:90%;">
+          <p>Data of usage rights/levels and proper database access settings
+            are stored here. Further database independent, user or application
+            level functions can also be implemented here.<br>
+            The <b>NAS</b> doesn’t store
+            data related to workflow management but information needed for
+            accessing these data. The client databases, server databases can
+            also be placed here but those can be located anywhere else in the
+            world as well.</p>
+          <p>The <b>NAS</b> is based on the <a href="http://expressjs.com/" 
+            target="_blank">Express</a> web application framework technology and
+            uses its security solutions. Through handling databases of
+            <a href="https://nodejs.org/" target="_blank">Node.js</a> 
+            it supports numerous drivers such as SQLite, PostgreSQL, MySQL,
+            MSSQL. Each of them can be chosen for data storage and the
+            types can also be exchanged at any time. In Nervatura applications
+            the data access is independent from the type of storage.</p>
+          <p>The Admin graphical user interface (NAS ADMIN) is part of
+            <b>NAS</b> project. For instance: setting of certain user rights or
+            database accesses. Remote access of that could be limited because of
+            safety reasons.</p>
+        </div>
+      </div>
+    </div>
+  </li>
+  
+  <li>
+    <p style="color: #3B7687;">
+      <span class="sname">NDI</span>&nbsp;<b>Nervatura Data Interface</b></p>
+    <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-collapsed-icon="info">
+      <div data-role="collapsible">
+        <h2 class="colhead">The purpose was to create an easy to learn, simple and safe function
+          library. Its usage is mainly beneficial for those users who want to
+          query or transmit information to a Nervatura client database for any
+          purpose.</h2>
+        <div style="font-size:90%;">
+          <p>Potential utilization area for example: creating backups, data
+            migration, sending or receiving data to or from other applications
+            (for instance accounting systems, analytical data supply, etc), data
+            source for analytical reports, loading data from offline
+            applications, adding exchange rates, financial indexes, etc.</p>
+          <p>Main advantages and specifics of usage:  
+          <ul>
+            <li>The structure of functions is tracking the logic of
+              workflow management, it’s not necessary to recognize and understand
+              the data storage principles and exact structure of the database.</li>
+            <li>The functions can easily be called from anywhere with any
+              device or programming language embedded in http requests which are
+              optionally encoded and encrypted.</li>
+            <li>Several format types can be called as results of queries
+              such as html, json, xml, csv.</li>
+            <li>Update for functions is centrally provided in case of
+              potential database changes, also backward compatibility is
+              assured. It makes it easy to maintain the automated tasks as no
+              further resources are needed for updates.</li>
+            <li>During entering new data, the <b>NOM</b> object attribute -which
+              has not existed before- is automatically generated when the first
+              value is given.</li>
+            <li>With <b>NDI</b> data integrity problems can be avoided when
+              inserting or updating data, which means the queried information is
+              certainly composed well and the uploaded data stored properly. The
+              built-in rule system also indicates the logical errors.</li>
+          </ul>
+          </p>
+          
+          <hr style="margin-bottom: 3px;">
+          <div class="info_div">
+            <b><i>For more information and examples: </i></b>
+          </div>
+            <div class="info_div">
+              <a href="/docs/ndi" target="_blank"><b><i>Nervatura Data Interface</i></b></a>
+            </div>
+            <div class="info_div">
+              <a href="/ndi/wizard" target="_blank"><b><i>Data Interface Wizard</i></b></a>
+            </div>
+            <div class="info_div">
+              <a href="/download/calc_demo.ods" target="_blank"><b><i>LibreOffice Calc Data Loader</i></b></a>
+            </div>
+          <hr style="margin-top: 3px;">
+        </div>
+      </div>
+    </div>      
+  </li>
+  
+  <li>
+    <p style="color: #3B7687;">
+      <span class="sname">NPI</span>&nbsp;<b>Nervatura Programming Interface</b></p>
+    <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-collapsed-icon="info">
+      <div data-role="collapsible">
+        <h2 class="colhead">Ensures direct access to Nervatura databases at database management
+          level. In certain cases it enables faster and more efficient data
+          handling than the NDI, but its secure usage requires more substantial
+          database structure and programming knowledge.</h2>
+        <div style="font-size:90%;">
+          <p>With its help we can send and receive data without knowing the
+            exact location and type of the database but we have the possibility
+            also to use database-specific features. During the communication we
+            can use arbitrary-size data packages which may contain data query,
+            data entry or server-side function calls at the same time.</p>
+          <p>It uses <a href="http://en.wikipedia.org/wiki/JSON-RPC" target="_blank">JSON</a> 
+              coding which can be easily changed in case of need
+            for other types. It has been destined to easily and quickly create –
+            primarily client-side, secondary server-side – applications in all
+            kinds of programming languages on any devices.</p>
+          
+          <hr style="margin-bottom: 3px;">
+          <div class="info_div">
+            <b><i>For more information and examples: </i></b>
+          </div>
+          <div class="info_div">
+            <a href="/docs/npi" target="_blank"><b><i>Nervatura Programming Interface</i></b></a>
+          </div>
+          <div class="info_div">
+            <a href="/download/nwx.zip" target="_blank"><b><i>Nervatura wxPython Client</i></b></a>
+          </div>
+          <div class="info_div">
+            <a href="/download/npijson.zip" target="_blank"><b><i>Javascript RPC functions</i></b></a>
+          </div>
+          <hr style="margin-top: 3px;">
+        </div>
+      </div>
+    </div>
+  </li>
+  
+  <li>
+    <p style="color: #3B7687;">
+      <span class="sname">NDR</span>&nbsp;<b>Nervatura Report</b>
+    </p>
+    <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-collapsed-icon="info">
+      <div data-role="collapsible">
+        <h2 class="colhead">Client and server-side data representation</h2>
+        <div style="font-size:90%;">
+          <ul>
+            <li><b>Client/server side:</b><br> 
+              PDF printing in pure <b>JavaScript</b> (using the library <a href="https://github.com/MrRio/jsPDF" 
+                target="_blank">jsPDF</a>) and <b>Python</b> (using the library
+              <a href="http://www.github.com/reingart/pyfpdf/" target="_blank">Pypdf</a>) </li>
+            <li><b>Fully declarative:</b><br> 
+              can be easily modified and used for relative layout (no need to specify the x and y coordinates)</li>
+            <li><b>Powerful layout engine:</b><br> 
+              row, datagrid, column, cell, image, separator, html, barcode, hline, vgap elements </li>
+            <li><b>Many types of declaration:</b><br> 
+              XML, JSON, Javascript or Python languages </li>
+            <li><b>Several output options:</b><br> 
+              PDF, XML, JSON, HTML</li>
+            <li><b>Can be used independently:</b><br> 
+              any (client or server-side) python and html5 (in-browser) programs</li>
+            <li><b>Server-side printing support:</b><br> 
+              Windows, Linux (CUPS) and cloud (Google Cloud Print and email)</li>
+          </ul>
+          
+          <hr style="margin-bottom: 3px;">
+          <div class="info_div">
+            <b><i>For more information and examples: </i></b>
+          </div>
+          <div class="info_div">
+            <a href="/docs/report" target="_blank"><b><i>Nervatura Report</i></b></a>
+          </div>
+          <div class="info_div">
+            <a href="/report" target="_blank"><b><i>Client and server-side DEMO</i></b></a>
+          </div>
+          <hr style="margin-top: 3px;">
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>
+</div>
+
+</div><!-- /content -->
+</div><!-- /page -->
+</body></html>

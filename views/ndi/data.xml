@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+  <% data.forEach(function(row) { %><% if (show_id) { %><<%- datatype %> id="<%- row[0].value %>"><% } else{ %><<%- datatype %>><% } %>
+    <% row.forEach(function(field) { %><% if (field.name !== 'id') { %><field><% for (var fieldname in field) { %>
+      <<%- fieldname %>><![CDATA[<%- field[fieldname] %>]]></<%- fieldname %>><% } %>
+    </field><% } %>
+    <% }); %></<%- datatype %>><% }); %>
+</data>

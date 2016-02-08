@@ -1,0 +1,58 @@
+<div id="main-menu" data-role="panel" data-position-fixed="true" data-display="overlay" data-theme="b">
+  <div data-role="header">
+	<a class="ui-btn-left" data-ajax="false" data-icon="home" data-iconpos="left" 
+	  data-mini="true" data-role="button" data-theme="b" href="/nas/index"><span><%= lang.title_home %></span></a>
+	<a class="ui-btn-right" data-ajax="true" data-icon="delete" data-iconpos="notext" 
+	  data-rel="close" data-role="button" href="#"><span><%= lang.label_close %></span></a>
+  </div>
+  
+  <div data-role="content" style="margin-top:30px;padding:0px;margin-bottom: 20px;">
+    <hr style="border-width:0;background-color: #333333;">
+    <div data-role="collapsible-set" data-mini="false" data-theme="b" data-content-theme="b" data-inset="true" 
+      data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-iconpos="right" 
+      style="margin-top:20px;padding:0px;">   
+	  <a href="/nas/user/list" data-role="button" data-theme="b" data-corners="false"
+	    data-icon="forward" data-iconpos="right" data-ajax="false"
+	    style="color: #FFD700;margin:0px;text-align: left;"><%= lang.label_accounts %></a>
+	  <a href="/nas/database/list" data-role="button" data-theme="b" data-corners="false"
+	    data-icon="forward" data-iconpos="right" data-ajax="false"
+	    style="color: #FFD700;margin:0px;text-align: left;"><%= lang.label_databases %></a>
+      
+	  <div data-role="collapsible">
+        <h3 style="margin: 0px;"><%= lang.label_management %></h3>       
+		<div data-role="collapsible-set" data-mini="false" data-theme="b" data-content-theme="b" data-inset="false" 
+		  data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-iconpos="right" 
+		  style="margin:0px;padding:0px;">
+		  <a href="/nas/database/create" data-role="button" data-theme="b" data-corners="false"
+		    data-icon="forward" data-iconpos="right" data-ajax="false"
+		    style="color: #FFD700;margin:0px;text-align: left"><%= lang.label_creation %></a>   
+        </div>        
+		<div data-role="collapsible-set" data-mini="false" data-theme="b" data-content-theme="b" data-inset="false" 
+		  data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-iconpos="right" 
+		  style="margin:0px;padding:0px;">
+		  <a href="/nas/database/backup" data-role="button" data-theme="b" data-corners="false"
+		    data-icon="forward" data-iconpos="right" data-ajax="false"
+		    style="color: #FFD700;margin:0px;text-align: left"><%= lang.label_backup %></a>
+		</div>     
+		<div data-role="collapsible-set" data-mini="false" data-theme="b" data-content-theme="b" data-inset="false" 
+		  data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-iconpos="right" 
+		  style="margin:0px;padding:0px;">
+		  <a href="/nas/database/restore" data-role="button" data-theme="b" data-corners="false"
+			data-icon="forward" data-iconpos="right" data-ajax="false"
+			style="color: #FFD700;margin:0px;text-align: left"><%= lang.label_restore %></a>
+		</div>
+	  </div>
+	  
+	  <a href="/nas/report" data-role="button" data-theme="b" data-corners="false"
+	    data-icon="forward" data-iconpos="right" data-ajax="false"
+	    style="color: #FFD700;margin:0px;text-align: left;"><%= lang.label_reports %></a>
+	  <a href="/nas/setting/list" data-role="button" data-theme="b" data-corners="false"
+	    data-icon="forward" data-iconpos="right" data-ajax="false"
+	    style="color: #FFD700;margin:0px;text-align: left;"><%= lang.label_settings %></a>
+	  <a href="/nas/user/password" data-role="button" data-theme="b" data-corners="false"
+	    data-icon="forward" data-iconpos="right" data-ajax="false"
+	    style="color: #FFD700;margin:0px;text-align: left;"><%= lang.label_change_password %></a>  
+    </div>
+  </div>    
+</div>
+            

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>NDI Data</title>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <style>
+    table {
+      border-style: solid;
+      border-width: 1px;
+      border-color: #8B8B83;
+      font-size: .9em;
+      font-family: sans-serif;
+      }
+    th {text-align:left;
+      background-color: #8B8B83;
+      color: #FFFFFF;
+      padding:4px;}
+    td {
+      padding:4px;}
+    .stripe {
+      background-color: #DCDCDC;}
+    .no_stripe {
+      border-style: solid;
+      border-width: 1px;
+      border-color: #DCDCDC;}
+  </style>
+</head> 
+<body>
+  <% if (data.length > 0) { %>
+    <% if (cross_tab) { %>
+      <table cellspacing="3" cellpadding="0">
+        <thead>
+          <tr><% for (var fieldname in data[0]) { %>
+            <th><%= fieldname %></th><% } %>
+          </tr>
+        </thead>
+        <tbody><% var numrec = 0; %><% data.forEach(function(row) { %>
+          <tr><% for (var fieldname in row) { %>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%>><%= row[fieldname] %></td><% } %><% numrec += 1; %>
+          </tr><% }); %>
+        </tbody>
+      </table>
+    <% } else{ %>
+      <table cellspacing="3" cellpadding="0">
+        <thead>
+          <tr><% if (show_id) { %>
+            <th>id</th><% } %>
+            <th>name</th>
+            <th>value</th>
+            <th>type</th>
+            <th>label</th>
+            <th>index</th>
+            <th>data</th>
+          </tr>
+        </thead>
+        <tbody><% var numrec = 0; %><% data.forEach(function(row) { %>
+        <% row.forEach(function(field) { %>
+          <tr><% if (show_id) { %>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%> style="text-align:right;"><%= field.id %></td><% } %>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%>><%= field.name %></td>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%> <%= ['integer','float','id'].indexOf(field.type)>-1? 'style=text-align:right;' : ''%>><%= field.value %></td>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%>><%= field.type %></td>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%>><%= field.label %></td>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%> style="text-align:right;"><%= field.index %></td>
+            <td <%=numrec % 2 == 0? 'class=no_stripe' : 'class=stripe'%>><%= field.data %></td>
+          </tr><% }); %><% numrec += 1; %><% }); %>
+        </tbody>
+      </table><% } %>
+  <% } else{ %>
+  <p>No results data...</p><% } %>
+</body>
+</html>

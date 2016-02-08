@@ -1,0 +1,85 @@
+<% include html_head.html %>
+<% include body_page_header.html %>
+
+<script>
+  function msgDelete(fieldname){
+    $("#current_fieldname").val(fieldname);
+    $("#delete").popup("open", {transition:"pop", positionTo:"window"});}
+  function msgNew(){
+	  $("#edit_title").html("<%= lang.label_new %>");
+    $("#edit_fieldname").val("");
+	  $("#edit_description").val("");
+	  $("#edit_value").val("");
+    $("#edit").popup("open", {transition:"pop", positionTo:"window"});}
+  function msgEdit(fieldname, description, value){
+    $("#edit_title").html("<%= lang.label_edit %>");
+	  $("#edit_fieldname").val(fieldname);
+	  $("#edit_description").val(description);
+	  $("#edit_value").val(value);
+    $("#edit").popup("open", {transition:"pop", positionTo:"window"});}
+</script>
+
+<div align="center" style="padding-top: 10px;">
+  <div style="max-width: 500px;">
+    <a href="#" onclick="msgNew();" style="color:#8FBC8F;"
+      class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline"><%= lang.label_new %></a>
+    <ul data-role="listview" data-split-icon="delete" data-split-theme="a" 
+      data-inset="true" data-filter="true"><% settings.forEach(function(setting) { %>
+      <li><a href="#" onclick="msgEdit('<%= setting.fieldname %>','<%= setting.description %>','<%= setting.value %>');">
+			  <h1><%= setting.fieldname %></h1><p><%= setting.value %></p></a>
+          <a href="#" onclick="msgDelete('<%= setting.fieldname %>');"><%= lang.label_delete %></a></li><% }); %>
+    </ul>
+    <div data-role="popup" id="delete" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
+      style="max-width:340px;">
+      <form id="frm_delete" action="/nas/setting/delete" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div data-role="header" data-theme="b">
+          <h1><%= lang.label_delete %></h1>
+        </div>
+        <div role="main" class="ui-content">
+          <h3><%= lang.msg_delete_text %></h3>
+          <p><%= lang.msg_delete_info %></p>
+          <div align="center">
+            <a data-ajax="false" href="#" onclick="document.forms['frm_delete'].submit();" style="color:#FF7F50;"
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-delete ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_delete %></a>
+            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
+          </div>
+        </div>
+        <input id="current_fieldname" type="hidden" name="fieldname" value="">
+      </form>
+    </div>
+	  <div data-role="popup" id="edit" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
+      style="max-width:400px;">
+      <form id="frm_update" action="/nas/setting/update" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div data-role="header" data-theme="b">
+          <h1 id="edit_title"><%= lang.label_edit %></h1>
+        </div>
+        <div role="main" class="ui-content">
+          <div class="ui-field-contain">
+            <label for="edit_fieldname"><%= lang.label_fieldname %>:</label>
+            <input id="edit_fieldname" name="fieldname" value="" type="text">
+          </div>
+          <div class="ui-field-contain">
+            <label for="edit_description"><%= lang.label_description %>:</label>
+            <textarea id="edit_description" name="description" cols="60"></textarea>
+          </div>
+          <div class="ui-field-contain">
+            <label for="edit_value"><%= lang.label_value %>:</label>
+            <textarea id="edit_value" name="value" cols="60"></textarea>
+          </div>
+          <div align="center">
+            <a data-ajax="false" href="#" onclick="document.forms['frm_update'].submit();" style="color:#8FBC8F;" 
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-check ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_update %></a>
+            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+<% include menu.html %>
+</div><!-- /page -->
+</body></html>

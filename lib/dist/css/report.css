@@ -1,0 +1,47 @@
+.error { 
+  background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0 0 #FFF9DF;
+  border: 1px solid #F7C942;
+  text-shadow: 0 1px 0 #FFFFFF;
+  color: red; font-weight: bold; 
+  padding: 3px;
+}
+.flash {
+  padding: 8px;
+  font-weight: bold;
+  border: 1px solid #F7C942;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  color: #222;
+  text-shadow: 0px 1px 0px #FFF;
+  background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0% 0% #FFF9DF;
+}
+#container {
+  background: none repeat scroll 0 0 #FFFFFF;
+  margin: 0 auto;
+  padding: 30px;
+  padding-top: 10px;
+  color: #444444;
+}
+#container a {
+  color: #3B7687 !important;
+  text-decoration: none;
+}
+.vernum {
+  background-color: #444444;
+  color: #FFFFFF;
+  font-weight: bold;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-style: italic;
+  vertical-align: top;
+}
+.cheader {
+  width: 100%;
+  float: left;
+  background-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+textarea.ui-input-text {
+  max-height : 300px;
+}

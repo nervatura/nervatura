@@ -1,0 +1,17 @@
+<body>
+  <div data-role="page">
+    <div data-role="header" data-fullscreen="false" data-position="fixed" data-theme="b">
+      <div data-role="navbar">
+        <ul>
+          <li><a data-icon="home" data-ajax="false" data-theme="b" href="/index"><%= lang.title_home %></a></li>
+          <li><a data-icon="file-text" data-ajax="false" data-theme="b" href="/ndoc"><%= lang.title_documentation %></a></li>
+          <li><a data-icon="info" data-ajax="false" data-theme="b" href="/about"><%= lang.title_about %></a></li>
+          <li><a data-icon="gear" data-ajax="false" data-theme="b" href="/nas"><%= lang.title_nas %></a></li>
+        </ul>
+      </div><!-- /navbar -->
+      <% if (typeof login !== "undefined") { %>
+      <h1 style="color: #FFD700;margin: 0px;padding: 4px 0px 0px">Nervatura Framework</h1>
+      <h1 style="padding: 0px 0px 7px;margin: 0px;"><span class="vernum"> Ver.No: <%= settings.version %></span></h1>
+      <% } %>
+    </div>
+    

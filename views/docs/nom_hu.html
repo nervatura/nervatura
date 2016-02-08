@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Nervatura Object Model</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    
+    <style type="text/css">
+      .body {
+        background-color: #ffffff;
+        padding: 20pt 42.5pt 42.5pt 42.5pt;
+        font-family: sans-serif;
+        text-align: justify;
+        color: #444444;
+      }
+      a {
+          text-decoration: none;
+          color: #3B7687;
+      }
+      .nobj {
+        font-weight: bold;
+        color: #8B2500;
+      }
+    </style>
+  </head>
+<body class="body">
+  <h1 align="center" style="margin-top: 0px;">
+    Nervatura Object Model 
+  </h1>
+  <p align="center"><b><i>Ver.No: <%= settings.version %></i></b></p>
+  
+  <h3>
+    <ol style="color: #3B7687;">
+      <li><a href="#overview">Áttekintés</a></li>
+      <li><a href="#object">Objektumok</a></li>
+      <li><a href="#base_object">Alapobjektumok</a></li>
+      <li><a href="#fields">Tulajdonságok</a></li>
+      <li><a href="#events">Események</a></li>
+      <li><a href="#trans">Tranzakciók</a></li>
+      <li><a href="#link">Kapcsolatok</a></li>
+      <li><a href="#groups">Csoportképzés</a></li>
+      <li><a href="#complex">Összetett adattípusok (complex type)</a></li>
+      <li><a href="#other_object">Egyéb objektumok</a></li>
+      <li><a href="#ui_object">Felhasználói interfész objektumok</a></li>
+      <li><a href="#pyramid">Kapcsolat piramis</a></li>
+      <li><a href="#appendix">Relációs kapcsolatok</a></li>
+    </ol>
+  </h3>
+  
+  <hr>
+  
+  <ol>
+    <li>
+      <h3><a name="overview">Áttekintés</a></h3>
+      <p>Általános adatmodell, amely képes tárolni egy klasszikus
+				gazdasági szervezet működése során keletkezett információkat. Ide
+				értendő minden olyan termelő, forgalmazó és szolgáltató cég (vagy
+				kormányzati egység), amely működése értelmezhető és leírható egy
+				tetszőleges <b>ÁRU</b> (amit el szeretnénk adni, vagy szolgáltatunk) -
+				<b>ÜGYFÉL</b> (akinek dolgozunk) - <b>ERŐFORRÁS</b> (amivel rendelkezünk a
+				feladathoz) háromszögben.</p>
+			<p>Az adatokat használó, létrehozó alkalmazások, felületek,
+				valamint a valós adattárolási réteg között helyezkedik el. Logikai
+				objektumokat definiál, és ezek szabadon meghatározható
+				tulajdonságai, valamint a közöttük lévő kapcsolatok tárolják az
+				információkat. Rugalmas szerkezete lehetővé teszi, hogy
+				objektumainknak új tulajdonságokat definiálhassunk, vagy eseményeket
+				rendelhessünk hozzájuk.</p>
+			<p>Az objektumok száma minimális, azok felépítése egyszerű.
+				Logikája könnyen megtanulható, áttekinthető és használható.
+				Ugyanakkor képes arra, hogy bármely szükséges adatot strukturáltan
+				tároljon. Biztosítja, hogy az egyes objektumok bármilyen, típusos
+				tulajdonsággal rendelkezhessenek, valamint egymással is
+				tetszőlegesen kapcsolhatóak legyenek</p>
+			<p>Az adatmodell független az adattárolási rétegtől. Az
+				implementáció függvényeiben a konkrét adattárolás tetszőleges módon
+				és eszközzel megvalósítható, de fő követelményként az adatmodellt
+				használónak ebből semmit sem szabad érzékelnie.</p>
+		</li>
+    <li>
+      <h3><a name="object">Objektumok</a></h3>
+      <p>Olyan <b><i>előre definiált funkcionáris szerepkörök</i></b>, amelyek
+				tetszőleges tulajdonságokkal rendelkezhetnek, események
+				kapcsolhatóak hozzájuk, valamint elemeik más objektumok elemeivel is
+				összeköthetőek.</p>
+    </li>
+    <li>
+      <h3><a name="base_object">Alapobjektumok</a></h3>
+      <p><span class="nobj">CUSTOMER</span> - az összes szervezeten kívüli szereplő, beleértve a
+				vevői, fogyasztói, valamint a szállítói oldalt is <br>
+				<span class="nobj">PRODUCT</span> - az összes alapanyag, vég- és félkész termék, amivel bármely minőségben
+				(vevőként, vagy eladóként) kapcsolatba kerülünk, gyártóként
+				előállítjuk, vagy szolgáltatásként nyújtjuk <br>
+				<span class="nobj">TOOL, EMPLOYEE, PLACE</span>:
+				mindazok az erőforrások, amelyek a tevékenység elvégzéséhez
+				rendelkezésre állnak, abban közreműködnek. Ezek lehetnek humán
+				erőforrások (EMPLOYEE), tárgyi eszközök, szerszámok, gépek (TOOL),
+				vagy pénzügyi, esetleg infrastrukturális feltételek, mint például
+				raktárak, bankszámla, pénztár (PLACE)</p>
+    </li>
+    <li>
+      <h3><a name="fields">Tulajdonságok</a></h3>
+      <p>Mindazok <b><i>az adatok, amik egy adott objektumot jellemeznek</i></b>,
+				ahhoz információként kapcsolni akarunk. Néhány ezek közül már előre
+				definiáltan létezik, de bármely objektumhoz szabadon definiálhatunk
+				is ilyeneket.</p>
+			<p><i>A Nervatura Data Interface (NDI) használatakor egy objektum még
+				nem létező tulajdonsága az első értékadással automatikusan létrejön.
+				Ha így hozunk létre új tulajdonságot, akkor annak a típusa
+				meghatározhatatlan, így az automatikusan szöveg lesz. Ugyanakkor az
+				egyes tulajdonságok típusának pontos meghatározásával az abban
+				tárolt értékek helyességét is könyebben biztosíthatjuk.</i></p>
+      <p>A <span class="nobj">DEFFIELD</span> objektum használatával más objektumoknak
+				definiálhatunk adattárolási tulajdonságokat. Ezek a klasszikus
+				adattípusokon kívül (bool, integer, float, date, string, notes)
+				tartalmazhatnak még értéklistákat (valuelist), url linkeket (urlink),
+				vagy más objektumok konkrét elemeire történő hivatkozásokat
+				(customer, product, tool, employe stb.)</p>
+      <p><i>Az NDI használatakor az így definiált tulajdonságok értékei
+					az objektum adott elemén a tulajdonság nevével beállíthatóak,
+					illetve lekérdezhetőek. </i></p>
+      <p>A <span class="nobj">FIELDVALUE</span> objektumon keresztül minden objektum, összes
+				elemének, valamennyi definiált tulajdonság értéke lekérdezhető.</p>
+    </li>
+    <li>
+      <h3><a name="events">Események</a></h3>
+      <p><b><i>Bővített, általában adott időponthoz, vagy idő
+				intervallumhoz kötött objektum tulajdonságok</i></b>. Az események
+				segítségével dinamikussá tehetjük a statikus objektum
+				tulajdonságokat, vagyis egy adott elem tulajdonsága különböző
+				időpontokban, különböző értékeket vehet fel. Az esemény lehet adott
+				kezdő és végdátummal (időponttal) megadott időszakban is érvényes.
+				Tetszőleges számban vehetünk fel rá az adott objektum kiegészítő
+				adataiból, valamint csoportokba is rendezhetjük.</p>
+			<p>Az eseményeket az <span class="nobj">EVENT</span> objektumon keresztül kezelhetjük. Az
+				alapobjektumokon kívül a projektekhez is rendelhetünk eseményt.</p>
+		</li>
+    <li>
+      <h3><a name="trans">Tranzakciók</a></h3>
+      <p>A tranzakció <b><i>az esemény egy olyan fajtája, melyhez legalább
+				két alapobjektum kapcsolódik</i></b>.</p>
+			<p>Egy esemény mindig egy adott objektumhoz kötődik. Az esemény
+				további jellemzőjeként megadható másik alapobjektum, de ez annak
+				csak egy opcionális kiegészítő adata. <br>
+				A tranzakciókban az
+				alapobjektumok kapcsolata az adott esemény elhagyhatatlan, lényegi
+				elemét képezik. A tranzakció nem tartozik egyik, vagy másik
+				alapobjektumhoz, hanem a tranzakcióhoz kapcsolódnak az
+				alapobjektumok. Ezek közül előfordulhat, hogy bizonyos alapobjektum
+				opcionális elem, de minimum kettő annak elhagyhatatlan része.</p>
+      <p>A leggyakoribb objektumpár az ügyfél és termék kapcsolat
+				(pl. ajánlat, rendelés, számla), de előfordulhat bármely más
+				kombináció is, például termék - hely (raktárkezelés), ügyfél -
+				eszköz (bérlet), dolgozó - ügyfél (munkalap) stb.</p>
+			<p>Ahogy az eseményekhez, a tranzakciókhoz is tudunk további
+				kiegészítő adatokat kapcsolni, de ellentétben az eseményekkel, itt
+				nem a kapcsolódó alapobjektum jellemzőit használhatjuk, hanem lehet
+				saját, tranzakciós kiegészítő adatokat is deklarálni. A tranzakciók
+				egymáshoz is kapcsolódhatnak, illetve “származhatnak” is egymásból,
+				például ajánlat -> rendelés -> raktármozgás -> számla. </p>
+			<p>A tranzakciók
+				objektuma a <span class="nobj">TRANS</span>, amely a tranzakció főbb adatait, valamint az
+				egyszeres objektum kapcsolatokat tartalmazza. Az tranzakcióhoz
+				kötődő PRODUCT sorokat az <span class="nobj">ITEM</span> objektum, a pénzügyi teljesítéseket a
+				<span class="nobj">PAYMENT</span> objektum, a raktár és eszközmozgásokat a 
+				<span class="nobj">MOVEMENT</span> objektum
+				tartalmazza.</p>
+    </li>
+    <li>
+      <h3><a name="link">Kapcsolatok</a></h3>
+      <p>Az egyes objektumok összekapcsolására többfajta lehetőség is
+				van. Egy-az-egyes kapcsolat megadási lehetőséget, ha típusa
+				indokolja, a általában az objektum alapértelmezetten tartalmaz.
+				Szükség esetén erre bármikor létrehozható a megfelelő
+				objektumtípusra mutató kiegészítő adat is. <br>
+				Például a CUSTOMER
+				objektumhoz megadhatunk egy ügyfél típusú tulajdonságot, amivel egy
+				adott ügyfelet egy másik ügyfélhez köthetünk. Ugyanezzel a
+				módszerrel megadhatóak egy-a-többös kapcsolatok is, vagyis például
+				ebben az esetben az ügyfelünkhöz több másik ügyfelet is köthetünk.</p>
+      <p>Ha valamelyik kapcsolt ügyfél más ügyfélhez is kapcsolódik,
+				több-a-többös kapcsolatot kapunk. <br>
+				Objektumok közötti kapcsolatok
+				megadásához használhatjuk a <span class="nobj">LINK</span> objektumot is. Ennek segítségével
+				további objektumtulajdonságok létrehozása nélkül tudunk bármilyen
+				két objektumot összekapcsolni.</p>
+    </li>
+    <li>
+      <h3><a name="groups">Csoportképzés</a></h3>
+      <p>Az objektumok csoportosítására szintén többfajta lehetőség
+				kínálkozik. A kiegészítő adatok használata az adattárolási
+				lehetőségeken túl bizonyos fokú csoportosításra is lehetőséget
+				nyújt.</p>
+			<p>A <span class="nobj">GROUPS</span> objektumban objektumtípusonként csoportokat hozhatunk
+				létre. Ezeknek a csoportoknak szükség esetén további jellemzőket is
+				definiálhatunk. Ezeket azután felhasználhatjuk az adott objektumon
+				előre definiált értékek hozzárendelésére (például típusok
+				beállítása), de a LINK objektumon keresztül klasszikus egy-a-többös
+				csoportok létrehozására is (például ügyfél, vagy termékcsoportok).</p>
+			<p>A <span class="nobj">PROJECT</span> objektum lényegében a GROUPS objektum
+				kiterjesztéseként is értelmezhető. Természetesen további
+				adatjellemzők megadására itt is lehetőség van, de akárcsak az
+				eseményeknek a tulajdonságokhoz képest, a PROJECT objektumnál is
+				lehetőség van az időbeli kiterjesztésre. Opcionálisan lehet kezdő,
+				illetve végdátuma, szükség esetén köthetjük ügyfélhez, vagy helyhez
+				is. A projekteknek is lehetnek saját eseményei, valamint
+				kapcsolhatunk hozzá bármilyen tranzakciót.</p>
+		</li>
+    <li>
+      <h3><a name="complex">Összetett adattípusok (complex type)</a></h3>
+      <p>Az objektum tulajdonságok megadásakor bizonyos esetekben
+				szükség van összetett adattulajdonságok beállítására. Ezek
+				lényegében <b><i>olyan alobjektumok, amik maguk is saját tulajdonságokkal
+				rendelkeznek</i></b>. Ha például egy ügyfélhez meg szeretnénk adni egy
+				címadatot, akkor a konkrét cím megadásakor egyben megadhatjuk a
+				várost, az irányítószámot, vagy az utca nevét is. <br>
+				Az összetett
+				adattípusok egy részét nem csak egyetlen objektumhoz köthetjük,
+				hanem ugyanazt az elemet több másikhoz is. Némelyiknél további
+				kiegészítő adat definiálására is lehet lehetőség.</p>
+			<p>Egy-a-többös kötésű alobjektumok: <br>
+			  <span class="nobj">ADDRESS</span>,
+				<span class="nobj">BARCODE</span>, <span class="nobj">CONTACT</span>, 
+				<span class="nobj">PRICE</span></p>
+			<p>Egy-az-egyes kötésű alobjektumok: <br>
+			  <span class="nobj">CURRENCY, PATTERN, RATE, TAX</span>
+			</p>
+		</li>
+    <li>
+      <h3><a name="other_object">Egyéb objektumok</a></h3>
+      <p>A jogosultság kezelés, a naplózás, és az egyéb beállítások
+				objektumai: <br>
+				<span class="nobj">LOG</span>, 
+				<span class="nobj">NUMBERDEF</span></p>
+		</li>
+    <li>
+      <h3><a name="ui_object">Felhasználói interfész objektumok</a></h3>
+      <p>Ezek az objektumok <b><i>nem részei az objektum modellnek</i></b>, az
+				ügyvitel adatainak nyilvántartásához nem lenne rájuk szükség.
+				Ugyanakkor az egyes alkalmazások saját működésük biztosításához is
+				igényelhetnek adattárolási lehetőséget. <br>
+				<i>Az NDI függvényei ezeket az
+				objektumokat nem, vagy feltételesen támogatják, a Nervatura
+				Programming Interface (NPI) keresztül azonban elérhetőek. Nervatura
+				Web Client (NWC) szintén használja némelyiket.</i></p>
+			<p>Kimutatások, bizonylatok adatainak tárolása: <br>
+			  <span class="nobj">UI_REPORT,
+				UI_REPORTSOURCES, UI_REPORTFIELDS</span></p>
+			<p>Felhasználói felületek beállításai: <br>
+			  <span class="nobj">
+				UI_MENU, UI_MENUFIELDS</span></p>
+			<p>Felhasználói jogosultságok, beállítások: <br>
+			  <span class="nobj">UI_AUDIT,
+				UI_USERCONFIG</span></p>
+			<p>Lokalizáció: <br>
+			  <span class="nobj">UI_LANGUAGE, UI_MESSAGE</span></p>
+			<p>Nyomtatás: <br>
+			  <span class="nobj">UI_PRINTQUEUE</span></p>
+		</li>
+		<li>
+      <h3><a name="pyramid">Kapcsolat priramis</a></h3>
+      <p style="font-style: italic;">For safe backup and restore go from top to the bottom.</p>
+      <table cellpadding="8px" cellspacing="0" style="border-width: 1px; border-style: solid; border-collapse: collapse;">
+        <tr style="background-color: background;">
+          <th colspan="2">Level</th>
+          <th>Additional data</th>
+          <th>Objects</th>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 1a</td>
+          <td rowspan="2">no external link</td>
+          <td>no</td>
+          <td><span class="nobj">GROUPS, NUMBERDEF</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 1b</td>
+          <td>yes*</td>
+          <td><span class="nobj">CURRENCY, TAX</span></td>
+        </tr>
+        <tr style="background-color: #F5F5F5;">
+          <td style="font-weight: bold;">level 2a</td>
+          <td rowspan="2">link to <= level 1</td>
+          <td>no</td>
+          <td><span class="nobj">DEFFIELD, PATTERN</span></td>
+        </tr>
+        <tr style="background-color: #F5F5F5;">
+          <td style="font-weight: bold;">level 2b</td>
+          
+          <td>yes*</td>
+          <td><span class="nobj">CUSTOMER, EMPLOYEE, PLACE, PRODUCT</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 3</td>
+          <td>link to <= level 2</td>
+          <td>yes*</td>
+          <td><span class="nobj">BARCODE, PRICE, PROJECT, RATE, TOOL</span></td>
+        </tr>
+        <tr style="background-color: #F5F5F5;">
+          <td style="font-weight: bold;">level 4</td>
+          <td>link to <= level 3</td>
+          <td>yes*</td>
+          <td><span class="nobj">TRANS</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 5</td>
+          <td>link to <= level 4</td>
+          <td>yes*</td>
+          <td><span class="nobj">EVENT, ITEM, MOVEMENT, PAYMENT</span></td>
+        </tr>
+        <tr style="background-color: #F5F5F5;">
+          <td style="font-weight: bold;">level 6</td>
+          <td>link to <= level 5</td>
+          <td>yes*</td>
+          <td><span class="nobj">ADDRESS, CONTACT</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 7</td>
+          <td>link to <= level 6</td>
+          <td>yes*</td>
+          <td><span class="nobj">LINK, LOG</span></td>
+        </tr>
+        <tr style="background-color: #F5F5F5;">
+          <td style="font-weight: bold;">level 8</td>
+          <td>link to <= level 7</td>
+          <td>no</td>
+          <td><span class="nobj">FIELDVALUE</span></td>
+        </tr>
+        <tr>
+          <td colspan="4" style="font-style: italic;border-top-style: solid;border-top-width: 1px;font-size: small;">
+          *Backup with the FIELDVALUE (cross-references fields)
+          </td>
+        </tr>
+      </table>
+      
+      <table cellpadding="8px" cellspacing="0" style="border-width: 1px; border-style: solid; border-collapse: collapse;margin-top: 20px;">
+        <tr style="background-color: background;">
+          <th colspan="2">Level</th>
+          <th>Objects</th>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 1</td>
+          <td>no external link</td>
+          <td><span class="nobj">UI_MENU, UI_LANGUAGE</span></td>
+        </tr>
+        <tr style="background-color: #F5F5F5;">
+          <td style="font-weight: bold;">level 2a</td>
+          <td>link to <= level 1</td>
+          <td><span class="nobj">UI_MESSAGE</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 2b</td>
+          <td>link to <= NOM level 1</td>
+          <td><span class="nobj">UI_REPORT, UI_AUDIT</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold;">level 3</td>
+          <td>link to <= level 2b</td>
+          <td><span class="nobj">UI_MENUFIELDS, UI_REPORTFIELDS, UI_REPORTSOURCES</span></td>
+        </tr>
+        <tr style="background-color: #F5F5F5;">
+          <td style="font-weight: bold;">level 4</td>
+          <td>link to <= NOM level 2</td>
+          <td><span class="nobj">UI_USERCONFIG, UI_PRINTQUEUE</span></td>
+        </tr>
+      </table>
+    </li>
+    <li>
+      <h3><a name="appendix">Relációs kapcsolatok</a></h3>
+      <p><i>1. ábra: A NOM objektumok egy lehetséges relációs adatbázis terve</i></p>
+      <p>
+        <img height="680" src="/images/nom.png" width="686">
+      </p>
+      <p><i>2. ábra: A felhasználói interfész objektumok egy lehetséges relációs adatbázis terve</i></p>
+      <p>
+        <img height="485" src="/images/uio.png" width="678">
+      </p>
+    </li>
+    </ol>
+    
+</body>
+</html>

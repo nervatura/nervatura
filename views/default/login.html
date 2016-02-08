@@ -1,0 +1,76 @@
+<% include html_head.html %>
+<% include body_page_header.html %>
+
+<style>
+  .vernum {
+    background-color: #444444;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 2px;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-style: italic;
+    vertical-align: middle;
+  }
+  .ui-content .ui-btn {
+    text-align: center;
+  }
+</style>
+
+<div id="container" role="main" class="ui-content">
+  <% if (flash) { %>
+  <div class="flash"><%= flash %></div>
+  <% } %>
+  <% if (typeof insecure === "undefined") { %>
+  <div align="center" style="max-width: 800px;padding-top: 10px;">
+    <form id="frm_login" action="/login" method="post" style="max-width: 500px;">
+      <input name="_csrf" value="<%= _csrf %>" type="hidden">
+      <ul data-role="listview" data-inset="true">
+        <li class="ui-field-contain">
+          <label for="username"><%= lang.label_username %>:</label>
+          <input id="username" name="username" value="<%= username %>" type="text" 
+            onkeydown="if (event.keyCode == 13) document.forms['frm_login'].submit();">
+        </li>
+        <li class="ui-field-contain">
+          <label for="password"><%= lang.label_password %>:</label>
+          <input id="password" name="password" value="" type="password" 
+            onkeydown="if (event.keyCode == 13) document.forms['frm_login'].submit();">
+        </li>
+        <li class="ui-body">
+          <fieldset class="ui-grid-a">
+            <div class="ui-block-a">
+            </div>
+            <div class="ui-block-b">
+              <a data-ajax="false" href="#" onclick="document.forms['frm_login'].submit();" 
+                style="color:#8FBC8F !important;"
+                class="ui-link ui-btn ui-btn-b ui-icon-check ui-btn-icon-left ui-shadow ui-corner-all" 
+                role="button"><%= lang.label_login %></a>
+            </div>
+          </fieldset>
+        </li>
+      </ul>
+    </form>
+    <hr style="margin: 25px 0 5px;border-width: 1.5px;"/>
+    <hr style="margin: 0px 0 5px;border-width: 1.5px;"/>
+    <div style="padding-top: 20px;display:inline-block;width: 100%">
+      <table cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="width: 64px;padding-right: 0px;">
+            <img style="vertical-align: bottom;" src="/images/icon64_ntura_te.png" />
+          </td>
+          <td style="width: 120px;color: #616161;vertical-align: middle;font-size: 13px;font-weight: bold;">
+            OPEN SOURCE<br>
+            BUSINESS<br> 
+            MANAGEMENT
+          </td>
+        </tr>
+      </table>
+      <p style="text-align:center"><a href="http://www.nervatura.com" target="_blank" title="Nervatura Homepage" 
+                style="font-weight: bold;"><%= lang.label_ntura_framework %></a></p>
+    </div>
+  </div>
+  <% } %>
+
+</div><!-- /content -->
+</div><!-- /page -->
+</body></html>

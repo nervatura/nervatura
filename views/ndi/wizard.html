@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %></title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+	<script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+  <script type="text/javascript" src="/javascripts/jquery.datetimepicker.min.js"></script>
+  <script type="text/javascript" src="/javascripts/jquery.base64.js"></script>
+  <script type="text/javascript">
+    String.prototype.reverse = function () { return this.split('').reverse().join('');};                   
+	  $(document).bind("mobileinit", function(){
+  		$.extend(  $.mobile , {
+    		gradeA: function(){            
+          var ie = (function() {
+          var v = 3, div = document.createElement('div'), a = div.all || [];
+          while (div.innerHTML = '<!--[if gt IE '+(++v)+']><br><![endif]-->', a[0]); 
+          return v > 4 ? v : !v;}());
+            return $.support.mediaquery || (ie && ie >= 7);}});});
+  </script>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/jquery.mobile-1.4.5.min.css" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/jquery.datetimepicker.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/wizard.css" />
+  <script type="text/javascript" src="/javascripts/jquery.mobile-1.4.5.min.js"></script>
+  <script type="text/javascript" src="/javascripts/wizard.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('input[data-role=date]').datetimepicker({timepicker:false, format:'Y-m-d'});
+      $('input[data-role=datetime]').datetimepicker({timepicker:true, format:'Y-m-d H:i'});
+      $("input[data-role=integer]").keyup(function() {
+        this.value=this.value.reverse().replace(/[^0-9\-]|\-(?=.)/g,'').reverse();});
+      $("input[data-role=float]").keyup(function() {
+        this.value=this.value.reverse().replace(/[^0-9\-\.]|[\-](?=.)|[\.](?=[0-9]*[\.])/g,'').reverse();});});
+  </script>
+</head> 
+<body>
+  <div data-role="page">
+    <div data-role="header" data-theme="a" data-fullscreen="false" >  
+      <div class="ui-grid-b ui-responsive">
+        <div class="ui-block-a" style="padding: 3px;">
+          <div style="float: left;">
+            <img style="vertical-align: bottom;" src="/images/icon64_ntura_te.png" />
+          </div>
+          <div style="float: left;">
+            <span style="width: 120px;color: #616161;vertical-align: middle;font-size: 13px;font-weight: bold;">
+            OPEN SOURCE<br>BUSINESS<br> MANAGEMENT
+            </span>
+          </div>
+        </div>
+        <div align="center" class="ui-block-b">
+          <h1 style="font-variant: small-caps;font-weight: bold;margin: 0px;">NERVATURA</h1>
+          Data Interface Wizard
+        </div>
+        <div align="right" class="ui-block-c" style="padding: 10px;">
+          <span class="vernum" >Ver.No: <%= settings.version %></span>
+        </div>
+      </div>
+    </div>
+    <div id="container" role="main" class="ui-content">
+      <% if (flash) { %><div class="flash"><%= flash %></div><% } %>
+      <form id="frm_wizard" action="/ndi/wizard/index" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin:0px;" >
+          <li style="text-align:center;">
+            <div data-role="controlgroup" data-type="horizontal">
+              <a href="#" class="ui-btn ui-state-disabled label_btn">NOM OBJECT</a>
+              <select name="nom" id="nom" data-theme="b" onchange="document.forms['frm_wizard'].submit();"><% lst_nom.forEach(function(nom) { %><% if (nom === data.nom) { %>
+                <option value="<%= nom %>" selected="selected"><%= nom.toUpperCase() %></option><% } 
+                else{ %><option value="<%= nom %>"><%= nom.toUpperCase() %></option><% } %>
+                <% }); %>
+              </select>
+              <a href="/docs/ndi#<%= data.nom %>_fields" target="_blank" 
+                class="ui-btn ui-icon-info ui-btn-icon-left" style="color: #38C;">
+                <%= data.nom.toUpperCase() %> fieldname and type values</a>
+              <a href="/docs/ndi#datatype_values" target="_blank" 
+                class="ui-btn ui-icon-info ui-btn-icon-left" style="color: #38C;">
+                The datatype values</a>
+            </div>
+          </li>
+          <li class="ui-responsive">
+            <a href="#" target="_blank" onclick="sendToServer();"
+              class="ui-btn ui-icon-action ui-btn-icon-left ui-btn-inline">SEND NDI URL</a>
+            <textarea id="rs_url" data-mini="true"></textarea>
+          </li>
+          <li class="ui-responsive">
+            <a href="#" target="_blank" onclick="sendToJsonServer();"
+              class="ui-btn ui-icon-action ui-btn-icon-left ui-btn-inline">SEND JSON-RPC</a>
+            <textarea id="rs_json" data-mini="true" readonly="readonly"></textarea>
+          </li>
+          <li class="ui-responsive">
+            <label for="rs_server">SERVER SIDE</label>
+            <textarea id="rs_server" data-mini="true"></textarea>
+          </li>
+          <li style="padding-top: 0px;">
+            <div data-role="collapsibleset" data-inset="false" style="margin:0px;">
+              <div data-role="collapsible" data-collapsed="true" style="padding:0px;"
+                data-collapsed-icon="gear" data-expanded-icon="gear" >
+                <h2 style="margin:0px;">SETTINGS</h2>
+                <div class="ui-grid-b ui-responsive">
+                  <div class="ui-block-a" style="padding: 0px 3px;">
+                    <label for="database">database</label>
+                    <input name="database" id="database" value="<%= data.database %>" data-clear-btn="true" type="text">
+                  </div>
+                  <div class="ui-block-b" style="padding: 0px 3px;">
+                    <label for="username">username</label>
+                    <input name="username" id="username" value="<%= data.username %>" data-clear-btn="true" type="text">
+                  </div>
+                  <div class="ui-block-c" style="padding: 0px 3px;">
+                    <label for="password">password</label>
+                    <input name="password" id="password" value="<%= data.password %>" data-clear-btn="true" type="text">
+                  </div>
+                </div>
+                <div class="ui-grid-b ui-responsive">
+                  <div class="ui-block-a" style="padding: 0px 3px;">
+                    <label for="code">code</label>
+                    <select name="code" id="code" >
+                      <option value=""></option><% url_code.forEach(function(code) { %>
+                      <% if (code === data.code) { %><option value="<%= code %>" selected="selected"><%= code %></option><% } else{ %><option value="<%= code %>"><%= code %></option><% } %><% }); %>
+                    </select>
+                  </div>
+                  <div class="ui-block-b" style="padding: 0px 3px;">
+                    <label for="datatype">datatype</label>
+                    <input id="datatype" value="<%= data.nom %>" disabled="disabled" type="text" data-wrapper-class="full_opacity">
+                  </div>
+                  <div class="ui-block-c" style="padding: 0px 3px;">
+                    <br><label><input id="use_deleted" name="use_deleted" type="checkbox" value="true" <%=data.use_deleted==="true"? "checked" : ""%> >use_deleted</label>
+                  </div>
+                </div>
+                <div><b style="color:#778899;">Other NAS settings:</b> MD5 password - NO; Encrypt data - NO; URL filter: NO</div>
+              </div>
+              
+              <div data-role="collapsible" data-collapsed-icon="search" data-expanded-icon="search"
+                <%=data.selected_tab==='view'? "data-collapsed=false" : "data-collapsed=true"%>>
+                <h2 style="margin:0px;">VIEW</h2><% if (data.nom === 'sql') { %>
+                  <div data-role="controlgroup" data-type="horizontal" data-mini="true">
+                    <a href="#" class="ui-btn ui-state-disabled label_btn">output</a>
+                    <select name="output" id="output" ><% view_output.forEach(function(output) { %>
+                      <option value="<%= output %>" <%=output===data.output? "selected=selected" : ""%> ><%=output %></option><% }); %>
+                    </select>
+                    <a href="#" onclick="$('#selected_tab').val('view');createView();"
+                       class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left ui-corner-all ui-btn-inline">Create</a>
+                  </div>
+                  <div>
+                    <label for="sql">sql</label>
+                    <textarea id="sql" ></textarea>
+                  </div>
+                <% } else{ %>
+                  <div data-role="controlgroup" data-type="horizontal" data-mini="true">
+                    <a href="#" class="ui-btn ui-state-disabled label_btn">output</a>
+                    <select name="output" id="output"><% view_output.forEach(function(output) { %>
+                      <option value="<%= output %>" <%=output===data.output? "selected=selected" : ""%> ><%=output %></option><% }); %>
+                    </select>
+                    <a href="#" class="ui-btn ui-state-disabled label_btn">cross_tab</a>
+                    <select name="cross_tab" id="cross_tab" ><% if (data.cross_tab === 'true') { %>
+                      <option value="true" selected="selected">true</option>
+                      <option value="false">false</option><% } else{ %>
+                      <option value="true">true</option>
+                      <option value="false" selected="selected">false</option><% } %>
+                    </select>
+                    <a href="#" class="ui-btn ui-state-disabled label_btn">show_id</a>
+                    <select name="show_id" id="show_id" ><% if (data.show_id === 'true') { %>
+                      <option value="true" selected="selected">true</option>
+                      <option value="false">false</option>
+                      <% } else{ %>
+                      <option value="true">true</option>
+                      <option value="false" selected="selected">false</option><% } %>
+                    </select>
+                    <% if (lst_no_deffield.indexOf(data.nom)===-1) { %><a href="#" class="ui-btn ui-state-disabled label_btn">no_deffield</a>
+                    <select name="no_deffield" id="no_deffield" ><% if (data.no_deffield === 'true') { %>
+                      <option value="true" selected="selected">true</option>
+                      <option value="false">false</option>
+                      <% } else{ %>
+                      <option value="true">true</option>
+                      <option value="false" selected="selected">false</option><% } %>
+                    </select><% } %>
+                    <% if (typeof view_nervatype[data.nom] !== 'undefined') { %><% if (data.nom === 'link') { %>
+                        <a href="#" class="ui-btn ui-state-disabled label_btn">nervatype1</a>
+                        <select id="view_nervatype1" name="view_nervatype1">
+                          <option value=""></option><% view_nervatype[data.nom].forEach(function(nervatype) { %>
+                          <option value="<%= nervatype %>" <%=data.view_nervatype1===nervatype? "selected=selected" : ""%>><%= nervatype %></option><% }); %>
+                        </select>
+                        <a href="#" class="ui-btn ui-state-disabled label_btn">nervatype2</a>
+                        <select id="view_nervatype2" name="view_nervatype2">
+                          <option value=""></option><% typeof view_nervatype[data.nom].forEach(function(nervatype) { %>
+                          <option value="<%= nervatype %>" <%=data.view_nervatype2===nervatype? "selected=selected" : ""%>><%= nervatype %></option><% }); %>
+                        </select><% } else{ %>
+                        <a href="#" class="ui-btn ui-state-disabled label_btn">nervatype</a>
+                        <select id="view_nervatype" name="view_nervatype">
+                          <option value=""></option><% view_nervatype[data.nom].forEach(function(nervatype) { %>
+                          <option value="<%= nervatype %>" <%=data.view_nervatype===nervatype? "selected=selected" : ""%>><%= nervatype %></option><% }); %>
+                        </select><% } %><% } %>
+                    <a href="#" onclick="$('#selected_tab').val('view');createView();"
+                       class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left ui-corner-all ui-btn-inline">Create</a>
+                  </div>
+                  <div class="ui-grid-a ui-responsive">
+                    <div class="ui-block-a" style="padding: 0px 3px;">
+                      <label for="where">where</label>
+                      <input name="where" id="where" value="<%= data.where %>" data-clear-btn="true" type="text">
+                    </div>
+                    <div class="ui-block-b" style="padding: 0px 3px;">
+                      <label for="orderby">orderby</label>
+                      <input name="orderby" id="orderby" value="<%= data.orderby %>" data-clear-btn="true" type="text">
+                    </div>
+                  </div>
+                  <div class="ui-grid-a ui-responsive">
+                    <div class="ui-block-a" style="padding: 0px 3px;">
+                      <label for="header">header</label>
+                      <input name="header" id="header" value="<%= data.header %>" data-clear-btn="true" type="text">
+                    </div>
+                    <div class="ui-block-b" style="padding: 0px 3px;">
+                      <label for="columns">columns</label>
+                      <input name="columns" id="columns" value="<%= data.columns %>" data-clear-btn="true" type="text">
+                    </div>
+                  </div><% } %>
+              </div>
+              <% if (data.nom !== 'sql') { %>
+              <div data-role="collapsible" data-collapsed-icon="edit" data-expanded-icon="edit" 
+                <%=data.selected_tab==='update'? "data-collapsed=false" : "data-collapsed=true"%>>
+                <h2 style="margin:0px;">INSERT/UPDATE</h2>
+                <div data-role="controlgroup" data-type="horizontal" data-mini="true">
+                  <a href="#" class="ui-btn ui-state-disabled label_btn">rows</a>
+                  <select id="update_rows" name="update_rows" 
+                    onchange="$('#selected_tab').val('update');document.forms['frm_wizard'].submit();"><% for (var i = 1; i < 10; i++) { %>
+                    <option value="<%= i %>" <%=parseInt(data.update_rows,10)===i? "selected=selected" : ""%> ><%= i %></option><% } %>
+                  </select>
+                  <a href="#" class="ui-btn ui-state-disabled label_btn">insert_row</a>
+                  <select name="insert_row" id="insert_row" ><% if (data.insert_row === 'true') { %>
+                    <option value="true" selected="selected">true</option>
+                    <option value="false">false</option><% } else{ %>
+                    <option value="true">true</option>
+                    <option value="false" selected="selected">false</option><% } %>
+                  </select>
+                  <% if (lst_no_deffield.indexOf(data.nom)===-1) { %>
+                  <a href="#" class="ui-btn ui-state-disabled label_btn">insert_field</a>
+                  <select name="insert_field" id="insert_field" ><% if (data.insert_field === 'true') { %>
+                    <option value="true" selected="selected">true</option>
+                    <option value="false">false</option><% } else{ %>
+                    <option value="true">true</option>
+                    <option value="false" selected="selected">false</option><% } %>
+                  </select><% } %>
+                  <a href="#" onclick="$('#selected_tab').val('update');createUpdate('update');"
+                     class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left ui-corner-all ui-btn-inline">Create</a>
+                </div>
+                
+                <table class="ui-body-d ui-shadow table-stripe ui-responsive ui-table ui-table-reflow">
+                  <thead>
+                    <tr class="ui-bar-a">
+                      <th></th><% for (var i = 0; i < parseInt(data.update_rows,10); i++) { %>
+                      <th>
+                        ROW <%= i+1 %>
+                      </th><% } %>
+                    </tr>
+                  </thead>
+                  <tbody id="rs_update"><% data.fields_lst.forEach(function(field) { %>
+                      <tr><% if (field.label === field.fieldname) { %>
+                        <td><span class="<%= field.mtype %>"><%= field.fieldname %></span></td><% } else{ %>
+                        <td><span class="<%= field.mtype %>"><%= field.fieldname %><br><%= field.label %></span></td><% } %><% for (var i = 0; i < parseInt(data.update_rows,10); i++) { %>
+                        <td>
+                          <input data-role="flipswitch" data-mini="true" id="cb_update"
+                            name="<%= 'cb_update_'+data.nom+'_'+field.fieldname+'_'+(i+1) %>" type="checkbox" <%=data['cb_update_'+data.nom+'_'+field.fieldname+'_'+(i+1)]==="on"? "checked" : ""%> >
+                          <% if (field.fieldtype === 'valuelist') { %>
+                            <select data-mini="true" name="<%= 'update_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" id="<%= field.fieldname %>_<%= i+1 %>">
+                              <option value=""></option><% field.values.forEach(function(value) { %>
+                              <option value="<%= value %>" <%=data['update_'+data.nom+'_'+field.fieldname+'_'+(i+1)]===value? "selected=selected" : ""%> ><%= value %></option><% }); %>
+                            </select>
+                          <% } else if (field.fieldtype === 'bool') { %>
+                            <select data-mini="true" name="<%= 'update_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" id="<%= field.fieldname %>_<%= i+1 %>">
+                              <option value=""></option>
+                              <option value="true" <%=data['update_'+data.nom+'_'+field.fieldname+'_'+(i+1)]==='true'? "selected=selected" : ""%> >true</option>
+                              <option value="false" <%=data['update_'+data.nom+'_'+field.fieldname+'_'+(i+1)]==='false'? "selected=selected" : ""%> >false</option>
+                            </select>
+                          <% } else if (['date','datetime','float','integer'].indexOf(field.fieldtype) > -1) { %>
+                            <input data-mini="true" name="<%= 'update_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" id="<%= field.fieldname %>_<%= i+1 %>" 
+                              value="<%= data['update_'+data.nom+'_'+field.fieldname+'_'+(i+1)] %>" data-role="<%= field.fieldtype %>" type="text" >
+                          <% } else{ %>
+                            <input data-mini="true" name="<%= 'update_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" id="<%= field.fieldname %>_<%= i+1 %>" 
+                              value="<%= data['update_'+data.nom+'_'+field.fieldname+'_'+(i+1)] %>" data-clear-btn="true" type="text"><% } %>
+                        </td><% } %>
+                      </tr><% }); %>
+                  </tbody>
+                </table>
+              </div><% } %>
+              
+              <% if (data.nom !== 'sql' && data.nom !== 'numberdef') { %>
+              <div data-role="collapsible" data-collapsed-icon="delete" data-expanded-icon="delete" 
+                <%=data.selected_tab==='delete'? "data-collapsed=false" : "data-collapsed=true"%>>
+                <h2 style="margin:0px;">DELETE</h2>
+                <div data-role="controlgroup" data-type="horizontal" data-mini="true">
+                  <a href="#" class="ui-btn ui-state-disabled label_btn">rows</a>
+                  <select id="delete_rows" name="delete_rows" 
+                    onchange="$('#selected_tab').val('delete');document.forms['frm_wizard'].submit();"><% for (var i = 1; i < 10; i++) { %>
+                    <option value="<%= i %>" <%=parseInt(data.delete_rows,10)===i? "selected=selected" : ""%> ><%= i %></option><% } %>
+                  </select>
+                  <a href="#" onclick="$('#selected_tab').val('delete');createUpdate('delete');"
+                     class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left ui-corner-all ui-btn-inline">Create</a>
+                </div>
+                <table class="ui-body-d ui-shadow table-stripe ui-responsive ui-table ui-table-reflow">
+                  <thead>
+                    <tr class="ui-bar-a">
+                      <th></th><% for (var i = 0; i < parseInt(data.delete_rows,10); i++) { %>
+                      <th>
+                        ROW <%= i+1 %>
+                      </th><% } %>
+                    </tr>
+                  </thead>
+                  <tbody id="rs_delete">
+                    <tr>
+                      <td></td><% for (var i = 0; i < parseInt(data.delete_rows,10); i++) { %>
+                      <td>
+                        <input data-role="flipswitch" data-mini="true" id="cb_delete"
+                          name="<%= 'cb_delete_'+data.nom+'_'+(i+1) %>" 
+                          type="checkbox" <%=data['cb_delete_'+data.nom+'_'+(i+1)]==="on"? "checked" : ""%> >
+                      </td><% } %>
+                    </tr><% data.fields_lst.forEach(function(field) { %><% if (field.fieldcat === 0) { %>
+                    <tr>
+                      <% if (field.label === field.fieldname) { %>
+                      <td><span class="<%= field.mtype %>"><%= field.fieldname %></span></td><% } else{ %>
+                      <td><span class="<%= field.mtype %>"><%= field.fieldname %><br><%= field.label %></span></td><% } %>
+                      <% for (var i = 0; i < parseInt(data.delete_rows,10); i++) { %>
+                      <td><% if (field.fieldtype === 'valuelist') { %>
+                          <select data-mini="true" name="<%= 'delete_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" 
+                          id="<%= 'delete_'+data.nom+'_'+(i+1) %>">
+                          <option value=""></option><% field.values.forEach(function(value) { %>
+                          <option value="<%= value %>" <%=data['delete_'+data.nom+'_'+field.fieldname+'_'+(i+1)]===value? "selected=selected" : ""%> ><%= value %></option><% }); %>
+                          </select><% } else if (field.fieldtype === 'bool') { %>
+                          <select data-mini="true" name="<%= 'delete_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" 
+                          id="<%= 'delete_'+data.nom+'_'+(i+1) %>">
+                          <option value=""></option>
+                          <option value="true" <%=data['delete_'+data.nom+'_'+field.fieldname+'_'+(i+1)]==='true'? "selected=selected" : ""%> >true</option>
+                          <option value="false" <%=data['delete_'+data.nom+'_'+field.fieldname+'_'+(i+1)]==='false'? "selected=selected" : ""%> >false</option>
+                          </select>
+                          <% } else if (['date','datetime','float','integer'].indexOf(field.fieldtype) > -1) { %>
+                          <input data-mini="true" name="<%= 'delete_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" 
+                            id="<%= 'delete_'+data.nom+'_'+(i+1) %>" 
+                            value="<%= data['delete_'+data.nom+'_'+field.fieldname+'_'+(i+1)] %>" data-role="<%= field.fieldtype %>" type="text" >
+                          <% } else{ %>
+                          <input data-mini="true" name="<%= 'delete_'+data.nom+'_'+field.fieldname %>_<%= i+1 %>" 
+                              id="<%= 'delete_'+data.nom+'_'+(i+1) %>" 
+                              value="<%= data['delete_'+data.nom+'_'+field.fieldname+'_'+(i+1)] %>" data-clear-btn="true" type="text"><% } %>
+                      </td><% } %>
+                    </tr><% } %><% }); %>
+                  </tbody>
+                </table>
+              </div><% } %>
+            </div>
+          </li>
+        </ul>
+        <input value="<%= data.selected_tab %>" name="selected_tab" id="selected_tab" type="hidden">
+      </form>
+
+    </div><!-- /content -->
+  </div><!-- /page -->
+</body>
+</html>

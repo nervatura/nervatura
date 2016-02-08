@@ -1,0 +1,65 @@
+{
+  "name": "nervatura",
+  "version": "2.0.0",
+  "description": "Open Source Business Management Framework",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nervatura/nervatura.git"
+  },
+  "keywords": [
+    "business management",
+    "customer",
+    "product",
+    "invoice",
+    "order",
+    "offer",
+    "offer"
+  ],
+  "author": "Csaba Kappel <kappel.csaba@gmail.com> (http://nervatura.com)",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/nervatura/nervatura/issues"
+  },
+  "homepage": "http://nervatura.com",
+  "dependencies": {
+    "any-db": "^2.1.0",
+    "any-db-transaction": "^2.2.2",
+    "async": "^0.9.0",
+    "body-parser": "~1.10.2",
+    "compression": "^1.6.0",
+    "cookie-parser": "~1.3.3",
+    "cors": "^2.7.1",
+    "debug": "^2.2.0",
+    "ejs": "^2.3.4",
+    "express": "~4.11.1",
+    "express-session": "^1.11.3",
+    "jquery": "^2.1.4",
+    "jquery-mobile-babel-safe": "^1.4.5-1",
+    "json2csv": "^3.0.1",
+    "lokijs": "^1.3.10",
+    "lusca": "^1.3.0",
+    "morgan": "~1.5.1",
+    "passport": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "python-shell": "^0.3.0",
+    "serve-favicon": "~2.2.0",
+    "xml2js": "^0.4.13"
+  },
+  "optionalDependencies": {
+    "any-db-mssql": "^0.1.0",
+    "any-db-mysql": "^2.1.2",
+    "any-db-postgres": "^2.1.4",
+    "sqlite3": "^3.0.5",
+    "any-db-sqlite3": "^2.1.4",
+    "connect-sqlite3": "^0.9.6",
+    "leveldown": "^1.4.2",
+    "level": "^1.3.0",
+    "level-session-store": "^2.0.1",
+    "nodemailer": "^2.0.0",
+    "printer": "^0.2.1",
+    "pouchdb": "^5.0.0"
+  }
+}

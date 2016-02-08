@@ -1,0 +1,239 @@
+<% include html_head.html %>
+<% include body_page_header.html %>
+
+<style>
+  
+</style>
+
+<script>
+  function msgDelete(alias){
+    $("#current_alias").val(alias);
+    $("#delete").popup("open", {transition:"pop", positionTo:"window"});}
+</script>
+
+<div align="center" style="padding-top: 10px;">
+  <% if (view === "create") { %>
+  <form id="frm_create" action="/nas/database/create" method="post" style="max-width: 600px;">
+    <input name="_csrf" value="<%= _csrf %>" type="hidden">
+    <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
+      <li><p class="dbs_list">1. <%= lang.li_dbs_create_1 %> 
+          <a class="ui-link" href="/nas/database/list" ><%= lang.label_databases %></a></p></li>
+      <li><p class="dbs_list">2. <%= lang.li_dbs_create_2 %></p></li>
+      <li><p class="dbs_list">3. <%= lang.li_dbs_create_3 %></p></li>
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <select name="alias" id="alias"><% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
+            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+          </select>
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <a data-ajax="false" href="#" onclick="$('#info_create').html('<%= lang.info_start %>');document.forms['frm_create'].submit();" 
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
+              Starting the process...</a>
+        </div>
+      </li>
+    </ul>
+    <div id="info_create" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
+  </form><% } %>
+  <% if (view === "backup") { %>
+  <form id="frm_backup" action="/nas/database/backup" method="post" style="max-width: 600px;">
+    <input name="_csrf" value="<%= _csrf %>" type="hidden">
+    <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
+      <li><p class="bck_list_label"><span style="color:brown;">Nervatura backup</span></p>
+        <p class="bck_list_label"><span style="color:green;">NOM objects:</span></p>
+        <p class="bck_list">
+          <span style="font-weight:normal;">address, barcode, contact, currency, customer, deffield, employee, event, fieldvalue, groups, item, link, log, movement, numberdef, pattern, payment, place, price, product, project, rate, tax, tool, trans</span></p>
+        <p class="bck_list_label"><span style="color:green;">UI objects: </span></p>
+        <p class="bck_list">
+          <span>ui_audit, ui_language, ui_menu, ui_menufields, ui_message, ui_report, ui_reportfields, ui_reportsources, ui_userconfig</span></p>
+        <p class="bck_list_label"><span style="color:red;"><%= lang.not_included %>: </span></p>
+        <p class="bck_list"><span>ui_printqueue</span></p>
+      </li>
+      <li><p class="bck_list"><%= lang.info_backup %></p></li>
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <label for="filename"><%= lang.label_backup_file %>:</label>
+          <select name="filename" id="filename"><% if (form.filename !== 'download') { %>
+            <option value="alias" selected="selected"><%= lang.label_alias %></option>
+            <option value="download"><%= lang.label_download %></option><% } else{ %>
+            <option value="alias"><%= lang.label_alias %></option>
+            <option value="download" selected="selected"><%= lang.label_download %></option><% } %>
+          </select>
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <label for="format"><%= lang.label_format %>:</label>
+          <select name="format" id="format"><% if (form.format !== 'xml') { %>
+            <option value="backup" selected="selected">backup</option>
+            <option value="xml">xml</option><% } else{ %>
+            <option value="backup">backup</option>
+            <option value="xml" selected="selected">xml</option><% } %>
+          </select>
+        </div>
+      </li>
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <select name="alias" id="alias"><% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
+            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+          </select>
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <a data-ajax="false" href="#" onclick="$('#info_backup').html('<%= lang.info_start %>');document.forms['frm_backup'].submit();" 
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
+              Starting the process...</a>
+        </div>
+      </li>
+    </ul>
+    <div id="info_backup" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
+  </form><% } %>
+  <% if (view === "restore") { %>
+  <form id="frm_restore" action="/nas/database/restore" method="post" style="max-width: 600px;">
+    <input name="_csrf" value="<%= _csrf %>" type="hidden">
+    <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
+      <li><p class="dbs_list"><%= lang.li_dbs_create_2 %></p></li>
+      <li class="ui-field-contain">
+        <label for="filename"><%= lang.label_backup_file %>:</label>
+        <select name="filename" id="alias"><% filenames.forEach(function(filename) { %><% if (filename === form.filename) { %>
+          <option value="<%= filename %>" selected="selected"><%= filename %></option><% } else{ %>
+          <option value="<%= filename %>"><%= filename %></option><% } %><% }); %>
+        </select>
+      </li>
+      <li>
+        <label for="backup"><%= lang.label_upload_file %>:</label>
+        <input id="backup" name="backup" type="file">
+      </li>
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <select name="alias" id="alias"><% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
+            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+          </select>
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <a data-ajax="false" href="#" onclick="$('#info_restore').html('<%= lang.info_start %>');document.forms['frm_restore'].submit();" 
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
+              Starting the process...</a>
+        </div>
+      </li>
+    </ul>
+    <div id="info_restore" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
+  </form><% } %>
+  <% if (view === "edit") { %>
+  <form id="frm_edit" action="/nas/database/list" method="post" style="max-width: 500px;">
+    <input name="_csrf" value="<%= _csrf %>" type="hidden">
+    <ul data-role="listview" data-inset="true">
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <label for="alias"><%= lang.label_alias %>:</label>
+          <input name="alias" id="alias" value="<%= data.alias %>" data-clear-btn="true" type="text">
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <label for="engine" class="select"><%= lang.label_engine %>:</label>
+          <select name="engine" id="engine"><% engines.forEach(function(engine) { %><% if (engine.key === data.engine) { %>
+            <option value="<%= engine.key %>" selected="selected"><%= engine.label %></option><% } else{ %>
+            <option value="<%= engine.key %>"><%= engine.label %></option><% } %><% }); %>
+          </select>
+        </div>
+      </li>
+      <li class="ui-field-contain">
+        <label for="host"><%= lang.label_host %>:</label>
+        <input name="host" id="host" value="<%= data.connect.host %>" data-clear-btn="true" type="text">
+      </li>
+      <li>
+        <div class="ui-grid-a ui-responsive">
+          <div class="ui-block-a" style="padding: 0px 3px;">
+            <label for="dbname"><%= lang.label_database %>:</label>
+            <input name="dbname" id="dbname" value="<%= data.connect.dbname %>" data-clear-btn="true" type="text">
+          </div>
+          <div class="ui-block-b" style="padding: 0px 3px;">
+            <label for="port"><%= lang.label_port %>:</label>
+            <input name="port" id="port" value="<%= data.connect.port %>" data-clear-btn="true" type="text" >
+          </div>
+        </div>
+      </li>
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <label for="username"><%= lang.label_username %>:</label>
+          <input name="username" id="username" value="<%= data.connect.username %>" data-clear-btn="true" type="text">
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <label for="password"><%= lang.label_password %>:</label>
+          <input name="password" id="password" value="<%= data.connect.password %>" data-clear-btn="true" type="text">
+        </div>
+      </li>
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <label><input name="ndi_enabled" type="checkbox" <%=data.settings.ndi_enabled? "checked" : ""%> ><%= lang.label_ndi_enabled %></label>
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <label><input name="ndi_encrypt_data" type="checkbox" <%=data.settings.ndi_encrypt_data? "checked" : ""%> ><%= lang.label_ndi_encrypt_data %></label>
+        </div>
+      </li>
+      <li class="ui-grid-a ui-responsive">
+        <div class="ui-block-a" style="padding: 0px 3px;">
+          <label><input name="ndi_md5_password" type="checkbox" <%=data.settings.ndi_md5_password? "checked" : ""%> ><%= lang.label_ndi_md5_password %></label>
+        </div>
+        <div class="ui-block-b" style="padding: 0px 3px;">
+          <label for="ndi_encrypt_password"><%= lang.label_ndi_encrypt_password %>:</label>
+          <input name="ndi_encrypt_password" id="ndi_encrypt_password" value="<%= data.settings.ndi_encrypt_password %>" data-clear-btn="true" type="text">
+        </div>
+      </li>
+      <li class="ui-responsive">
+        <label for="ndi_host_restriction"><%= lang.label_ndi_host_restriction %>:</label>
+        <textarea id="ndi_host_restriction" name="ndi_host_restriction" ><%= data.settings.ndi_host_restriction %></textarea>
+      </li>
+      <li class="ui-body">
+        <fieldset class="ui-grid-a">
+          <div class="ui-block-a">
+            <a data-ajax="false" href="#" onclick="document.forms['frm_edit'].submit();" style="color:#8FBC8F;"
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-check ui-btn-icon-left"><%= lang.label_update %>
+            </a>
+          </div>
+          <div class="ui-block-b">
+            <a data-ajax="false" href="/nas/database/list" 
+              class="ui-shadow ui-btn ui-corner-all ui-icon-back ui-btn-icon-left"><%= lang.label_cancel %>
+            </a>
+          </div>
+        </fieldset>
+      </li>
+    </ul>
+    <input value="update" id="update_cmd" name="update_cmd" type="hidden">
+  </form><% } %>
+  <% if (view === "list") { %>
+  <div style="max-width: 500px;">
+    <a href="/nas/database/edit?alias=" data-ajax="false" style="color:#8FBC8F;"
+      class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline"><%= lang.label_new %></a>
+    <ul data-role="listview" data-split-icon="delete" data-split-theme="a" 
+      data-inset="true" data-filter="true"><% data.forEach(function(dbs) { %>
+        <li><a href="/nas/database/edit?alias=<%= dbs.alias %>" data-ajax="false">
+			    <span><%= dbs.alias %></span><span style="font-weight:normal;"> - <%= dbs.engine %></span></a>
+          <a href="#" onclick="msgDelete('<%= dbs.alias %>');"><%= lang.label_delete %></a></li><% }); %>
+    </ul>
+    <div data-role="popup" id="delete" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
+      style="max-width:340px;">
+      <form id="frm_delete" action="/nas/database/list" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div data-role="header" data-theme="b">
+          <h1><%= lang.label_delete %></h1>
+        </div>
+        <div role="main" class="ui-content">
+          <h3><%= lang.msg_delete_text %></h3>
+          <p><%= lang.msg_delete_info %></p>
+          <div align="center">
+            <a data-ajax="false" href="#" onclick="document.forms['frm_delete'].submit();" style="color:#FF7F50;"
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-delete ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_delete %></a>
+            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
+          </div>
+        </div>
+        <input id="current_alias" type="hidden" name="alias" value="">
+        <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
+      </form>
+    </div>
+  </div><% } %>
+</div>
+
+</div><!-- /content -->
+<% include menu.html %>
+</div><!-- /page -->
+</body></html>

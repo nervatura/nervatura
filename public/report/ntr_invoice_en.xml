@@ -1,0 +1,313 @@
+<report reportkey="ntr_invoice_en" nervatype="trans" transtype="invoice" direction="out" 
+  repname="Invoice EN" description="Customer invoice" filetype="ntr">
+  
+  <dataset name="taxgroup" engine=""><![CDATA[select tax.taxcode as taxcode, sum(ti.netamount) as netamount, sum(ti.vatamount) as vatamount, sum(ti.amount) as amount 
+from item ti inner join product p on p.id = ti.product_id inner join tax on tax.id = ti.tax_id 
+where ti.deleted=0 and ti.trans_id = @id 
+group by tax.rate, tax.taxcode order by tax.rate]]></dataset>
+
+  <dataset name="items" engine=""><![CDATA[select concat(case when ti.deposit=1 then '={{lb_deposit}}: ' else '' end, case when pf.value is null then '' else concat(pf.value,' ') end, ti.description) as description
+, pf.value as vtsz, p.partnumber as partnumber, ti.unit as unit, ti.qty as qty, tax.taxcode as taxcode
+, ti.fxprice as fxprice, ti.netamount as netamount, ti.discount as discount, ti.vatamount as vatamount, ti.amount as amount, ti.deposit as deposit 
+from item ti inner join product p on p.id = ti.product_id inner join tax on tax.id = ti.tax_id 
+left join fieldvalue pf on pf.ref_id = p.id and fieldname = 'szj_vtsz' 
+where ti.deleted=0 and ti.trans_id = @id 
+order by ti.id]]></dataset>
+
+  <dataset name="items" engine="sqlite"><![CDATA[select case when ti.deposit=1 then '={{lb_deposit}}: ' else '' end || case when pf.value is null then '' else pf.value||' ' end || ti.description as description
+, pf.value as vtsz, p.partnumber as partnumber, ti.unit as unit, ti.qty as qty, tax.taxcode as taxcode
+, ti.fxprice as fxprice, ti.netamount as netamount, ti.discount as discount, ti.vatamount as vatamount, ti.amount as amount, ti.deposit as deposit 
+from item ti inner join product p on p.id = ti.product_id inner join tax on tax.id = ti.tax_id 
+left join fieldvalue pf on pf.ref_id = p.id and fieldname = 'szj_vtsz' 
+where ti.deleted=0 and ti.trans_id = @id 
+order by ti.id]]></dataset>
+
+  <dataset name="items" engine="mssql"><![CDATA[select case when ti.deposit=1 then '={{lb_deposit}}: ' else '' end + case when pf.value is null then '' else pf.value+' ' end + ti.description as description
+, pf.value as vtsz, p.partnumber as partnumber, ti.unit as unit, ti.qty as qty, tax.taxcode as taxcode
+, ti.fxprice as fxprice, ti.netamount as netamount, ti.discount as discount, ti.vatamount as vatamount, ti.amount as amount, ti.deposit as deposit 
+from item ti inner join product p on p.id = ti.product_id inner join tax on tax.id = ti.tax_id 
+left join fieldvalue pf on pf.ref_id = p.id and fieldname = 'szj_vtsz' 
+where ti.deleted=0 and ti.trans_id = @id 
+order by ti.id]]></dataset>
+
+  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber, t.transdate as transdate, t.crdate as crdate
+, case when t.notes is null then '' else t.notes end as notes
+, case when t.fnote is null then '' else t.fnote end as fnote
+, case when (tcast.value != 'normal' ) then 
+    case when t.ref_transnumber is null then '' else concat('={{lb_ref_invoice}}: ', t.ref_transnumber) end 
+  else '' end as ref_transnumber_1
+, case when (tcast.value = 'normal' ) then
+  case when t.ref_transnumber is null then '' else t.ref_transnumber end
+  else '' end as ref_transnumber_2, t.deleted
+, case when t.closed = 1 then '={{lb_copy}}' else '={{lb_original_issue}}' end as state
+, case when (tcast.value = 'cancellation' ) then '={{lb_cancelling_invoice}}' when (tcast.value = 'amendment') then '={{lb_amending_invoice}}' else '' end as transcast
+, case when (t.deleted = 1 and tcast.value <> 'cancellation' ) then '={{lb_deleted}}' else '' end as status
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, compname.value as comp_name
+, concat('={{lb_address}}: ',case when compaddress.value is null then '' else compaddress.value end) as comp_address
+, concat('={{lb_tax_no}}: ',case when comptax.value is null then '' else comptax.value end) as comp_taxnumber
+, custname.value as cust_name
+, concat('={{lb_address}}: ',case when custaddress.value is null then '' else custaddress.value end) as cust_address
+, concat('={{lb_tax_no}}: ',case when custtax.value is null then '' else custtax.value end) as cust_taxnumber
+, concat('={{lb_account_no}}: ',case when c.account is null then '' else c.account end) as custaccount
+, concat('={{lb_account_no}}: ',case when comp.account is null then '' else comp.account end) as compaccount
+, tsum.sum_netamount as sum_netamount, tsum.sum_vatamount as sum_vatamount, tsum.sum_amount as sum_amount 
+from trans t 
+inner join currency cu on t.curr = cu.curr 
+inner join fieldvalue tcast on t.id = tcast.ref_id and tcast.fieldname='trans_transcast' 
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en' 
+left join fieldvalue compname on t.id = compname.ref_id and compname.fieldname='trans_custinvoice_compname' 
+left join fieldvalue compaddress on t.id = compaddress.ref_id and compaddress.fieldname='trans_custinvoice_compaddress' 
+left join fieldvalue comptax on t.id = comptax.ref_id and comptax.fieldname='trans_custinvoice_comptax' 
+left join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname' 
+left join fieldvalue custaddress on t.id = custaddress.ref_id and custaddress.fieldname='trans_custinvoice_custaddress' 
+left join fieldvalue custtax on t.id = custtax.ref_id and custtax.fieldname='trans_custinvoice_custtax' 
+inner join customer c on t.customer_id = c.id 
+left join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+left join (select ti.trans_id as id, sum(ti.netamount) as sum_netamount, sum(ti.vatamount) as sum_vatamount, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id 
+where t.id = @id]]></dataset>
+
+  <dataset name="head" engine="sqlite"><![CDATA[select t.transnumber as transnumber, t.transdate as transdate, t.crdate as crdate
+, case when t.notes is null then '' else t.notes end as notes
+, case when t.fnote is null then '' else t.fnote end as fnote
+, case when (tcast.value != 'normal' ) then 
+    case when t.ref_transnumber is null then '' else '={{lb_ref_invoice}}: ' || t.ref_transnumber end 
+  else '' end as ref_transnumber_1
+, case when (tcast.value = 'normal' ) then
+  case when t.ref_transnumber is null then '' else t.ref_transnumber end
+  else '' end as ref_transnumber_2, t.deleted
+, case when t.closed = 1 then '={{lb_copy}}' else '={{lb_original_issue}}' end as state
+, case when (tcast.value = 'cancellation' ) then '={{lb_cancelling_invoice}}' when (tcast.value = 'amendment') then '={{lb_amending_invoice}}' else '' end as transcast
+, case when (t.deleted = 1 and tcast.value <> 'cancellation' ) then '={{lb_deleted}}' else '' end as status
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, compname.value as comp_name
+, '={{lb_address}}: '||case when compaddress.value is null then '' else compaddress.value end as comp_address
+, '={{lb_tax_no}}: '||case when comptax.value is null then '' else comptax.value end as comp_taxnumber
+, custname.value as cust_name
+, '={{lb_address}}: '||case when custaddress.value is null then '' else custaddress.value end as cust_address
+, '={{lb_tax_no}}: '||case when custtax.value is null then '' else custtax.value end as cust_taxnumber
+, '={{lb_account_no}}: '||case when c.account is null then '' else c.account end as custaccount, '={{lb_account_no}}: '||case when comp.account is null then '' else comp.account end as compaccount
+, tsum.sum_netamount as sum_netamount, tsum.sum_vatamount as sum_vatamount, tsum.sum_amount as sum_amount 
+from trans t 
+inner join currency cu on t.curr = cu.curr 
+inner join fieldvalue tcast on t.id = tcast.ref_id and tcast.fieldname='trans_transcast' 
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en' 
+left join fieldvalue compname on t.id = compname.ref_id and compname.fieldname='trans_custinvoice_compname' 
+left join fieldvalue compaddress on t.id = compaddress.ref_id and compaddress.fieldname='trans_custinvoice_compaddress' 
+left join fieldvalue comptax on t.id = comptax.ref_id and comptax.fieldname='trans_custinvoice_comptax' 
+left join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname' 
+left join fieldvalue custaddress on t.id = custaddress.ref_id and custaddress.fieldname='trans_custinvoice_custaddress' 
+left join fieldvalue custtax on t.id = custtax.ref_id and custtax.fieldname='trans_custinvoice_custtax' 
+inner join customer c on t.customer_id = c.id 
+left join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+left join (select ti.trans_id as id, sum(ti.netamount) as sum_netamount, sum(ti.vatamount) as sum_vatamount, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id 
+where t.id = @id]]></dataset>
+  
+  <dataset name="head" engine="mssql"><![CDATA[select t.transnumber as transnumber
+, CONVERT(VARCHAR(10), t.transdate, 120) as transdate
+, CONVERT(VARCHAR(10), t.crdate, 120) as crdate
+, case when t.notes is null then '' else t.notes end as notes
+, case when t.fnote is null then '' else t.fnote end as fnote
+, case when (tcast.value != 'normal' ) then 
+    case when t.ref_transnumber is null then '' else '={{lb_ref_invoice}}: ' + t.ref_transnumber end 
+  else '' end as ref_transnumber_1
+, case when (tcast.value = 'normal' ) then
+  case when t.ref_transnumber is null then '' else t.ref_transnumber end
+  else '' end as ref_transnumber_2, t.deleted
+, case when t.closed = 1 then '={{lb_copy}}' else '={{lb_original_issue}}' end as state
+, case when (tcast.value = 'cancellation' ) then '={{lb_cancelling_invoice}}' when (tcast.value = 'amendment') then '={{lb_amending_invoice}}' else '' end as transcast
+, case when (t.deleted = 1 and tcast.value <> 'cancellation' ) then '={{lb_deleted}}' else '' end as status
+, CONVERT(VARCHAR(10), t.duedate, 120) as duedate
+, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, compname.value as comp_name
+, '={{lb_address}}: '+case when compaddress.value is null then '' else compaddress.value end as comp_address
+, '={{lb_tax_no}}: '+case when comptax.value is null then '' else comptax.value end as comp_taxnumber
+, custname.value as cust_name
+, '={{lb_address}}: '+case when custaddress.value is null then '' else custaddress.value end as cust_address
+, '={{lb_tax_no}}: '+case when custtax.value is null then '' else custtax.value end as cust_taxnumber
+, '={{lb_account_no}}: '+case when c.account is null then '' else c.account end as custaccount, '={{lb_account_no}}: '+case when comp.account is null then '' else comp.account end as compaccount
+, tsum.sum_netamount as sum_netamount, tsum.sum_vatamount as sum_vatamount, tsum.sum_amount as sum_amount 
+from trans t 
+inner join currency cu on t.curr = cu.curr 
+inner join fieldvalue tcast on t.id = tcast.ref_id and tcast.fieldname='trans_transcast' 
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en' 
+left join fieldvalue compname on t.id = compname.ref_id and compname.fieldname='trans_custinvoice_compname' 
+left join fieldvalue compaddress on t.id = compaddress.ref_id and compaddress.fieldname='trans_custinvoice_compaddress' 
+left join fieldvalue comptax on t.id = comptax.ref_id and comptax.fieldname='trans_custinvoice_comptax' 
+left join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname' 
+left join fieldvalue custaddress on t.id = custaddress.ref_id and custaddress.fieldname='trans_custinvoice_custaddress' 
+left join fieldvalue custtax on t.id = custtax.ref_id and custtax.fieldname='trans_custinvoice_custtax' 
+inner join customer c on t.customer_id = c.id 
+left join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+left join (select ti.trans_id as id, sum(ti.netamount) as sum_netamount, sum(ti.vatamount) as sum_vatamount, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id 
+where t.id = @id]]></dataset>
+  
+  <message secname="items" fieldname="lb_deposit"><![CDATA[Deposit]]></message>
+  
+  <message secname="head" fieldname="lb_ref_invoice"><![CDATA[Ref. invoice]]></message>
+  <message secname="head" fieldname="lb_copy"><![CDATA[COPY]]></message>
+  <message secname="head" fieldname="lb_original_issue"><![CDATA[ORIGINAL ISSUE]]></message>
+  <message secname="head" fieldname="lb_cancelling_invoice"><![CDATA[CANCELLING INVOICE]]></message>
+  <message secname="head" fieldname="lb_amending_invoice"><![CDATA[AMENDING INVOICE]]></message>
+  <message secname="head" fieldname="lb_deleted"><![CDATA[DELETED]]></message>
+  <message secname="head" fieldname="lb_address"><![CDATA[Address]]></message>
+  <message secname="head" fieldname="lb_tax_no"><![CDATA[Tax No]]></message>
+  <message secname="head" fieldname="lb_account_no"><![CDATA[Account No]]></message>
+  
+  <message secname="report" fieldname="web_page"><![CDATA[www.nervatura.com]]></message>
+  <message secname="report" fieldname="web_link"><![CDATA[http://nervatura.com]]></message>
+  <message secname="report" fieldname="lb_invoice"><![CDATA[INVOICE]]></message>
+  <message secname="report" fieldname="lb_supplier"><![CDATA[Supplier]]></message>
+  <message secname="report" fieldname="lb_customer"><![CDATA[Customer]]></message>
+  <message secname="report" fieldname="lb_delivery_date"><![CDATA[Delivery Date]]></message>
+  <message secname="report" fieldname="lb_due_date"><![CDATA[Due Date]]></message>
+  <message secname="report" fieldname="lb_creation_date"><![CDATA[Creation Date]]></message>
+  <message secname="report" fieldname="lb_currency"><![CDATA[Currency]]></message>
+  <message secname="report" fieldname="lb_payment"><![CDATA[Payment]]></message>
+  <message secname="report" fieldname="lb_source_ref_no"><![CDATA[Source Ref.No.]]></message>
+  <message secname="report" fieldname="lb_comments"><![CDATA[Comments]]></message>
+  
+  <message secname="report" fieldname="lb_no"><![CDATA[No.]]></message>
+  <message secname="report" fieldname="lb_description"><![CDATA[Description]]></message>
+  <message secname="report" fieldname="lb_unit"><![CDATA[Unit]]></message>
+  <message secname="report" fieldname="lb_qty"><![CDATA[Qty]]></message>
+  <message secname="report" fieldname="lb_price"><![CDATA[Price]]></message>
+  <message secname="report" fieldname="lb_disc"><![CDATA[Disc.]]></message>
+  <message secname="report" fieldname="lb_vat"><![CDATA[VAT]]></message>
+  <message secname="report" fieldname="lb_netamount"><![CDATA[NetAmount]]></message>
+  <message secname="report" fieldname="lb_amount"><![CDATA[Amount]]></message>
+  <message secname="report" fieldname="lb_total"><![CDATA[Total]]></message>
+  
+  <template><![CDATA[
+<template>
+  <report title="INVOICE" font-family="times" font-size="11" left-margin="15" top-margin="15" right-margin="15" decode="utf-8" encode="latin_1" />
+  <header>
+    <row height="10">
+      <columns>
+        <image src="logo" />
+        <cell name="label" value="labels.lb_invoice" font-style="bolditalic" font-size="26" color="#D8DBDA"/>
+        <cell name="transnumber" value="head.0.transnumber" align="right" font-style="bold" font-size="20"/>
+      </columns>
+    </row>
+    <row hgap="2" height="1">
+      <columns>
+        <cell name="status" value="head.0.status" align="left" font-style="bold" color="#FF0000" font-size="10"/>
+        <cell name="state" value="head.0.state" align="right" font-style="bold" font-size="10"/>
+      </columns>
+    </row>
+    <row >
+      <columns>
+        <cell name="transcast" value="head.0.transcast" align="left" font-style="bold" font-size="10"/>
+        <cell name="ref_transnumber_1" value="head.0.ref_transnumber_1" align="right" font-style="bold" font-size="10"/>
+      </columns>
+    </row>
+    <hline border-color="218"/>
+    <vgap height="2"/>
+  </header>
+  <details>
+    <row>
+      <columns>
+        <cell name="label" width="50%" value="labels.lb_supplier" font-style="bold" background-color="245" border="LT" border-color="218"/>
+        <cell name="label" value="labels.lb_customer" font-style="bold" background-color="245"  border="LRT" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="company_name" width="50%" font-style="bold" value="head.0.comp_name" border="L" border-color="218"/>
+        <cell name="customer_name" font-style="bold" value="head.0.cust_name" border="LR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="company_address" width="50%" value="head.0.comp_address" border="L" border-color="218"/>
+        <cell name="customer_address" value="head.0.cust_address" border="LR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="company_taxnumber" width="50%" value="head.0.comp_taxnumber" border="L" border-color="218"/>
+        <cell name="customer_taxnumber" value="head.0.cust_taxnumber" border="LR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="company_account" width="50%" value="head.0.compaccount" border="L" border-color="218"/>
+        <cell name="customer_account" value="head.0.custaccount" border="LR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="label" align="center" width="30" font-style="bold" value="labels.lb_delivery_date" background-color="245" border="LBT" border-color="218"/>
+        <cell name="label" align="center" width="30" font-style="bold" value="labels.lb_due_date" background-color="245" border="LBT" border-color="218"/>
+        <cell name="label" align="center" width="30" font-style="bold" value="labels.lb_creation_date" background-color="245" border="LBT" border-color="218"/>
+        <cell name="label" align="center" width="20" font-style="bold" value="labels.lb_currency" background-color="245" border="LBT" border-color="218"/>
+        <cell name="label" align="center" width="30" font-style="bold" value="labels.lb_payment" background-color="245" border="LBT" border-color="218"/>
+        <cell name="label" align="center" font-style="bold" value="labels.lb_source_ref_no" background-color="245" border="LBTR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="transdate" align="center" width="30" value="head.0.transdate" border="LB" border-color="218"/>
+        <cell name="duedate" align="center" width="30" value="head.0.duedate" border="LB" border-color="218"/>
+        <cell name="crdate" align="center" width="30" value="head.0.crdate" border="LB" border-color="218"/>
+        <cell name="curr" align="center" width="20" value="head.0.curr" border="LB" border-color="218"/>
+        <cell name="payment" align="center" width="30" value="head.0.paidtypedesc" border="LB" border-color="218"/>
+        <cell name="source_transnumber" align="center" value="head.0.ref_transnumber_2" border="LBR" border-color="218"/>
+      </columns>
+    </row>
+    <row>
+      <columns>
+        <cell name="label" width="30" font-style="bold" value="labels.lb_comments" background-color="245" border="LB" border-color="218"/>
+        <cell name="comment" multiline="true" value="head.0.notes" border="LBR" border-color="218"/>
+      </columns>
+    </row>
+    <vgap height="2"/>
+    <datagrid name="items" databind="items" border="1" border-color="218" font-size="9" header-background="245">
+      <columns>
+        <column width="5%" fieldname="counter" align="right" label="labels.lb_no" header-align="center"/>
+        <column width="25%" fieldname="description" label="labels.lb_description" header-align="center"/>
+        <column width="8%" fieldname="unit" label="labels.lb_unit" header-align="center"/>
+        <column width="7%" fieldname="qty" align="right" thousands=" " digit="2" label="labels.lb_qty" header-align="right"/>
+        <column width="10%" fieldname="fxprice" align="right" thousands=" " digit="2" label="labels.lb_price" header-align="right"/>
+        <column width="8%" fieldname="discount" align="right" thousands=" " digit="2" label="={{labels.lb_disc}}%" header-align="right"/>
+        <column width="7%" fieldname="taxcode" align="right" label="={{labels.lb_vat}}%" header-align="right"/>
+        <column width="11%" fieldname="netamount" align="right" thousands=" " digit="2" label="labels.lb_netamount" header-align="right"/>
+        <column width="9%" fieldname="vatamount" align="right" thousands=" " digit="2" label="labels.lb_vat" header-align="right"/>
+        <column fieldname="amount" align="right" thousands=" " digit="2" label="labels.lb_amount" header-align="right"/>
+      </columns>  
+    </datagrid>
+    <vgap height="2"/>
+    <datagrid width="50%" name="taxgroup" databind="taxgroup" border="1" border-color="218" font-size="10" header-background="245">
+      <columns>
+        <column width="19%" fieldname="taxcode" align="right" label="={{labels.lb_vat}} %" footer="labels.lb_total" header-align="right"/>
+        <column width="27%" fieldname="netamount" align="right" thousands=" " digit="2" label="labels.lb_netamount" footer="head.0.sum_netamount" footer-align="right" header-align="right"/>
+        <column width="27%" fieldname="vatamount" align="right" thousands=" " digit="2" label="labels.lb_vat" footer="head.0.sum_vatamount" footer-align="right" header-align="right"/>
+        <column width="27%" fieldname="amount" align="right" thousands=" " digit="2" label="labels.lb_amount" footer="head.0.sum_amount" footer-align="right" header-align="right"/>
+      </columns>  
+    </datagrid>
+    <vgap height="4"/>
+    <html fieldname="notes">={{head.0.fnote}}</html>
+  </details>
+  <footer>
+    <vgap height="2"/>
+    <hline border-color="218"/>
+    <row height="10">
+      <columns>
+        <cell value="labels.web_page" link="labels.web_link" font-style="bolditalic" color="#2100FF"/>
+        <cell value="{{page}}" align="right" font-style="bold"/>
+      </columns>
+    </row>
+  </footer>
+  <data>    <logo>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wIExQZM+QLBuYAAAQ5SURBVEjHtZVJbJRlGMd/77fM0ul0ykynLQPtjEOZWjptSisuJRorF6ocjEaDoDGSYKLiFmIMxoPGg0viRY0cNB6IUQ+YYCJEBLXQWqZgK6GU2taWLrS0dDrdO0vn+14PlYSlQAH9357L+89/eZ9HHDp0iP8TyqXDCV9Iuivvkf8lgXbp8JjPxUfHfseXs1yGs52sd+VgpueJqQYdPRE8sxniZgnElRbF8p1yXW6AgWgbDeeOoJgCu8PJtFbAc2W1tEeaxC0rADDTKVZmO+kxKwjawmwO5pJIGhzpP8je7m5KbycDgKnEDEnDYEO+G10xeT3Sxu6eIYJuP5OJffT5ihbNKD/klzckWLWuSibjUSyahZn5NBtXerkj0059dy+rPaUs1wvoiH3GXjkgIy6nbPV65PEMQzaNN0qLu+j6GZTfX5P+NPKjuqXIj8sV4vR0gv7ZJP2zCUpsEEdhW7GfztFOBqf6cQmV5ByUFpfxyr6veHpZpbhuBk/91qw+lGrDwIfXbqfGbkVXVQCiyRQvNZ5hY0EeIW+IkDfEm83dvL82wHRqAkOz3TiDXdqUeGLDLg73xfj5r4PoqopkwVa3RefFkkKeaWgDYHfXENV5LhRFRVMsZFvl0kLuP/aLCM+p4tfeLs4MtyEQgEQRgrs8Th70OtkeaefE2BQPeF1ICQ6Lk9WOOKMrlssltQjAavdwdqQbACkXrHXoOllWnWgiiVNApq4g/nV9+/pXaWrfw3Dh1Q1blCAr3kO5v5K0hPHUPHt6hinZf4JILE6R005CUTBNSJkmFxIp4qbG25veY3LyKJ9Pj8iGDIf0lFfIRT9aVjBHBsaK8Wb4qBuJMTyTpNTtoP2RdQD8PTXHjuOdfNwxiFWBHKsFj1WjPEvDJjIJOBXuCxQzdqpFLLoqJjwTsrbkYSyKBVPTsF6qUUpSpqRuOMaT9e0cq11LiSsTgLd+eheLq4YXKqtpra8Ti1o06ByQwYLVHB05yoHz+2mM1jGWGAPJQqOEoGsmzmvNnXxZHaL2yEKrvjv9LarmY2t4/WWPX6bAnm+TZ40kAlB0GDfO08dJptNxnl+xnYrcClrHZ9g7MMqOkI8PTvejaBo5Np253k/I879MaLBDXDPk+HBC5I9KkTcqhXdIitBIvtiau5Nszc3Xnd8A8GdsmnfKAnhtVnYW2iE1y8GhcbQZlUeDBSy5phdxobVNhPVnUdU0J893scXvITYbpbGvgVh6iIlUgiqPixbWcqb+sFjSur4Sued6hc0WkJIoX/zRQyI1icvhJG0YhA2DmJJDoxqgZoVXrhnsFjel4CIy5Ep+ONXKpjXVlKXconBcF8Epmyidd4hlFpU37vTxYccIuVX3ylsiUDNWse3ux+k4fvU181t1Nvu9pE3J9+eiNz6Zi8FfWSX7WpqveSoHg2EpgHC2g1hLk7hpgtvBP6lBrRsE+ni7AAAAAElFTkSuQmCC</logo>
+  </data>
+</template>
+  ]]></template>
+</report>

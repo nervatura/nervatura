@@ -1,0 +1,76 @@
+<% include html_head.html %>
+<% include body_page_header.html %>
+
+<style>
+  .ui-state-disabled {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function msgDelete(username){
+    $("#current_user").val(username);
+    $("#delete").popup("open", {transition:"pop", positionTo:"window"});}
+</script>
+
+<div align="center" style="padding-top: 10px;">
+  <div style="max-width: 500px;">
+    <a href="#new" data-rel="popup" data-position-to="window" data-transition="pop" style="color:#8FBC8F;"
+      class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline"><%= lang.label_new %></a>
+    <ul data-role="listview" data-split-icon="delete" data-split-theme="a" 
+      data-inset="true" data-filter="true"><% users.forEach(function(username) { %>
+      <li><a href="#" class="ui-state-disabled"><%= username %></a>
+        <a href="#" onclick="msgDelete('<%= username %>');"><%= lang.label_delete %></a></li><% }); %>
+    </ul>
+    <div data-role="popup" id="delete" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
+      style="max-width:340px;">
+      <form id="frm_delete" action="/nas/user/list" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div data-role="header" data-theme="b">
+          <h1><%= lang.label_delete %></h1>
+        </div>
+        <div role="main" class="ui-content">
+          <h3><%= lang.msg_delete_text %></h3>
+          <p><%= lang.msg_delete_info %></p>
+          <div align="center">
+            <a data-ajax="false" href="#" onclick="document.forms['frm_delete'].submit();" style="color:#FF7F50;"
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-delete ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_delete %></a>
+            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
+          </div>
+        </div>
+        <input id="current_user" type="hidden" name="username" value="">
+        <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
+      </form>
+    </div>
+    <div data-role="popup" id="new" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
+      style="max-width:340px;">
+      <form id="frm_new" action="/nas/user/list" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div data-role="header" data-theme="b">
+          <h1><%= lang.label_new %></h1>
+        </div>
+        <div role="main" class="ui-content">
+          <div class="ui-field-contain">
+            <label for="username"><%= lang.label_username %>:</label>
+            <input id="username" name="username" value="" type="text">
+          </div>
+          <div class="ui-field-contain">
+            <label for="password"><%= lang.label_password %>:</label>
+            <input id="password" name="password" value="" type="password">
+          </div>
+          <div align="center">
+            <a data-ajax="false" href="#" onclick="document.forms['frm_new'].submit();"  style="color:#8FBC8F;"
+              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_new %></a>
+            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
+          </div>
+        </div>
+        <input value="new" id="update_cmd" name="update_cmd" type="hidden">
+      </form>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+<% include menu.html %>
+</div><!-- /page -->
+</body></html>

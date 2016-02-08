@@ -1,0 +1,101 @@
+<% include html_head.html %>
+<% include body_page_header.html %>
+
+<div id="container" role="main" class="ui-content">
+  <div id="flash" class="flash" style="display:<% if (flash) { %>block<%} else {%>none<%}%>;"><%= flash %></div>
+  <div class="cheader">
+    <div style="float: left;">
+      <fieldset data-role="controlgroup" data-type="horizontal">
+        <button id="set_xml_content" >Sample template</button>
+        <button id="set_dbs_content">Database</button>
+      </fieldset>
+    </div>
+  </div>
+  <div id="temp_panel" class="cheader" style="display:block;">
+    <div id="dv_xml_template" style="display:block;width:100%;font-weight: bold;" align="left" >
+      <div style="float: left;">
+        <fieldset data-role="controlgroup" data-type="horizontal">
+          <select id="template">
+            <option value="xml">XML template</option>
+            <option value="py">Python template</option>
+          </select>
+          <button id="open_template" >XML/Python template</button>
+        </fieldset>
+      </div>
+      <div style="float: right;">
+        <fieldset data-role="controlgroup" data-type="horizontal">
+          <button id="pdf_report">Save PDF Report</button>
+          <button id="html_report">HTML Preview</button>
+          <button id="xml_data">Report XML data</button>
+        </fieldset>
+      </div>
+    </div>
+    <div id="dv_dbs_template" style="display:none;width:100%;background-color: white;font-weight: bold;" align="center" >
+      <table cellpadding="0px;" cellspacing="5px;">
+        <tr>
+          <td style="padding-right: 5px;"><label>Database</label></td>
+          <td><input id="dbs_name" type="text" value=""></td>
+          <td style="padding-left: 10px;padding-right: 5px;"><label>Username</label></td>
+          <td><input id="dbs_user" type="text"  value=""></td>
+          <td style="padding-left: 10px;padding-right: 5px;"><label>Password</label></td>
+          <td><input id="dbs_psw" type="password" value=""></td>
+        </tr>
+        <tr>
+          <td colspan="6" align="center">
+            <table cellpadding="0px;" cellspacing="5px;">
+              <tr>
+                <td style="padding-right: 5px;"><label>Def.template</label></td>
+                <td>
+                  <select id="dbs_temp">
+                    <option value="trans">Document</option>
+                    <option value="customer">Customer</option>
+                    <option value="employee">Employee</option>
+                    <option value="product">Product</option>
+                    <option value="project">Project</option>
+                    <option value="tool">Tool</option>
+                  </select>
+                </td>
+                <td style="padding-left: 10px;padding-right: 5px;"><label>Doc.No.</label></td>
+                <td><input id="dbs_no" type="text"  value=""></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  
+  <div class="cheader">
+    <div style="float: left;font-weight: bold;">
+      <fieldset data-role="controlgroup" data-type="horizontal">
+        <button id="prev">Previous</button>
+        <button id="next">Next</button>
+      </fieldset>
+    </div>
+    <div style="float: left;padding: 10px;font-weight: bold;">
+      <fieldset data-role="controlgroup" data-type="horizontal">
+        <span>Page: </span>
+        <span id="page_num"></span>
+        <span> / </span>
+        <span id="page_count"></span>
+      </fieldset>
+    </div>
+    <div style="float: right;">
+      <fieldset data-role="controlgroup" data-type="horizontal">
+        <select id="orientation">
+          <option value="portrait">Portrait</option>
+          <option value="landscape">Landscape</option>
+        </select> 
+        <button id="server_prev_report">Report Preview</button>
+      </fieldset>
+    </div>
+  </div>
+  <div style="vertical-align:top;text-align:center;">
+    <canvas id="preview_box" style="border:1px solid black;margin-top: 10px;"></canvas>
+  </div>
+  
+  <script data-main="../javascripts/report.demo.server" src="../javascripts/require.js"></script>
+
+  </div><!-- /content -->
+</div><!-- /page -->
+</body></html>

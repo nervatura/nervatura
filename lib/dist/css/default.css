@@ -1,0 +1,94 @@
+.error { 
+  background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0 0 #FFF9DF;
+  border: 1px solid #F7C942;
+  text-shadow: 0 1px 0 #FFFFFF;
+  color: red; font-weight: bold; 
+  padding: 3px;
+}
+.flash {
+  padding: 8px;
+  font-weight: bold;
+  border: 1px solid #F7C942;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  color: #222;
+  text-shadow: 0px 1px 0px #FFF;
+  background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0% 0% #FFF9DF;
+}
+a { 
+  text-decoration:none;
+}
+a:hover {
+  text-decoration: none;
+}
+a.button {
+  text-decoration: none
+}
+
+.ui-btn {
+  font-size: 14px;
+}
+
+label, label.ui-input-text {
+  font-weight: bold !important;    
+}
+.ui-content {
+  padding: 5px;
+}
+.ui-content .ui-btn {
+  text-align: left;
+}
+#container {
+	background: none repeat scroll 0 0 #FFFFFF;
+	margin: 0 auto;
+	padding: 30px;
+	padding-top: 10px;
+	max-width: 800px;
+	min-width: 250px;
+	text-align: justify;
+	color: #444444;
+}
+#container a {
+  	color: #3B7687 ;
+}
+h2 {
+	color: #3B7687;
+}
+.vernum {
+	background-color: #444444;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding: 5px 8px;
+	font-size: 12px;
+	font-style: italic;
+	vertical-align: top;
+}
+.sname {
+	background-color: #DAA520;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding-left: 3px;
+	padding-right: 3px;
+	font-family: monospace;
+	font-size: 16px;
+	font-style: italic;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+}
+p {
+	text-align: justify;
+}
+.info_div {
+	background-color: #F5F5DC;
+	margin: 0px;
+	padding: 3px 6px ;
+}
+.colhead a {
+  white-space: normal;
+  color: #444444 !important;
+  background-color: #FFFFFF !important;
+  text-align: justify !important;
+  font-weight: normal !important;
+  font-size: 16px !important;
+}
+

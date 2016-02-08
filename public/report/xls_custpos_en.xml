@@ -1,0 +1,273 @@
+<report reportkey="xls_custpos_en" nervatype="report" repname="Payments Due List - MS Excel" 
+  description="Accounts Payable and Receivable. MS Excel output." label="Invoice" filetype="xls">
+
+  <dataset name="customers" engine=""><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, t.transdate
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, cast(t.duedate as date)-@posdate as days
+, case when cast(t.duedate as date)-@posdate<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as REAL)*cast(lrate.value as REAL)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and pm.paiddate<=@posdate group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='out' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by (cast(t.duedate as date)-@posdate), t.duedate, t.id]]></dataset>
+  <dataset name="customers" engine="mssql"><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, CONVERT(VARCHAR(10), t.transdate, 120) as transdate
+, CONVERT(VARCHAR(10), t.duedate, 120) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, DATEDIFF(day,@posdate,t.duedate) as days
+, case when DATEDIFF(day,@posdate,t.duedate)<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as REAL)*cast(lrate.value as REAL)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and pm.paiddate<=@posdate group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='out' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by DATEDIFF(day,@posdate,t.duedate), t.duedate, t.id]]></dataset>
+  <dataset name="customers" engine="mysql"><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, t.transdate
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, DATEDIFF(t.duedate,@posdate) as days
+, case when DATEDIFF(t.duedate,@posdate)<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as decimal)*cast(lrate.value as decimal)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and pm.paiddate<=@posdate group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='out' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by DATEDIFF(t.duedate,@posdate), t.duedate, t.id]]></dataset>
+  <dataset name="customers" engine="sqlite"><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, t.transdate
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, julianday(t.duedate)-julianday(@posdate) as days
+, case when julianday(t.duedate)-julianday(@posdate)<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as REAL)*cast(lrate.value as REAL)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and julianday(pm.paiddate)<=julianday(@posdate) group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='out' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by (julianday(t.duedate)-julianday(@posdate)), t.duedate, t.id]]></dataset>
+  <dataset name="suppliers" engine=""><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, t.transdate
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, cast(t.duedate as date)-@posdate as days
+, case when cast(t.duedate as date)-@posdate<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as REAL)*cast(lrate.value as REAL)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and pm.paiddate<=@posdate group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='in' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by (cast(t.duedate as date)-@posdate), t.duedate, t.id]]></dataset>
+  <dataset name="suppliers" engine="mssql"><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, CONVERT(VARCHAR(10), t.transdate, 120) as transdate
+, CONVERT(VARCHAR(10), t.duedate, 120) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, DATEDIFF(day,@posdate,t.duedate) as days
+, case when DATEDIFF(day,@posdate,t.duedate)<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as REAL)*cast(lrate.value as REAL)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and pm.paiddate<=@posdate group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='in' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by DATEDIFF(day,@posdate,t.duedate), t.duedate, t.id]]></dataset>
+  <dataset name="suppliers" engine="mysql"><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, t.transdate
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, DATEDIFF(t.duedate,@posdate) as days
+, case when DATEDIFF(t.duedate,@posdate)<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as decimal)*cast(lrate.value as decimal)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and pm.paiddate<=@posdate group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='in' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by DATEDIFF(t.duedate,@posdate), t.duedate, t.id]]></dataset>
+  <dataset name="suppliers" engine="sqlite"><![CDATA[select t.transnumber as invoice_no
+, custname.value as customer
+, t.transdate
+, substr(cast(t.duedate as char(10)), 1, 10) as duedate
+, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, tsum.sum_amount
+, case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
+, tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
+, julianday(t.duedate)-julianday(@posdate) as days
+, case when julianday(t.duedate)-julianday(@posdate)<0 then tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end else 0 end as overdue
+from trans t
+inner join groups dir on t.direction=dir.id
+inner join groups ttype on t.transtype=ttype.id
+inner join groups ptg on t.paidtype = ptg.id 
+  left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en'
+inner join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname'
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join (select l.ref_id_2 as trans_id, sum(cast(iamount.value as REAL)*cast(lrate.value as REAL)) as paid_amount
+  from link l inner join payment pm on l.ref_id_1=pm.id and pm.deleted=0
+  left join fieldvalue lrate on lrate.fieldname='link_rate' and lrate.ref_id=l.id
+  left join fieldvalue iamount on iamount.fieldname='link_qty' and iamount.ref_id=l.id
+  where l.deleted=0 and l.nervatype_1 in(select id from groups where groupname='nervatype' and groupvalue='payment') 
+    and l.nervatype_2 in(select id from groups where groupname='nervatype' and groupvalue='trans') 
+    and julianday(pm.paiddate)<=julianday(@posdate) group by l.ref_id_2) as tpaid on tpaid.trans_id=t.id
+where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue='in' 
+  and tsum.sum_amount<>case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end @where_str 
+order by (julianday(t.duedate)-julianday(@posdate)), t.duedate, t.id]]></dataset>
+  
+  <field fieldname="posdate" fieldtype="date" wheretype="in" description="Date" orderby="0" defvalue="0"/>
+  <field fieldname="curr" fieldtype="string" wheretype="where" description="Currency" orderby="1"/>
+  <field fieldname="transdate_from" fieldtype="date" wheretype="where" description="Inv. Date >=" orderby="2"><![CDATA[ t.transdate >= @transdate_from]]></field>
+  <field fieldname="transdate_to" fieldtype="date" wheretype="where" description="Inv. Date &lt;=" orderby="3"><![CDATA[ t.transdate <= @transdate_to]]></field>
+  <field fieldname="duedate_from" fieldtype="date" wheretype="where" description="Due Date >=" orderby="4"><![CDATA[ t.duedate >= @duedate_from]]></field>
+  <field fieldname="duedate_to" fieldtype="date" wheretype="where" description="Due Date &lt;=" orderby="5"><![CDATA[ t.duedate <= @duedate_to]]></field>
+  <field fieldname="customer" fieldtype="string" wheretype="where" description="Customer/Supplier" orderby="6"><![CDATA[ custname.value like @customer]]></field>
+  
+  <message secname="report" fieldname="duedate"><![CDATA[Due Date]]></message>
+  <message secname="report" fieldname="transdate"><![CDATA[Invoice Date]]></message>
+  <message secname="report" fieldname="invoice_no"><![CDATA[Invoice No.]]></message>
+  <message secname="report" fieldname="customer"><![CDATA[Customer]]></message>
+  <message secname="report" fieldname="curr"><![CDATA[Currency]]></message>
+  <message secname="report" fieldname="sum_amount"><![CDATA[Amount]]></message>
+  <message secname="report" fieldname="paid_amount"><![CDATA[Paid]]></message>
+  <message secname="report" fieldname="overdue"><![CDATA[Overdue]]></message>
+  <message secname="report" fieldname="days"><![CDATA[Days]]></message>
+  
+  <template><![CDATA[{
+  "suppliers":{"sheetName":"payable",
+        "columns":[{"name":"duedate","label":"Due Date","type":"date"},
+                   {"name":"transdate","label":"Invoice Date","type":"date"},                   
+                   {"name":"invoice_no","label":"Invoice No.","type":"string"},
+                   {"name":"customer","label":"Customer","type":"string"},
+                   {"name":"curr","label":"Curr","type":"string"},
+                   {"name":"sum_amount","label":"Amount","type":"float"},
+                   {"name":"paid_amount","label":"Paid","type":"float"},
+                   {"name":"overdue","label":"Overdue","type":"float"},
+                   {"name":"days","label":"Days","type":"float"}
+                  ]
+       },
+  "customers":{"sheetName":"receivable",
+        "columns":[{"name":"duedate","label":"Due Date","type":"date"},
+                   {"name":"transdate","label":"Invoice Date","type":"date"},                   
+                   {"name":"invoice_no","label":"Invoice No.","type":"string"},
+                   {"name":"customer","label":"Customer","type":"string"},
+                   {"name":"curr","label":"Curr","type":"string"},
+                   {"name":"sum_amount","label":"Amount","type":"float"},
+                   {"name":"paid_amount","label":"Paid","type":"float"},
+                   {"name":"overdue","label":"Overdue","type":"float"},
+                   {"name":"days","label":"Days","type":"float"}
+                  ]
+       }
+}]]></template>
+</report>
