@@ -20,11 +20,11 @@ Homepage: http://www.nervatura.com
 
 ## Installation & Quick Start
 
-    $ npm install nervatura
+    $ npm install nervatura --save
 
 Start the server:
 
-    $ cd path/nervatura
+    $ cd node_modules/nervatura
     $ npm start
 
 and [http://localhost:3000/](http://localhost:3000/)
