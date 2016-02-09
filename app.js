@@ -59,9 +59,6 @@ app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/javascripts', express.static(path.join(__dirname, 'lib/dist/js')));
 app.use('/stylesheets', express.static(path.join(__dirname, 'lib/dist/css')));
-app.use('/javascripts', express.static(path.join(__dirname, 'node_modules/jquery/dist')));
-app.use('/javascripts', express.static(path.join(__dirname, 'node_modules/jquery-mobile-babel-safe/js')));
-app.use('/stylesheets', express.static(path.join(__dirname, 'node_modules/jquery-mobile-babel-safe/css')));
 
 app.use(logger('dev'));
 app.use(cookieParser());
