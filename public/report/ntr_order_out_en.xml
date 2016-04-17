@@ -7,13 +7,20 @@
 from item ti inner join product p on p.id = ti.product_id inner join tax on tax.id = ti.tax_id 
 where ti.deleted=0 and ti.trans_id = @id 
 order by ti.id]]></dataset>
-  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber, t.transdate as orderdate, t.crdate as crdate
+  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber
+, substr(cast(t.crdate as char(10)), 1, 10) as crdate
+, substr(cast(t.transdate as char(10)), 1, 10) as orderdate
 , case when t.notes is null then '' else t.notes end as notes
 , case when t.fnote is null then '' else t.fnote end as fnote
 , case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber_1
 , t.deleted
 , substr(cast(t.duedate as char(10)), 1, 10) as deldate
-, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, t.curr as curr, cu.description as currname
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
+, t.acrate as acrate
 , c.custname as cust_name
 , case when cust_address.zipcode is null then '' else cust_address.zipcode end as cust_zipcode
 , case when cust_address.city is null then '' else cust_address.city end as cust_city
@@ -50,7 +57,12 @@ where t.id = @id]]></dataset>
 , case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber_1
 , t.deleted
 , CONVERT(VARCHAR(10), t.duedate, 120) as deldate
-, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, t.curr as curr, cu.description as currname
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
+, t.acrate as acrate
 , c.custname as cust_name
 , case when cust_address.zipcode is null then '' else cust_address.zipcode end as cust_zipcode
 , case when cust_address.city is null then '' else cust_address.city end as cust_city

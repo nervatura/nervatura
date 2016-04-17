@@ -41,8 +41,10 @@ node_modules
 .pydevproject
 .settings
 .vscode
+.eslintrc.json
+jsonconfig.json
 
 public/application
-storage/data
-storage/data.json
-storage/session.db
+data/data/*
+data/storage/*
+*.pem

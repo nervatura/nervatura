@@ -1,7 +1,9 @@
 <report reportkey="ntr_bank_en" nervatype="trans" transtype="bank" direction="transfer" 
   repname="Bank Statement EN" description="Bank Statement" filetype="ntr">
   
-  <dataset name="head" engine=""><![CDATA[select t.transnumber, t.crdate, t.transdate, 
+  <dataset name="head" engine=""><![CDATA[select t.transnumber,
+substr(cast(t.crdate as char(10)), 1, 10) as crdate,
+substr(cast(t.transdate as char(10)), 1, 10) as transdate,
 case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber, 
 p.planumber, p.description as account, p.curr, 
 case when t.notes is null then '' else t.notes end as notes, 
@@ -19,7 +21,8 @@ case when t.fnote is null then '' else t.fnote end as fnote
 from trans t
 inner join place p on p.id=t.place_id
 where t.id= @id]]></dataset>
-  <dataset name="payment" engine=""><![CDATA[select pm.id, pm.paiddate, pm.amount, 
+  <dataset name="payment" engine=""><![CDATA[select pm.id, pm.amount,
+  substr(cast(pm.paiddate as char(10)), 1, 10) as paiddate, 
   case when pm.notes is null then '' else pm.notes end as notes, 
   t.transnumber as invnumber, t.curr as invoice_curr, 
   cast(iamount.value as REAL) as invoice_amount, lrate.value as rate, 
@@ -46,7 +49,8 @@ left join link l on pm.id=l.ref_id_1 and l.nervatype_1=(select id from groups wh
     left join customer c on t.customer_id=c.id
 where pm.deleted=0 and pm.trans_id = @id
 order by pm.id]]></dataset>
-  <dataset name="payment" engine="mysql"><![CDATA[select pm.id, pm.paiddate, pm.amount, 
+  <dataset name="payment" engine="mysql"><![CDATA[select pm.id, pm.amount,
+  substr(cast(pm.paiddate as char(10)), 1, 10) as paiddate, 
   case when pm.notes is null then '' else pm.notes end as notes, 
   t.transnumber as invnumber, t.curr as invoice_curr, 
   cast(iamount.value as decimal) as invoice_amount, lrate.value as rate, 

@@ -21,7 +21,9 @@ inner join trans t on mv.trans_id=t.id
 inner join place pl on mv.place_id=pl.id 
 where mv.deleted=0 and mv.shared=0 and mv.trans_id = @id
 order by mv.id]]></dataset>
-  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber, t.crdate as crdate, t.transdate as startdate
+  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber
+, substr(cast(t.crdate as char(10)), 1, 10) as crdate
+, substr(cast(t.transdate as char(10)), 1, 10) as startdate
 , substr(cast(t.duedate as char(16)), 1, 16) as enddate
 , case when t.notes is null then '' else t.notes end as notes
 , case when t.fnote is null then '' else t.fnote end as fnote

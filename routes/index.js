@@ -18,6 +18,19 @@ router.get('/', function(req, res, next) {
   res.redirect('index');
 });
 
+router.get('/env', function(req, res, next) {
+  var content = 'Version: ' + process.version + '\n<br/>\n' +
+    'Env: {<br/>\n<pre>';
+  //  Add env entries.
+  for (var k in process.env) {
+    content += '   ' + k + ': ' + process.env[k] + '\n';
+  }
+  content += '}\n</pre><br/>\n'
+  res.send('<html>\n' +
+    '  <head><title>Node.js Process Env</title></head>\n' +
+    '  <body>\n<br/>\n' + content + '</body>\n</html>');
+});
+
 router.get('/index', function(req, res, next) {
   res.render('default/index.html',{});
 });
@@ -32,6 +45,10 @@ router.get('/about', function(req, res, next) {
 
 router.get('/licenses', function(req, res, next) {
   res.render('default/licenses.html',{});
+});
+
+router.get('/docs/nas', function(req, res, next) {
+  res.render('docs/nas.html',{});
 });
 
 router.get('/docs/nom', function(req, res, next) {
@@ -69,6 +86,8 @@ router.get('/login',
     page_render({req:req, res:res, page:"login", data:data});});
 
 router.post('/login', function(req, res, next) {
+  if(!req.body.password || req.body.password===""){
+    req.body.password = "empty";}
   passport.authenticate('local', function(err, user, info) {
     if (err) { return next(err); }
     if (!user) {
@@ -76,9 +95,12 @@ router.post('/login', function(req, res, next) {
         data:{username:info.username, flash:info.message}});}
     else {
       req.logIn(user, function(err) {
-        if (err) { return next(err); }
-        return res.redirect('nas/index');});}
-  })(req, res, next);});
+        if (err) {return next(err);}
+        if(user.dirty_password){
+          return res.redirect('nas/user/password');}
+        else{
+          return res.redirect('nas/index');}});}
+})(req, res, next);});
   
 router.get('/logout',
   function(req, res){

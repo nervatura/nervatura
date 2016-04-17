@@ -17,7 +17,7 @@ inner join tax tx on ti.tax_id=tx.id
 where t.deleted=0 and t.transdate >= @date_from and t.transdate <= @date_to @where_str 
 group by t.curr, case when t.notax=1 then '={{lb_notax}}' else tx.taxcode end, tx.rate 
 order by t.curr, tx.rate]]></dataset>
-  <dataset name="ds" engine=""><![CDATA[select @date_from as date_from, @date_to as date_to, t.transnumber as transnumber, t.crdate as crdate, t.transdate as transdate, substr(cast(t.duedate as char(10)), 1, 10) as  duedate, c.custname as custname, t.curr as curr, dg.groupvalue as direction
+  <dataset name="ds" engine=""><![CDATA[select t.transnumber as transnumber, t.crdate as crdate, t.transdate as transdate, substr(cast(t.duedate as char(10)), 1, 10) as  duedate, c.custname as custname, t.curr as curr, dg.groupvalue as direction
 , case when t.notax=1 then '={{lb_notax}}' else tx.taxcode end as taxcode
 , case when dg.groupvalue='in' then 0-sum(netamount) else sum(netamount) end as netamount
 , case when dg.groupvalue='in' then 0-sum(vatamount) else sum(vatamount) end as vatamount
@@ -31,7 +31,7 @@ inner join tax tx on ti.tax_id=tx.id
 where t.deleted=0 and t.transdate >= @date_from and t.transdate <= @date_to @where_str 
 group by t.transnumber, t.crdate, t.transdate, substr(cast(t.duedate as char(10)), 1, 10), c.custname, t.curr, dg.groupvalue, case when t.notax=1 then '={{lb_notax}}' else tx.taxcode end 
 order by t.curr, t.transdate, c.custname]]></dataset>
-  <dataset name="ds" engine="mssql"><![CDATA[select @date_from as date_from, @date_to as date_to, t.transnumber as transnumber, t.crdate as crdate, t.transdate as transdate, CONVERT(VARCHAR(10), t.duedate, 120) as duedate, c.custname as custname, t.curr as curr, dg.groupvalue as direction
+  <dataset name="ds" engine="mssql"><![CDATA[select t.transnumber as transnumber, t.crdate as crdate, t.transdate as transdate, CONVERT(VARCHAR(10), t.duedate, 120) as duedate, c.custname as custname, t.curr as curr, dg.groupvalue as direction
 , case when t.notax=1 then '={{lb_notax}}' else tx.taxcode end as taxcode
 , case when dg.groupvalue='in' then 0-sum(netamount) else sum(netamount) end as netamount
 , case when dg.groupvalue='in' then 0-sum(vatamount) else sum(vatamount) end as vatamount
@@ -56,7 +56,8 @@ inner join item ti on t.id=ti.trans_id and ti.deleted=0
 where t.deleted=0 and t.transdate >= @date_from and t.transdate <= @date_to @where_str 
 group by t.curr 
 order by t.curr DESC]]></dataset>
-  <dataset name="company" engine=""><![CDATA[select c.custname as custname, c.taxnumber as taxnumber, c.account as account, addr.country as country, addr.state as state, addr.zipcode as zipcode, addr.city as city, addr.street as street 
+  <dataset name="company" engine=""><![CDATA[select @date_from as date_from, @date_to as date_to, c.custname as custname, c.taxnumber as taxnumber, 
+  c.account as account, addr.country as country, addr.state as state, addr.zipcode as zipcode, addr.city as city, addr.street as street 
 from customer c 
 left join (select * from address 
   where id in(select min(id) fid from address a 
@@ -103,9 +104,9 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
     <row hgap="2" height="1">
       <columns>
         <cell name="label" value="labels.lb_report_date" font-style="bold" font-size="10" align="left" />
-        <cell name="date_from" value="ds.0.date_from" align="left" font-style="bold" font-size="10" />
+        <cell name="date_from" value="company.0.date_from" align="left" font-style="bold" font-size="10" />
         <cell name="label" value="-" font-style="bold" font-size="10" align="left" width="5"/>
-        <cell name="date_to" value="ds.0.date_to" align="left" font-style="bold" font-size="10"/>
+        <cell name="date_to" value="company.0.date_to" align="left" font-style="bold" font-size="10"/>
         <cell name="crdate" value="={{labels.lb_create_date}} ={{crtime}}" align="right" font-style="italic" font-size="9"/>
       </columns>
     </row>

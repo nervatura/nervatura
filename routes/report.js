@@ -24,9 +24,8 @@ router.get('/index', function(req, res, next) {
 router.get('/server', function(req, res, next) {
   var flash;
   const exec = require('child_process').exec;
-  exec(req.app.locals.settings.conf.python2_path+" "
-    +req.app.locals.settings.conf.python_script+"/pylib.py check_python", (err, stdout, stderr) => {
-      if (err || stdout.indexOf("2")===-1) {
+  exec(req.app.get("conf").python2_path+" -V", function(err, stdout, stderr){
+      if (err || stderr.indexOf("Python 2.")===-1) {
         flash = req.app.locals.lang.invalid_python_path;}
      res.render('report/server.html',{flash:flash});});});
 
@@ -40,49 +39,60 @@ router.all('/document', function(req, res, next) {
     orient = "l";}
   if (req.query.py || req.body.py){
     method = "create_report_sample"}
-  
-  var ps = new PyShell("pylib.py", {
-    args: [method,orient,format,req.app.locals.settings.conf.python_script+"/report/sample.xml"],
-    pythonPath: req.app.locals.settings.conf.python2_path,
-    scriptPath: req.app.locals.settings.conf.python_script,
-    mode: 'text', pythonOptions: ['-u']});
-  var output = '';
-  ps.stdout.on('data', function (data) {
-    output += ''+data;});
-  ps.end(function (err) {
-    if (err) {
-      return next(err);}
-    else {
-      switch (format) {
-        case "pdf":
-          res.setHeader('Content-Type', 'application/pdf');
-          res.end(new Buffer(output, 'base64'));
-          break;
-        case "xml":
-          res.set('Content-Type', 'text/xml');
-          res.end(output);
-          break;
-        default:
-          res.end(output);
-          break;}}});});
+    
+  const exec = require('child_process').exec;
+  exec(req.app.get("conf").python2_path+" -V", function(err, stdout, stderr){
+    if (err || stderr.indexOf("Python 2.")===-1) {
+      res.end(req.app.locals.lang.invalid_python_path);}
+    else{
+      var ps = new PyShell("pylib.py", {
+        args: [method,orient,format,req.app.get("conf").python_script+"/report/sample.xml"],
+        pythonPath: req.app.get("conf").python2_path,
+        scriptPath: req.app.get("conf").python_script,
+        mode: 'text', pythonOptions: ['-u']});
+      var output = '';
+      ps.stdout.on('data', function (data) {
+        output += ''+data;});
+      ps.end(function (err) {
+        if (err) {
+          return next(err);}
+        else {
+          switch (format) {
+            case "pdf":
+              res.setHeader('Content-Type', 'application/pdf');
+              res.end(new Buffer(output, 'base64'));
+              break;
+            case "xml":
+              res.set('Content-Type', 'text/xml');
+              res.end(output);
+              break;
+            default:
+              res.set('Content-Type', 'text/html');
+              res.end(output);
+              break;}}});}});});
 
 router.get('/template', function(req, res, next) {
   if (req.query.py){
-    var ps = new PyShell("pylib.py", {
-      args: ["get_source","create_report_sample"],
-      pythonPath: req.app.locals.settings.conf.python2_path,
-      scriptPath: req.app.locals.settings.conf.python_script,
-      mode: 'text', pythonOptions: ['-u']});
-    var output = '';
-    ps.stdout.on('data', function (data) {
-      output += ''+data;});
-    ps.end(function (err) {
-      if (err) {
-        return next(err);}
-      else {
-        res.render('report/python.html',{python_code:output});}});}
+    const exec = require('child_process').exec;
+    exec(req.app.get("conf").python2_path+" -V", function(err, stdout, stderr){
+      if (err || stderr.indexOf("Python 2.")===-1) {
+        res.end(req.app.locals.lang.invalid_python_path);}
+      else{
+        var ps = new PyShell("pylib.py", {
+          args: ["get_source","create_report_sample"],
+          pythonPath: req.app.get("conf").python2_path,
+          scriptPath: req.app.get("conf").python_script,
+          mode: 'text', pythonOptions: ['-u']});
+        var output = '';
+        ps.stdout.on('data', function (data) {
+          output += ''+data;});
+        ps.end(function (err) {
+          if (err) {
+            return next(err);}
+          else {
+            res.render('report/python.html',{python_code:output});}});}});}
   else {
-    res.download(req.app.locals.settings.conf.python_script+"/report/sample.xml", 'sample.xml', function(err){
+    res.download(req.app.get("conf").python_script+"/report/sample.xml", 'sample.xml', function(err){
       if(err){return next(err);}});}});
 
 router.get('/client', function(req, res, next) {

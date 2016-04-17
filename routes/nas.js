@@ -64,13 +64,18 @@ router.post('/user/list', function(req, res, next) {
 
 router.get('/user/password', function(req, res, next) {
   if (validator === "ok"){
+    var flash = null;
+    if(req.user.dirty_password){
+      flash = lang.dirty_password;}
     nas.pageRender({res:res, page:"password", 
-      data:{subtitle:lang.label_change_password, flash:null}});}
+      data:{subtitle:lang.label_change_password, flash:flash}});}
   else {
     res.redirect(validator);}});
 
 router.post('/user/password', function(req, res, next) {
   if (validator === "ok"){
+    if(req.body.old === ""){
+      req.body.old = "empty";}
     req.app.settings.storage.changePassword(req.user.username, req.body.old, req.body.new, req.body.verify, 
       function(err, message){
         if (err) {return next(err);}
@@ -94,8 +99,7 @@ router.get('/database/edit', function(req, res, next) {
     if (req.query.alias === ""){
       params.data.data = {alias:"", engine:"sqlite", 
         connect:{host:"", port:"", dbname:"", username:"", password:""},
-        settings:{ndi_enabled:true, ndi_md5_password:false, ndi_encrypt_data:false, 
-        ndi_encrypt_password:"", ndi_host_restriction:""}};
+        settings:{ndi_enabled:true, encrypt_password:"", dbs_host_restriction:""}};
       nas.pageRender(params);}
     else {
       req.app.settings.storage.getDbsFromAlias(req.query.alias,
@@ -141,49 +145,49 @@ router.post('/database/create', function(req, res, next) {
   else {
     res.redirect(validator);}});
 
-router.get('/database/backup', function(req, res, next) {
+router.get('/database/export', function(req, res, next) {
   if (validator === "ok"){
     nas.databaseList({res:res, req:req, next:next,
-      data:{view:"backup", subtitle:lang.label_backup, form:{}, flash:null}});}
+      data:{view:"export", subtitle:lang.label_export, form:{}, flash:null}});}
   else {
     res.redirect(validator);}});
 
-router.post('/database/backup', function(req, res, next) {
+router.post('/database/export', function(req, res, next) {
   if (validator === "ok"){
     var nstore = require('../lib/node/nervastore.js')(req, res);
-    nas.backupDatabase(nstore, 
+    nas.exportDatabase(nstore, 
       {database:req.body.alias, filename:req.body.filename, format:req.body.format,
-       version: req.app.settings.version_number, backup_dir:req.app.locals.settings.backup_dir}, 
+       version: req.app.settings.version_number, export_dir:req.app.get('data_dir')+'/data'}, 
       function(err, logstr, result){
         if(err || req.body.filename !== "download"){
           var form = req.body; form.message = logstr;
           nas.databaseList({res:res, req:req, next:next,
-            data:{view:"backup", subtitle:lang.label_backup, 
+            data:{view:"export", subtitle:lang.label_export, 
               form:form, flash:null}});}
         else {
           res.send(result);}});}
   else {
     res.redirect(validator);}});
 
-router.get('/database/restore', function(req, res, next) {
+router.get('/database/import', function(req, res, next) {
   if (validator === "ok"){
-    nas.restoreList({res:res, req:req, next:next,
-      data:{view:"restore", backup_dir:req.app.locals.settings.backup_dir,
-        subtitle:lang.label_restore, form:{}, filenames:[], flash:null}});}
+    nas.importList({res:res, req:req, next:next,
+      data:{view:"import", import_dir:req.app.get('data_dir')+'/data',
+        subtitle:lang.label_import, form:{}, filenames:[], flash:null}});}
   else {
     res.redirect(validator);}});
 
-router.post('/database/restore', function(req, res, next) {
+router.post('/database/import', function(req, res, next) {
   if (validator === "ok"){
     var nstore = require('../lib/node/nervastore.js')(req, res);
-    nas.restoreDatabase(nstore, 
+    nas.importDatabase(nstore, 
       {database:req.body.alias, filename:req.body.filename, 
-       backup_dir:req.app.locals.settings.backup_dir}, 
+       import_dir:req.app.get('data_dir')+'/data'}, 
       function(err, logstr){
         var form = req.body; form.message = logstr;
-        nas.restoreList({res:res, req:req, next:next,
-          data:{view:"restore", subtitle:lang.label_restore, 
-            backup_dir:req.app.locals.settings.backup_dir, form:form, flash:null}});});}
+        nas.importList({res:res, req:req, next:next,
+          data:{view:"import", import_dir:req.app.get('data_dir')+'/data',
+            subtitle:lang.label_import, form:form, filenames:[], flash:null}});});}
   else {
     res.redirect(validator);}});
 

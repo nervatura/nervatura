@@ -82,7 +82,7 @@ function index(req, res, data) {
             callback(error, validator);}
           else {
             data.rows.forEach(function(field) {
-              if (field.valuelist){field.valuelist = field.valuelist.split("~");}
+              if (field.valuelist){field.valuelist = field.valuelist.split("|");}
               response.data.fields_lst.push({fieldname:field.fieldname, label:field.description,
                 fieldtype:field.fieldtype, mtype:"deffield", fieldcat:1, values:field.valuelist});});
             callback(null, validator);}});}

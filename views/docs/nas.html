@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	  <title>Nervatura Application Server</title>
+	  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+			
+	  <style type="text/css">
+		.body {
+      font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		  font-size: 1em;
+      background-color: #ffffff;
+		  padding: 20pt 42.5pt 42.5pt 42.5pt;
+		  text-align: justify;
+		  color: #444444;
+		}
+		a {
+		  text-decoration: none;
+		  color: #3B7687;
+		}
+    ul {
+      text-align: left;
+    }
+		.code {
+      font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font-size: .85em;
+		  background-color: #F5F5F5;
+		  padding: 10px;
+      margin: 10px 0px;
+      text-align: left;
+		}
+	  </style>
+	</head>
+<body class="body">
+  <h1 align="center" style="margin-top: 0px;">
+    Nervatura Application Server 
+  </h1>
+  <h2 align="center">Admin Guide</h2>
+  <p align="center"><b><i>Ver.No: <%= settings.version %></i></b></p>
+  
+  <ol style="color: #3B7687;">
+    <li><b><a href="#install">Installation</a></b>
+      <ul style="padding-left:5px;">
+        <li style="padding:3px 0px 0px;"><a href="#install_default">Default packages</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#install_quick">Quick Start</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#install_optional">Optional packages</a></li>
+      </ul>
+    </li>
+    <li style="padding:5px 0px 0px;"><b><a href="#cloud">Cloud Hosting Services</a></b>
+      <ul style="padding-left:5px;">
+        <li style="padding:3px 0px 0px;"><a href="#cloud_openshift">OpenShift</a></li>
+      </ul>
+    </li>
+    <li style="padding:5px 0px 0px;"><b><a href="#config">Server config</a></b></li>
+    <li style="padding:5px 0px 0px;"><b><a href="#other">Other recipes</a></b>
+      <ul style="padding-left:5px;">
+        <li style="padding:3px 0px 0px;"><a href="#migration">Database migration</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#printer">Server-side printers</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#security">Security Issues</a></li>
+      </ul>
+    </li>
+  </ol>
+  
+  <hr>
+  
+	<h3>
+		<a name="install">1. Installation</a>
+	</h3>
+  
+  <ul>
+    <li><b><a name="install_default">Default packages</a></b>
+      <p class="code" style="text-align: left;">
+        $ npm install nervatura --production --save
+      </p>
+      or
+      <p class="code" style="text-align: left;">
+        $ git clone https://github.com/nervatura/nervatura.git<br>
+        $ cd nervatura<br>
+        $ npm install --production --save
+      </p>
+    </li>
+    <li><b><a name="install_quick">Quick Start</a></b>
+      <p class="code" style="text-align: left;">
+        $ cd nervatura<br>
+        $ npm start
+      </p>
+      <p>and <a href="http://localhost:3000/" target="_blank">http://localhost:3000/</a></p>
+    </li>
+    <li><b><a name="install_optional">Optional packages</a></b><br>
+      <p><span style="color:#8B1A1A;font-weight:bold;">Server-side printing</span></p>
+      <p>UNIX-like operating systems: <a href="http://www.cups.org/" target="_blank">CUPS</a> and 
+        <a href="https://github.com/tojocky/node-printer" target="_blank">node-printer</a></li></p>
+      <p class="code" style="text-align: left;">
+        $ npm install printer --save
+      </p>
+      <p>Windows systems: <a href="http://www.ghostscript.com/Ghostscript.html" target="_blank">Ghostscript</a> 
+        and <a href="http://pages.cs.wisc.edu/~ghost/gsview/gsprint.htm" target="_blank">GSPRINT</a></p>
+      <p><a href="http://www.google.com/cloudprint/learn/" target="_blank">Google Cloud Print</a>: 
+        <a href="https://github.com/simoncadman/CUPS-Cloud-Print" target="_blank">CUPS-Cloud-Print</a></p>
+      <p><a href="https://h30495.www3.hp.com/help#eprint" target="_blank">HP ePrint via Email</a>:</p>
+      <p class="code" style="text-align: left;">
+        $ npm install nodemailer --save
+      </p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Session and data store</span></p>
+      <p>leveldown and PouchDB:</p>
+      <p class="code" style="text-align: left;">
+        $ npm install level --save<br>
+        $ npm install level-session-store --save<br>
+        $ npm install pouchdb --save
+      </p>
+    </li>
+  </ul>
+  
+  <h3>
+		<a name="cloud">2. Cloud Hosting Services</a>
+	</h3>
+  
+  <ul>
+    <li><b><a name="cloud_openshift">OpenShift</a></b>
+      <p>Login at <a href="http://openshift.redhat.com/" target="blank">OpenShift</a>. 
+         Create an account if you don’t already have one.<br>
+         Ensure you have the latest version of the 
+         <a href="https://developers.openshift.com/getting-started/" target="blank">client tools</a>. 
+         As part of this process, you’ll run the rhc setup command and choose a unique name 
+         (called a namespace) that becomes part of your public application URL.
+         </p>
+      <p>Create a <b>nervatura</b> (scaled) application (you can call your application whatever you want) 
+        on OpenShift with the following command:</p>
+      <p class="code" style="text-align: left;">
+        $ rhc app create nervatura nodejs --scaling --from-code=https://github.com/nervatura/nervatura.git<br>
+      </p>
+      <p>This package includes 
+        <a href="https://github.com/ryanj/nodejs-custom-version-openshift" target="_blank">a dynamic Node.js build stage</a> 
+        that will provide the application with a customized Node.js runtime. The version of Node that is 
+        available will depend on the requirements listed in the application's package.json file.</p>
+      <p>See: <span class="code">.openshift/action_hooks/</span> for more informaiton on how the OpenShift build process works.</p>
+      <p>That's it, you can now checkout your application at: https://nervatura-<b><i>yournamespace</i></b>.rhcloud.com</p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Databases support</span></p>
+      <p><b>SQLite</b> install: Included by default. Database files are stored in 
+      <a href="https://developers.openshift.com/managing-your-applications/filesystem.html" target="blank">a separate data directory</a>, 
+        independently from the application. Upgrade of the application does not affect the content of the database files. 
+        Several database files can be created.</p>
+      <p><b>PostgeSQL</b> install:</p>
+      <p class="code" style="text-align: left;">
+        rhc cartridge add postgresql-9.2 -a nervatura
+      </p>
+      <p><b>MySQL</b> install:</p>
+      <p class="code" style="text-align: left;">
+        rhc cartridge add mysql-5.5 -a nervatura
+      </p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p>1. Login to NAS Admin GUI</p>
+      <ul>
+        <li>Username: <b>admin</b></li>
+        <li>Password: <b>leave the field empty, not needed</b> (Default. Please change after the first login!)</li>
+      </ul>
+      <p>2. Add/Edit a new customer database reference</p>
+      <p>3.1 NAS SQLite database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>demo</b> (or what you want)</li>
+        <li>Engine: <b>SQLite</b></li>
+        <li>Host: <b>leave the field empty, not needed</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>demo</b> (or what you want)</li>
+        <li>Other settings: <b>default</b> (or what you want)</li>
+      </ul>
+      <p><i>You can create an unlimited number of SQLite databases (to max. storage/gear)!</i></p>
+      
+      <p>3.2. NAS PostgreSql database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>pgdemo</b> (or what you want)</li>
+        <li>Engine: <b>PostgreSQL</b></li>
+        <li>Host: <b>$OPENSHIFT_POSTGRESQL_DB_HOST</b></li>
+        <li>Port: <b>$OPENSHIFT_POSTGRESQL_DB_PORT</b></li>
+        <li>Database: <b>$OPENSHIFT_APP_NAME</b></li>
+        <li>UserName: <b>$OPENSHIFT_POSTGRESQL_DB_USERNAME</b></li>
+        <li>Password: <b>$OPENSHIFT_POSTGRESQL_DB_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you want)</li>
+      </ul>
+      <p><i>For each application you can configure only one postgresql database! (OpenShift restriction)</i></p>
+      
+      <p>3.3 NAS MySQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>mydemo</b> (or what you want)</li>
+        <li>Engine: <b>MySQL</b></li>
+        <li>Host: <b>$OPENSHIFT_MYSQL_DB_HOST</b></li>
+        <li>Port: <b>$OPENSHIFT_MYSQL_DB_PORT</b></li>
+        <li>Database: <b>$OPENSHIFT_APP_NAME</b></li>
+        <li>UserName: <b>$OPENSHIFT_MYSQL_DB_USERNAME</b></li>
+        <li>Password: <b>$OPENSHIFT_MYSQL_DB_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you want)</li>
+      </ul>
+      <p><i>For each application you can configure only one mysql database! (OpenShift restriction)</i></p>
+      
+      <p>4. Create a new Nervatura database</p>
+      <p>Database alias:</p>
+      <ul>
+        <li><b>demo</b></li>
+        <li>or <b>pgdemo</b></li>
+        <li>or <b>mydemo</b></li>
+        <li>(or whatever alias you created)</li>
+      </ul>
+      <p><i>All existing data of the database will be lost!</i></p>
+      
+      <p>5. Create a DEMO database (optional)</p>
+      <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
+        than you can create a blank database again according to the previous instructions.</p>
+        
+      <p><span style="color:#8B1A1A;font-weight:bold;">Managing an OpenShift Application</span></p>
+      
+      <p>Upgrade to the latest Nervatura version (Linux)</p>
+      <p class="code" style="text-align: left;">
+        rhc git-clone -a nervatura<br>
+        git clone https://github.com/nervatura/nervatura.git nervatura_latest<br>
+        rm -r nervatura/*<br>
+        cp -r nervatura_latest/* nervatura/<br>
+        git add .<br>
+        git commit -a -m 'latest'<br>
+        git push
+      </p>
+      
+      <p>Save and restore backups</p>
+      <p class="code" style="text-align: left;">
+        rhc snapshot-save -a nervatura<br>
+        rhc snapshot-restore -f nervatura.tar.gz
+      </p>
+      
+      <p>Watching logs</p>
+      <p class="code" style="text-align: left;">
+        rhc tail -a nervatura
+      </p>
+      
+      <p>Starts and stops an application</p>
+      <p class="code" style="text-align: left;">
+        rhc app-start -a nervatura<br>
+        rhc app-stop -a nervatura<br>
+        rhc app-force-stop -a nervatura<br>
+        rhc app-restart -a nervatura<br>
+      </p>
+      
+      <p>Deletes all the contents of the log and /tmp directory</p>
+      <p class="code" style="text-align: left;">
+        rhc app-tidy -a nervatura
+      </p>
+      
+      <p>Copies a new Nervatura Report template file to the database install directory</p>
+      <p class="code" style="text-align: left;">
+        rhc scp demo upload custom_report.xml app-root/runtime/repo/public/report/
+      </p>
+      
+    </li>
+  </ul>
+  
+  <h3>
+		<a name="config">3. Server config</a>
+	</h3>
+  <p>Application const and UI/GUI settings: 
+    <a href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
+    target="blank">lib/node/conf.js</a> file. Can be changed, but the program is 
+    overwritten when updating!</p>
+  
+  <ul>
+    <li><i>data_dir</i>: Path string. Default:app_home/data or OPENSHIFT_DATA_DIR. A persistent data directory. Subfolders: database(sqlite), data(export/import), storage.</li>
+    <li><i>data_store</i>: String.
+      <ul style="padding-left:15px;">
+        <li>lokijs: Default.</li>
+        <li>pouchdb</li>
+      </ul>
+    </li>
+    <li><i>datepicker</i>
+      <ul style="padding-left:15px;">
+        <li>dateFormat: String. Default:'yy-mm-dd'</li>
+        <li>defaultDate: Integer. Default:0</li>
+        <li>changeMonth: Boolean. Default:true</li>
+        <li>changeYear: Boolean. Default:true</li>
+      </ul>
+    </li>
+    <li><i>engine</i>: Array. Valid values: sqlite, mysql, postgres, mssql</li>
+    <li><i>pool_config</i>: See more <a href="https://github.com/grncdr/node-any-db-pool#api" target="blank">database agnostic connection pool</a></li>
+    <li><i>port</i>: Integer. Default value: 3000. Node.js/Express port value.</li>
+    <li><i>python_script</i>: Path string. Default:'./lib/pylib'. The path where to look for Python 2 app. scripts.</li>
+    <li><i>lang</i>: String. Default value: 'en'. Valid values: en.</li>
+    <li><i>session_store</i>: String.
+      <ul style="padding-left:15px;">
+        <li>leveldown: Linux, Mac OS, FreeBSD</li>
+        <li>sqlite: Default. Windows, Linux, Mac OS, FreeBSD</li>
+        <li>memory: For debugging and developing</li>
+      </ul>
+    </li>
+  </ul>
+  
+  <p>Initial setup (conf.js) and persistent server-side settings: data_dir/storage/data(.json)</p>
+  
+  <ul>
+    <li><i>databases</i>: Default sample customer database connection settings. See more NAS Admin GUI/Customer Databases.
+      <ul style="padding-left:15px;">
+        <li><i>alias</i>: a unique connection name</li>
+        <li><i>engine</i>: the type of database</li>
+        <li><i>host, port, dbname, username, password</i>: the connection information (stored encrypted)</li>
+        <li><i>ndi_enabled</i>: enables the NDI</li>
+        <li><i>encrypt_password</i>: encrypting the data of NDI (cipher key)</li>
+        <li><i>dbs_host_restriction</i>: limiting database connections(ip pattern)</li>
+      </ul>
+    </li>
+    <li><i>databases_openshift</i>: Default sample customer database settings (OpenShift service).</li>
+    <li><i>users</i>: Default sample user accounts. See more NAS Admin GUI/User Accounts.</li>
+    <li><i>settings</i>: See more NAS Admin GUI/Server Settings. A restart is required!
+      <ul style="padding-left:15px;">
+        <li><i>python2_path</i>: Path string. Default:'python'. The path where to locate the "python" executable.
+          Optional, for the server-side Nervatura Report.</li>
+        <li><i>max_content_length</i>: Integer. Default value: 5000. See more <a href="https://github.com/ericmdantas/express-content-length-validator" 
+          target="_blank">express-content-length-validator</a></li>
+        <li><i>session_cookie_max_age</i>: Default value: 7*24*60*60*1000. See more <a href="https://github.com/expressjs/session" 
+          target="blank">express-session</a></li>
+        <li><i>session_secret</i>: See more <a href="https://github.com/expressjs/session" 
+          target="blank">express-session</a></li>
+        <li><i>host_restriction</i>: limiting server connections(ip pattern).
+          <ul style="padding-left:15px;">
+            <li>all_host_restriction: String.</li>
+            <li>nas_host_restriction: String. NAS Admin GUI</li>
+            <li>npi_host_restriction: String. Programming Interface</li>
+            <li>ndi_host_restriction: String. Data Interface</li>
+          </ul>
+          <p class="code">all/nas/npi/ndi/dbs_host_restriction localhost sample:<br> ::1,127.0.0.1,::ffff:127.0.0.1</p>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  
+  <h3>
+		<a name="other">4. Other recipes</a>
+	</h3>
+  
+  <ul>
+    <li><b><a name="migration">Database migration</a></b>
+      <p>Customer database migration is the process of transferring data between storage types, formats, 
+        or computer systems. Using the daily data backup is not recommended. 
+        It may be helpful in the following situations:
+        <ul>
+          <li>switching to another database type, such as sqlite<->mysql, mysql<->postgresql, mssql<->mysql etc.</li>
+          <li>transferring data between host servers</li>
+          <li>exporting data to other formats</li>
+        </ul>
+      </p>
+      <p><span style="font-weight:bold;">Data export</span></p> 
+      <p>NAS Admin GUI/Database Management/Database Export.<br>
+        <u>Data File</u><br>
+        &nbsp;&nbsp;<i>alias:</i> Copy the aliasname_timestamp.data/xml file to the data_dir/data folder.<br>
+        &nbsp;&nbsp;<i>download:</i> Download the result file.
+        <br>
+        <u>Export format</u><br>
+        &nbsp;&nbsp;<i>data:</i> Compress data using deflate.<br>
+        &nbsp;&nbsp;<i>xml:</i> XML text file.
+      </p>
+      <p><span style="font-weight:bold;">Data import</span></p> 
+      <p>NAS Admin GUI/Database Management/Database Import.<br>
+        <u>Data File:</u> Load the *.data/xml file from the data_dir/data folder</p>
+    </li>
+    
+    <li><b><a name="printer">Server-side printers</a></b>
+      <p>Network printer sample</p>
+      <p class="code">
+        NDI URL:<br>
+        http://localhost:3000/ndi/updateData?code=&amp;params=database=demo|username=demo|password=|datatype=tool|insert_row|insert_field
+        &amp;data=serial=network_printer_name|description=Printer settings sample|partnumber=printer|
+        toolgroup=printer|tool_printertype=network
+        <br><br>
+        NDI JSON:<br>
+        updateData({"datatype":"tool","insert_row":true,"insert_field":true},[{"serial":"network_printer_name",
+        "description":"Printer settings sample","partnumber":"printer","toolgroup":"printer","tool_printertype":"network"}])
+      </p>
+      
+      <p>Mail printer sample</p>
+      <p class="code">
+        NDI URL:<br>
+        http://localhost:3000/ndi/updateData?code=&amp;params=database=demo|username=demo|password=|datatype=tool|insert_row|insert_field
+        &amp;data=serial=mail_printer_name|description=Mail-printer settings sample|partnumber=printer|toolgroup=printer|
+        tool_printertype=mail|tool_printer_mail_smtp=smtps://user%40gmail.com:pass@smtp.gmail.com|
+        tool_printer_mail_sender="Fred Foo 👥" &#60;foo@blurdybloop.com&#62;|tool_printer_mail_address=bar@blurdybloop.com, baz@blurdybloop.com|
+        tool_printer_mail_subject=Optional mail subject|tool_printer_mail_message=Optional mail message <br><br>
+        NDI JSON:<br>
+        updateData({"datatype":"tool","insert_row":true,"insert_field":true},[{"serial":"mail_printer_name",
+        "description":"Mail-printer settings sample","partnumber":"printer","toolgroup":"printer","tool_printertype":"mail",
+        "tool_printer_mail_smtp":"smtps://user%40gmail.com:pass@smtp.gmail.com",
+        "tool_printer_mail_sender":"\"Fred Foo 👥\" &#60;foo@blurdybloop.com&#62;",
+        "tool_printer_mail_address":"bar@blurdybloop.com, baz@blurdybloop.com",
+        "tool_printer_mail_subject":"Optional mail subject","tool_printer_mail_message":"Optional mail message"}])
+      </p>
+    
+    </li>
+    
+    <li><b><a name="security">Security Issues</a></b>
+      <p>
+        The Nervatura Framework is based on the <a href="http://expressjs.com/" target="_blank">Express</a>. 
+        If you discover a security vulnerability in Express, please see 
+        <a href="https://github.com/strongloop/express/blob/master/Security.md" 
+          target="_blank">Security Policies and Procedures</a>.<br>
+        Please see more: <a href="http://expressjs.com/en/advanced/best-practice-security.html" 
+          target="_blank">Express security best practices</a> and 
+        <a href="http://expressjs.com/en/advanced/best-practice-performance.html" 
+          target="_blank">Express performance best practices</a>
+      </p>
+      <p>Built-in security packages:</p>
+      <ul>
+        <li><a href="https://github.com/ericmdantas/express-content-length-validator" 
+          target="_blank">express-content-length-validator</a>: large payload attacks</li>
+        <li><a href="https://github.com/aredo/express-enforces-ssl" 
+          target="_blank">express-enforces-ssl</a>: enforces HTTPS connections on any incoming requests (production environment)</li>
+        <li><a href="https://github.com/helmetjs/helmet" 
+          target="_blank">helmet</a>: Content Security Policy, DNS prefetching, clickjacking, 
+          remove the X-Powered-By header, HTTP Public Key Pinning, HTTP Strict Transport Security, 
+          X-Download-Options for IE8+, disable client-side caching, to keep clients from sniffing the MIME type, 
+          some small XSS protections</li>
+        <li><a href="https://github.com/analog-nico/hpp" 
+          target="_blank">hpp</a>: HTTP Parameter Pollution attacks</li>
+        <li><a href="https://github.com/krakenjs/lusca" 
+          target="_blank">lusca</a>: Cross Site Request Forgery (CSRF)</li>
+        <li><a href="https://github.com/jaredhanson/passport" 
+          target="_blank">passport</a>, 
+          <a href="https://github.com/jaredhanson/passport-local" 
+          target="_blank">passport-local</a>: Username and password authentication (NAS Admin GUI)</li>
+        <li><a href="https://software.intel.com/en-us/app-security-api/api" 
+          target="_blank">Intel App Security API</a>: Secure Data, Storage and Transport (client-side, eg. Nervatura Touch)</li>
+      </ul>
+    </li>
+  </ul>
+  
+</body></html>

@@ -7,9 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
     <style type="text/css">
     .body {
+      font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-size: 1em;
       background-color: #ffffff;
       padding: 20pt 42.5pt 42.5pt 42.5pt;
-      font-family: sans-serif;
       color: #444444;
     }
     a {
@@ -44,7 +45,9 @@
       font-weight: bold;
       color: #8B2500;
     }
-    .exblock {
+    .code {
+      font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font-size: .85em;
       background-color: #F5F5F5;
       padding: 5px;
     }
@@ -167,7 +170,7 @@
     </tbody>
   </table>
   
-  <p class="exblock">
+  <p class="code">
     <b>More Examples: </b><a href="/download/nwx.zip"" 
     target="_blank"><b><i>Nervatura wxPython Client</i></b></a> and <a href="/download/npijson.zip" 
     target="_blank"><b><i>Javascript RPC functions</i></b></a>
@@ -200,7 +203,7 @@
 					<p>
 					  The result value is a <a href="#validator">validator</a> object.
 					</p>
-					<p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+					<p class="code"><b><u><i>Examples:</i></u></b><br><br>
 					  data = {"id":1, "method":"getLogin", "jsonrpc":"2.0", <br>
             &nbsp;&nbsp;"params":{"database":"demo","username":"demo","password":""}}<br><br>
             
@@ -249,7 +252,7 @@
 					</p>
 					<p>The result for the called function result.</p>
 					
-					<p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+					<p class="code"><b><u><i>Examples:</i></u></b><br><br>
             <b><i>The next value from the numberdef table (customer, product, invoice etc.):</i></b><br>
             <i>nextNumber(numberkey::String, step::Boolean, insert_key::Boolean)</i><br>
             <br>
@@ -334,7 +337,7 @@
           </p>
           <p>The result of the SQL statement.</p>
           
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br><br>
             <b><i>Close all customer order between 2011.01.01 and 2011.02.01, in EUR:</i></b><br>
             sqlStr = "update trans set closed=1<br>
             &nbsp;&nbsp;where deleted=0 and transtype =(select id from groups where groupvalue='order')<br>
@@ -375,7 +378,7 @@
           </p>
           <p>The result for the execute query result.</p>
           
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br><br>
             <b><i>All customer invoices from 2011.01.01, between 0 and 1 000 000, in EUR, order by duedate:</i></b><br>
             sqlStr = "select t.transnumber, t.transdate <br>
             &nbsp;&nbsp;from trans t <br>
@@ -420,7 +423,7 @@
           </p>
           <p>The result table rows.</p>
           
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br>
             <br>
             data = {"id":3, "method":"loadTable", "jsonrpc":"2.0",<br>
             &nbsp;&nbsp;"params":{<br>
@@ -444,7 +447,7 @@
           <p><u>Functions:</u> <b>loadDataSet</b>, <b>loadDataSet_json</b><br>
             The result value a list of <a href="#infoSet">infoSet</a> objects.</p>
           
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br>
             <br>
             data = {"id":2, "method":"loadDataSet", "jsonrpc":"2.0",<br>
             &nbsp;&nbsp;"params":{<br>

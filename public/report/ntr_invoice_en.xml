@@ -30,7 +30,9 @@ left join fieldvalue pf on pf.ref_id = p.id and fieldname = 'szj_vtsz'
 where ti.deleted=0 and ti.trans_id = @id 
 order by ti.id]]></dataset>
 
-  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber, t.transdate as transdate, t.crdate as crdate
+  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber
+, substr(cast(t.crdate as char(10)), 1, 10) as crdate
+, substr(cast(t.transdate as char(10)), 1, 10) as transdate
 , case when t.notes is null then '' else t.notes end as notes
 , case when t.fnote is null then '' else t.fnote end as fnote
 , case when (tcast.value != 'normal' ) then 
@@ -43,7 +45,12 @@ order by ti.id]]></dataset>
 , case when (tcast.value = 'cancellation' ) then '={{lb_cancelling_invoice}}' when (tcast.value = 'amendment') then '={{lb_amending_invoice}}' else '' end as transcast
 , case when (t.deleted = 1 and tcast.value <> 'cancellation' ) then '={{lb_deleted}}' else '' end as status
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, t.curr as curr, cu.description as currname
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
+, t.acrate as acrate
 , compname.value as comp_name
 , concat('={{lb_address}}: ',case when compaddress.value is null then '' else compaddress.value end) as comp_address
 , concat('={{lb_tax_no}}: ',case when comptax.value is null then '' else comptax.value end) as comp_taxnumber
@@ -83,7 +90,12 @@ where t.id = @id]]></dataset>
 , case when (tcast.value = 'cancellation' ) then '={{lb_cancelling_invoice}}' when (tcast.value = 'amendment') then '={{lb_amending_invoice}}' else '' end as transcast
 , case when (t.deleted = 1 and tcast.value <> 'cancellation' ) then '={{lb_deleted}}' else '' end as status
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, t.curr as curr, cu.description as currname
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
+, t.acrate as acrate
 , compname.value as comp_name
 , '={{lb_address}}: '||case when compaddress.value is null then '' else compaddress.value end as comp_address
 , '={{lb_tax_no}}: '||case when comptax.value is null then '' else comptax.value end as comp_taxnumber
@@ -124,7 +136,12 @@ where t.id = @id]]></dataset>
 , case when (tcast.value = 'cancellation' ) then '={{lb_cancelling_invoice}}' when (tcast.value = 'amendment') then '={{lb_amending_invoice}}' else '' end as transcast
 , case when (t.deleted = 1 and tcast.value <> 'cancellation' ) then '={{lb_deleted}}' else '' end as status
 , CONVERT(VARCHAR(10), t.duedate, 120) as duedate
-, t.curr as curr, cu.description as currname, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc, t.acrate as acrate
+, t.curr as curr, cu.description as currname
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
+, t.acrate as acrate
 , compname.value as comp_name
 , '={{lb_address}}: '+case when compaddress.value is null then '' else compaddress.value end as comp_address
 , '={{lb_tax_no}}: '+case when comptax.value is null then '' else comptax.value end as comp_taxnumber

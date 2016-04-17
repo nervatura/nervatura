@@ -55,7 +55,8 @@ where e.deleted=0 and e.nervatype = (select id from groups where groupname='nerv
 from event e 
 left join groups eg on e.eventgroup = eg.id 
 where e.deleted=0 and e.nervatype = (select id from groups where groupname='nervatype' and groupvalue='product') and e.ref_id = @id]]></dataset>
-  <dataset name="price" engine=""><![CDATA[select p.validfrom, p.curr, p.qty, p.pricevalue
+  <dataset name="price" engine=""><![CDATA[select p.curr, p.qty, p.pricevalue
+, substr(cast(p.validfrom as char(10)), 1, 10) as validfrom
 , case when p.validto is null then '' else substr(cast(p.validto as char(10)), 1, 10) end as validto
 , case when p.vendorprice=1 then '={{lb_yes}}' else '={{lb_no}}' end as vendor
 , case when c.custname is null then '' else c.custname end as custname
@@ -80,7 +81,8 @@ left join link gl on p.id=gl.ref_id_1 and gl.nervatype_1 = (select id from group
   left join groups g on gl.ref_id_2=g.id and gl.nervatype_2 = (select id from groups where groupname='nervatype' and groupvalue='groups') and g.deleted=0
 where p.deleted=0 and p.discount is null and p.product_id = @id
 order by p.validfrom]]></dataset>
-  <dataset name="discount" engine=""><![CDATA[select p.validfrom, p.curr, p.qty, p.pricevalue
+  <dataset name="discount" engine=""><![CDATA[select p.curr, p.qty, p.pricevalue
+, substr(cast(p.validfrom as char(10)), 1, 10) as validfrom
 , case when p.validto is null then '' else substr(cast(p.validto as char(10)), 1, 10) end as validto
 , case when p.vendorprice=1 then '={{lb_yes}}' else '={{lb_no}}' end as vendor
 , case when c.custname is null then '' else c.custname end as custname

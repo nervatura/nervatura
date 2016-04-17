@@ -36,11 +36,11 @@
     </ul>
     <div id="info_create" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
   </form><% } %>
-  <% if (view === "backup") { %>
-  <form id="frm_backup" action="/nas/database/backup" method="post" style="max-width: 600px;">
+  <% if (view === "export") { %>
+  <form id="frm_export" action="/nas/database/export" method="post" style="max-width: 600px;">
     <input name="_csrf" value="<%= _csrf %>" type="hidden">
     <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
-      <li><p class="bck_list_label"><span style="color:brown;">Nervatura backup</span></p>
+      <li><p class="bck_list_label"><span style="color:brown;">Nervatura data export</span></p>
         <p class="bck_list_label"><span style="color:green;">NOM objects:</span></p>
         <p class="bck_list">
           <span style="font-weight:normal;">address, barcode, contact, currency, customer, deffield, employee, event, fieldvalue, groups, item, link, log, movement, numberdef, pattern, payment, place, price, product, project, rate, tax, tool, trans</span></p>
@@ -50,10 +50,10 @@
         <p class="bck_list_label"><span style="color:red;"><%= lang.not_included %>: </span></p>
         <p class="bck_list"><span>ui_printqueue</span></p>
       </li>
-      <li><p class="bck_list"><%= lang.info_backup %></p></li>
+      <li><p class="bck_list"><%= lang.info_export %></p></li>
       <li class="ui-grid-a ui-responsive">
         <div class="ui-block-a" style="padding: 0px 3px;">
-          <label for="filename"><%= lang.label_backup_file %>:</label>
+          <label for="filename"><%= lang.label_export_file %>:</label>
           <select name="filename" id="filename"><% if (form.filename !== 'download') { %>
             <option value="alias" selected="selected"><%= lang.label_alias %></option>
             <option value="download"><%= lang.label_download %></option><% } else{ %>
@@ -64,9 +64,9 @@
         <div class="ui-block-b" style="padding: 0px 3px;">
           <label for="format"><%= lang.label_format %>:</label>
           <select name="format" id="format"><% if (form.format !== 'xml') { %>
-            <option value="backup" selected="selected">backup</option>
+            <option value="data" selected="selected">data</option>
             <option value="xml">xml</option><% } else{ %>
-            <option value="backup">backup</option>
+            <option value="data">data</option>
             <option value="xml" selected="selected">xml</option><% } %>
           </select>
         </div>
@@ -79,29 +79,29 @@
           </select>
         </div>
         <div class="ui-block-b" style="padding: 0px 3px;">
-          <a data-ajax="false" href="#" onclick="$('#info_backup').html('<%= lang.info_start %>');document.forms['frm_backup'].submit();" 
+          <a data-ajax="false" href="#" onclick="$('#info_export').html('<%= lang.info_start %>');document.forms['frm_export'].submit();" 
               class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
               Starting the process...</a>
         </div>
       </li>
     </ul>
-    <div id="info_backup" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
+    <div id="info_export" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
   </form><% } %>
-  <% if (view === "restore") { %>
-  <form id="frm_restore" action="/nas/database/restore" method="post" style="max-width: 600px;">
+  <% if (view === "import") { %>
+  <form id="frm_import" action="/nas/database/import" method="post" style="max-width: 600px;">
     <input name="_csrf" value="<%= _csrf %>" type="hidden">
     <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
       <li><p class="dbs_list"><%= lang.li_dbs_create_2 %></p></li>
       <li class="ui-field-contain">
-        <label for="filename"><%= lang.label_backup_file %>:</label>
+        <label for="filename"><%= lang.label_export_file %>:</label>
         <select name="filename" id="alias"><% filenames.forEach(function(filename) { %><% if (filename === form.filename) { %>
           <option value="<%= filename %>" selected="selected"><%= filename %></option><% } else{ %>
           <option value="<%= filename %>"><%= filename %></option><% } %><% }); %>
         </select>
       </li>
       <li>
-        <label for="backup"><%= lang.label_upload_file %>:</label>
-        <input id="backup" name="backup" type="file">
+        <label for="data"><%= lang.label_upload_file %>:</label>
+        <input id="data" name="data" type="file" disabled="disabled">
       </li>
       <li class="ui-grid-a ui-responsive">
         <div class="ui-block-a" style="padding: 0px 3px;">
@@ -111,13 +111,13 @@
           </select>
         </div>
         <div class="ui-block-b" style="padding: 0px 3px;">
-          <a data-ajax="false" href="#" onclick="$('#info_restore').html('<%= lang.info_start %>');document.forms['frm_restore'].submit();" 
+          <a data-ajax="false" href="#" onclick="$('#info_import').html('<%= lang.info_start %>');document.forms['frm_import'].submit();" 
               class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
               Starting the process...</a>
         </div>
       </li>
     </ul>
-    <div id="info_restore" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
+    <div id="info_import" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
   </form><% } %>
   <% if (view === "edit") { %>
   <form id="frm_edit" action="/nas/database/list" method="post" style="max-width: 500px;">
@@ -167,21 +167,13 @@
           <label><input name="ndi_enabled" type="checkbox" <%=data.settings.ndi_enabled? "checked" : ""%> ><%= lang.label_ndi_enabled %></label>
         </div>
         <div class="ui-block-b" style="padding: 0px 3px;">
-          <label><input name="ndi_encrypt_data" type="checkbox" <%=data.settings.ndi_encrypt_data? "checked" : ""%> ><%= lang.label_ndi_encrypt_data %></label>
-        </div>
-      </li>
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <label><input name="ndi_md5_password" type="checkbox" <%=data.settings.ndi_md5_password? "checked" : ""%> ><%= lang.label_ndi_md5_password %></label>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <label for="ndi_encrypt_password"><%= lang.label_ndi_encrypt_password %>:</label>
-          <input name="ndi_encrypt_password" id="ndi_encrypt_password" value="<%= data.settings.ndi_encrypt_password %>" data-clear-btn="true" type="text">
+          <label for="encrypt_password"><%= lang.label_encrypt_password %>:</label>
+          <input name="encrypt_password" id="encrypt_password" value="<%= data.settings.encrypt_password %>" data-clear-btn="true" type="text">
         </div>
       </li>
       <li class="ui-responsive">
-        <label for="ndi_host_restriction"><%= lang.label_ndi_host_restriction %>:</label>
-        <textarea id="ndi_host_restriction" name="ndi_host_restriction" ><%= data.settings.ndi_host_restriction %></textarea>
+        <label for="dbs_host_restriction"><%= lang.label_dbs_host_restriction %>:</label>
+        <textarea id="dbs_host_restriction" name="dbs_host_restriction" ><%= data.settings.dbs_host_restriction %></textarea>
       </li>
       <li class="ui-body">
         <fieldset class="ui-grid-a">

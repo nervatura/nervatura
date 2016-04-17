@@ -3,6 +3,9 @@
 
 <script>
   function updateForm(cmd,reportkey){
+    if((cmd==="cancel" || cmd==="delete") && document.getElementById("ftemplate")){
+      document.getElementById("ftemplate").remove();
+      document.getElementById("flabels").remove();}
     $("#update_cmd").val(cmd);
     $("#update_reportkey").val(reportkey);
     document.forms['frm_list'].submit();}
@@ -119,12 +122,12 @@
       </li>
       <li style="padding-top: 0px;">
         <div data-role="collapsibleset" data-inset="false" style="margin:0px;">
-          <div data-role="collapsible" data-collapsed="true" style="padding:0px;"
+          <div id="ftemplate" data-role="collapsible" data-collapsed="true" style="padding:0px;"
             data-collapsed-icon="code" data-expanded-icon="code" >
             <h2 style="margin:0px;"><%= lang.label_xml_template %></h2>
             <textarea name="template" style="margin:0px;"><%= form.report.report %></textarea>
           </div>
-          <div data-role="collapsible" data-collapsed="true" 
+          <div id="flabels" data-role="collapsible" data-collapsed="true" 
             data-collapsed-icon="tag" data-expanded-icon="tag" >
             <h2 style="margin:0px;"><%= lang.label_report_labels %></h2><% form.labels.forEach(function(label) { %>
               <div>

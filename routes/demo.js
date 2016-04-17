@@ -30,7 +30,7 @@ router.post('/create', function(req, res, next) {
 
 function create_demo(params, req, res, _callback) {
   var nstore = require('../lib/node/nervastore.js')(req, res);
-  var data = require('../lib/node/demo.js');
+  var data = JSON.parse(JSON.stringify(require('../lib/node/demo.js')));
   var ndi = require('../lib/node/ndi.js')();
   var out = require('../lib/node/tools.js').DataOutput();
   var tool = require('../lib/node/tools.js').NervaTools();

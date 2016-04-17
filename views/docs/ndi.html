@@ -8,9 +8,10 @@
 			
 	  <style type="text/css">
 		.body {
+      font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		  font-size: 1em;
 		  background-color: #ffffff;
 		  padding: 20pt 42.5pt 42.5pt 42.5pt;
-		  font-family: sans-serif;
 		  text-align: justify;
 		  color: #444444;
 		}
@@ -18,7 +19,9 @@
 		  text-decoration: none;
 		  color: #3B7687;
 		}
-		.exblock {
+		.code {
+      font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font-size: .85em;
 		  background-color: #F5F5F5;
 		  padding: 10px;
 		}
@@ -166,7 +169,7 @@
 			<tr>
         <td>use_deleted</td>
         <td>no value</td>
-        <td>Optional. Show (getData) or use (updateData) the deleted data. Used for data backup/restore.
+        <td>Optional. Show (getData) or use (updateData) the deleted data. Used for data export/import.
         </td>
       </tr>
 			<tr>
@@ -458,7 +461,7 @@
     <a name="examples">5. Examples</a>
   </h3>
   
-  <p class="exblock" style="text-align: left;">
+  <p class="code" style="text-align: left;">
     <b><i>1. Enter two new customers in one request: customer name, VAT
 				number and eye colour. If the eye colour customer feature does not
 				exist, it will be automatically generated. We give customer number
@@ -588,7 +591,7 @@
     <br>
   </p>
   
-  <p class="exblock">
+  <p class="code">
     <b>More Examples: </b>
     <a href="/ndi/wizard" 
     target="_blank"><b><i>Data Interface Wizard</i></b></a>,&nbsp;

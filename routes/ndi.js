@@ -52,6 +52,11 @@ function index(data, req, res) {
   var ndi_data = ndi.decodeData(data);
   if (ndi_data.error){
     res.send(ndi_data.error);}
+  else if (req.app.get("host_settings").ndi_host_restriction.length>0 && req.app.get("host_settings").ndi_host_restriction.indexOf(req.ip)===-1){
+    res.send(ndi.getError("login", "message", "NDI "+req.app.locals.lang.insecure_err));}
+  else if (req.app.get("host_settings").ndi_host_restriction.length===0 && req.app.get("host_settings").all_host_restriction.length>0 
+    && req.app.get("host_settings").all_host_restriction.indexOf(req.ip)===-1){
+    res.send(ndi.getError("login", "message", "NDI "+req.app.locals.lang.insecure_err));}
   else {
     var nstore = require('../lib/node/nervastore.js')(req, res);
     nstore.connect.getLogin(
@@ -59,8 +64,10 @@ function index(data, req, res) {
       function(err, validator){
         if (err){
           res.send(ndi.getError("login", "message", err));}
+        else if (nstore.ndi_enabled() === false){
+          res.send(ndi.getError("login", "message", lang.ndi_disabled))}
         else {
-          if (nstore.encrypt_data() && nstore.encrypt_password()!==null){
+          if (nstore.encrypt_password()!==null){
             var out = require('../lib/node/tools.js').DataOutput();
             ndi_data.items = out.decipherValue(nstore.encrypt_password(), ndi_data.items, "hex");}
           ndi_data.params.validator = validator;

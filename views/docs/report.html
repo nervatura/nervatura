@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
     <style type="text/css">
       .body {
+        font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size: 1em;
         background-color: #ffffff;
         padding: 20pt 42.5pt 42.5pt 42.5pt;
         font-family: sans-serif;
@@ -54,7 +56,9 @@
         font-style: italic;
         color: #008B45;
       }
-      .exblock {
+      .code {
+        font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        font-size: .85em;
         background-color: #F5F5F5;
         padding: 5px;
       }
@@ -437,7 +441,7 @@
             The result value is an element object.
           </p>
           
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br><br>
             <b><i>Python:</i></b><br>
             rpt = Report()<br>
             details = rpt.report["elements"]["details"]<br>
@@ -805,7 +809,7 @@
     <a name="deploying">5. Deploying Report Templates</a>
   </h3>
   
-  <p class="exblock">
+  <p class="code">
     <b>Complete Examples: </b>
     <a href="/report/ntr_vat_en.xml" target="_blank">Nervatura VAT Report</a>, 
     <a href="/report/ntr_invoice_en.xml" target="_blank">Nervatura Invoice</a>
@@ -844,7 +848,7 @@
               ntr (Nervatura Report), xls (Excel workbook), html (HTML document),
               gshi(Genshi template)</span><br>
           </div>
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br><br>
             &lt;report reportkey="ntr_cash_in_en" nervatype="trans" 
             transtype="cash" direction="in" repname="Petty Cash Voucher EN" 
             description="Deposit Voucher" filetype="ntr"&gt;<br>
@@ -872,7 +876,7 @@
             <span class="retpar">text</span>: <span class="fdesc">
               a valid SQL statement. Parameters: @fieldname (nervatype=report) or @id </span><br>
           </div>
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br><br>
             &lt;dataset name="head" engine=""&gt;&lt;![CDATA[select ...]]&gt;&lt;/dataset&gt;<br><br>
             &lt;dataset name="fieldvalue" engine="mysql"&gt;&lt;![CDATA[select ...]]&gt;&lt;/dataset&gt;<br>
           </p>        
@@ -906,7 +910,7 @@
             <span class="retpar">text</span>: <span class="fdesc">
               a valid SQL statement. Parameters: @fieldname</span><br>
           </div>
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br><br>
             &lt;field fieldname="date_from" fieldtype="date" wheretype="in" description="From date" 
             orderby="0" defvalue="-360"/&gt;<br><br>
             &lt;field fieldname="customer" fieldtype="string" wheretype="where" 
@@ -929,7 +933,7 @@
             <span class="retpar">text</span>: <span class="fdesc">
               label</span><br>
           </div>
-          <p class="exblock"><b><u><i>Examples:</i></u></b><br><br>
+          <p class="code"><b><u><i>Examples:</i></u></b><br><br>
             &lt;message secname="report" fieldname="transdate"&gt;&lt;![CDATA[Invoice Date]]&gt;&lt;/message&gt;<br><br>
             &lt;message secname="head" fieldname="lb_address"&gt;&lt;![CDATA[Address]]&gt;&lt;/message&gt;<br>
           </p>        

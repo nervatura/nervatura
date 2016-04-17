@@ -1,7 +1,19 @@
 <report reportkey="ntr_employee_en" nervatype="employee" repname="Employee Sheet" 
   description="Employee Information Sheet" filetype="ntr">
   
-  <dataset name="head" engine=""><![CDATA[select e.id as id, e.empnumber as empnumber, e.username as username, ugroup.groupvalue as usergroup, e.startdate as startdate, e.enddate as enddate, dep.groupvalue as department,
+  <dataset name="head" engine=""><![CDATA[select e.id as id, e.empnumber as empnumber, e.username as username, ugroup.groupvalue as usergroup, 
+  substr(cast(e.startdate as char(10)), 1, 10) as startdate,
+  substr(cast(e.enddate as char(10)), 1, 10) as enddate, 
+  dep.groupvalue as department,
+  case when e.inactive=1 then '={{lb_yes}}' else '={{lb_no}}' end as inactive 
+from employee e 
+inner join groups as ugroup on e.usergroup=ugroup.id 
+left join groups as dep on e.department=dep.id 
+where e.deleted=0 and e.id = @id]]></dataset>
+<dataset name="head" engine="mssql"><![CDATA[select e.id as id, e.empnumber as empnumber, e.username as username, ugroup.groupvalue as usergroup, 
+CONVERT(VARCHAR(10), e.startdate, 120) as startdate,
+CONVERT(VARCHAR(10), e.enddate, 120) as enddate, 
+dep.groupvalue as department,
   case when e.inactive=1 then '={{lb_yes}}' else '={{lb_no}}' end as inactive 
 from employee e 
 inner join groups as ugroup on e.usergroup=ugroup.id 
@@ -135,9 +147,9 @@ where e.deleted=0 and e.nervatype = (select id from groups where groupname='nerv
       </columns>
     </row>
     <vgap height="2"/>
-    <hline border-color="218"/>
-    <vgap height="2"/>
-    <row hgap="2">
+    <hline border-color="218" visible="address"/>
+    <vgap height="2" visible="address"/>
+    <row hgap="2" visible="address">
       <columns>
         <cell name="label" value="labels.lb_zipcode" font-style="bold" background-color="245"/>
         <cell name="zipcode" value="address.0.zipcode" border="1" border-color="218"/>
@@ -145,8 +157,8 @@ where e.deleted=0 and e.nervatype = (select id from groups where groupname='nerv
         <cell name="city" value="address.0.city" border="1" border-color="218"/>
       </columns>
     </row>
-    <vgap height="2"/>
-    <row hgap="2">
+    <vgap height="2" visible="address"/>
+    <row hgap="2" visible="address">
       <columns>
         <cell name="label" value="labels.lb_street" font-style="bold" background-color="245"/>
         <cell name="street" multiline="true" value="address.0.street" border="1" border-color="218"/>

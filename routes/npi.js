@@ -33,10 +33,10 @@ router.post('/', function (req, res, next) {
   index(req.body, req, res);});
 
 function index(data, req, res) {
-  if (req.app.settings.conf.host_restriction.npi.length>0 && req.app.settings.conf.host_restriction.npi.indexOf(req.ip)===-1){
+  if (req.app.get("host_settings").npi_host_restriction.length>0 && req.app.get("host_settings").npi_host_restriction.indexOf(req.ip)===-1){
     res.send(getError("host_restrict", "NPI "+req.app.locals.lang.insecure_err));}
-  else if (req.app.settings.conf.host_restriction.npi.length===0 && req.app.settings.conf.host_restriction.all.length>0 
-    && req.app.settings.conf.host_restriction.all.indexOf(req.ip)===-1){
+  else if (req.app.get("host_settings").npi_host_restriction.length===0 && req.app.get("host_settings").all_host_restriction.length>0 
+    && req.app.get("host_settings").all_host_restriction.indexOf(req.ip)===-1){
     res.send(getError("host_restrict", "NPI "+req.app.locals.lang.insecure_err));}
   else {
     var nstore = require('../lib/node/nervastore.js')(req, res);

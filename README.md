@@ -7,43 +7,43 @@ Open Source Business Management Framework for [Node.js](http://nodejs.org)
 
 The purpose of Nervatura Project is to develop such data model, tools and knowledge database which allows to build safe and flexible management solutions quickly and at low cost.
 The Nervatura Project includes:
-  * Object Model
-  * Application Server and Admin GUI
-  * Data Interface
-  * Programming Interface
-  * Client- and server-side data reporting
+  * [Object Model](https://github.com/nervatura/nervatura/wiki/Nervatura-Object-Model-%28NOM%29)
+  * [Application Server and Admin GUI](https://github.com/nervatura/nervatura/wiki/Application-Server-and-Admin-GUI-%28NAS%29)
+  * [Data Interface](https://github.com/nervatura/nervatura/wiki/Nervatura-Data-Interface-%28NDI%29)
+  * [Programming Interface](https://github.com/nervatura/nervatura/wiki/Nervatura-Programming-Interface-%28NPI%29)
+  * [Client- and server-side data reporting](https://github.com/nervatura/nervatura/wiki/Nervatura-Report-%28NDR%29)
   * and other documents, resources, sample code and demo programs
 
-Developed by Nervatura Ltd. and can be used under the [LGPLv3 License](LICENSE).
+The development are open-source project and can be used freely under the scope of [LGPLv3 License](http://www.gnu.org/licenses/lgpl.html).
 
 Homepage: http://www.nervatura.com
 
 ## Installation & Quick Start
 
-    $ npm install nervatura --save
+    $ npm install nervatura --production --save
+
+or
+
+    $ git clone https://github.com/nervatura/nervatura.git
+    $ cd nervatura
+    $ npm install --production --save
 
 Start the server:
 
-    $ cd node_modules/nervatura
+    $ cd nervatura
     $ npm start
 
 and [http://localhost:3000/](http://localhost:3000/)
-
-Server config file (port, secret, storage type, host restriction etc.): [lib/node/conf.js](lib/node/conf.js)
-
-###Security Issues
-
-Built in modules: [lusca](https://github.com/krakenjs/lusca), [passport](https://github.com/jaredhanson/passport)
-
-The Nervatura is based on the [Express framework] (http://expressjs.com/). If you discover a security vulnerability in Express, please see 
-[Security Policies and Procedures](https://github.com/strongloop/express/blob/master/Security.md).
-
-Please see more:
-[Express security best practices](http://expressjs.com/en/advanced/best-practice-security.html)
-and
-[Express performance best practices](http://expressjs.com/en/advanced/best-practice-performance.html)
+    
+Please see more the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/views/docs/nas.html):
+  * Optional packages
+  * Cloud Hosting Services
+  * Server config
+  * Other recipes
 
 ## Docs & Community
+
+[Nervatura Wiki](https://github.com/nervatura/nervatura/wiki)
 
 More info see http://www.nervatura.com.
 

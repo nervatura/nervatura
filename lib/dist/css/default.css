@@ -1,3 +1,9 @@
+.body {
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 1em;
+  background-color: #ffffff;
+  color: #444444;
+}
 .error { 
   background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0 0 #FFF9DF;
   border: 1px solid #F7C942;

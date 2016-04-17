@@ -1,9 +1,11 @@
 <report reportkey="ntr_cash_out_en" nervatype="trans" transtype="cash" direction="out" 
   repname="Petty Cash Voucher EN" description="Payment Voucher" filetype="ntr">
   
-  <dataset name="head" engine=""><![CDATA[select t.transnumber, t.crdate, dir.groupvalue as direction, 
+  <dataset name="head" engine=""><![CDATA[select t.transnumber, dir.groupvalue as direction, 
 case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber, 
-p.planumber, p.description as cdesk, p.curr, pm.paiddate, -pm.amount as amount, 
+p.planumber, p.description as cdesk, p.curr, -pm.amount as amount,
+substr(cast(t.crdate as char(10)), 1, 10) as crdate,
+substr(cast(pm.paiddate as char(10)), 1, 10) as paiddate, 
 case when t.notes is null then '' else t.notes end as notes, 
 case when t.fnote is null then '' else t.fnote end as fnote, 
 case when emp.empnumber is null then '' else emp.empnumber end as empnumber  

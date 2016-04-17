@@ -31,7 +31,7 @@ class Pylib(object):
       return f.read()
     finally:
       f.close()
-  
+            
   def create_excel(self):
     from xlwt import easyxf
     from xlwt import Workbook

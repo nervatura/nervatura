@@ -8,11 +8,12 @@
 , case when mv.shared =0 then '={{lb_yes}}' else '={{lb_no}}' end as shared
 from movement mv inner join product p on mv.product_id=p.id
 inner join trans t on mv.trans_id=t.id
-inner join place pl on mv.place_id=pl.id 
+left join place pl on mv.place_id=pl.id 
 inner join groups g on mv.movetype=g.id and g.groupvalue='plan'
 where mv.deleted=0 and mv.trans_id = @id
 order by mv.id]]></dataset>
-  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber, t.crdate as crdate
+  <dataset name="head" engine=""><![CDATA[select t.transnumber as transnumber
+, substr(cast(t.crdate as char(10)), 1, 10) as crdate
 , case when t.notes is null then '' else t.notes end as notes
 , case when t.fnote is null then '' else t.fnote end as fnote
 , case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber

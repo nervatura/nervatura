@@ -3,9 +3,13 @@
   
   <dataset name="customers" engine=""><![CDATA[select t.transnumber as invoice_no
 , custname.value as customer
-, t.transdate
+, substr(cast(t.transdate as char(10)), 1, 10) as transdate
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -33,7 +37,11 @@ order by (cast(t.duedate as date)-@posdate), t.duedate, t.id]]></dataset>
 , custname.value as customer
 , CONVERT(VARCHAR(10), t.transdate, 120) as transdate
 , CONVERT(VARCHAR(10), t.duedate, 120) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -59,9 +67,13 @@ where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue
 order by DATEDIFF(day,@posdate,t.duedate), t.duedate, t.id]]></dataset>
   <dataset name="customers" engine="mysql"><![CDATA[select t.transnumber as invoice_no
 , custname.value as customer
-, t.transdate
+, substr(cast(t.transdate as char(10)), 1, 10) as transdate
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -89,7 +101,11 @@ order by DATEDIFF(t.duedate,@posdate), t.duedate, t.id]]></dataset>
 , custname.value as customer
 , t.transdate
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -115,9 +131,13 @@ where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue
 order by (julianday(t.duedate)-julianday(@posdate)), t.duedate, t.id]]></dataset>
   <dataset name="suppliers" engine=""><![CDATA[select t.transnumber as invoice_no
 , custname.value as customer
-, t.transdate
+, substr(cast(t.transdate as char(10)), 1, 10) as transdate
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -145,7 +165,11 @@ order by (cast(t.duedate as date)-@posdate), t.duedate, t.id]]></dataset>
 , custname.value as customer
 , CONVERT(VARCHAR(10), t.transdate, 120) as transdate
 , CONVERT(VARCHAR(10), t.duedate, 120) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -171,9 +195,13 @@ where t.deleted=0 and t.paid=0 and ttype.groupvalue='invoice' and dir.groupvalue
 order by DATEDIFF(day,@posdate,t.duedate), t.duedate, t.id]]></dataset>
   <dataset name="suppliers" engine="mysql"><![CDATA[select t.transnumber as invoice_no
 , custname.value as customer
-, t.transdate
+, substr(cast(t.transdate as char(10)), 1, 10) as transdate
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -201,7 +229,11 @@ order by DATEDIFF(t.duedate,@posdate), t.duedate, t.id]]></dataset>
 , custname.value as customer
 , t.transdate
 , substr(cast(t.duedate as char(10)), 1, 10) as duedate
-, t.curr as curr, case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtypedesc
+, t.curr as curr
+, case when msp.msg is null then 
+  case when ptg.description is null or ptg.description = '' then 
+  ptg.groupvalue else ptg.description end 
+  else msp.msg end as paidtypedesc
 , tsum.sum_amount
 , case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as paid_amount
 , tsum.sum_amount-case when tpaid.paid_amount is null then 0 else tpaid.paid_amount end as pdiff
@@ -263,22 +295,28 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
   <report title="PAYMENTS DUE LIST" font-family="helvetica" font-size="11" left-margin="15" top-margin="15" right-margin="15" decode="utf-8" encode="latin_1" />
   <header>
     <row height="10">
-      <cell name="custname" value="company.0.custname" align="left" font-style="bold" font-size="12" width="100"/>
-      <cell name="label" value="labels.lb_custpos" font-style="bolditalic" font-size="26" align="right" color="#D8DBDA"/>
+      <columns>
+        <cell name="custname" value="company.0.custname" align="left" font-style="bold" font-size="12" width="100"/>
+        <cell name="label" value="labels.lb_custpos" font-style="bolditalic" font-size="26" align="right" color="#D8DBDA"/>
+      </columns>
     </row>
     <vgap height="1"/>
     <hline border-color="218" gap="1"/>
     <vgap height="3"/>
     <row hgap="2" height="1">
-      <cell name="label" value="labels.lb_report_date" font-style="bold" font-size="10" align="left" />
-      <cell name="posdate" value="company.0.posdate" align="left" font-style="bold" font-size="10" />
-      <cell name="crdate" value="={{labels.lb_create_date}} ={{crtime}}" align="right" font-style="italic" font-size="9"/>
+      <columns>
+        <cell name="label" value="labels.lb_report_date" font-style="bold" font-size="10" align="left" />
+        <cell name="posdate" value="company.0.posdate" align="left" font-style="bold" font-size="10" />
+        <cell name="crdate" value="={{labels.lb_create_date}} ={{crtime}}" align="right" font-style="italic" font-size="9"/>
+      </columns>
     </row>
   </header>
   <details>
     <vgap height="2"/>
     <row visible="suppliers">
-      <cell name="label" value="labels.lb_suppliers" align="center" font-style="bold" background-color="14212058"/>
+      <columns>
+        <cell name="label" value="labels.lb_suppliers" align="center" font-style="bold" background-color="14212058"/>
+      </columns>
     </row>
     <datagrid name="payable" databind="suppliers" border="1" border-color="218" font-size="8" header-background="245">
       <columns>
@@ -295,7 +333,9 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
     </datagrid>
     <vgap height="2"/>
     <row visible="customers">
-      <cell name="label" value="labels.lb_customers" align="center" font-style="bold" background-color="14212058"/>
+      <columns>
+        <cell name="label" value="labels.lb_customers" align="center" font-style="bold" background-color="14212058"/>
+      </columns>
     </row>
     <datagrid name="receivable" databind="customers" border="1" border-color="218" font-size="8" header-background="245">
       <columns>
@@ -315,8 +355,10 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
     <vgap height="2"/>
     <hline border-color="218"/>
     <row height="10">
-      <cell value="labels.web_page" link="labels.web_link" font-style="bolditalic" color="#2100FF"/>
-      <cell value="{{page}}" align="right" font-style="bold"/>
+      <columns>
+        <cell value="labels.web_page" link="labels.web_link" font-style="bolditalic" color="#2100FF"/>
+        <cell value="{{page}}" align="right" font-style="bold"/>
+      </columns>
     </row>
   </footer>
 </template>]]></template>
