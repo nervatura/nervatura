@@ -33,7 +33,7 @@ Start the server:
     $ cd nervatura
     $ npm start
 
-and [http://localhost:3000/](http://localhost:3000/)
+and [http://127.0.0.1:3000/](http://127.0.0.1:3000/)
     
 Please see more the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/views/docs/nas.html):
   * Optional packages
