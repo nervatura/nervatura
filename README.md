@@ -28,13 +28,25 @@ or
     $ cd nervatura
     $ npm install --production --save
 
-Start the server:
+Start the server
 
-    $ cd nervatura
+* development mode:
+```
+    $ NODE_ENV=development node server.js
+```
+and [http://localhost:3000/](http://localhost:3000/)
+
+* production mode:
+```
     $ npm start
+```
+and [https://localhost:3000/](https://localhost:3000/)
 
-and [http://127.0.0.1:3000/](http://127.0.0.1:3000/)
-    
+* or change the file [.npmrc](.npmrc): production = true/false, and
+```
+    $ npm start
+```    
+
 Please see more the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/views/docs/nas.html):
   * Optional packages
   * Cloud Hosting Services
