@@ -32,19 +32,19 @@ Start the server
 
 * development mode:
 ```
-    $ NODE_ENV=development node server.js
+  $ NODE_ENV=development node server.js
 ```
 and [http://localhost:3000/](http://localhost:3000/)
 
 * production mode:
 ```
-    $ npm start
+  $ npm start
 ```
 and [https://localhost:3000/](https://localhost:3000/)
 
 * or change the file [.npmrc](.npmrc): production = true/false, and
 ```
-    $ npm start
+  $ npm start
 ```    
 
 Please see more the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/views/docs/nas.html):
