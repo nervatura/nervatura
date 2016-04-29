@@ -18,18 +18,18 @@ router.get('/', function(req, res, next) {
   res.redirect('index');
 });
 
+/*
 router.get('/env', function(req, res, next) {
   var content = 'Version: ' + process.version + '\n<br/>\n' +
     'Env: {<br/>\n<pre>';
-  //  Add env entries.
   for (var k in process.env) {
-    content += '   ' + k + ': ' + process.env[k] + '\n';
-  }
+    content += '   ' + k + ': ' + process.env[k] + '\n';}
   content += '}\n</pre><br/>\n'
   res.send('<html>\n' +
     '  <head><title>Node.js Process Env</title></head>\n' +
     '  <body>\n<br/>\n' + content + '</body>\n</html>');
 });
+*/
 
 router.get('/index', function(req, res, next) {
   res.render('default/index.html',{});
