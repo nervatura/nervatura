@@ -24,7 +24,7 @@ router.get('/index', function(req, res, next) {
 router.get('/server', function(req, res, next) {
   var flash;
   const exec = require('child_process').exec;
-  exec(req.app.get("conf").python2_path+" -V", function(err, stdout, stderr){
+  exec(req.app.get("host_settings").python2_path+" -V", function(err, stdout, stderr){
       if (err || stderr.indexOf("Python 2.")===-1) {
         flash = req.app.locals.lang.invalid_python_path;}
      res.render('report/server.html',{flash:flash});});});
@@ -41,13 +41,13 @@ router.all('/document', function(req, res, next) {
     method = "create_report_sample"}
     
   const exec = require('child_process').exec;
-  exec(req.app.get("conf").python2_path+" -V", function(err, stdout, stderr){
+  exec(req.app.get("host_settings").python2_path+" -V", function(err, stdout, stderr){
     if (err || stderr.indexOf("Python 2.")===-1) {
       res.end(req.app.locals.lang.invalid_python_path);}
     else{
       var ps = new PyShell("pylib.py", {
         args: [method,orient,format,req.app.get("conf").python_script+"/report/sample.xml"],
-        pythonPath: req.app.get("conf").python2_path,
+        pythonPath: req.app.get("host_settings").python2_path,
         scriptPath: req.app.get("conf").python_script,
         mode: 'text', pythonOptions: ['-u']});
       var output = '';
@@ -74,13 +74,13 @@ router.all('/document', function(req, res, next) {
 router.get('/template', function(req, res, next) {
   if (req.query.py){
     const exec = require('child_process').exec;
-    exec(req.app.get("conf").python2_path+" -V", function(err, stdout, stderr){
+    exec(req.app.get("host_settings").python2_path+" -V", function(err, stdout, stderr){
       if (err || stderr.indexOf("Python 2.")===-1) {
         res.end(req.app.locals.lang.invalid_python_path);}
       else{
         var ps = new PyShell("pylib.py", {
           args: ["get_source","create_report_sample"],
-          pythonPath: req.app.get("conf").python2_path,
+          pythonPath: req.app.get("host_settings").python2_path,
           scriptPath: req.app.get("conf").python_script,
           mode: 'text', pythonOptions: ['-u']});
         var output = '';
