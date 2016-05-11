@@ -5,16 +5,24 @@ Open Source Business Management Framework for [Node.js](http://nodejs.org)
 
 ## Features
 
-The purpose of Nervatura Project is to develop such data model, tools and knowledge database which allows to build safe and flexible management solutions quickly and at low cost.
-The Nervatura Project includes:
-  * [Object Model](https://github.com/nervatura/nervatura/wiki/Nervatura-Object-Model-%28NOM%29)
+Nervatura is an business management framework. It can handle any type of business related information, starting from customer details, up to shipping, stock or payment information.
+
+The framework is based on Nervatura [Object Model](https://github.com/nervatura/nervatura/wiki/Nervatura-Object-Model-%28NOM%29) specification. The main aspects of its design were:
+
+* simple and transparent structure
+* capability of storing different data types of an average company
+* effective, easily expandable and secure data storage
+* support of several database types
+* well documented, easy data management
+
+The Nervatura Framework is a freely available and free of charge solution. Its main parts are the following:
   * [Application Server and Admin GUI](https://github.com/nervatura/nervatura/wiki/Application-Server-and-Admin-GUI-%28NAS%29)
   * [Data Interface](https://github.com/nervatura/nervatura/wiki/Nervatura-Data-Interface-%28NDI%29)
   * [Programming Interface](https://github.com/nervatura/nervatura/wiki/Nervatura-Programming-Interface-%28NPI%29)
   * [Client- and server-side data reporting](https://github.com/nervatura/nervatura/wiki/Nervatura-Report-%28NDR%29)
   * and other documents, resources, sample code and demo programs
 
-The development are open-source project and can be used freely under the scope of [LGPLv3 License](http://www.gnu.org/licenses/lgpl.html).
+Developed as open-source project and can be used freely under the scope of [LGPLv3 License](http://www.gnu.org/licenses/lgpl.html).
 
 Homepage: http://www.nervatura.com
 

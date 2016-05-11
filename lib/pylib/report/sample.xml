@@ -84,10 +84,10 @@
       <columns>
         <cell name="label" value="Barcode (Interleaved 2of5)" font-style="bold" font-size="10" 
           border="1" border-color="245" background-color="245"/>
-        <barcode code-type="i2of5" value="1234567890" visible-value="1"/>
+        <barcode code-type="ITF" value="1234567890" visible-value="1"/>
         <cell name="label" value="Barcode (Code 39)" font-style="bold" font-size="10" 
           border="1" border-color="245" background-color="245"/>
-        <barcode code-type="code39" value="1234567890ABCDEF" visible-value="1"/>
+        <barcode code-type="CODE_39" value="1234567890ABCDEF" visible-value="1"/>
       </columns>
     </row>
     <vgap height="3"/>

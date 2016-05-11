@@ -386,7 +386,7 @@
      },
      {
       "barcode": {
-       "code-type": "i2of5",
+       "code-type": "ITF",
        "value": "1234567890",
        "visible-value": 1
       }
@@ -404,7 +404,7 @@
      },
      {
       "barcode": {
-       "code-type": "code39",
+       "code-type": "CODE_39",
        "value": "1234567890ABCDEF",
        "visible-value": 1
       }

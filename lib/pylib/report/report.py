@@ -588,7 +588,7 @@ class Report(FPDF, HTMLMixin):
         self.cell(w=width, txt="", border=0, ln=0)
         hrow+='<td style="width:'+str(width)+self.unit+';"> </td>'
       if row_element[ei].tag =="barcode":
-        code_type = row_element[ei].get("code-type","code39")
+        code_type = row_element[ei].get("code-type","CODE_39")
         wide = float(row_element[ei].get("wide",self.get_def_barcode_size(code_type, "wide")))
         narrow = float(row_element[ei].get("narrow",self.get_def_barcode_size(code_type, "narrow")))
         code = row_element[ei].get("value","")
@@ -600,10 +600,10 @@ class Report(FPDF, HTMLMixin):
           x = self.get_x()
           self.add_page(self.cur_orientation)
           self.set_x(x)
-        if code_type=="code39":
+        if code_type in("code39","CODE_39"):
           x = self.code39_(code, self.get_x(), self.get_y(), wide, narrow, (visible==1))
           hrow+='<td><img src="'+code39_prev+'"/></td>'
-        elif code_type=="i2of5":
+        elif code_type in("i2of5","ITF"):
           x = self.interleaved2of5_(code, self.get_x(), self.get_y(), wide, narrow, (visible==1))
           hrow+='<td><img src="'+i2of5_prev+'"/></td>'
         self.set_x(x+0.5)
@@ -617,10 +617,10 @@ class Report(FPDF, HTMLMixin):
     return hrow
   
   def get_def_barcode_size(self, code_type, size_type):
-    if code_type=="code39":
+    if code_type in("code39","CODE_39"):
       if size_type=="wide": return 1.5
       else: return 5
-    if code_type=="i2of5":
+    if code_type in("i2of5","ITF"):
       if size_type=="wide": return 1
       else: return 10
     return 0
@@ -633,7 +633,7 @@ class Report(FPDF, HTMLMixin):
     return True
   
   def interleaved2of5_(self, txt, x, y, w=1.0, h=10.0, visible=False):
-    "Barcode I2of5 (numeric), adds a 0 if odd lenght"
+    "Barcode ITF/I2of5 (numeric), adds a 0 if odd lenght"
     narrow = w / 3.0
     wide = w
     

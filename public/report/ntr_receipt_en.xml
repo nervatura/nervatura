@@ -1,5 +1,5 @@
-<report reportkey="ntr_invoice_en" nervatype="trans" transtype="invoice" direction="out" 
-  repname="Invoice EN" description="Customer invoice" filetype="ntr">
+<report reportkey="ntr_receipt_en" nervatype="trans" transtype="receipt" direction="out" 
+  repname="Receipt EN" description="Receipt" filetype="ntr">
   
   <dataset name="taxgroup" engine=""><![CDATA[select tax.taxcode as taxcode, sum(ti.netamount) as netamount, sum(ti.vatamount) as vatamount, sum(ti.amount) as amount 
 from item ti inner join product p on p.id = ti.product_id inner join tax on tax.id = ti.tax_id 
@@ -48,13 +48,11 @@ order by ti.id]]></dataset>
   ptg.groupvalue else ptg.description end 
   else msp.msg end as paidtypedesc
 , t.acrate as acrate
-, compname.value as comp_name
-, concat('={{lb_address}}: ',case when compaddress.value is null then '' else compaddress.value end) as comp_address
-, concat('={{lb_tax_no}}: ',case when comptax.value is null then '' else comptax.value end) as comp_taxnumber
-, custname.value as cust_name
-, concat('={{lb_address}}: ',case when custaddress.value is null then '' else custaddress.value end) as cust_address
-, concat('={{lb_tax_no}}: ',case when custtax.value is null then '' else custtax.value end) as cust_taxnumber
-, concat('={{lb_account_no}}: ',case when c.account is null then '' else c.account end) as custaccount
+, comp.custname as comp_name
+, case when comp_address.zipcode is null then '' else comp_address.zipcode end as comp_zipcode
+, case when comp_address.city is null then '' else comp_address.city end as comp_city
+, case when comp_address.street is null then '' else comp_address.street end as comp_street
+, concat('={{lb_tax_no}}: ',case when comp.taxnumber is null then '' else comp.taxnumber end) as comp_taxnumber
 , concat('={{lb_account_no}}: ',case when comp.account is null then '' else comp.account end) as compaccount
 , tsum.sum_netamount as sum_netamount, tsum.sum_vatamount as sum_vatamount, tsum.sum_amount as sum_amount 
 from trans t 
@@ -62,14 +60,10 @@ inner join currency cu on t.curr = cu.curr
 inner join fieldvalue tcast on t.id = tcast.ref_id and tcast.fieldname='trans_transcast' 
 inner join groups ptg on t.paidtype = ptg.id 
   left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en' 
-left join fieldvalue compname on t.id = compname.ref_id and compname.fieldname='trans_custinvoice_compname' 
-left join fieldvalue compaddress on t.id = compaddress.ref_id and compaddress.fieldname='trans_custinvoice_compaddress' 
-left join fieldvalue comptax on t.id = comptax.ref_id and comptax.fieldname='trans_custinvoice_comptax' 
-left join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname' 
-left join fieldvalue custaddress on t.id = custaddress.ref_id and custaddress.fieldname='trans_custinvoice_custaddress' 
-left join fieldvalue custtax on t.id = custtax.ref_id and custtax.fieldname='trans_custinvoice_custtax' 
-inner join customer c on t.customer_id = c.id 
-left join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+inner join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+  left join (select ref_id, min(id) as address_id from address 
+    where deleted=0 and nervatype in(select id from groups where groupname='nervatype' and groupvalue='customer') group by ref_id) as coi on coi.ref_id=comp.id
+  left join address comp_address on comp_address.id=coi.address_id 
 left join (select ti.trans_id as id, sum(ti.netamount) as sum_netamount, sum(ti.vatamount) as sum_vatamount, sum(ti.amount) as sum_amount 
   from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id 
 where t.id = @id]]></dataset>
@@ -93,27 +87,22 @@ where t.id = @id]]></dataset>
   ptg.groupvalue else ptg.description end 
   else msp.msg end as paidtypedesc
 , t.acrate as acrate
-, compname.value as comp_name
-, '={{lb_address}}: '||case when compaddress.value is null then '' else compaddress.value end as comp_address
-, '={{lb_tax_no}}: '||case when comptax.value is null then '' else comptax.value end as comp_taxnumber
-, custname.value as cust_name
-, '={{lb_address}}: '||case when custaddress.value is null then '' else custaddress.value end as cust_address
-, '={{lb_tax_no}}: '||case when custtax.value is null then '' else custtax.value end as cust_taxnumber
-, '={{lb_account_no}}: '||case when c.account is null then '' else c.account end as custaccount, '={{lb_account_no}}: '||case when comp.account is null then '' else comp.account end as compaccount
+, comp.custname as comp_name
+, case when comp_address.zipcode is null then '' else comp_address.zipcode end as comp_zipcode
+, case when comp_address.city is null then '' else comp_address.city end as comp_city
+, case when comp_address.street is null then '' else comp_address.street end as comp_street
+,'={{lb_tax_no}}: '||case when comp.taxnumber is null then '' else comp.taxnumber end as comp_taxnumber
+,'={{lb_account_no}}: '||case when comp.account is null then '' else comp.account end as compaccount
 , tsum.sum_netamount as sum_netamount, tsum.sum_vatamount as sum_vatamount, tsum.sum_amount as sum_amount 
 from trans t 
 inner join currency cu on t.curr = cu.curr 
 inner join fieldvalue tcast on t.id = tcast.ref_id and tcast.fieldname='trans_transcast' 
 inner join groups ptg on t.paidtype = ptg.id 
   left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en' 
-left join fieldvalue compname on t.id = compname.ref_id and compname.fieldname='trans_custinvoice_compname' 
-left join fieldvalue compaddress on t.id = compaddress.ref_id and compaddress.fieldname='trans_custinvoice_compaddress' 
-left join fieldvalue comptax on t.id = comptax.ref_id and comptax.fieldname='trans_custinvoice_comptax' 
-left join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname' 
-left join fieldvalue custaddress on t.id = custaddress.ref_id and custaddress.fieldname='trans_custinvoice_custaddress' 
-left join fieldvalue custtax on t.id = custtax.ref_id and custtax.fieldname='trans_custinvoice_custtax' 
-inner join customer c on t.customer_id = c.id 
-left join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+inner join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+  left join (select ref_id, min(id) as address_id from address 
+    where deleted=0 and nervatype in(select id from groups where groupname='nervatype' and groupvalue='customer') group by ref_id) as coi on coi.ref_id=comp.id
+  left join address comp_address on comp_address.id=coi.address_id 
 left join (select ti.trans_id as id, sum(ti.netamount) as sum_netamount, sum(ti.vatamount) as sum_vatamount, sum(ti.amount) as sum_amount 
   from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id 
 where t.id = @id]]></dataset>
@@ -139,38 +128,33 @@ where t.id = @id]]></dataset>
   ptg.groupvalue else ptg.description end 
   else msp.msg end as paidtypedesc
 , t.acrate as acrate
-, compname.value as comp_name
-, '={{lb_address}}: '+case when compaddress.value is null then '' else compaddress.value end as comp_address
-, '={{lb_tax_no}}: '+case when comptax.value is null then '' else comptax.value end as comp_taxnumber
-, custname.value as cust_name
-, '={{lb_address}}: '+case when custaddress.value is null then '' else custaddress.value end as cust_address
-, '={{lb_tax_no}}: '+case when custtax.value is null then '' else custtax.value end as cust_taxnumber
-, '={{lb_account_no}}: '+case when c.account is null then '' else c.account end as custaccount, '={{lb_account_no}}: '+case when comp.account is null then '' else comp.account end as compaccount
+, comp.custname as comp_name
+, case when comp_address.zipcode is null then '' else comp_address.zipcode end as comp_zipcode
+, case when comp_address.city is null then '' else comp_address.city end as comp_city
+, case when comp_address.street is null then '' else comp_address.street end as comp_street
+,'={{lb_tax_no}}: '+case when comp.taxnumber is null then '' else comp.taxnumber end as comp_taxnumber
+,'={{lb_account_no}}: '+case when comp.account is null then '' else comp.account end as compaccount
 , tsum.sum_netamount as sum_netamount, tsum.sum_vatamount as sum_vatamount, tsum.sum_amount as sum_amount 
 from trans t 
 inner join currency cu on t.curr = cu.curr 
 inner join fieldvalue tcast on t.id = tcast.ref_id and tcast.fieldname='trans_transcast' 
 inner join groups ptg on t.paidtype = ptg.id 
   left join ui_message msp on msp.fieldname = ptg.groupvalue and  msp.secname = 'paidtype' and msp.lang = 'en' 
-left join fieldvalue compname on t.id = compname.ref_id and compname.fieldname='trans_custinvoice_compname' 
-left join fieldvalue compaddress on t.id = compaddress.ref_id and compaddress.fieldname='trans_custinvoice_compaddress' 
-left join fieldvalue comptax on t.id = comptax.ref_id and comptax.fieldname='trans_custinvoice_comptax' 
-left join fieldvalue custname on t.id = custname.ref_id and custname.fieldname='trans_custinvoice_custname' 
-left join fieldvalue custaddress on t.id = custaddress.ref_id and custaddress.fieldname='trans_custinvoice_custaddress' 
-left join fieldvalue custtax on t.id = custtax.ref_id and custtax.fieldname='trans_custinvoice_custtax' 
-inner join customer c on t.customer_id = c.id 
-left join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+inner join customer comp on comp.id in (select min(customer.id) from customer inner join groups on customer.custtype=groups.id and groups.groupvalue='own') 
+  left join (select ref_id, min(id) as address_id from address 
+    where deleted=0 and nervatype in(select id from groups where groupname='nervatype' and groupvalue='customer') group by ref_id) as coi on coi.ref_id=comp.id
+  left join address comp_address on comp_address.id=coi.address_id 
 left join (select ti.trans_id as id, sum(ti.netamount) as sum_netamount, sum(ti.vatamount) as sum_vatamount, sum(ti.amount) as sum_amount 
   from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id 
 where t.id = @id]]></dataset>
   
   <message secname="items" fieldname="lb_deposit"><![CDATA[Deposit]]></message>
   
-  <message secname="head" fieldname="lb_ref_invoice"><![CDATA[Ref. invoice]]></message>
+  <message secname="head" fieldname="lb_ref_invoice"><![CDATA[Ref. receipt]]></message>
   <message secname="head" fieldname="lb_copy"><![CDATA[COPY]]></message>
   <message secname="head" fieldname="lb_original_issue"><![CDATA[ORIGINAL ISSUE]]></message>
-  <message secname="head" fieldname="lb_cancelling_invoice"><![CDATA[CANCELLING INVOICE]]></message>
-  <message secname="head" fieldname="lb_amending_invoice"><![CDATA[AMENDING INVOICE]]></message>
+  <message secname="head" fieldname="lb_cancelling_invoice"><![CDATA[CANCELLING RECEIPT]]></message>
+  <message secname="head" fieldname="lb_amending_invoice"><![CDATA[AMENDING RECEIPT]]></message>
   <message secname="head" fieldname="lb_deleted"><![CDATA[DELETED]]></message>
   <message secname="head" fieldname="lb_address"><![CDATA[Address]]></message>
   <message secname="head" fieldname="lb_tax_no"><![CDATA[Tax No]]></message>
@@ -178,7 +162,7 @@ where t.id = @id]]></dataset>
   
   <message secname="report" fieldname="web_page"><![CDATA[www.nervatura.com]]></message>
   <message secname="report" fieldname="web_link"><![CDATA[http://nervatura.com]]></message>
-  <message secname="report" fieldname="lb_invoice"><![CDATA[INVOICE]]></message>
+  <message secname="report" fieldname="lb_invoice"><![CDATA[RECEIPT]]></message>
   <message secname="report" fieldname="lb_supplier"><![CDATA[Supplier]]></message>
   <message secname="report" fieldname="lb_customer"><![CDATA[Customer]]></message>
   <message secname="report" fieldname="lb_delivery_date"><![CDATA[Delivery Date]]></message>
@@ -202,7 +186,7 @@ where t.id = @id]]></dataset>
   
   <template><![CDATA[
 <template>
-  <report title="INVOICE" font-family="times" font-size="11" left-margin="15" top-margin="15" right-margin="15" decode="utf-8" encode="latin_1" />
+  <report title="RECEIPT" font-family="times" font-size="11" left-margin="15" top-margin="15" right-margin="15" decode="utf-8" encode="latin_1" />
   <header>
     <row height="10">
       <columns>
@@ -227,36 +211,20 @@ where t.id = @id]]></dataset>
     <vgap height="2"/>
   </header>
   <details>
-    <row>
+    <row height="6">
       <columns>
-        <cell name="label" width="50%" value="labels.lb_supplier" font-style="bold" background-color="245" border="LT" border-color="218"/>
-        <cell name="label" value="labels.lb_customer" font-style="bold" background-color="245"  border="LRT" border-color="218"/>
+        <cell name="company_name" font-style="bold" font-size="13" value="head.0.comp_name"/>
+        <cell name="taxnumber" align="right" font-size="10" value="head.0.comp_taxnumber"/>
       </columns>
     </row>
-    <row>
+    <row height="6">
       <columns>
-        <cell name="company_name" width="50%" font-style="bold" value="head.0.comp_name" border="L" border-color="218"/>
-        <cell name="customer_name" font-style="bold" value="head.0.cust_name" border="LR" border-color="218"/>
+        <cell name="company_address" value="={{head.0.comp_zipcode}} ={{head.0.comp_city}} ={{head.0.comp_street}}"/>
+        <cell name="account" align="right" font-size="9" value="head.0.compaccount"/>
       </columns>
     </row>
-    <row>
-      <columns>
-        <cell name="company_address" width="50%" value="head.0.comp_address" border="L" border-color="218"/>
-        <cell name="customer_address" value="head.0.cust_address" border="LR" border-color="218"/>
-      </columns>
-    </row>
-    <row>
-      <columns>
-        <cell name="company_taxnumber" width="50%" value="head.0.comp_taxnumber" border="L" border-color="218"/>
-        <cell name="customer_taxnumber" value="head.0.cust_taxnumber" border="LR" border-color="218"/>
-      </columns>
-    </row>
-    <row>
-      <columns>
-        <cell name="company_account" width="50%" value="head.0.compaccount" border="L" border-color="218"/>
-        <cell name="customer_account" value="head.0.custaccount" border="LR" border-color="218"/>
-      </columns>
-    </row>
+    <hline border-color="218"/>
+    <vgap height="2"/>
     <row>
       <columns>
         <cell name="label" align="center" width="30" font-style="bold" value="labels.lb_delivery_date" background-color="245" border="LBT" border-color="218"/>
