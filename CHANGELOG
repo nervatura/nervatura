@@ -1,3 +1,8 @@
+## 2.1.5
+- NDI: fixes sql datatype
+- NDI: remove link/linktype field
+- NOM docs: update objects/transtype relations
+
 ## 2.1.4
 
 - new default barcode(qr code) types: AZTEC,CODABAR,CODE_128,CODE_39,CODE_93,DATA_MATRIX,EAN_13,EAN_8,ITF,MSI,PDF417,QR_CODE,RSS_EXPANDED,RSS14,UPC_A,UPC_E
