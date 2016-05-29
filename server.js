@@ -29,17 +29,19 @@ var AppContainer = function () {
 
     require('./app')(function(err,app){
       if(!err){
-        var ip = app.get('ip');
         var port = app.get('port') || process.env.PORT || '8080';
         port = normalizePort(port);
 
         var server = require('http').createServer(app);
         if(app.get('env') === 'development'){
           self.debug = require('debug')('nervatura:server');}
-
-        server.listen(port, ip, function () {
+          
+        if(app.get('ip')){
+          server.listen(port, app.get('ip'), function () {
           console.log('%s: Node server started on %s:%d ...',
-            Date(Date.now()), ip, port);});
+            Date(Date.now()), app.get('ip'), port);});}
+        else{
+          server.listen(port);}
         server.on('error', onError);
         server.on('listening', onListening);
 

@@ -50,6 +50,7 @@
     <li style="padding:5px 0px 0px;"><b><a href="#cloud">Cloud Hosting Services</a></b>
       <ul style="padding-left:5px;">
         <li style="padding:3px 0px 0px;"><a href="#cloud_openshift">OpenShift</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#cloud_docker">Docker</a></li>
       </ul>
     </li>
     <li style="padding:5px 0px 0px;"><b><a href="#config">Server config</a></b></li>
@@ -234,6 +235,7 @@
         git clone https://github.com/nervatura/nervatura.git nervatura_latest<br>
         rm -r nervatura/*<br>
         cp -r nervatura_latest/* nervatura/<br>
+        cd nervatura<br>
         git add .<br>
         git commit -a -m 'latest'<br>
         git push
@@ -267,7 +269,199 @@
       <p class="code" style="text-align: left;">
         rhc scp demo upload custom_report.xml app-root/runtime/repo/public/report/
       </p>
+    </li>
+    <li><b><a name="cloud_docker">Docker</a></b>
+      <p><a href="https://www.docker.com/what-docker" target="_blank">Docker</a> allows you to 
+        package an application with all of its dependencies into a standardized unit for software 
+        development. Get Started with Docker Engine for 
+        <a href="https://docs.docker.com/linux/" target="_blank">Linux</a>, 
+        <a href="https://docs.docker.com/windows/" target="_blank">Windows</a> or 
+        <a href="https://docs.docker.com/mac/" target="_blank">Mac OS X</a>.</p>
       
+      <p><span style="color:#8B1A1A;font-weight:bold;">What's in this image?</span></p>
+      <ul>
+        <li>A minimal Docker image 
+          <a href="https://hub.docker.com/_/alpine/" target="_blank">based on Alpine Linux</a> 
+          (Official Repository)</li>
+        <li>Additional packages: nodejs, python(2.7), git</li>
+        <li><a href="https://docs.docker.com/docker-hub/builds/" 
+          target="_blank">Automated Build</a> from the 
+          <a href="https://github.com/nervatura/nervatura" 
+          target="_blank">Nervatura GitHub</a> repository (see <a 
+          href="https://raw.githubusercontent.com/nervatura/nervatura/master/Dockerfile" 
+          target="_blank">this Dockerfile</a>)</li>
+        <li>Node production packages (<a 
+          href="https://raw.githubusercontent.com/nervatura/nervatura/master/package.json" 
+          target="_blank">dependencies+optionalDependencies</a>)</li>
+        <li><a href="https://h30495.www3.hp.com/help#eprint" target="_blank">HP ePrint via Email</a>
+          support (nodemailer package)</li>
+        <li><a href="http://pm2.keymetrics.io/" 
+          target="_blank">pm2 process manager</a></li>
+      </ul>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Creates a new Nervatura container</span></p>
+      <p style="margin:0px;">1. Sample production settings:</p>
+      <ul>
+        <li>production mode, enforces HTTPS connections, publish port:3000</li>
+        <li>pm2 process manage start</li>
+        <li>automatically remove the container when it exits: run --rm</li>
+        <li>mount a persist host directory as a data volume (host mountpoint: docker volume inspect nervatura)</li>
+        <li>add link to postgres database (see more Databases support)</li>
+      </ul>
+      <p class="code" style="text-align: left;">
+        docker run --rm -i -t -p 3000:3000 \<br>
+        &nbsp;&nbsp;-v nervatura:/app/data -w /app/dist\<br>
+        &nbsp;&nbsp;-e NERVATURA_DATA_DIR=/app/data \<br>
+        &nbsp;&nbsp;--link postgres \<br>
+        &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
+        &nbsp;&nbsp;pm2 start -x server.js --max-memory-restart 150M --no-daemon
+      </p>
+      
+      <p style="margin:0px;">2. Sample development settings:</p>
+      <ul>
+        <li>development mode, HTTP connections, publish port:3000</li>
+        <li>automatically remove the container when it exits: run --rm</li>
+        <li>mount a persist host directory as a data volume 
+          (host mountpoint: <span class="code">docker volume inspect nervatura</span>)</li>
+        <li>add link to mysql database (see more Databases support)</li>
+      </ul>
+      <p class="code" style="text-align: left;">
+        docker run --rm -i -t -p 3000:3000 \<br>
+        &nbsp;&nbsp;-v nervatura:/app/data -w /app/dist \<br>
+        &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
+        &nbsp;&nbsp;--link mysql \<br>
+        &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
+        &nbsp;&nbsp;node server.js
+      </p>
+      
+      <p style="margin:0px;">3. Sample development settings:</p>
+      <ul>
+        <li>development mode, HTTP connections, publish ports:3000,5858</li>
+        <li>mount the source directory: you are free to debug and modify the code</li>
+        <li>automatically remove the container when it exits: run --rm</li>
+        <li>mount a persist host directory as a data volume 
+          (host mountpoint: <span class="code">docker volume inspect nervatura</span>)</li>
+        <li>add link to postgres database (see more Databases support)</li>
+      </ul>
+      <p class="code" style="text-align: left;">
+        git clone https://github.com/nervatura/nervatura.git<br>
+        cd nervatura<br>
+        docker run --rm -i -t -p 3000:3000 -p 5858:5858 \<br>
+        &nbsp;&nbsp;-v nervatura:/app/data -v `pwd`:/app/src -w /app/src \<br>
+        &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
+        &nbsp;&nbsp;--link postgres \<br>
+        &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
+        &nbsp;&nbsp;node --debug=5858 server.js
+      </p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Databases support</span></p>
+      <p><b>SQLite</b> install: Included by default. Database files are stored in 
+      <a href="https://docs.docker.com/engine/userguide/containers/dockervolumes/" target="blank">a separate data volume</a>, 
+        independently from the application. Upgrade of the application does not affect the content of the database files. 
+        Several database files can be created.</p>
+      <p><b>PostgeSQL</b> install:</p>
+      <p class="code" style="text-align: left;">
+        docker create -i -t -p 5432:5432 \<br>
+        &nbsp;&nbsp;-v pgdata:/var/lib/postgresql/data \<br>
+        &nbsp;&nbsp;-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=nervatura \<br>
+        &nbsp;&nbsp;--restart="always" --name postgres postgres<br>
+        docker start postgres
+      </p>
+      <p><b>MySQL</b> install:</p>
+      <p class="code" style="text-align: left;">
+        docker create -i -t -p 3306:3306 \<br>
+        &nbsp;&nbsp;-v mysql:/var/lib/mysql \<br>
+        &nbsp;&nbsp;-e MYSQL_USER=nervatura -e MYSQL_PASSWORD=admin -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=nervatura \<br>
+        &nbsp;&nbsp;--restart="always" --name mysql mysql<br>
+        docker start mysql
+      </p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p>1. Login to NAS Admin GUI</p>
+      <ul>
+        <li>Username: <b>admin</b></li>
+        <li>Password: <b>leave the field empty, not needed</b> (Default. Please change after the first login!)</li>
+      </ul>
+      <p>2. Add/Edit a new customer database reference</p>
+      <p>3.1 NAS SQLite database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>demo</b> (or what you want)</li>
+        <li>Engine: <b>SQLite</b></li>
+        <li>Host: <b>leave the field empty, not needed</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>demo</b> (or what you want)</li>
+        <li>Other settings: <b>default</b> (or what you want)</li>
+      </ul>
+      <p><i>You can create an unlimited number of SQLite databases!</i></p>
+      
+      <p>3.2. NAS PostgreSql database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>pgdemo</b> (or what you want)</li>
+        <li>Engine: <b>PostgreSQL</b></li>
+        <li>Host: <b>$POSTGRES_PORT_5432_TCP_ADDR</b></li>
+        <li>Port: <b>$POSTGRES_PORT_5432_TCP_PORT</b></li>
+        <li>Database: <b>$POSTGRES_ENV_POSTGRES_DB</b> (or what you want)</li>
+        <li>UserName: <b>$POSTGRES_ENV_POSTGRES_USER</b></li>
+        <li>Password: <b>$POSTGRES_ENV_POSTGRES_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you want)</li>
+      </ul>
+      <p><i>You can create an unlimited number of PostgreSql databases! 
+        POSTGRES_DB optional environment variable can be used to define a 
+        different name for the default database that is created when the 
+        image is first started. If it is not specified, then the value of 
+        POSTGRES_USER will be used.</i></p>
+      
+      <p>3.3 NAS MySQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>mydemo</b> (or what you want)</li>
+        <li>Engine: <b>MySQL</b></li>
+        <li>Host: <b>$MYSQL_PORT_3306_TCP_ADDR</b></li>
+        <li>Port: <b>$MYSQL_PORT_3306_TCP_PORT</b></li>
+        <li>Database: <b>$MYSQL_ENV_MYSQL_DATABASE</b> (or what you want)</li>
+        <li>UserName: <b>$MYSQL_ENV_MYSQL_USER</b> (or root)</li>
+        <li>Password: <b>$MYSQL_ENV_MYSQL_PASSWORD</b> (or $MYSQL_ROOT_PASSWORD)</li>
+        <li>Other settings: <b>default</b> (or what you want)</li>
+      </ul>
+      <p><i>You can create an unlimited number of MySQL databases! 
+        MYSQL_DATABASE variable is optional and allows you to specify 
+        the name of a database to be created on image startup. If a 
+        user/password was supplied then that user will be granted 
+        superuser access (corresponding to GRANT ALL) to this database.</i></p>
+      
+      <p>4. Create a new Nervatura database</p>
+      <p>Database alias:</p>
+      <ul>
+        <li><b>demo</b></li>
+        <li>or <b>pgdemo</b></li>
+        <li>or <b>mydemo</b></li>
+        <li>(or whatever alias you created)</li>
+      </ul>
+      <p><i>All existing data of the database will be lost!</i></p>
+      
+      <p>5. Create a DEMO database (optional)</p>
+      <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
+        than you can create a blank database again according to the previous instructions.</p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Managing an Docker Application</span></p>
+      <p><a href="https://docs.docker.com/engine/userguide/intro/" 
+        target="blank">Engine user guide</a></p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Docker Cloud</span></p>
+      <p style="margin:0px;"><a href="https://docs.docker.com/docker-cloud/overview/" 
+        target="blank">Docker Cloud</a> service providers:</p>
+      <ul>
+        <li><a href="https://docs.docker.com/docker-cloud/infrastructure/link-aws/" 
+          target="blank">Amazon Web Services</a></li>
+        <li><a href="https://docs.docker.com/docker-cloud/infrastructure/link-do/" 
+          target="blank">DigitalOcean</a></li>
+        <li><a href="https://docs.docker.com/docker-cloud/infrastructure/link-azure/" 
+          target="blank">Microsoft Azure</a></li>
+        <li><a href="https://docs.docker.com/docker-cloud/infrastructure/link-softlayer/" 
+          target="blank">IBM SoftLayer</a></li>
+        <li><a href="https://docs.docker.com/docker-cloud/infrastructure/link-packet/" 
+          target="blank">Packet.net</a></li>
+      </ul>
+      <p>Google Container Engine: <a href="http://kubernetes.io/" target="blank">kubernetes</a></p>
     </li>
   </ul>
   

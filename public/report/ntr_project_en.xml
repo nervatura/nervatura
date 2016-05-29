@@ -46,8 +46,14 @@ where a.deleted=0 and p.deleted=0 and a.nervatype = (select id from groups where
   <dataset name="contact" engine=""><![CDATA[select p.id as id, p.pronumber as pronumber, p.description as description, co.firstname as firstname, co.surname as surname, co.status as status, co.phone as phone, co.fax as fax, co.mobil as mobil, co.email as email, co.notes as cont_notes 
 from contact co inner join project p on co.ref_id = p.id 
 where co.deleted=0 and p.deleted=0 and co.nervatype = (select id from groups where groupname='nervatype' and groupvalue='project') and p.id = @id]]></dataset>
-  <dataset name="trans" engine=""><![CDATA[select t.transnumber, tt.groupvalue as transtype, dir.groupvalue as direction, t.transdate,
-t.curr, tsum.sum_amount as amount, c.custname as customer
+  <dataset name="trans" engine=""><![CDATA[select t.transnumber, tt.groupvalue as transtype, dir.groupvalue as direction,
+substr(cast(t.transdate as char(10)), 1, 10) as transdate, t.curr, tsum.sum_amount as amount, c.custname as customer
+from trans t inner join groups tt on t.transtype=tt.id inner join groups dir on t.direction=dir.id inner join project p on t.project_id=p.id
+left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
+  from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id
+left join customer c on t.customer_id=c.id where t.deleted=0 and p.id = @id]]></dataset>
+  <dataset name="trans" engine="mssql"><![CDATA[select t.transnumber, tt.groupvalue as transtype, dir.groupvalue as direction,
+CONVERT(VARCHAR(10), t.transdate, 120) as transdate, t.curr, tsum.sum_amount as amount, c.custname as customer
 from trans t inner join groups tt on t.transtype=tt.id inner join groups dir on t.direction=dir.id inner join project p on t.project_id=p.id
 left join (select ti.trans_id as id, sum(ti.amount) as sum_amount 
   from item ti where ti.deleted=0 group by ti.trans_id ) as tsum on tsum.id = t.id

@@ -120,7 +120,7 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
         <column width="20%" fieldname="transnumber" label="labels.lb_invoice_no" footer="labels.lb_total"/>
         <column width="11%" fieldname="duedate" align="center" label="labels.lb_due_date" header-align="center"/>
         <column width="20%" fieldname="custname" label="labels.lb_customer"/>
-        <column width="6%" fieldname="taxcode" align="right" label="={{labels.lb_vat}}%" />
+        <column width="6%" fieldname="taxcode" align="right" label="={{labels.lb_vat}}" />
         <column width="12%" fieldname="netamount" align="right" thousands=" " digit="2" label="labels.lb_net" footer="total_bycur.0.netamount" header-align="right" footer-align="right"/>
         <column width="11%" fieldname="vatamount" align="right" thousands=" " digit="2" label="labels.lb_vat" footer="total_bycur.0.vatamount" header-align="right" footer-align="right"/>
         <column fieldname="amount" align="right" thousands=" " digit="2" label="labels.lb_gross" footer="total_bycur.0.amount" header-align="right" footer-align="right"/>

@@ -49,8 +49,7 @@ var conf = require('./lib/node/conf.js');
 app.set('conf', conf);
 
 //host ip,port
-app.set('host_type', 'localhost');
-app.set('ip', '127.0.0.1');
+app.set('host_type', process.env.HOST_TYPE || 'localhost');
 app.set('port', conf.port || process.env.PORT || '8080');
 if(process.env.OPENSHIFT_NODEJS_IP){
   app.set('host_type', 'openshift');
@@ -62,29 +61,32 @@ if(process.env.OPENSHIFT_NODEJS_PORT){
 //data directory
 if(process.env.OPENSHIFT_DATA_DIR){
   app.set('data_dir', process.env.OPENSHIFT_DATA_DIR);}
+else if(process.env.NERVATURA_DATA_DIR){
+  app.set('data_dir', process.env.NERVATURA_DATA_DIR);}
 else{
   try {
     app.set('data_dir', conf.data_dir || 'data');
+    console.log(path.join(__dirname, 'data'));
     fs.statSync(app.get('data_dir'));} 
   catch(e) {
     try {
-      fs.statSync(path.join(__dirname, '/data'));} 
+      fs.statSync(path.join(__dirname, 'data'));} 
     catch(e) {
-      fs.mkdirSync(path.join(__dirname, '/data'));}
-    app.set('data_dir', path.join(__dirname, '/data'));}}
+      fs.mkdirSync(path.join(__dirname, 'data'));}
+    app.set('data_dir', path.join(__dirname, 'data'));}}
 try {
-  fs.statSync(app.get('data_dir')+'/database');} 
+  fs.statSync(path.join(app.get('data_dir'),'database'));} 
 catch(e) {
-  fs.mkdirSync(app.get('data_dir')+'/database');}
+  fs.mkdirSync(path.join(app.get('data_dir'),'database'));}
 try {
-  fs.statSync(app.get('data_dir')+'/storage');} 
+  fs.statSync(path.join(app.get('data_dir'),'storage'));} 
 catch(e) {
-  fs.mkdirSync(app.get('data_dir')+'/storage');}
+  fs.mkdirSync(path.join(app.get('data_dir'),'storage'));}
 try {
-  fs.statSync(app.get('data_dir')+'/data');} 
+  fs.statSync(path.join(app.get('data_dir'),'data'));} 
 catch(e) {
-  fs.mkdirSync(app.get('data_dir')+'/data');}
-app.set('report_dir', path.join(__dirname, 'public/report'));
+  fs.mkdirSync(path.join(app.get('data_dir'),'data'));}
+app.set('report_dir', path.join(__dirname, 'public','report'));
 
 var version = require('./package.json').version;
 app.set('version', version+'-NJS/EXP');
@@ -140,12 +142,21 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     var cookie_ = {httpOnly: true, secure: (app.get('env') === 'production') ? true : false, 
       maxAge: host_settings.session_cookie_max_age};
     var proxy_ = (app.get('env') === 'production') ? true : false;
-    if (conf.session_store==='leveldown' && util.checkOptional('level-session-store')){
+    var session_store = conf.session_store;
+    if (session_store==='leveldown' && !util.checkOptional('level-session-store')){
+      if (util.checkOptional('connect-sqlite3')){
+        session_store = 'sqlite';}
+      else {session_store = 'memory';}}
+    if (session_store==='sqlite' && !util.checkOptional('connect-sqlite3')){
+      if (util.checkOptional('level-session-store')){
+        session_store = 'leveldown';}
+      else {session_store = 'memory';}}
+    if (session_store==='leveldown'){
       var LevelSession = require('level-session-store')(session);
       app.use(session({name:'ntura', secret: host_settings.session_secret,
         store: new LevelSession(app.get('data_dir')+'/storage/session'), 
         resave: true, saveUninitialized: true, cookie: cookie_, proxy: proxy_}));}
-    else if (conf.session_store==='sqlite' && util.checkOptional('connect-sqlite3')){
+    else if (session_store==='sqlite'){
       var SQLiteStore = require('connect-sqlite3')(session);
       app.use(session({name:'ntura', secret: host_settings.session_secret,
         store: new SQLiteStore({dir:app.get('data_dir')+'/storage',db:'session'}), 

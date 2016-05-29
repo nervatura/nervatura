@@ -1,9 +1,9 @@
 <report reportkey="ntr_cash_in_en" nervatype="trans" transtype="cash" direction="in" 
   repname="Petty Cash Voucher EN" description="Deposit Voucher" filetype="ntr">
   
-  <dataset name="head" engine="select t.transnumber, dir.groupvalue as direction, 
+  <dataset name="head" engine=""><![CDATA[select t.transnumber, dir.groupvalue as direction, 
 case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber, 
-p.planumber, p.description as cdesk, p.curr, pm.amount,
+p.planumber, p.description as cdesk, p.curr, -pm.amount as amount,
 substr(cast(t.crdate as char(10)), 1, 10) as crdate,
 substr(cast(pm.paiddate as char(10)), 1, 10) as paiddate, 
 case when t.notes is null then '' else t.notes end as notes, 
@@ -14,12 +14,12 @@ inner join groups dir on dir.id=t.direction
 inner join place p on p.id=t.place_id
 inner join payment pm on pm.trans_id=t.id
 left join employee emp on emp.id=t.employee_id
-where t.id= @id"><![CDATA[ ]]></dataset>
+where t.id= @id]]></dataset>
   <dataset name="head" engine="mssql"><![CDATA[select t.transnumber, dir.groupvalue as direction, 
 case when t.ref_transnumber is null then '' else t.ref_transnumber end as ref_transnumber, 
 CONVERT(VARCHAR(10), t.crdate, 120) as crdate,
 CONVERT(VARCHAR(10), pm.paiddate, 120) as paiddate,
-p.planumber, p.description as cdesk, p.curr, pm.amount, 
+p.planumber, p.description as cdesk, p.curr, -pm.amount as amount, 
 case when t.notes is null then '' else t.notes end as notes, 
 case when t.fnote is null then '' else t.fnote end as fnote, 
 case when emp.empnumber is null then '' else emp.empnumber end as empnumber  
