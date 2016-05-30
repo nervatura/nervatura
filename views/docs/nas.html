@@ -323,13 +323,12 @@
         <li>automatically remove the container when it exits: run --rm</li>
         <li>mount a persist host directory as a data volume 
           (host mountpoint: <span class="code">docker volume inspect nervatura</span>)</li>
-        <li>add link to mysql database (see more Databases support)</li>
+        <li>remote ('bridge' network) database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
         docker run --rm -i -t -p 3000:3000 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -w /app/dist \<br>
         &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
-        &nbsp;&nbsp;--link mysql \<br>
         &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
         &nbsp;&nbsp;node server.js
       </p>
@@ -341,7 +340,7 @@
         <li>automatically remove the container when it exits: run --rm</li>
         <li>mount a persist host directory as a data volume 
           (host mountpoint: <span class="code">docker volume inspect nervatura</span>)</li>
-        <li>add link to postgres database (see more Databases support)</li>
+        <li>add link to mysql database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
         git clone https://github.com/nervatura/nervatura.git<br>
@@ -349,7 +348,7 @@
         docker run --rm -i -t -p 3000:3000 -p 5858:5858 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -v `pwd`:/app/src -w /app/src \<br>
         &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
-        &nbsp;&nbsp;--link postgres \<br>
+        &nbsp;&nbsp;--link mysql \<br>
         &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
         &nbsp;&nbsp;node --debug=5858 server.js
       </p>
@@ -375,6 +374,9 @@
         &nbsp;&nbsp;--restart="always" --name mysql mysql<br>
         docker start mysql
       </p>
+      <p><b>MSSQL</b> or any remote database:</p> 
+      <p>See more docker run <a 
+        href="https://docs.docker.com/engine/reference/commandline/run/" target="_blank">--net parameter</a></p>
       
       <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
       <p>1. Login to NAS Admin GUI</p>
@@ -428,12 +430,29 @@
         user/password was supplied then that user will be granted 
         superuser access (corresponding to GRANT ALL) to this database.</i></p>
       
+      <p>3.4 NAS MSSQL (or any remote) database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>msdemo</b> (or what you want)</li>
+        <li>Engine: <b>MSSQL</b> (or what you want)</li>
+        <li>Host: <b>192.168.56.1</b> (or what you want)</li>
+        <li>Port: <b>1433</b> (or what you want)</li>
+        <li>Database: <b>nervatura</b> (or what you want)</li>
+        <li>UserName: <b>sa</b> (or what you want))</li>
+        <li>Password: <b>sadmin</b> (or what you want)</li>
+        <li>Other settings: <b>default</b> (or what you want)</li>
+      </ul>
+      <p><i>You can create an unlimited number of MSSQL/remote databases! 
+        See more docker run <a 
+        href="https://docs.docker.com/engine/reference/commandline/run/" 
+        target="_blank">--net parameter</a></i></p>
+        
       <p>4. Create a new Nervatura database</p>
       <p>Database alias:</p>
       <ul>
         <li><b>demo</b></li>
         <li>or <b>pgdemo</b></li>
         <li>or <b>mydemo</b></li>
+        <li>or <b>msdemo</b></li>
         <li>(or whatever alias you created)</li>
       </ul>
       <p><i>All existing data of the database will be lost!</i></p>

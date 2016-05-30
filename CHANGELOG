@@ -1,3 +1,6 @@
+## 2.2.1
+- Docker mssql/remote database (see more Admin Guide)
+
 ## 2.2.0
 - tools/getReport: fixes mysql syntaxt error
 - Nervatura Report: fixes default Petty Cash Voucher(cash/in), Project Sheet templates 
