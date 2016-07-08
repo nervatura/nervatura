@@ -1,20 +1,21 @@
 <% include html_head.html %>
 <% include body_page_header.html %>
 
+<style>
+  .logo_border {
+    border-style: solid;
+    border-width: 1px;
+    border-color:#DCDCDC;
+    border-collapse:collapse;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  }
+</style>
+
 <div align="center" style="padding-top:30px;">
   <p style="font-weight: bold;">Nervatura <%= lang.title_nas %></p>
   <p><span style="font-weight: bold;"><%= lang.label_username %>: </span><%= user.username %></p>
   <p><span class="vernum">Ver.No: <%= settings.version %></span></p>
-  <table>
-    <tr>
-      <td style="width: 64px;padding-right: 0px;">
-        <img src="/images/icon64_ntura_te.png" style="vertical-align: bottom;" />
-      </td>
-      <td style="width: 120px;color: #616161;vertical-align: middle;font-size: 13px;">
-        OPEN SOURCE<br />BUSINESS<br />MANAGEMENT
-      </td>
-    </tr>
-  </table>
+  <img class="logo_border" style="vertical-align: bottom;" src="/images/ntura_framework.png" height="64px" />
   <p><a href="http://www.nervatura.com" style="font-weight: bold;" target="_blank" 
     title="Nervatura"><%= lang.label_ntura_framework %></a></p>
 </div>

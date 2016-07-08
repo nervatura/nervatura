@@ -297,11 +297,11 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
     <row height="10">
       <columns>
         <cell name="custname" value="company.0.custname" align="left" font-style="bold" font-size="12" width="100"/>
-        <cell name="label" value="labels.lb_custpos" font-style="bolditalic" font-size="26" align="right" color="#D8DBDA"/>
+        <cell name="label" value="labels.lb_custpos" font-style="bolditalic" font-size="26" align="right" color="#696969"/>
       </columns>
     </row>
     <vgap height="1"/>
-    <hline border-color="218" gap="1"/>
+    <hline border-color="100" gap="1"/>
     <vgap height="3"/>
     <row hgap="2" height="1">
       <columns>
@@ -318,7 +318,7 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
         <cell name="label" value="labels.lb_suppliers" align="center" font-style="bold" background-color="14212058"/>
       </columns>
     </row>
-    <datagrid name="payable" databind="suppliers" border="1" border-color="218" font-size="8" header-background="245">
+    <datagrid name="payable" databind="suppliers" border="1" border-color="100" font-size="8" header-background="230">
       <columns>
         <column width="11%" fieldname="duedate" align="center" label="labels.lb_duedate" />
         <column width="11%" fieldname="transdate" align="center" label="labels.lb_transdate" />
@@ -337,7 +337,7 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
         <cell name="label" value="labels.lb_customers" align="center" font-style="bold" background-color="14212058"/>
       </columns>
     </row>
-    <datagrid name="receivable" databind="customers" border="1" border-color="218" font-size="8" header-background="245">
+    <datagrid name="receivable" databind="customers" border="1" border-color="100" font-size="8" header-background="230">
       <columns>
         <column width="11%" fieldname="duedate" align="center" label="labels.lb_duedate" />
         <column width="11%" fieldname="transdate" align="center" label="labels.lb_transdate" />
@@ -353,7 +353,7 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
   </details>
   <footer>
     <vgap height="2"/>
-    <hline border-color="218"/>
+    <hline border-color="100"/>
     <row height="10">
       <columns>
         <cell value="labels.web_page" link="labels.web_link" font-style="bolditalic" color="#2100FF"/>

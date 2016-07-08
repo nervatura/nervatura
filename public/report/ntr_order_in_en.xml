@@ -122,11 +122,11 @@ where t.id = @id]]></dataset>
     <row height="10">
       <columns>
         <image src="logo" />
-        <cell name="label" value="labels.lb_worksheet" font-style="bolditalic" font-size="26" color="#D8DBDA"/>
+        <cell name="label" value="labels.lb_worksheet" font-style="bolditalic" font-size="26" color="#696969"/>
         <cell name="transnumber" value="head.0.transnumber" align="right" font-style="bold" font-size="20"/>
       </columns>
     </row>
-    <hline border-color="218"/>
+    <hline border-color="100"/>
     <vgap height="2"/>
   </header>
   <details>
@@ -142,7 +142,7 @@ where t.id = @id]]></dataset>
         <cell name="crdate" align="right" value="head.0.crdate"/>
       </columns>
     </row>
-    <hline border-color="218"/>
+    <hline border-color="100"/>
     <vgap height="2"/>
     <row height="5">
       <columns>
@@ -162,36 +162,36 @@ where t.id = @id]]></dataset>
     <vgap height="1"/>
     <row>
       <columns>
-        <cell name="label" width="25" font-style="bold" value="labels.lb_orderdate" border="LBT" border-color="218"/>
-        <cell name="label" width="25" font-style="bold" value="labels.lb_deldate" border="LBT" border-color="218"/>
-        <cell name="label" width="20" font-style="bold" value="labels.lb_currency" border="LBT" border-color="218"/>
-        <cell name="label" width="30" font-style="bold" value="labels.lb_payment" border="LBT" border-color="218"/>
-        <cell name="label" width="35" font-style="bold" value="labels.lb_pronumber" border="LBT" border-color="218"/>
-        <cell name="label" font-style="bold" value="labels.lb_ref_no" border="LBTR" border-color="218"/>
+        <cell name="label" width="25" font-style="bold" value="labels.lb_orderdate" border="LBT" border-color="100"/>
+        <cell name="label" width="25" font-style="bold" value="labels.lb_deldate" border="LBT" border-color="100"/>
+        <cell name="label" width="20" font-style="bold" value="labels.lb_currency" border="LBT" border-color="100"/>
+        <cell name="label" width="30" font-style="bold" value="labels.lb_payment" border="LBT" border-color="100"/>
+        <cell name="label" width="35" font-style="bold" value="labels.lb_pronumber" border="LBT" border-color="100"/>
+        <cell name="label" font-style="bold" value="labels.lb_ref_no" border="LBTR" border-color="100"/>
       </columns>
     </row>
     <row>
       <columns>
-        <cell name="orderdate" align="center" width="25" value="head.0.orderdate" border="LB" border-color="218"/>
-        <cell name="deldate" align="center" width="25" value="head.0.deldate" border="LB" border-color="218"/>
-        <cell name="curr" align="center" width="20" value="head.0.curr" border="LB" border-color="218"/>
-        <cell name="payment" width="30" value="head.0.paidtypedesc" border="LB" border-color="218"/>
-        <cell name="pronumber" width="35" value="head.0.pronumber" border="LB" border-color="218"/>
-        <cell name="ref_transnumber" value="head.0.ref_transnumber_1" border="LBR" border-color="218"/>
+        <cell name="orderdate" align="center" width="25" value="head.0.orderdate" border="LB" border-color="100"/>
+        <cell name="deldate" align="center" width="25" value="head.0.deldate" border="LB" border-color="100"/>
+        <cell name="curr" align="center" width="20" value="head.0.curr" border="LB" border-color="100"/>
+        <cell name="payment" width="30" value="head.0.paidtypedesc" border="LB" border-color="100"/>
+        <cell name="pronumber" width="35" value="head.0.pronumber" border="LB" border-color="100"/>
+        <cell name="ref_transnumber" value="head.0.ref_transnumber_1" border="LBR" border-color="100"/>
       </columns>
     </row>
     <row>
       <columns>
-        <cell name="label" font-style="bold" value="labels.lb_comments" border="LBR" border-color="218"/>
+        <cell name="label" font-style="bold" value="labels.lb_comments" border="LBR" border-color="100"/>
       </columns>
     </row>
     <row>
       <columns>
-        <cell name="notes" multiline="true" value="head.0.notes" border="LBR" border-color="218"/>
+        <cell name="notes" multiline="true" value="head.0.notes" border="LBR" border-color="100"/>
       </columns>
     </row>
     <vgap height="2"/>
-    <datagrid name="items" databind="items" border="1" border-color="218" font-size="10" header-background="245">
+    <datagrid name="items" databind="items" border="1" border-color="100" font-size="10" header-background="230">
       <columns>
         <column width="6%" fieldname="counter" align="right" label="labels.lb_no"/>
         <column width="20%" fieldname="description" label="labels.lb_description" footer="labels.lb_total_amount"/>
@@ -210,7 +210,7 @@ where t.id = @id]]></dataset>
   </details>
   <footer>
     <vgap height="2"/>
-    <hline border-color="218"/>
+    <hline border-color="100"/>
     <row height="10">
       <columns>
         <cell value="labels.web_page" link="labels.web_link" font-style="bolditalic" color="#2100FF"/>
@@ -218,7 +218,7 @@ where t.id = @id]]></dataset>
       </columns>
     </row>
   </footer>
-  <data>    <logo>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wIExQZM+QLBuYAAAQ5SURBVEjHtZVJbJRlGMd/77fM0ul0ykynLQPtjEOZWjptSisuJRorF6ocjEaDoDGSYKLiFmIMxoPGg0viRY0cNB6IUQ+YYCJEBLXQWqZgK6GU2taWLrS0dDrdO0vn+14PlYSlQAH9357L+89/eZ9HHDp0iP8TyqXDCV9Iuivvkf8lgXbp8JjPxUfHfseXs1yGs52sd+VgpueJqQYdPRE8sxniZgnElRbF8p1yXW6AgWgbDeeOoJgCu8PJtFbAc2W1tEeaxC0rADDTKVZmO+kxKwjawmwO5pJIGhzpP8je7m5KbycDgKnEDEnDYEO+G10xeT3Sxu6eIYJuP5OJffT5ihbNKD/klzckWLWuSibjUSyahZn5NBtXerkj0059dy+rPaUs1wvoiH3GXjkgIy6nbPV65PEMQzaNN0qLu+j6GZTfX5P+NPKjuqXIj8sV4vR0gv7ZJP2zCUpsEEdhW7GfztFOBqf6cQmV5ByUFpfxyr6veHpZpbhuBk/91qw+lGrDwIfXbqfGbkVXVQCiyRQvNZ5hY0EeIW+IkDfEm83dvL82wHRqAkOz3TiDXdqUeGLDLg73xfj5r4PoqopkwVa3RefFkkKeaWgDYHfXENV5LhRFRVMsZFvl0kLuP/aLCM+p4tfeLs4MtyEQgEQRgrs8Th70OtkeaefE2BQPeF1ICQ6Lk9WOOKMrlssltQjAavdwdqQbACkXrHXoOllWnWgiiVNApq4g/nV9+/pXaWrfw3Dh1Q1blCAr3kO5v5K0hPHUPHt6hinZf4JILE6R005CUTBNSJkmFxIp4qbG25veY3LyKJ9Pj8iGDIf0lFfIRT9aVjBHBsaK8Wb4qBuJMTyTpNTtoP2RdQD8PTXHjuOdfNwxiFWBHKsFj1WjPEvDJjIJOBXuCxQzdqpFLLoqJjwTsrbkYSyKBVPTsF6qUUpSpqRuOMaT9e0cq11LiSsTgLd+eheLq4YXKqtpra8Ti1o06ByQwYLVHB05yoHz+2mM1jGWGAPJQqOEoGsmzmvNnXxZHaL2yEKrvjv9LarmY2t4/WWPX6bAnm+TZ40kAlB0GDfO08dJptNxnl+xnYrcClrHZ9g7MMqOkI8PTvejaBo5Np253k/I879MaLBDXDPk+HBC5I9KkTcqhXdIitBIvtiau5Nszc3Xnd8A8GdsmnfKAnhtVnYW2iE1y8GhcbQZlUeDBSy5phdxobVNhPVnUdU0J893scXvITYbpbGvgVh6iIlUgiqPixbWcqb+sFjSur4Sued6hc0WkJIoX/zRQyI1icvhJG0YhA2DmJJDoxqgZoVXrhnsFjel4CIy5Ep+ONXKpjXVlKXconBcF8Epmyidd4hlFpU37vTxYccIuVX3ylsiUDNWse3ux+k4fvU181t1Nvu9pE3J9+eiNz6Zi8FfWSX7WpqveSoHg2EpgHC2g1hLk7hpgtvBP6lBrRsE+ni7AAAAAElFTkSuQmCC</logo>
+  <data>    <logo>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAFxGAABcRgEUlENBAAAAB3RJTUUH4AcCFiIAfaA8WwAAAeBJREFUSMftlj9IVlEUwH/nfR/+G3QwaPlAg3D5pKkPDIoIghYVm4yCFKlPcGoQdGppa4mm4IJbQdFYRKDgoFR0o5ZwcL5LLoKCoPW+43JfvO/6ns9P0ckDj8c5l3t+55x73rkPzqUFqdRrTe/Tho0CRGeQ2FWA8ilmcgH4CUyeGFSp13DGpvUOoB+YSwDALwBp0VF6jwAKXAbGgIfAYOBi1Rl7oxDknXf56IaBKtDhnzagvcBHzRn7IxOUZFGp12aAaeDKMSv7D+gBdpyxzSBfmnZgGbh2wn5Yc8ZWEyXKOI+lY0C2RGQ9sD1OK/9BvlyjwPUWIZsi8lFVB1K2DWfsl/REKAdle94i5LuIbKnq/cC+mAR/ICMvvUcliMgroFNVb2csT4WGcoGeJbsisqCq4zmBLThj90JjmNFeQbt+i0ReqOpMDiR2xj7KmtYh6E/WZhH5WoqiCWCooTp/SDC3wrPJ7Dr/9Sdn8L5UKt0T5JOqVuNG401BSaedsSt5d08ULFwENoBNVb0Zx/FbRUeA7gLIU2esCWdjU/P41h4HZv3d8Q74DTw7QmP8Baacsa8Pg6S7bBvoSw9BP0yfAJ05gM/AXSDOO5cDGeVdC972ALgDXAJ2gQ/O2Jfnf0RnJvumbKT0gnMTFgAAAABJRU5ErkJggg==</logo>
   </data>
 </template>]]></template>
 </report>

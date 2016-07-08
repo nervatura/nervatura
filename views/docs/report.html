@@ -231,7 +231,7 @@
       </tr>
       <tr>
         <td><a href="#hline">hline</a></td>
-        <td>width, gap</td>
+        <td>width, gap, border-color</td>
       </tr>
       <tr>
         <td><a href="#html">html</a></td>
@@ -719,14 +719,16 @@
       </tr>
       <tr class="fhead">
         <td><a name="hline" class="fname">hline</a>{width<span class="ftype">::String</span><span class="defvalue">='100%'</span>,
-        gap<span class="ftype">::Integer</span><span class="defvalue">=0</span>}</td>
+        gap<span class="ftype">::Integer</span><span class="defvalue">=0</span>,
+        border-color<span class="ftype">::Integer</span><span class="defvalue">=0</span>}</td>
       </tr>
       <tr>
         <td>
           <div class="fdesc" style="margin-top: 15px;margin-bottom: 15px;">
             Horizontal line.<br>
             <span class="retpar">width</span>: <span class="fdesc">if missing or 0, then extends up to the right margin</span><br>
-            <span class="retpar">gap</span>: <span class="fdesc">greater than 0 = double line</span>
+            <span class="retpar">gap</span>: <span class="fdesc">greater than 0 = double line</span><br>
+            <span class="retpar">border-color</span>: gray color (in range from 0 to 255)
           </div>         
         </td>
       </tr>

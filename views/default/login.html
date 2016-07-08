@@ -15,6 +15,13 @@
   .ui-content .ui-btn {
     text-align: center;
   }
+  .logo_border {
+    border-style: solid;
+    border-width: 1px;
+    border-color:#DCDCDC;
+    border-collapse:collapse;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  }
 </style>
 
 <div id="container" role="main" class="ui-content">
@@ -53,18 +60,7 @@
     <hr style="margin: 25px 0 5px;border-width: 1.5px;"/>
     <hr style="margin: 0px 0 5px;border-width: 1.5px;"/>
     <div style="padding-top: 20px;display:inline-block;width: 100%">
-      <table cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="width: 64px;padding-right: 0px;">
-            <img style="vertical-align: bottom;" src="/images/icon64_ntura_te.png" />
-          </td>
-          <td style="width: 120px;color: #616161;vertical-align: middle;font-size: 13px;font-weight: bold;">
-            OPEN SOURCE<br>
-            BUSINESS<br> 
-            MANAGEMENT
-          </td>
-        </tr>
-      </table>
+      <img class="logo_border" style="vertical-align: bottom;" src="/images/ntura_framework.png" height="64px" />
       <p style="text-align:center"><a href="http://www.nervatura.com" target="_blank" title="Nervatura Homepage" 
                 style="font-weight: bold;"><%= lang.label_ntura_framework %></a></p>
     </div>

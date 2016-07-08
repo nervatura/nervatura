@@ -178,38 +178,38 @@
       <p>2. Add/Edit a new customer database reference</p>
       <p>3.1 NAS SQLite database settings (optional)</p>
       <ul>
-        <li>Alias: <b>demo</b> (or what you want)</li>
+        <li>Alias: <b>demo</b> (or what you prefer)</li>
         <li>Engine: <b>SQLite</b></li>
         <li>Host: <b>leave the field empty, not needed</b></li>
         <li>Port: <b>leave the field empty, not needed</b></li>
-        <li>Database: <b>demo</b> (or what you want)</li>
-        <li>Other settings: <b>default</b> (or what you want)</li>
+        <li>Database: <b>demo</b> (or what you prefer)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
       <p><i>You can create an unlimited number of SQLite databases (to max. storage/gear)!</i></p>
       
       <p>3.2. NAS PostgreSql database settings (optional)</p>
       <ul>
-        <li>Alias: <b>pgdemo</b> (or what you want)</li>
+        <li>Alias: <b>pgdemo</b> (or what you prefer)</li>
         <li>Engine: <b>PostgreSQL</b></li>
         <li>Host: <b>$OPENSHIFT_POSTGRESQL_DB_HOST</b></li>
         <li>Port: <b>$OPENSHIFT_POSTGRESQL_DB_PORT</b></li>
         <li>Database: <b>$OPENSHIFT_APP_NAME</b></li>
         <li>UserName: <b>$OPENSHIFT_POSTGRESQL_DB_USERNAME</b></li>
         <li>Password: <b>$OPENSHIFT_POSTGRESQL_DB_PASSWORD</b></li>
-        <li>Other settings: <b>default</b> (or what you want)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
       <p><i>For each application you can configure only one postgresql database! (OpenShift restriction)</i></p>
       
       <p>3.3 NAS MySQL database settings (optional)</p>
       <ul>
-        <li>Alias: <b>mydemo</b> (or what you want)</li>
+        <li>Alias: <b>mydemo</b> (or what you prefer)</li>
         <li>Engine: <b>MySQL</b></li>
         <li>Host: <b>$OPENSHIFT_MYSQL_DB_HOST</b></li>
         <li>Port: <b>$OPENSHIFT_MYSQL_DB_PORT</b></li>
         <li>Database: <b>$OPENSHIFT_APP_NAME</b></li>
         <li>UserName: <b>$OPENSHIFT_MYSQL_DB_USERNAME</b></li>
         <li>Password: <b>$OPENSHIFT_MYSQL_DB_PASSWORD</b></li>
-        <li>Other settings: <b>default</b> (or what you want)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
       <p><i>For each application you can configure only one mysql database! (OpenShift restriction)</i></p>
       
@@ -225,7 +225,7 @@
       
       <p>5. Create a DEMO database (optional)</p>
       <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
-        than you can create a blank database again according to the previous instructions.</p>
+        then you can create a blank database again according to the previous instructions.</p>
         
       <p><span style="color:#8B1A1A;font-weight:bold;">Managing an OpenShift Application</span></p>
       
@@ -387,25 +387,25 @@
       <p>2. Add/Edit a new customer database reference</p>
       <p>3.1 NAS SQLite database settings (optional)</p>
       <ul>
-        <li>Alias: <b>demo</b> (or what you want)</li>
+        <li>Alias: <b>demo</b> (or what you prefer)</li>
         <li>Engine: <b>SQLite</b></li>
         <li>Host: <b>leave the field empty, not needed</b></li>
         <li>Port: <b>leave the field empty, not needed</b></li>
-        <li>Database: <b>demo</b> (or what you want)</li>
-        <li>Other settings: <b>default</b> (or what you want)</li>
+        <li>Database: <b>demo</b> (or what you prefer)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
       <p><i>You can create an unlimited number of SQLite databases!</i></p>
       
       <p>3.2. NAS PostgreSql database settings (optional)</p>
       <ul>
-        <li>Alias: <b>pgdemo</b> (or what you want)</li>
+        <li>Alias: <b>pgdemo</b> (or what you prefer)</li>
         <li>Engine: <b>PostgreSQL</b></li>
         <li>Host: <b>$POSTGRES_PORT_5432_TCP_ADDR</b></li>
         <li>Port: <b>$POSTGRES_PORT_5432_TCP_PORT</b></li>
-        <li>Database: <b>$POSTGRES_ENV_POSTGRES_DB</b> (or what you want)</li>
+        <li>Database: <b>$POSTGRES_ENV_POSTGRES_DB</b> (or what you prefer)</li>
         <li>UserName: <b>$POSTGRES_ENV_POSTGRES_USER</b></li>
         <li>Password: <b>$POSTGRES_ENV_POSTGRES_PASSWORD</b></li>
-        <li>Other settings: <b>default</b> (or what you want)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
       <p><i>You can create an unlimited number of PostgreSql databases! 
         POSTGRES_DB optional environment variable can be used to define a 
@@ -415,14 +415,14 @@
       
       <p>3.3 NAS MySQL database settings (optional)</p>
       <ul>
-        <li>Alias: <b>mydemo</b> (or what you want)</li>
+        <li>Alias: <b>mydemo</b> (or what you prefer)</li>
         <li>Engine: <b>MySQL</b></li>
         <li>Host: <b>$MYSQL_PORT_3306_TCP_ADDR</b></li>
         <li>Port: <b>$MYSQL_PORT_3306_TCP_PORT</b></li>
-        <li>Database: <b>$MYSQL_ENV_MYSQL_DATABASE</b> (or what you want)</li>
+        <li>Database: <b>$MYSQL_ENV_MYSQL_DATABASE</b> (or what you prefer)</li>
         <li>UserName: <b>$MYSQL_ENV_MYSQL_USER</b> (or root)</li>
         <li>Password: <b>$MYSQL_ENV_MYSQL_PASSWORD</b> (or $MYSQL_ROOT_PASSWORD)</li>
-        <li>Other settings: <b>default</b> (or what you want)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
       <p><i>You can create an unlimited number of MySQL databases! 
         MYSQL_DATABASE variable is optional and allows you to specify 
@@ -432,14 +432,14 @@
       
       <p>3.4 NAS MSSQL (or any remote) database settings (optional)</p>
       <ul>
-        <li>Alias: <b>msdemo</b> (or what you want)</li>
-        <li>Engine: <b>MSSQL</b> (or what you want)</li>
-        <li>Host: <b>192.168.56.1</b> (or what you want)</li>
-        <li>Port: <b>1433</b> (or what you want)</li>
-        <li>Database: <b>nervatura</b> (or what you want)</li>
-        <li>UserName: <b>sa</b> (or what you want))</li>
-        <li>Password: <b>sadmin</b> (or what you want)</li>
-        <li>Other settings: <b>default</b> (or what you want)</li>
+        <li>Alias: <b>msdemo</b> (or what you prefer)</li>
+        <li>Engine: <b>MSSQL</b> (or what you prefer)</li>
+        <li>Host: <b>192.168.56.1</b> (or what you prefer)</li>
+        <li>Port: <b>1433</b> (or what you prefer)</li>
+        <li>Database: <b>nervatura</b> (or what you prefer)</li>
+        <li>UserName: <b>sa</b> (or what you prefer))</li>
+        <li>Password: <b>sadmin</b> (or what you prefer)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
       <p><i>You can create an unlimited number of MSSQL/remote databases! 
         See more docker run <a 
@@ -490,7 +490,7 @@
   <p>Application const and UI/GUI settings: 
     <a href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
     target="blank">lib/node/conf.js</a> file. Can be changed, but the program is 
-    overwritten when updating!</p>
+    overwritten when updated!</p>
   
   <ul>
     <li><i>data_dir</i>: Path string. Default:app_home/data or OPENSHIFT_DATA_DIR. A persistent data directory. Subfolders: database(sqlite), data(export/import), storage.</li>

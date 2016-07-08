@@ -95,11 +95,11 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
     <row height="10">
       <columns>
         <cell name="custname" value="company.0.custname" align="left" font-style="bold" font-size="12" width="100"/>
-        <cell name="label" value="labels.lb_vat_summary" font-style="bolditalic" font-size="26" align="right" color="#D8DBDA"/>
+        <cell name="label" value="labels.lb_vat_summary" font-style="bolditalic" font-size="26" align="right" color="#696969"/>
       </columns>
     </row>
     <vgap height="2"/>
-    <hline border-color="218" gap="1"/>
+    <hline border-color="100" gap="1"/>
     <vgap height="3"/>
     <row hgap="2" height="1">
       <columns>
@@ -113,7 +113,7 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
   </header>
   <details>
     <vgap height="3"/>
-    <datagrid name="items" databind="ds" border="1" border-color="218" font-size="8" header-background="245">
+    <datagrid name="items" databind="ds" border="1" border-color="100" font-size="8" header-background="230">
       <columns>
         <column width="6%" fieldname="counter" align="right" label="labels.lb_no"/>
         <column width="6%" fieldname="curr" label="labels.lb_curr"/>
@@ -127,7 +127,7 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
       </columns>  
     </datagrid>
     <vgap height="3"/>
-    <datagrid name="total" databind="total" border="1" border-color="218" font-size="8" header-background="245">
+    <datagrid name="total" databind="total" border="1" border-color="100" font-size="8" header-background="230">
       <columns>
         <column width="10%" fieldname="curr" label="labels.lb_curr" />
         <column width="8%" fieldname="taxcode" align="right" label="={{labels.lb_vat}}%" header-align="right"/>
@@ -141,7 +141,7 @@ where c.id in(select min(customer.id) from customer inner join groups on custome
   </details>
   <footer>
     <vgap height="2"/>
-    <hline border-color="218"/>
+    <hline border-color="100"/>
     <row height="10">
       <columns>
         <cell value="labels.web_page" link="labels.web_link" font-style="bolditalic" color="#2100FF"/>

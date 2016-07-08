@@ -5,7 +5,7 @@ Open Source Business Management Framework for [Node.js](http://nodejs.org)
 
 ## Features
 
-Nervatura is an business management framework. It can handle any type of business related information, starting from customer details, up to shipping, stock or payment information.
+Nervatura is a business management framework. It can handle any type of business related information, starting from customer details, up to shipping, stock or payment information.
 
 The framework is based on Nervatura [Object Model](https://github.com/nervatura/nervatura/wiki/Nervatura-Object-Model-%28NOM%29) specification. The main aspects of its design were:
 

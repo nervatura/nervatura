@@ -52,7 +52,7 @@
 
   <p>The <i><b>Nervatura Data Interface (NDI)</b></i> is made for those who want to
 		query or transmit data to a Nervatura customer database. <b><i>The purpose
-		of functions is to give an easily operable, perspicuous and safe tool</i></b>
+		of functions is to give an easily operable, clear and safe tool</i></b>
 		to manage while the real data storage layer is covered:</p>
 
 	<ul>
@@ -120,7 +120,7 @@
 		options also encryption settings can be added.<br>
 		<b>params:</b> it contains identification information just as the
 		processing type and method.<br>
-		<b>data,filters:</b> the data itself (data), possibly filtration,
+		<b>data,filters:</b> the data itself (data), possible filtration,
 		formatting, return format information (filters) is located here
 		according to the given function.
 	</p>
@@ -464,10 +464,12 @@
   <p class="code" style="text-align: left;">
     <b><i>1. Enter two new customers in one request: customer name, VAT
 				number and eye colour. If the eye colour customer feature does not
-				exist, it will be automatically generated. We give customer number
-				to the first but we do not to the second. To the second it generates
-				one automatically and as a response it gives back. If the customer
-				number already existed to the first then it overwrites the data. </i></b>
+				exist, it will be automatically generated. We give a customer number
+				to the first but we do not enter it for the second customer. The program will
+				generate a new one automatically for the second customer and it will be visible in 
+				the response given to the action. If the customer
+				number that we have given for the first customer has already existed
+				then the data of it will be updated with the new entry. </i></b>
     <br>
     <br> 
     <span style="font-style: italic;font-size: small;">
@@ -526,7 +528,7 @@
 	  </span>
     <br>
     <br>
-    <b><i>4. For the customer generated in the point 1. we give new address data.</i></b>
+    <b><i>4. For the customer generated in the point 1. we add new address data.</i></b>
     <br>
     <br>
     <span style="font-style: italic;background-color: #FFFAFA;font-size: small;">
@@ -543,7 +545,7 @@
 	  </span>
     <br>
     <br>
-    <b><i>5. For the customer generated in the point 1. we give a new event. </i></b>
+    <b><i>5. To the customer generated in the point 1. we attach a new event. </i></b>
     <br>
     <br>
     <span style="font-style: italic;background-color: #FFFAFA;font-size: small;">
@@ -560,7 +562,7 @@
 	  </span>
     <br>
 	<br>
-    <b><i>6. Querying data from a client </i></b>
+    <b><i>6. Querying data for a client </i></b>
     <br>
     <br>
     <span style="font-style: italic;background-color: #FFFAFA;font-size: small;">

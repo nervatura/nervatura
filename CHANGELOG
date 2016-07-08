@@ -1,3 +1,8 @@
+## 2.2.2
+- language file fixes and new logo
+- documentation corrections
+- report templates fixes
+
 ## 2.2.1
 - Docker mssql/remote database (see more Admin Guide)
 
@@ -31,7 +36,7 @@
 - new Admin Guide
 - performance and security patches
 - added support for OpenShift
-- updating and fixes Nervatura Report templates
+- Nervatura Report templates fixes
 - many bug fixes
 
 ## 2.0.0
