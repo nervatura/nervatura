@@ -1,3 +1,9 @@
+## 2.3.0
+- NAS Admin, NDI Wizard, Report DEMO: jquery-mobile replaced with bootstrap & jquery 3 upgrade
+- express and npm libs upgrade
+- Nervatura Touch developer mode support
+- some bug fixes
+
 ## 2.2.2
 - language file fixes and new logo
 - docs corrections

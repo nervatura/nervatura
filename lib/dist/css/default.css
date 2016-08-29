@@ -1,8 +1,5 @@
-.body {
-  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 1em;
-  background-color: #ffffff;
-  color: #444444;
+body {
+  background-color: #f9f9f9;
 }
 .error { 
   background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0 0 #FFF9DF;
@@ -21,80 +18,95 @@
   text-shadow: 0px 1px 0px #FFF;
   background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0% 0% #FFF9DF;
 }
-a { 
-  text-decoration:none;
+.navbar-header {
+  padding:2px 0px 2px 0px;
+}
+.vernum {
+  padding-left:15px;
+}
+.btext {
+  padding:20px;
+  margin-top:70px;
+  max-width: 800px;
+  background-color: #fff;
+  font-size: 1.1em;
+}
+a {
+  font-weight: bold;
+  color: #3B7687;
 }
 a:hover {
   text-decoration: none;
 }
-a.button {
-  text-decoration: none
-}
-
-.ui-btn {
-  font-size: 14px;
-}
-
-label, label.ui-input-text {
-  font-weight: bold !important;    
-}
-.ui-content {
-  padding: 5px;
-}
-.ui-content .ui-btn {
-  text-align: left;
-}
-#container {
-	background: none repeat scroll 0 0 #FFFFFF;
-	margin: 0 auto;
-	padding: 30px;
-	padding-top: 10px;
-	max-width: 800px;
-	min-width: 250px;
-	text-align: justify;
-	color: #444444;
-}
-#container a {
-  	color: #3B7687 ;
-}
-h2 {
-	color: #3B7687;
-}
-.vernum {
-	background-color: #444444;
-	color: #FFFFFF;
-	font-weight: bold;
-	padding: 5px 8px;
-	font-size: 12px;
-	font-style: italic;
-	vertical-align: top;
+h3 {
+  color: #3B7687;
+  font-weight: bold;
 }
 .sname {
-	background-color: #DAA520;
-	color: #FFFFFF;
-	font-weight: bold;
-	padding-left: 3px;
-	padding-right: 3px;
-	font-family: monospace;
-	font-size: 16px;
-	font-style: italic;
-	-webkit-border-radius:3px;
-	border-radius:3px;
+  background-color: #DAA520;
+  color: #FFFFFF;
+  font-weight: bold;
+  padding-left: 3px;
+  padding-right: 3px;
+  font-family: monospace;
+  font-size: 16px;
+  font-style: italic;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
 }
-p {
-	text-align: justify;
+.panel-default>.panel-heading {
+  color: #333;
+  background-color: #fff;
+  border-color: #ddd;
+}
+.panel-title>a {
+  font-weight: normal;
+  text-decoration:none;
+}
+.panel-body {
+  font-size: 0.9em;
 }
 .info_div {
-	background-color: #F5F5DC;
-	margin: 0px;
-	padding: 3px 6px ;
+  background-color: #f5f5f5;
+  margin: 0px;
+  padding: 3px 6px;
 }
-.colhead a {
-  white-space: normal;
-  color: #444444 !important;
-  background-color: #FFFFFF !important;
-  text-align: justify !important;
-  font-weight: normal !important;
-  font-size: 16px !important;
+form .list-group-item {
+  border-radius: 0px !important;
 }
-
+.btn-primary {
+  font-weight: bold;
+  background-color: #333;
+  border-color: #1f1f1f;
+}
+.btn-primary.active, .btn-primary:active, .open>.dropdown-toggle.btn-primary {
+  background-color: #080808;
+  border-color: #363636;
+}
+.panel-primary {
+  border-color: #333333;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.panel-primary>.panel-heading {
+  color: #fff;
+  background-color: #333333;
+  border-color: #333333;
+  font-weight: bold;
+}
+.btn-collapse {
+  display: inline-block;
+  margin-bottom: 0;
+  line-height: 1.42857143;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  width: 100%;
+}

@@ -1,5 +1,4 @@
 <% include html_head.html %>
-<% include body_page_header.html %>
 
 <script>
   function updateForm(cmd,reportkey){
@@ -11,146 +10,170 @@
     document.forms['frm_list'].submit();}
 </script>
 
-<div align="center" style="padding-top: 10px;">
+<div align="center" style="padding-top: 20px;">
   <% if (view === "list") { %>
-  <form id="frm_list" action="/nas/report" method="post" style="max-width: 800px;">
-    <input name="_csrf" value="<%= _csrf %>" type="hidden">
-    <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
-      <li class="ui-grid-b ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <label for="alias"><%= lang.label_alias %>:</label>
-          <select name="alias" id="alias"><% form.database.forEach(function(dbs) { %>
-            <% if (dbs.alias === form.alias) { %><option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option>
-            <% } else{ %><option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
-          </select>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <label for="group"><%= lang.label_report_group %>:</label>
-          <select name="group" id="group"><% if (form.groups) { %><% form.groups.forEach(function(group) { %>
+  <div class="panel panel-primary" style="max-width: 600px;">
+    <div class="panel-heading">
+      <h2 class="panel-title text-left"><%= subtitle %></h2>
+    </div>
+    <form id="frm_list" action="/nas/report" method="post">
+      <input name="_csrf" value="<%= _csrf %>" type="hidden">
+      <div class="panel-body">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <select name="alias" id="alias" class="form-control">
+              <% form.database.forEach(function(dbs) { %>
+              <% if (dbs.alias === form.alias) { %><option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option>
+              <% } else{ %><option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+            </select>
+          </div>
+          <div class="input-group-btn" style="padding-left:10px;">
+            <select name="group" id="group" class="form-control">
+              <% if (form.groups) { %><% form.groups.forEach(function(group) { %>
               <% if (group === form.group) { %><option value="<%= group %>" selected="selected"><%= group %></option>
               <% } else{ %><option value="<%= group %>"><%= group %></option><% } %><% }); %><% } %>
-          </select>
-        </div>
-        <div class="ui-block-c" style="padding: 0px 3px;">
-          <br>
-          <a data-ajax="false" data-icon="search" data-iconpos="left" data-role="button" 
-			       href="#" onclick="document.forms['frm_list'].submit();" data-theme="b"
-			       role="button"><%= lang.label_search %></a>
-        </div>
-      </li>
-    </ul>
-    <table class="ui-body-d ui-shadow table-stripe ui-responsive ui-table ui-table-reflow" 
-      id="tbl_reports" data-filter="true">
-      <thead>
-        <tr class="ui-bar-a">
-          <th data-colstart="1"></th>
-          <th data-colstart="2"></th>
-          <th data-colstart="3"></th>
-          <th data-colstart="4" data-priority="1"><%= lang.label_report_name %></th>
-        </tr>
-      </thead>
-      <tbody><% if (form.files) { %><% form.files.forEach(function(template) { %>
-        <tr>
-          <td><% if (form.alias === '') { %>
-            <input type="button" data-theme="b" data-icon="plus" data-iconshadow="true" value="Install" disabled="disabled" /><% } else{ %>
-              <% if (template.installed) { %>
-                <a class="ui-link ui-btn ui-btn-b ui-icon-delete ui-btn-icon-left ui-shadow ui-corner-all" 
-                  href="#" onclick="updateForm('delete','<%= template.reportkey %>');" 
-                  style="color:#FF7F50;"><%= lang.label_report_delete %></a>
-              <% } else{ %>
-                <a class="ui-link ui-btn ui-btn-b ui-icon-plus ui-btn-icon-left ui-shadow ui-corner-all" 
-                  href="#" onclick="updateForm('install','<%= template.reportkey %>');" 
-                  style="color:#8FBC8F;"><%= lang.label_report_install %></a><% } %><% } %>
-          </td>
-          <td><% if (template.preview) { %>
-            <div style="padding-right:5px;">
-              <a class="ui-link ui-btn ui-btn-a ui-icon-info ui-btn-icon-left ui-shadow ui-corner-all"  
-                data-position-to="window" data-rel="popup" data-transition="fade" 
-                href="#<%= template.reportkey %>" title="<%= template.repname %>"><%= lang.label_report_preview %></a>
-              <div class="ui-popup ui-body-b ui-overlay-shadow ui-corner-all" 
-                data-corners="true" data-overlay-theme="b" data-role="popup" data-theme="b" 
-                id="<%= template.reportkey %>" style="padding:10px;padding-top:5px;">
-                <a class="ui-btn-right ui-link ui-btn ui-btn-b ui-icon-delete ui-btn-icon-notext ui-shadow ui-corner-all" 
-                  data-rel="back" href="#">Close</a>
-                <div style="font-weight: bold;padding-bottom:4px;" align="center"><%= template.repname %></div>
-                <img alt="<%= template.repname %>" src="/report/<%= template.reportkey %>.png" title="<%= template.repname %>">
-              </div>
-            </div><% } else{ %>
-            <input type="button" data-icon="info" data-iconshadow="true" value="<%= lang.label_report_preview %>" disabled="disabled" /><% } %>
+            </select>
           </div>
-          </td>
-          <td><% if (template.installed) { %>
-            <input type="button" data-icon="edit" data-iconshadow="true" value="<%= lang.label_report_edit %>" 
-              onclick="updateForm('edit','<%= template.reportkey %>');"/><% } else{ %>
-            <input type="button" data-icon="edit" data-iconshadow="true" value="<%= lang.label_report_edit %>" disabled="disabled" /><% } %>
-          </td>
-          <td>
-            <b class="ui-table-cell-label"><%= lang.label_report_name %></b><span style="font-weight: bold;"><%= template.repname %></span><br><%= template.description %>
-          </td>
-        </tr><% }); %><% } %>
-      </tbody>
-    </table>
-    <div style="display:none;">
-      <input value="<%= form.alias %>" name="update_database" type="hidden">
-      <input value="" id="update_cmd" name="update_cmd" type="hidden">
-      <input value="" id="update_reportkey" name="update_reportkey" type="hidden">
-      <input value="" name="update_group" type="hidden">
-      <input value="" name="update_repname" type="hidden">
-    </div>
-  </form><% } %>
+          <div class="input-group-btn text-left" style="padding-left:10px;">
+            <a role="button" class="btn btn-primary" href="#" class="form-control"
+              onclick="document.forms['frm_list'].submit();">
+              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+              <%= lang.label_search %></a>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <tbody><% if (form.files) { %><% form.files.forEach(function(template) { %>
+            <tr>
+              <td>
+                <p><b><%= template.repname %></b><br>
+                  <%= template.description %></p>
+
+                <div class="btn-group" role="group" aria-label="...">
+                  <% if (form.alias === '') { %>
+                    <a role="button" class="btn btn-primary disabled" href="#">
+                      <span class="glyphicon glyphicon-plus" style="color:#8FBC8F;" aria-hidden="true"></span>
+                      <%= lang.label_report_install %></a>
+                  <% } else{ %>
+                    <% if (template.installed) { %>
+                      <a role="button" class="btn btn-primary" href="#" 
+                        onclick="updateForm('delete','<%= template.reportkey %>');">
+                        <span class="glyphicon glyphicon-trash" style="color:#FF7F50;" aria-hidden="true"></span>
+                        <%= lang.label_report_delete %></a>
+                    <% } else{ %>
+                      <a role="button" class="btn btn-primary" href="#" 
+                        onclick="updateForm('install','<%= template.reportkey %>');">
+                        <span class="glyphicon glyphicon-plus" style="color:#8FBC8F;" aria-hidden="true"></span>
+                        <%= lang.label_report_install %></a><% } %><% } %>
+
+                    <a class="btn btn-default <%=template.preview===false ? 'disabled' : ''%>" role="button" data-toggle="modal" 
+                      data-target="#<%= template.reportkey %>" title="<%= template.repname %>">
+                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                        <%= lang.label_report_preview %></a>
+                    <% if (template.preview) { %>
+                    <div id="<%= template.reportkey %>" class="modal fade" tabindex="-1" role="dialog">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <a role="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span></a>
+                            <h4 id="edit_title" class="modal-title"><%= template.repname %></h4>
+                          </div>
+                          <img alt="<%= template.repname %>" 
+                            src="/report/<%= template.reportkey %>.png" title="<%= template.repname %>">
+                        </div><!-- /.modal-content -->
+                      </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal --><% } %>
+
+                    <a role="button" class="btn btn-default <%=template.installed===false ? 'disabled' : ''%>" href="#" 
+                      onclick="updateForm('edit','<%= template.reportkey %>');">
+                      <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                      <%= lang.label_report_edit %></a>
+                </div>
+              </td>
+            </tr><% }); %><% } %>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:none;">
+        <input value="<%= form.alias %>" name="update_database" type="hidden">
+        <input value="" id="update_cmd" name="update_cmd" type="hidden">
+        <input value="" id="update_reportkey" name="update_reportkey" type="hidden">
+        <input value="" name="update_group" type="hidden">
+        <input value="" name="update_repname" type="hidden">
+      </div>
+    </form>
+  </div>
+  <% } %>
   <% if (view === "edit") { %>
-  <form id="frm_list" action="/nas/report" method="post" style="max-width: 800px;">
-    <input name="_csrf" value="<%= _csrf %>" type="hidden">
-    <ul data-role="listview" class="ui-responsive" data-inset="true" style="margin: 10px 0px;">
-      <li data-role="list-divider" data-theme="b" role="heading" 
-         style="font-size: 18px; font-weight: bold;"><%= form.report.repname %></li>
-      <li class="ui-grid-b ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <a class="ui-link ui-btn ui-btn-b ui-icon-check ui-btn-icon-left ui-shadow ui-corner-all" 
-             data-ajax="true" href="#" onclick="updateForm('update','<%= form.report.reportkey %>');" 
-             style="color:#8FBC8F;"><%= lang.label_update %></a>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <a class="ui-link ui-btn ui-btn-b ui-icon-delete ui-btn-icon-left ui-shadow ui-corner-all" 
-            href="#" onclick="updateForm('delete','<%= form.report.reportkey %>');" 
-            style="color:#FF7F50;"><%= lang.label_report_delete %></a>
-        </div>
-        <div class="ui-block-c" style="padding: 0px 3px;">
-          <a class="ui-link ui-btn ui-btn-a ui-icon-back ui-btn-icon-left ui-shadow ui-corner-all" 
-            href="#" onclick="updateForm('cancel','');"><%= lang.label_cancel %></a>
-        </div>
-      </li>
-      <li style="padding-top: 0px;">
-        <div data-role="collapsibleset" data-inset="false" style="margin:0px;">
-          <div id="ftemplate" data-role="collapsible" data-collapsed="true" style="padding:0px;"
-            data-collapsed-icon="code" data-expanded-icon="code" >
-            <h2 style="margin:0px;"><%= lang.label_xml_template %></h2>
-            <textarea name="template" style="margin:0px;"><%= form.report.report %></textarea>
+    <div class="panel panel-primary" style="max-width: 800px;">
+      <div class="panel-heading">
+        <h2 class="panel-title text-left"><%= form.report.repname %></h2>
+      </div>
+      <form id="frm_list" action="/nas/report" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div class="panel-body">
+          <div class="btn-group" role="group" aria-label="...">
+            <a role="button" class="btn btn-primary"
+              onclick="updateForm('update','<%= form.report.reportkey %>');">
+              <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
+              <%= lang.label_update %></a>
+            <a role="button" class="btn btn-primary" style="margin-left:10px;" 
+              onclick="updateForm('delete','<%= form.report.reportkey %>');">
+              <span class="glyphicon glyphicon-trash" style="color:#FF7F50;" aria-hidden="true"></span>
+              <%= lang.label_report_delete %></a>
+            <a role="button" class="btn btn-default" style="margin-left:10px;"
+              onclick="updateForm('cancel','');">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              <%= lang.label_cancel %></a>
           </div>
-          <div id="flabels" data-role="collapsible" data-collapsed="true" 
-            data-collapsed-icon="tag" data-expanded-icon="tag" >
-            <h2 style="margin:0px;"><%= lang.label_report_labels %></h2><% form.labels.forEach(function(label) { %>
-              <div>
-                <label for="label_<%= label.id %>"><%= label.secname %> - <%= label.fieldname %></label>
-                <input name="label_msg" id="label_<%= label.id %>" value="<%= label.msg %>" data-clear-btn="true" type="text">
-                <input name="label_id" value="<%= label.id %>" type="hidden">
-              </div><% }); %>
+          <div class="panel panel-default" style="margin-top:10px;">
+            <div class="panel-heading" role="tab" id="ftemplate">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#xml_template" 
+                  aria-expanded="true" aria-controls="xml_template" class="btn-collapse">
+                  <span class="glyphicon glyphicon-file" aria-hidden="true"></span> <%= lang.label_xml_template %>
+                </a>
+              </h4>
+            </div>
+            <div id="xml_template" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ftemplate">
+              <textarea name="template" class="form-control" rows="15"><%= form.report.report %></textarea>
+            </div>
+          </div>
+          
+          <div class="panel panel-default" style="margin-top:10px;">
+            <div class="panel-heading" role="tab" id="flabels">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#labels" 
+                  aria-expanded="true" aria-controls="labels" class="btn-collapse">
+                  <span class="glyphicon glyphicon-tag" aria-hidden="true"></span> <%= lang.label_report_labels %>
+                </a>
+              </h4>
+            </div>
+            <div id="labels" class="panel-collapse collapse" role="tabpanel" aria-labelledby="flabels">
+              <div class="panel-body text-left">
+                <% form.labels.forEach(function(label) { %>
+                <div style="padding:5px;">
+                  <label class="control-label" for="label_<%= label.id %>"><%= label.secname %> - <%= label.fieldname %></label>
+                  <input name="label_<%= label.id %>" id="label_<%= label.id %>" value="<%= label.msg %>" class="form-control" type="text">
+                </div><% }); %>
+              </div>
+            </div>
           </div>
         </div>
-      </li>
-    </ul>
-    <div style="display:none;">
-      <input value="<%= form.alias %>" name="update_database" type="hidden">
-      <input value="" id="update_cmd" name="update_cmd" type="hidden">
-      <input value="" id="update_reportkey" name="update_reportkey" type="hidden">
-      <input value="<%= form.report.id %>" name="report_id" type="hidden">
-      <input value="<%= form.group %>" name="update_group" type="hidden">
-      <input value="<%= form.repname %>" name="update_repname" type="hidden">
+
+        <div style="display:none;">
+          <input value="<%= form.alias %>" name="update_database" type="hidden">
+          <input value="" id="update_cmd" name="update_cmd" type="hidden">
+          <input value="" id="update_reportkey" name="update_reportkey" type="hidden">
+          <input value="<%= form.report.id %>" name="report_id" type="hidden">
+          <input value="<%= form.group %>" name="update_group" type="hidden">
+          <input value="<%= form.repname %>" name="update_repname" type="hidden">
+        </div>
+      </form>
     </div>
-  </form><% } %>
+  <% } %>
 </div>
 
-</div><!-- /content -->
-<% include menu.html %>
-</div><!-- /page -->
-</body></html>
+<% include html_foot.html %>

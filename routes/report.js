@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
   res.redirect('index');});
 
 router.get('/index', function(req, res, next) {
-  res.render('report/index.html',{});});
+  res.render('report/index.html',{view:"index"});});
 
 router.get('/server', function(req, res, next) {
   var flash;
@@ -27,7 +27,7 @@ router.get('/server', function(req, res, next) {
   exec(req.app.get("host_settings").python2_path+" -V", function(err, stdout, stderr){
       if (err || stderr.indexOf("Python 2.")===-1) {
         flash = req.app.locals.lang.invalid_python_path;}
-     res.render('report/server.html',{flash:flash});});});
+     res.render('report/server.html',{flash:flash, view:"server"});});});
 
 router.all('/document', function(req, res, next) {
   var orient = "p"; var format = "pdf"; var method = "load_report_xml";
@@ -96,6 +96,6 @@ router.get('/template', function(req, res, next) {
       if(err){return next(err);}});}});
 
 router.get('/client', function(req, res, next) {
-  res.render('report/client.html',{});});
+  res.render('report/client.html',{view:"client"});});
 
 module.exports = router;

@@ -1,70 +1,51 @@
 <% include html_head.html %>
-<% include body_page_header.html %>
-
-<style>
-  .vernum {
-    background-color: #444444;
-    color: #FFFFFF;
-    font-weight: bold;
-    padding: 2px;
-    font-family: sans-serif;
-    font-size: 12px;
-    font-style: italic;
-    vertical-align: middle;
-  }
-  .ui-content .ui-btn {
-    text-align: center;
-  }
-  .logo_border {
-    border-style: solid;
-    border-width: 1px;
-    border-color:#DCDCDC;
-    border-collapse:collapse;
-    box-shadow: 0 1px 3px rgba(0,0,0,.15);
-  }
-</style>
-
-<div id="container" role="main" class="ui-content">
+<div class="container btext" >
   <% if (flash) { %>
   <div class="flash"><%= flash %></div>
   <% } %>
   <% if (typeof insecure === "undefined") { %>
-  <div align="center" style="max-width: 800px;padding-top: 10px;">
-    <form id="frm_login" action="/login" method="post" style="max-width: 500px;">
-      <input name="_csrf" value="<%= _csrf %>" type="hidden">
-      <ul data-role="listview" data-inset="true">
-        <li class="ui-field-contain">
-          <label for="username"><%= lang.label_username %>:</label>
-          <input id="username" name="username" value="<%= username %>" type="text" 
-            onkeydown="if (event.keyCode == 13) document.forms['frm_login'].submit();">
-        </li>
-        <li class="ui-field-contain">
-          <label for="password"><%= lang.label_password %>:</label>
-          <input id="password" name="password" value="" type="password" 
-            onkeydown="if (event.keyCode == 13) document.forms['frm_login'].submit();">
-        </li>
-        <li class="ui-body">
-          <fieldset class="ui-grid-a">
-            <div class="ui-block-a">
+  <div align="center" style="padding-top: 20px;">
+    <div class="panel panel-primary" style="max-width: 400px;">
+      <div class="panel-heading">
+        <h2 class="panel-title text-left"><%= lang.label_login_title %></h2>
+      </div>
+      <form id="frm_login" action="/login" method="post" class="form-horizontal" style="max-width: 500px;">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <ul class="list-group" style="margin:0px;">
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-sm-3 text-left">
+                <label for="username" class="control-label"><%= lang.label_username %>:</label>
+              </div>
+              <div class="col-sm-9">
+                <input name="username" id="username" value="<%= username %>" 
+                  class="form-control" type="text" 
+                  onkeydown="if (event.keyCode == 13) document.forms['frm_login'].submit();">
+              </div>
             </div>
-            <div class="ui-block-b">
-              <a data-ajax="false" href="#" onclick="document.forms['frm_login'].submit();" 
-                style="color:#8FBC8F !important;"
-                class="ui-link ui-btn ui-btn-b ui-icon-check ui-btn-icon-left ui-shadow ui-corner-all" 
-                role="button"><%= lang.label_login %></a>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-sm-3 text-left">
+                <label for="password" class="control-label"><%= lang.label_password %>:</label>
+              </div>
+              <div class="col-sm-9">
+                <input name="password" id="password" value="" 
+                  class="form-control" type="password" 
+                  onkeydown="if (event.keyCode == 13) document.forms['frm_login'].submit();">
+              </div>
             </div>
-          </fieldset>
-        </li>
-      </ul>
-    </form>
-    <hr style="margin: 25px 0 5px;border-width: 1.5px;"/>
-    <hr style="margin: 0px 0 5px;border-width: 1.5px;"/>
-    <div style="padding-top: 20px;display:inline-block;width: 100%">
-      <img class="logo_border" style="vertical-align: bottom;" src="/images/ntura_framework.png" height="64px" />
-      <p style="text-align:center"><a href="http://www.nervatura.com" target="_blank" title="Nervatura Homepage" 
-                style="font-weight: bold;"><%= lang.label_ntura_framework %></a></p>
+          </li>
+        </ul>
+      </form>
+      <div class="panel-footer">
+        <a role="button" class="btn btn-primary" 
+          onclick="document.forms['frm_login'].submit();">
+          <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
+          <%= lang.label_login %></a>
+      </div>
     </div>
   </div>
   <% } %>
-
+</div>
 <% include html_foot.html %>

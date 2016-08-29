@@ -32,19 +32,19 @@ router.get('/env', function(req, res, next) {
 */
 
 router.get('/index', function(req, res, next) {
-  res.render('default/index.html',{});
+  res.render('default/index.html',{view:"index"});
 });
 
 router.get('/ndoc', function(req, res, next) {
-  res.render('default/ndoc.html',{});
+  res.render('default/ndoc.html',{view:"ndoc"});
 });
 
 router.get('/about', function(req, res, next) {
-  res.render('default/about.html',{});
+  res.render('default/about.html',{view:"about"});
 });
 
 router.get('/licenses', function(req, res, next) {
-  res.render('default/licenses.html',{});
+  res.render('default/licenses.html',{view:"licenses"});
 });
 
 router.get('/docs/nas', function(req, res, next) {
@@ -75,7 +75,9 @@ function page_render(params){
   if (typeof params.dir === "undefined"){
     params.dir = "default"}
   if (typeof params.data === "undefined"){
-    params.data = {};}
+    params.data = {view:params.page};}
+  else{
+    params.data.view = params.page;}
   params.res.render(params.dir+"/"+params.page+".html",params.data);}
 
 router.get('/login',

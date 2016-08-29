@@ -1,85 +1,118 @@
 <% include html_head.html %>
-<% include body_page_header.html %>
 
 <script>
   function msgDelete(fieldname){
     $("#current_fieldname").val(fieldname);
-    $("#delete").popup("open", {transition:"pop", positionTo:"window"});}
+    $("#delete").modal();}
   function msgNew(){
 	  $("#edit_title").html("<%= lang.label_new %>");
     $("#edit_fieldname").val("");
 	  $("#edit_description").val("");
 	  $("#edit_value").val("");
-    $("#edit").popup("open", {transition:"pop", positionTo:"window"});}
+    $("#edit").modal();}
   function msgEdit(fieldname, description, value){
     $("#edit_title").html("<%= lang.label_edit %>");
 	  $("#edit_fieldname").val(fieldname);
 	  $("#edit_description").val(description);
 	  $("#edit_value").val(value);
-    $("#edit").popup("open", {transition:"pop", positionTo:"window"});}
+    $("#edit").modal();}
 </script>
 
-<div align="center" style="padding-top: 10px;">
-  <div style="max-width: 500px;">
-    <a href="#" onclick="msgNew();" style="color:#8FBC8F;"
-      class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline"><%= lang.label_new %></a>
-    <ul data-role="listview" data-split-icon="delete" data-split-theme="a" 
-      data-inset="true" data-filter="true"><% settings.forEach(function(setting) { %>
-      <li><a href="#" onclick="msgEdit('<%= setting.fieldname %>','<%= setting.description %>','<%= setting.value %>');">
-			  <h1><%= setting.fieldname %></h1><p><%= setting.value %></p></a>
-          <a href="#" onclick="msgDelete('<%= setting.fieldname %>');"><%= lang.label_delete %></a></li><% }); %>
+<div align="center" style="padding-top: 20px;">
+  <div class="panel panel-primary" style="max-width: 500px;">
+    <div class="panel-heading">
+      <h2 class="panel-title text-left"><%= subtitle %></h2>
+    </div>
+    <div class="panel-body">
+      <a class="btn btn-primary" role="button" href="#" onclick="msgNew();">
+        <span class="glyphicon glyphicon-plus" style="color: green;" aria-hidden="true"></span>
+        <%= lang.label_new %></a>
+    </div>
+    <ul class="list-group">
+      <% settings.forEach(function(setting) { %>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-sm-10 text-left">
+            <label class="control-label"> <%= setting.fieldname %></label>
+            <a href="#" onclick="msgEdit('<%= setting.fieldname %>','<%= setting.description %>','<%= setting.value %>');" 
+              class="btn btn-default-left form-control">
+              <span style="font-weight: normal;"><%= String(setting.value).substr(0,25) %></span></a>
+          </div>
+          <div class="col-sm-2" style="padding:10px 0px;">
+            <a class="btn btn-primary" role="button" onclick="msgDelete('<%= setting.fieldname %>');">
+              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
+            </a>
+          </div>
+        </div>
+      </li>
+      <% }); %>
     </ul>
-    <div data-role="popup" id="delete" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
-      style="max-width:340px;">
-      <form id="frm_delete" action="/nas/setting/delete" method="post">
-        <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <div data-role="header" data-theme="b">
-          <h1><%= lang.label_delete %></h1>
-        </div>
-        <div role="main" class="ui-content">
-          <h3><%= lang.msg_delete_text %></h3>
-          <p><%= lang.msg_delete_info %></p>
-          <div align="center">
-            <a data-ajax="false" href="#" onclick="document.forms['frm_delete'].submit();" style="color:#FF7F50;"
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-delete ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_delete %></a>
-            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
-          </div>
-        </div>
-        <input id="current_fieldname" type="hidden" name="fieldname" value="">
-      </form>
-    </div>
-	  <div data-role="popup" id="edit" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
-      style="max-width:400px;">
-      <form id="frm_update" action="/nas/setting/update" method="post">
-        <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <div data-role="header" data-theme="b">
-          <h1 id="edit_title"><%= lang.label_edit %></h1>
-        </div>
-        <div role="main" class="ui-content">
-          <div class="ui-field-contain">
-            <label for="edit_fieldname"><%= lang.label_fieldname %>:</label>
-            <input id="edit_fieldname" name="fieldname" value="" type="text">
-          </div>
-          <div class="ui-field-contain">
-            <label for="edit_description"><%= lang.label_description %>:</label>
-            <textarea id="edit_description" name="description" cols="60"></textarea>
-          </div>
-          <div class="ui-field-contain">
-            <label for="edit_value"><%= lang.label_value %>:</label>
-            <textarea id="edit_value" name="value" cols="60"></textarea>
-          </div>
-          <div align="center">
-            <a data-ajax="false" href="#" onclick="document.forms['frm_update'].submit();" style="color:#8FBC8F;" 
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-check ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_update %></a>
-            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
-          </div>
-        </div>
-      </form>
-    </div>
   </div>
+  <div id="delete" class="modal fade" tabindex="-1" role="dialog">
+    <form id="frm_delete" action="/nas/setting/delete" method="post">
+      <input name="_csrf" value="<%= _csrf %>" type="hidden">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <a role="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></a>
+            <h4 class="modal-title"><%= lang.label_delete %></h4>
+          </div>
+          <div class="modal-body text-left">
+            <h4><%= lang.msg_delete_text %></h4>
+            <p><%= lang.msg_delete_info %></p>
+          </div>
+          <div class="modal-footer">
+            <a role="button" class="btn btn-default" data-dismiss="modal">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              <%= lang.label_cancel %></a>
+            <a role="button" class="btn btn-primary" 
+              onclick="document.forms['frm_delete'].submit();">
+              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
+              <%= lang.label_delete %></a>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+      <input id="current_fieldname" type="hidden" name="fieldname" value="">
+    </form>
+  </div><!-- /.modal -->
+  <div id="edit" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <a role="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></a>
+          <h4 id="edit_title" class="modal-title"><%= lang.label_edit %></h4>
+        </div>
+        <div class="modal-body">
+          <form id="frm_update" action="/nas/setting/update" method="post">
+            <input name="_csrf" value="<%= _csrf %>" type="hidden">
+            <div class="form-group text-left">
+              <label for="edit_fieldname" class="control-label"><%= lang.label_fieldname %>:</label>
+              <input id="edit_fieldname" class="form-control" name="fieldname" value="" type="text">
+            </div>
+            <div class="form-group text-left">
+              <label for="edit_description" class="control-label"><%= lang.label_description %>:</label>
+              <textarea id="edit_description" class="form-control" name="description"></textarea>
+            </div>
+            <div class="form-group text-left">
+              <label for="edit_value" class="control-label"><%= lang.label_value %>:</label>
+              <textarea id="edit_value" class="form-control" name="value"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <a role="button" class="btn btn-default" data-dismiss="modal">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <%= lang.label_cancel %></a>
+          <a role="button" class="btn btn-primary" 
+            onclick="document.forms['frm_update'].submit();">
+            <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
+            <%= lang.label_update %></a>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 </div>
 
-</div><!-- /content -->
-<% include menu.html %>
-</div><!-- /page -->
-</body></html>
+<% include html_foot.html %>

@@ -1,76 +1,101 @@
 <% include html_head.html %>
-<% include body_page_header.html %>
-
-<style>
-  .ui-state-disabled {
-    opacity: 1;
-  }
-</style>
 
 <script>
   function msgDelete(username){
     $("#current_user").val(username);
-    $("#delete").popup("open", {transition:"pop", positionTo:"window"});}
+    $("#delete").modal();}
 </script>
 
-<div align="center" style="padding-top: 10px;">
-  <div style="max-width: 500px;">
-    <a href="#new" data-rel="popup" data-position-to="window" data-transition="pop" style="color:#8FBC8F;"
-      class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline"><%= lang.label_new %></a>
-    <ul data-role="listview" data-split-icon="delete" data-split-theme="a" 
-      data-inset="true" data-filter="true"><% users.forEach(function(username) { %>
-      <li><a href="#" class="ui-state-disabled"><%= username %></a>
-        <a href="#" onclick="msgDelete('<%= username %>');"><%= lang.label_delete %></a></li><% }); %>
+<div align="center" style="padding-top: 20px;">
+  <div class="panel panel-primary" style="max-width: 500px;">
+    <div class="panel-heading">
+      <h2 class="panel-title text-left"><%= subtitle %></h2>
+    </div>
+    <div class="panel-body">
+      <a class="btn btn-primary" role="button" data-toggle="modal" data-target="#new">
+        <span class="glyphicon glyphicon-plus" style="color: green;" aria-hidden="true"></span>
+        <%= lang.label_new %></a>
+    </div>
+    <ul class="list-group">
+      <% users.forEach(function(username) { %>
+      <li class="list-group-item">
+        <div class="input-group">
+          <span class="form-control text-left"><b><%= username %></b></span>
+          <span class="input-group-btn">
+            <a class="btn btn-primary" role="button" onclick="msgDelete('<%= username %>');">
+              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
+            </a>
+          </span>
+        </div><!-- /input-group -->
+      </li>
+      <% }); %>
     </ul>
-    <div data-role="popup" id="delete" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
-      style="max-width:340px;">
-      <form id="frm_delete" action="/nas/user/list" method="post">
-        <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <div data-role="header" data-theme="b">
-          <h1><%= lang.label_delete %></h1>
-        </div>
-        <div role="main" class="ui-content">
-          <h3><%= lang.msg_delete_text %></h3>
-          <p><%= lang.msg_delete_info %></p>
-          <div align="center">
-            <a data-ajax="false" href="#" onclick="document.forms['frm_delete'].submit();" style="color:#FF7F50;"
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-delete ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_delete %></a>
-            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
-          </div>
-        </div>
-        <input id="current_user" type="hidden" name="username" value="">
-        <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
-      </form>
-    </div>
-    <div data-role="popup" id="new" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
-      style="max-width:340px;">
-      <form id="frm_new" action="/nas/user/list" method="post">
-        <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <div data-role="header" data-theme="b">
-          <h1><%= lang.label_new %></h1>
-        </div>
-        <div role="main" class="ui-content">
-          <div class="ui-field-contain">
-            <label for="username"><%= lang.label_username %>:</label>
-            <input id="username" name="username" value="" type="text">
-          </div>
-          <div class="ui-field-contain">
-            <label for="password"><%= lang.label_password %>:</label>
-            <input id="password" name="password" value="" type="password">
-          </div>
-          <div align="center">
-            <a data-ajax="false" href="#" onclick="document.forms['frm_new'].submit();"  style="color:#8FBC8F;"
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_new %></a>
-            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
-          </div>
-        </div>
-        <input value="new" id="update_cmd" name="update_cmd" type="hidden">
-      </form>
-    </div>
   </div>
+  <div id="delete" class="modal fade" tabindex="-1" role="dialog">
+    <form id="frm_delete" action="/nas/user/list" method="post">
+      <input name="_csrf" value="<%= _csrf %>" type="hidden">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <a role="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></a>
+            <h4 class="modal-title"><%= lang.label_delete %></h4>
+          </div>
+          <div class="modal-body text-left">
+            <h4><%= lang.msg_delete_text %></h4>
+            <p><%= lang.msg_delete_info %></p>
+          </div>
+          <div class="modal-footer">
+            <a role="button" class="btn btn-default" data-dismiss="modal">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              <%= lang.label_cancel %></a>
+            <a role="button" class="btn btn-primary" 
+              onclick="document.forms['frm_delete'].submit();">
+              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
+              <%= lang.label_delete %></a>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+      <input id="current_user" type="hidden" name="username" value="">
+      <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
+    </form>
+  </div><!-- /.modal -->
+  <div id="new" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <a role="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></a>
+          <h4 class="modal-title"><%= lang.label_new %></h4>
+        </div>
+        <div class="modal-body">
+          <form id="frm_new" action="/nas/user/list" method="post">
+            <input name="_csrf" value="<%= _csrf %>" type="hidden">
+            <div class="form-group text-left">
+              <label for="username" class="control-label"><%= lang.label_username %>:</label>
+              <input id="username" class="form-control" name="username" 
+                value="" type="text" >
+            </div>
+            <div class="form-group text-left">
+              <label for="password" class="control-label"><%= lang.label_password %>:</label>
+              <input id="password" class="form-control" name="password" 
+                value="" type="password" >
+            </div>
+            <input value="new" id="update_cmd" name="update_cmd" type="hidden">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <a role="button" class="btn btn-default" data-dismiss="modal">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <%= lang.label_cancel %></a>
+          <a role="button" class="btn btn-primary" 
+            onclick="document.forms['frm_new'].submit();">
+            <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
+            <%= lang.label_new %></a>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 </div>
 
-</div><!-- /content -->
-<% include menu.html %>
-</div><!-- /page -->
-</body></html>
+<% include html_foot.html %>

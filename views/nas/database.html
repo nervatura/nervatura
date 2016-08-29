@@ -1,231 +1,322 @@
 <% include html_head.html %>
-<% include body_page_header.html %>
-
-<style>
-  
-</style>
 
 <script>
   function msgDelete(alias){
     $("#current_alias").val(alias);
-    $("#delete").popup("open", {transition:"pop", positionTo:"window"});}
+    $("#delete").modal();}
 </script>
 
-<div align="center" style="padding-top: 10px;">
+<div align="center" style="padding-top: 20px;">
   <% if (view === "create") { %>
-  <form id="frm_create" action="/nas/database/create" method="post" style="max-width: 600px;">
-    <input name="_csrf" value="<%= _csrf %>" type="hidden">
-    <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
-      <li><p class="dbs_list">1. <%= lang.li_dbs_create_1 %> 
-          <a class="ui-link" href="/nas/database/list" ><%= lang.label_databases %></a></p></li>
-      <li><p class="dbs_list">2. <%= lang.li_dbs_create_2 %></p></li>
-      <li><p class="dbs_list">3. <%= lang.li_dbs_create_3 %></p></li>
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <select name="alias" id="alias"><% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
-            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
-            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
-          </select>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <a data-ajax="false" href="#" onclick="$('#info_create').html('<%= lang.info_start %>');document.forms['frm_create'].submit();" 
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
-              Starting the process...</a>
-        </div>
-      </li>
-    </ul>
-    <div id="info_create" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
-  </form><% } %>
-  <% if (view === "export") { %>
-  <form id="frm_export" action="/nas/database/export" method="post" style="max-width: 600px;">
-    <input name="_csrf" value="<%= _csrf %>" type="hidden">
-    <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
-      <li><p class="bck_list_label"><span style="color:brown;">Nervatura data export</span></p>
-        <p class="bck_list_label"><span style="color:green;">NOM objects:</span></p>
-        <p class="bck_list">
-          <span style="font-weight:normal;">address, barcode, contact, currency, customer, deffield, employee, event, fieldvalue, groups, item, link, log, movement, numberdef, pattern, payment, place, price, product, project, rate, tax, tool, trans</span></p>
-        <p class="bck_list_label"><span style="color:green;">UI objects: </span></p>
-        <p class="bck_list">
-          <span>ui_audit, ui_language, ui_menu, ui_menufields, ui_message, ui_report, ui_reportfields, ui_reportsources, ui_userconfig</span></p>
-        <p class="bck_list_label"><span style="color:red;"><%= lang.not_included %>: </span></p>
-        <p class="bck_list"><span>ui_printqueue</span></p>
-      </li>
-      <li><p class="bck_list"><%= lang.info_export %></p></li>
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <label for="filename"><%= lang.label_export_file %>:</label>
-          <select name="filename" id="filename"><% if (form.filename !== 'download') { %>
-            <option value="alias" selected="selected"><%= lang.label_alias %></option>
-            <option value="download"><%= lang.label_download %></option><% } else{ %>
-            <option value="alias"><%= lang.label_alias %></option>
-            <option value="download" selected="selected"><%= lang.label_download %></option><% } %>
-          </select>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <label for="format"><%= lang.label_format %>:</label>
-          <select name="format" id="format"><% if (form.format !== 'xml') { %>
-            <option value="data" selected="selected">data</option>
-            <option value="xml">xml</option><% } else{ %>
-            <option value="data">data</option>
-            <option value="xml" selected="selected">xml</option><% } %>
-          </select>
-        </div>
-      </li>
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <select name="alias" id="alias"><% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
-            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
-            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
-          </select>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <a data-ajax="false" href="#" onclick="$('#info_export').html('<%= lang.info_start %>');document.forms['frm_export'].submit();" 
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
-              Starting the process...</a>
-        </div>
-      </li>
-    </ul>
-    <div id="info_export" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
-  </form><% } %>
-  <% if (view === "import") { %>
-  <form id="frm_import" action="/nas/database/import" method="post" style="max-width: 600px;">
-    <input name="_csrf" value="<%= _csrf %>" type="hidden">
-    <ul data-role="listview" data-inset="false" class="ui-responsive" style="margin: 10px 0px;">
-      <li><p class="dbs_list"><%= lang.li_dbs_create_2 %></p></li>
-      <li class="ui-field-contain">
-        <label for="filename"><%= lang.label_export_file %>:</label>
-        <select name="filename" id="alias"><% filenames.forEach(function(filename) { %><% if (filename === form.filename) { %>
-          <option value="<%= filename %>" selected="selected"><%= filename %></option><% } else{ %>
-          <option value="<%= filename %>"><%= filename %></option><% } %><% }); %>
-        </select>
-      </li>
-      <li>
-        <label for="data"><%= lang.label_upload_file %>:</label>
-        <input id="data" name="data" type="file" disabled="disabled">
-      </li>
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <select name="alias" id="alias"><% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
-            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
-            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
-          </select>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <a data-ajax="false" href="#" onclick="$('#info_import').html('<%= lang.info_start %>');document.forms['frm_import'].submit();" 
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-clock ui-btn-icon-left">
-              Starting the process...</a>
-        </div>
-      </li>
-    </ul>
-    <div id="info_import" class="ui-body dbs_info"><% if (form.message) { %><%- form.message %><% } %></div>
-  </form><% } %>
-  <% if (view === "edit") { %>
-  <form id="frm_edit" action="/nas/database/list" method="post" style="max-width: 500px;">
-    <input name="_csrf" value="<%= _csrf %>" type="hidden">
-    <ul data-role="listview" data-inset="true">
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <label for="alias"><%= lang.label_alias %>:</label>
-          <input name="alias" id="alias" value="<%= data.alias %>" data-clear-btn="true" type="text">
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <label for="engine" class="select"><%= lang.label_engine %>:</label>
-          <select name="engine" id="engine"><% engines.forEach(function(engine) { %><% if (engine.key === data.engine) { %>
-            <option value="<%= engine.key %>" selected="selected"><%= engine.label %></option><% } else{ %>
-            <option value="<%= engine.key %>"><%= engine.label %></option><% } %><% }); %>
-          </select>
-        </div>
-      </li>
-      <li class="ui-field-contain">
-        <label for="host"><%= lang.label_host %>:</label>
-        <input name="host" id="host" value="<%= data.connect.host %>" data-clear-btn="true" type="text">
-      </li>
-      <li>
-        <div class="ui-grid-a ui-responsive">
-          <div class="ui-block-a" style="padding: 0px 3px;">
-            <label for="dbname"><%= lang.label_database %>:</label>
-            <input name="dbname" id="dbname" value="<%= data.connect.dbname %>" data-clear-btn="true" type="text">
-          </div>
-          <div class="ui-block-b" style="padding: 0px 3px;">
-            <label for="port"><%= lang.label_port %>:</label>
-            <input name="port" id="port" value="<%= data.connect.port %>" data-clear-btn="true" type="text" >
-          </div>
-        </div>
-      </li>
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <label for="username"><%= lang.label_username %>:</label>
-          <input name="username" id="username" value="<%= data.connect.username %>" data-clear-btn="true" type="text">
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <label for="password"><%= lang.label_password %>:</label>
-          <input name="password" id="password" value="<%= data.connect.password %>" data-clear-btn="true" type="text">
-        </div>
-      </li>
-      <li class="ui-grid-a ui-responsive">
-        <div class="ui-block-a" style="padding: 0px 3px;">
-          <label><input name="ndi_enabled" type="checkbox" <%=data.settings.ndi_enabled? "checked" : ""%> ><%= lang.label_ndi_enabled %></label>
-        </div>
-        <div class="ui-block-b" style="padding: 0px 3px;">
-          <label for="encrypt_password"><%= lang.label_encrypt_password %>:</label>
-          <input name="encrypt_password" id="encrypt_password" value="<%= data.settings.encrypt_password %>" data-clear-btn="true" type="text">
-        </div>
-      </li>
-      <li class="ui-responsive">
-        <label for="dbs_host_restriction"><%= lang.label_dbs_host_restriction %>:</label>
-        <textarea id="dbs_host_restriction" name="dbs_host_restriction" ><%= data.settings.dbs_host_restriction %></textarea>
-      </li>
-      <li class="ui-body">
-        <fieldset class="ui-grid-a">
-          <div class="ui-block-a">
-            <a data-ajax="false" href="#" onclick="document.forms['frm_edit'].submit();" style="color:#8FBC8F;"
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-check ui-btn-icon-left"><%= lang.label_update %>
-            </a>
-          </div>
-          <div class="ui-block-b">
-            <a data-ajax="false" href="/nas/database/list" 
-              class="ui-shadow ui-btn ui-corner-all ui-icon-back ui-btn-icon-left"><%= lang.label_cancel %>
-            </a>
-          </div>
-        </fieldset>
-      </li>
-    </ul>
-    <input value="update" id="update_cmd" name="update_cmd" type="hidden">
-  </form><% } %>
-  <% if (view === "list") { %>
-  <div style="max-width: 500px;">
-    <a href="/nas/database/edit?alias=" data-ajax="false" style="color:#8FBC8F;"
-      class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-plus ui-btn-icon-left ui-btn-inline"><%= lang.label_new %></a>
-    <ul data-role="listview" data-split-icon="delete" data-split-theme="a" 
-      data-inset="true" data-filter="true"><% data.forEach(function(dbs) { %>
-        <li><a href="/nas/database/edit?alias=<%= dbs.alias %>" data-ajax="false">
-			    <span><%= dbs.alias %></span><span style="font-weight:normal;"> - <%= dbs.engine %></span></a>
-          <a href="#" onclick="msgDelete('<%= dbs.alias %>');"><%= lang.label_delete %></a></li><% }); %>
-    </ul>
-    <div data-role="popup" id="delete" data-theme="a" data-overlay-theme="b" class="ui-content ui-mini" 
-      style="max-width:340px;">
-      <form id="frm_delete" action="/nas/database/list" method="post">
+    <div class="panel panel-primary" style="max-width: 500px;">
+      <div class="panel-heading">
+        <h2 class="panel-title text-left"><%= subtitle %></h2>
+      </div>
+      <div class="panel-body text-left" style="padding: 15px 15px 0px;">
+        <p>1. <%= lang.li_dbs_create_1 %> 
+          <a href="/nas/database/list" ><%= lang.label_databases %></a></p>
+        <p>2. <%= lang.li_dbs_create_2 %></p>
+        <p>3. <%= lang.li_dbs_create_3 %></p>
+
+        <form id="frm_create" action="/nas/database/create" method="post" style="max-width: 600px;">
         <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <div data-role="header" data-theme="b">
-          <h1><%= lang.label_delete %></h1>
+
+        <div class="input-group">
+          <select name="alias" id="alias" class="form-control">
+            <% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
+            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+          </select>
+          <span class="input-group-btn">
+            <a class="btn btn-primary" role="button" href="#" 
+              onclick="$('#info_create').html('<%= lang.info_start %>');document.forms['frm_create'].submit();">
+              <span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= lang.li_dbs_start%></a>
+          </span>
+        </div><!-- /input-group -->
+        <div id="info_create" class="jumbotron" style="margin:15px 0px;padding:10px;">
+          <% if (form.message) { %><%- form.message %><% } %>
         </div>
-        <div role="main" class="ui-content">
-          <h3><%= lang.msg_delete_text %></h3>
-          <p><%= lang.msg_delete_info %></p>
-          <div align="center">
-            <a data-ajax="false" href="#" onclick="document.forms['frm_delete'].submit();" style="color:#FF7F50;"
-              class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-delete ui-btn-icon-left ui-btn-inline ui-mini"><%= lang.label_delete %></a>
-            <a href="#" data-rel="back" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini"><%= lang.label_cancel %></a>
-          </div>
+        </form>
+      </div>
+    </div>  
+  <% } %>
+  <% if (view === "export") { %>
+    <div class="panel panel-primary" style="max-width: 500px;">
+      <div class="panel-heading">
+        <h2 class="panel-title text-left"><%= subtitle %></h2>
+      </div>
+      <div class="panel-body text-left" style="padding: 15px 15px 0px;">
+        <p><span style="color:brown;font-weight: bold;">Nervatura data export</span><br>
+          <span style="color:green;font-weight: bold;">NOM objects:</span><br>
+          <span style="font-weight:normal;">address, barcode, contact, currency, customer, 
+            deffield, employee, event, fieldvalue, groups, item, link, log, movement, numberdef, 
+            pattern, payment, place, price, product, project, rate, tax, tool, trans</span><br>
+          <span style="color:green;font-weight: bold;">UI objects: </span><br>
+          <span>ui_audit, ui_language, ui_menu, ui_menufields, ui_message, ui_report, ui_reportfields, 
+            ui_reportsources, ui_userconfig</span></p>
+        <p><span style="color:red;font-weight: bold;"><%= lang.not_included %>: </span><br>
+          <span>ui_printqueue</span></p>
+        <p><%= lang.info_export %></p>
+      </div>
+      <form id="frm_export" action="/nas/database/export" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <ul class="list-group" style="margin:0px;">
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-sm-6 text-left">
+                <label for="filename" class="control-label"><%= lang.label_export_file %>:</label>
+                <select name="filename" id="filename" class="form-control"><% if (form.filename !== 'download') { %>
+                  <option value="alias" selected="selected"><%= lang.label_alias %></option>
+                  <option value="download"><%= lang.label_download %></option><% } else{ %>
+                  <option value="alias"><%= lang.label_alias %></option>
+                  <option value="download" selected="selected"><%= lang.label_download %></option><% } %>
+                </select>
+              </div>
+              <div class="col-sm-6 text-left">
+                <label for="format" class="control-label"><%= lang.label_format %>:</label>
+                <select name="format" id="format" class="form-control"><% if (form.format !== 'xml') { %>
+                  <option value="data" selected="selected">data</option>
+                  <option value="xml">xml</option><% } else{ %>
+                  <option value="data">data</option>
+                  <option value="xml" selected="selected">xml</option><% } %>
+                </select>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-sm-6">
+                <select name="alias" id="alias" class="form-control">
+                  <% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
+                  <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+                  <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+                </select>
+              </div>
+              <div class="col-sm-6">
+                <a class="btn btn-primary" role="button" href="#" 
+                  onclick="$('#info_export').html('<%= lang.info_start %>');document.forms['frm_export'].submit();">
+                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= lang.li_dbs_start%></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div id="info_export" class="jumbotron text-left" style="margin:15px;padding:10px;">
+          <% if (form.message) { %><%- form.message %><% } %>
         </div>
-        <input id="current_alias" type="hidden" name="alias" value="">
-        <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
       </form>
     </div>
-  </div><% } %>
+  <% } %>
+  <% if (view === "import") { %>
+    <div class="panel panel-primary" style="max-width: 500px;">
+      <div class="panel-heading">
+        <h2 class="panel-title text-left"><%= subtitle %></h2>
+      </div>
+      <div class="panel-body text-left" style="padding: 15px 15px 0px;">
+        <p><%= lang.li_dbs_create_2 %></p>
+      </div>
+      <form id="frm_import" action="/nas/database/import" method="post" style="max-width: 600px;">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <ul class="list-group" style="margin:0px;">
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-sm-3 text-left">
+                <label for="filename" class="control-label"><%= lang.label_export_file %>:</label>
+              </div>
+              <div class="col-sm-9">
+                <select name="filename" id="alias" class="form-control">
+                  <% filenames.forEach(function(filename) { %><% if (filename === form.filename) { %>
+                  <option value="<%= filename %>" selected="selected"><%= filename %></option><% } else{ %>
+                  <option value="<%= filename %>"><%= filename %></option><% } %><% }); %>
+                </select>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-sm-12 text-left">
+                <label for="data" class="control-label"><%= lang.label_upload_file %>:</label>
+                <input id="data" name="data" type="file" disabled="disabled" class="form-control">
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-sm-6">
+                <select name="alias" id="alias" class="form-control">
+                  <% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
+                  <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+                  <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+                </select>
+              </div>
+              <div class="col-sm-6">
+                <a class="btn btn-primary" role="button" href="#" 
+                  onclick="$('#info_import').html('<%= lang.info_start %>');document.forms['frm_import'].submit();">
+                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= lang.li_dbs_start%></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div id="info_import" class="jumbotron text-left" style="margin:15px;padding:10px;">
+          <% if (form.message) { %><%- form.message %><% } %></div>
+      </form>
+    </div>
+  <% } %>
+  <% if (view === "edit") { %>
+  <div class="panel panel-primary" style="max-width: 500px;">
+    <div class="panel-heading">
+      <h2 class="panel-title text-left"><%=data.alias===''? lang.label_new : data.alias%></h2>
+    </div>
+    <form id="frm_edit" action="/nas/database/list" method="post">
+      <input name="_csrf" value="<%= _csrf %>" type="hidden">
+      <ul class="list-group" style="margin:0px;">
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 text-left">
+              <label for="alias" class="control-label"><%= lang.label_alias %>:</label>
+              <input name="alias" id="alias" value="<%= data.alias %>" class="form-control" type="text">
+            </div>
+            <div class="col-sm-6 text-left">
+              <label for="engine" class="control-label"><%= lang.label_engine %>:</label>
+              <select name="engine" id="engine" class="form-control">
+                <% engines.forEach(function(engine) { %><% if (engine.key === data.engine) { %>
+                  <option value="<%= engine.key %>" selected="selected"><%= engine.label %></option><% } else{ %>
+                  <option value="<%= engine.key %>"><%= engine.label %></option><% } %><% }); %>
+              </select>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-2 text-left">
+              <label for="host" class="control-label"><%= lang.label_host %>:</label>
+            </div>
+            <div class="col-sm-10">
+              <input name="host" id="host" value="<%= data.connect.host %>" 
+                class="form-control" type="text">
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 text-left">
+              <label for="dbname" class="control-label"><%= lang.label_database %>:</label>
+              <input name="dbname" id="dbname" value="<%= data.connect.dbname %>" class="form-control" type="text">
+            </div>
+            <div class="col-sm-6 text-left">
+              <label for="port" class="control-label"><%= lang.label_port %>:</label>
+              <input name="port" id="port" value="<%= data.connect.port %>" class="form-control" type="text" >
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 text-left">
+              <label for="username" class="control-label"><%= lang.label_username %>:</label>
+              <input name="username" id="username" value="<%= data.connect.username %>" class="form-control" type="text">
+            </div>
+            <div class="col-sm-6 text-left">
+              <label for="password" class="control-label"><%= lang.label_password %>:</label>
+              <input name="password" id="password" value="<%= data.connect.password %>" class="form-control" type="text">
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 text-left">
+              <label class="control-label"> <%= lang.label_ndi_enabled %></label>
+              <select name="ndi_enabled" id="ndi_enabled" class="form-control">
+                <% if (data.settings.ndi_enabled) { %>
+                <option value="true" selected="selected">true</option>
+                <option value="false">false</option><% } else{ %>
+                <option value="true">true</option>
+                <option value="false" selected="selected">false</option><% } %>
+              </select>
+            </div>
+            <div class="col-sm-6 text-left">
+              <label for="encrypt_password" class="control-label"><%= lang.label_encrypt_password %>:</label>
+              <input name="encrypt_password" id="encrypt_password" value="<%= data.settings.encrypt_password %>" class="form-control" type="text">
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-12 text-left">
+              <label for="dbs_host_restriction" class="control-label"><%= lang.label_dbs_host_restriction %>:</label>
+              <textarea id="dbs_host_restriction" name="dbs_host_restriction" class="form-control" ><%= data.settings.dbs_host_restriction %></textarea>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <input value="update" id="update_cmd" name="update_cmd" type="hidden">
+    </form>
+    <div class="panel-footer">
+      <a role="button" class="btn btn-default" href="/nas/database/list">
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <%= lang.label_cancel %></a>
+      <a role="button" class="btn btn-primary" 
+        onclick="document.forms['frm_edit'].submit();">
+        <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
+        <%= lang.label_update %></a>
+    </div>
+  </div>
+  <% } %>
+  <% if (view === "list") { %>
+  <div class="panel panel-primary" style="max-width: 500px;">
+    <div class="panel-heading">
+      <h2 class="panel-title text-left"><%= subtitle %></h2>
+    </div>
+    <div class="panel-body">
+      <a class="btn btn-primary" role="button" href="/nas/database/edit?alias=">
+        <span class="glyphicon glyphicon-plus" style="color: green;" aria-hidden="true"></span>
+        <%= lang.label_new %></a>
+    </div>
+    <ul class="list-group">
+      <% data.forEach(function(dbs) { %>
+      <li class="list-group-item">
+        <div class="input-group">
+          <a href="/nas/database/edit?alias=<%= dbs.alias %>" 
+            class="btn btn-default-left form-control">
+            <%= dbs.alias %> - <span style="font-weight: normal;"><%= dbs.engine %></span></a>
+          <span class="input-group-btn">
+            <a class="btn btn-primary" role="button" onclick="msgDelete('<%= dbs.alias %>');">
+              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
+            </a>
+          </span>
+        </div><!-- /input-group -->
+      </li>
+      <% }); %>
+    </ul>
+  </div>
+  <div id="delete" class="modal fade" tabindex="-1" role="dialog">
+    <form id="frm_delete" action="/nas/database/list" method="post">
+      <input name="_csrf" value="<%= _csrf %>" type="hidden">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <a role="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></a>
+            <h4 class="modal-title"><%= lang.label_delete %></h4>
+          </div>
+          <div class="modal-body text-left">
+            <h4><%= lang.msg_delete_text %></h4>
+            <p><%= lang.msg_delete_info %></p>
+          </div>
+          <div class="modal-footer">
+            <a role="button" class="btn btn-default" data-dismiss="modal">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              <%= lang.label_cancel %></a>
+            <a role="button" class="btn btn-primary" 
+              onclick="document.forms['frm_delete'].submit();">
+              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
+              <%= lang.label_delete %></a>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+      <input id="current_alias" type="hidden" name="alias" value="">
+      <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
+    </form>
+  </div><!-- /.modal -->
+  <% } %>
 </div>
 
-</div><!-- /content -->
-<% include menu.html %>
-</div><!-- /page -->
-</body></html>
+<% include html_foot.html %>

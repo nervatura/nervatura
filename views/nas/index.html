@@ -1,26 +1,14 @@
 <% include html_head.html %>
-<% include body_page_header.html %>
 
-<style>
-  .logo_border {
-    border-style: solid;
-    border-width: 1px;
-    border-color:#DCDCDC;
-    border-collapse:collapse;
-    box-shadow: 0 1px 3px rgba(0,0,0,.15);
-  }
-</style>
-
-<div align="center" style="padding-top:30px;">
-  <p style="font-weight: bold;">Nervatura <%= lang.title_nas %></p>
-  <p><span style="font-weight: bold;"><%= lang.label_username %>: </span><%= user.username %></p>
-  <p><span class="vernum">Ver.No: <%= settings.version %></span></p>
-  <img class="logo_border" style="vertical-align: bottom;" src="/images/ntura_framework.png" height="64px" />
-  <p><a href="http://www.nervatura.com" style="font-weight: bold;" target="_blank" 
-    title="Nervatura"><%= lang.label_ntura_framework %></a></p>
+<div class="jumbotron" style="margin-top:20px;">
+  <div align="center" style="padding-top:20px;">
+    <p style="font-weight: bold;">Nervatura <%= lang.title_nas %></p>
+    <p><span style="font-weight: bold;"><%= lang.label_username %>: </span><%= user.username %></p>
+    <p>Ver.No: <%= settings.version %></p>
+    <img class="logo_border" style="vertical-align: bottom;" src="/images/ntura_framework.png" height="64px" />
+    <p style="padding-top:20px;"><a href="http://www.nervatura.com" style="font-weight: bold;" target="_blank" 
+      title="Nervatura"><%= lang.label_ntura_framework %></a></p>
+  </div>
 </div>
 
-</div><!-- /content -->
-<% include menu.html %>
-</div><!-- /page -->
-</body></html>
+<% include html_foot.html %>
