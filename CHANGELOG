@@ -1,3 +1,8 @@
+## 2.3.1
+- express and npm libs upgrade
+- docs corrections and additions
+- some bug fixes
+
 ## 2.3.0
 - NAS Admin, NDI Wizard, Report DEMO: jquery-mobile replaced with bootstrap & jquery 3 upgrade
 - express and npm libs upgrade
