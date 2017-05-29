@@ -1,118 +1,147 @@
-<% include html_head.html %>
-
 <script>
   function msgDelete(fieldname){
-    $("#current_fieldname").val(fieldname);
-    $("#delete").modal();}
+    document.getElementById('current_fieldname').value = fieldname;
+    document.getElementById('deleteSetting').style.display = 'block';
+  }
   function msgNew(){
-	  $("#edit_title").html("<%= lang.label_new %>");
-    $("#edit_fieldname").val("");
-	  $("#edit_description").val("");
-	  $("#edit_value").val("");
-    $("#edit").modal();}
+    document.getElementById('edit_title').innerHTML = "<%= lang.label_new %>";
+    document.getElementById('edit_fieldname').value = "";
+    document.getElementById('edit_description').innerHTML = "";
+	  document.getElementById('edit_value').innerHTML = "";
+    document.getElementById('editSetting').style.display = 'block';
+  }
   function msgEdit(fieldname, description, value){
-    $("#edit_title").html("<%= lang.label_edit %>");
-	  $("#edit_fieldname").val(fieldname);
-	  $("#edit_description").val(description);
-	  $("#edit_value").val(value);
-    $("#edit").modal();}
+    document.getElementById('edit_title').innerHTML = "<%= lang.label_edit %>";
+    document.getElementById('edit_fieldname').value = fieldname;
+    document.getElementById('edit_description').innerHTML = description;
+	  document.getElementById('edit_value').innerHTML = value;
+    document.getElementById('editSetting').style.display = 'block';
+  }
 </script>
 
-<div align="center" style="padding-top: 20px;">
-  <div class="panel panel-primary" style="max-width: 500px;">
-    <div class="panel-heading">
-      <h2 class="panel-title text-left"><%= subtitle %></h2>
+<div class="w3-modal-content" style="max-width: 500px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
+      <label><%= subtitle %></label>
     </div>
-    <div class="panel-body">
-      <a class="btn btn-primary" role="button" href="#" onclick="msgNew();">
-        <span class="glyphicon glyphicon-plus" style="color: green;" aria-hidden="true"></span>
-        <%= lang.label_new %></a>
+    <div class="w3-container w3-border-top w3-padding-8">
+      <div class="w3-row w3-center w3-padding">
+        <a class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+           onclick="msgNew();">
+          <i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>
+          <b><%= lang.label_new %></b></a>
+      </div>
     </div>
-    <ul class="list-group">
+    <ul class="w3-ul w3-border w3-striped-ul w3-hoverable">
       <% settings.forEach(function(setting) { %>
-      <li class="list-group-item">
-        <div class="row">
-          <div class="col-sm-10 text-left">
-            <label class="control-label"> <%= setting.fieldname %></label>
-            <a href="#" onclick="msgEdit('<%= setting.fieldname %>','<%= setting.description %>','<%= setting.value %>');" 
-              class="btn btn-default-left form-control">
-              <span style="font-weight: normal;"><%= String(setting.value).substr(0,25) %></span></a>
+      <li class="w3-padding">
+        <div class="w3-row">
+          <div class="w3-col w3-right" style="width:40px;">
+            <span onclick="msgDelete('<%= setting.fieldname %>');" 
+              class="w3-text-blue-grey w3-hover-text-red" style="cursor: pointer;">
+              <i class="fa fa-times fa-2x fa-fw" aria-hidden="true"></i>
+            </span>
           </div>
-          <div class="col-sm-2" style="padding:10px 0px;">
-            <a class="btn btn-primary" role="button" onclick="msgDelete('<%= setting.fieldname %>');">
-              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
-            </a>
+          <div class="w3-rest">
+            <a onclick="msgEdit('<%= setting.fieldname %>','<%= setting.description %>','<%= setting.value %>');" 
+              class="wrap-button w3-block w3-left-align">
+              <span class="w3-hover-text-green"><b><%= setting.fieldname %></b></span><br />
+              <span class="w3-text-black" ><%= String(setting.value).substr(0,25) %></span></a>
           </div>
         </div>
       </li>
       <% }); %>
     </ul>
   </div>
-  <div id="delete" class="modal fade" tabindex="-1" role="dialog">
-    <form id="frm_delete" action="/nas/setting/delete" method="post">
-      <input name="_csrf" value="<%= _csrf %>" type="hidden">
-      <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <a role="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span></a>
-            <h4 class="modal-title"><%= lang.label_delete %></h4>
-          </div>
-          <div class="modal-body text-left">
-            <h4><%= lang.msg_delete_text %></h4>
-            <p><%= lang.msg_delete_info %></p>
-          </div>
-          <div class="modal-footer">
-            <a role="button" class="btn btn-default" data-dismiss="modal">
-              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              <%= lang.label_cancel %></a>
-            <a role="button" class="btn btn-primary" 
-              onclick="document.forms['frm_delete'].submit();">
-              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
-              <%= lang.label_delete %></a>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-      <input id="current_fieldname" type="hidden" name="fieldname" value="">
-    </form>
-  </div><!-- /.modal -->
-  <div id="edit" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-sm" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <a role="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span></a>
-          <h4 id="edit_title" class="modal-title"><%= lang.label_edit %></h4>
-        </div>
-        <div class="modal-body">
-          <form id="frm_update" action="/nas/setting/update" method="post">
-            <input name="_csrf" value="<%= _csrf %>" type="hidden">
-            <div class="form-group text-left">
-              <label for="edit_fieldname" class="control-label"><%= lang.label_fieldname %>:</label>
-              <input id="edit_fieldname" class="form-control" name="fieldname" value="" type="text">
-            </div>
-            <div class="form-group text-left">
-              <label for="edit_description" class="control-label"><%= lang.label_description %>:</label>
-              <textarea id="edit_description" class="form-control" name="description"></textarea>
-            </div>
-            <div class="form-group text-left">
-              <label for="edit_value" class="control-label"><%= lang.label_value %>:</label>
-              <textarea id="edit_value" class="form-control" name="value"></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <a role="button" class="btn btn-default" data-dismiss="modal">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            <%= lang.label_cancel %></a>
-          <a role="button" class="btn btn-primary" 
-            onclick="document.forms['frm_update'].submit();">
-            <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
-            <%= lang.label_update %></a>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
 </div>
 
-<% include html_foot.html %>
+<div id="deleteSetting" class="w3-modal">
+  <div class="w3-modal-content w3-animate-top" style="max-width: 400px;">
+    <div class="w3-card-4 w3-margin-top w3-margin-bottom">
+      <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+        <i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>
+        <label><%= lang.label_delete %></label>
+        <span onclick="document.getElementById('deleteSetting').style.display='none'" 
+          class="w3-hover-text-red w3-right" style="cursor: pointer;">
+          <i class="fa fa-window-close fa-fw" aria-hidden="true"></i></span>
+      </div>
+
+      <form id="frm_delete" action="/nas/setting/delete" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div class="w3-container w3-padding">
+          <p><b><%= lang.msg_delete_text %></b></p>
+          <span><%= lang.msg_delete_info %></span>
+        </div>
+        <input id="current_fieldname" type="hidden" name="fieldname" value="">
+      </form>
+      
+      <div class="w3-container w3-border-top w3-margin-top w3-padding-8 w3-light-grey">
+        <div class="w3-row w3-center w3-padding">
+          <button  class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-red w3-round" 
+            onclick="document.forms['frm_delete'].submit();"
+            onkeydown="if (event.keyCode == 13) document.forms['frm_delete'].submit();">
+            <i class="fa fa-trash fa-fw" aria-hidden="true"></i>
+            <b><%= lang.label_delete %></b></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="editSetting" class="w3-modal">
+  <div class="w3-modal-content w3-animate-top" style="max-width: 400px;">
+    <div class="w3-card-4 w3-margin-top w3-margin-bottom">
+      <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+        <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
+        <label id="edit_title"><%= lang.label_edit %></label>
+        <span onclick="document.getElementById('editSetting').style.display='none'" 
+          class="w3-hover-text-red w3-right" style="cursor: pointer;">
+          <i class="fa fa-window-close fa-fw" aria-hidden="true"></i></span>
+      </div>
+      <form id="frm_update" action="/nas/setting/update" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <ul class="w3-ul">
+          <li class="w3-padding-small">
+            <div class="w3-row-padding">
+              <div class="w3-col w3-hide-small" style="width:100px; padding-top:8px">
+                <label><%= lang.label_fieldname %>:</label>
+              </div>
+              <div class="w3-rest w3-padding-small">
+                <label class="w3-hide-medium w3-hide-large"><%= lang.label_fieldname %>:</label>
+                <input name="fieldname" id="edit_fieldname" value="" 
+                  class="w3-input w3-border w3-round" type="text">
+              </div>
+            </div>
+          </li>
+          <li class="w3-padding-small">
+            <div class="w3-row">
+              <div class="w3-col w3-padding-small">
+                <label><%= lang.label_description %>:</label>
+                <textarea id="edit_description" name="description" 
+                  class="w3-input w3-border w3-round" ></textarea>
+              </div>
+            </div>
+          </li>
+          <li class="w3-padding-small">
+            <div class="w3-row">
+              <div class="w3-col w3-padding-small">
+                <label><%= lang.label_value %>:</label>
+                <textarea id="edit_value" name="value" 
+                  class="w3-input w3-border w3-round" ></textarea>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </form>
+      <div class="w3-container w3-border-top w3-margin-top w3-padding-8 w3-light-grey">
+        <div class="w3-row w3-center w3-padding">
+          <button  class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+            onclick="document.forms['frm_update'].submit();">
+            <i class="fa fa-check fa-fw" aria-hidden="true"></i>
+            <b><%= lang.label_update %></b></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,43 +1,35 @@
-<% include html_head.html %>
-<style>
-  .btext li {
-      padding-top: 10px;
-      text-align: left;
-  }
-</style>
 
-<div class="container text-justify btext" >
-  <h3 style="color: #3B7687;margin-top: 0px;">Documentations</h3>
+<div class="w3-container w3-justify main" >
+  <p class="section-label w3-xlarge">Documentations</p>
   <ul>
-    <li><a href="/docs/nas" target="_blank">
-      <span class="sname">NAS</span>&nbsp;<b><i>Nervatura Application Server</i></b></a></li>
-    <li><a href="/docs/nom" target="_blank">
-      <span class="sname">NOM</span>&nbsp;<b><i>Nervatura Object Model</i></b></a></li>
-    <li><a href="/docs/ndi" target="_blank">
-      <span class="sname">NDI</span>&nbsp;<b><i>Nervatura Data Interface</i></b></a></li>
-    <li><a href="/ndi/wizard" target="_blank">
-      <span class="sname">NDI</span>&nbsp;<b><i>Nervatura Data Interface Wizard</i></b></a></li>
-    <li><a href="/docs/npi" target="_blank">
-      <span class="sname">NPI</span>&nbsp;<b><i>Nervatura Programming Interface</i></b></a></li>
-    <li><a href="/report" target="_blank">
-      <span class="sname">NDR</span>&nbsp;<b><i>Nervatura Report</i></b></a></li>
+    <li><p><span class="sname">NAS</span>&nbsp;
+      <a href="/docs/nas" target="_blank"><i>Nervatura Application Server</i></a></p></li>
+    <li><p><span class="sname">NOM</span>&nbsp;
+      <a href="/docs/nom" target="_blank"><i>Nervatura Object Model</i></a></p></li>
+    <li><p><span class="sname">NDI</span>&nbsp;
+      <a href="/docs/ndi" target="_blank"><i>Nervatura Data Interface</i></a></p></li>
+    <li><p><span class="sname">NDI</span>&nbsp;
+      <a href="/ndi/wizard" target="_blank"><i>Nervatura Data Interface Wizard</i></a></p></li>
+    <li><p><span class="sname">NPI</span>&nbsp;
+      <a href="/docs/npi" target="_blank"><i>Nervatura Programming Interface</i></a></p></li>
+    <li><p><span class="sname">NDR</span>&nbsp;
+      <a href="/report" target="_blank"><i>Nervatura Report</i></a></p></li>
   </ul>
 
-  <hr>
-
-  <h3 style="color: #3B7687;">More Resources</h3>
+  <h3>More Resources</h3>
   <ul>
-    <li><a href="http://www.nervatura.com/touch.html" 
-      target="_blank"><span class="sname">NTOUCH</span>&nbsp;<b><i>Nervatura Touch</i></b></a><br>
+    <li class="w3-margin-bottom"><span class="sname">NTOUCH</span>&nbsp;
+      <a href="http://www.nervatura.com#touch" target="_blank"><i>Nervatura Touch</i></a><br>
         The graphical user interface of the Nervatura Framework. A commercial product which can be downloaded 
-        to several operating systems: Android, Windows 10 and Google Chrome Extension. Touch-optimized 
+        to several operating systems: Android, Windows and Google Chrome Extension. Touch-optimized 
         and responsive graphical user interface for all devices (smartphone, tablet, laptop, PC).<br>
         The program works through the Programming Interface, offers a user friendly alternative to Data 
         Interface. Its structure covers the needs of a usual company. Besides the business management 
         tasks it can be used for setting other parameters of the system as well. Also, it includes a 
         built-in report editor.<br>
-        Support to <b>Developer Mode</b> (Chrome Extension): Enables connection to Nervatura Framework run on a localhost. Free 
-        usage is offered to developers, testers of Nervatura Framework and system administrators.<br>
+        Support to <b>Developer Mode</b> (Chrome Extension, Linux x64, Windows 7-8): Enables connection to 
+        Nervatura Framework run on a localhost. Free usage is offered to developers, testers of 
+        Nervatura Framework and system administrators.<br>
         Download links:
         <ul>
           <li style="padding:0px;"><a href="https://chrome.google.com/webstore/detail/nervatura-touch/fjcfkmfpocggbohnaohnjpifkjhknkia" 
@@ -45,39 +37,54 @@
           <li style="padding:0px;"><a href="https://play.google.com/store/apps/details?id=com.nervatura.ntouch" 
             target="_blank">Google Play</a> (Android ARMv7 and x86)</li>
           <li style="padding:0px;"><a href="https://www.microsoft.com/store/apps/9NBLGGH4SQX2" 
-            target="_blank">Windows Store</a> (Desktop and mobile)</li>
+            target="_blank">Windows Store</a> (Windows 10 desktop and mobile)</li>
+          <li style="padding:0px;"><a href="http://nervatura.com#download" 
+            target="_blank">Linux and Windows 7-8</a> (Local Database and Developer Mode only)</li>
         </ul>
     </li>
-    <li><a href="/download/nwx.zip" target="_blank"><span class="sname">NPI</span>&nbsp;<b><i>Nervatura wxPython Client</i></b></a><br>
+
+    <li class="w3-margin-bottom"><span class="sname">NDR</span>&nbsp;
+      <a href="https://github.com/nervatura/nervatura-react" 
+        target="_blank"><i>Nervatura React Sample</i></a><br>
+      Sample program using 
+      <a href="https://facebook.github.io/react/" target="_blank">React</a>,
+      Nervatura Report and <a href="/docs/npi" 
+      target="_blank">NPI</a>: <a href="http://es6-features.org/" 
+      target="_blank">ES6</a>, <a href="http://redux.js.org/" 
+      target="_blank">Redux</a>, <a href="https://webpack.js.org/" 
+      target="_blank">Webpack</a> and more...</li>
+
+    <li class="w3-margin-bottom"><span class="sname">NPI</span>&nbsp;
+      <a href="/download/nwx.zip"><i>Nervatura wxPython Client</i></a><br>
       Sample program using 
       <a href="http://wxpython.org/" target="_blank">wxPython</a>
       and  <a href="/docs/npi" 
       target="_blank">NPI</a>.
       It is aimed to present the usage of a client-side interface.</li>
-    <li><a href="/download/npijson.zip" 
-      target="_blank"><span class="sname">NPI</span>&nbsp;<b><i>Javascript RPC functions</i></b></a><br>
+
+    <li class="w3-margin-bottom"><span class="sname">NPI</span>&nbsp;
+     <a href="/download/npijson.zip"><i>Javascript RPC functions</i></a><br>
       Sample program using <a href="http://knockoutjs.com/" target="_blank">Knockout</a>,
       <a href="http://en.wikipedia.org/wiki/JSON-RPC" target="_blank">JSON-RPC</a>
       and  <a href="/docs/npi" 
       target="_blank">NPI</a>.</li>
-    <li><a href="/download/calc_demo.ods"
-      target="_blank"><span class="sname">NDI</span>&nbsp;<b><i>LibreOffice Calc Data Loader</i></b></a><br>
+      
+    <li class="w3-margin-bottom"><span class="sname">NDI</span>&nbsp;
+      <a href="/download/calc_demo.ods"><i>LibreOffice Calc Data Loader</i></a><br>
       Sample LibreOffice Calc Basic functions using  
       <a href="/docs/ndi" 
       target="_blank">NDI</a>. <br>
       Example objects: deffield, product, barcode, event, price, link. (Windows and Linux)
     </li>
-    <li><a href="https://github.com/nervatura/nerva2py"
-      target="_blank"><span class="sname">nerva2py</span>&nbsp;<b><i>Previous (v1.*) version</i></b></a><br>
+
+    <li><span class="sname">nerva2py</span>&nbsp;
+      <a href="https://github.com/nervatura/nerva2py" target="_blank"><i>Previous (v1.*) version</i></a><br>
       The Nervatura Framework v1.* is based on the <a href="http://www.web2py.com/"
       target="_blank">WEB2PY WEB FRAMEWORK</a> technology. 
       It is written and programmable in Python.<br>    
       Object Model, Application Server, Data Interface, Programming Interface, Web Client, Mobil Client
       and other documents, resources, sample code and demo programs.
-
     </li>
-
   </ul>
-</div>
 
-<% include html_foot.html %>
+<div>

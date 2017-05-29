@@ -1,7 +1,7 @@
 /*
 This file is part of the Nervatura Framework
 http://www.nervatura.com
-Copyright © 2011-2016, Csaba Kappel
+Copyright © 2011-2017, Csaba Kappel
 License: LGPLv3
 https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 */
@@ -36,15 +36,15 @@ router.get('/index', function(req, res, next) {
 });
 
 router.get('/ndoc', function(req, res, next) {
-  res.render('default/ndoc.html',{view:"ndoc"});
+  res.render('default/index.html',{view:"ndoc"});
 });
 
 router.get('/about', function(req, res, next) {
-  res.render('default/about.html',{view:"about"});
+  res.render('default/index.html',{view:"about"});
 });
 
 router.get('/licenses', function(req, res, next) {
-  res.render('default/licenses.html',{view:"licenses"});
+  res.render('default/index.html',{view:"licenses"});
 });
 
 router.get('/docs/nas', function(req, res, next) {
@@ -78,7 +78,7 @@ function page_render(params){
     params.data = {view:params.page};}
   else{
     params.data.view = params.page;}
-  params.res.render(params.dir+"/"+params.page+".html",params.data);}
+  params.res.render(params.dir+"/index.html",params.data);}
 
 router.get('/login',
   function(req, res){

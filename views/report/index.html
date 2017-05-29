@@ -1,27 +1,63 @@
-<% include html_head.html %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nervatura Report</title>
+    <link rel="stylesheet" type="text/css" href="/lib/icon/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/lib/w3/w3.css">
+    <link rel="stylesheet" type="text/css" href="/css/report.css">
+  </head>
+  <body>
+    <div class="w3-top">
+      <div class="w3-bar w3-black">
+        <div class="w3-bar-item w3-right w3-hide-small">
+          <div class="w3-padding">
+            <span >Ver.No:</span><br>
+            <span ><%= settings.version %></span>
+          </div>
+        </div>
+        <a class="w3-bar-item w3-right w3-padding-small w3-hide-medium w3-hide-small">
+          <img src="/images/ntura_framework.png" height="64px" /></a>
+        <div class="w3-padding w3-hide-small">
+          <a href="/report/index" class="w3-bar-item w3-button w3-hover-black w3-hover-text-green <%= view==='index' ? 'w3-text-khaki' : 'w3-text-white' %>">
+            <i class="fa fa-home fa-2x fa-fw" aria-hidden="true"></i><br />
+            <span><%= lang.title_home %></span></a>
+          <a href="/docs/report" target="_blank"
+            class="w3-bar-item w3-button w3-hover-black w3-hover-text-green">
+            <i class="fa fa-question-circle fa-2x fa-fw" aria-hidden="true"></i><br />
+            <span><%= lang.title_help %></span></a>
+          <a href="/report/server" class="w3-bar-item w3-button w3-hover-black w3-hover-text-green <%= view==='server' ? 'w3-text-khaki' : 'w3-text-white' %>">
+            <i class="fa fa-cloud fa-2x fa-fw" aria-hidden="true"></i><br />
+            <span><%= lang.title_server_side %></span></a>
+          <a href="/report/client" class="w3-bar-item w3-button w3-hover-black w3-hover-text-green <%= view==='client' ? 'w3-text-khaki' : 'w3-text-white' %>">
+            <i class="fa fa-window-maximize fa-2x fa-fw" aria-hidden="true"></i><br />
+            <span><%= lang.title_client_side %></span></a>
+        </div>
+        <div class="w3-hide-medium w3-hide-large">
+          <a href="/report/index" class="w3-bar-item w3-button w3-hover-black w3-hover-text-green <%= view==='index' ? 'w3-text-khaki' : 'w3-text-white' %>">
+            <i class="fa fa-home fa-2x fa-fw" aria-hidden="true"></i></a>
+          <a href="/docs/report" target="_blank"
+            class="w3-bar-item w3-button w3-hover-black w3-hover-text-green">
+            <i class="fa fa-question-circle fa-2x fa-fw" aria-hidden="true"></i></a>
+          <a href="/report/server" class="w3-bar-item w3-button w3-hover-black w3-hover-text-green <%= view==='server' ? 'w3-text-khaki' : 'w3-text-white' %>">
+            <i class="fa fa-cloud fa-2x fa-fw" aria-hidden="true"></i></a>
+          <a href="/report/client" class="w3-bar-item w3-button w3-hover-black w3-hover-text-green <%= view==='client' ? 'w3-text-khaki' : 'w3-text-white' %>">
+            <i class="fa fa-window-maximize fa-2x fa-fw" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
 
-<div class="container btext" >
-  <h1><b>Client and server-side PDF Reporting</b></h1>
-  <ul>
-    <li><span class="title_row">Client/server side:</span><br> 
-      PDF printing in pure <b>JavaScript</b> (using the library <a href="https://github.com/MrRio/jsPDF" 
-        target="_blank">jsPDF</a>) and <b>Python</b> (using the library
-      <a href="http://www.github.com/reingart/pyfpdf/" target="_blank">Pypdf</a>) </li>
-    <li><span class="title_row">Fully declarative:</span><br> 
-      can be easily modified and used for relative layout (no need to specify the x and y coordinates)</li>
-    <li><span class="title_row">Powerful layout engine:</span><br> 
-      row, datagrid, column, cell, image, separator, html, barcode, hline, vgap elements </li>
-    <li><span class="title_row">Many types of declaration:</span><br> 
-      XML, JSON, Javascript or Python languages </li>
-    <li><span class="title_row">Several output options:</span><br> 
-      PDF, XML, JSON, HTML</li>
-    <li><span class="title_row">Documentations:</span><br> 
-      <a href="/docs/report" target="_blank">Reference Manual</a>, 
-      <a href="/report/server" data-ajax="false" >Server-side DEMO</a>, 
-      <a href="/report/client" data-ajax="false" >Client-side DEMO</a></li>
-    <li><span class="title_row">Can be used independently:</span><br> 
-      any (client or server-side) python and html5 (in-browser) programs</li>
-  </ul>
-</div>
+    <% if (view === 'index') { %>
+      <% include home.html %>
+    <% } else if (view === 'server') { %>
+      <% include server.html %>
+    <% } else if (view === 'client') { %>
+      <% include client.html %>
+    <% } else { %>
+      <% include home.html %>
+    <% } %>
 
-<% include html_foot.html %>
+  </body>
+</html>

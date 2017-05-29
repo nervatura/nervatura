@@ -4,7 +4,7 @@
 """
 This file is part of the Nervatura Framework
 http://www.nervatura.com
-Copyright © 2011-2016, Csaba Kappel
+Copyright © 2011-2017, Csaba Kappel
 License: LGPLv3
 https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 """

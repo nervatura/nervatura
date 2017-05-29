@@ -34,13 +34,13 @@ Homepage: http://www.nervatura.com
 
 ## Installation & Quick Start
 
-    $ npm install nervatura --production --save
+    $ npm install nervatura --production
 
 or
 
     $ git clone https://github.com/nervatura/nervatura.git
     $ cd nervatura
-    $ npm install --production --save
+    $ npm install --production
 
 Start the server
 

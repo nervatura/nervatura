@@ -1,59 +1,43 @@
-label {
-  font-size: 16px;
-}
-.flash {
-  padding: 8px;
-  font-weight: bold;
-  border: 1px solid #F7C942;
-  -webkit-border-radius:5px;
-  border-radius:5px;
-  color: #222;
-  text-shadow: 0px 1px 0px #FFF;
-  background: linear-gradient(#FFFADF, #FFF3A5) repeat scroll 0% 0% #FFF9DF;
-}
-.btn-default {
-  font-weight: bold;
-}
-.btn-primary {
-  font-weight: bold;
-  background-color: #333;
-  border-color: #1f1f1f;
-}
-.btn-primary.active, .btn-primary:active, .open>.dropdown-toggle.btn-primary {
-  background-color: #080808;
-  border-color: #363636;
-}
-.panel-primary {
-  border-color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,.15);
-}
-.panel-primary>.panel-heading {
-  color: #9D9D9D;
-  background-color: #333333;
-  border-color: #333333;
-  font-weight: bold;
-}
-.btn-collapse {
-  display: inline-block;
-  margin-bottom: 0;
+body {
+  background-color: #f9f9f9;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 15px;
   line-height: 1.42857143;
-  vertical-align: middle;
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  background-image: none;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  width: 100%;
+  color: #333 !important;
+}
+
+.w3-dark-black,.w3-hover-dark-black:hover{background-color:#2A2A2A!important; color: #fff;}
+.w3-striped-ul li:nth-child(odd){background-color:#f1f1f1}
+.w3-striped-ul li:nth-child(even){background-color:#fff}
+
+select:not([size]):not([multiple]), select[size="0"], select[size="1"] {
+  background-color: #fff;
+}
+select:disabled {
+  background-color: rgb(235, 235, 228)!important;
+  color: rgb(84, 84, 84);
+}
+
+img {
+	background-size: cover;
+}
+
+label {
   font-weight: bold;
 }
-.form-group{
-  padding: 0px 15px 0px;
+
+.bold {
+  font-weight: bold;
 }
+
+.margin-small-top {
+  margin-top:5px;
+}
+
+.w3-padding-0 {
+  padding: 0px !important;
+}
+
 .basefield {
   font-size: 16px;
   /*font-weight: bold;*/
@@ -69,3 +53,4 @@ input[data-role=float] {
 input[data-role=integer] {
   text-align: right !important;
 }
+

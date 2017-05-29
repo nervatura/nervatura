@@ -1,102 +1,112 @@
-<% include html_head.html %>
-
 <script>
   function updateForm(cmd,reportkey){
     if((cmd==="cancel" || cmd==="delete") && document.getElementById("ftemplate")){
       document.getElementById("ftemplate").remove();
       document.getElementById("flabels").remove();}
-    $("#update_cmd").val(cmd);
-    $("#update_reportkey").val(reportkey);
-    document.forms['frm_list'].submit();}
+    document.getElementById('update_cmd').value = cmd;
+    document.getElementById('update_reportkey').value = reportkey;
+    if(document.getElementById('template_text')){
+      document.getElementById('template').value = document.getElementById('template_text').value;
+    }
+    document.forms['frm_list'].submit();
+  }
+  function showPreview(reportkey,title){
+    document.getElementById('preview').src = "/report/"+reportkey+".png";
+    document.getElementById('preview').title = title;
+    document.getElementById('preview').alt = title;
+    document.getElementById('preview_label').innerHTML = title;
+    document.getElementById('showPreview').style.display = 'block';
+  }
+  function setAccordion(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+      x.className += " w3-show";
+    } else {
+      x.className = x.className.replace(" w3-show", ""); }
+  }
 </script>
 
-<div align="center" style="padding-top: 20px;">
-  <% if (view === "list") { %>
-  <div class="panel panel-primary" style="max-width: 600px;">
-    <div class="panel-heading">
-      <h2 class="panel-title text-left"><%= subtitle %></h2>
+<% if (view === "list") { %>
+<div class="w3-modal-content" style="max-width: 600px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-file-text fa-fw" aria-hidden="true"></i>
+      <label><%= subtitle %></label>
     </div>
     <form id="frm_list" action="/nas/report" method="post">
       <input name="_csrf" value="<%= _csrf %>" type="hidden">
-      <div class="panel-body">
-        <div class="input-group">
-          <div class="input-group-btn">
-            <select name="alias" id="alias" class="form-control">
+
+      <div class="w3-container w3-padding-8">
+        <div class="w3-row-padding w3-padding">
+          <div class="w3-third">
+            <select name="alias" id="alias" class="w3-select w3-block w3-border w3-round">
               <% form.database.forEach(function(dbs) { %>
               <% if (dbs.alias === form.alias) { %><option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option>
               <% } else{ %><option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
             </select>
           </div>
-          <div class="input-group-btn" style="padding-left:10px;">
-            <select name="group" id="group" class="form-control">
+          <div class="w3-third">
+             <select name="group" id="group" class="w3-select w3-block w3-border w3-round">
               <% if (form.groups) { %><% form.groups.forEach(function(group) { %>
               <% if (group === form.group) { %><option value="<%= group %>" selected="selected"><%= group %></option>
               <% } else{ %><option value="<%= group %>"><%= group %></option><% } %><% }); %><% } %>
             </select>
           </div>
-          <div class="input-group-btn text-left" style="padding-left:10px;">
-            <a role="button" class="btn btn-primary" href="#" class="form-control"
+          <div class="w3-third">
+             <a class="w3-button w3-block w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
               onclick="document.forms['frm_list'].submit();">
-              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-              <%= lang.label_search %></a>
+              <i class="fa fa-search fa-fw" aria-hidden="true"></i>
+              <b><%= lang.label_search %></b></a>
           </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <tbody><% if (form.files) { %><% form.files.forEach(function(template) { %>
-            <tr>
-              <td>
-                <p><b><%= template.repname %></b><br>
-                  <%= template.description %></p>
 
-                <div class="btn-group" role="group" aria-label="...">
-                  <% if (form.alias === '') { %>
-                    <a role="button" class="btn btn-primary disabled" href="#">
-                      <span class="glyphicon glyphicon-plus" style="color:#8FBC8F;" aria-hidden="true"></span>
-                      <%= lang.label_report_install %></a>
-                  <% } else{ %>
-                    <% if (template.installed) { %>
-                      <a role="button" class="btn btn-primary" href="#" 
-                        onclick="updateForm('delete','<%= template.reportkey %>');">
-                        <span class="glyphicon glyphicon-trash" style="color:#FF7F50;" aria-hidden="true"></span>
-                        <%= lang.label_report_delete %></a>
-                    <% } else{ %>
-                      <a role="button" class="btn btn-primary" href="#" 
-                        onclick="updateForm('install','<%= template.reportkey %>');">
-                        <span class="glyphicon glyphicon-plus" style="color:#8FBC8F;" aria-hidden="true"></span>
-                        <%= lang.label_report_install %></a><% } %><% } %>
-
-                    <a class="btn btn-default <%=template.preview===false ? 'disabled' : ''%>" role="button" data-toggle="modal" 
-                      data-target="#<%= template.reportkey %>" title="<%= template.repname %>">
-                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                        <%= lang.label_report_preview %></a>
-                    <% if (template.preview) { %>
-                    <div id="<%= template.reportkey %>" class="modal fade" tabindex="-1" role="dialog">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <a role="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span></a>
-                            <h4 id="edit_title" class="modal-title"><%= template.repname %></h4>
-                          </div>
-                          <img alt="<%= template.repname %>" 
-                            src="/report/<%= template.reportkey %>.png" title="<%= template.repname %>">
-                        </div><!-- /.modal-content -->
-                      </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal --><% } %>
-
-                    <a role="button" class="btn btn-default <%=template.installed===false ? 'disabled' : ''%>" href="#" 
-                      onclick="updateForm('edit','<%= template.reportkey %>');">
-                      <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                      <%= lang.label_report_edit %></a>
+      <ul class="w3-ul w3-border w3-striped-ul w3-hoverable">
+        <% if (form.files) { %><% form.files.forEach(function(template) { %>
+        <li class="w3-padding">
+          <div class="w3-row">
+            <% if (form.alias !== '') { %>
+              <% if (template.installed) { %>
+              <div class="w3-col w3-right" style="width:40px;">
+                <span onclick="updateForm('delete','<%= template.reportkey %>');" 
+                  class="w3-text-red w3-hover-text-black" style="cursor: pointer;">
+                  <i class="fa fa-times fa-2x fa-fw" aria-hidden="true"></i>
+                </span>
+              </div>
+              <% } else{ %>
+              <div class="w3-col w3-right" style="width:40px;">
+                <span onclick="updateForm('install','<%= template.reportkey %>');" 
+                  class="w3-text-green w3-hover-text-black" style="cursor: pointer;">
+                  <i class="fa fa-plus-circle fa-2x fa-fw" aria-hidden="true"></i>
+                </span>
+              </div>
+              <% } %>
+              <% if (template.preview) { %>
+                <div class="w3-col" style="width:40px;">
+                  <span onclick="showPreview('<%= template.reportkey %>','<%= template.description %>');" 
+                    class="w3-text-blue-grey w3-hover-text-green" style="cursor: pointer;">
+                    <i class="fa fa-eye fa-2x fa-fw" aria-hidden="true"></i>
+                  </span>
                 </div>
-              </td>
-            </tr><% }); %><% } %>
-          </tbody>
-        </table>
-      </div>
-      <div style="display:none;">
+              <% } %>
+            <% } %>
+            <div class="w3-rest">
+              <% if (template.installed) { %>
+                <a onclick="updateForm('edit','<%= template.reportkey %>');" 
+                  class="wrap-button w3-block w3-left-align">
+                  <span class="w3-hover-text-green"><b><%= template.repname %></b></span><br />
+                  <span class="w3-text-black"><%= template.description %></span></a>
+              <% } else{ %>
+                <span><b><%= template.repname %></b></span><br />
+                <span><%= template.description %></span>
+              <% } %>
+            </div>
+          </div>
+        </li>
+        <% }); %><% } %>
+      </ul>
+
+    <div style="display:none;">
         <input value="<%= form.alias %>" name="update_database" type="hidden">
         <input value="" id="update_cmd" name="update_cmd" type="hidden">
         <input value="" id="update_reportkey" name="update_reportkey" type="hidden">
@@ -105,64 +115,76 @@
       </div>
     </form>
   </div>
-  <% } %>
-  <% if (view === "edit") { %>
-    <div class="panel panel-primary" style="max-width: 800px;">
-      <div class="panel-heading">
-        <h2 class="panel-title text-left"><%= form.report.repname %></h2>
+</div>
+<div id="showPreview" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom" style="width:400px;">
+    <div class="w3-card-4">
+      <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+        <i class="fa fa-eye fa-fw" aria-hidden="true"></i>
+        <label id="preview_label"></label>
+        <span onclick="document.getElementById('showPreview').style.display='none'" 
+          class="w3-hover-text-red w3-right" style="cursor: pointer;">
+          <i class="fa fa-window-close fa-fw" aria-hidden="true"></i></span>
       </div>
-      <form id="frm_list" action="/nas/report" method="post">
+      <img id="preview" style="width:400px;" alt="" src="" title="">
+    </div>
+  </div>
+</div>
+<% } %>
+
+<% if (view === "edit") { %>
+<div class="w3-modal-content w3-animate-zoom" style="max-width: 600px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-file-text fa-fw" aria-hidden="true"></i>
+      <label><%= form.report.repname %></label>
+      <a onclick="updateForm('cancel','');" 
+        class="w3-hover-text-red w3-right w3-text-white" style="cursor: pointer;">
+        <i class="fa fa-window-close fa-fw" aria-hidden="true"></i></a>
+    </div>
+    <div class="w3-container w3-border-top w3-padding-8 w3-light-grey">
+      <form id="frm_list" action="/nas/report" method="post"
+        onsubmit="event.preventDefault(); return false;">
         <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <div class="panel-body">
-          <div class="btn-group" role="group" aria-label="...">
-            <a role="button" class="btn btn-primary"
-              onclick="updateForm('update','<%= form.report.reportkey %>');">
-              <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
-              <%= lang.label_update %></a>
-            <a role="button" class="btn btn-primary" style="margin-left:10px;" 
-              onclick="updateForm('delete','<%= form.report.reportkey %>');">
-              <span class="glyphicon glyphicon-trash" style="color:#FF7F50;" aria-hidden="true"></span>
-              <%= lang.label_report_delete %></a>
-            <a role="button" class="btn btn-default" style="margin-left:10px;"
-              onclick="updateForm('cancel','');">
-              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              <%= lang.label_cancel %></a>
-          </div>
-          <div class="panel panel-default" style="margin-top:10px;">
-            <div class="panel-heading" role="tab" id="ftemplate">
-              <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#xml_template" 
-                  aria-expanded="true" aria-controls="xml_template" class="btn-collapse">
-                  <span class="glyphicon glyphicon-file" aria-hidden="true"></span> <%= lang.label_xml_template %>
-                </a>
-              </h4>
-            </div>
-            <div id="xml_template" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ftemplate">
-              <textarea name="template" class="form-control" rows="15"><%= form.report.report %></textarea>
-            </div>
-          </div>
-          
-          <div class="panel panel-default" style="margin-top:10px;">
-            <div class="panel-heading" role="tab" id="flabels">
-              <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#labels" 
-                  aria-expanded="true" aria-controls="labels" class="btn-collapse">
-                  <span class="glyphicon glyphicon-tag" aria-hidden="true"></span> <%= lang.label_report_labels %>
-                </a>
-              </h4>
-            </div>
-            <div id="labels" class="panel-collapse collapse" role="tabpanel" aria-labelledby="flabels">
-              <div class="panel-body text-left">
-                <% form.labels.forEach(function(label) { %>
-                <div style="padding:5px;">
-                  <label class="control-label" for="label_<%= label.id %>"><%= label.secname %> - <%= label.fieldname %></label>
-                  <input name="label_<%= label.id %>" id="label_<%= label.id %>" value="<%= label.msg %>" class="form-control" type="text">
-                </div><% }); %>
-              </div>
-            </div>
-          </div>
+        <div class="w3-row w3-center w3-padding">
+          <button  class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+            onclick="updateForm('update','<%= form.report.reportkey %>');">
+            <i class="fa fa-check fa-fw" aria-hidden="true"></i>
+            <b><%= lang.label_update %></b></button>
+          <button  class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-red w3-round" 
+            onclick="updateForm('delete','<%= form.report.reportkey %>');">
+            <i class="fa fa-trash fa-fw" aria-hidden="true"></i>
+            <b><%= lang.label_report_delete %></b></button>
         </div>
 
+        <button onclick="setAccordion('xml_template')" 
+          class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-block w3-left-align ">
+          <i class="fa fa-edit fa-fw" aria-hidden="true"></i>&nbsp;<b><%= lang.label_xml_template %></b>
+        </button>
+        <div id="xml_template" class="w3-white w3-border w3-hide">
+          <textarea id="template_text" class="w3-input w3-block w3-small" rows="15"><%= form.report.report %></textarea>
+        </div>
+
+        <div class="w3-margin-bottom margin-small-top">
+          <button onclick="setAccordion('xml_fields')" 
+            class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-block w3-left-align ">
+            <i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<b><%= lang.label_report_labels %></b>
+          </button>
+          <ul id="xml_fields" class="w3-ul w3-border w3-striped-ul w3-hide">
+          <% form.labels.forEach(function(label) { %>
+            <li class="w3-padding-small w3-border-0">
+              <div class="w3-row">
+                <div class="w3-col w3-padding-small">
+                  <label><%= label.secname %> - <%= label.fieldname %></label>
+                  <input name="label_<%= label.id %>" id="label_<%= label.id %>" value="<%= label.msg %>" 
+                    class="w3-input w3-border w3-round" type="text">
+                </div>
+              </div>
+            </li>
+          <% }); %>
+          </ul>
+        </div>
+        
         <div style="display:none;">
           <input value="<%= form.alias %>" name="update_database" type="hidden">
           <input value="" id="update_cmd" name="update_cmd" type="hidden">
@@ -170,10 +192,10 @@
           <input value="<%= form.report.id %>" name="report_id" type="hidden">
           <input value="<%= form.group %>" name="update_group" type="hidden">
           <input value="<%= form.repname %>" name="update_repname" type="hidden">
+          <input value="" id="template" name="template" type="hidden">
         </div>
       </form>
     </div>
-  <% } %>
+  </div>
 </div>
-
-<% include html_foot.html %>
+<% } %>

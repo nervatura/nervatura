@@ -1,3 +1,14 @@
+## 2.5.0
+- remove all GUI jquery dependencies:
+  bootstrap -> w3.css, bootstrap-datetimepicker -> flatpickr
+  glyphicons -> font-awesome
+- NDI Wizard bug fixes
+- Nervatura Report bug fixes
+- set npm packages: 
+  new: w3.css, flatpickr, font-awesome, 
+  from public folder: highlight.js, jspdf, pdfjs-dist
+- React Sample application (ES6 and Webpack)
+
 ## 2.3.1
 - express and npm libs upgrade
 - docs corrections and additions

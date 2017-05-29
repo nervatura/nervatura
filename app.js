@@ -1,7 +1,7 @@
 /*
 This file is part of the Nervatura Framework
 http://www.nervatura.com
-Copyright © 2011-2016, Csaba Kappel
+Copyright © 2011-2017, Csaba Kappel
 License: LGPLv3
 https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 */
@@ -130,8 +130,15 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     app.use(compression());
     app.use(favicon(__dirname + '/public/favicon.ico'));
     app.use(express.static(path.join(__dirname, 'public')));
-    app.use('/javascripts', express.static(path.join(__dirname, 'lib/dist/js')));
-    app.use('/stylesheets', express.static(path.join(__dirname, 'lib/dist/css')));
+    app.use('/js', express.static(path.join(__dirname, 'lib/dist/js')));
+    app.use('/css', express.static(path.join(__dirname, 'lib/dist/css')));
+    
+    app.use('/lib/w3', express.static(path.join(__dirname, 'node_modules/w3-css')));
+    app.use('/lib/highlightjs', express.static(path.join(__dirname, 'node_modules/highlightjs')));
+    app.use('/lib/jspdf', express.static(path.join(__dirname, 'node_modules/jspdf/dist')));
+    app.use('/lib/pdfjs', express.static(path.join(__dirname, 'node_modules/pdfjs-dist/build')));
+    app.use('/lib/icon', express.static(path.join(__dirname, 'node_modules/font-awesome')));
+    app.use('/lib/flatpickr', express.static(path.join(__dirname, 'node_modules/flatpickr/dist')));
 
     app.use(logger((app.get('env')==='development')?'dev':'common'));
     app.use(bodyParser.json());

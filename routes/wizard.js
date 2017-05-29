@@ -1,7 +1,7 @@
 /*
 This file is part of the Nervatura Framework
 http://www.nervatura.com
-Copyright © 2011-2016, Csaba Kappel
+Copyright © 2011-2017, Csaba Kappel
 License: LGPLv3
 https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 */
@@ -34,6 +34,7 @@ function index(req, res, data) {
       nom:"address", database:"demo", username:"demo", password:"", code:"", use_deleted:"false",
       output:"html", cross_tab:"false", show_id:"false", no_deffield:"false", insert_row:"true", insert_field:"true",
       update_rows:2, delete_rows:2, selected_tab:"view"},
+    view_tabs: ["view","update","delete"],
     url_code: ["base64"],
     view_output: ["html","json","xml","csv"],
     lst_no_deffield: ["groups","fieldvalue","numberdef","deffield","pattern"],

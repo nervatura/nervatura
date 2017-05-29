@@ -3,7 +3,7 @@
 """
 This file is part of the Nervatura Framework
 http://www.nervatura.com
-Copyright © 2011-2016, Csaba Kappel
+Copyright © 2011-2017, Csaba Kappel
 License: LGPLv3
 https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 """
@@ -23,7 +23,7 @@ except ImportError:
                 
 class Report(FPDF, HTMLMixin):
   
-  CLASS_VERSION='2.141007'
+  CLASS_VERSION='2.170528'
   template,databind = {},{}
   images_folder=None
   
@@ -520,8 +520,8 @@ class Report(FPDF, HTMLMixin):
               except:
                 name = ""
             if name!="":  
-              self.image(name=name, x=self.get_x()+0.5, y=self.get_y()+0.5, w=width, link=link)
-              self.set_x(self.get_x()+(self.images[name]['w']/self.k)+0.5)
+              self.image(name=name, x=self.get_x(), y=self.get_y(), w=width, link=link)
+              self.set_x(self.get_x()+(self.images[name]['w']/self.k))
             if link!="":
               hrow+='<td width="1'+self.unit+'"><a href="'+link+'"><img style="'+style+'" src="'+name+'"/></a></td>'
             else:
@@ -559,8 +559,8 @@ class Report(FPDF, HTMLMixin):
                 info['odata']=value_data
                 self.images[name]=info
           if self.images.has_key(name):
-            self.image(name=name, x=self.get_x()+0.5, y=self.get_y()+0.5, w=width, link=link)
-            self.set_x(self.get_x()+(self.images[name]['w']/self.k)+0.5)
+            self.image(name=name, x=self.get_x(), y=self.get_y(), w=width, link=link)
+            self.set_x(self.get_x()+(self.images[name]['w']/self.k))
             if link!="":
               hrow+='<td width="1'+self.unit+'"><a href="'+link+'"><img style="'+style+'" src="'+self.images[name]['odata']+'"/></a></td>'
             else:

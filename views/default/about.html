@@ -1,30 +1,40 @@
-<% include html_head.html %>
-<div class="container text-justify btext" >
+
+<div class="w3-container w3-justify main" >
   <p>The <b>Nervatura Framework</b> is an open source business management framework.<bp>
     Can be used under the <a
       href="http://www.gnu.org/licenses/lgpl.html" target="_blank">LGPLv3
       License</a>.</p>
+  <p>Ver.No: <b><%= settings.version %></b></p>
   <p>Nervatura Framework License: <a href="/licenses" data-ajax="false">
-    <span style="font-weight: bold;">License Agreement</span></a></p>
+    License Agreement</a></p>
   <p>Licenses for third party contributed software: <a href="/licenses" data-ajax="false">
-    <span style="font-weight: bold;">License Agreement</span></a></p>
+    License Agreement</a></p>
   <p>
     <span>For more information and help visit: </span>
-      <a href="http://www.nervatura.com" target="_blank" title="Nervatura Homepage" 
-        style="font-weight: bold;">Nervatura Homepage
-      </a>
+      <a href="http://www.nervatura.com" target="_blank" 
+        title="Nervatura Homepage" >Nervatura Homepage</a>
   </p>
 
   <p>
-  <b>Copyright (c) 2011-2016 by <a href="mailto:kappel.csaba@gmail.com" title="Lead Developer">Csaba Kappel</a>. <br>All rights reserved.</b></p>
-
-  <p>General contact: <a href="mailto:info@nervatura.com">info@nervatura.com</a></p>
+  <b>Copyright (c) 2011-2017 by <a class="w3-text-blue-grey" 
+    href="mailto:info@nervatura.com" title="Lead Developer">Csaba Kappel</a>.<br />
+    All rights reserved.</b></p>
+  
+  <div class="w3-row w3-margin-bottom">
+    <div class="w3-col" style="width: 96px;" >
+      <img src="/images/ntura_white.jpg" style="width: 96px;" alt="" />
+    </div>
+    <div class="w3-rest w3-padding" >
+      <span>General contact: </span><br />
+      <a class="w3-text-blue-grey" href="mailto:info@nervatura.com"><b>info@nervatura.com</b></a><br />
+    </div>
+  </div>
 
   <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td><div></div></td>
       <td style="text-align: right;width: 50%;"> 
-      <span style="font-weight: bold;">Donate to Nervatura Framework:</span>
+      <span><b>Donate to Nervatura Framework:</b></span>
       <br><br>
       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
         <input type="hidden" name="cmd" value="_s-xclick">
@@ -36,4 +46,3 @@
     </tr>
   </table>
 </div>
-<% include html_foot.html %>

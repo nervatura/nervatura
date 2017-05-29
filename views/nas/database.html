@@ -1,80 +1,83 @@
-<% include html_head.html %>
 
-<script>
-  function msgDelete(alias){
-    $("#current_alias").val(alias);
-    $("#delete").modal();}
-</script>
+<% if (view === "create") { %>
+<div class="w3-modal-content" style="max-width: 500px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>
+      <label><%= subtitle %></label>
+    </div>
+    <div class="w3-container w3-padding w3-white">
+      <p>1. <%= lang.li_dbs_create_1 %> 
+        <a class="w3-text-blue-grey" href="/nas/database/list" ><b><%= lang.label_databases %></b></a></p>
+      <p>2. <%= lang.li_dbs_create_2 %></p>
+      <p>3. <%= lang.li_dbs_create_3 %></p>
 
-<div align="center" style="padding-top: 20px;">
-  <% if (view === "create") { %>
-    <div class="panel panel-primary" style="max-width: 500px;">
-      <div class="panel-heading">
-        <h2 class="panel-title text-left"><%= subtitle %></h2>
-      </div>
-      <div class="panel-body text-left" style="padding: 15px 15px 0px;">
-        <p>1. <%= lang.li_dbs_create_1 %> 
-          <a href="/nas/database/list" ><%= lang.label_databases %></a></p>
-        <p>2. <%= lang.li_dbs_create_2 %></p>
-        <p>3. <%= lang.li_dbs_create_3 %></p>
-
-        <form id="frm_create" action="/nas/database/create" method="post" style="max-width: 600px;">
+      <form id="frm_create" action="/nas/database/create" method="post">
         <input name="_csrf" value="<%= _csrf %>" type="hidden">
-
-        <div class="input-group">
-          <select name="alias" id="alias" class="form-control">
-            <% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
-            <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
-            <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
-          </select>
-          <span class="input-group-btn">
-            <a class="btn btn-primary" role="button" href="#" 
-              onclick="$('#info_create').html('<%= lang.info_start %>');document.forms['frm_create'].submit();">
-              <span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= lang.li_dbs_start%></a>
-          </span>
-        </div><!-- /input-group -->
-        <div id="info_create" class="jumbotron" style="margin:15px 0px;padding:10px;">
+        <ul class="w3-ul">
+          <li class="w3-padding-small">
+            <div class="w3-row">
+              <div class="w3-half w3-padding-small">
+                <select name="alias" id="alias" class="w3-select w3-border w3-round">
+                  <% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
+                    <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+                    <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+                </select>
+              </div>
+              <div class="w3-half w3-padding-small">
+                <button  class="w3-button w3-block w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+                  onclick="document.getElementById('info_create').innerHTML='<%= lang.info_start %>';document.forms['frm_create'].submit();">
+                  <i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>
+                  <b><%= lang.li_dbs_start%></b></button>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div id="info_create" class="w3-panel w3-border w3-sand w3-padding w3-round">
           <% if (form.message) { %><%- form.message %><% } %>
         </div>
-        </form>
-      </div>
-    </div>  
-  <% } %>
-  <% if (view === "export") { %>
-    <div class="panel panel-primary" style="max-width: 500px;">
-      <div class="panel-heading">
-        <h2 class="panel-title text-left"><%= subtitle %></h2>
-      </div>
-      <div class="panel-body text-left" style="padding: 15px 15px 0px;">
-        <p><span style="color:brown;font-weight: bold;">Nervatura data export</span><br>
-          <span style="color:green;font-weight: bold;">NOM objects:</span><br>
-          <span style="font-weight:normal;">address, barcode, contact, currency, customer, 
-            deffield, employee, event, fieldvalue, groups, item, link, log, movement, numberdef, 
-            pattern, payment, place, price, product, project, rate, tax, tool, trans</span><br>
-          <span style="color:green;font-weight: bold;">UI objects: </span><br>
-          <span>ui_audit, ui_language, ui_menu, ui_menufields, ui_message, ui_report, ui_reportfields, 
-            ui_reportsources, ui_userconfig</span></p>
-        <p><span style="color:red;font-weight: bold;"><%= lang.not_included %>: </span><br>
-          <span>ui_printqueue</span></p>
-        <p><%= lang.info_export %></p>
-      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>
+<% if (view === "export") { %>
+<div class="w3-modal-content" style="max-width: 500px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-cloud-download fa-fw" aria-hidden="true"></i>
+      <label><%= subtitle %></label>
+    </div>
+    <div class="w3-container w3-padding w3-white">
+      <p><span style="color:brown;font-weight: bold;">Nervatura data export</span><br>
+        <span style="color:green;font-weight: bold;">NOM objects:</span><br>
+        <span style="font-weight:normal;">address, barcode, contact, currency, customer, 
+          deffield, employee, event, fieldvalue, groups, item, link, log, movement, numberdef, 
+          pattern, payment, place, price, product, project, rate, tax, tool, trans</span><br>
+        <span style="color:green;font-weight: bold;">UI objects: </span><br>
+        <span>ui_audit, ui_language, ui_menu, ui_menufields, ui_message, ui_report, ui_reportfields, 
+          ui_reportsources, ui_userconfig</span></p>
+      <p><span style="color:red;font-weight: bold;"><%= lang.not_included %>: </span><br>
+        <span>ui_printqueue</span></p>
+      <p><%= lang.info_export %></p>
+
       <form id="frm_export" action="/nas/database/export" method="post">
         <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <ul class="list-group" style="margin:0px;">
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-sm-6 text-left">
-                <label for="filename" class="control-label"><%= lang.label_export_file %>:</label>
-                <select name="filename" id="filename" class="form-control"><% if (form.filename !== 'download') { %>
+        <ul class="w3-ul">
+          <li class="w3-padding-small w3-border-0">
+            <div class="w3-row">
+              <div class="w3-half w3-padding-small">
+                <label><%= lang.label_export_file %>:</label>
+                <select name="filename" id="filename" class="w3-select w3-border w3-round"><% if (form.filename !== 'download') { %>
                   <option value="alias" selected="selected"><%= lang.label_alias %></option>
                   <option value="download"><%= lang.label_download %></option><% } else{ %>
                   <option value="alias"><%= lang.label_alias %></option>
                   <option value="download" selected="selected"><%= lang.label_download %></option><% } %>
                 </select>
               </div>
-              <div class="col-sm-6 text-left">
-                <label for="format" class="control-label"><%= lang.label_format %>:</label>
-                <select name="format" id="format" class="form-control"><% if (form.format !== 'xml') { %>
+              <div class="w3-half w3-padding-small">
+                <label><%= lang.label_format %>:</label>
+                <select name="format" id="format" class="w3-select w3-border w3-round"><% if (form.format !== 'xml') { %>
                   <option value="data" selected="selected">data</option>
                   <option value="xml">xml</option><% } else{ %>
                   <option value="data">data</option>
@@ -83,47 +86,53 @@
               </div>
             </div>
           </li>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-sm-6">
-                <select name="alias" id="alias" class="form-control">
+          <li class="w3-padding-small">
+            <div class="w3-row">
+              <div class="w3-half w3-padding-small">
+                <select name="alias" id="alias" class="w3-select w3-border w3-round">
                   <% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
-                  <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
-                  <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+                    <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+                    <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
                 </select>
               </div>
-              <div class="col-sm-6">
-                <a class="btn btn-primary" role="button" href="#" 
-                  onclick="$('#info_export').html('<%= lang.info_start %>');document.forms['frm_export'].submit();">
-                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= lang.li_dbs_start%></a>
+              <div class="w3-half w3-padding-small">
+                <button  class="w3-button w3-block w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+                  onclick="document.getElementById('info_export').innerHTML='<%= lang.info_start %>';document.forms['frm_export'].submit();">
+                  <i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>
+                  <b><%= lang.li_dbs_start%></b></button>
               </div>
             </div>
           </li>
         </ul>
-        <div id="info_export" class="jumbotron text-left" style="margin:15px;padding:10px;">
+        <div id="info_export" class="w3-panel w3-border w3-sand w3-padding w3-round">
           <% if (form.message) { %><%- form.message %><% } %>
         </div>
       </form>
     </div>
-  <% } %>
-  <% if (view === "import") { %>
-    <div class="panel panel-primary" style="max-width: 500px;">
-      <div class="panel-heading">
-        <h2 class="panel-title text-left"><%= subtitle %></h2>
-      </div>
-      <div class="panel-body text-left" style="padding: 15px 15px 0px;">
-        <p><%= lang.li_dbs_create_2 %></p>
-      </div>
-      <form id="frm_import" action="/nas/database/import" method="post" style="max-width: 600px;">
+  </div>
+</div>
+<% } %>
+<% if (view === "import") { %>
+<div class="w3-modal-content" style="max-width: 500px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-cloud-upload fa-fw" aria-hidden="true"></i>
+      <label><%= subtitle %></label>
+    </div>
+    <div class="w3-container w3-padding w3-white">
+      <p><%= lang.li_dbs_create_2 %></p>
+
+      <form id="frm_import" action="/nas/database/import" method="post">
         <input name="_csrf" value="<%= _csrf %>" type="hidden">
-        <ul class="list-group" style="margin:0px;">
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-sm-3 text-left">
-                <label for="filename" class="control-label"><%= lang.label_export_file %>:</label>
+        <ul class="w3-ul">
+          <li class="w3-padding-small w3-border-0">
+            <div class="w3-row">
+              <div class="w3-col w3-hide-small" style="width:100px; padding-top:8px">
+                <label><%= lang.label_export_file %>:</label>
               </div>
-              <div class="col-sm-9">
-                <select name="filename" id="alias" class="form-control">
+              <div class="w3-rest w3-padding-small">
+                <label class="w3-hide-medium w3-hide-large"><%= lang.label_export_file %>:</label>
+                <select name="filename" id="alias" class="w3-select w3-border w3-round">
                   <% filenames.forEach(function(filename) { %><% if (filename === form.filename) { %>
                   <option value="<%= filename %>" selected="selected"><%= filename %></option><% } else{ %>
                   <option value="<%= filename %>"><%= filename %></option><% } %><% }); %>
@@ -131,53 +140,64 @@
               </div>
             </div>
           </li>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-sm-12 text-left">
-                <label for="data" class="control-label"><%= lang.label_upload_file %>:</label>
-                <input id="data" name="data" type="file" disabled="disabled" class="form-control">
+          <li class="w3-padding-small w3-border-0">
+            <div class="w3-row">
+              <div class="w3-col w3-padding-small">
+                <label><%= lang.label_upload_file %>:</label>
+                <input id="data" name="data" type="file" disabled="disabled" 
+                  class="w3-input w3-border w3-round">
               </div>
             </div>
           </li>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-sm-6">
-                <select name="alias" id="alias" class="form-control">
+          <li class="w3-padding-small">
+            <div class="w3-row">
+              <div class="w3-half w3-padding-small">
+                <select name="alias" id="alias" class="w3-select w3-border w3-round">
                   <% data.forEach(function(dbs) { %><% if (dbs.alias === form.alias) { %>
-                  <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
-                  <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
+                    <option value="<%= dbs.alias %>" selected="selected"><%= dbs.alias %></option><% } else{ %>
+                    <option value="<%= dbs.alias %>"><%= dbs.alias %></option><% } %><% }); %>
                 </select>
               </div>
-              <div class="col-sm-6">
-                <a class="btn btn-primary" role="button" href="#" 
-                  onclick="$('#info_import').html('<%= lang.info_start %>');document.forms['frm_import'].submit();">
-                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= lang.li_dbs_start%></a>
+              <div class="w3-half w3-padding-small">
+                <button  class="w3-button w3-block w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+                  onclick="document.getElementById('info_import').innerHTML='<%= lang.info_start %>';document.forms['frm_import'].submit();">
+                  <i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>
+                  <b><%= lang.li_dbs_start%></b></button>
               </div>
             </div>
           </li>
         </ul>
-        <div id="info_import" class="jumbotron text-left" style="margin:15px;padding:10px;">
-          <% if (form.message) { %><%- form.message %><% } %></div>
+        <div id="info_import" class="w3-panel w3-border w3-sand w3-padding w3-round">
+          <% if (form.message) { %><%- form.message %><% } %>
+        </div>
       </form>
     </div>
-  <% } %>
-  <% if (view === "edit") { %>
-  <div class="panel panel-primary" style="max-width: 500px;">
-    <div class="panel-heading">
-      <h2 class="panel-title text-left"><%=data.alias===''? lang.label_new : data.alias%></h2>
+  </div>
+</div>
+<% } %>
+<% if (view === "edit") { %>
+<div class="w3-modal-content w3-animate-zoom" style="max-width: 500px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-database fa-fw" aria-hidden="true"></i>
+      <label><%=data.alias===''? lang.label_new : data.alias%></label>
+      <a href="/nas/database/list" 
+        class="w3-hover-text-red w3-right w3-text-white" style="cursor: pointer;">
+        <i class="fa fa-window-close fa-fw" aria-hidden="true"></i></a>
     </div>
     <form id="frm_edit" action="/nas/database/list" method="post">
       <input name="_csrf" value="<%= _csrf %>" type="hidden">
-      <ul class="list-group" style="margin:0px;">
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-sm-6 text-left">
-              <label for="alias" class="control-label"><%= lang.label_alias %>:</label>
-              <input name="alias" id="alias" value="<%= data.alias %>" class="form-control" type="text">
+      <ul class="w3-ul">
+        <li class="w3-padding-small">
+          <div class="w3-row-padding">
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_alias %>:</label>
+              <input name="alias" id="alias" value="<%= data.alias %>" 
+                class="w3-input w3-border w3-round" type="text">
             </div>
-            <div class="col-sm-6 text-left">
-              <label for="engine" class="control-label"><%= lang.label_engine %>:</label>
-              <select name="engine" id="engine" class="form-control">
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_engine %>:</label>
+              <select name="engine" id="engine" class="w3-select w3-border w3-round">
                 <% engines.forEach(function(engine) { %><% if (engine.key === data.engine) { %>
                   <option value="<%= engine.key %>" selected="selected"><%= engine.label %></option><% } else{ %>
                   <option value="<%= engine.key %>"><%= engine.label %></option><% } %><% }); %>
@@ -185,46 +205,51 @@
             </div>
           </div>
         </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-sm-2 text-left">
-              <label for="host" class="control-label"><%= lang.label_host %>:</label>
+        <li class="w3-padding-small">
+          <div class="w3-row-padding">
+            <div class="w3-col w3-hide-small" style="width:100px; padding-top:8px">
+              <label><%= lang.label_host %>:</label>
             </div>
-            <div class="col-sm-10">
+            <div class="w3-rest w3-padding-small">
+              <label class="w3-hide-medium w3-hide-large"><%= lang.label_host %>:</label>
               <input name="host" id="host" value="<%= data.connect.host %>" 
-                class="form-control" type="text">
+                class="w3-input w3-border w3-round" type="text">
             </div>
           </div>
         </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-sm-6 text-left">
-              <label for="dbname" class="control-label"><%= lang.label_database %>:</label>
-              <input name="dbname" id="dbname" value="<%= data.connect.dbname %>" class="form-control" type="text">
+        <li class="w3-padding-small">
+          <div class="w3-row-padding">
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_database %>:</label>
+              <input name="dbname" id="dbname" value="<%= data.connect.dbname %>" 
+                class="w3-input w3-border w3-round" type="text">
             </div>
-            <div class="col-sm-6 text-left">
-              <label for="port" class="control-label"><%= lang.label_port %>:</label>
-              <input name="port" id="port" value="<%= data.connect.port %>" class="form-control" type="text" >
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-sm-6 text-left">
-              <label for="username" class="control-label"><%= lang.label_username %>:</label>
-              <input name="username" id="username" value="<%= data.connect.username %>" class="form-control" type="text">
-            </div>
-            <div class="col-sm-6 text-left">
-              <label for="password" class="control-label"><%= lang.label_password %>:</label>
-              <input name="password" id="password" value="<%= data.connect.password %>" class="form-control" type="text">
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_port %>:</label>
+              <input name="port" id="port" value="<%= data.connect.port %>" 
+                class="w3-input w3-border w3-round" type="text">
             </div>
           </div>
         </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-sm-6 text-left">
-              <label class="control-label"> <%= lang.label_ndi_enabled %></label>
-              <select name="ndi_enabled" id="ndi_enabled" class="form-control">
+        <li class="w3-padding-small">
+          <div class="w3-row-padding">
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_username %>:</label>
+              <input name="username" id="username" value="<%= data.connect.username %>" 
+                class="w3-input w3-border w3-round" type="text">
+            </div>
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_password %>:</label>
+              <input name="password" id="password" value="<%= data.connect.password %>" 
+                class="w3-input w3-border w3-round" type="text">
+            </div>
+          </div>
+        </li>
+        <li class="w3-padding-small">
+          <div class="w3-row-padding">
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_ndi_enabled %>:</label>
+              <select name="ndi_enabled" id="ndi_enabled" class="w3-select w3-border w3-round">
                 <% if (data.settings.ndi_enabled) { %>
                 <option value="true" selected="selected">true</option>
                 <option value="false">false</option><% } else{ %>
@@ -232,91 +257,104 @@
                 <option value="false" selected="selected">false</option><% } %>
               </select>
             </div>
-            <div class="col-sm-6 text-left">
-              <label for="encrypt_password" class="control-label"><%= lang.label_encrypt_password %>:</label>
-              <input name="encrypt_password" id="encrypt_password" value="<%= data.settings.encrypt_password %>" class="form-control" type="text">
+            <div class="w3-half w3-padding-small">
+              <label><%= lang.label_encrypt_password %>:</label>
+              <input name="encrypt_password" id="encrypt_password" value="<%= data.settings.encrypt_password %>" 
+                class="w3-input w3-border w3-round" type="text">
             </div>
           </div>
         </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-sm-12 text-left">
-              <label for="dbs_host_restriction" class="control-label"><%= lang.label_dbs_host_restriction %>:</label>
-              <textarea id="dbs_host_restriction" name="dbs_host_restriction" class="form-control" ><%= data.settings.dbs_host_restriction %></textarea>
+        <li class="w3-padding-small">
+          <div class="w3-row">
+            <div class="w3-col w3-padding-small">
+              <label><%= lang.label_dbs_host_restriction %>:</label>
+              <textarea id="dbs_host_restriction" name="dbs_host_restriction" 
+                class="w3-input w3-border w3-round" ><%= data.settings.dbs_host_restriction %></textarea>
             </div>
           </div>
         </li>
       </ul>
       <input value="update" id="update_cmd" name="update_cmd" type="hidden">
     </form>
-    <div class="panel-footer">
-      <a role="button" class="btn btn-default" href="/nas/database/list">
-        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-        <%= lang.label_cancel %></a>
-      <a role="button" class="btn btn-primary" 
-        onclick="document.forms['frm_edit'].submit();">
-        <span class="glyphicon glyphicon-ok" style="color:#8FBC8F;" aria-hidden="true"></span>
-        <%= lang.label_update %></a>
+    <div class="w3-container w3-border-top w3-margin-top w3-padding-8 w3-light-grey">
+      <div class="w3-row w3-center w3-padding">
+        <button  class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+          onclick="document.forms['frm_edit'].submit();"
+          onkeydown="if (event.keyCode == 13) document.forms['frm_edit'].submit();">
+          <i class="fa fa-check fa-fw" aria-hidden="true"></i>
+          <b><%= lang.label_update %></b></button>
+      </div>
     </div>
   </div>
-  <% } %>
-  <% if (view === "list") { %>
-  <div class="panel panel-primary" style="max-width: 500px;">
-    <div class="panel-heading">
-      <h2 class="panel-title text-left"><%= subtitle %></h2>
+</div>
+<% } %>
+<% if (view === "list") { %>
+<div class="w3-modal-content" style="max-width: 500px;">
+  <div class="w3-border w3-border-black w3-margin-top w3-margin-bottom">
+    <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+      <i class="fa fa-database fa-fw" aria-hidden="true"></i>
+      <label><%= subtitle %></label>
     </div>
-    <div class="panel-body">
-      <a class="btn btn-primary" role="button" href="/nas/database/edit?alias=">
-        <span class="glyphicon glyphicon-plus" style="color: green;" aria-hidden="true"></span>
-        <%= lang.label_new %></a>
+    <div class="w3-container w3-border-top w3-padding-8">
+      <div class="w3-row w3-center w3-padding">
+        <a class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round" 
+          href="/nas/database/edit?alias=">
+          <i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>
+          <b><%= lang.label_new %></b></a>
+      </div>
     </div>
-    <ul class="list-group">
+    <ul class="w3-ul w3-border w3-striped-ul w3-hoverable">
       <% data.forEach(function(dbs) { %>
-      <li class="list-group-item">
-        <div class="input-group">
-          <a href="/nas/database/edit?alias=<%= dbs.alias %>" 
-            class="btn btn-default-left form-control">
-            <%= dbs.alias %> - <span style="font-weight: normal;"><%= dbs.engine %></span></a>
-          <span class="input-group-btn">
-            <a class="btn btn-primary" role="button" onclick="msgDelete('<%= dbs.alias %>');">
-              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
-            </a>
-          </span>
-        </div><!-- /input-group -->
+      <li class="w3-padding">
+        <div class="w3-row">
+          <div class="w3-col w3-right" style="width:40px;">
+            <span onclick="document.getElementById('current_alias').value='<%= dbs.alias %>';document.getElementById('deleteDbs').style.display='block'" 
+              class="w3-text-blue-grey w3-hover-text-red" style="cursor: pointer;">
+              <i class="fa fa-times fa-2x fa-fw" aria-hidden="true"></i>
+            </span>
+          </div>
+          <div class="w3-rest">
+            <a href="/nas/database/edit?alias=<%= dbs.alias %>" 
+              class="w3-button wrap-button w3-block w3-left-align">
+              <b><%= dbs.alias %></b> - <%= dbs.engine %></a>
+          </div>
+        </div>
       </li>
       <% }); %>
     </ul>
   </div>
-  <div id="delete" class="modal fade" tabindex="-1" role="dialog">
-    <form id="frm_delete" action="/nas/database/list" method="post">
-      <input name="_csrf" value="<%= _csrf %>" type="hidden">
-      <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <a role="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span></a>
-            <h4 class="modal-title"><%= lang.label_delete %></h4>
-          </div>
-          <div class="modal-body text-left">
-            <h4><%= lang.msg_delete_text %></h4>
-            <p><%= lang.msg_delete_info %></p>
-          </div>
-          <div class="modal-footer">
-            <a role="button" class="btn btn-default" data-dismiss="modal">
-              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              <%= lang.label_cancel %></a>
-            <a role="button" class="btn btn-primary" 
-              onclick="document.forms['frm_delete'].submit();">
-              <span class="glyphicon glyphicon-trash" style="color:red;" aria-hidden="true"></span>
-              <%= lang.label_delete %></a>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-      <input id="current_alias" type="hidden" name="alias" value="">
-      <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
-    </form>
-  </div><!-- /.modal -->
-  <% } %>
 </div>
+<div id="deleteDbs" class="w3-modal">
+  <div class="w3-modal-content w3-animate-top" style="max-width: 400px;">
+    <div class="w3-card-4 w3-margin-top w3-margin-bottom">
+      <div class="w3-container w3-padding w3-dark-black w3-text-white w3-border-black">
+        <i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>
+        <label><%= lang.label_delete %></label>
+        <span onclick="document.getElementById('deleteDbs').style.display='none'" 
+          class="w3-hover-text-red w3-right" style="cursor: pointer;">
+          <i class="fa fa-window-close fa-fw" aria-hidden="true"></i></span>
+      </div>
 
-<% include html_foot.html %>
+      <form id="frm_delete" action="/nas/database/list" method="post">
+        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+        <div class="w3-container w3-padding">
+          <p><b><%= lang.msg_delete_text %></b></p>
+          <span><%= lang.msg_delete_info %></span>
+        </div>
+        <input id="current_alias" type="hidden" name="alias" value="">
+        <input value="delete" id="update_cmd" name="update_cmd" type="hidden">
+      </form>
+      
+      <div class="w3-container w3-border-top w3-margin-top w3-padding-8 w3-light-grey">
+        <div class="w3-row w3-center w3-padding">
+          <button  class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-red w3-round" 
+            onclick="document.forms['frm_delete'].submit();"
+            onkeydown="if (event.keyCode == 13) document.forms['frm_delete'].submit();">
+            <i class="fa fa-trash fa-fw" aria-hidden="true"></i>
+            <b><%= lang.label_delete %></b></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
