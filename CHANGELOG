@@ -1,3 +1,6 @@
+## 2.5.1
+- Docker file fixes
+
 ## 2.5.0
 - remove all GUI jquery dependencies:
   bootstrap -> w3.css, bootstrap-datetimepicker -> flatpickr
