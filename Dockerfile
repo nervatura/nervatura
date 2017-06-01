@@ -4,9 +4,11 @@ EXPOSE 5858
 
 RUN apk update && apk upgrade
 RUN apk add --no-cache \
-  nodejs \
   python \
   git
+RUN apk add --update --no-cache \
+  nodejs \
+  nodejs-npm && npm install npm@latest -g
 
 COPY . /app/dist
 RUN mkdir app/src
