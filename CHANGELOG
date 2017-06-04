@@ -1,3 +1,7 @@
+## 2.5.2
+- NAS Database settings bug fixes
+- Docker mssql container image (linux) support (see more Admin Guide)
+
 ## 2.5.1
 - Docker file fixes
 

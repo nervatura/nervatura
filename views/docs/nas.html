@@ -374,7 +374,21 @@
         &nbsp;&nbsp;--restart="always" --name mysql mysql<br>
         docker start mysql
       </p>
-      <p><b>MSSQL</b> or any remote database:</p> 
+      <p><b>MSSQL</b> install:</p>
+      <p class="code" style="text-align: left;">
+        docker create -i -t -p 1433:1433 \<br>
+        &nbsp;&nbsp;-v mssql:/var/lib/mssql/data \<br>
+        &nbsp;&nbsp;-e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=SA_admin' \<br>
+        &nbsp;&nbsp;--restart="always" --name mssql microsoft/mssql-server-linux<br><br>
+        docker exec -it mssql "bash"<br>
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'SA_admin'<br>
+        CREATE DATABASE nervatura;<br>
+        GO<br>
+        QUIT<br>
+        exit<br><br>
+        docker start mysql
+      </p>
+      <p><b>Remote</b> database:</p> 
       <p>See more docker run <a 
         href="https://docs.docker.com/engine/reference/commandline/run/" target="_blank">--net parameter</a></p>
       
@@ -430,7 +444,20 @@
         user/password was supplied then that user will be granted 
         superuser access (corresponding to GRANT ALL) to this database.</i></p>
       
-      <p>3.4 NAS MSSQL (or any remote) database settings (optional)</p>
+      <p>3.4 NAS MSSQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>msdemo</b> (or what you prefer)</li>
+        <li>Engine: <b>MSSQL</b></li>
+        <li>Host: <b>$MSSQL_PORT_1433_TCP_ADDR</b></li>
+        <li>Port: <b>$MSSQL_PORT_1433_TCP_PORT</b></li>
+        <li>Database: <b>nervatura</b> (or what you prefer)</li>
+        <li>UserName: <b>sa</b> (or what you prefer)</li>
+        <li>Password: <b>$MSSQL_ENV_SA_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      <p><i>You can create an unlimited number of MSSQL databases!</i></p>
+      
+      <p>3.5 Remote database settings (optional)</p>
       <ul>
         <li>Alias: <b>msdemo</b> (or what you prefer)</li>
         <li>Engine: <b>MSSQL</b> (or what you prefer)</li>
@@ -441,7 +468,7 @@
         <li>Password: <b>sadmin</b> (or what you prefer)</li>
         <li>Other settings: <b>default</b> (or what you prefer)</li>
       </ul>
-      <p><i>You can create an unlimited number of MSSQL/remote databases! 
+      <p><i>You can create an unlimited number of remote databases! 
         See more docker run <a 
         href="https://docs.docker.com/engine/reference/commandline/run/" 
         target="_blank">--net parameter</a></i></p>
