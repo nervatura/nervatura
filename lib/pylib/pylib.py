@@ -135,7 +135,7 @@ class Pylib(object):
     if "template" in params:
       rpt.loadDefinition(params["template"])
     rpt.createReport()
-    if params["output"] == "pdf":
+    if params["output"] == "pdf" or params["output"] == "base64":
       import binascii
       sys.stdout.write(binascii.b2a_base64(rpt.save2Pdf()))
     elif output == "xml":

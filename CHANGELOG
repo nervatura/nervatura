@@ -1,3 +1,15 @@
+## 2.5.3
+- Google App Engine support (see more Admin Guide)
+- NAS: added support for Google Datastore (GAE default)
+- NAS Admin: Google (OAuth 2.0) authentication support
+- NPI: new sendEmail function 
+- NPI docs: Email sending with attached invoice example
+- Email Service Provider: smtp(nodemailer), Mailjet support
+- remove express-session (+ connect-sqlite3, level-session-store)
+- new: cookie-session
+- custom homepage support (see more Admin Guide)
+- default express port: 8080
+
 ## 2.5.2
 - NAS Database settings bug fixes
 - Docker mssql container image (linux) support (see more Admin Guide)

@@ -48,13 +48,13 @@ Start the server
 ```
   $ npm run dev
 ```
-and [http://localhost:3000/](http://localhost:3000/)
+and [http://localhost:8080/](http://localhost:8080/)
 
 * production mode:
 ```
   $ npm start
 ```
-and [https://localhost:3000/](https://localhost:3000/)
+and [https://localhost:8080/](https://localhost:8080/)
 
 * or change the file [.npmrc](.npmrc): production = true/false, and
 ```

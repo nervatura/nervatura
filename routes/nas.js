@@ -7,6 +7,7 @@ https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 */
 
 var express = require('express');
+var passport = require('passport');
 var router = express.Router();
 
 var nas = require('../lib/node/nas.js')();
@@ -31,11 +32,52 @@ router.get('/insecure', function(req, res, next) {
   nas.pageRender({res:res, dir:"default", page:"login", 
     data:{insecure:true, username:"", flash:"NAS "+lang.insecure_err}});});
 
-router.get('/logout', function(req, res, next) {
-  res.redirect('../logout');});
+router.get('/login',
+  function(req, res){
+    var data = {username:"", flash:null};
+    if (req.user) {
+      data.username = req.user.username;}
+    nas.pageRender({req:req, res:res, dir:"ntura", page:"login", data:data});});
 
-router.get('/login', function(req, res, next) {
-  res.redirect('../login');});
+router.get('/login/google', 
+  passport.authenticate('google', { scope: ['email'] }));
+
+router.get('/google/callback', function(req, res, next) {
+  passport.authenticate('google', 
+  function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user && info) {
+      nas.pageRender({req:req, res:res, dir:"ntura", page:"login", 
+        data:{username:info.username, flash:info.message}});}
+    else if (!user) {
+      nas.pageRender({req:req, res:res, dir:"ntura", page:"login", data:{}});}
+    else {
+      req.logIn(user, function(err) {
+        if (err) {return next(err);}
+        res.redirect('/nas/index');})
+  }})(req, res, next);});
+
+router.post('/login/local', function(req, res, next) {
+  if(!req.body.password || req.body.password===""){
+    req.body.password = "empty";}
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) {
+      nas.pageRender({req:req, res:res, dir:"ntura", page:"login", 
+        data:{username:info.username, flash:info.message}});}
+    else {
+      req.logIn(user, function(err) {
+        if (err) {return next(err);}
+        if(user.dirty_password){
+          return res.redirect('/nas/user/password');}
+        else{
+          return res.redirect('/nas/index');}});}
+})(req, res, next);});
+  
+router.get('/logout',
+  function(req, res){
+    req.logout();
+    return res.redirect('/nas/login');});
 
 router.get('/user/list', function(req, res, next) {
   if (validator === "ok"){
@@ -238,10 +280,15 @@ router.get('/setting/list', function(req, res, next) {
 
 router.post('/setting/update', function(req, res, next) {
   if (validator === "ok"){
-    req.app.settings.storage.updateSetting(req.body, function(err, message){
-      if (err) {return next(err);}
-      else {
-        nas.settingList({res:res, req:req, next:next, data:{flash:message}});}});}
+    var setting_err = nas.validSetting(req.body, lang)
+    if(setting_err === null){
+      req.app.settings.storage.updateSetting(req.body, function(err, message){
+        if (err) {return next(err);}
+        else {
+          req.app.get('host_settings')[req.body.fieldname] = req.body.value
+          nas.settingList({res:res, req:req, next:next, data:{flash:message}});}});}
+    else{
+      nas.settingList({res:res, req:req, next:next, data:{flash:setting_err}});}}
   else {
     res.redirect(validator);}});
     

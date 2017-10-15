@@ -49,6 +49,7 @@
     </li>
     <li style="padding:5px 0px 0px;"><b><a href="#cloud">Cloud Hosting Services</a></b>
       <ul style="padding-left:5px;">
+        <li style="padding:3px 0px 0px;"><a href="#app_engine">Google App Engine</a></li>
         <li style="padding:3px 0px 0px;"><a href="#cloud_openshift">OpenShift</a></li>
         <li style="padding:3px 0px 0px;"><a href="#cloud_docker">Docker</a></li>
       </ul>
@@ -56,8 +57,10 @@
     <li style="padding:5px 0px 0px;"><b><a href="#config">Server config</a></b></li>
     <li style="padding:5px 0px 0px;"><b><a href="#other">Other recipes</a></b>
       <ul style="padding-left:5px;">
+        <li style="padding:3px 0px 0px;"><a href="#customize">Customize the appearance</a></li>
         <li style="padding:3px 0px 0px;"><a href="#migration">Database migration</a></li>
         <li style="padding:3px 0px 0px;"><a href="#printer">Server-side printers</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#emails">Sending Emails</a></li>
         <li style="padding:3px 0px 0px;"><a href="#security">Security Issues</a></li>
       </ul>
     </li>
@@ -87,13 +90,13 @@
           <p class="code" style="text-align: left;">
             $ npm run dev
           </p>
-          <p>and <a href="http://localhost:3000/" target="_blank">http://localhost:3000/</a></p>
+          <p>and <a href="http://localhost:8080/" target="_blank">http://localhost:8080/</a></p>
         </li>
         <li>production mode
           <p class="code" style="text-align: left;">
             $ npm start
           </p>
-          <p>and <a href="https://localhost:3000/" target="_blank">https://localhost:3000/</a></p>
+          <p>and <a href="https://localhost:8080/" target="_blank">https://localhost:8080/</a></p>
         </li>
         <li>or change the file <a href="https://github.com/nervatura/nervatura/blob/master/.npmrc" 
           target="blank">.npmrc</a>: production = true/false, and
@@ -115,17 +118,11 @@
         and <a href="http://pages.cs.wisc.edu/~ghost/gsview/gsprint.htm" target="_blank">GSPRINT</a></p>
       <p><a href="http://www.google.com/cloudprint/learn/" target="_blank">Google Cloud Print</a>: 
         <a href="https://github.com/simoncadman/CUPS-Cloud-Print" target="_blank">CUPS-Cloud-Print</a></p>
-      <p><a href="https://h30495.www3.hp.com/help#eprint" target="_blank">HP ePrint via Email</a>:</p>
-      <p class="code" style="text-align: left;">
-        $ npm install nodemailer --save
-      </p>
       
       <p><span style="color:#8B1A1A;font-weight:bold;">Session and data store</span></p>
-      <p>leveldown and PouchDB:</p>
+      <p>PouchDB:</p>
       <p class="code" style="text-align: left;">
-        $ npm install level --save<br>
-        $ npm install level-session-store --save<br>
-        $ npm install pouchdb --save
+        $ npm install pouchdb-node --save
       </p>
     </li>
   </ul>
@@ -135,6 +132,197 @@
 	</h3>
   
   <ul>
+    <li><b><a name="app_engine">Google App Engine</a></b>
+      <p>Use the <a href="https://console.cloud.google.com/" target="blank">Cloud Platform Console</a> 
+        to create a new Cloud Platform project, create an App Engine application, and enable billing.<br>
+        Download and install the <a href="https://cloud.google.com/sdk/docs/" target="blank">Google Cloud SDK</a> 
+        and then initialize the gcloud tool.</p>
+      <p class="code" style="text-align: left;">
+        git clone https://github.com/nervatura/nervatura.git nervatura_gae<br>
+        cd nervatura_gae<br>
+      </p>
+      <p>Remove the Dockerfile from this directory:</p>
+      <p class="code" style="text-align: left;">
+        rm ./Dockerfile
+      </p>
+      <p>If necessary, modify the <a 
+        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        target="blank"><b>app.yaml</b></a> and <a 
+        href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
+        target="blank">lib/node/<b>conf.js</b></a> file (see below). Deploy the 
+        Nervatura by running the following command:</p>
+      <p class="code" style="text-align: left;">
+        gcloud app deploy --project <span style="font-weight:bold;">YOUR_PROJECT_ID</span>
+      </p>
+      <p>Launch your browser and view the app at http://<b>your_project_id</b>.appspot.com, by running 
+        the following command:</p>
+      <p class="code" style="text-align: left;">
+        gcloud app browse
+      </p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Google (OAuth 2.0) authentication</span></p>
+      <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=plus" 
+        target="blank">Google+ API</a>. Any application that uses OAuth 2.0 to access Google APIs must have authorization credentials that identify 
+        the application to Google's OAuth 2.0 server. See more here: <a 
+        href="https://developers.google.com/identity/protocols/OAuth2WebServer" target="blank">Using OAuth 2.0 
+        for Web Server Applications</a></p>
+      <p>Before you deploy the application, modify the following section in the <a 
+        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" target="blank"><b>app.yaml</b></a> file:</p>
+      <p class="code" style="text-align: left;">
+        GOOGLE_CLIENT_ID: <b>YOUR_GOOGLE_CLIENT_ID</b><br>
+        GOOGLE_CLIENT_SECRET: <b>YOUR_GOOGLE_CLIENT_SECRET</b>
+      </p>
+      <p>1. Login to NAS Admin GUI</p>
+      <ul>
+        <li>Username: <b>admin</b></li>
+        <li>Password: <b>leave the field empty, not needed</b> (Default. Please change after the first login!)</li>
+      </ul>
+      <p>2. Add a new user (User Accounts)</p>
+      <ul>
+        <li>Username: <b>a valid(!) Google email</b></li>
+        <li>Password: <b>leave the field empty, not needed</b></li>
+      </ul>
+      <p>3. Remove the admin user (optional) and modify the following setting (Server Settings):</p>
+      <ul>
+        <li>Fieldname: <b>nas_auth</b></li>
+        <li>Value: <b>google</b></li>
+      </ul>
+      <p>4. Log off and re-enter the new user.</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Databases support</span></p>
+      <p><b>SQLite</b> install: Included by default. Recommended for testing only!</p>
+      <p><b>PostgeSQL</b> instance:</p>
+      <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=sqladmin" 
+        target="blank">Cloud SQL API</a>. Creating an instance and setting the password:</p>
+      <p class="code" style="text-align: left;">
+        gcloud sql instances create [INSTANCE_NAME] --database-version=POSTGRES_9_6 \<br>
+        --cpu=[NUMBER_CPUS] --memory=[MEMORY_SIZE]<br><br>
+        gcloud sql users set-password postgres no-host --instance=[INSTANCE_NAME] \<br>
+        --password=[PASSWORD]
+      </p>
+      <p>See more here: <a 
+        href="https://cloud.google.com/sql/docs/postgres/create-instance" target="blank">Creating PostgreSQL Instances</a></p>
+      <p><b>MySQL</b> instance:</p>
+      <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=sqladmin" 
+        target="blank">Cloud SQL API</a>. Creating an instance and setting the password:</p>
+      <p class="code" style="text-align: left;">
+        gcloud sql instances create [INSTANCE_NAME] --tier=[MACHINE_TYPE] --region=[REGION]<br><br>
+        gcloud sql users set-password root % --instance [INSTANCE_NAME] --password [PASSWORD]
+      </p>
+      <p>See more here: <a 
+        href="https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen" target="blank">Creating MySQL Instances</a></p>
+      <p>To allow your app to connect to your Cloud SQL instance when the app is deployed, add the user, 
+        password, database, and instance connection name variables from Cloud SQL to the related environment 
+        variables in the <a href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        target="blank"><b>app.yaml</b></a> file: The deployed application will connect via unix sockets.</p>
+      <p class="code" style="text-align: left;">
+        env_variables:<br>
+        &nbsp;&nbsp;SQL_USER: <b>YOUR_SQL_USER</b><br>
+        &nbsp;&nbsp;SQL_PASSWORD: <b>YOUR_SQL_PASSWORD</b><br>
+        &nbsp;&nbsp;SQL_DATABASE: <b>YOUR_SQL_DATABASE</b><br>
+          # e.g. my-awesome-project:us-central1:my-cloud-sql-instance<br>
+        &nbsp;&nbsp;INSTANCE_CONNECTION_NAME: <b>YOUR_INSTANCE_CONNECTION_NAME</b><br><br>
+
+        beta_settings:<br>
+        &nbsp;&nbsp;cloud_sql_instances: <b>YOUR_INSTANCE_CONNECTION_NAME</b>
+      </p>
+      <p>See more here: <a 
+        href="https://cloud.google.com/appengine/docs/flexible/nodejs/using-cloud-sql" 
+        target="blank">Using Cloud SQL for MySQL</a> and <a 
+        href="https://cloud.google.com/appengine/docs/flexible/nodejs/using-cloud-sql-postgres" 
+        target="blank">Using Cloud SQL for PostgreSQL</a></p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p>1. Login to NAS Admin GUI</p>
+      <p>2. Add/Edit a new customer database reference</p>
+      <p>3.1 NAS SQLite database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>demo</b> (or what you prefer)</li>
+        <li>Engine: <b>SQLite</b></li>
+        <li>Host: <b>leave the field empty, not needed</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>demo</b> (or what you prefer)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      <p><i>You can create an unlimited number of SQLite databases. Recommended for testing only!</i></p>
+      
+      <p>3.2. NAS PostgreSql and MySQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>pgdemo</b> or <b>mydemo</b> (or what you prefer)</li>
+        <li>Engine: <b>PostgreSQL</b> or <b>MySQL</b></li>
+        <li>Host: <b>/cloudsql/$INSTANCE_CONNECTION_NAME</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>$SQL_DATABASE</b></li>
+        <li>UserName: <b>$SQL_USER</b></li>
+        <li>Password: <b>$SQL_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      <p><i>For each application you can configure only one postgresql or one mysql database!</i></p>
+      
+      <p>4. Create a new Nervatura database</p>
+      <p>Database alias:</p>
+      <ul>
+        <li><b>demo</b></li>
+        <li>or <b>pgdemo</b></li>
+        <li>or <b>mydemo</b></li>
+        <li>(or whatever alias you created)</li>
+      </ul>
+      <p><i>All existing data of the database will be lost!</i></p>
+      
+      <p>5. Create a DEMO database (optional)</p>
+      <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
+        then you can create a blank database again according to the previous instructions.</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Sending Emails</span></p>
+      <p>Configure your email settings in your <a 
+        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        target="blank"><b>app.yaml</b></a> file:</p>
+      <ul>
+        <li><p>Sending Emails using SMTP (<a href="https://nodemailer.com/" 
+            target="blank">Nodemailer</a>)</p>
+          <p class="code" style="text-align: left;">
+            SMTP_HOST: <b>YOUR_SMTP_HOST</b><br>
+            SMTP_PORT: <b>YOUR_SMTP_PORT</b><br>
+            SMTP_SECURE: <b>YOUR_SMTP_SECURE</b><br>
+            SMTP_USER: <b>YOUR_SMTP_USER</b><br>
+            SMTP_PASSWORD: <b>YOUR_SMTP_PASSWORD</b>
+          </p></li>
+        <li><p><a href="https://cloud.google.com/appengine/docs/flexible/nodejs/sending-emails-with-mailjet" 
+            target="blank">Mailjet</a> settings, such as the API key and secret:</p>
+          <p class="code" style="text-align: left;">
+            MJ_APIKEY_PUBLIC: <b>YOUR_MJ_APIKEY_PUBLIC</b><br>
+            MJ_APIKEY_PRIVATE: <b>YOUR_MJ_APIKEY_PRIVATE</b>
+          </p>
+        </li>
+      </ul>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Configuring your App</span></p>
+      <p>A Node.js App Engine application can be configured by a file named <a 
+        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        target="blank"><b>app.yaml</b></a> that contains cpu, memory, network and disk resources, 
+        automatic or manual scaling configurations, and general settings. Please see more:
+      </p>
+      <ul>
+        <li><a href="https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml" 
+          target="blank">Configuring your App with app.yaml</a></li>
+        <li><a href="https://medium.com/google-cloud/scaling-google-app-engine-to-no-instances-or-maybe-just-1-37be4e8d4230" 
+          target="blank">Scaling Google App Engine to No Instances (or maybe just 1)</a></li>
+        <li><a href="https://medium.com/google-cloud/three-simple-steps-to-save-costs-when-prototyping-with-app-engine-flexible-environment-104fc6736495" 
+          target="blank">Three Simple Steps to Save Costs when Prototyping with App Engine Flexible Environment</a></li>
+        </ul>
+      <p>Some example settings:</p>
+      <p class="code" style="text-align: left;">
+        automatic_scaling:<br>
+        &nbsp;&nbsp;max_num_instances: 1<br>
+
+        resources:<br>
+        &nbsp;&nbsp;cpu: 1<br>
+        &nbsp;&nbsp;memory_gb: 0.5<br>
+        &nbsp;&nbsp;disk_size_gb: 10
+      </p>
+
+    </li>
+
     <li><b><a name="cloud_openshift">OpenShift</a></b>
       <p>Login at <a href="http://openshift.redhat.com/" target="blank">OpenShift</a>. 
          Create an account if you don’t already have one.<br>
@@ -293,8 +481,6 @@
         <li>Node production packages (<a 
           href="https://raw.githubusercontent.com/nervatura/nervatura/master/package.json" 
           target="_blank">dependencies+optionalDependencies</a>)</li>
-        <li><a href="https://h30495.www3.hp.com/help#eprint" target="_blank">HP ePrint via Email</a>
-          support (nodemailer package)</li>
         <li><a href="http://pm2.keymetrics.io/" 
           target="_blank">pm2 process manager</a></li>
       </ul>
@@ -302,14 +488,14 @@
       <p><span style="color:#8B1A1A;font-weight:bold;">Creates a new Nervatura container</span></p>
       <p style="margin:0px;">1. Sample production settings:</p>
       <ul>
-        <li>production mode, enforces HTTPS connections, publish port:3000</li>
+        <li>production mode, enforces HTTPS connections, publish port:8080</li>
         <li>pm2 process manage start</li>
         <li>automatically remove the container when it exits: run --rm</li>
         <li>mount a persist host directory as a data volume (host mountpoint: docker volume inspect nervatura)</li>
         <li>add link to postgres database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
-        docker run --rm -i -t -p 3000:3000 \<br>
+        docker run --rm -i -t -p 8080:8080 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -w /app/dist\<br>
         &nbsp;&nbsp;-e NERVATURA_DATA_DIR=/app/data \<br>
         &nbsp;&nbsp;--link postgres \<br>
@@ -319,14 +505,14 @@
       
       <p style="margin:0px;">2. Sample development settings:</p>
       <ul>
-        <li>development mode, HTTP connections, publish port:3000</li>
+        <li>development mode, HTTP connections, publish port:8080</li>
         <li>automatically remove the container when it exits: run --rm</li>
         <li>mount a persist host directory as a data volume 
           (host mountpoint: <span class="code">docker volume inspect nervatura</span>)</li>
         <li>remote ('bridge' network) database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
-        docker run --rm -i -t -p 3000:3000 \<br>
+        docker run --rm -i -t -p 8080:8080 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -w /app/dist \<br>
         &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
         &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
@@ -335,7 +521,7 @@
       
       <p style="margin:0px;">3. Sample development settings:</p>
       <ul>
-        <li>development mode, HTTP connections, publish ports:3000,5858</li>
+        <li>development mode, HTTP connections, publish ports:8080,5858</li>
         <li>mount the source directory: you are free to debug and modify the code</li>
         <li>automatically remove the container when it exits: run --rm</li>
         <li>mount a persist host directory as a data volume 
@@ -345,7 +531,7 @@
       <p class="code" style="text-align: left;">
         git clone https://github.com/nervatura/nervatura.git<br>
         cd nervatura<br>
-        docker run --rm -i -t -p 3000:3000 -p 5858:5858 \<br>
+        docker run --rm -i -t -p 8080:8080 -p 5858:5858 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -v `pwd`:/app/src -w /app/src \<br>
         &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
         &nbsp;&nbsp;--link mysql \<br>
@@ -520,25 +706,40 @@
     overwritten when updated!</p>
   
   <ul>
+    <li><i>start_page</i>: String.
+      <ul style="padding-left:15px;">
+        <li>ntura: Default.</li>
+        <li>static: Custom static homepage</li>
+        <li>custom: Custom NodeJS/Express homepage</li>
+      </ul>
+    </li>
     <li><i>data_dir</i>: Path string. Default:app_home/data or OPENSHIFT_DATA_DIR. A persistent data directory. Subfolders: database(sqlite), data(export/import), storage.</li>
     <li><i>data_store</i>: String.
       <ul style="padding-left:15px;">
         <li>lokijs: Default.</li>
         <li>pouchdb</li>
+        <li>datastore: Google Datastore (Google App Engine default)</li>
+      </ul>
+    </li>
+    <li><i>email_providers</i>: Object. Email Service Providers
+      <ul style="padding-left:15px;">
+        <li>smtp: <a href="https://nodemailer.com/smtp/" 
+          target="blank">nodemailer</a> smtp options</li>
+        <li><a href="https://github.com/mailjet/mailjet-apiv3-nodejs" 
+          target="blank">mailjet</a>: clientID, clientSecret</li>
       </ul>
     </li>
     <li><i>engine</i>: Array. Valid values: sqlite, mysql, postgres, mssql</li>
-    <li><i>pool_config</i>: See more <a href="https://github.com/grncdr/node-any-db-pool#api" target="blank">database agnostic connection pool</a></li>
-    <li><i>port</i>: Integer. Default value: 3000. Node.js/Express port value.</li>
-    <li><i>python_script</i>: Path string. Default:'./lib/pylib'. The path where to look for Python 2 app. scripts.</li>
-    <li><i>lang</i>: String. Default value: 'en'. Valid values: en.</li>
-    <li><i>session_store</i>: String.
+    <li><i>nas_login</i>: Object. NAS Admin authentications
       <ul style="padding-left:15px;">
-        <li>leveldown: Linux, Mac OS, FreeBSD</li>
-        <li>sqlite: Default. Windows, Linux, Mac OS, FreeBSD</li>
-        <li>memory: For debugging and developing</li>
+        <li>local</li>
+        <li>google</li>
       </ul>
     </li>
+    <li><i>pool_config</i>: See more <a href="https://github.com/grncdr/node-any-db-pool#api" target="blank">database agnostic connection pool</a></li>
+    <li><i>port</i>: Integer. Default value: 8080. Node.js/Express port value.</li>
+    <li><i>python_script</i>: Path string. Default:'./lib/pylib'. The path where to look for Python 2 app. scripts.</li>
+    <li><i>lang</i>: String. Default value: 'en'. Valid values: en.</li>
   </ul>
   
   <p>Initial setup (conf.js) and persistent server-side settings: data_dir/storage/data(.json)</p>
@@ -554,18 +755,21 @@
         <li><i>dbs_host_restriction</i>: limiting database connections(ip pattern)</li>
       </ul>
     </li>
+    <li><i>databases_docker</i>: Default sample customer database settings (Docker).</li>
+    <li><i>databases_gae</i>: Default sample customer database settings (Google App Engine).</li>
     <li><i>databases_openshift</i>: Default sample customer database settings (OpenShift service).</li>
     <li><i>users</i>: Default sample user accounts. See more NAS Admin GUI/User Accounts.</li>
     <li><i>settings</i>: See more NAS Admin GUI/Server Settings. A restart is required!
       <ul style="padding-left:15px;">
+        <li><i>nas_auth</i>: NAS Admin authentication strategy. Default:'local'. Valid values: local (username and password), google (Google OAuth 2.0)</li>
         <li><i>python2_path</i>: Path string. Default:'python'. The path where to locate the "python" executable.
           Optional, for the server-side Nervatura Report.</li>
         <li><i>max_content_length</i>: Integer. Default value: 20000. See more <a href="https://github.com/ericmdantas/express-content-length-validator" 
           target="_blank">express-content-length-validator</a></li>
-        <li><i>session_cookie_max_age</i>: Default value: 7*24*60*60*1000. See more <a href="https://github.com/expressjs/session" 
-          target="blank">express-session</a></li>
-        <li><i>session_secret</i>: See more <a href="https://github.com/expressjs/session" 
-          target="blank">express-session</a></li>
+        <li><i>session_cookie_max_age</i>: Default value: 7*24*60*60*1000. See more <a href="https://github.com/expressjs/cookie-session" 
+          target="blank">cookie-session</a></li>
+        <li><i>session_secret</i>: See more <a href="https://github.com/expressjs/cookie-session" 
+          target="blank">cookie-session</a></li>
         <li><i>host_restriction</i>: limiting server connections(ip pattern).
           <ul style="padding-left:15px;">
             <li>all_host_restriction: String.</li>
@@ -584,6 +788,27 @@
 	</h3>
   
   <ul>
+    <li><b><a name="customize">Customize the appearance</a></b>
+      <p>You can change the following setting in <a 
+        href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
+        target="blank">lib/node/<b>conf.js</b></a> file. </p>
+      <ul>
+        <li>Collaborate with other systems: different ports or multicontainers (default)
+          <p class="code">start_page: "ntura"</p>
+        </li>
+        <li>Every custom modification in the <a 
+        href="https://github.com/nervatura/nervatura/blob/master/www" 
+        target="blank"><b>www</b></a> directory
+          <p class="code">start_page: "static"</p>
+        </li>
+        <li>Custom NodeJs/Express functions: <a 
+        href="https://github.com/nervatura/nervatura/blob/master/routes/custom.js" 
+        target="blank">routes/custom.js<b></b></a>
+          <p class="code">start_page: "custom"</p>
+        </li>
+      </ul>
+    </li>
+
     <li><b><a name="migration">Database migration</a></b>
       <p>Customer database migration is the process of transferring data between storage types, formats, 
         or computer systems. Using the daily data backup is not recommended. 
@@ -612,33 +837,58 @@
     <li><b><a name="printer">Server-side printers</a></b>
       <p>Network printer sample</p>
       <p class="code">
-        NDI URL:<br>
-        http://localhost:3000/ndi/updateData?code=&amp;params=database=demo|username=demo|password=|datatype=tool|insert_row|insert_field
+        <b>NDI URL:</b><br>
+        http://localhost:8080/ndi/updateData?code=&amp;params=database=demo|username=demo|password=|datatype=tool|insert_row|insert_field
         &amp;data=serial=network_printer_name|description=Printer settings sample|partnumber=printer|
         toolgroup=printer|tool_printertype=network
         <br><br>
-        NDI JSON:<br>
+        <b>NDI JSON:</b><br>
         updateData({"datatype":"tool","insert_row":true,"insert_field":true},[{"serial":"network_printer_name",
         "description":"Printer settings sample","partnumber":"printer","toolgroup":"printer","tool_printertype":"network"}])
       </p>
-      
-      <p>Mail printer sample</p>
       <p class="code">
-        NDI URL:<br>
-        http://localhost:3000/ndi/updateData?code=&amp;params=database=demo|username=demo|password=|datatype=tool|insert_row|insert_field
-        &amp;data=serial=mail_printer_name|description=Mail-printer settings sample|partnumber=printer|toolgroup=printer|
-        tool_printertype=mail|tool_printer_mail_smtp=smtps://user%40gmail.com:pass@smtp.gmail.com|
-        tool_printer_mail_sender="Fred Foo 👥" &#60;foo@blurdybloop.com&#62;|tool_printer_mail_address=bar@blurdybloop.com, baz@blurdybloop.com|
-        tool_printer_mail_subject=Optional mail subject|tool_printer_mail_message=Optional mail message <br><br>
-        NDI JSON:<br>
-        updateData({"datatype":"tool","insert_row":true,"insert_field":true},[{"serial":"mail_printer_name",
-        "description":"Mail-printer settings sample","partnumber":"printer","toolgroup":"printer","tool_printertype":"mail",
-        "tool_printer_mail_smtp":"smtps://user%40gmail.com:pass@smtp.gmail.com",
-        "tool_printer_mail_sender":"\"Fred Foo 👥\" &#60;foo@blurdybloop.com&#62;",
-        "tool_printer_mail_address":"bar@blurdybloop.com, baz@blurdybloop.com",
-        "tool_printer_mail_subject":"Optional mail subject","tool_printer_mail_message":"Optional mail message"}])
+        <b>NPI server-side printing(ui_printqueue rows):</b><br>
+        <i>printQueue(printer::String, items::Array, orientation::String, size::String)</i><br>
+        <br>
+        data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+        &nbsp;&nbsp;"params":{<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"printQueue",<br> 
+        &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"printer":"network_printer_name", "items":[12,14,15], "orientation":"p", "size":"a4"}}};<br>
+        <br>
+        Sample result: true
       </p>
-    
+    </li>
+
+    <li><b><a name="emails">Sending Emails</a></b>
+      <p>Configure your email settings in your</p>
+      <ul>
+        <li>environment variables or</li>
+        <li><a href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+          target="blank"><b>app.yaml</b></a> file (<a href="#app_engine">Google App Engine</a>) or</li>
+        <li><a href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
+          target="blank">lib/node/<b>conf.js</b></a> file</li>
+        </ul>
+        <p class="code">
+          <b><i>NPI email sending with attached report:</i></b><br>
+          <i>sendEmail("provider"::String,<br> 
+          &nbsp;&nbsp;"email"::Object{ "from"::String, "name"::String, "recipients"::Array[{"email"::String}],<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"subject"::String, "text"::String, "html"::String,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"attachments"::Array[{ "filename"::String, "report_id"::Integer, "reportkey"::String,<br> 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ref_id"::Integer, "nervatype"::String, "refnumber"::String }] })</i><br>
+          <br>
+          data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+          &nbsp;&nbsp;"params":{<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"sendEmail",<br> 
+          &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{ "provider":"mailjet",<br> 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email":{"from":"info@nervatura.com", "name":"Nervatura", <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"recipients":[{"email":"sample@company.com"}],<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject":"Demo Invoice", "text":"Email sending with attached invoice",<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"attachments":[{ "reportkey":"ntr_invoice_en", "nervatype":"trans", "refnumber":"DMINV/00001" }] }}}};<br>
+          <br>
+          Sample result: {"id":11,"jsonrpc":"2.0","result":{"Sent":[{"Email":"sample@company.com","MessageID":18859125621232550}]}}
+        </p>
     </li>
     
     <li><b><a name="security">Security Issues</a></b>

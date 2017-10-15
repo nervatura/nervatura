@@ -1,5 +1,5 @@
 FROM alpine
-EXPOSE 3000
+EXPOSE 8080
 EXPOSE 5858
 
 RUN apk update && apk upgrade

@@ -212,7 +212,7 @@
             
             <b><i>Python:</i></b><br>
             import json, requests<br><br>
-            response = requests.post("http://127.0.0.1:3000/npi/", <br>
+            response = requests.post("http://127.0.0.1:8080/npi/", <br>
             &nbsp;&nbsp;data=json.dumps(data), headers={'content-type': 'application/json'}).json()<br>
             if response.has_key("error"):<br>
             &nbsp;&nbsp;return "error"<br>
@@ -225,7 +225,7 @@
             or<br>
             $.ajax({<br>
             &nbsp;&nbsp;type: "post",<br>
-            &nbsp;&nbsp;url: "http://127.0.0.1:3000/npi/",<br>
+            &nbsp;&nbsp;url: "http://127.0.0.1:8080/npi/",<br>
             &nbsp;&nbsp;data: JSON.stringify(data),<br>
             &nbsp;&nbsp;contentType: "application/json",<br>
             &nbsp;&nbsp;success: function(response){<br>
@@ -321,6 +321,34 @@
             &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{"printer":"tool_serial", "items":[12,14,15], "orientation":"p", "size":"a4"}}};<br>
             <br>
             Sample result: true<br>
+            <br>
+            <b><i>Email sending:</i></b><br>
+            <i>sendEmail("provider"::String,<br> 
+            &nbsp;&nbsp;"email"::Object{ "from"::String, "name"::String, "recipients"::Array[{"email"::String}],<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"subject"::String, "text"::String, "html"::String,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"attachments"::Array[{ "filename"::String, "report_id"::Integer, "reportkey"::String,<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ref_id"::Integer, "nervatype"::String, "refnumber"::String }] })</i><br>
+            <br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"sendEmail",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{ "provider":"smtp",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email":{"from":"info@nervatura.com", "recipients":[{"email":"sample@company.com"}],<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject":"Basic email", "text":"Sending a basic email" }}}};<br>
+            <br>
+            <b><i>Email sending with attached report:</i></b><br>
+            data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+            &nbsp;&nbsp;"params":{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"sendEmail",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{ "provider":"mailjet",<br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email":{"from":"info@nervatura.com", "name":"Nervatura", <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"recipients":[{"email":"sample@company.com"}],<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject":"Demo Invoice", "text":"Email sending with attached invoice",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"attachments":[{ "reportkey":"ntr_invoice_en", "nervatype":"trans", "refnumber":"DMINV/00001" }] }}}};<br>
+            <br>
+            Sample result: {"id":11,"jsonrpc":"2.0","result":{"Sent":[{"Email":"sample@company.com","MessageID":18859125621232550}]}}<br>
           </p>   
 				</td>
 			</tr>

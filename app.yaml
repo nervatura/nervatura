@@ -1,0 +1,48 @@
+
+runtime: nodejs
+env: flex
+
+#automatic_scaling:
+  #max_num_instances: 1
+
+#resources:
+  #cpu: 1
+  #memory_gb: 0.5
+  #disk_size_gb: 10
+
+env_variables:
+  HOST_TYPE: gae
+  
+#Google (OAuth 2.0) authentication
+  #GOOGLE_CLIENT_ID: YOUR_GOOGLE_CLIENT_ID
+  #GOOGLE_CLIENT_SECRET: YOUR_GOOGLE_CLIENT_SECRET
+
+#ESP options
+  #SMTP_HOST: YOUR_SMTP_HOST
+  #SMTP_PORT: YOUR_SMTP_PORT
+  #SMTP_SECURE: YOUR_SMTP_SECURE
+  #SMTP_USER: YOUR_SMTP_USER
+  #SMTP_PASSWORD: YOUR_SMTP_PASSWORD
+
+  #MJ_APIKEY_PUBLIC: YOUR_MJ_APIKEY_PUBLIC
+  #MJ_APIKEY_PRIVATE: YOUR_MJ_APIKEY_PRIVATE
+
+#SQL database
+  #SQL_USER: YOUR_SQL_USER
+  #SQL_PASSWORD: YOUR_SQL_PASSWORD
+  #SQL_DATABASE: YOUR_SQL_DATABASE
+  #INSTANCE_CONNECTION_NAME: YOUR_INSTANCE_CONNECTION_NAME
+
+#beta_settings:
+  #cloud_sql_instances: YOUR_INSTANCE_CONNECTION_NAME
+
+skip_files:
+- ^(.*/)?app\.yaml
+- ^Dockerfile
+- ^\.dockerignore
+- ^\.gitignore
+- ^\.git/.*
+- ^\.openshift/.*
+- ^\.vscode/.*
+- ^node_modules/(.*/)?
+- ^data/storage/(.*/)?

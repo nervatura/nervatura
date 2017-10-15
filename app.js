@@ -9,14 +9,16 @@ https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 /* global __dirname */
 
 module.exports = function(callback){
-
+  
 var fs = require('fs');
 var express = require('express');
-var session = require('express-session');
+var session = require('cookie-session')
 
 var compression = require('compression');
 var passport = require('passport');
-var Strategy = require('passport-local').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+
 var cors = require('cors');
 var lusca = require('lusca');
 var helmet = require('helmet');
@@ -33,13 +35,14 @@ var methodOverride = require('method-override');
 var _ = require('lodash');
   
 //routes
-var index = require('./routes/index');
+var ntura = require('./routes/ntura');
 var demo = require('./routes/demo');
 var npi = require('./routes/npi');
 var ndi = require('./routes/ndi');
 var nas = require('./routes/nas');
 var report = require('./routes/report');
 var wizard = require('./routes/wizard');
+var custom = require('./routes/custom');
 
 var app = express();
 app.locals._ = _;
@@ -145,31 +148,11 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(methodOverride());
     app.use(cookieParser(host_settings.session_secret));
-    
-    var cookie_ = {httpOnly: true, secure: (app.get('env') === 'production') ? true : false, 
-      maxAge: host_settings.session_cookie_max_age};
-    var proxy_ = (app.get('env') === 'production') ? true : false;
-    var session_store = conf.session_store;
-    if (session_store==='leveldown' && !util.checkOptional('level-session-store')){
-      if (util.checkOptional('connect-sqlite3')){
-        session_store = 'sqlite';}
-      else {session_store = 'memory';}}
-    if (session_store==='sqlite' && !util.checkOptional('connect-sqlite3')){
-      if (util.checkOptional('level-session-store')){
-        session_store = 'leveldown';}
-      else {session_store = 'memory';}}
-    if (session_store==='leveldown'){
-      var LevelSession = require('level-session-store')(session);
-      app.use(session({name:'ntura', secret: host_settings.session_secret,
-        store: new LevelSession(app.get('data_dir')+'/storage/session'), 
-        resave: true, saveUninitialized: true, cookie: cookie_, proxy: proxy_}));}
-    else if (session_store==='sqlite'){
-      var SQLiteStore = require('connect-sqlite3')(session);
-      app.use(session({name:'ntura', secret: host_settings.session_secret,
-        store: new SQLiteStore({dir:app.get('data_dir')+'/storage',db:'session'}), 
-        resave: true, saveUninitialized: true, cookie: cookie_, proxy: proxy_}));}
-    else {
-      app.use(session({name:'ntura', secret: host_settings.session_secret, resave: true, saveUninitialized: true}));}
+    app.use(session({name:'ntura', 
+      secret: host_settings.session_secret,
+      httpOnly: true, maxAge: host_settings.session_cookie_max_age,
+      secure: (app.get('env') === 'production') ? true : false,  
+      proxy: (app.get('env') === 'production') ? true : false}))
     
     app.use(cors());
     app.use('/npi', npi);
@@ -182,16 +165,33 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     app.use(contentLength.validateMax({max: host_settings.max_content_length, status: 400, message: 'Too much content'}));
     if (app.get('env') === 'production') {
       app.use(express_enforces_ssl());}
-    app.use(lusca.csrf());
-      
-    app.use('/', index);
+    app.use(lusca.csrf({secret: host_settings.session_secret}));
+    
+    switch (conf.start_page) {
+      case "static":
+        app.use(express.static(path.join(__dirname, 'www')));
+        break;
+      case "custom":
+        app.use('/', custom);
+        break;
+      default:
+        app.use('/', ntura);
+        break;}
+    app.use('/ntura', ntura);
     app.use('/nas', nas);
     app.use('/report', report);
     app.use('/ndi/wizard', wizard);
     app.use('/ndi/demo', demo);
     
     // Configure the local strategy for use by Passport.
-    passport.use(new Strategy(app.get('storage').getUserFromName));
+    passport.use(new LocalStrategy(
+      conf.nas_login.local, app.get('storage').getUserFromName));
+    if(conf.nas_login.google.clientID && conf.nas_login.google.clientSecret){
+      passport.use(new GoogleStrategy( conf.nas_login.google,
+        function(accessToken, refreshToken, profile, cb) {
+          process.nextTick(function () {
+            app.get('storage').getUserFromEmail(profile, accessToken, function (err, user, info) {
+              return cb(err, user, info); });});}));}
     passport.serializeUser(function(user, cb) {cb(null, user.id);});
     passport.deserializeUser(app.get('storage').getUserFromId);
     
