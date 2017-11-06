@@ -29,8 +29,8 @@ var AppContainer = function () {
 
     require('./app')(function(err,app){
       if(!err){
-        var port = app.get('port') || process.env.PORT || '8080';
-        port = normalizePort(port);
+        var port = normalizePort(process.env.PORT || '8080');
+        app.set('port', port);
 
         var server = require('http').createServer(app);
         if(app.get('env') === 'development'){

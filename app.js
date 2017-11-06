@@ -17,7 +17,6 @@ var session = require('cookie-session')
 var compression = require('compression');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 var cors = require('cors');
 var lusca = require('lusca');
@@ -39,6 +38,7 @@ var ntura = require('./routes/ntura');
 var demo = require('./routes/demo');
 var npi = require('./routes/npi');
 var ndi = require('./routes/ndi');
+var login = require('./routes/login');
 var nas = require('./routes/nas');
 var report = require('./routes/report');
 var wizard = require('./routes/wizard');
@@ -53,7 +53,6 @@ app.set('conf', conf);
 
 //host ip,port
 app.set('host_type', process.env.HOST_TYPE || 'localhost');
-app.set('port', conf.port || process.env.PORT || '8080');
 if(process.env.OPENSHIFT_NODEJS_IP){
   app.set('host_type', 'openshift');
   app.set('ip', process.env.OPENSHIFT_NODEJS_IP);}
@@ -69,7 +68,6 @@ else if(process.env.NERVATURA_DATA_DIR){
 else{
   try {
     app.set('data_dir', conf.data_dir || 'data');
-    console.log(path.join(__dirname, 'data'));
     fs.statSync(app.get('data_dir'));} 
   catch(e) {
     try {
@@ -119,6 +117,9 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
            host_settings[setting] = parseInt(host_settings[setting],10);}
          else{
            host_settings[setting] = conf.def_settings[setting];}}}
+    for (var setting in host_settings) {
+      if(process.env[String(setting).toUpperCase()]){
+        host_settings[setting] = process.env[String(setting).toUpperCase()];}}
     app.set('host_settings', host_settings);
 
     // view engine setup
@@ -163,8 +164,9 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     app.use(hpp());
     app.use(helmet());
     app.use(contentLength.validateMax({max: host_settings.max_content_length, status: 400, message: 'Too much content'}));
-    if (app.get('env') === 'production') {
+    if ((app.get('env') === 'production') && conf.enforces_ssl) {
       app.use(express_enforces_ssl());}
+    app.use('/login', login);
     app.use(lusca.csrf({secret: host_settings.session_secret}));
     
     switch (conf.start_page) {
@@ -186,12 +188,29 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     // Configure the local strategy for use by Passport.
     passport.use(new LocalStrategy(
       conf.nas_login.local, app.get('storage').getUserFromName));
+    if(conf.nas_login.azure.clientID && conf.nas_login.azure.clientSecret 
+      && conf.nas_login.azure.redirectUrl && conf.nas_login.azure.identityMetadata){
+      var AzureStrategy = require('passport-azure-ad').OIDCStrategy;
+      passport.use(new AzureStrategy( conf.nas_login.azure,
+        function(iss, sub, profile, accessToken, refreshToken, cb) {
+          if (!profile._json.email) {
+            return cb(lang.no_email_found, null);}
+          else {
+            process.nextTick(function () {
+              app.get('storage').getUserFromEmail(profile._json.email, profile, accessToken, 
+                function (err, user, info) {
+                  return cb(err, user, info); });});}}));}
     if(conf.nas_login.google.clientID && conf.nas_login.google.clientSecret){
+      var GoogleStrategy = require('passport-google-oauth20').Strategy;
       passport.use(new GoogleStrategy( conf.nas_login.google,
         function(accessToken, refreshToken, profile, cb) {
-          process.nextTick(function () {
-            app.get('storage').getUserFromEmail(profile, accessToken, function (err, user, info) {
-              return cb(err, user, info); });});}));}
+          if(profile.emails.length === 0){
+            return cb(lang.no_email_found, null);}
+          else {
+            process.nextTick(function () {
+              app.get('storage').getUserFromEmail(profile.emails[0].value, profile, accessToken, 
+                function (err, user, info) {
+                  return cb(err, user, info); });});}}));}
     passport.serializeUser(function(user, cb) {cb(null, user.id);});
     passport.deserializeUser(app.get('storage').getUserFromId);
     

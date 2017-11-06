@@ -1,3 +1,9 @@
+## 2.5.4
+- Microsoft Azure support (see more Admin Guide)
+- NAS Admin: Azure AD OpenID Connect authentication support
+- remove config port setting
+- new config settings: enforces_ssl, pg_ssl, mysql_ssl, mssql_encrypt, long_timeout
+
 ## 2.5.3
 - Google App Engine support (see more Admin Guide)
 - NAS: added support for Google Datastore (GAE default)

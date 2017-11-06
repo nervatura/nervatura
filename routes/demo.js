@@ -22,6 +22,7 @@ router.get('/create', function(req, res, next) {
     res.render('ndi/demo.html',{data:results});});});
 
 router.post('/create', function(req, res, next) {
+  req.setTimeout(req.app.settings.conf.long_timeout);
   var params = {database:req.body.database, 
     username:req.body.username, password:req.body.password}
   create_demo(params, req, res, function(results){

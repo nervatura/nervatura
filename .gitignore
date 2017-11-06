@@ -49,3 +49,4 @@ public/application
 data/data/*
 data/storage/*
 *.pem
+.elasticbeanstalk/

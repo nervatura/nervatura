@@ -1,6 +1,6 @@
 {
   "name": "nervatura",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "description": "Open Source Business Management Framework",
   "keywords": [
     "business management",
@@ -34,7 +34,7 @@
     "dev": "NODE_ENV=development node server.js"
   },
   "engines": {
-    "node": ">= 0.12.13"
+    "node": ">= 6"
   },
   "dependencies": {
     "any-db": "^2.1.0",
@@ -78,6 +78,7 @@
     "any-db-sqlite3": "^2.1.4",
     "node-mailjet": "^3.2.1",
     "nodemailer": "^4.2.0",
+    "passport-azure-ad": "^3.0.8",
     "passport-google-oauth20": "^1.0.0"
   },
   "devDependencies": {

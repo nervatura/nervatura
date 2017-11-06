@@ -50,6 +50,7 @@
     <li style="padding:5px 0px 0px;"><b><a href="#cloud">Cloud Hosting Services</a></b>
       <ul style="padding-left:5px;">
         <li style="padding:3px 0px 0px;"><a href="#app_engine">Google App Engine</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#azure">Microsoft Azure</a></li>
         <li style="padding:3px 0px 0px;"><a href="#cloud_openshift">OpenShift</a></li>
         <li style="padding:3px 0px 0px;"><a href="#cloud_docker">Docker</a></li>
       </ul>
@@ -195,10 +196,10 @@
       <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=sqladmin" 
         target="blank">Cloud SQL API</a>. Creating an instance and setting the password:</p>
       <p class="code" style="text-align: left;">
-        gcloud sql instances create [INSTANCE_NAME] --database-version=POSTGRES_9_6 \<br>
-        --cpu=[NUMBER_CPUS] --memory=[MEMORY_SIZE]<br><br>
-        gcloud sql users set-password postgres no-host --instance=[INSTANCE_NAME] \<br>
-        --password=[PASSWORD]
+        gcloud sql instances create <b>[INSTANCE_NAME]</b> --database-version=POSTGRES_9_6 \<br>
+        --cpu=<b>[NUMBER_CPUS]</b> --memory=<b>[MEMORY_SIZE]</b><br><br>
+        gcloud sql users set-password postgres no-host --instance=<b>[INSTANCE_NAME]</b> \<br>
+        --password=<b>[PASSWORD]</b>
       </p>
       <p>See more here: <a 
         href="https://cloud.google.com/sql/docs/postgres/create-instance" target="blank">Creating PostgreSQL Instances</a></p>
@@ -206,8 +207,8 @@
       <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=sqladmin" 
         target="blank">Cloud SQL API</a>. Creating an instance and setting the password:</p>
       <p class="code" style="text-align: left;">
-        gcloud sql instances create [INSTANCE_NAME] --tier=[MACHINE_TYPE] --region=[REGION]<br><br>
-        gcloud sql users set-password root % --instance [INSTANCE_NAME] --password [PASSWORD]
+        gcloud sql instances create <b>[INSTANCE_NAME]</b> --tier=<b>[MACHINE_TYPE]</b> --region=<b>[REGION]</b><br><br>
+        gcloud sql users set-password root % --instance <b>[INSTANCE_NAME]</b> --password <b>[PASSWORD]</b>
       </p>
       <p>See more here: <a 
         href="https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen" target="blank">Creating MySQL Instances</a></p>
@@ -320,6 +321,348 @@
         &nbsp;&nbsp;memory_gb: 0.5<br>
         &nbsp;&nbsp;disk_size_gb: 10
       </p>
+
+    </li>
+
+    <li><b><a name="azure">Microsoft Azure</a></b>
+      <p>If you don't have an Azure subscription, create a <a 
+         href="https://azure.microsoft.com/free/" target="blank">free account</a> before 
+         you begin. Install or upgrade the last version of the <a 
+         href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli" 
+         target="blank">Azure CLI 2.0</a>.<br>
+         <a href="https://docs.microsoft.com/en-us/azure/app-service/scripts/app-service-cli-deploy-local-git" 
+         target="blank">Create a web app</a> from a local Git repository.
+      </p>
+      <ul>
+        <li>Create a resource group (see more <a 
+          href="https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_list_locations" 
+          target="blank">list-locations</a>):
+          <p class="code" style="text-align: left;">
+            $ az group create --location northeurope --name <b>[GROUP_NAME]</b>
+          </p>
+        </li>
+        <li>Create an App Service plan (in FREE tier):
+          <p class="code" style="text-align: left;">
+            $ az appservice plan create --name <b>[PLAN_NAME]</b> --resource-group <b>[GROUP_NAME]</b> --sku FREE
+          </p>
+          Linux and Basic tier sample:
+          <p class="code" style="text-align: left;">
+            $ az appservice plan create --name <b>[PLAN_NAME]</b> --resource-group <b>[GROUP_NAME]</b> \<br />
+            &nbsp;&nbsp;--is-linux --number-of-workers 3 --sku B1
+          </p>
+        </li>
+        <li>Create a web app (see more <a 
+          href="https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az_webapp_list_runtimes" 
+          target="blank">list-runtimes</a>):
+          <p class="code" style="text-align: left;">
+            $ az webapp create --name <b>[APP_NAME]</b> --resource-group <b>[GROUP_NAME]</b> --plan <b>[PLAN_NAME]</b> \<br />
+            &nbsp;&nbsp;--deployment-local-git --runtime "node|8.1"
+          </p>
+        </li>
+        <li>Set the account-level deployment credentials:
+          <p class="code" style="text-align: left;">
+            $ az webapp deployment user set --user-name <b>[USERNAME]</b> --password <b>[PASSWORD]</b>
+          </p>
+        </li>
+        <li>Set some environment variables:
+          <p class="code" style="text-align: left;">
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings HOST_TYPE=azure
+          </p>
+        </li>
+        <li>Disable the <a href="https://github.com/hengkiardo/express-enforces-ssl" 
+          target="blank">SSL enforces</a> (optional, only for the FREE tier):
+          <p class="code" style="text-align: left;">
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings DISABLED_SSL=true
+          </p>
+        </li>
+        <li>
+          Clone and configure the (empty) local git directory:
+          <p class="code" style="text-align: left;">
+            $ git clone https://<b>[USERNAME]</b>@<b>[APP_NAME]</b>.scm.azurewebsites.net/<b>[APP_NAME]</b>.git
+          </p>
+          And upgrade to the latest Nervatura version (Linux sample):
+          <p class="code" style="text-align: left;">
+            $ git clone https://github.com/nervatura/nervatura.git nervatura_latest<br>
+            $ rm -r <b>[APP_NAME]</b>/*<br>
+            $ cp -r nervatura_latest/* <b>[APP_NAME]</b>/<br>
+            $ cd <b>[APP_NAME]</b><br>
+            $ git add .<br>
+            $ git commit -a -m 'latest'<br>
+            $ git push
+          </p>
+        </li>
+        <li>Or all <a 
+          href="https://docs.microsoft.com/en-us/azure/app-service/scripts/app-service-cli-deploy-github?toc=%2fcli%2fazure%2ftoc.json"
+          target="_blank">in one step</a> (if you don't want to modify anything):
+          <p class="code" style="text-align: left;">
+            $ az webapp deployment source config --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--repo-url https://github.com/nervatura/nervatura.git --branch master --manual-integration
+          </p>
+        </li>
+      </ul>
+      <p>See the web app here: http://<b>app_name</b>.azurewebsites.net</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Microsoft Azure Active Directory authentication (OpenID Connect)</span></p>
+      <p>Login to the Azure Active Directory portal and register your app. See more here:</p>
+      <ul>
+        <li><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-devquickstarts-openidconnect-nodejs" 
+          target="blank">Node.js web app sign-in and sign-out with Azure AD</a></li>
+        <li><a href="https://www.netiq.com/communities/cool-solutions/creating-application-client-id-client-secret-microsoft-azure-new-portal/" 
+          target="blank">Creating the application Client ID and Client Secret from Microsoft Azure new portal</a></li>
+      </ul>
+      
+      <p>Set the environment variables:</p>
+      <p class="code" style="text-align: left;">
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_CLIENT_ID=<b>[YOUR_AZURE_CLIENT_ID]</b><br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_CLIENT_SECRET=<b>[YOUR_AZURE_CLIENT_SECRET]</b><br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_REDIRECT_URL=https://<b>[APP_NAME]</b>.azurewebsites.net/login/azure/callback<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_IDENTITY_URL=https://login.microsoftonline.com/<b>[YOUR_TENANT_NAME]</b>.onmicrosoft.com/v2.0/.well-known/openid-configuration
+      </p>
+      <p>1. Login to NAS Admin GUI</p>
+      <ul>
+        <li>Username: <b>admin</b></li>
+        <li>Password: <b>leave the field empty, not needed</b> (Default. Please change after the first login!)</li>
+      </ul>
+      <p>2. Add a new user (User Accounts)</p>
+      <ul>
+        <li>Username: <b>a valid(!) Azure AD user</b></li>
+        <li>Password: <b>leave the field empty, not needed</b></li>
+      </ul>
+      <p>3a. Remove the admin user (optional) and modify the following setting (Server Settings):</p>
+      <ul>
+        <li>Fieldname: <b>nas_auth</b></li>
+        <li>Value: <b>azure</b></li>
+      </ul>
+      <p>3b. Or you can set the value at any time in an environment variable:</p>
+      <p class="code" style="text-align: left;">
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings NAS_AUTH=azure
+      </p>
+      <p>4. Log off and re-enter the new user.</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Databases support</span></p>
+      <p><b>SQLite</b> install: Included by default. Recommended for testing only!</p>
+
+      <p><b>MySQL in-app</b> feature:</p>
+      <p>See more <a 
+          href="https://blogs.msdn.microsoft.com/appserviceteam/2016/08/18/announcing-mysql-in-app-preview-for-web-apps/" 
+          target="blank">Announcing MySQL in-app for Web Apps (Windows)</a></p>
+      
+      <p><b>MySQL</b> server:</p>
+      <p>Create an Azure MySQL server.</p>
+      <p class="code" style="text-align: left;">
+        az mysql server create --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br>
+        &nbsp;&nbsp;--admin-user <b>[ADMIN_NAME]</b> --admin-password <b>[ADMIN_PASSWORD]</b> \<br>
+        &nbsp;&nbsp;--performance-tier Basic --compute-units 50 --ssl-enforcement Disabled
+      </p>
+      <p>Configure a server-level firewall rule:</p>
+      <p class="code" style="text-align: left;">
+        az mysql server firewall-rule create --resource-group <b>[GROUP_NAME]</b> --server <b>[SERVER_NAME]</b> \<br>
+        &nbsp;&nbsp;--name AllowYourIP --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
+      </p>
+      <p>Create an empty database for MySQL server. Connect to your server using the mysql 
+        command-line tool:</p>
+      <p class="code" style="text-align: left;">
+        $ mysql -h <b>[SERVER_NAME]</b>.mysql.database.azure.com -u <b>[ADMIN_NAME]</b>@<b>[SERVER_NAME]</b> -p<br /><br />
+        mysql> CREATE DATABASE nervatura;
+      </p>
+      <p>Set some environment variables:</p>
+      <p class="code" style="text-align: left;">
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_MYSQL_HOST=<b>[SERVER_NAME]</b>.mysql.database.azure.com<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_MYSQL_USERNAME=<b>[ADMIN_NAME]</b>@<b>[SERVER_NAME]</b><br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_MYSQL_PASSWORD=<b>[ADMIN_PASSWORD]</b>
+      </p>
+      <p>Enable ssl enforcement when connect to server. (Optional.)</p>
+      <p class="code" style="text-align: left;">
+        $ az mysql server update --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br />
+        &nbsp;&nbsp;--ssl-enforcement Enabled<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings MYSQL_SSL=true
+      </p>
+      <p>See more here: <a 
+        href="https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-cli" 
+        target="blank">Create an Azure Database for MySQL server using Azure CLI</a></p>
+
+      <p><b>PostgeSQL</b> server:</p>
+      <p>Create an Azure PostgreSQL server. By default, <b>postgres</b> database 
+        gets created under your server.</p>
+      <p class="code" style="text-align: left;">
+        $ az postgres server create --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br>
+        &nbsp;&nbsp;--admin-user <b>[ADMIN_NAME]</b> --admin-password <b>[ADMIN_PASSWORD]</b> \<br>
+        &nbsp;&nbsp;--performance-tier Basic --version 9.6 --ssl-enforcement Disabled
+      </p>
+      <p>Configure a server-level firewall rule:</p>
+      <p class="code" style="text-align: left;">
+        $ az postgres server firewall-rule create --resource-group <b>[GROUP_NAME]</b> --server <b>[SERVER_NAME]</b> \<br>
+        &nbsp;&nbsp;--name AllowAllIps --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
+      </p>
+      <p>Set some environment variables:</p>
+      <p class="code" style="text-align: left;">
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_PG_HOST=<b>[SERVER_NAME]</b>.postgres.database.azure.com<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_PG_USERNAME=<b>[ADMIN_NAME]</b>@<b>[SERVER_NAME]</b><br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_PG_PASSWORD=<b>[ADMIN_PASSWORD]</b>
+      </p>
+      <p>Enable ssl enforcement when connect to server. (Optional. If you're getting error 
+        after receiving response from database: <a 
+        href="https://github.com/brianc/node-postgres/issues/1344" 
+        target="blank">ECONNRESET with unpooled connection</a>)</p>
+      <p class="code" style="text-align: left;">
+        $ az postgres server update --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br />
+        &nbsp;&nbsp;--ssl-enforcement Enabled<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings PGSSLMODE=require
+      </p>
+      <p>See more here: <a 
+        href="https://docs.microsoft.com/en-us/azure/postgresql/quickstart-create-server-database-azure-cli" 
+        target="blank">Create an Azure Database for PostgreSQL using the Azure CLI</a></p>
+      
+      <p><b>Azure SQL</b> database:</p>
+      <p>Create a logical server and a single Azure SQL database (see more <a 
+        href="https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_list_locations" 
+        target="blank">list-locations</a>):</p>
+      <p class="code" style="text-align: left;">
+        $ az sql server create --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br> 
+        &nbsp;&nbsp;--location northeurope --admin-user <b>[ADMIN_NAME]</b> --admin-password <b>[ADMIN_PASSWORD]</b><br><br>
+        $ az sql db create --resource-group <b>[GROUP_NAME]</b> --server <b>[SERVER_NAME]</b> \<br>
+        &nbsp;&nbsp;--name nervatura --service-objective B0<br><br>
+      </p>
+      <p>Configure a server-level firewall rule:</p>
+      <p class="code" style="text-align: left;">
+        $ az sql server firewall-rule create --resource-group <b>[GROUP_NAME]</b> --server <b>[SERVER_NAME]</b> \<br>
+        &nbsp;&nbsp;--name AllowAllIps --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
+      </p>
+      <p>Set some environment variables:</p>
+      <p class="code" style="text-align: left;">
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings MSSQL_ENCRYPT=true<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_SQL_HOST=<b>[SERVER_NAME]</b>.database.windows.net<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_SQL_USERNAME=<b>[ADMIN_NAME]</b>@<b>[SERVER_NAME]</b><br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings AZURE_SQL_PASSWORD=<b>[ADMIN_PASSWORD]</b>
+      </p>
+      <p>See more here: <a 
+        href="https://docs.microsoft.com/en-us/azure/sql-database/sql-database-get-started-cli" 
+        target="blank">Create a single Azure SQL database using the Azure CLI</a></p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p>1. Login to NAS Admin GUI</p>
+      <p>2. Add/Edit a new customer database reference</p>
+      <p>3.1 NAS SQLite database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>demo</b> (or what you prefer)</li>
+        <li>Engine: <b>SQLite</b></li>
+        <li>Host: <b>leave the field empty, not needed</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>demo</b> (or what you prefer)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      <p><i>You can create an unlimited number of SQLite databases. Recommended for testing only!</i></p>
+
+      <p>3.2 NAS MySQL in-app database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>lcdemo</b> (or what you prefer)</li>
+        <li>Engine: <b>MySQL</b></li>
+        <li>Host: <b>$MYSQLCONNSTR_localdb</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>localdb</b></li>
+        <li>UserName: <b>leave the field empty, not needed</b></li>
+        <li>Password: <b>leave the field empty, not needed</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      
+      <p>3.3 NAS MySQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>mydemo</b> (or what you prefer)</li>
+        <li>Engine: <b>MySQL</b></li>
+        <li>Host: <b>$AZURE_MYSQL_HOST</b></li>
+        <li>Port: <b>3306</b></li>
+        <li>Database: <b>nervatura</b> (or what you prefer)</li>
+        <li>UserName: <b>$AZURE_MYSQL_USERNAME</b></li>
+        <li>Password: <b>$AZURE_MYSQL_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      
+      <p>3.4. NAS PostgreSql database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>pgdemo</b> (or what you prefer)</li>
+        <li>Engine: <b>PostgreSQL</b></li>
+        <li>Host: <b>$AZURE_PG_HOST</b></li>
+        <li>Port: <b>5432</b></li>
+        <li>Database: <b>postgres</b></li>
+        <li>UserName: <b>$AZURE_PG_USERNAME</b></li>
+        <li>Password: <b>$AZURE_PG_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+
+      <p>3.5. NAS Azure SQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>msdemo</b> (or what you prefer)</li>
+        <li>Engine: <b>MSSQL</b></li>
+        <li>Host: <b>$AZURE_SQL_HOST</b></li>
+        <li>Port: <b>1433</b></li>
+        <li>Database: <b>nervatura</b></li>
+        <li>UserName: <b>$AZURE_SQL_USERNAME</b></li>
+        <li>Password: <b>$AZURE_SQL_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+
+      <p>4. Create a new Nervatura database</p>
+      <p>Database alias:</p>
+      <ul>
+        <li><b>demo</b></li>
+        <li>or <b>lcdemo</b></li>
+        <li>or <b>mydemo</b></li>
+        <li>or <b>pgdemo</b></li>
+        <li>or <b>msdemo</b></li>
+        <li>(or whatever alias you created)</li>
+      </ul>
+      <p><i>All existing data of the database will be lost!</i></p>
+      
+      <p>5. Create a DEMO database (optional)</p>
+      <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
+        then you can create a blank database again according to the previous instructions.</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Sending Emails</span></p>
+      <p>Configure your email settings in your application environment variables:</p>
+      <ul>
+        <li><p>Sending Emails using SMTP (<a href="https://nodemailer.com/" 
+            target="blank">Nodemailer</a>)</p>
+          <p class="code" style="text-align: left;">
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings SMTP_HOST=<b>[YOUR_SMTP_HOST]</b><br /><br />
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings SMTP_PORT=<b>[YOUR_SMTP_PORT]</b><br /><br />
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings SMTP_SECURE=<b>[YOUR_SMTP_SECURE]</b><br /><br />
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings SMTP_USER=<b>[YOUR_SMTP_USER]</b><br /><br />
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings SMTP_PASSWORD=<b>[YOUR_SMTP_PASSWORD]</b>
+          </p></li>
+        <li><p><a href="https://cloud.google.com/appengine/docs/flexible/nodejs/sending-emails-with-mailjet" 
+            target="blank">Mailjet</a> settings, such as the API key and secret:</p>
+          <p class="code" style="text-align: left;">
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings MJ_APIKEY_PUBLIC=<b>[YOUR_MJ_APIKEY_PUBLIC]</b><br /><br />
+            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--settings MJ_APIKEY_PRIVATE=<b>[YOUR_MJ_APIKEY_PRIVATE]</b>
+          </p>
+        </li>
+      </ul>
 
     </li>
 
@@ -737,9 +1080,13 @@
       </ul>
     </li>
     <li><i>pool_config</i>: See more <a href="https://github.com/grncdr/node-any-db-pool#api" target="blank">database agnostic connection pool</a></li>
-    <li><i>port</i>: Integer. Default value: 8080. Node.js/Express port value.</li>
     <li><i>python_script</i>: Path string. Default:'./lib/pylib'. The path where to look for Python 2 app. scripts.</li>
     <li><i>lang</i>: String. Default value: 'en'. Valid values: en.</li>
+    <li><i>enforces_ssl</i>: This setting enforces HTTPS connections on any incoming requests in production 
+      mode. Default true. See more <a href="https://github.com/hengkiardo/express-enforces-ssl" 
+      target="blank">express-enforces-ssl</a></li>
+    <li><i>pg_ssl</i>: Enable postgres ssl enforcement or not when connect to server. Default false.</li>
+    <li><i>mysql_ssl</i>: Enable mysql ssl enforcement or not when connect to server. Default false.</li>
   </ul>
   
   <p>Initial setup (conf.js) and persistent server-side settings: data_dir/storage/data(.json)</p>
@@ -761,7 +1108,8 @@
     <li><i>users</i>: Default sample user accounts. See more NAS Admin GUI/User Accounts.</li>
     <li><i>settings</i>: See more NAS Admin GUI/Server Settings. A restart is required!
       <ul style="padding-left:15px;">
-        <li><i>nas_auth</i>: NAS Admin authentication strategy. Default:'local'. Valid values: local (username and password), google (Google OAuth 2.0)</li>
+        <li><i>nas_auth</i>: NAS Admin authentication strategy. Default:'local'. Valid values: 
+          local (username and password), azure (Azure AD OpenID Connect), google (Google OAuth 2.0)</li>
         <li><i>python2_path</i>: Path string. Default:'python'. The path where to locate the "python" executable.
           Optional, for the server-side Nervatura Report.</li>
         <li><i>max_content_length</i>: Integer. Default value: 20000. See more <a href="https://github.com/ericmdantas/express-content-length-validator" 

@@ -7,7 +7,6 @@ https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 */
 
 var express = require('express');
-var passport = require('passport');
 var router = express.Router();
 
 var nas = require('../lib/node/nas.js')();
@@ -27,57 +26,6 @@ router.get('/index', function(req, res, next) {
       data:{subtitle:lang.title_home, flash:null, user:req.user}});}
   else {
     res.redirect(validator);}});  
-
-router.get('/insecure', function(req, res, next) {
-  nas.pageRender({res:res, dir:"default", page:"login", 
-    data:{insecure:true, username:"", flash:"NAS "+lang.insecure_err}});});
-
-router.get('/login',
-  function(req, res){
-    var data = {username:"", flash:null};
-    if (req.user) {
-      data.username = req.user.username;}
-    nas.pageRender({req:req, res:res, dir:"ntura", page:"login", data:data});});
-
-router.get('/login/google', 
-  passport.authenticate('google', { scope: ['email'] }));
-
-router.get('/google/callback', function(req, res, next) {
-  passport.authenticate('google', 
-  function(err, user, info) {
-    if (err) { return next(err); }
-    if (!user && info) {
-      nas.pageRender({req:req, res:res, dir:"ntura", page:"login", 
-        data:{username:info.username, flash:info.message}});}
-    else if (!user) {
-      nas.pageRender({req:req, res:res, dir:"ntura", page:"login", data:{}});}
-    else {
-      req.logIn(user, function(err) {
-        if (err) {return next(err);}
-        res.redirect('/nas/index');})
-  }})(req, res, next);});
-
-router.post('/login/local', function(req, res, next) {
-  if(!req.body.password || req.body.password===""){
-    req.body.password = "empty";}
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err); }
-    if (!user) {
-      nas.pageRender({req:req, res:res, dir:"ntura", page:"login", 
-        data:{username:info.username, flash:info.message}});}
-    else {
-      req.logIn(user, function(err) {
-        if (err) {return next(err);}
-        if(user.dirty_password){
-          return res.redirect('/nas/user/password');}
-        else{
-          return res.redirect('/nas/index');}});}
-})(req, res, next);});
-  
-router.get('/logout',
-  function(req, res){
-    req.logout();
-    return res.redirect('/nas/login');});
 
 router.get('/user/list', function(req, res, next) {
   if (validator === "ok"){
@@ -179,6 +127,7 @@ router.get('/database/create', function(req, res, next) {
 
 router.post('/database/create', function(req, res, next) {
   if (validator === "ok"){
+    req.setTimeout(req.app.settings.conf.long_timeout);
     var nstore = require('../lib/node/nervastore.js')(req, res);
     nas.createDatabase(nstore, {database:req.body.alias}, function(err, logstr){
       var form = req.body; form.message = logstr;
@@ -196,6 +145,7 @@ router.get('/database/export', function(req, res, next) {
 
 router.post('/database/export', function(req, res, next) {
   if (validator === "ok"){
+     req.setTimeout(req.app.settings.conf.long_timeout);
     var nstore = require('../lib/node/nervastore.js')(req, res);
     nas.exportDatabase(nstore, 
       {database:req.body.alias, filename:req.body.filename, format:req.body.format,
@@ -221,6 +171,7 @@ router.get('/database/import', function(req, res, next) {
 
 router.post('/database/import', function(req, res, next) {
   if (validator === "ok"){
+    req.setTimeout(req.app.settings.conf.long_timeout);
     var nstore = require('../lib/node/nervastore.js')(req, res);
     nas.importDatabase(nstore, 
       {database:req.body.alias, filename:req.body.filename, 
@@ -280,7 +231,7 @@ router.get('/setting/list', function(req, res, next) {
 
 router.post('/setting/update', function(req, res, next) {
   if (validator === "ok"){
-    var setting_err = nas.validSetting(req.body, lang)
+    var setting_err = nas.validSetting(req.app.settings.conf, req.body, lang)
     if(setting_err === null){
       req.app.settings.storage.updateSetting(req.body, function(err, message){
         if (err) {return next(err);}

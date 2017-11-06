@@ -13,8 +13,7 @@
         <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
         <label><%= lang.label_login_title %></label>
       </div>
-      <form id="frm_login" action="/nas/login/local" method="post" class="form-horizontal" style="max-width: 500px;">
-        <input name="_csrf" value="<%= _csrf %>" type="hidden">
+      <form id="frm_login" action="/login/local" method="post" class="form-horizontal" style="max-width: 500px;">
         <div class="w3-row w3-padding">
           <label for="username"><%= lang.label_username %>:</label>
           <input name="username" id="username" value="<%= username %>" 
@@ -41,9 +40,15 @@
             <i class="fa fa-check fa-fw" aria-hidden="true"></i>
             <b><%= lang.label_login %></b></a>
           <% } %>
+          <% if (settings.host_settings.nas_auth === "azure") { %>
+          <a class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round"
+            href="/login/azure">
+            <i class="fa fa-openid fa-fw" aria-hidden="true"></i>
+            <b>Azure AD OpenID</b></a>
+          <% } %>
           <% if (settings.host_settings.nas_auth === "google") { %>
           <a class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round"
-            href="/nas/login/google">
+            href="/login/google">
             <i class="fa fa-google fa-fw" aria-hidden="true"></i>
             <b>Google OAuth</b></a>
           <% } %>
