@@ -127,9 +127,6 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     app.engine('.html', require('ejs').__express);
     app.engine('.xml', require('ejs').__express);
     app.set('view engine', 'ejs');
-    if (app.get('env') === 'production') {
-      app.enable('trust proxy');
-      app.disable('x-powered-by');}
       
     app.use(compression());
     app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -143,7 +140,11 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     app.use('/lib/pdfjs', express.static(path.join(__dirname, 'node_modules/pdfjs-dist/build')));
     app.use('/lib/icon', express.static(path.join(__dirname, 'node_modules/font-awesome')));
     app.use('/lib/flatpickr', express.static(path.join(__dirname, 'node_modules/flatpickr/dist')));
-
+    
+    if ((app.get('env') === 'production')) {
+      app.enable('trust proxy');
+      app.disable('x-powered-by');
+      app.use(express_enforces_ssl());}
     app.use(logger((app.get('env')==='development')?'dev':'common'));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
@@ -164,8 +165,7 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     app.use(hpp());
     app.use(helmet());
     app.use(contentLength.validateMax({max: host_settings.max_content_length, status: 400, message: 'Too much content'}));
-    if ((app.get('env') === 'production') && conf.enforces_ssl) {
-      app.use(express_enforces_ssl());}
+    
     app.use('/login', login);
     app.use(lusca.csrf({secret: host_settings.session_secret}));
     
@@ -203,6 +203,17 @@ app.set('storage', require('./lib/node/storage.js')(app, function(err,host_setti
     if(conf.nas_login.google.clientID && conf.nas_login.google.clientSecret){
       var GoogleStrategy = require('passport-google-oauth20').Strategy;
       passport.use(new GoogleStrategy( conf.nas_login.google,
+        function(accessToken, refreshToken, profile, cb) {
+          if(profile.emails.length === 0){
+            return cb(lang.no_email_found, null);}
+          else {
+            process.nextTick(function () {
+              app.get('storage').getUserFromEmail(profile.emails[0].value, profile, accessToken, 
+                function (err, user, info) {
+                  return cb(err, user, info); });});}}));}
+    if(conf.nas_login.amazon.clientID && conf.nas_login.amazon.clientSecret){
+      var AmazonStrategy = require('passport-amazon').Strategy;
+      passport.use(new AmazonStrategy( conf.nas_login.amazon,
         function(accessToken, refreshToken, profile, cb) {
           if(profile.emails.length === 0){
             return cb(lang.no_email_found, null);}

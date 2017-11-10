@@ -37,7 +37,24 @@ router.post('/local', function(req, res, next) {
         else{
           return res.redirect('/nas/index');}});}
         })(req, res, next);});
-        
+
+router.get('/amazon', 
+  passport.authenticate('amazon', { scope: ['profile', 'postal_code'] }));
+      
+router.all('/amazon/callback', function(req, res, next) {
+  passport.authenticate('amazon', 
+  function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user && info) {
+      res.render("ntura/index.html", {view:"login", username:info.username, flash:info.message});}
+    else if (!user) {
+      res.render("ntura/index.html", {view:"login"});}
+    else {
+      req.logIn(user, function(err) {
+        if (err) {return next(err);}
+        res.redirect('/nas/index');})
+  }})(req, res, next);});
+
 router.get('/azure',
   function(req, res, next) {
     passport.authenticate('azuread-openidconnect', 

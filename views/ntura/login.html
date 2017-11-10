@@ -40,6 +40,12 @@
             <i class="fa fa-check fa-fw" aria-hidden="true"></i>
             <b><%= lang.label_login %></b></a>
           <% } %>
+          <% if (settings.host_settings.nas_auth === "amazon") { %>
+          <a class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round"
+            href="/login/amazon">
+            <i class="fa fa-amazon fa-fw" aria-hidden="true"></i>
+            <b>Amazon OAuth</b></a>
+          <% } %>
           <% if (settings.host_settings.nas_auth === "azure") { %>
           <a class="w3-button w3-dark-black w3-text-white w3-hover-black w3-hover-text-green w3-round"
             href="/login/azure">

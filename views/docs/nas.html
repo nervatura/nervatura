@@ -49,6 +49,7 @@
     </li>
     <li style="padding:5px 0px 0px;"><b><a href="#cloud">Cloud Hosting Services</a></b>
       <ul style="padding-left:5px;">
+        <li style="padding:3px 0px 0px;"><a href="#aws">Amazon Web Services</a></li>
         <li style="padding:3px 0px 0px;"><a href="#app_engine">Google App Engine</a></li>
         <li style="padding:3px 0px 0px;"><a href="#azure">Microsoft Azure</a></li>
         <li style="padding:3px 0px 0px;"><a href="#cloud_openshift">OpenShift</a></li>
@@ -133,18 +134,193 @@
 	</h3>
   
   <ul>
+    <li><b><a name="aws">Amazon Web Services</a></b>
+      <p>If you're not already an AWS customer, you'll need to sign up. Signing up allows you to access 
+        Elastic Beanstalk and other AWS services that you will need. The Elastic Beanstalk Command Line Interface 
+        (EB CLI) is a command line client that you can use to create, configure, and manage Elastic Beanstalk 
+        environments. Download and install the last <a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html" 
+        target="blank">Amazon EB CLI</a>.</p>
+      <p>Clone the latest Nervatura version:</p>
+      <p class="code" style="text-align: left;">
+        $ git clone https://github.com/nervatura/nervatura.git nervatura_aws
+      </p>
+      <p>Run <span class="code">eb init</span> in your application's project directory to configure the EB CLI and your project:</p>
+      <p class="code" style="text-align: left;">
+        $ cd nervatura_aws<br><br>
+        $ git init<br><br>
+        $ eb init <b>[APP_NAME]</b> --platform node.js
+      </p>
+      <p>Add new and changed files and create a new environment:</p>
+      <p class="code" style="text-align: left;">
+        $ git add .<br><br>
+        $ git commit -a -m 'latest'<br><br>
+        $ eb create <b>[ENVIRONMENT_NAME]</b> --cname <b>[SUBDOMAIN_NAME]</b> --platform node.js --elb-type application
+      </p>
+
+      <p>Launch your browser and view the app at http://<b>environment_name</b>.azurewebsites.net, by running 
+        the following command:</p>
+      <p class="code" style="text-align: left;">
+        $ eb open
+      </p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Amazon (OAuth 2.0) authentication</span></p>
+      <p>The Amazon authentication strategy authenticates users using an Amazon account and OAuth 2.0 tokens. The 
+        client ID and secret are obtained by registering an application at the <a 
+        href="http://login.amazon.com/" target="_blank" >Login with Amazon Developer Center</a>.</p>
+      <p>Before you deploy the application, modify the following section in the <a 
+        href="https://github.com/nervatura/nervatura/blob/master/.ebextensions/node-settings.config" 
+        target="blank"><b>node-settings.config</b></a> file:</p>
+      <p class="code" style="text-align: left;">
+        AMAZON_CLIENT_ID: <b>YOUR_AMAZON_CLIENT_ID</b><br>
+        AMAZON_CLIENT_SECRET: <b>YOUR_AMAZON_CLIENT_SECRET</b>
+      </p>
+      <p>1. Login to NAS Admin GUI</p>
+      <ul>
+        <li>Username: <b>admin</b></li>
+        <li>Password: <b>leave the field empty, not needed</b> (Default. Please change after the first login!)</li>
+      </ul>
+      <p>2. Add a new user (User Accounts)</p>
+      <ul>
+        <li>Username: <b>a valid(!) Amazon user</b></li>
+        <li>Password: <b>leave the field empty, not needed</b></li>
+      </ul>
+      <p>3. Remove the admin user (optional) and modify the following setting (Server Settings):</p>
+      <ul>
+        <li>Fieldname: <b>nas_auth</b></li>
+        <li>Value: <b>amazon</b></li>
+      </ul>
+      <p>4. Log off and re-enter the new user.</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Databases support</span></p>
+      <p><b>SQLite</b> install: Included by default. Recommended for testing only!</p>
+      <p><b>Amazon RDS DB Instance</b></p>
+      <p>You can use an Amazon Relational Database Service (Amazon RDS) DB instance to store data gathered and modified 
+        by your application. The database can be attached to your environment and managed by Elastic Beanstalk, or created 
+        and managed externally. </p>
+      <p >Adding a DB Instance to Your Environment:</p>
+      <ul>
+        <li>Open the <a href="https://console.aws.amazon.com/elasticbeanstalk" 
+          target="_blank" >Elastic Beanstalk console</a>.</li>
+        <li>Navigate to the <a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-console.html" 
+          target="_blank" >management page</a> for your environment.</li>
+        <li>Choose <b>Configuration</b>.</li>
+        <li>Under <b>Data Tier</b>, choose <b>Create a new RDS database</b>.</li>
+        <li>Choose a DB engine, enter a user name and password, and then choose <b>Apply</b>.</li>
+      </ul>
+      <p>Or create a new environment with a database:</p>
+      <p class="code" style="text-align: left;">
+        $ eb create <b>[ENVIRONMENT_NAME]</b> --cname <b>[SUBDOMAIN_NAME]</b> --platform node.js --elb-type application \<br>
+        &nbsp;&nbsp;--database --database.engine <b>[DB_ENGINE]</b> --database.username <b>[DB_USER]</b> --database.password <b>[DB_PASSWORD]</b>
+      </p>
+      <p>For production environments, create a DB instance outside of your Elastic Beanstalk environment to decouple your environment 
+        resources from your database resources. Using an external DB instance lets you connect to the same database from multiple 
+        environments and perform blue-green deployments. For instructions, see <a 
+        href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/AWSHowTo.RDS.html" 
+        target="_blank" >Using Elastic Beanstalk with Amazon Relational Database Service</a>.</p>
+      
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p>1. Login to NAS Admin GUI</p>
+      <p>2. Add/Edit a new customer database reference</p>
+      <p>3.1 NAS SQLite database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>demo</b> (or what you prefer)</li>
+        <li>Engine: <b>SQLite</b></li>
+        <li>Host: <b>leave the field empty, not needed</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>demo</b> (or what you prefer)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      <p><i>You can create an unlimited number of SQLite databases. Recommended for testing only!</i></p>
+      
+      <p>3.2. NAS PostgreSql, MySQL and MSSQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>pgdemo</b>, <b>mydemo</b> or <b>msdemo</b> (or what you prefer)</li>
+        <li>Engine: <b>PostgreSQL</b>, <b>MySQL</b> or <b>MSSQL</b></li>
+        <li>Host: <b>$RDS_HOSTNAME</b></li>
+        <li>Port: <b>$RDS_PORT</b></li>
+        <li>Database: <b>$RDS_DB_NAME</b></li>
+        <li>UserName: <b>$RDS_USERNAME</b></li>
+        <li>Password: <b>$RDS_PASSWORD</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      <p><i>For each application you can configure only one postgresql or one mysql or one mssql database!</i></p>
+      
+      <p>4. Create a new Nervatura database</p>
+      <p>Database alias:</p>
+      <ul>
+        <li><b>demo</b></li>
+        <li>or <b>pgdemo</b></li>
+        <li>or <b>mydemo</b></li>
+        <li>or <b>msdemo</b></li>
+        <li>(or whatever alias you created)</li>
+      </ul>
+      <p><i>All existing data of the database will be lost!</i></p>
+      
+      <p>5. Create a DEMO database (optional)</p>
+      <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
+        then you can create a blank database again according to the previous instructions.</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Sending Emails</span></p>
+      <p>Configure your email settings in your <a 
+        href="https://github.com/nervatura/nervatura/blob/master/.ebextensions/node-settings.config" 
+        target="blank"><b>node-settings.config</b></a> file:</p>
+      <ul>
+        <li><p>Sending Emails using SMTP (<a href="https://nodemailer.com/" 
+            target="blank">Nodemailer</a>)</p>
+          <p class="code" style="text-align: left;">
+            SMTP_HOST: <b>YOUR_SMTP_HOST</b><br>
+            SMTP_PORT: <b>YOUR_SMTP_PORT</b><br>
+            SMTP_SECURE: <b>YOUR_SMTP_SECURE</b><br>
+            SMTP_USER: <b>YOUR_SMTP_USER</b><br>
+            SMTP_PASSWORD: <b>YOUR_SMTP_PASSWORD</b>
+          </p></li>
+        <li><p><a href="https://cloud.google.com/appengine/docs/flexible/nodejs/sending-emails-with-mailjet" 
+            target="blank">Mailjet</a> settings, such as the API key and secret:</p>
+          <p class="code" style="text-align: left;">
+            MJ_APIKEY_PUBLIC: <b>YOUR_MJ_APIKEY_PUBLIC</b><br>
+            MJ_APIKEY_PRIVATE: <b>YOUR_MJ_APIKEY_PRIVATE</b>
+          </p>
+        </li>
+      </ul>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Managing the application</span></p>
+      <p>Set Node.js production configurations (optional):</p>
+      <p class="code" style="text-align: left;">
+        $ eb setenv NODE_ENV=production
+      </p>
+      <p>Deploying changes:</p>
+      <p class="code" style="text-align: left;">
+        $ git add .<br><br>
+        $ eb deploy --staged
+      </p>
+      <p>You can override the NAS database settings in your <a 
+        href="https://github.com/nervatura/nervatura/blob/master/.ebextensions/node-settings.config" 
+        target="blank"><b>node-settings.config</b></a> file. For example:</p>
+      <p class="code" style="text-align: left;">
+        NAS_AUTH: amazon<br>
+        PYTHON2_PATH: python2<br>
+        MAX_CONTENT_LENGTH: 25000<br>
+        SESSION_SECRET: SECRET_12345<br>
+      </p>
+      <p>Or from the command line:</p>
+      <p class="code" style="text-align: left;">
+        $ eb setenv NAS_AUTH=amazon
+      </p>
+
+    </li>
     <li><b><a name="app_engine">Google App Engine</a></b>
       <p>Use the <a href="https://console.cloud.google.com/" target="blank">Cloud Platform Console</a> 
         to create a new Cloud Platform project, create an App Engine application, and enable billing.<br>
         Download and install the <a href="https://cloud.google.com/sdk/docs/" target="blank">Google Cloud SDK</a> 
         and then initialize the gcloud tool.</p>
+      <p>Clone the latest Nervatura version:</p>
       <p class="code" style="text-align: left;">
-        git clone https://github.com/nervatura/nervatura.git nervatura_gae<br>
-        cd nervatura_gae<br>
+        $ git clone https://github.com/nervatura/nervatura.git nervatura_gae<br><br>
+        $ cd nervatura_gae<br>
       </p>
       <p>Remove the Dockerfile from this directory:</p>
       <p class="code" style="text-align: left;">
-        rm ./Dockerfile
+        $ rm ./Dockerfile
       </p>
       <p>If necessary, modify the <a 
         href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
@@ -153,12 +329,12 @@
         target="blank">lib/node/<b>conf.js</b></a> file (see below). Deploy the 
         Nervatura by running the following command:</p>
       <p class="code" style="text-align: left;">
-        gcloud app deploy --project <span style="font-weight:bold;">YOUR_PROJECT_ID</span>
+        $ gcloud app deploy --project <span style="font-weight:bold;">YOUR_PROJECT_ID</span>
       </p>
       <p>Launch your browser and view the app at http://<b>your_project_id</b>.appspot.com, by running 
         the following command:</p>
       <p class="code" style="text-align: left;">
-        gcloud app browse
+        $ gcloud app browse
       </p>
 
       <p><span style="color:#8B1A1A;font-weight:bold;">Google (OAuth 2.0) authentication</span></p>
@@ -196,9 +372,9 @@
       <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=sqladmin" 
         target="blank">Cloud SQL API</a>. Creating an instance and setting the password:</p>
       <p class="code" style="text-align: left;">
-        gcloud sql instances create <b>[INSTANCE_NAME]</b> --database-version=POSTGRES_9_6 \<br>
+        $ gcloud sql instances create <b>[INSTANCE_NAME]</b> --database-version=POSTGRES_9_6 \<br>
         --cpu=<b>[NUMBER_CPUS]</b> --memory=<b>[MEMORY_SIZE]</b><br><br>
-        gcloud sql users set-password postgres no-host --instance=<b>[INSTANCE_NAME]</b> \<br>
+        $ gcloud sql users set-password postgres no-host --instance=<b>[INSTANCE_NAME]</b> \<br>
         --password=<b>[PASSWORD]</b>
       </p>
       <p>See more here: <a 
@@ -207,8 +383,8 @@
       <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=sqladmin" 
         target="blank">Cloud SQL API</a>. Creating an instance and setting the password:</p>
       <p class="code" style="text-align: left;">
-        gcloud sql instances create <b>[INSTANCE_NAME]</b> --tier=<b>[MACHINE_TYPE]</b> --region=<b>[REGION]</b><br><br>
-        gcloud sql users set-password root % --instance <b>[INSTANCE_NAME]</b> --password <b>[PASSWORD]</b>
+        $ gcloud sql instances create <b>[INSTANCE_NAME]</b> --tier=<b>[MACHINE_TYPE]</b> --region=<b>[REGION]</b><br><br>
+        $ gcloud sql users set-password root % --instance <b>[INSTANCE_NAME]</b> --password <b>[PASSWORD]</b>
       </p>
       <p>See more here: <a 
         href="https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen" target="blank">Creating MySQL Instances</a></p>
@@ -297,6 +473,17 @@
         </li>
       </ul>
       
+      <p><span style="color:#8B1A1A;font-weight:bold;">Overwrite the NAS database settings</span></p>
+      <p>You can override the server database settings in your <a 
+        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        target="blank"><b>app.yaml</b></a> file. For example:</p>
+      <p class="code" style="text-align: left;">
+        NAS_AUTH: google<br>
+        PYTHON2_PATH: python2<br>
+        MAX_CONTENT_LENGTH: 25000<br>
+        SESSION_SECRET: SECRET_12345<br>
+      </p>
+
       <p><span style="color:#8B1A1A;font-weight:bold;">Configuring your App</span></p>
       <p>A Node.js App Engine application can be configured by a file named <a 
         href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
@@ -370,11 +557,10 @@
             &nbsp;&nbsp;--settings HOST_TYPE=azure
           </p>
         </li>
-        <li>Disable the <a href="https://github.com/hengkiardo/express-enforces-ssl" 
-          target="blank">SSL enforces</a> (optional, only for the FREE tier):
+        <li>Set Node.js development configurations (optional, if there is no SSL support):
           <p class="code" style="text-align: left;">
             $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-            &nbsp;&nbsp;--settings DISABLED_SSL=true
+            &nbsp;&nbsp;--settings NODE_ENV=development
           </p>
         </li>
         <li>
@@ -457,13 +643,13 @@
       <p><b>MySQL</b> server:</p>
       <p>Create an Azure MySQL server.</p>
       <p class="code" style="text-align: left;">
-        az mysql server create --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br>
+        $ az mysql server create --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br>
         &nbsp;&nbsp;--admin-user <b>[ADMIN_NAME]</b> --admin-password <b>[ADMIN_PASSWORD]</b> \<br>
         &nbsp;&nbsp;--performance-tier Basic --compute-units 50 --ssl-enforcement Disabled
       </p>
       <p>Configure a server-level firewall rule:</p>
       <p class="code" style="text-align: left;">
-        az mysql server firewall-rule create --resource-group <b>[GROUP_NAME]</b> --server <b>[SERVER_NAME]</b> \<br>
+        $ az mysql server firewall-rule create --resource-group <b>[GROUP_NAME]</b> --server <b>[SERVER_NAME]</b> \<br>
         &nbsp;&nbsp;--name AllowYourIP --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
       </p>
       <p>Create an empty database for MySQL server. Connect to your server using the mysql 
@@ -486,7 +672,7 @@
         $ az mysql server update --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br />
         &nbsp;&nbsp;--ssl-enforcement Enabled<br /><br />
         $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings MYSQL_SSL=true
+        &nbsp;&nbsp;--settings MYSQL_SSL=require
       </p>
       <p>See more here: <a 
         href="https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-cli" 
@@ -546,7 +732,7 @@
       <p>Set some environment variables:</p>
       <p class="code" style="text-align: left;">
         $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings MSSQL_ENCRYPT=true<br /><br />
+        &nbsp;&nbsp;--settings MSSQL_ENCRYPT=require<br /><br />
         $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_SQL_HOST=<b>[SERVER_NAME]</b>.database.windows.net<br /><br />
         $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
@@ -664,6 +850,19 @@
         </li>
       </ul>
 
+      <p><span style="color:#8B1A1A;font-weight:bold;">Overwrite the NAS database settings</span></p>
+      <p>You can override the server database settings in your application environment variables. For example:</p>
+      <p class="code" style="text-align: left;">
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings NAS_AUTH=azure<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings PYTHON2_PATH=python2<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings MAX_CONTENT_LENGTH=25000<br /><br />
+        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        &nbsp;&nbsp;--settings SESSION_SECRET=SECRET_12345
+      </p>
+
     </li>
 
     <li><b><a name="cloud_openshift">OpenShift</a></b>
@@ -693,11 +892,11 @@
         Several database files can be created.</p>
       <p><b>PostgeSQL</b> install:</p>
       <p class="code" style="text-align: left;">
-        rhc cartridge add postgresql-9.2 -a nervatura
+        $ rhc cartridge add postgresql-9.2 -a nervatura
       </p>
       <p><b>MySQL</b> install:</p>
       <p class="code" style="text-align: left;">
-        rhc cartridge add mysql-5.5 -a nervatura
+        $ rhc cartridge add mysql-5.5 -a nervatura
       </p>
       
       <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
@@ -762,43 +961,43 @@
       
       <p>Upgrade to the latest Nervatura version (Linux)</p>
       <p class="code" style="text-align: left;">
-        rhc git-clone -a nervatura<br>
-        git clone https://github.com/nervatura/nervatura.git nervatura_latest<br>
-        rm -r nervatura/*<br>
-        cp -r nervatura_latest/* nervatura/<br>
-        cd nervatura<br>
-        git add .<br>
-        git commit -a -m 'latest'<br>
-        git push
+        $ rhc git-clone -a nervatura<br>
+        $ git clone https://github.com/nervatura/nervatura.git nervatura_latest<br>
+        $ rm -r nervatura/*<br>
+        $ cp -r nervatura_latest/* nervatura/<br>
+        $ cd nervatura<br>
+        $ git add .<br>
+        $ git commit -a -m 'latest'<br>
+        $ git push
       </p>
       
       <p>Save and restore backups</p>
       <p class="code" style="text-align: left;">
-        rhc snapshot-save -a nervatura<br>
-        rhc snapshot-restore -f nervatura.tar.gz
+        $ rhc snapshot-save -a nervatura<br><br>
+        $ rhc snapshot-restore -f nervatura.tar.gz
       </p>
       
       <p>Watching logs</p>
       <p class="code" style="text-align: left;">
-        rhc tail -a nervatura
+        $ rhc tail -a nervatura
       </p>
       
       <p>Starts and stops an application</p>
       <p class="code" style="text-align: left;">
-        rhc app-start -a nervatura<br>
-        rhc app-stop -a nervatura<br>
-        rhc app-force-stop -a nervatura<br>
-        rhc app-restart -a nervatura<br>
+        $ rhc app-start -a nervatura<br><br>
+        $ rhc app-stop -a nervatura<br><br>
+        $ rhc app-force-stop -a nervatura<br><br>
+        $ rhc app-restart -a nervatura
       </p>
       
       <p>Deletes all the contents of the log and /tmp directory</p>
       <p class="code" style="text-align: left;">
-        rhc app-tidy -a nervatura
+        $ rhc app-tidy -a nervatura
       </p>
       
       <p>Copies a new Nervatura Report template file to the database install directory</p>
       <p class="code" style="text-align: left;">
-        rhc scp demo upload custom_report.xml app-root/runtime/repo/public/report/
+        $ rhc scp demo upload custom_report.xml app-root/runtime/repo/public/report/
       </p>
     </li>
     <li><b><a name="cloud_docker">Docker</a></b>
@@ -838,7 +1037,7 @@
         <li>add link to postgres database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
-        docker run --rm -i -t -p 8080:8080 \<br>
+        $ docker run --rm -i -t -p 8080:8080 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -w /app/dist\<br>
         &nbsp;&nbsp;-e NERVATURA_DATA_DIR=/app/data \<br>
         &nbsp;&nbsp;--link postgres \<br>
@@ -855,7 +1054,7 @@
         <li>remote ('bridge' network) database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
-        docker run --rm -i -t -p 8080:8080 \<br>
+        $ docker run --rm -i -t -p 8080:8080 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -w /app/dist \<br>
         &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
         &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
@@ -872,9 +1071,9 @@
         <li>add link to mysql database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
-        git clone https://github.com/nervatura/nervatura.git<br>
-        cd nervatura<br>
-        docker run --rm -i -t -p 8080:8080 -p 5858:5858 \<br>
+        $ git clone https://github.com/nervatura/nervatura.git<br><br>
+        $ cd nervatura<br><br>
+        $ docker run --rm -i -t -p 8080:8080 -p 5858:5858 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -v `pwd`:/app/src -w /app/src \<br>
         &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
         &nbsp;&nbsp;--link mysql \<br>
@@ -889,33 +1088,33 @@
         Several database files can be created.</p>
       <p><b>PostgeSQL</b> install:</p>
       <p class="code" style="text-align: left;">
-        docker create -i -t -p 5432:5432 \<br>
+        $ docker create -i -t -p 5432:5432 \<br>
         &nbsp;&nbsp;-v pgdata:/var/lib/postgresql/data \<br>
         &nbsp;&nbsp;-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=nervatura \<br>
-        &nbsp;&nbsp;--restart="always" --name postgres postgres<br>
-        docker start postgres
+        &nbsp;&nbsp;--restart="always" --name postgres postgres<br><br>
+        $ docker start postgres
       </p>
       <p><b>MySQL</b> install:</p>
       <p class="code" style="text-align: left;">
-        docker create -i -t -p 3306:3306 \<br>
+        $ docker create -i -t -p 3306:3306 \<br>
         &nbsp;&nbsp;-v mysql:/var/lib/mysql \<br>
         &nbsp;&nbsp;-e MYSQL_USER=nervatura -e MYSQL_PASSWORD=admin -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=nervatura \<br>
-        &nbsp;&nbsp;--restart="always" --name mysql mysql<br>
-        docker start mysql
+        &nbsp;&nbsp;--restart="always" --name mysql mysql<br><br>
+        $ docker start mysql
       </p>
       <p><b>MSSQL</b> install:</p>
       <p class="code" style="text-align: left;">
-        docker create -i -t -p 1433:1433 \<br>
+        $ docker create -i -t -p 1433:1433 \<br>
         &nbsp;&nbsp;-v mssql:/var/lib/mssql/data \<br>
         &nbsp;&nbsp;-e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=SA_admin' \<br>
         &nbsp;&nbsp;--restart="always" --name mssql microsoft/mssql-server-linux<br><br>
-        docker exec -it mssql "bash"<br>
-        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'SA_admin'<br>
-        CREATE DATABASE nervatura;<br>
-        GO<br>
-        QUIT<br>
-        exit<br><br>
-        docker start mysql
+        $ docker exec -it mssql "bash"<br><br>
+        $ /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'SA_admin'<br><br>
+        sqlcmd> CREATE DATABASE nervatura;<br>
+        sqlcmd> GO<br>
+        sqlcmd> QUIT<br>
+        sqlcmd> exit<br><br>
+        $ docker start mssql
       </p>
       <p><b>Remote</b> database:</p> 
       <p>See more docker run <a 
@@ -1082,11 +1281,9 @@
     <li><i>pool_config</i>: See more <a href="https://github.com/grncdr/node-any-db-pool#api" target="blank">database agnostic connection pool</a></li>
     <li><i>python_script</i>: Path string. Default:'./lib/pylib'. The path where to look for Python 2 app. scripts.</li>
     <li><i>lang</i>: String. Default value: 'en'. Valid values: en.</li>
-    <li><i>enforces_ssl</i>: This setting enforces HTTPS connections on any incoming requests in production 
-      mode. Default true. See more <a href="https://github.com/hengkiardo/express-enforces-ssl" 
-      target="blank">express-enforces-ssl</a></li>
     <li><i>pg_ssl</i>: Enable postgres ssl enforcement or not when connect to server. Default false.</li>
     <li><i>mysql_ssl</i>: Enable mysql ssl enforcement or not when connect to server. Default false.</li>
+    <li><i>mssql_encrypt</i>: Enable mssql encrypt or not when connect to server. Default false.</li>
   </ul>
   
   <p>Initial setup (conf.js) and persistent server-side settings: data_dir/storage/data(.json)</p>
@@ -1109,7 +1306,8 @@
     <li><i>settings</i>: See more NAS Admin GUI/Server Settings. A restart is required!
       <ul style="padding-left:15px;">
         <li><i>nas_auth</i>: NAS Admin authentication strategy. Default:'local'. Valid values: 
-          local (username and password), azure (Azure AD OpenID Connect), google (Google OAuth 2.0)</li>
+          local (username and password), amazon (Amazon OAuth 2.0), azure (Azure AD OpenID Connect), 
+          google (Google OAuth 2.0)</li>
         <li><i>python2_path</i>: Path string. Default:'python'. The path where to locate the "python" executable.
           Optional, for the server-side Nervatura Report.</li>
         <li><i>max_content_length</i>: Integer. Default value: 20000. See more <a href="https://github.com/ericmdantas/express-content-length-validator" 

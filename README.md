@@ -63,7 +63,7 @@ and [https://localhost:8080/](https://localhost:8080/)
 
 Please see more the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/views/docs/nas.html):
   * Optional packages
-  * Cloud Hosting Services
+  * Cloud Hosting Services: AWS, App Engine, Azure, OpenShift and Docker
   * Server config
   * Other recipes
 
@@ -72,8 +72,3 @@ Please see more the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/
 [Nervatura Wiki](https://github.com/nervatura/nervatura/wiki)
 
 More info see http://www.nervatura.com.
-
-## Previous (Python) version
-
-The Nervatura Framework v1.* is based on the Python/WEB2PY technology.
-Please see https://github.com/nervatura/nerva2py
