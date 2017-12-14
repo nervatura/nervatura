@@ -1420,14 +1420,14 @@
         <li>add link to mysql database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
-        $ git clone https://github.com/nervatura/nervatura-express.git<br><br>
+        $ git clone https://github.com/nervatura/nervatura-express.git nervatura<br><br>
         $ cd nervatura<br><br>
         $ docker run --rm -i -t -p 8080:8080 -p 5858:5858 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -v `pwd`:/app/src -w /app/src \<br>
         &nbsp;&nbsp;-e NODE_ENV=development -e NERVATURA_DATA_DIR=/app/data \<br>
         &nbsp;&nbsp;--link mysql \<br>
         &nbsp;&nbsp;--name nervatura nervatura/nervatura:latest \<br>
-        &nbsp;&nbsp;node --debug=5858 server.js
+        &nbsp;&nbsp;node --inspect=5858 server.js
       </p>
       
       <p><span style="color:#8B1A1A;font-weight:bold;">Databases support</span></p>
