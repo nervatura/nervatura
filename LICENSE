@@ -41,7 +41,7 @@ The javascript and python licenses are in the code itself. Here we list some of 
 #### node_modules folder: 
 The full list of the modules please see the (package.json) file
 
-#### lib/pylib folder:
+#### pylib folder:
 
 #### pyFPDF (Python, Nervatura Report)
 Copyright © 2008, Mariano Reingart

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<data timestamp="<%- timestamp %>" verno="<%- version %>"><% dbs.forEach(function(mom) {mom.data.forEach(function(row) { %>
-<<%- mom.datatype %>>
-<% row.forEach(function(field) { %> <field> <% for (var fieldname in field) { %>
-<<%- fieldname %>><![CDATA[<%- field[fieldname] %>]]></<%- fieldname %>><% } %>
-</field>
-<% }); %></<%- mom.datatype %>><% });}); %>
-</data>

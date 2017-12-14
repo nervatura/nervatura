@@ -1,7 +1,7 @@
 Nervatura
 =========
 
-Open Source Business Management Framework for [Node.js](http://nodejs.org)
+Open Source Business Management Framework
 
 ## Features
 
@@ -22,7 +22,7 @@ The framework is based on Nervatura [Object Model](https://github.com/nervatura/
 * well documented, easy data management
 
 The Nervatura Framework is a set of open source applications and documentations. It enables to easily create a basic open-data business management system. Its key elements are:
-  * [Application Server and Admin GUI](https://github.com/nervatura/nervatura/wiki/Application-Server-and-Admin-GUI-%28NAS%29) to handle Nervatura databases: creation, data export, access rights system
+  * [Nervatura Admin Tools](https://github.com/nervatura/nervatura/wiki/Nervatura-Admin-Tools-(NAS)) to handle Nervatura databases: creation, data export, access rights system
   * [Data Interface](https://github.com/nervatura/nervatura/wiki/Nervatura-Data-Interface-%28NDI%29) as a non-graphical, command-based user interface
   * [Programming Interface](https://github.com/nervatura/nervatura/wiki/Nervatura-Programming-Interface-%28NPI%29) for applications that would use the data
   * [Client- and server-side data reporting](https://github.com/nervatura/nervatura/wiki/Nervatura-Report-%28NDR%29)
@@ -32,38 +32,21 @@ Developed as open-source project and can be used freely under the scope of [LGPL
 
 Homepage: http://www.nervatura.com
 
-## Installation & Quick Start
+## Quick Start
 
-    $ npm install nervatura --production
+Nervatura Core Package:
 
-or
+    $ npm install nervatura --production --save
 
-    $ git clone https://github.com/nervatura/nervatura.git
+Nervatura with Express Framework:
+
+    $ git clone https://github.com/nervatura/nervatura-express.git
     $ cd nervatura
     $ npm install --production
 
-Start the server
-
-* development mode:
-```
-  $ npm run dev
-```
-and [http://localhost:8080/](http://localhost:8080/)
-
-* production mode:
-```
-  $ npm start
-```
-and [https://localhost:8080/](https://localhost:8080/)
-
-* or change the file [.npmrc](.npmrc): production = true/false, and
-```
-  $ npm start
-```    
-
-Please see more the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/views/docs/nas.html):
-  * Optional packages
-  * Cloud Hosting Services: AWS, App Engine, Azure, OpenShift and Docker
+For more packages and deployment options, please see the [Admin Guide](https://rawgit.com/nervatura/nervatura/master/views/docs/nas.html):
+  * Nervatura packages
+  * Cloud Hosting Services
   * Server config
   * Other recipes
 

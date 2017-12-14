@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 	  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	  <title>Nervatura Application Server</title>
+	  <title>Nervatura Admin Guide</title>
 	  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
 			
@@ -30,40 +30,73 @@
       margin: 10px 0px;
       text-align: left;
 		}
+    th, td {
+      padding: 5px 8px;
+      border: 1px solid #e5e5e5;
+      border-collapse: collapse;
+    }
+    th {
+      font-weight: normal;
+      background-color: #e5e5e5;
+    }
 	  </style>
 	</head>
 <body class="body">
   <h1 align="center" style="margin-top: 0px;">
-    Nervatura Application Server 
+    Nervatura Admin Guide 
   </h1>
-  <h2 align="center">Admin Guide</h2>
-  <!--<p align="center"><b><i>Ver.No: <%= settings.version %></i></b></p>-->
   
   <ol style="color: #3B7687;">
     <li><b><a href="#install">Installation</a></b>
       <ul style="padding-left:5px;">
-        <li style="padding:3px 0px 0px;"><a href="#install_default">Default packages</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#install_default">Nervatura packages</a></li>
         <li style="padding:3px 0px 0px;"><a href="#install_quick">Quick Start</a></li>
-        <li style="padding:3px 0px 0px;"><a href="#install_optional">Optional packages</a></li>
       </ul>
     </li>
     <li style="padding:5px 0px 0px;"><b><a href="#cloud">Cloud Hosting Services</a></b>
       <ul style="padding-left:5px;">
-        <li style="padding:3px 0px 0px;"><a href="#aws">Amazon Web Services</a></li>
-        <li style="padding:3px 0px 0px;"><a href="#app_engine">Google App Engine</a></li>
-        <li style="padding:3px 0px 0px;"><a href="#azure">Microsoft Azure</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#aws">Amazon Web Services</a>
+          <ul style="padding-left:20px;">
+            <li style="padding:3px 0px 0px;"><a href="#aws_eb">Elastic Beanstalk</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#aws_lambda">Lambda Functions</a></li>
+          </ul>
+        </li>
+        <li style="padding:3px 0px 0px;"><a href="#gcloud">Google Cloud Platform</a>
+          <ul style="padding-left:20px;">
+            <li style="padding:3px 0px 0px;"><a href="#gcloud_app">App Engine</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#gcloud_functions">Cloud Functions</a></li>
+          </ul>
+        </li>
+        <li style="padding:3px 0px 0px;"><a href="#azure">Microsoft Azure</a>
+          <ul style="padding-left:20px;">
+            <li style="padding:3px 0px 0px;"><a href="#azure_web">Azure Web Apps</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#azure_functions">Azure Functions</a></li>
+          </ul>
+        </li>
         <li style="padding:3px 0px 0px;"><a href="#cloud_openshift">OpenShift</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#ibm">IBM Cloud</a>
+          <ul style="padding-left:20px;">
+            <li style="padding:3px 0px 0px;"><a href="#ibm_foundry">Cloud Foundry</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#ibm_functions">Cloud Functions</a></li>
+          </ul>
+        </li>
         <li style="padding:3px 0px 0px;"><a href="#cloud_docker">Docker</a></li>
       </ul>
     </li>
     <li style="padding:5px 0px 0px;"><b><a href="#config">Server config</a></b></li>
     <li style="padding:5px 0px 0px;"><b><a href="#other">Other recipes</a></b>
       <ul style="padding-left:5px;">
-        <li style="padding:3px 0px 0px;"><a href="#customize">Customize the appearance</a></li>
-        <li style="padding:3px 0px 0px;"><a href="#migration">Database migration</a></li>
-        <li style="padding:3px 0px 0px;"><a href="#printer">Server-side printers</a></li>
+        <li style="padding:3px 0px 0px;"><a href="#sls_admin">Serverless Admin</a></li>
         <li style="padding:3px 0px 0px;"><a href="#emails">Sending Emails</a></li>
-        <li style="padding:3px 0px 0px;"><a href="#security">Security Issues</a></li>
+        <li><a href="#express_recipes">Express Framework</a>
+          <ul style="padding-left:20px;">
+            <li style="padding:3px 0px 0px;"><a href="#customize">Customize the appearance</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#migration">Database migration</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#printer">Server-side printing</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#session">Session and data store</a></li>
+            <li style="padding:3px 0px 0px;"><a href="#security">Security Issues</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ol>
@@ -75,19 +108,87 @@
 	</h3>
   
   <ul>
-    <li><b><a name="install_default">Default packages</a></b>
+    <li><b><a name="install_default">Nervatura packages</a></b>
+      <p>Nervatura Core Package:</p>
       <p class="code" style="text-align: left;">
-        $ npm install nervatura --production
+        $ npm install nervatura --production --save
       </p>
-      or
-      <p class="code" style="text-align: left;">
-        $ git clone https://github.com/nervatura/nervatura.git<br>
-        $ cd nervatura<br>
-        $ npm install --production
+      <p>
+        <table >
+          <thead>
+            <th>Package</th>
+            <th>Framework</th>
+            <th>Admin</th>
+            <th>NDI</th>
+            <th>NPI</th>
+            <th>Report</th>
+            <th>Docs</th>
+            <th>Comment</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://github.com/nervatura/nervatura-azure/" target="_blank">nervatura-azure</a></td>
+              <td><a href="https://azure.microsoft.com/en-us/services/functions/" target="_blank">Azure Functions</a></td>
+              <td><a href="#sls_admin">SLS Admin</a></td>
+              <td>yes</td>
+              <td>yes</td>
+              <td>yes</td>
+              <td><a href="https://github.com/nervatura/nervatura/wiki/" target="_blank">online</a></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/nervatura/nervatura-express/" target="_blank">nervatura-express</a></td>
+              <td><a href="https://expressjs.com/" target="_blank">Express Framework</a></td>
+              <td><a href="https://github.com/nervatura/nervatura/wiki/Application-Server-and-Admin-GUI-(NAS)" target="_blank">NAS Admin</a></td>
+              <td>yes</td>
+              <td>yes</td>
+              <td>yes</td>
+              <td>contain</td>
+              <td>Additional example programs and downloads</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/nervatura/nervatura-gcloud/" target="_blank">nervatura-gcloud</a></td>
+              <td><a href="https://cloud.google.com/functions/" target="_blank">Google Cloud Functions</a></td>
+              <td><a href="#sls_admin">SLS Admin</a></td>
+              <td>yes</td>
+              <td>yes</td>
+              <td>yes</td>
+              <td><a href="https://github.com/nervatura/nervatura/wiki/" target="_blank">online</a></td>
+              <td>Experimental feature!</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/nervatura/nervatura-lambda/" target="_blank">nervatura-lambda</a></td>
+              <td><a href="https://aws.amazon.com/lambda/" target="_blank">AWS Lambda</a></td>
+              <td><a href="#sls_admin">SLS Admin</a></td>
+              <td>yes</td>
+              <td>yes</td>
+              <td>yes</td>
+              <td><a href="https://github.com/nervatura/nervatura/wiki/" target="_blank">online</a></td>
+              <td>Experimental feature!</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/nervatura/nervatura-openwhisk/" target="_blank">nervatura-openwhisk</a></td>
+              <td><a href="https://www.ibm.com/cloud/functions/" target="_blank">IBM Cloud Functions</a></td>
+              <td><a href="#sls_admin">SLS Admin</a></td>
+              <td>yes</td>
+              <td>yes</td>
+              <td>yes</td>
+              <td><a href="https://github.com/nervatura/nervatura/wiki/" target="_blank">online</a></td>
+              <td>Experimental feature!</td>
+            </tr>
+          </tbody>
+        </table>
       </p>
     </li>
     <li><b><a name="install_quick">Quick Start</a></b>
       <ul style="padding:10px;">
+        <li>Nervatura with Express Framework
+          <p class="code" style="text-align: left;">
+            $ git clone https://github.com/nervatura/nervatura-express.git nervatura<br>
+            $ cd nervatura<br>
+            $ npm install --production
+          </p>
+        </li>
         <li>development mode
           <p class="code" style="text-align: left;">
             $ npm run dev
@@ -100,32 +201,7 @@
           </p>
           <p>and <a href="https://localhost:8080/" target="_blank">https://localhost:8080/</a></p>
         </li>
-        <li>or change the file <a href="https://github.com/nervatura/nervatura/blob/master/.npmrc" 
-          target="blank">.npmrc</a>: production = true/false, and
-          <p class="code" style="text-align: left;">
-            $ npm start
-          </p>
-        </li>
       </ul>
-      
-    </li>
-    <li><b><a name="install_optional">Optional packages</a></b><br>
-      <p><span style="color:#8B1A1A;font-weight:bold;">Server-side printing</span></p>
-      <p>UNIX-like operating systems: <a href="http://www.cups.org/" target="_blank">CUPS</a> and 
-        <a href="https://github.com/tojocky/node-printer" target="_blank">node-printer</a></li></p>
-      <p class="code" style="text-align: left;">
-        $ npm install printer --save
-      </p>
-      <p>Windows systems: <a href="http://www.ghostscript.com/Ghostscript.html" target="_blank">Ghostscript</a> 
-        and <a href="http://pages.cs.wisc.edu/~ghost/gsview/gsprint.htm" target="_blank">GSPRINT</a></p>
-      <p><a href="http://www.google.com/cloudprint/learn/" target="_blank">Google Cloud Print</a>: 
-        <a href="https://github.com/simoncadman/CUPS-Cloud-Print" target="_blank">CUPS-Cloud-Print</a></p>
-      
-      <p><span style="color:#8B1A1A;font-weight:bold;">Session and data store</span></p>
-      <p>PouchDB:</p>
-      <p class="code" style="text-align: left;">
-        $ npm install pouchdb-node --save
-      </p>
     </li>
   </ul>
   
@@ -135,14 +211,15 @@
   
   <ul>
     <li><b><a name="aws">Amazon Web Services</a></b>
+      <p><a name="aws_eb"></a><span style="color:#8B1A1A;font-weight:bold;">Elastic Beanstalk</span></a></p>
       <p>If you're not already an AWS customer, you'll need to sign up. Signing up allows you to access 
         Elastic Beanstalk and other AWS services that you will need. The Elastic Beanstalk Command Line Interface 
         (EB CLI) is a command line client that you can use to create, configure, and manage Elastic Beanstalk 
         environments. Download and install the last <a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html" 
         target="blank">Amazon EB CLI</a>.</p>
-      <p>Clone the latest Nervatura version:</p>
+      <p>Clone the latest Nervatura Express version:</p>
       <p class="code" style="text-align: left;">
-        $ git clone https://github.com/nervatura/nervatura.git nervatura_aws
+        $ git clone https://github.com/nervatura/<b>nervatura-express</b>.git nervatura_aws
       </p>
       <p>Run <span class="code">eb init</span> in your application's project directory to configure the EB CLI and your project:</p>
       <p class="code" style="text-align: left;">
@@ -157,18 +234,40 @@
         $ eb create <b>[ENVIRONMENT_NAME]</b> --cname <b>[SUBDOMAIN_NAME]</b> --platform node.js --elb-type application
       </p>
 
-      <p>Launch your browser and view the app at http://<b>environment_name</b>.azurewebsites.net, by running 
-        the following command:</p>
+      <p>Launch your browser and view the app, by running the following command:</p>
       <p class="code" style="text-align: left;">
         $ eb open
       </p>
 
-      <p><span style="color:#8B1A1A;font-weight:bold;">Amazon (OAuth 2.0) authentication</span></p>
+      <p><a name="aws_lambda"></a><span style="color:#8B1A1A;font-weight:bold;">Lambda Functions*</span></a></p>
+      <p>Download and install the last <a href="http://docs.aws.amazon.com/cli/latest/userguide/installing.html" 
+        target="blank">Amazon AWS CLI</a>. Clone the latest Nervatura Lambda version:</p>
+      <p class="code" style="text-align: left;">
+        $ git clone https://github.com/nervatura/<b>nervatura-lambda</b>.git <br><br>
+        $ cd nervatura-lambda
+      </p>
+      <p>Create an Amazon S3 bucket:</p>
+      <p class="code" style="text-align: left;">
+        $ aws s3 mb s3://<b>[BUCKET_NAME]</b> --region <b>[REGION]</b>
+      </p>
+      <p>Package Nervatura template:</p>
+      <p class="code" style="text-align: left;">
+        $ aws cloudformation package --template-file template.yaml \<br>
+        &nbsp;&nbsp;--output-template-file ntura.yaml --s3-bucket <b>[BUCKET_NAME]</b>
+      </p>
+      <p>Deploy packaged Nervatura template:</p>
+      <p class="code" style="text-align: left;">
+        $ aws cloudformation deploy --template-file ./ntura.yaml \<br>
+        &nbsp;&nbsp;--stack-name <b>[STACK_NAME]</b> --capabilities CAPABILITY_IAM
+      </p>
+      <p style="font-weight:bold;">* Experimental feature! Use only for testing!</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Amazon (OAuth 2.0) authentication (Express Framework)</span></p>
       <p>The Amazon authentication strategy authenticates users using an Amazon account and OAuth 2.0 tokens. The 
         client ID and secret are obtained by registering an application at the <a 
         href="http://login.amazon.com/" target="_blank" >Login with Amazon Developer Center</a>.</p>
       <p>Before you deploy the application, modify the following section in the <a 
-        href="https://github.com/nervatura/nervatura/blob/master/.ebextensions/node-settings.config" 
+        href="https://github.com/nervatura/nervatura-express/blob/master/.ebextensions/node-settings.config" 
         target="blank"><b>node-settings.config</b></a> file:</p>
       <p class="code" style="text-align: left;">
         AMAZON_CLIENT_ID: <b>YOUR_AMAZON_CLIENT_ID</b><br>
@@ -218,7 +317,7 @@
         href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/AWSHowTo.RDS.html" 
         target="_blank" >Using Elastic Beanstalk with Amazon Relational Database Service</a>.</p>
       
-      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (Express Framework)</span></p>
       <p>1. Login to NAS Admin GUI</p>
       <p>2. Add/Edit a new customer database reference</p>
       <p>3.1 NAS SQLite database settings (optional)</p>
@@ -260,10 +359,24 @@
       <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
         then you can create a blank database again according to the previous instructions.</p>
 
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (Lambda Functions)</span></p>
+      <p>1. Configure your database settings in your <a href="https://github.com/nervatura/nervatura-lambda/blob/master/lib/databases.json" 
+          target="blank"><b>lib/databases.json</b></a> file.</p>
+      <p>2. Create a new Nervatura database:</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/create?alias=<b>[YOUR_ALIAS]</b>&code=<b>[SETTINGS_ADMIN_KEY]</b>
+      </p>
+      <p>3. Create a DEMO database (optional)</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/demo?database=<b>[YOUR_ALIAS]</b>&username=demo&password=none&code=<b>[SETTINGS_ADMIN_KEY]</b>
+      </p>
+
       <p><span style="color:#8B1A1A;font-weight:bold;">Sending Emails</span></p>
       <p>Configure your email settings in your <a 
-        href="https://github.com/nervatura/nervatura/blob/master/.ebextensions/node-settings.config" 
-        target="blank"><b>node-settings.config</b></a> file:</p>
+        href="https://github.com/nervatura/nervatura-express/blob/master/.ebextensions/node-settings.config" 
+        target="blank"><b>node-settings.config</b></a> (Express Framework) or in the <a 
+        href="https://github.com/nervatura/nervatura-lambda/blob/master/lib/settings.json" 
+        target="blank"><b>lib/settings.json</b></a> (Lambda Functions) file:</p>
       <ul>
         <li><p>Sending Emails using SMTP (<a href="https://nodemailer.com/" 
             target="blank">Nodemailer</a>)</p>
@@ -274,8 +387,7 @@
             SMTP_USER: <b>YOUR_SMTP_USER</b><br>
             SMTP_PASSWORD: <b>YOUR_SMTP_PASSWORD</b>
           </p></li>
-        <li><p><a href="https://cloud.google.com/appengine/docs/flexible/nodejs/sending-emails-with-mailjet" 
-            target="blank">Mailjet</a> settings, such as the API key and secret:</p>
+        <li><p><a href="https://www.mailjet.com/" target="blank">Mailjet</a> settings, such as the API key and secret:</p>
           <p class="code" style="text-align: left;">
             MJ_APIKEY_PUBLIC: <b>YOUR_MJ_APIKEY_PUBLIC</b><br>
             MJ_APIKEY_PRIVATE: <b>YOUR_MJ_APIKEY_PRIVATE</b>
@@ -293,29 +405,17 @@
         $ git add .<br><br>
         $ eb deploy --staged
       </p>
-      <p>You can override the NAS database settings in your <a 
-        href="https://github.com/nervatura/nervatura/blob/master/.ebextensions/node-settings.config" 
-        target="blank"><b>node-settings.config</b></a> file. For example:</p>
-      <p class="code" style="text-align: left;">
-        NAS_AUTH: amazon<br>
-        PYTHON2_PATH: python2<br>
-        MAX_CONTENT_LENGTH: 25000<br>
-        SESSION_SECRET: SECRET_12345<br>
-      </p>
-      <p>Or from the command line:</p>
-      <p class="code" style="text-align: left;">
-        $ eb setenv NAS_AUTH=amazon
-      </p>
 
     </li>
-    <li><b><a name="app_engine">Google App Engine</a></b>
+    <li><b><a name="gcloud">Google Cloud Platform</a></b>
       <p>Use the <a href="https://console.cloud.google.com/" target="blank">Cloud Platform Console</a> 
-        to create a new Cloud Platform project, create an App Engine application, and enable billing.<br>
-        Download and install the <a href="https://cloud.google.com/sdk/docs/" target="blank">Google Cloud SDK</a> 
+        to create a new Cloud Platform project and enable billing. Download and install the <a 
+          href="https://cloud.google.com/sdk/docs/" target="blank">Google Cloud SDK</a> 
         and then initialize the gcloud tool.</p>
-      <p>Clone the latest Nervatura version:</p>
+      <p><a name="gcloud_app"></a><span style="color:#8B1A1A;font-weight:bold;">App Engine</span></a></p>
+      <p>Clone the latest Nervatura Express version:</p>
       <p class="code" style="text-align: left;">
-        $ git clone https://github.com/nervatura/nervatura.git nervatura_gae<br><br>
+        $ git clone https://github.com/nervatura/<b>nervatura-express</b>.git nervatura_gae<br><br>
         $ cd nervatura_gae<br>
       </p>
       <p>Remove the Dockerfile from this directory:</p>
@@ -323,10 +423,10 @@
         $ rm ./Dockerfile
       </p>
       <p>If necessary, modify the <a 
-        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        href="https://github.com/nervatura/nervatura-express/blob/master/app.yaml" 
         target="blank"><b>app.yaml</b></a> and <a 
-        href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
-        target="blank">lib/node/<b>conf.js</b></a> file (see below). Deploy the 
+        href="https://github.com/nervatura/nervatura-express/blob/master/lib/settings.json" 
+        target="blank">lib/<b>settings.json</b></a> file (see below). Deploy the 
         Nervatura by running the following command:</p>
       <p class="code" style="text-align: left;">
         $ gcloud app deploy --project <span style="font-weight:bold;">YOUR_PROJECT_ID</span>
@@ -337,14 +437,33 @@
         $ gcloud app browse
       </p>
 
-      <p><span style="color:#8B1A1A;font-weight:bold;">Google (OAuth 2.0) authentication</span></p>
+      <p><a name="gcloud_functions"></a><span style="color:#8B1A1A;font-weight:bold;">Cloud Functions*</span></a></p>
+      <p>Enable the Cloud Functions API. If you don't already have a Cloud Storage Bucket, 
+        <a href="https://console.cloud.google.com/storage/browser" target="_blank">create one</a>.</p>
+      <p>Clone the latest Nervatura Cloud Functions version:</p>
+      <p class="code" style="text-align: left;">
+        $ git clone https://github.com/nervatura/<b>nervatura-gcloud</b>.git nervatura_gcloud<br><br>
+        $ cd nervatura_gcloud<br>
+      </p>
+      <p>If necessary, modify the <a 
+        href="https://github.com/nervatura/nervatura-gcloud/blob/master/lib/settings.json" 
+        target="blank">lib/<b>settings.json</b></a> file (see below). Deploy the 
+        Nervatura by running the following command:</p>
+      <p class="code" style="text-align: left;">
+        $ gcloud beta functions deploy ndi --stage-bucket <b>YOUR_BUCKET_NAME</b> --trigger-http<br><br>
+        $ gcloud beta functions deploy npi --stage-bucket <b>YOUR_BUCKET_NAME</b> --trigger-http<br><br>
+        $ gcloud beta functions deploy nas --stage-bucket <b>YOUR_BUCKET_NAME</b> --trigger-http
+      </p>
+      <p style="font-weight:bold;">* Experimental feature! Use only for testing!</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Google (OAuth 2.0) authentication (Express Framework)</span></p>
       <p>Enable the <a href="https://console.cloud.google.com/flows/enableapi?apiid=plus" 
         target="blank">Google+ API</a>. Any application that uses OAuth 2.0 to access Google APIs must have authorization credentials that identify 
         the application to Google's OAuth 2.0 server. See more here: <a 
         href="https://developers.google.com/identity/protocols/OAuth2WebServer" target="blank">Using OAuth 2.0 
         for Web Server Applications</a></p>
       <p>Before you deploy the application, modify the following section in the <a 
-        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" target="blank"><b>app.yaml</b></a> file:</p>
+        href="https://github.com/nervatura/nervatura-express/blob/master/app.yaml" target="blank"><b>app.yaml</b></a> file:</p>
       <p class="code" style="text-align: left;">
         GOOGLE_CLIENT_ID: <b>YOUR_GOOGLE_CLIENT_ID</b><br>
         GOOGLE_CLIENT_SECRET: <b>YOUR_GOOGLE_CLIENT_SECRET</b>
@@ -390,7 +509,7 @@
         href="https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen" target="blank">Creating MySQL Instances</a></p>
       <p>To allow your app to connect to your Cloud SQL instance when the app is deployed, add the user, 
         password, database, and instance connection name variables from Cloud SQL to the related environment 
-        variables in the <a href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        variables in the <a href="https://github.com/nervatura/nervatura-express/blob/master/app.yaml" 
         target="blank"><b>app.yaml</b></a> file: The deployed application will connect via unix sockets.</p>
       <p class="code" style="text-align: left;">
         env_variables:<br>
@@ -409,7 +528,7 @@
         href="https://cloud.google.com/appengine/docs/flexible/nodejs/using-cloud-sql-postgres" 
         target="blank">Using Cloud SQL for PostgreSQL</a></p>
       
-      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (Express Framework)</span></p>
       <p>1. Login to NAS Admin GUI</p>
       <p>2. Add/Edit a new customer database reference</p>
       <p>3.1 NAS SQLite database settings (optional)</p>
@@ -450,10 +569,24 @@
       <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
         then you can create a blank database again according to the previous instructions.</p>
 
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (Cloud Functions)</span></p>
+      <p>1. Configure your database settings in your <a href="https://github.com/nervatura/nervatura-gcloud/blob/master/lib/databases.json" 
+          target="blank"><b>lib/databases.json</b></a> file.</p>
+      <p>2. Create a new Nervatura database:</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/create?alias=<b>[YOUR_ALIAS]</b>&code=<b>[SETTINGS_ADMIN_KEY]</b>
+      </p>
+      <p>3. Create a DEMO database (optional)</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/demo?database=<b>[YOUR_ALIAS]</b>&username=demo&password=none&code=<b>[SETTINGS_ADMIN_KEY]</b>
+      </p>
+
       <p><span style="color:#8B1A1A;font-weight:bold;">Sending Emails</span></p>
       <p>Configure your email settings in your <a 
-        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
-        target="blank"><b>app.yaml</b></a> file:</p>
+        href="https://github.com/nervatura/nervatura-express/blob/master/app.yaml" 
+        target="blank"><b>app.yaml</b></a> (Express Framework) or in the <a 
+        href="https://github.com/nervatura/nervatura-gcloud/blob/master/lib/settings.json" 
+        target="blank"><b>lib/settings.json</b></a> (Cloud Functions) file:</p>
       <ul>
         <li><p>Sending Emails using SMTP (<a href="https://nodemailer.com/" 
             target="blank">Nodemailer</a>)</p>
@@ -472,21 +605,10 @@
           </p>
         </li>
       </ul>
-      
-      <p><span style="color:#8B1A1A;font-weight:bold;">Overwrite the NAS database settings</span></p>
-      <p>You can override the server database settings in your <a 
-        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
-        target="blank"><b>app.yaml</b></a> file. For example:</p>
-      <p class="code" style="text-align: left;">
-        NAS_AUTH: google<br>
-        PYTHON2_PATH: python2<br>
-        MAX_CONTENT_LENGTH: 25000<br>
-        SESSION_SECRET: SECRET_12345<br>
-      </p>
 
-      <p><span style="color:#8B1A1A;font-weight:bold;">Configuring your App</span></p>
+      <p><span style="color:#8B1A1A;font-weight:bold;">Configuring your App (Express Framework)</span></p>
       <p>A Node.js App Engine application can be configured by a file named <a 
-        href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
+        href="https://github.com/nervatura/nervatura-express/blob/master/app.yaml" 
         target="blank"><b>app.yaml</b></a> that contains cpu, memory, network and disk resources, 
         automatic or manual scaling configurations, and general settings. Please see more:
       </p>
@@ -516,11 +638,12 @@
          href="https://azure.microsoft.com/free/" target="blank">free account</a> before 
          you begin. Install or upgrade the last version of the <a 
          href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli" 
-         target="blank">Azure CLI 2.0</a>.<br>
-         <a href="https://docs.microsoft.com/en-us/azure/app-service/scripts/app-service-cli-deploy-local-git" 
-         target="blank">Create a web app</a> from a local Git repository.
+         target="blank">Azure CLI 2.0</a>.
       </p>
-      <ul>
+      <p><a name="azure_web"></a><span style="color:#8B1A1A;font-weight:bold;">Azure Web Apps</span></a></p>
+      <p><a href="https://docs.microsoft.com/en-us/azure/app-service/scripts/app-service-cli-deploy-local-git" 
+         target="blank">Create a web app</a> from a local Git repository.</p>
+      <ul style="padding-left:15px;">
         <li>Create a resource group (see more <a 
           href="https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_list_locations" 
           target="blank">list-locations</a>):
@@ -538,7 +661,7 @@
             &nbsp;&nbsp;--is-linux --number-of-workers 3 --sku B1
           </p>
         </li>
-        <li>Create a web app (see more <a 
+        <li>Create a <a href="https://azure.microsoft.com/en-us/services/app-service/web/" target="blank">web app</a> (see more <a 
           href="https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az_webapp_list_runtimes" 
           target="blank">list-runtimes</a>):
           <p class="code" style="text-align: left;">
@@ -568,9 +691,9 @@
           <p class="code" style="text-align: left;">
             $ git clone https://<b>[USERNAME]</b>@<b>[APP_NAME]</b>.scm.azurewebsites.net/<b>[APP_NAME]</b>.git
           </p>
-          And upgrade to the latest Nervatura version (Linux sample):
+          And upgrade to the latest Nervatura Express version (Linux sample):
           <p class="code" style="text-align: left;">
-            $ git clone https://github.com/nervatura/nervatura.git nervatura_latest<br>
+            $ git clone https://github.com/nervatura/<b>nervatura-express</b>.git nervatura_latest<br>
             $ rm -r <b>[APP_NAME]</b>/*<br>
             $ cp -r nervatura_latest/* <b>[APP_NAME]</b>/<br>
             $ cd <b>[APP_NAME]</b><br>
@@ -584,13 +707,64 @@
           target="_blank">in one step</a> (if you don't want to modify anything):
           <p class="code" style="text-align: left;">
             $ az webapp deployment source config --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-            &nbsp;&nbsp;--repo-url https://github.com/nervatura/nervatura.git --branch master --manual-integration
+            &nbsp;&nbsp;--repo-url https://github.com/nervatura/<b>nervatura-express</b>.git --branch master --manual-integration
           </p>
         </li>
       </ul>
       <p>See the web app here: http://<b>app_name</b>.azurewebsites.net</p>
 
-      <p><span style="color:#8B1A1A;font-weight:bold;">Microsoft Azure Active Directory authentication (OpenID Connect)</span></p>
+      <p><a name="azure_functions"></a><span style="color:#8B1A1A;font-weight:bold;">Azure Functions</span></a></p>
+      <ul style="padding-left:15px;">
+        <li>Create a resource group (see more <a 
+          href="https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_list_locations" 
+          target="blank">list-locations</a>):
+          <p class="code" style="text-align: left;">
+            $ az group create --location northeurope --name <b>[GROUP_NAME]</b>
+          </p>
+        </li>
+        <li>Create a storage account:
+          <p class="code" style="text-align: left;">
+            $ az storage account create --name <b>[ACC_NAME]</b> --resource-group <b>[GROUP_NAME]</b>
+          </p>
+        </li>
+        <li>Create a <a href="https://azure.microsoft.com/en-us/services/functions/" target="blank">function</a>:
+          <p class="code" style="text-align: left;">
+            $ az functionapp create --name <b>[APP_NAME]</b> --resource-group <b>[GROUP_NAME]</b> --storage-account <b>[ACC_NAME]</b> \<br />
+            &nbsp;&nbsp;--deployment-local-git 
+          </p>
+        </li>
+        <li>Set the account-level deployment credentials:
+          <p class="code" style="text-align: left;">
+            $ az functionapp deployment user set --user-name <b>[USERNAME]</b> --password <b>[PASSWORD]</b>
+          </p>
+        </li>
+        <li>
+          Clone and configure the (empty) local git directory:
+          <p class="code" style="text-align: left;">
+            $ git clone https://<b>[USERNAME]</b>@<b>[APP_NAME]</b>.scm.azurewebsites.net/<b>[APP_NAME]</b>.git
+          </p>
+          And upgrade to the latest Nervatura Azure version (Linux sample):
+          <p class="code" style="text-align: left;">
+            $ git clone https://github.com/nervatura/<b>nervatura-azure</b>.git nervatura_latest<br>
+            $ rm -r <b>[APP_NAME]</b>/*<br>
+            $ cp -r nervatura_latest/* <b>[APP_NAME]</b>/<br>
+            $ cd <b>[APP_NAME]</b><br>
+            $ git add .<br>
+            $ git commit -a -m 'latest'<br>
+            $ git push
+          </p>
+        </li>
+        <li>Or all <a 
+          href="https://docs.microsoft.com/en-us/azure/app-service/scripts/app-service-cli-deploy-github?toc=%2fcli%2fazure%2ftoc.json"
+          target="_blank">in one step</a> (if you don't want to modify anything):
+          <p class="code" style="text-align: left;">
+            $ az functionapp deployment source config --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            &nbsp;&nbsp;--repo-url https://github.com/nervatura/<b>nervatura-azure</b>.git --branch master --manual-integration
+          </p>
+        </li>
+      </ul>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Microsoft Azure Active Directory authentication (Express Framework)</span></p>
       <p>Login to the Azure Active Directory portal and register your app. See more here:</p>
       <ul>
         <li><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-devquickstarts-openidconnect-nodejs" 
@@ -660,19 +834,17 @@
       </p>
       <p>Set some environment variables:</p>
       <p class="code" style="text-align: left;">
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_MYSQL_HOST=<b>[SERVER_NAME]</b>.mysql.database.azure.com<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_MYSQL_USERNAME=<b>[ADMIN_NAME]</b>@<b>[SERVER_NAME]</b><br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_MYSQL_PASSWORD=<b>[ADMIN_PASSWORD]</b>
       </p>
       <p>Enable ssl enforcement when connect to server. (Optional.)</p>
       <p class="code" style="text-align: left;">
         $ az mysql server update --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br />
-        &nbsp;&nbsp;--ssl-enforcement Enabled<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings MYSQL_SSL=require
+        &nbsp;&nbsp;--ssl-enforcement Enabled
       </p>
       <p>See more here: <a 
         href="https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-cli" 
@@ -693,11 +865,11 @@
       </p>
       <p>Set some environment variables:</p>
       <p class="code" style="text-align: left;">
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_PG_HOST=<b>[SERVER_NAME]</b>.postgres.database.azure.com<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_PG_USERNAME=<b>[ADMIN_NAME]</b>@<b>[SERVER_NAME]</b><br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_PG_PASSWORD=<b>[ADMIN_PASSWORD]</b>
       </p>
       <p>Enable ssl enforcement when connect to server. (Optional. If you're getting error 
@@ -706,9 +878,7 @@
         target="blank">ECONNRESET with unpooled connection</a>)</p>
       <p class="code" style="text-align: left;">
         $ az postgres server update --resource-group <b>[GROUP_NAME]</b> --name <b>[SERVER_NAME]</b> \<br />
-        &nbsp;&nbsp;--ssl-enforcement Enabled<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings PGSSLMODE=require
+        &nbsp;&nbsp;--ssl-enforcement Enabled<br />
       </p>
       <p>See more here: <a 
         href="https://docs.microsoft.com/en-us/azure/postgresql/quickstart-create-server-database-azure-cli" 
@@ -731,20 +901,18 @@
       </p>
       <p>Set some environment variables:</p>
       <p class="code" style="text-align: left;">
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings MSSQL_ENCRYPT=require<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_SQL_HOST=<b>[SERVER_NAME]</b>.database.windows.net<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_SQL_USERNAME=<b>[ADMIN_NAME]</b>@<b>[SERVER_NAME]</b><br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+        $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
         &nbsp;&nbsp;--settings AZURE_SQL_PASSWORD=<b>[ADMIN_PASSWORD]</b>
       </p>
       <p>See more here: <a 
         href="https://docs.microsoft.com/en-us/azure/sql-database/sql-database-get-started-cli" 
         target="blank">Create a single Azure SQL database using the Azure CLI</a></p>
 
-      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database</span></p>
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (Express Framework)</span></p>
       <p>1. Login to NAS Admin GUI</p>
       <p>2. Add/Edit a new customer database reference</p>
       <p>3.1 NAS SQLite database settings (optional)</p>
@@ -822,46 +990,47 @@
       <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
         then you can create a blank database again according to the previous instructions.</p>
 
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (Azure Functions)</span></p>
+      <p>1. Configure your database settings in your <a href="https://github.com/nervatura/nervatura-azure/blob/master/lib/databases.json" 
+          target="blank"><b>lib/databases.json</b></a> file.</p>
+      <p>2. Create a new Nervatura database:</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/create?alias=<b>[YOUR_ALIAS]</b>&code=<b>[YOUR_FUNCTION_KEY]</b>
+      </p>
+      <p>See more: <a 
+        href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook#authorization-keys" 
+        target="blank">Functions authorization keys</a></p>
+      <p>3. Create a DEMO database (optional)</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/demo?database=<b>[YOUR_ALIAS]</b>&username=demo&password=none&code=<b>[YOUR_FUCCTION_KEY]</b>
+      </p>
+
       <p><span style="color:#8B1A1A;font-weight:bold;">Sending Emails</span></p>
       <p>Configure your email settings in your application environment variables:</p>
       <ul>
         <li><p>Sending Emails using SMTP (<a href="https://nodemailer.com/" 
             target="blank">Nodemailer</a>)</p>
           <p class="code" style="text-align: left;">
-            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
             &nbsp;&nbsp;--settings SMTP_HOST=<b>[YOUR_SMTP_HOST]</b><br /><br />
-            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
             &nbsp;&nbsp;--settings SMTP_PORT=<b>[YOUR_SMTP_PORT]</b><br /><br />
-            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
             &nbsp;&nbsp;--settings SMTP_SECURE=<b>[YOUR_SMTP_SECURE]</b><br /><br />
-            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
             &nbsp;&nbsp;--settings SMTP_USER=<b>[YOUR_SMTP_USER]</b><br /><br />
-            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
             &nbsp;&nbsp;--settings SMTP_PASSWORD=<b>[YOUR_SMTP_PASSWORD]</b>
           </p></li>
-        <li><p><a href="https://cloud.google.com/appengine/docs/flexible/nodejs/sending-emails-with-mailjet" 
-            target="blank">Mailjet</a> settings, such as the API key and secret:</p>
+        <li><p><a href="https://www.mailjet.com/" target="blank">Mailjet</a> settings, such as the API key and secret:</p>
           <p class="code" style="text-align: left;">
-            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
             &nbsp;&nbsp;--settings MJ_APIKEY_PUBLIC=<b>[YOUR_MJ_APIKEY_PUBLIC]</b><br /><br />
-            $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
+            $ az <b>[webapp/functionapp]</b> config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
             &nbsp;&nbsp;--settings MJ_APIKEY_PRIVATE=<b>[YOUR_MJ_APIKEY_PRIVATE]</b>
           </p>
         </li>
       </ul>
-
-      <p><span style="color:#8B1A1A;font-weight:bold;">Overwrite the NAS database settings</span></p>
-      <p>You can override the server database settings in your application environment variables. For example:</p>
-      <p class="code" style="text-align: left;">
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings NAS_AUTH=azure<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings PYTHON2_PATH=python2<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings MAX_CONTENT_LENGTH=25000<br /><br />
-        $ az webapp config appsettings set --resource-group <b>[GROUP_NAME]</b> --name <b>[APP_NAME]</b> \<br />
-        &nbsp;&nbsp;--settings SESSION_SECRET=SECRET_12345
-      </p>
 
     </li>
 
@@ -876,7 +1045,7 @@
       <p>Create a <b>nervatura</b> (scaled) application (you can call your application whatever you want) 
         on OpenShift with the following command:</p>
       <p class="code" style="text-align: left;">
-        $ rhc app create nervatura nodejs --scaling --from-code=https://github.com/nervatura/nervatura.git<br>
+        $ rhc app create nervatura nodejs --scaling --from-code=https://github.com/nervatura/nervatura-express.git<br>
       </p>
       <p>This package includes 
         <a href="https://github.com/ramr/nodejs-custom-version-openshift" target="_blank">a dynamic Node.js build stage</a> 
@@ -962,7 +1131,7 @@
       <p>Upgrade to the latest Nervatura version (Linux)</p>
       <p class="code" style="text-align: left;">
         $ rhc git-clone -a nervatura<br>
-        $ git clone https://github.com/nervatura/nervatura.git nervatura_latest<br>
+        $ git clone https://github.com/nervatura/nervatura-express.git nervatura_latest<br>
         $ rm -r nervatura/*<br>
         $ cp -r nervatura_latest/* nervatura/<br>
         $ cd nervatura<br>
@@ -1000,6 +1169,186 @@
         $ rhc scp demo upload custom_report.xml app-root/runtime/repo/public/report/
       </p>
     </li>
+    <li><b><a name="ibm">IBM Cloud</a></b>
+      <p>If you don't have an IBM Cloud account, create a <a 
+         href="https://console.bluemix.net/registration?target=%2Fdashboard%2Fapps" target="blank">free account</a> before 
+         you begin.
+      </p>
+      <p><a name="ibm_foundry"></a><span style="color:#8B1A1A;font-weight:bold;">Cloud Foundry</span></a></p>
+      <p>Install or upgrade the last version of the <a 
+         href="https://github.com/cloudfoundry/cli#downloads" target="blank">Cloud Foundry CLI</a>. Clone the latest 
+         Nervatura Express version:</p>
+      <p class="code" style="text-align: left;">
+        $ git clone https://github.com/nervatura/<b>nervatura-express</b>.git nervatura_icf<br><br>
+        $ cd nervatura_icf<br>
+      </p>
+      <p>To deploy to IBM Cloud, it can be helpful to set up a manifest.yml file. The manifest.yml includes basic information 
+        about your app, such as the name, how much memory to allocate for each instance and the route. We've provided a 
+        sample manifest.yml file in the nervatura directory.</p>
+      <p>Run the following command to set your API endpoint, replacing the API-endpoint value with the API endpoint for your 
+        region. See more <a 
+          href="https://console.bluemix.net/docs/runtimes/nodejs/getting-started.html#getting-started-tutorial" 
+          target="blank">Getting started tutorial</a></p>
+      <p class="code" style="text-align: left;">
+        $ cf api <b>[API-endpoint]</b>
+      </p>
+      <p>Log in to your IBM Cloud account and push your app to IBM Cloud.</p>
+      <p class="code" style="text-align: left;">
+        $ cf login<br><br>
+        $ cf push<br>
+      </p>
+
+      <p><a name="ibm_functions"></a><span style="color:#8B1A1A;font-weight:bold;">Cloud Functions*</span></a></p>
+      <p>Install or upgrade the last version of the <a 
+         href="https://console.bluemix.net/openwhisk/cli" target="blank">IBM Cloud Functions CLI</a>. Log In to IBM Cloud.</p>
+      <p>Clone the latest Nervatura OpenWhisk version:</p>
+      <p class="code" style="text-align: left;">
+        $ git clone https://github.com/nervatura/<b>nervatura-openwhisk</b>.git<br><br>
+        $ cd nervatura-openwhisk<br>
+      </p>
+      <p>Run the deploy.sh file in the application's directory and deploy your project (linux only):</p>
+      <p class="code" style="text-align: left;">
+        $ bx login <br/><br/>
+        $ ./deploy.sh
+      </p>
+      <p style="font-weight:bold;">* Experimental feature! Use only for testing!</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Databases support</span></p>
+      <p><b>SQLite</b> install: Included by default. Recommended for testing only!</p>
+      
+      <p><b>PostgeSQL</b> install:</p>
+      <p><a href="https://console.bluemix.net/catalog/services/compose-for-postgresql" 
+        target="_blank">You can use the web interface</a> or create a PostgreSQL service instance 
+        by typing the <b>cf create-service</b> command:</p>
+      <p class="code" style="text-align: left;">
+        $ cf create-service compose-for-postgresql Standard <b>[SERVICE_INSTANCE_NAME]</b>
+      </p>
+      <p>Express Framework: <a 
+        href="https://docs.cloudfoundry.org/devguide/services/application-binding.html#bind"
+        target="_blank">Bind the service to your application</a></p>
+      <ul>
+        <li>by using the <b>cf bind-service</b> command (APP_NAME from the <a 
+          href="https://github.com/nervatura/nervatura-express/blob/master/manifest.yml" 
+          target="blank">manifest.yml</a>):
+          <p class="code" style="text-align: left;">
+            $ cf bind-service <b>[APP_NAME]</b> <b>[SERVICE_INSTANCE_NAME]</b>
+          </p>
+        </li>
+        <li>or you can use the application <a 
+          href="https://github.com/nervatura/nervatura-express/blob/master/manifest.yml" 
+          target="blank">manifest.yml</a> to bind the service instance during push:
+          <p class="code" style="text-align: left;">
+            services:<br>
+            &nbsp;&nbsp;SERVICE_INSTANCE_NAME
+          </p>
+        </li>
+      </ul>
+      
+      <p><b>MySQL</b> install:</p>
+      <p><a href="https://console.bluemix.net/catalog/services/compose-for-mysql" 
+        target="_blank">You can use the web interface</a> or create a MySQL service instance 
+        by typing the <b>cf create-service</b> command:</p>
+      <p class="code" style="text-align: left;">
+        $ cf create-service compose-for-mysql Standard <b>[SERVICE_INSTANCE_NAME]</b>
+      </p>
+      <p>Express Framework: <a 
+        href="https://docs.cloudfoundry.org/devguide/services/application-binding.html#bind"
+        target="_blank">Bind the service to your application</a></p>
+      <ul>
+        <li>by using the <b>cf bind-service</b> command (APP_NAME from the <a 
+          href="https://github.com/nervatura/nervatura-express/blob/master/manifest.yml" 
+          target="blank">manifest.yml</a>):
+          <p class="code" style="text-align: left;">
+            $ cf bind-service <b>[APP_NAME]</b> <b>[SERVICE_INSTANCE_NAME]</b>
+          </p>
+        </li>
+        <li>or you can use the application <a 
+          href="https://github.com/nervatura/nervatura-express/blob/master/manifest.yml" 
+          target="blank">manifest.yml</a> to bind the service instance during push:
+          <p class="code" style="text-align: left;">
+            services:<br>
+            &nbsp;&nbsp;SERVICE_INSTANCE_NAME
+          </p>
+        </li>
+      </ul>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (Express Framework)</span></p>
+      <p>1. Login to NAS Admin GUI</p>
+      <p>2. Add/Edit a new customer database reference</p>
+      <p>3.1 NAS SQLite database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>demo</b> (or what you prefer)</li>
+        <li>Engine: <b>SQLite</b></li>
+        <li>Host: <b>leave the field empty, not needed</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>demo</b> (or what you prefer)</li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      <p><i>You can create an unlimited number of SQLite databases. Recommended for testing only!</i></p>
+      
+      <p>3.2. NAS PostgreSql and MySQL database settings (optional)</p>
+      <ul>
+        <li>Alias: <b>pgdemo</b> or <b>mydemo</b> (or what you prefer)</li>
+        <li>Engine: <b>PostgreSQL</b> or <b>MySQL</b></li>
+        <li>Host: <b>$VCAP_SERVICES</b></li>
+        <li>Port: <b>leave the field empty, not needed</b></li>
+        <li>Database: <b>[SERVICE_INSTANCE_NAME] or leave the field empty</b></li>
+        <li>UserName: <b>leave the field empty, not needed</b></li>
+        <li>Password: <b>leave the field empty, not needed</b></li>
+        <li>Other settings: <b>default</b> (or what you prefer)</li>
+      </ul>
+      
+      <p>4. Create a new Nervatura database</p>
+      <p>Database alias:</p>
+      <ul>
+        <li><b>demo</b></li>
+        <li>or <b>pgdemo</b></li>
+        <li>or <b>mydemo</b></li>
+        <li>(or whatever alias you created)</li>
+      </ul>
+      <p><i>All existing data of the database will be lost!</i></p>
+      
+      <p>5. Create a DEMO database (optional)</p>
+      <p>For testing you can fill in the database with some dummy data. If you don't need those later, 
+        then you can create a blank database again according to the previous instructions.</p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Create a new Nervatura database (OpenWhisk Functions)</span></p>
+      <p>1. Configure your database settings in your <a 
+        href="https://github.com/nervatura/nervatura-lambda/blob/master/lib/databases.json" 
+        target="blank"><b>lib/databases.json</b></a> file.</p>
+      <p>2. Create a new Nervatura database:</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/create?alias=<b>[YOUR_ALIAS]</b>&code=<b>[SETTINGS_ADMIN_KEY]</b>
+      </p>
+      <p>3. Create a DEMO database (optional)</p>
+      <p class="code" style="text-align: left;">
+        [HOST_URL]/nas/database/demo?database=<b>[YOUR_ALIAS]</b>&username=demo&password=none&code=<b>[SETTINGS_ADMIN_KEY]</b>
+      </p>
+
+      <p><span style="color:#8B1A1A;font-weight:bold;">Sending Emails</span></p>
+      <p>Configure your email settings in your <a href="https://github.com/nervatura/nervatura-express/blob/master/manifest.yml" 
+          target="blank"><b>manifest.yml</b></a> file (Express Framework) or in the <a 
+        href="https://github.com/nervatura/nervatura-openwhisk/blob/master/lib/settings.json" 
+        target="blank"><b>lib/settings.json</b></a> (OpenWhisk Functions) file:</p>
+      <ul>
+        <li><p>Sending Emails using SMTP (<a href="https://nodemailer.com/" 
+            target="blank">Nodemailer</a>)</p>
+          <p class="code" style="text-align: left;">
+            SMTP_HOST: <b>YOUR_SMTP_HOST</b><br>
+            SMTP_PORT: <b>YOUR_SMTP_PORT</b><br>
+            SMTP_SECURE: <b>YOUR_SMTP_SECURE</b><br>
+            SMTP_USER: <b>YOUR_SMTP_USER</b><br>
+            SMTP_PASSWORD: <b>YOUR_SMTP_PASSWORD</b>
+          </p></li>
+        <li><p><a href="https://www.mailjet.com/" target="blank">Mailjet</a> settings, such as the API key and secret:</p>
+          <p class="code" style="text-align: left;">
+            MJ_APIKEY_PUBLIC: <b>YOUR_MJ_APIKEY_PUBLIC</b><br>
+            MJ_APIKEY_PRIVATE: <b>YOUR_MJ_APIKEY_PRIVATE</b>
+          </p>
+        </li>
+      </ul>
+
+    </li>
     <li><b><a name="cloud_docker">Docker</a></b>
       <p><a href="https://www.docker.com/what-docker" target="_blank">Docker</a> allows you to 
         package an application with all of its dependencies into a standardized unit for software 
@@ -1016,12 +1365,12 @@
         <li>Additional packages: nodejs, python(2.7), git</li>
         <li><a href="https://docs.docker.com/docker-hub/builds/" 
           target="_blank">Automated Build</a> from the 
-          <a href="https://github.com/nervatura/nervatura" 
-          target="_blank">Nervatura GitHub</a> repository (see <a 
-          href="https://raw.githubusercontent.com/nervatura/nervatura/master/Dockerfile" 
+          <a href="https://github.com/nervatura/nervatura-express" 
+          target="_blank">Nervatura Express GitHub</a> repository (see <a 
+          href="https://raw.githubusercontent.com/nervatura/nervatura-express/master/Dockerfile" 
           target="_blank">this Dockerfile</a>)</li>
         <li>Node production packages (<a 
-          href="https://raw.githubusercontent.com/nervatura/nervatura/master/package.json" 
+          href="https://raw.githubusercontent.com/nervatura/nervatura-express/master/package.json" 
           target="_blank">dependencies+optionalDependencies</a>)</li>
         <li><a href="http://pm2.keymetrics.io/" 
           target="_blank">pm2 process manager</a></li>
@@ -1071,7 +1420,7 @@
         <li>add link to mysql database (see more Databases support)</li>
       </ul>
       <p class="code" style="text-align: left;">
-        $ git clone https://github.com/nervatura/nervatura.git<br><br>
+        $ git clone https://github.com/nervatura/nervatura-express.git<br><br>
         $ cd nervatura<br><br>
         $ docker run --rm -i -t -p 8080:8080 -p 5858:5858 \<br>
         &nbsp;&nbsp;-v nervatura:/app/data -v `pwd`:/app/src -w /app/src \<br>
@@ -1242,91 +1591,70 @@
   <h3>
 		<a name="config">3. Server config</a>
 	</h3>
-  <p>Application const and UI/GUI settings: 
-    <a href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
-    target="blank">lib/node/conf.js</a> file. Can be changed, but the program is 
-    overwritten when updated!</p>
-  
+  <p>Application settings: <b>lib/settings.json</b> file.</p>
+
+  <p>Express Framework</p>
   <ul>
-    <li><i>start_page</i>: String.
+    <li>APP_LANG: <i>String</i>. Default value: 'en'. Valid values: en.</li>
+    <li style="padding-top: 4px;">START_PAGE: <i>String</i>
       <ul style="padding-left:15px;">
         <li>ntura: Default.</li>
         <li>static: Custom static homepage</li>
         <li>custom: Custom NodeJS/Express homepage</li>
       </ul>
     </li>
-    <li><i>data_dir</i>: Path string. Default:app_home/data or OPENSHIFT_DATA_DIR. A persistent data directory. Subfolders: database(sqlite), data(export/import), storage.</li>
-    <li><i>data_store</i>: String.
+
+    <li style="padding-top: 10px;" >DATA_DIR: <i>Path string</i>. Default: app_home/data. A persistent data directory. 
+      Subfolders: database(sqlite), data(export/import), storage.</li>
+    <li style="padding-top: 4px;">PYTHON2_PATH: <i>Path string</i>. Default:'python'. The path where to locate the "python" 
+      executable. Optional, for the server-side Nervatura Report.</li>
+    <li style="padding-top: 4px;">DATA_STORE: <i>String</i>.
       <ul style="padding-left:15px;">
-        <li>lokijs: Default.</li>
+        <li>memory</li>
+        <li>lokijs: Default</li>
         <li>pouchdb</li>
         <li>datastore: Google Datastore (Google App Engine default)</li>
       </ul>
     </li>
-    <li><i>email_providers</i>: Object. Email Service Providers
-      <ul style="padding-left:15px;">
-        <li>smtp: <a href="https://nodemailer.com/smtp/" 
-          target="blank">nodemailer</a> smtp options</li>
-        <li><a href="https://github.com/mailjet/mailjet-apiv3-nodejs" 
-          target="blank">mailjet</a>: clientID, clientSecret</li>
-      </ul>
-    </li>
-    <li><i>engine</i>: Array. Valid values: sqlite, mysql, postgres, mssql</li>
-    <li><i>nas_login</i>: Object. NAS Admin authentications
-      <ul style="padding-left:15px;">
-        <li>local</li>
-        <li>google</li>
-      </ul>
-    </li>
-    <li><i>pool_config</i>: See more <a href="https://github.com/grncdr/node-any-db-pool#api" target="blank">database agnostic connection pool</a></li>
-    <li><i>python_script</i>: Path string. Default:'./lib/pylib'. The path where to look for Python 2 app. scripts.</li>
-    <li><i>lang</i>: String. Default value: 'en'. Valid values: en.</li>
-    <li><i>pg_ssl</i>: Enable postgres ssl enforcement or not when connect to server. Default false.</li>
-    <li><i>mysql_ssl</i>: Enable mysql ssl enforcement or not when connect to server. Default false.</li>
-    <li><i>mssql_encrypt</i>: Enable mssql encrypt or not when connect to server. Default false.</li>
+
+    <li style="padding-top: 10px;" >LONG_TIMEOUT: <i>Integer</i>. Default: (4 * 60 * 1000). Express response timeout/msec. 
+      (create/export/import database and import demo database)</li>
+    <li style="padding-top: 4px;">SESSION_SECRET: <i>String</i>. Default: auto. See more <a 
+      href="https://github.com/expressjs/cookie-session" target="blank">cookie-session</a></li>
+    <li>COOKIE_MAX_AGE: <i>Integer</i>. Default value: 7*24*60*60*1000. See more <a 
+      href="https://github.com/expressjs/cookie-session" target="blank">cookie-session</a></li>
+    <li>CONTENT_LENGTH: <i>Integer</i>. Default value: 20000. See more <a 
+      href="https://github.com/ericmdantas/express-content-length-validator" target="_blank">express-content-length-validator</a></li>
+    <li>ALL_HOST_RESTRICTION, NAS_HOST_RESTRICTION, NPI_HOST_RESTRICTION, NDI_HOST_RESTRICTION: <i>String</i>. Limiting server connections(ip pattern)</li>
+    
+    <li style="padding-top: 10px;">NAS_AUTH: <i>String</i>. Default:'local'. NAS Admin authentication strategy. Valid values: 
+      local (username and password), amazon (Amazon OAuth 2.0), azure (Azure AD OpenID Connect), google (Google OAuth 2.0)</li>
+    <li style="padding-top: 4px;">AMAZON_CLIENT_ID, AMAZON_CLIENT_SECRET: <i>String</i>. NAS Admin authentication Amazon OAuth 2.0 values.</li>
+    <li style="padding-top: 4px;">AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_REDIRECT_URL, AZURE_IDENTITY_URL: <i>String</i>. NAS Admin 
+      authentication Azure AD OpenID Connect values.</li>
+    <li style="padding-top: 4px;">GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET: <i>String</i>. NAS Admin 
+      authentication Google OAuth 2.0 values.</li>
+    
+    <li style="padding-top: 10px;">SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASSWORD: <i>String</i>. <a 
+      href="https://nodemailer.com/smtp/" target="blank">nodemailer</a> smtp options</li>
+    <li style="padding-top: 4px;">MJ_APIKEY_PUBLIC, MJ_APIKEY_PRIVATE: <i>String</i>. <a 
+      href="https://github.com/mailjet/mailjet-apiv3-nodejs" target="blank">mailjet</a>: clientID, clientSecret</li>
   </ul>
-  
-  <p>Initial setup (conf.js) and persistent server-side settings: data_dir/storage/data(.json)</p>
-  
+
+  <p>Serverless versions</p>
   <ul>
-    <li><i>databases</i>: Default sample customer database connection settings. See more NAS Admin GUI/Customer Databases.
-      <ul style="padding-left:15px;">
-        <li><i>alias</i>: a unique connection name</li>
-        <li><i>engine</i>: the type of database</li>
-        <li><i>host, port, dbname, username, password</i>: the connection information (stored encrypted)</li>
-        <li><i>ndi_enabled</i>: enables the NDI</li>
-        <li><i>encrypt_password</i>: encrypting the data of NDI (cipher key)</li>
-        <li><i>dbs_host_restriction</i>: limiting database connections(ip pattern)</li>
-      </ul>
-    </li>
-    <li><i>databases_docker</i>: Default sample customer database settings (Docker).</li>
-    <li><i>databases_gae</i>: Default sample customer database settings (Google App Engine).</li>
-    <li><i>databases_openshift</i>: Default sample customer database settings (OpenShift service).</li>
-    <li><i>users</i>: Default sample user accounts. See more NAS Admin GUI/User Accounts.</li>
-    <li><i>settings</i>: See more NAS Admin GUI/Server Settings. A restart is required!
-      <ul style="padding-left:15px;">
-        <li><i>nas_auth</i>: NAS Admin authentication strategy. Default:'local'. Valid values: 
-          local (username and password), amazon (Amazon OAuth 2.0), azure (Azure AD OpenID Connect), 
-          google (Google OAuth 2.0)</li>
-        <li><i>python2_path</i>: Path string. Default:'python'. The path where to locate the "python" executable.
-          Optional, for the server-side Nervatura Report.</li>
-        <li><i>max_content_length</i>: Integer. Default value: 20000. See more <a href="https://github.com/ericmdantas/express-content-length-validator" 
-          target="_blank">express-content-length-validator</a></li>
-        <li><i>session_cookie_max_age</i>: Default value: 7*24*60*60*1000. See more <a href="https://github.com/expressjs/cookie-session" 
-          target="blank">cookie-session</a></li>
-        <li><i>session_secret</i>: See more <a href="https://github.com/expressjs/cookie-session" 
-          target="blank">cookie-session</a></li>
-        <li><i>host_restriction</i>: limiting server connections(ip pattern).
-          <ul style="padding-left:15px;">
-            <li>all_host_restriction: String.</li>
-            <li>nas_host_restriction: String. NAS Admin GUI</li>
-            <li>npi_host_restriction: String. Programming Interface</li>
-            <li>ndi_host_restriction: String. Data Interface</li>
-          </ul>
-          <p class="code">all/nas/npi/ndi/dbs_host_restriction localhost sample:<br> ::1,127.0.0.1,::ffff:127.0.0.1</p>
-        </li>
-      </ul>
-    </li>
+    <li>APP_LANG: <i>String</i>. Default value: 'en'. Valid values: en.</li>
+    <li style="padding-top: 4px;">CHECK_ADMIN: <i>Bool</i>. NAS Admin authentication. Not used: Azure</li>
+    <li style="padding-top: 4px;">ADMIN_KEY: <i>String</i>. NAS Admin authentication key (code parameter). Not used: Azure</li>
+    <li style="padding-top: 4px;">PYTHON2_PATH: <i>Path string</i>. Default:'python'. The path where to locate the "python" 
+      executable. Optional, for the server-side Nervatura Report.</li>
+
+    <li style="padding-top: 10px;" >DBS_CONNECTION_PARAMS: <i>String</i>. </li>
+    
+    <li style="padding-top: 10px;">SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASSWORD: <i>String</i>. <a 
+      href="https://nodemailer.com/smtp/" target="blank">nodemailer</a> smtp options</li>
+    <li style="padding-top: 4px;">MJ_APIKEY_PUBLIC, MJ_APIKEY_PRIVATE: <i>String</i>. <a 
+      href="https://github.com/mailjet/mailjet-apiv3-nodejs" target="blank">mailjet</a>: clientID, clientSecret</li>
   </ul>
   
   <h3>
@@ -1334,32 +1662,118 @@
 	</h3>
   
   <ul>
-    <li><b><a name="customize">Customize the appearance</a></b>
-      <p>You can change the following setting in <a 
-        href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
-        target="blank">lib/node/<b>conf.js</b></a> file. </p>
+    <li><b><a name="sls_admin">Serverless Admin</a></b>
+      <p>Create a new Nervatura database: <span class="code">[HOST_URL]/nas/database/create</span> </p>
+      <p style="margin-bottom:0px;">Parameters:
+        <ul style="padding-left:15px;">
+          <li>alias: Required, the alias name of the database.</li>
+          <li>code: Required*</li>
+          <li>output: Optional. Default: html. Valid values: json, html.</li>
+        </ul>
+      </p>
+
+      <p>Create a DEMO database: <span class="code">[HOST_URL]/nas/database/demo</span></p>
+      <p style="margin-bottom:0px;">Parameters:
+        <ul style="padding-left:15px;">
+          <li>database: Required, the alias name of the database.</li>
+          <li>username: Required, the valid username of the database.</li>
+          <li>password: Required.</li>
+          <li>code: Required*</li>
+          <li>output: Optional. Default: html. Valid values: json, html.</li>
+        </ul>
+      </p>
+
+      <p>List the all reports of the database: <span class="code">[HOST_URL]/nas/report/list</span> </p>
+      <p style="margin-bottom:0px;">Parameters:
+        <ul style="padding-left:15px;">
+          <li>alias: Required, the alias name of the database.</li>
+          <li>code: Required*</li>
+          <li>output: Optional. Default: html. Valid values: csv, json, html.</li>
+        </ul>
+      </p>
+
+      <p>Install a report to the database: <span class="code">[HOST_URL]/nas/report/install</span> </p>
+      <p style="margin-bottom:0px;">Parameters:
+        <ul style="padding-left:15px;">
+          <li>alias: Required, the alias name of the database.</li>
+          <li>reportkey: Required.</li>
+          <li>code: Required*</li>
+        </ul>
+      </p>
+
+      <p>Delete a report from the database: <span class="code">[HOST_URL]/nas/report/delete</span> </p>
+      <p style="margin-bottom:0px;">Parameters:
+        <ul style="padding-left:15px;">
+          <li>alias: Required, the alias name of the database.</li>
+          <li>reportkey: Required.</li>
+          <li>code: Required*</li>
+        </ul>
+      </p>
+      <p>* The authentication key. It can be disabled or can be set in the lib/settings.json file, or see <a 
+        href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook#authorization-keys" 
+        target="blank">Azure Functions authorization keys</a></p>
+      
+    </li>
+    <li><b><a name="emails">Sending Emails</a></b>
+      <p>Configure your email settings in your</p>
       <ul>
+        <li>environment variables or</li>
+        <li><a href="https://github.com/nervatura/nervatura-express/blob/master/app.yaml" 
+          target="blank"><b>app.yaml</b></a> file (<a href="#gcloud">Google App Engine</a>) or</li>
+        <li><a href="https://github.com/nervatura/nervatura-express/blob/master/manifest.yml" 
+          target="blank"><b>manifest.yml</b></a> file (<a href="#ibm_foundry">IBM Cloud Foundry</a>) or</li>
+        <li>lib/<b>settings.json</b> file</li>
+        </ul>
+        <p class="code">
+          <b><i>NPI email sending with attached report:</i></b><br>
+          <i>sendEmail("provider"::String,<br> 
+          &nbsp;&nbsp;"email"::Object{ "from"::String, "name"::String, "recipients"::Array[{"email"::String}],<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"subject"::String, "text"::String, "html"::String,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"attachments"::Array[{ "filename"::String, "report_id"::Integer, "reportkey"::String,<br> 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ref_id"::Integer, "nervatype"::String, "refnumber"::String }] })</i><br>
+          <br>
+          data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
+          &nbsp;&nbsp;"params":{<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"sendEmail",<br> 
+          &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{ "provider":"mailjet",<br> 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email":{"from":"info@nervatura.com", "name":"Nervatura", <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"recipients":[{"email":"sample@company.com"}],<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject":"Demo Invoice", "text":"Email sending with attached invoice",<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"attachments":[{ "reportkey":"ntr_invoice_en", "nervatype":"trans", "refnumber":"DMINV/00001" }] }}}};<br>
+          <br>
+          Sample result: {"id":11,"jsonrpc":"2.0","result":{"Sent":[{"Email":"sample@company.com","MessageID":18859125621232550}]}}
+        </p>
+    </li>
+    <li><b><a name="express_recipes">Express Framework</a></b>
+      
+      <p><a name="customize">
+        <span style="color:#8B1A1A;font-weight:bold;">Customize the appearance</span></a></p>
+      <p>You can change the following setting in <a 
+        href="https://github.com/nervatura/nervatura-express/blob/master/lib/settings.json" 
+        target="blank">lib/<b>settings.json</b></a> file. </p>
+      <ul style="padding-left:15px;">
         <li>Collaborate with other systems: different ports or multicontainers (default)
-          <p class="code">start_page: "ntura"</p>
+          <p class="code">"START_PAGE": "ntura"</p>
         </li>
         <li>Every custom modification in the <a 
-        href="https://github.com/nervatura/nervatura/blob/master/www" 
+        href="https://github.com/nervatura/nervatura-express/blob/master/www" 
         target="blank"><b>www</b></a> directory
-          <p class="code">start_page: "static"</p>
+          <p class="code">"START_PAGE": "static"</p>
         </li>
         <li>Custom NodeJs/Express functions: <a 
-        href="https://github.com/nervatura/nervatura/blob/master/routes/custom.js" 
+        href="https://github.com/nervatura/nervatura-express/blob/master/routes/custom.js" 
         target="blank">routes/custom.js<b></b></a>
-          <p class="code">start_page: "custom"</p>
+          <p class="code">"START_PAGE": "custom"</p>
         </li>
       </ul>
-    </li>
 
-    <li><b><a name="migration">Database migration</a></b>
+      <p><a name="migration">
+        <span style="color:#8B1A1A;font-weight:bold;">Database migration</span></a></p>
       <p>Customer database migration is the process of transferring data between storage types, formats, 
         or computer systems. Using the daily data backup is not recommended. 
         It may be helpful in the following situations:
-        <ul>
+        <ul style="padding-left:15px;">
           <li>switching to another database type, such as sqlite<->mysql, mysql<->postgresql, mssql<->mysql etc.</li>
           <li>transferring data between host servers</li>
           <li>exporting data to other formats</li>
@@ -1378,9 +1792,18 @@
       <p><span style="font-weight:bold;">Data import</span></p> 
       <p>NAS Admin GUI/Database Management/Database Import.<br>
         <u>Data File:</u> Load the *.data/xml file from the data_dir/data folder</p>
-    </li>
-    
-    <li><b><a name="printer">Server-side printers</a></b>
+        
+      <p><a name="printer">
+        <span style="color:#8B1A1A;font-weight:bold;">Server-side printing</span></a></p>
+      <p>UNIX-like operating systems: <a href="http://www.cups.org/" target="_blank">CUPS</a> and 
+        <a href="https://github.com/tojocky/node-printer" target="_blank">node-printer</a></li></p>
+      <p class="code" style="text-align: left;">
+        $ npm install printer --save
+      </p>
+      <p>Windows systems: <a href="http://www.ghostscript.com/Ghostscript.html" target="_blank">Ghostscript</a> 
+        and <a href="http://pages.cs.wisc.edu/~ghost/gsview/gsprint.htm" target="_blank">GSPRINT</a></p>
+      <p><a href="http://www.google.com/cloudprint/learn/" target="_blank">Google Cloud Print</a>: 
+        <a href="https://github.com/simoncadman/CUPS-Cloud-Print" target="_blank">CUPS-Cloud-Print</a></p>
       <p>Network printer sample</p>
       <p class="code">
         <b>NDI URL:</b><br>
@@ -1404,52 +1827,28 @@
         <br>
         Sample result: true
       </p>
-    </li>
-
-    <li><b><a name="emails">Sending Emails</a></b>
-      <p>Configure your email settings in your</p>
-      <ul>
-        <li>environment variables or</li>
-        <li><a href="https://github.com/nervatura/nervatura/blob/master/app.yaml" 
-          target="blank"><b>app.yaml</b></a> file (<a href="#app_engine">Google App Engine</a>) or</li>
-        <li><a href="https://github.com/nervatura/nervatura/blob/master/lib/node/conf.js" 
-          target="blank">lib/node/<b>conf.js</b></a> file</li>
-        </ul>
-        <p class="code">
-          <b><i>NPI email sending with attached report:</i></b><br>
-          <i>sendEmail("provider"::String,<br> 
-          &nbsp;&nbsp;"email"::Object{ "from"::String, "name"::String, "recipients"::Array[{"email"::String}],<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;"subject"::String, "text"::String, "html"::String,<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;"attachments"::Array[{ "filename"::String, "report_id"::Integer, "reportkey"::String,<br> 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ref_id"::Integer, "nervatype"::String, "refnumber"::String }] })</i><br>
-          <br>
-          data = {"id":11, "method":"callFunction", "jsonrpc":"2.0",<br> 
-          &nbsp;&nbsp;"params":{<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;"login":{"database":"demo", "username":"admin", "password":""},<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;"functionName":"sendEmail",<br> 
-          &nbsp;&nbsp;&nbsp;&nbsp;"paramList":{ "provider":"mailjet",<br> 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email":{"from":"info@nervatura.com", "name":"Nervatura", <br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"recipients":[{"email":"sample@company.com"}],<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject":"Demo Invoice", "text":"Email sending with attached invoice",<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"attachments":[{ "reportkey":"ntr_invoice_en", "nervatype":"trans", "refnumber":"DMINV/00001" }] }}}};<br>
-          <br>
-          Sample result: {"id":11,"jsonrpc":"2.0","result":{"Sent":[{"Email":"sample@company.com","MessageID":18859125621232550}]}}
-        </p>
-    </li>
-    
-    <li><b><a name="security">Security Issues</a></b>
+      
+      <p><a name="session">
+        <span style="color:#8B1A1A;font-weight:bold;">Session and data store</span></a></p>
+      <p>PouchDB:</p>
+      <p class="code" style="text-align: left;">
+        $ npm install pouchdb-node --save
+      </p>
+      
+      <p><a name="security">
+        <span style="color:#8B1A1A;font-weight:bold;">Security Issues</span></a></p>
       <p>
-        The Nervatura Framework is based on the <a href="http://expressjs.com/" target="_blank">Express</a>. 
+        The Nervatura Express Package is based on the <a href="http://expressjs.com/" target="_blank">Express</a>. 
         If you discover a security vulnerability in Express, please see 
         <a href="https://github.com/strongloop/express/blob/master/Security.md" 
-          target="_blank">Security Policies and Procedures</a>.<br>
-        Please see more: <a href="http://expressjs.com/en/advanced/best-practice-security.html" 
+          target="_blank">Security Policies and Procedures</a>. Please see 
+          more: <a href="http://expressjs.com/en/advanced/best-practice-security.html" 
           target="_blank">Express security best practices</a> and 
         <a href="http://expressjs.com/en/advanced/best-practice-performance.html" 
           target="_blank">Express performance best practices</a>
       </p>
       <p>Built-in security packages:</p>
-      <ul>
+      <ul style="padding-left:15px;">
         <li><a href="https://github.com/ericmdantas/express-content-length-validator" 
           target="_blank">express-content-length-validator</a>: large payload attacks</li>
         <li><a href="https://github.com/aredo/express-enforces-ssl" 
@@ -1466,9 +1865,18 @@
         <li><a href="https://github.com/jaredhanson/passport" 
           target="_blank">passport</a>, 
           <a href="https://github.com/jaredhanson/passport-local" 
-          target="_blank">passport-local</a>: Username and password authentication (NAS Admin GUI)</li>
+          target="_blank">passport-local</a>,
+          <a href="https://github.com/jaredhanson/passport-amazon" 
+          target="_blank">passport-amazon</a>,
+          <a href="https://github.com/jaredhanson/passport-google-oauth2" 
+          target="_blank">passport-google-oauth20</a>,
+          <a href="https://github.com/AzureAD/passport-azure-ad" 
+          target="_blank">passport-azure-ad</a>: Username and password authentication (NAS Admin GUI)</li>
       </ul>
+      
     </li>
+    
+    
   </ul>
   
 </body></html>
