@@ -1,6 +1,7 @@
 ## 3.0.1
 - new placetype: other
 - new additional data type: time
+- some bug fixes
 
 ## 3.0.0
 - Separating the structure of the application: core and frameworks packages
