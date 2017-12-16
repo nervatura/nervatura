@@ -1,3 +1,7 @@
+## 3.0.1
+- new placetype: other
+- new additional data type: time
+
 ## 3.0.0
 - Separating the structure of the application: core and frameworks packages
 - Serverless functions support (Azure, Google, Lambda, OpenWhisk)
