@@ -40,7 +40,7 @@ Nervatura Core Package:
 
 Nervatura with Express Framework:
 
-    $ git clone https://github.com/nervatura/nervatura-express.git
+    $ git clone https://github.com/nervatura/nervatura-express.git nervatura
     $ cd nervatura
     $ npm install --production
 
