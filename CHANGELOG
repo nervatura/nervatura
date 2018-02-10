@@ -1,3 +1,7 @@
+## 3.0.2
+- JSON Web Token support
+- NDI: fxprice/vatamound calc. fixes
+
 ## 3.0.1
 - new placetype: other
 - new additional data type: time

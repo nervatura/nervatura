@@ -159,6 +159,12 @@
 				<td>text</td>
 				<td>Required, optional MD5 encoded</td>
 			</tr>
+      <tr>
+				<td>token*</td>
+				<td>text</td>
+				<td>Optional <a href="https://en.wikipedia.org/wiki/JSON_Web_Token" 
+          target="_blank" >JSON Web Token</a> (instead of username and password)</td>
+			</tr>
 			<tr>
 				<td>datatype*</td>
 				<td>text</td>
@@ -482,6 +488,13 @@
 	  <br>
       data: {"id":2,"method":"updateData","jsonrpc":"2.0","params":[
 	  {"database":"demo","username":"demo","password":"","datatype":"customer","insert_row":true,"insert_field":true},
+	  [{"custnumber":"DOC/00001","custname":"NDIDoc Sample 1.","taxnumber":"12345678-1-12","eye colour":"blue"},
+	  {"custname":"NDIDoc Sample 2.","taxnumber":"87654321-1-21","eye colour":"brown"}]]}</span>
+    <br><br>
+	  <b>POST DATA (WEB TOKEN):</b>
+	  <br>
+      data: {"id":2,"method":"updateData","jsonrpc":"2.0","params":[
+	  {"database":"demo","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...","datatype":"customer","insert_row":true,"insert_field":true},
 	  [{"custnumber":"DOC/00001","custname":"NDIDoc Sample 1.","taxnumber":"12345678-1-12","eye colour":"blue"},
 	  {"custname":"NDIDoc Sample 2.","taxnumber":"87654321-1-21","eye colour":"brown"}]]}</span>
 	<br><br>

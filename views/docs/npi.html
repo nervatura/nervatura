@@ -50,6 +50,8 @@
       font-size: .85em;
       background-color: #F5F5F5;
       padding: 5px;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
     }
     </style>
   </head>
@@ -77,7 +79,7 @@
       <tr>
         <td><a href="#getLogin">getLogin</a></td>
         <td>Object</td>
-        <td>database, username, password</td>
+        <td>database, username, password, token</td>
       </tr>
       <tr>
         <td><a href="#callFunction">callFunction</a></td>
@@ -150,7 +152,7 @@
       </tr>
       <tr>
         <td><a href="#login">login</a></td>
-        <td>database, username, password, appl</td>
+        <td>database, username, password, token</td>
       </tr>
       <tr>
         <td><a href="#param">param</a></td>
@@ -190,7 +192,7 @@
 			<tr class="fhead">
 				<td><a name="getLogin" class="fname">getLogin</a>(database<span
 					class="ftype">::String</span>, username<span class="ftype">::String</span>,
-					password<span class="ftype">::String</span>)<span
+					password<span class="ftype">::String</span>, token<span class="ftype">::String</span>)<span
 					class="ftype">::Object</span></td>
 			</tr>
 			<tr>
@@ -201,7 +203,10 @@
 						<span class="retpar">database</span>: <span class="fdesc">
               an <b>NAS</b> alias set for a database</span><br>
             <span class="retpar">username, password</span>: <span class="fdesc">
-              valid username and password for the database</span>
+              valid username and password for the database</span><br>
+            <span class="retpar">token</span>: <span class="fdesc">
+              valid <a href="https://en.wikipedia.org/wiki/JSON_Web_Token" 
+                target="_blank" >JSON Web Token</a> (instead of username and password)</span>
 				  </p>
 					<p>
 					  The result value is a <a href="#validator">validator</a> object.
@@ -209,6 +214,9 @@
 					<p class="code"><b><u><i>Examples:</i></u></b><br><br>
 					  data = {"id":1, "method":"getLogin", "jsonrpc":"2.0", <br>
             &nbsp;&nbsp;"params":{"database":"demo","username":"demo","password":""}}<br><br>
+
+            data = {"id":1, "method":"getLogin", "jsonrpc":"2.0", <br>
+            &nbsp;&nbsp;"params":{"database":"demo","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}}<br><br>
             
             <b><i>Python:</i></b><br>
             import json, requests<br><br>
@@ -622,14 +630,17 @@
       <tr class="fhead">
         <td><a name="login" class="fname">login</a>{database<span
           class="ftype">::String</span>, username<span class="ftype">::String</span>,
-          password<span class="ftype">::String</span>}</td>
+          password<span class="ftype">::String</span>, token<span class="ftype">::String</span>}</td>
       </tr>
       <tr>
         <td>
           <span class="retpar">database</span>: <span class="fdesc">
               an <b>NAS</b> alias set for a database</span><br>
           <span class="retpar">username, password</span>: <span class="fdesc">
-              valid username and password for the database</span>
+              valid username and password for the database</span><br>
+          <span class="retpar">token</span>: <span class="fdesc">
+              valid <a href="https://en.wikipedia.org/wiki/JSON_Web_Token" 
+                target="_blank" >JSON Web Token</a> (instead of username and password)</span>
         </td>
       </tr>
       
