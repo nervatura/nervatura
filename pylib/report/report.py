@@ -565,8 +565,8 @@ class Report(FPDF, HTMLMixin):
               hrow+='<td width="1'+self.unit+'"><a href="'+link+'"><img style="'+style+'" src="'+self.images[name]['odata']+'"/></a></td>'
             else:
               hrow+='<td width="1 '+self.unit+'"><img style="'+style+'" src="'+self.images[name]['odata']+'"/></td>'
-        if self.images[name]['h']/self.k>max_height:
-          max_height = self.images[name]['h']/self.k
+        #if self.images[name]['h']/self.k>max_height:
+        #  max_height = self.images[name]['h']/self.k
       if row_element[ei].tag =="separator":
         gap = row_element[ei].get("gap",0)
         if gap!="":

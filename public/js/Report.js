@@ -596,10 +596,8 @@ window.Report = function(orientation, unit, format) {
             if (img_src.toString().substr(0,10)!=="data:image") {
               img_src = setValue(img_src);}
             if (img_src.toString().substr(0,10)==="data:image") {
-              var width = parseFloat(get_value(element.width,0));
-              var img_height = get_value(element.height,0);
-              if (img_height===0 || width===0) {
-                width = row_height-1; img_height = row_height-1; }
+              var width = parseFloat(get_value(element.width, row_height-1));
+              var img_height = get_value(element.height, row_height-1);
               var compression = get_value(element.compression,"medium");
               if (check_page_break(self.template.page.cursor.y, img_height)) {
                 doc.addPage();}

@@ -1,3 +1,9 @@
+## 3.0.3
+- NDI: set username fixes
+- NDI: currency digit rounding fixes
+- NDI: validator bug fixes
+- Nervatura Report: Report.js/report.py image width/height fixes
+
 ## 3.0.2
 - JSON Web Token support
 - NDI: fxprice/vatamound calc. fixes
