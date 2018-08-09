@@ -1,3 +1,6 @@
+## 3.0.5
+- Config check_value function bug fixes
+
 ## 3.0.4
 - NPI: invalid reporkey fixes
 - new server setting value: REPORT_DIR (lib/settings.json - overrides the nervatura/report)
