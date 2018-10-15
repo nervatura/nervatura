@@ -1,3 +1,6 @@
+## 3.0.7
+- ndi, nervastore, npi, tool: rollback callback function bug fixes
+
 ## 3.0.6
 - nervastore getIdFromRefnumber function bug fixes
 
