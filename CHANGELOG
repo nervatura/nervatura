@@ -1,3 +1,7 @@
+## 3.0.8
+- nervastore: rollback callback function bug fixes
+- adapter mysql: charset and insecureAuth (connection options)
+
 ## 3.0.7
 - ndi, nervastore, npi, tool: rollback callback function bug fixes
 
