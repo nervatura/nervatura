@@ -1,3 +1,7 @@
+## 3.1.0
+- NAS: move some special functions to nervatura-express (-> lib/ext/nas.js)
+- JEST Testing Framework support (/test dir)
+
 ## 3.0.8
 - nervastore: rollback callback function bug fixes
 - adapter mysql: charset and insecureAuth (connection options)

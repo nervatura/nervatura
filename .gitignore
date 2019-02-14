@@ -47,6 +47,7 @@ jsonconfig.json
 
 public/application
 data/data/*
+test/database/test.db
 data/storage/*
 *.pem
 .elasticbeanstalk/
