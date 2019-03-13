@@ -19,6 +19,16 @@ describe('ndi', () => {
       done();
     })
   })
+  it("setData", (done) => {
+    setData(nstore, "function", 
+      { login:{database:"test", username:"admin"}, 
+        functionName: "getReport", paramList: {
+          nervatype: "trans", refnumber:"DMINV/00001", 
+          output: "pdf", orientation: "portrait" }}, (err, results) => {
+      expect(err).toBeNull();
+      done();
+    })
+  })
   it("loadDataSet", (done) => {
     loadDataSet(nstore, 
       { login:{database:"test", username:"admin"},

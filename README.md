@@ -34,7 +34,7 @@ Homepage: http://www.nervatura.com
 
 ## Nervatura packages
 
-[Express Framework](https://github.com/nervatura/nervatura-express/), [Azure Functions](https://github.com/nervatura/nervatura-azure/)
+[Express Framework](https://github.com/nervatura/nervatura-express/), [Nervatura Report](https://github.com/nervatura/nervatura-report/), [Azure Functions](https://github.com/nervatura/nervatura-azure/)
 
 Experimental: [Google Cloud Functions](https://github.com/nervatura/nervatura-gcloud/), [AWS Lambda](https://github.com/nervatura/nervatura-lambda/), [IBM Cloud Functions](https://github.com/nervatura/nervatura-openwhisk/)
 
@@ -58,9 +58,9 @@ For more packages and deployment options, please see the [Admin Guide](https://r
 
 ## More Resources and Sample Applications
 
-Sample Applications: [Nervatura Booking](https://github.com/nervatura/nervatura-booking/) (Express+React), [Nervatura Report](https://github.com/nervatura/nervatura-react/) (React), [wxPython Client](https://rawgit.com/nervatura/nervatura/master/public/download/nwx.zip), [Javascript RPC functions](https://rawgit.com/nervatura/nervatura/master/public/download/npijson.zip), [LibreOffice Calc](https://rawgit.com/nervatura/nervatura/master/public/download/calc_demo.ods)
+Sample Applications: [Nervatura Booking](https://github.com/nervatura/nervatura-booking/) (Express+React), [Nervatura React](https://github.com/nervatura/nervatura-react/) (React), [wxPython Client](https://rawgit.com/nervatura/nervatura/master/public/download/nwx.zip), [Javascript RPC functions](https://rawgit.com/nervatura/nervatura/master/public/download/npijson.zip), [LibreOffice Calc](https://rawgit.com/nervatura/nervatura/master/public/download/calc_demo.ods)
 
-More Resources: [Nervatura Touch](http://nervatura.com#touch), Data Interface Wizard ([nervatura-express](https://github.com/nervatura/nervatura-express/)), Nervatura Report ([nervatura-express](https://github.com/nervatura/nervatura-express/))
+More Resources: [Nervatura Touch](http://nervatura.com#touch), Data Interface Wizard ([nervatura-express](https://github.com/nervatura/nervatura-express/))
 
 ## Docs & Community
 

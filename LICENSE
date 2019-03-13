@@ -43,12 +43,6 @@ The full list of the modules please see the (package.json) file
 
 #### pylib folder:
 
-#### pyFPDF (Python, Nervatura Report)
-Copyright © 2008, Mariano Reingart
-Homepage: https://github.com/reingart/pyfpdf
-Licence: LGPL
-http://www.gnu.org/licenses/lgpl.html
-
 #### xlwt (Python, Nervatura Report)
 Portions copyright © 2007, Stephen John Machin, Lingfo Pty Ltd
 Homepage: http://www.python-excel.org

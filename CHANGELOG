@@ -1,3 +1,9 @@
+## 3.2.0
+- new client/server side JavaScript PDF generation: nervatura-report package (jspdf + pdfkit)
+- remove public/js/Report.js (-> nervatura-report/dist/report.browser.js)
+- move docs/report.html -> nervatura-report/docs
+- remove python fpdf package
+
 ## 3.1.0
 - NAS: move some special functions to nervatura-express (-> lib/ext/nas.js)
 - JEST Testing Framework support (/test dir)
