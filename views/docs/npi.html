@@ -217,16 +217,6 @@
 
             data = {"id":1, "method":"getLogin", "jsonrpc":"2.0", <br>
             &nbsp;&nbsp;"params":{"database":"demo","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}}<br><br>
-            
-            <b><i>Python:</i></b><br>
-            import json, requests<br><br>
-            response = requests.post("http://127.0.0.1:8080/npi/", <br>
-            &nbsp;&nbsp;data=json.dumps(data), headers={'content-type': 'application/json'}).json()<br>
-            if response.has_key("error"):<br>
-            &nbsp;&nbsp;return "error"<br>
-            else:<br>
-            &nbsp;&nbsp;return response["result"]<br>
-            
             <br>
             <b><i>Javascript:</i></b><br>
             XMLHttpRequest<br>

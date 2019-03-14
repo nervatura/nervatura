@@ -4,7 +4,6 @@ const { ntconf } = require('./config')
 
 describe('ndi', () => {
   let nstore = Nervastore(ntconf);
-
   it("getLogin", (done) => {
     getLogin(nstore, {database:"test", username:"admin"}, (validator) => {
       expect(validator.valid).toBeTruthy();
@@ -19,12 +18,26 @@ describe('ndi', () => {
       done();
     })
   })
+  
   it("setData", (done) => {
     setData(nstore, "function", 
       { login:{database:"test", username:"admin"}, 
         functionName: "getReport", paramList: {
           nervatype: "trans", refnumber:"DMINV/00001", 
           output: "pdf", orientation: "portrait" }}, (err, results) => {
+      expect(err).toBeNull();
+      done();
+    })
+  })
+  it("setData", (done) => {
+    setData(nstore, "function", 
+      { login:{database:"test", username:"admin"},
+        functionName: "getReport", 
+        paramList: {
+          filters: { posdate: "2017-03-14" },
+          output:"base64",
+          reportkey: "xls_custpos_en" 
+        }}, (err, results) => {
       expect(err).toBeNull();
       done();
     })
@@ -63,5 +76,4 @@ describe('ndi', () => {
       done();
     })
   })
-
 })
