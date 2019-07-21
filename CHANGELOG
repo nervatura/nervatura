@@ -1,3 +1,6 @@
+## 3.2.2
+- security update
+
 ## 3.2.1
 - excel report: replaced python xlwt -> node-xlsx
 - remove all python dependencies
