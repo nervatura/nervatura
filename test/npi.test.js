@@ -18,6 +18,46 @@ describe('ndi', () => {
       done();
     })
   })
+  it("nervastore", (done) => {
+    nstore.connect.getDatabaseSettings({}, (err, settings) => {
+      expect(err).toBeNull();
+      done();
+    })
+    /*
+    nstore.valid.getGroupsId({
+      groupname: ["transtype", "usergroup"]
+    }, (err, groups) => {
+      expect(err).toBeNull();
+      done();
+    })
+    nstore.connect.getObjectAudit({
+      nervatype: "customer"
+    }, (err, info) => {
+      expect(err).toBeNull();
+      done();
+    })
+    nstore.connect.getDataAudit({}, (err, info) => {
+      expect(err).toBeNull();
+      done();
+    })
+    nstore.valid.getRefnumber(
+      {nervatype: "item", ref_id: 6, rettype: ""}, (err, id, info) => {
+      expect(err).toBeNull();
+      done();
+    })
+    nstore.valid.getIdFromRefnumber(
+      {nervatype: "ui_reportsources", refnumber: "ntr_invoice_en~head", extra_info: false}, (err, id, info) => {
+      expect(err).toBeNull();
+      done();
+    })  
+    setData(nstore, "delete", 
+      { login:{database:"test", username:"admin"}, 
+        record: {__tablename__: "customer", refnumber: "DMCUST/00001" } }, (err, results) => {
+      expect(err).toBeNull();
+      done();
+    })
+    */
+  })
   
   it("setData", (done) => {
     setData(nstore, "function", 

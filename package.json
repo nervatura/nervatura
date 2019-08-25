@@ -1,6 +1,6 @@
 {
   "name": "nervatura",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "Open Source Business Management Framework - Core Package",
   "keywords": [
     "business management",
@@ -42,7 +42,7 @@
     "async": "^3.1.0",
     "json2csv": "^4.5.2",
     "jsonwebtoken": "^8.5.1",
-    "nervatura-report": "^1.0.4",
+    "nervatura-report": "^1.0.6",
     "node-xlsx": "^0.15.0",
     "pdfkit": "^0.10.0",
     "xml2js": "^0.4.19",
