@@ -7,6 +7,7 @@ https://raw.githubusercontent.com/nervatura/nervatura/master/LICENSE
 */
 
 exports.adapter = require('./lib/adapter.js');
+exports.api = require('./lib/api.js');
 exports.conf = require('./lib/conf.js');
 exports.demo = require('./lib/demo.js');
 exports.lang = require('./lib/lang.js');

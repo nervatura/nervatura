@@ -1,3 +1,12 @@
+## 4.0.0
+- new generic programming interface: Nervatura API
+- NAS, NDI, NPI are still usable but outdated
+- NPI JWT token auth. support
+- all settings are based on environment variables
+- built-in Bearer Authentication support
+- new documentation and demo applications: nervatura-docs, nervatura-demo
+- new free PWA Client: nervatura-client
+
 ## 3.2.2
 - security update
 
