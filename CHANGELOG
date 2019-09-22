@@ -1,3 +1,6 @@
+## 4.0.1
+- API auth_user customer login usergroup bug fixes
+
 ## 4.0.0
 - new generic programming interface: Nervatura API
 - NAS, NDI, NPI are still usable but outdated
