@@ -1,3 +1,6 @@
+## 4.0.2
+- set JWT Token kid value: external JWT X509 public keys supports
+
 ## 4.0.1
 - API auth_user customer login usergroup bug fixes
 
