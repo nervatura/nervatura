@@ -32,13 +32,17 @@ Developed as open-source project and can be used freely under the scope of [LGPL
 
 Homepage: http://www.nervatura.com
 
-## More Nervatura Node.js packages
+## Nervatura Node.js packages
 
-[Express Framework](https://github.com/nervatura/nervatura-express/), [Nervatura Report](https://github.com/nervatura/nervatura-report/)
+[Nervatura Core](https://github.com/nervatura/nervatura/), [Nervatura Express](https://github.com/nervatura/nervatura-express/), [Nervatura Report](https://github.com/nervatura/nervatura-report/)
 
 Experimental: [Azure Functions](https://github.com/nervatura/nervatura-azure/), [Google Cloud Functions](https://github.com/nervatura/nervatura-gcloud/), [AWS Lambda](https://github.com/nervatura/nervatura-lambda/), [IBM Cloud Functions](https://github.com/nervatura/nervatura-openwhisk/)
 
-## Quick Start
+## Nervatura Go packages
+
+[Nervatura Go](https://github.com/nervatura/nervatura-go/), [Go Report](https://github.com/nervatura/go-report/)
+
+## Node.js Quick Start
 
 Nervatura Core Package:
 
