@@ -1,3 +1,7 @@
+## 4.0.3
+  - demo.js bug fixes
+  - service/get_report bug fixes
+
 ## 4.0.2
 - set JWT Token kid value: external JWT X509 public keys supports
 
