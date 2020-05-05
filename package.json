@@ -1,6 +1,6 @@
 {
   "name": "nervatura",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Open Source Business Management Framework - Core Package",
   "keywords": [
     "business management",
@@ -39,24 +39,24 @@
   "dependencies": {
     "any-db": "^2.2.1",
     "any-db-transaction": "^2.2.2",
-    "argon2": "^0.25.1",
-    "async": "^3.1.0",
-    "json2csv": "^4.5.4",
+    "argon2": "^0.26.2",
+    "async": "^3.2.0",
+    "json2csv": "^5.0.1",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.24.0",
-    "nervatura-report": "^1.0.6",
+    "moment": "^2.25.3",
+    "nervatura-report": "^1.0.7",
     "node-xlsx": "^0.15.0",
     "pdfkit": "^0.11.0",
     "xml2js": "^0.4.23",
-    "xmldom": "^0.2.1"
+    "xmldom": "^0.3.0"
   },
   "devDependencies": {
     "any-db-mssql": "^0.1.0",
     "any-db-mysql": "^2.1.2",
-    "any-db-postgres": "^2.1.4",
+    "any-db-postgres": "^2.1.5",
     "any-db-sqlite3": "^2.1.4",
-    "jest": "^24.9.0",
-    "node-mailjet": "^3.2.1",
-    "nodemailer": "^6.3.0"
+    "jest": "^26.0.1",
+    "node-mailjet": "^3.3.1",
+    "nodemailer": "^6.4.6"
   }
 }

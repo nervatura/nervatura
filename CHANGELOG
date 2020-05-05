@@ -1,3 +1,6 @@
+## 4.0.5
+  - API AuthUserLogin: added engine (database type) result
+
 ## 4.0.4
   - nervastore init bug fixes
 
