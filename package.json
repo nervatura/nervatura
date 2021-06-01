@@ -1,7 +1,7 @@
 {
   "name": "nervatura",
-  "version": "4.0.7",
-  "description": "Open Source Business Management Framework - Core Package",
+  "version": "5.0.0-beta.1",
+  "description": "Open Source Business Management Framework",
   "keywords": [
     "business management",
     "open-data",
@@ -32,31 +32,22 @@
   "engines": {
     "node": ">= 6"
   },
-  "main": "index.js",
+  "files": [
+    "dist",
+    "postinstall.js"
+  ],
   "scripts": {
-    "test": "jest"
+    "postinstall": "node postinstall.js install",
+    "preuninstall": "node postinstall.js uninstall"
+  },
+  "service": {
+    "name": "nervatura",
+    "path": "./bin",
+    "url": "https://github.com/nervatura/nervatura-service/releases/download/v{{version}}/nervatura_{{version}}_{{platform}}_{{arch}}.tar.gz"
   },
   "dependencies": {
-    "any-db": "^2.2.1",
-    "any-db-transaction": "^2.2.2",
-    "argon2": "^0.25.1",
-    "async": "^3.2.0",
-    "json2csv": "^5.0.1",
-    "jsonwebtoken": "^8.5.1",
-    "moment": "^2.25.3",
-    "nervatura-report": "^1.0.7",
-    "node-xlsx": "^0.15.0",
-    "pdfkit": "^0.11.0",
-    "xml2js": "^0.4.23",
-    "xmldom": "^0.3.0"
-  },
-  "devDependencies": {
-    "any-db-mssql": "^0.1.0",
-    "any-db-mysql": "^2.1.2",
-    "any-db-postgres": "^2.1.5",
-    "any-db-sqlite3": "^2.1.4",
-    "jest": "^26.0.1",
-    "node-mailjet": "^3.3.1",
-    "nodemailer": "^6.4.6"
+    "mkdirp": "^0.5.5",
+    "request": "^2.88.2",
+    "tar": "^2.2.2"
   }
 }

@@ -51,3 +51,5 @@ test/database/test.db
 data/storage/*
 *.pem
 .elasticbeanstalk/
+bin
+Makefile

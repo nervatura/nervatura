@@ -1,0 +1,31 @@
+{
+  "locales": {
+    "de": {
+      "key": "de",
+      "de": "Deutsche",
+      
+      "title_login": "Nervatura Client",
+      "login_username": "Nutzername",
+      "login_password": "Passwort",
+      "login_database": "Datenbank"
+    },
+    "hu": {
+      "key": "hu",
+      "hu": "Magyar",
+      
+      "title_login": "Nervatura Client",
+      "login_username": "Felhasználó",
+      "login_password": "Jelszó",
+      "login_database": "Adatbázis"
+    },
+    "jp": {
+      "key": "jp",
+      "jp": "日本語",
+      
+      "title_login": "Nervatura Client",
+      "login_username": "ユーザー名",
+      "login_password": "パスワード",
+      "login_database": "データベース"
+    }
+  }
+}
