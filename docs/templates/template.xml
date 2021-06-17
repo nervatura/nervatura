@@ -1,0 +1,9 @@
+<report reportkey="" nervatype="" transtype="" direction="" repname="" description="" label="" filetype="">
+  <dataset name="" engine=""><![CDATA[ ]]></dataset>
+  
+  <field fieldname="" fieldtype="" wheretype="" description="" orderby="" dataset="" defvalue=""><![CDATA[ ]]></field>
+  
+  <message secname="" fieldname=""><![CDATA[]]></message>
+  
+  <template><![CDATA[]]></template>
+</report>

@@ -1,0 +1,1156 @@
+syntax = "proto3";
+
+option go_package = "github.com/nervatura/nervatura-go/pkg/proto";
+
+package nervatura;
+
+/*
+Nervatura gRPC API
+*/
+service API {
+  // Logs in user by username and password
+  rpc UserLogin (RequestUserLogin) returns (ResponseUserLogin) {}
+  // User (employee or customer) password change.
+  rpc UserPassword (RequestUserPassword) returns (ResponseEmpty) {}
+  // JWT token auth.
+  rpc TokenLogin (RequestEmpty) returns (ResponseTokenLogin) {}
+  // Refreshes JWT token by checking at database whether refresh token exists.
+  rpc TokenRefresh (RequestEmpty) returns (ResponseTokenRefresh) {}
+  // Decoded JWT token but doesn't validate the signature.
+  rpc TokenDecode (RequestTokenDecode) returns (ResponseTokenDecode) {}
+  // Get returns one or more records
+  rpc Get (RequestGet) returns (ResponseGet) {}
+  // Add/update one or more items
+  rpc Update (RequestUpdate) returns (ResponseUpdate) {}
+  // Delete an item
+  rpc Delete (RequestDelete) returns (ResponseEmpty) {}
+  // Run raw SQL queries in safe mode
+  rpc View (RequestView) returns (ResponseView) {}
+  // Call a server-side function
+  rpc Function (RequestFunction) returns (ResponseFunction) {}
+  // Create and download a Nervatura Report
+  rpc Report (RequestReport) returns (ResponseReport) {}
+  // List all available Nervatura Report. Admin user group membership required.
+  rpc ReportList (RequestReportList) returns (ResponseReportList) {}
+  // Install a report to the database. Admin user group membership required.
+  rpc ReportInstall (RequestReportInstall) returns (ResponseReportInstall) {}
+  // Delete a report from the database. Admin user group membership required.
+  rpc ReportDelete (RequestReportDelete) returns (ResponseEmpty) {}
+  // Create a new Nervatura database
+  rpc DatabaseCreate (RequestDatabaseCreate) returns (ResponseDatabaseCreate) {}
+}
+
+enum DataType {
+  address = 0; // Address
+  barcode = 1; // Barcode
+  contact = 2; // Contact
+  currency = 3; // Currency
+  customer = 4; // Customer
+  deffield = 5; // Deffield
+  employee = 6; // Employee
+  event = 7; // Event
+  fieldvalue = 8; // Fieldvalue
+  groups = 9; // Groups
+  item = 10; // Item
+  link = 11; // Link
+  log = 12; // Log
+  movement = 13; // Movement
+  numberdef = 14; // Numberdef
+  pattern = 15; // Pattern
+  payment = 16; // Payment
+  place = 17; // Place
+  price = 18; // Price
+  product = 19; // Product
+  project = 20; // Project
+  rate = 21; // Rate
+  tax = 22; // Tax
+  tool = 23; // Tool
+  trans = 24; // Trans
+  ui_audit = 25; // UiAudit
+  ui_menu = 26; // UiMenu
+  ui_menufields = 27; // UiMenufields
+  ui_message = 28; // UiMessage
+  ui_printqueue = 29; // UiPrintqueue
+  ui_report = 30; // UiReport
+  ui_userconfig = 31; // UiUserconfig
+}
+
+message Value {
+  oneof value {
+    bool boolean = 1;
+    double number = 2;
+    string text = 3;
+    //google.protobuf.NullValue null = 4;
+  }
+}
+
+message ResponseRows {
+  message Item {
+    map<string, Value> values = 1;
+  }
+  repeated Item items = 1;
+}
+
+// No parameters
+message RequestEmpty {}
+
+// Does not return content.
+message ResponseEmpty {}
+
+message RequestUserLogin {
+  // Employee username or Customer custnumber (email or phone number)
+  string username = 1;
+  string password = 2;
+  // Optional. Default value: NT_DEFAULT_ALIAS
+  string database = 3;
+}
+
+message ResponseUserLogin {
+  string token = 1; // Access JWT token
+  string engine = 2; // Type of database
+}
+
+message RequestTokenDecode {
+  string value = 1; // Access token code.
+}
+
+// Access token claims.
+message ResponseTokenDecode {
+  string username = 1;
+  string database = 2;
+  double exp = 3; // JWT expiration time
+  string iss = 4;
+}
+
+message ResponseTokenRefresh {
+  string value = 1; // Access token code.
+}
+
+// Token user properties
+message ResponseTokenLogin {
+  int64 id = 1;
+  string username = 2;
+  string empnumber = 3;
+  int64 usergroup = 4;
+  string scope = 5;
+  string department = 6;
+}
+
+message RequestUserPassword {
+  // New password
+  string password = 1;
+  // New password confirmation
+  string confirm = 2;
+  // Optional. Only if different from the logged in user. Admin user group membership required.
+  string username = 3;
+  // Optional. Only if different from the logged in user. Admin user group membership required.
+  string custnumber = 4; 
+}
+
+// New database props. 
+message RequestDatabaseCreate {
+  // Alias name of the database
+  string alias = 1;
+  // Create a DEMO database
+  bool demo = 2;
+}
+
+// Result log data
+message ResponseDatabaseCreate {
+  ResponseRows details = 1;
+}
+
+// Delete parameters
+message RequestDelete {
+  DataType nervatype = 1;
+  // The object ID
+  int64 id = 36;
+  // Use Key instead of ID
+  string key = 37;
+}
+
+// Only "select" queries and functions can be executed. Changes to the data are not saved in the database.
+message RequestView {
+  message Query {
+    // Give the query a unique name
+    string key = 1;
+    // The SQL query as a string
+    string text = 2;
+    // The array of parameter values
+    repeated Value values = 3;
+  }
+  // The array of Query object
+  repeated Query options = 1;
+}
+
+message ResponseView {
+  // key - results map
+  map<string, ResponseRows> values = 1;
+}
+
+message RequestFunction {
+  // Server function name
+  string key = 1;
+  // The array of parameter values
+  map<string, Value> values = 2;
+}
+
+message ResponseFunction {
+  bytes value = 1;
+}
+
+message RequestReportList {
+  string label = 1;
+}
+
+// Returns all installable files from the NT_REPORT_DIR directory (empty value: all available built-in Nervatura Reports)
+message ResponseReportList {
+  message Info {
+    string reportkey = 1;
+    string repname = 2;
+    string description = 3;
+    string label = 4;
+    string reptype = 5;
+    string filename = 6;
+    bool installed = 7;
+  }
+  repeated Info items = 1;
+}
+
+/*
+Admin user group membership required.
+ */
+message RequestReportInstall {
+  // Example : ntr_invoice_en
+  string reportkey = 1;
+}
+
+message ResponseReportInstall {
+  // Returns a new report ID.
+  int64 id = 1;
+}
+
+message RequestReportDelete {
+  // Example : ntr_invoice_en
+  string reportkey = 1;
+}
+
+enum ReportOrientation {
+  portrait = 0;
+  landscape = 1;
+} 
+
+enum ReportSize {
+  a3 = 0; 
+  a4 = 1; 
+  a5 = 2; 
+  letter = 3; 
+  legal = 4;
+}
+
+enum ReportOutput {
+  auto = 0;
+  xml = 1;
+  data = 2;
+  base64 = 3;
+}
+
+enum ReportType {
+  report_none = 0;
+  report_customer = 1;
+  report_employee = 2;
+  report_event = 3;
+  report_place = 4;
+  report_product = 5;
+  report_project = 6;
+  report_tool = 7;
+  report_trans = 8;
+}
+
+message RequestReport {
+  // Example : ntr_invoice_en
+  string reportkey = 1;
+  ReportOrientation orientation = 2;
+  ReportSize size = 3;
+  ReportOutput output = 4;
+  ReportType type = 5;
+  // Example : DMINV/00001
+  string refnumber = 6;
+  // Custom report JSON template
+  string template = 7;
+  map<string, Value> filters = 8;
+}
+
+message ResponseReport {
+  bytes value = 1;
+}
+
+message RequestUpdate {
+  message Item {
+    map<string, Value> values = 1;
+    map<string, Value> keys = 2;
+  }
+  DataType nervatype = 1;
+  repeated Item items = 2;
+}
+
+// If the ID (or Key) value is missing, it creates a new item.
+message ResponseUpdate {
+  // Returns the all new/updated IDs values.
+  repeated int64 values = 1;
+}
+
+message RequestGet {
+  DataType nervatype = 1;
+  bool metadata = 2;
+  repeated int64 ids = 3;
+  repeated string filter = 7;
+}
+
+message ResponseGet {
+  message Value {
+    oneof value {
+      Address address = 1;
+      Barcode barcode = 2;
+      Contact contact = 3;
+      Currency currency = 4;
+      Customer customer = 5;
+      Deffield deffield = 6;
+      Employee employee = 7;
+      Event event = 8;
+      Fieldvalue fieldvalue = 9;
+      Groups groups = 10;
+      Item item = 11;
+      Link link = 12;
+      Log log = 13;
+      Movement movement = 14;
+      Numberdef numberdef = 15;
+      Pattern pattern = 16;
+      Payment payment = 17;
+      Place place = 18;
+      Price price = 19;
+      Product product = 20;
+      Project project = 21;
+      Rate rate = 22;
+      Tax tax = 23;
+      Tool tool = 24;
+      Trans trans = 25;
+      UiAudit ui_audit = 26;
+      UiMenu ui_menu = 27;
+      UiMenufields ui_menufields = 28;
+      UiMessage ui_message = 29;
+      UiPrintqueue ui_printqueue = 30;
+      UiReport ui_report = 31;
+      UiUserconfig ui_userconfig = 32;
+    }
+  }
+  repeated Value values = 1;
+}
+
+message MetaData {
+  int64 id = 1;
+  // Reference to [Deffield](#deffield).fieldname.
+  string fieldname = 2;
+  // Reference to [Deffield](#deffield).fieldtype.
+  string fieldtype = 3;
+  string value = 4;
+  string notes = 5;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Value is a generated unique key identifier: *{nervatype}/{refnumber}~{rownumber}*. The *rownumber* is the order of multiple *{nervatype}/{refnumber}* keys. For example: ```customer/DMCUST/00001~1```
+  
+  - ```nervatype```: Valid values: *customer, employee, event, place, product, project, tool, trans*
+  
+  - ```ref_id```: Valid values: *customer/{custnumber}, employee/{empnumber}, event/{calnumber}, place/{planumber}, product/{partnumber}, 
+  project/{pronumber}, tool/{serial}, trans/{transnumber}*
+
+*/
+message Address {
+  int64 id = 1;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype = 2; 
+  // Reference to [Customer](#customer).id, [Employee](#employee).id, [Event](#event).id, [Place](#place).id, [Product](#product).id, [Project](#project).id, [Tool](#tool).id, [Trans](#trans).id
+  int64 ref_id = 3;
+  string country = 4;
+  string state = 5;
+  string zipcode = 6;
+  string city = 7;
+  string street = 8;
+  string notes = 9;
+  // Address meta data
+  repeated MetaData metadata = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Barcode *code*
+  
+  - ```barcodetype```: Valid values: *CODE_128, CODE_39, EAN_13, EAN_8, QR*
+  
+  - ```product_id```: Product *partnumber*
+*/
+message Barcode {
+  int64 id = 1;
+  // Each product can be connected to any number of bar codes, but the code must remain unique to ensure that the product is clearly identifiable.
+  string code = 2;
+  // Reference to [Product](#product).id
+  int64 product_id = 3;
+  // Comment related to the barcode. Informal, has no role in identification.
+  string description = 4;
+  // Reference to [Groups](#groups).id  (only where groupname = 'barcodetype').
+  int64 barcodetype = 5;
+  // The actual amount of the products identified by the barcode. For example can be used for packaged goods, tray packaging.
+  double qty = 6;
+  // If more than one bar code is assigned, this will be the default. Because of the uniqueness of the barcode the product is always clearly identifiable, but in reverse case (eg. in case the barcode should be printed on a document) we must assign one being the default for that product.
+  bool defcode = 7;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: The value is a generated constant key identifier: *{nervatype}/{refnumber}~{rownumber}*. The rownumber is the order of multiple *{nervatype}/{refnumber}* keys.
+  
+  - ```nervatype```: Valid values: *customer, employee, event, place, product, project, tool, trans*
+  
+  - ```ref_id```: Valid values: *customer/{custnumber}, employee/{empnumber}, event/{calnumber}, place/{planumber}, product/{partnumber}, project/{pronumber}, tool/{serial}, trans/{transnumber}*
+*/
+message Contact {
+  int64 id = 1;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype = 2;
+  // Reference to [Customer](#customer).id, [Employee](#employee).id, [Event](#event).id, [Place](#place).id, [Product](#product).id, [Project](#project).id, [Tool](#tool).id, [Trans](#trans).id
+  int64 ref_id = 3;
+  string firstname = 4;
+  string surname = 5;
+  string status = 6;
+  string phone = 7;
+  string fax = 8;
+  string mobil = 9;
+  string email = 10;
+  string notes = 11;
+  // Contact meta data
+  repeated MetaData metadata = 12;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Currency *curr*
+*/
+message Currency {
+  int64 id = 1;
+  // The ISO 4217 code of the currency.
+  string curr = 2;
+  // The name of the currency.
+  string description = 3;
+  // The number of decimal places used for recording and rounding by the program. Default: 2
+  int64 digit = 4;
+  // Default Rate. You can specify an exchange rate vs. the default currency, which will be used by the reports.
+  double defrate = 5;
+  // Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1.
+  int64 cround = 6;
+  // Currency meta data
+  repeated MetaData metadata = 7;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Customer *custnumber*
+
+  - ```custtype```: Valid values: *own, company, private, other*
+*/
+message Customer {
+  int64 id = 1;
+  // Reference to [Groups](#groups).id (only where groupname = 'custtype')
+  int64 custtype = 2;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = custnumber) data series.
+  string custnumber = 3;
+  // Full name of the customer
+  string custname = 4;
+  string taxnumber = 5;
+  string account = 6;
+  // Tax-free
+  bool notax = 7;
+  // Payment per.
+  int64 terms = 8;
+  // Customer's credit limit. Data is used by financial reports.
+  double creditlimit = 9;
+  // If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field. If the product has a separate customer price, the value specified here will not be considered by the program.
+  double discount = 10;
+  string notes = 11;
+  bool inactive = 12;
+  // Customer meta data
+  repeated MetaData metadata = 13;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Deffield *fieldname*
+
+  - ```nervatype```: Valid values: *address, barcode, contact, currency, customer, employee, event, item, link, log, movement, payment, price, place, product, project, rate, tax, tool, trans, setting*
+  
+  - ```subtype```: All groupvalue from Groups, where groupname equal *custtype, placetype, protype, toolgroup, transtype*
+  
+  - ```fieldtype```: Valid values: *bool, date, time, float, integer, string, valuelist, notes, urlink, password, customer, tool, transitem, transmovement, transpayment, product, project, employee, place*
+  */
+message Deffield {
+  int64 id = 1;
+  string fieldname = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype = 3;
+  //  Reference to [Groups](#groups).id (where groupname in ('custtype','placetype','  protype','toolgroup','transtype'))
+  optional int64 subtype = 4;
+  // Reference to [Groups](#groups).id  (only where groupname = 'fieldtype')
+  int64 fieldtype = 5;
+  string description = 6;
+  // If fieldtype=valuelist: valid values are listed, separated by ~
+  string valuelist = 7;
+  // When selected, the attribute in case of adding a new element (eg a new customer or employee is created) will automatically be created with the default value according to its type and also will be attached to the new element.
+  bool addnew = 8;
+  // Can appear or not (hidden value) on the entry forms
+  bool visible = 9;
+  // The value of the attribute can not be changed in the program interface
+  bool readonly = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Employee *empnumber*
+
+  - ```usergroup```: All groupvalue from Groups, where groupname equal usergroup
+  
+  - ```department```: All groupvalue from Groups, where groupname equal department
+*/
+message Employee {
+  int64 id = 1;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = empnumber) data series.
+  string empnumber = 2;
+  // Database login name. Should be unique on database level.
+  optional string username = 3;
+  // Reference to [Groups](#groups).id (only where groupname = 'usergroup')
+  int64 usergroup = 4;
+  optional string startdate = 5;
+  optional string enddate = 6;
+  // Reference to [Groups](#groups).id (only where groupname = 'department')
+  optional int64 department = 7;
+  string registration_key = 8;
+  bool inactive = 9;
+  // Employee meta data
+  repeated MetaData metadata = 13;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Event *calnumber*
+
+  - ```nervatype```: Valid values: *customer, employee, place, product, project, tool, trans*
+  
+  - ```ref_id```: Valid values: *customer/{custnumber}, employee/{empnumber}, place/{planumber}, product/{partnumber}, project/{pronumber}, tool/{serial}, trans/{transnumber}*
+  
+  - ```eventgroup```: All groupvalue from Groups, where groupname equal eventgroup
+  */
+message Event {
+  int64 id = 1;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = calnumber) data series.
+  string calnumber = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype = 3;
+  // Reference to [Customer](#customer).id, [Employee](#employee).id, [Place](#place).id, [Product](#product).id, [Project](#project).id, [Tool](#tool).id, [Trans](#trans).id
+  int64 ref_id = 4;
+  string uid = 5;
+  // Reference to [Groups](#groups).id (only where groupname = 'eventgroup')
+  optional int64 eventgroup = 6;
+  // Datetime
+  string fromdate = 7;
+  // Datetime
+  optional string todate = 8;
+  string subject = 9;
+  string place = 10;
+  string description = 11;
+  // Event meta data
+  repeated MetaData metadata = 12;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: The value is a generated constant key identifier: *{refnumber}~~{fieldname}~{rownumber}*. The rownumber is the order of multiple *{refnumber}~~{fieldname}* keys.
+  
+  - ```ref_id```: Valid values: *{nervatype}/{refnumber}*
+  */
+message Fieldvalue {
+  int64 id = 1;
+  // Reference to [Deffield](#deffield).fieldname.
+  string fieldname = 2;
+  // Reference to any type.id where type = [Deffield](#deffield).nervatype. If it is null then nervatype = setting.
+  optional int64 ref_id = 3;
+  string value = 4;
+  string notes = 5;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Group *groupname~groupvalue*
+  */
+message Groups {
+  int64 id = 1;
+  string groupname = 2;
+  string groupvalue = 3;
+  string description = 4;
+  bool inactive = 5;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Trans and Item *transnumber~rownumber*
+
+  - ```trans_id```: Trans *transnumber*
+
+  - ```product_id```: Product *partnumber*
+
+  - ```tax_id```: Tax *taxcode*
+  */
+message Item {
+  int64 id = 1;
+  // Reference to [trans](#trans).id
+  int64 trans_id = 2;
+  // Reference to [product](#product).id
+  int64 product_id = 3;
+  string unit = 4;
+  double qty = 5;
+  double fxprice = 6;
+  double netamount = 7;
+  double discount = 8;
+  // Reference to [Tax](#tax).id
+  int64 tax_id = 9;
+  double vatamount = 10;
+  double amount = 11;
+  string description = 12;
+  bool deposit = 13;
+  double ownstock = 14;
+  bool actionprice = 15;
+  // Item meta data
+  repeated MetaData metadata = 16;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: *{nervatype_1}~{refnumber_1}~~{nervatype_2}~{refnumber_2}*
+
+  - ```nervatype_1```: All groupvalue from Groups, where groupname equal nervatype
+
+  - ```ref_id_1```: *{nervatype_1}/{refnumber_1}*
+
+  - ```nervatype_2```: All groupvalue from Groups, where groupname equal nervatype
+  */
+message Link {
+  int64 id = 1;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype_1 = 2;
+  // Reference to {nervatype}.id
+  int64 ref_id_1 = 3;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype_2 = 4;
+  // Reference to {nervatype}.id
+  int64 ref_id_2 = 5;
+  // Link meta data
+  repeated MetaData metadata = 16;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: *{empnumber}~{crdate}'*
+
+  - ```employee_id```: Employee *empnumber*
+
+  - ```ref_id```: *{nervatype}/{refnumber}*
+
+  - ```nervatype```: All groupvalue from Groups, where groupname equal nervatype
+
+  - ```logstate```: Valid values: update, closed, deleted, print, login, logout
+  */
+message Log {
+  int64 id = 1;
+  // Reference to [Employee](#employee).id
+  int64 employee_id = 2;
+  // Date-time
+  string crdate = 3;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  optional int64 nervatype = 4;
+  // Reference to {nervatype}.id
+  optional int64 ref_id = 5;
+  // Reference to [Groups](#groups).id (only where groupname = 'logstate')
+  int64 logstate = 6;
+  // Log meta data
+  repeated MetaData metadata = 16;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Trans and Item *transnumber~rownumber*
+
+  - ```trans_id```: Trans *transnumber*
+
+  - ```product_id```: Product *partnumber*
+
+  - ```movetype```: Valid values: *inventory, tool, plan, head*
+
+  - ```tool_id```: Tool *serial*
+
+  - ```place_id```: Place *planumber*
+  */
+message Movement {
+  int64 id = 1;
+  // Reference to [Trans](#trans).id
+  int64 trans_id = 2;
+  // Date-time
+  string shippingdate = 3;
+  // Reference to [Groups](#groups).id (only where groupname = 'movetype')
+  int64 movetype = 4;
+  // Reference to [Product](#product).id
+  optional int64 product_id = 5;
+  // Reference to [Tool](#tool).id
+  optional int64 tool_id = 6;
+  // Reference to [Place](#place).id
+  optional int64 place_id = 7;
+  double qty = 8;
+  string description = 9;
+  bool shared = 10;
+  // Movement meta data
+  repeated MetaData metadata = 16;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Numberdef *numberkey*
+  */
+message Numberdef {
+  int64 id = 1;
+  // Unique key
+  string numberkey = 2;
+  // The text prefix of the identifier. It can be any length, but usage of special characters, spaces in the text is not recommended.
+  string prefix = 3;
+  // The current status of the counter, the next sequence number will be one value higher than this one. It is possible to re-set the counter, but the uniqueness must be ensured in all cases!
+  int64 curvalue = 4;
+  // If selected, the created identifier will contain the year.
+  bool isyear = 5;
+  // The separator character in the identifier. Default: "/"
+  string sep = 6;
+  // The value field is arranged in such length to the right and filled with zeros.
+  int64 len = 7;
+  string description = 8;
+  bool visible = 9;
+  bool readonly = 10;
+  int64 orderby = 11;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Pattern *description*
+  */
+message Pattern {
+  int64 id = 1;
+  string description = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'transtype')
+  int64 transtype = 3;
+  string notes = 4;
+  bool defpattern = 5;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Trans and Item *transnumber~rownumber*
+
+  - ```trans_id```: Trans *transnumber*
+  */
+message Payment {
+  int64 id = 1;
+  // Reference to [Trans](#trans).id
+  int64 trans_id = 2;
+  string paiddate = 3;
+  double amount = 4;
+  string notes = 5;
+  // Payment meta data
+  repeated MetaData metadata = 6;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Place *planumber*
+
+  - ```placetype```: Valid values: *bank, cash, warehouse, other*
+  */
+message Place {
+  int64 id = 1;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = planumber) data series.
+  string planumber = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'placetype')
+  int64 placetype = 3;
+  string description = 4;
+  optional string curr = 5;
+  bool defplace = 6;
+  string notes = 7;
+  bool inactive = 8;
+  // Place meta data
+  repeated MetaData metadata = 9;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Price *partnumber~validfrom~curr~qty*
+
+  - ```product_id```: Product *partnumber*
+  */
+message Price {
+  int64 id = 1;
+  // Reference to [Product](#product).id
+  int64 product_id = 2;
+  // Start of validity, mandatory data.
+  string validfrom = 3;
+  // End of validity, can be left empty.
+  optional string validto = 4;
+  string curr = 5;
+  // Price ranges can also be specified, thus different price can be set for a smaller and bigger quantity of the same product. The quantity should be used as the lower threshold, ie. this should be the minimum quantity for the price set.
+  double qty = 6;
+  // Price value
+  double pricevalue = 7;
+  // Supplier (if marked) or customer price. By default the customer price.
+  bool vendorprice = 8;
+  // Price meta data
+  repeated MetaData metadata = 9;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Product *partnumber*
+
+  - ```protype```: Valid values: *item, service*
+
+  - ```tax_id```: Tax *taxcode*
+  */
+message Product {
+  int64 id = 1;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = partnumber) data series.
+  string partnumber = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'protype')
+  int64 protype = 3;
+  // The full name of the product or short description.
+  string description = 4;
+  string unit = 5;
+  // Reference to [Tax](#tax).id
+  int64 tax_id = 6;
+  string notes = 7;
+  bool webitem = 8;
+  bool inactive = 9;
+  // Product meta data
+  repeated MetaData metadata = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Project *pronumber*
+  
+  - ```customer_id```: Tax *custnumber*
+  */
+message Project {
+  int64 id = 1;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = pronumber) data series.
+  string pronumber = 2;
+  // The name of the project.
+  string description = 3;
+  // Reference to [Customer](#customer).id
+  optional int64 customer_id = 4;
+  optional string startdate = 5;
+  optional string enddate = 6;
+  string notes = 7;
+  bool inactive = 8;
+  // Project meta data
+  repeated MetaData metadata = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Rate *ratetype~ratedate~curr~planumber*
+
+  - ```place_id```: Place *planumber*
+
+  - ```ratetype```: Valid values: *rate, buy, sell,average*
+
+  - ```rategroup```: all groupvalue from Groups, where groupname equal rategroup
+  */
+message Rate {
+  int64 id = 1;
+  // Reference to [Groups](#groups).id (only where groupname = 'ratetype')
+  int64 ratetype = 2;
+  string ratedate = 3;
+  string curr = 4;
+  // Reference to [Place](#place).id
+  optional int64 place_id = 5;
+  // Reference to [Groups](#groups).id (only where groupname = 'rategroup')
+  optional int64 rategroup = 6;
+  // Rate or interest value
+  double ratevalue = 7;
+  // Rate meta data
+  repeated MetaData metadata = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Tax *taxcode*
+  */
+message Tax {
+  int64 id = 1;
+  // Unique ID.
+  string taxcode = 2;
+  string description = 3;
+  // Rate or interest value
+  double rate = 4;
+  bool inactive = 5;
+  // Tax meta data
+  repeated MetaData metadata = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Tool *serial*
+
+  - ```toolgroup```: all groupvalue from Groups, where groupname equal toolgroup
+
+  - ```product_id```: Product *partnumber*
+  */
+message Tool {
+  int64 id = 1;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = serial) data series.
+  string serial = 2;
+  string description = 3;
+  // Reference to [Product](#product).id
+  int64 product_id = 4;
+  // Reference to [Groups](#groups).id (only where groupname = 'toolgroup')
+  optional int64 toolgroup = 5;
+  string notes = 6;
+  bool inactive = 7;
+  // Tool meta data
+  repeated MetaData metadata = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: Trans *transnumber*
+
+  - ```transtype```: all groupvalue from Groups, where groupname equal transtype
+
+  - ```direction```: Valid values *in, out, transfer*
+
+  - ```customer_id```: Customer *custnumber*
+
+  - ```employee_id```: Employee *empnumber*
+
+  - ```department```: all groupvalue from Groups, where groupname equal department
+
+  - ```project_id```: Project *pronumber*
+
+  - ```place_id```: Place *planumber*
+
+  - ```paidtype```: all groupvalue from Groups, where groupname equal paidtype
+
+  - ```transtate```: all groupvalue from Groups, where groupname equal transtate
+  */
+message Trans {
+  int64 id = 1;
+  // Unique ID. If you set it to numberdef, it will be generated at the first data save. The format and value of the next data in row is taken from the numberdef (numberkey = transnumber) data series.
+  string transnumber = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'transtype')[Groups](#groups).id
+  int64 transtype = 3;
+  // Reference to [Groups](#groups).id (only where groupname = 'direction')
+  int64 direction = 4;
+  optional string ref_transnumber = 5;
+  string crdate = 6;
+  string transdate = 7;
+  // Date-time
+  optional string duedate = 8;
+  // Reference to [Customer](#customer).id
+  optional int64 customer_id = 9;
+  // Reference to [Employee](#employee).id
+  optional int64 employee_id = 10;
+  // Reference to [Groups](#groups).id (only where groupname = 'department')
+  optional int64 department = 11;
+  // Reference to [Project](#project).id
+  optional int64 project_id = 12;
+  // Reference to [Place](#place).id
+  optional int64 place_id = 13;
+  // Reference to [Groups](#groups).id (only where groupname = 'paidtype')
+  optional int64 paidtype = 14;
+  optional string curr = 15;
+  bool notax = 16;
+  bool paid = 17;
+  double acrate = 18;
+  string notes = 19;
+  string intnotes = 20;
+  string fnote = 21;
+  // Reference to [Groups](#groups).id (only where groupname = 'transtate')
+  int64 transtate = 22;
+  bool closed = 23;
+  // Trans meta data
+  repeated MetaData metadata = 24;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: UiAudit *{usergroup}~{nervatype}~{transtype}*
+
+  - ```usergroup```: all groupvalue from Groups, where groupname equal usergroup
+
+  - ```nervatype```: all groupvalue from Groups, where groupname equal nervatype
+
+  - ```subtype```: all groupvalue from Groups, where groupname equal transtype, movetype, protype, custtype, placetype
+  
+  - ```inputfilter```: Valid values *disabled, readonly, update, all*
+  */
+message UiAudit {
+  int64 id = 1;
+  // Reference to [Groups](#groups).id (only where groupname = 'usergroup')
+  int64 usergroup = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype = 3;
+  // Reference to [Groups](#groups).id (only where groupname = 'movetype')
+  optional int64 subtype = 4;
+  // Reference to [Groups](#groups).id (only where groupname = 'inputfilter')
+  int64 inputfilter = 5;
+  bool supervisor = 6;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: UiMenu *menukey*
+  */
+message UiMenu {
+  int64 id = 1;
+  string menukey = 2;
+  string description = 3;
+  string modul = 4;
+  string icon = 5;
+  // Reference to [Groups](#groups).id (only where groupname = 'method')
+  int64 method = 6;
+  string funcname = 7;
+  string address = 8;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: UiMenufields *{menukey}~{fieldname}*
+
+  - ```menu_id```: UiMenu *menukey*
+  */
+message UiMenufields {
+  int64 id = 1;
+  // Reference to [UiMenu](#UiMenu).id
+  int64 menu_id = 2;
+  string fieldname = 3;
+  string description = 4;
+  // Reference to [Groups](#groups).id (only where groupname = 'fieldtype')
+  int64 fieldtype = 5;
+  int64 orderby = 6;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: UiMessage *{secname}~{fieldname}~{lang}*
+  */
+message UiMessage {
+  int64 id = 1;
+  string secname = 2;
+  string fieldname = 3;
+  string lang = 4;
+  string msg = 5;
+}
+
+message UiPrintqueue {
+  int64 id = 1;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  optional int64 nervatype = 2;
+  // Reference to {nervatype}.id
+  int64 ref_id = 3;
+  double qty = 4;
+  // Reference to [Employee](#employee).id
+  optional int64 employee_id = 5;
+  // Reference to [UiReport](#UiReport).id
+  int64 report_id = 6;
+  // Date-time
+  string crdate = 7;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: UiReport *reportkey*
+
+  - ```nervatype```: all groupvalue from Groups, where groupname equal nervatype
+
+  - ```transtype```: all groupvalue from Groups, where groupname equal transtype
+
+  - ```direction```: all groupvalue from Groups, where groupname equal direction
+
+  - ```filetype```: all groupvalue from Groups, where groupname equal filetype
+  */
+message UiReport {
+  int64 id = 1;
+  string reportkey = 2;
+  // Reference to [Groups](#groups).id (only where groupname = 'nervatype')
+  int64 nervatype = 3;
+  // Reference to [Groups](#groups).id (only where groupname = 'transtype')
+  optional int64 transtype = 4;
+  // Reference to [Groups](#groups).id (only where groupname = 'direction')
+  optional int64 direction = 5;
+  string repname = 6;
+  string description = 7;
+  string label = 8;
+  // Reference to [Groups](#groups).id (only where groupname = 'filetype')
+  int64 filetype = 9;
+  string report = 10;
+}
+
+/*
+  RequestUpdate Key->ID keys:
+
+  - ```id```: *{empnumber}~{section}~{cfgroup}~{cfname}*
+
+  - ```employee_id```: Employee *{empnumber}*
+  */
+message UiUserconfig {
+  int64 id = 1;
+  // Reference to [Employee](#employee).id
+  optional int64 employee_id = 2;
+  optional string section = 3;
+  string cfgroup = 4;
+  string cfname = 5;
+  optional string cfvalue = 6;
+  int64 orderby = 7;
+}

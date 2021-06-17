@@ -1,0 +1,60 @@
+Nervatura License
+=========
+
+Nervatura Framework is Licensed under the [LGPL license version 3]
+(http://www.gnu.org/licenses/lgpl.html)
+
+Copyright © 2011-2019, Csaba Kappel.
+All rights reserved.
+
+### On Commercial Redistribution
+
+In accordance with LGPL you may:
+- redistribute Nervatura with your apps
+- release your applications which use official Nervatura libraries under any license you wish
+But you must:
+- make clear in the documentation that your application uses Nervatura
+- release any modification of the Nervatura libraries under the LGPLv3 license
+
+THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES 
+PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, 
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE 
+PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL 
+NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT 
+HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, 
+BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL 
+DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED 
+TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES 
+OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER 
+PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+### Licenses for third party contributed software
+
+Nervatura contains third party software under the node_modules and lib/pylib and folders.
+Each file/module in contrib is distributed with Nervatura under its original license.
+The javascript licenses are in the code itself. Here we list some of them.
+
+#### node_modules folder: 
+The full list of the modules please see the (package.json) file
+
+#### sample programs:
+
+#### ConfigObj (Python, Nervatura WxPython Sample Client)
+Copyright © 2005-2010 Michael Foord, Nicola Larosa
+Homepage: http://www.voidspace.org.uk/python/configobj.html
+Licence: BSD
+http://www.voidspace.org.uk/python/license.shtml
+
+#### ObjectAttrValidator (Python, Nervatura WxPython Sample Client)
+Copyright © 2004 by Samuel Reynolds
+Licence: BSD
+http://auditory-research-suite.googlecode.com/svn/trunk/src/python/SI/PTCommon/ObjectAttrValidator2.py
+
+#### Knockout (Javascript, JSON-RPC Sample)
+Homepage: http://knockoutjs.com
+Licence: MIT
+http://opensource.org/licenses/mit-license.php

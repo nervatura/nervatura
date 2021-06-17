@@ -1,0 +1,43 @@
+{
+  "name": "nervatura",
+  "version": "4.0.7",
+  "description": "Open Source Business Management Framework",
+  "keywords": [
+    "business management",
+    "open-data",
+    "customer",
+    "employee",
+    "product",
+    "invoice",
+    "order",
+    "offer",
+    "stock control",
+    "payment",
+    "inventory",
+    "rental",
+    "project",
+    "express",
+    "PDF reporting"
+  ],
+  "author": "Csaba Kappel <kappel.csaba@gmail.com> (http://nervatura.com)",
+  "license": "LGPL-3.0",
+  "homepage": "http://nervatura.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nervatura/nervatura.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nervatura/nervatura/issues"
+  },
+  "engines": {
+    "node": ">= 6"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
