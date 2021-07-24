@@ -19,7 +19,8 @@ The framework is based on Nervatura Object [**MODEL**](https://nervatura.github.
 
 The Nervatura service is small and fast. A single ~6 MB file contains all the necessary dependencies.
 The framework includes:
-- CLI (command line) API
+- [**CLI API**](https://nervatura.github.io/nervatura/#cli-api) (command line)
+- [**CGO API**](https://nervatura.github.io/nervatura/#cgo-api) (C shared library)
 - standard HTTP [**RESTful API**](https://nervatura.github.io/nervatura/api) for client communication
 - HTTP/2-based [**gRPC API**](https://nervatura.github.io/nervatura/grpc) for server-side communication
 - JWT generation, external token validation, SSL/TLS support and other HTTP security [settings](https://github.com/nervatura/nervatura-service/blob/master/.env.example)
@@ -29,8 +30,8 @@ or CSV data files
 - sample report templates and [**REPORT EDITOR**](https://nervatura.github.io/nervatura/docs/editor) GUI
 - PWA [**CLIENT**](https://nervatura.github.io/nervatura/docs) application and a basic **ADMIN** interface
 
-The client and report interface supports [multilingualism](https://nervatura.github.io/nervatura/#customize-the-appearance). The framework can be easily extended with additional interfaces and functions in the [supported languages](https://grpc.io/docs/languages/): 
-C#, C++, Dart, Go, Java, Kotlin, Node, Objective-C, PHP, Python, Ruby
+The client and report interface supports [multilingualism](https://nervatura.github.io/nervatura/#customize-the-appearance). The framework can be easily extended with additional interfaces and functions in the supported languages: 
+C, C#, C++, Dart, Go, Java, Kotlin, Node, Objective-C, PHP, Python, Ruby (CGO and gRPC API)
 
 [**Installation**](https://nervatura.github.io/nervatura/#installation) and [**Quick Start**](https://nervatura.github.io/nervatura/#quick-start)
 
