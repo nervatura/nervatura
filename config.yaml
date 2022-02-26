@@ -1,6 +1,8 @@
 baseURL: /
 title: Nervatura
 
+publishDir: docs
+
 #module:
 #  imports:
 #  - path: github.com/alex-shpak/hugo-book
