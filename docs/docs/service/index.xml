@@ -25,7 +25,7 @@ CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposi
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/service/api/</guid>
-      <description>    window.onload = function() { const ui = SwaggerUIBundle({ url: &#34;/nervatura/data/openapi.yaml&#34;, dom_id: &#39;#swagger-ui&#39; }); window.ui = ui; };  </description>
+      <description>    window.onload = function() { const ui = SwaggerUIBundle({ url: &#34;/data/openapi.yaml&#34;, dom_id: &#39;#swagger-ui&#39; }); window.ui = ui; };  </description>
     </item>
     
     <item>
