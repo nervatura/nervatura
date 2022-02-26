@@ -4,4 +4,4 @@ type: swagger
 weight: 20
 bookToC: false
 ---
-{{< swaggerui src="/data/openapi.yaml" >}}
+{{< swaggerui src="openapi.yaml" >}}
