@@ -1,4 +1,5 @@
 baseURL: https://nervatura.github.io/nervatura/
+#baseURL: http://localhost:1313/
 canonifyURLs: true
 title: Nervatura
 

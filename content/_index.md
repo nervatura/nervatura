@@ -23,7 +23,7 @@ Nervatura is a business management framework based on **open-data principle**. I
     <div class="paypal">
       <a href="http://nervatura.com" target="_blank" rel="noopener noreferrer"
           title="Nervatura Homepage" >
-          <img src="{{ $baseurl }}/images/logo_green.svg" style="width:80px;" alt="logo" class="logo" />
+          <img src="/images/logo_green.svg" style="width:80px;" alt="logo" class="logo" />
       </a>
     </div>
     <div class="paypal">
