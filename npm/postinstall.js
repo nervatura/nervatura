@@ -36,6 +36,10 @@ function validateConfiguration(packageJson) {
         return "'service' property must be defined and be an object";
     }
 
+    if (!packageJson.service.version) {
+        return "'version' property must be specified";
+    }
+
     if (!packageJson.service.name) {
         return "'name' property is necessary";
     }
@@ -81,7 +85,7 @@ function parsePackageJson() {
     let binName = packageJson.service.name;
     let binPath = packageJson.service.path;
     let url = packageJson.service.url;
-    let version = packageJson.version;
+    let version = packageJson.service.version;
     if (version[0] === 'v') version = version.substr(1);  // strip the 'v' if necessary v0.0.1 => 0.0.1
 
     // Binary name on Windows has .exe suffix
