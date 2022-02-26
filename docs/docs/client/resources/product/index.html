@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Input fields #  Product No. #  The unique ID of the product. Can be set when a new product is added, before the first save. Later cannot be modified any more.
+If the field is left empty, the program automatically will generate one when the save happens. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = partnumber) data series.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Product" />
+<meta property="og:description" content="Input fields #  Product No. #  The unique ID of the product. Can be set when a new product is added, before the first save. Later cannot be modified any more.
+If the field is left empty, the program automatically will generate one when the save happens. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = partnumber) data series." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/docs/client/resources/product/" /><meta property="article:section" content="docs" />
+
+
+
+<title>Product | Nervatura</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/book.min.990e3c19292e85852047b5ab2df5110988802825306dbb53cd52d25aee669a31.css" ><!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+</head>
+<body dir="ltr">
+  
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+  
+    
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><img src="/logo.svg" alt="Logo" /><span>Nervatura</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/model/" class="">Object Model</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/install/" class="">Installation</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/start/" class="">Getting Started</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/start/database/" class="">Create a new database</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/start/customization/" class="">Customization</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/service/" class="">Nervatura Service</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/cli/" class="">CLI AND CGO API</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/api/" class="">HTTP OPEN API</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/grpc/" class="">gRPC API</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/client/" class="">Nervatura Client</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-7b063bf698b3ac559c74fd717794893c" class="toggle"  />
+    <label for="section-7b063bf698b3ac559c74fd717794893c" class="flex justify-between">
+      <a role="button" class="">Document and Payment</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/document/" class="">Document</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/item/" class="">Document Item</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/payment/" class="">Payment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-d7327658f2ed6b96e5082fd4735d57a6" class="toggle"  />
+    <label for="section-d7327658f2ed6b96e5082fd4735d57a6" class="flex justify-between">
+      <a role="button" class="">Stock Control</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/shipping/" class="">Shipping</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/delivery/" class="">Delivery</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/inventory/" class="">Inventory control</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/waybill/" class="">Tool movement</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/production/" class="">Production</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/formula/" class="">Formula</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-abd30df49557c5db7a1d52452ceb8aa8" class="toggle" checked />
+    <label for="section-abd30df49557c5db7a1d52452ceb8aa8" class="flex justify-between">
+      <a role="button" class="">Resources</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/customer/" class="">Customer</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/product/" class=" active">Product</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/employee/" class="">Employee</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/tool/" class="">Tool</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/project/" class="">Project</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/event/" class="">Event</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-d7c02b9fdb7add8d1736c268ca2d8afb" class="toggle"  />
+    <label for="section-d7c02b9fdb7add8d1736c268ca2d8afb" class="flex justify-between">
+      <a role="button" class="">Settings</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/setting/" class="">Default settings</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/numberdef/" class="">Document numbering</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/usergroup/" class="">Access rights</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/uimenu/" class="">Menu shortcuts</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/metadata/" class="">Metadata</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/groups/" class="">Groups</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/place/" class="">Place</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/currency/" class="">Currency</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/rate/" class="">Interest and Rate</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-17a6b96d75ff23ae8268645da80805cf" class="toggle"  />
+    <label for="section-17a6b96d75ff23ae8268645da80805cf" class="flex justify-between">
+      <a role="button" class="">Program</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/psetting/" class="">Program settings</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/browser/" class="">Data browser</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/report/" class="">Report</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/notes/" class="">Report notes</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/printqueue/" class="">Report queue</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/export/" class="">Data export</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/editor/" class="">Report Editor</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/nervatura/nervatura" target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+    
+
+      
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Product</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#input-fields">Input fields</a>
+          <ul>
+            <li><a href="#product-no">Product No.</a></li>
+            <li><a href="#product-name">Product Name</a></li>
+            <li><a href="#product-type">Product Type</a></li>
+            <li><a href="#unit-tax-web-item">Unit, Tax, Web Item</a></li>
+            <li><a href="#comment">Comment</a></li>
+          </ul>
+        </li>
+        <li><a href="#related-data">Related data</a>
+          <ul>
+            <li><a href="#metadatadocsclientsettingsmetadata"><a href="/docs/client/settings/metadata"><strong>METADATA</strong></a></a></li>
+            <li><a href="#barcode-qr-code">BARCODE (QR CODE)</a></li>
+            <li><a href="#eventdocsclientresourcesevent"><a href="/docs/client/resources/event"><strong>EVENT</strong></a></a></li>
+            <li><a href="#price">PRICE</a></li>
+          </ul>
+        </li>
+        <li><a href="#operations">Operations</a>
+          <ul>
+            <li><a href="#report">REPORT</a></li>
+            <li><a href="#bookmark">BOOKMARK</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+      
+
+      
+      
+  <article class="markdown"><h2 id="input-fields">
+  Input fields
+  <a class="anchor" href="#input-fields">#</a>
+</h2>
+<h3 id="product-no">
+  Product No.
+  <a class="anchor" href="#product-no">#</a>
+</h3>
+<p>The unique ID of the product. Can be set when a new product is added, before the first save. Later cannot be modified any more.<br />
+If the field is left empty, the program automatically will generate one when the save happens. The format and value of the next data in row is taken from the 
+  <a href="/docs/client/settings/numberdef/"><strong>DOCUMENT NUMBERING</strong></a> (code = partnumber) data series.</p>
+<h3 id="product-name">
+  Product Name
+  <a class="anchor" href="#product-name">#</a>
+</h3>
+<p>The full name of the product or short description.</p>
+<h3 id="product-type">
+  Product Type
+  <a class="anchor" href="#product-type">#</a>
+</h3>
+<p>item, service</p>
+<h3 id="unit-tax-web-item">
+  Unit, Tax, Web Item
+  <a class="anchor" href="#unit-tax-web-item">#</a>
+</h3>
+<p>Other product attributes. When new product line is added (eg. offer, order, invoice etc.) the default value for Unit and Tax fields will be the data set here.</p>
+<h3 id="comment">
+  Comment
+  <a class="anchor" href="#comment">#</a>
+</h3>
+<p>Remarks field.</p>
+<h2 id="related-data">
+  Related data
+  <a class="anchor" href="#related-data">#</a>
+</h2>
+<h3 id="metadatadocsclientsettingsmetadata">
+  
+  <a href="/docs/client/settings/metadata/"><strong>METADATA</strong></a>
+  <a class="anchor" href="#metadatadocsclientsettingsmetadata">#</a>
+</h3>
+<p>Unlimited number of supplementary data can be added.</p>
+<blockquote class="book-hint info">
+  The <strong>Element Product</strong> is an automatically generated, special additional data. With its help we can create special, so called virtual products. In practice this means that we create groups of some products which also exist independently and then treat these groups as separate products. We can add them to the product list, name, number and price them, use them in an offer, order or issue an invoice for them.<br />
+If we produce or assemble a product, then it will usually be created physically as well. The components it is made of will be withdrawn from the warehouse and a new product is added to our stock.<br />
+The virtual product may contain existing products and services, but these products will still be tracked separately (although they are not necessarily distributed separately). If the virtual product is sold (or rented out) the order and the invoice will be issued for the virtual product, but the delivery note will list all the content of the virtual product (group) and our stocks will also be reduced by these individual products.<br />
+The virtual products are <strong>item</strong> types, and when created the content should be added at additional data by using <strong>Element Product</strong>. Here also the quantity of a certain product included in the pack can be specified.
+</blockquote>
+
+<h3 id="barcode-qr-code">
+  BARCODE (QR CODE)
+  <a class="anchor" href="#barcode-qr-code">#</a>
+</h3>
+<p>Each product can be connected to any number of bar codes, but the code must remain unique to ensure that the product is clearly identifiable.</p>
+<blockquote class="book-hint danger">
+  The reader and the reports of the program do not support all possible code types!
+</blockquote>
+
+<ul>
+<li><strong>Barcode</strong>: The barcode (QR code) in alphanumeric form. The program will only check the uniqueness, not the compliance with the type of the barcode.</li>
+<li><strong>Type</strong>: AZTEC, CODABAR, CODE_128, CODE_39, CODE_93, DATA_MATRIX, EAN_13, EAN_8, ITF, MSI, PDF417, QR_CODE, RSS_EXPANDED, RSS14, UPC_A, UPC_E</li>
+<li><strong>Quantity</strong>: The actual amount of the products identified by the barcode. For example can be used for packaged goods, tray packaging.</li>
+<li><strong>Default</strong>: If more than one bar code is assigned, this will be the default. Because of the uniqueness of the barcode the product is always clearly identifiable, but in reverse case (eg. in case the barcode should be printed on a document) we must assign one being the default for that product.</li>
+<li><strong>Description</strong>: Comment related to the barcode. Informal, has no role in identification.</li>
+</ul>
+<h3 id="eventdocsclientresourcesevent">
+  
+  <a href="/docs/client/resources/event/"><strong>EVENT</strong></a>
+  <a class="anchor" href="#eventdocsclientresourcesevent">#</a>
+</h3>
+<p>Unlimited number of events can be added.</p>
+<h3 id="price">
+  PRICE
+  <a class="anchor" href="#price">#</a>
+</h3>
+<p>The product can be connected to several prices based on different schemes, which are stored by the program historically, for previous periods as well. When a new product line is added (ie. offer, order, invoice, etc.) the program will select these as defaults, also they can be used in reports, for example when making Pricelists.</p>
+<blockquote class="book-hint danger">
+  The Nervatura Client only supports the usage of list prices and customer specific prices! The Nervatura Framework also uses prices linked to a certain customer group.
+</blockquote>
+
+<ul>
+<li><strong>Start Date</strong>: Start of validity, mandatory data.</li>
+<li><strong>End Date</strong>: End of validity, can be left empty.</li>
+<li><strong>Supplier</strong>: Supplier (if marked) or customer price. By default the customer price.</li>
+<li><strong>Currency</strong>: By default the value given in 
+  <a href="/docs/client/settings/setting/#default-currency"><em>default currency</em></a>.</li>
+<li><strong>Quantity</strong>: Price ranges can also be specified, thus different price can be set for a smaller and bigger quantity of the same product. The quantity should be used as the lower threshold, ie. this should be the minimum quantity for the price set. Default value: 0.</li>
+<li><strong>Price</strong></li>
+<li><strong>Customer Name</strong>: The price is valid only for this specific customer. If the field is empty the general list price is used.</li>
+</ul>
+<blockquote class="book-hint info">
+  The program for pricing considers the following conditions: (product and transaction side), date, currency, quantity, customer. Also follows the below pricing validity rules:<br />
+The valid price is the one set in the given currency, having a valid from date which is earlier or equal to the date when the price is used and valid till a date which is bigger or equal to the date when the price is used, or it is missing. The quantity set for the price should be lower or equal to the given quantity. These criteria should be met to have a general list price for the product. Additionally, if these criteria are also met by a specific customer price then this will be applied, otherwise the valid price will be the general list price.
+</blockquote>
+
+<blockquote class="book-hint info">
+  It is possible to set a price valid for a certain period. The product should have a price with an earlier valid from date and undefined valid till date. If then a later valid from date and also a valid till date is given, than the product will have the set price only during this period. In periods before and after the original price with undefined ending will be valid.
+</blockquote>
+
+<h2 id="operations">
+  Operations
+  <a class="anchor" href="#operations">#</a>
+</h2>
+<h3 id="report">
+  REPORT
+  <a class="anchor" href="#report">#</a>
+</h3>
+<p>
+  <a href="/docs/client/program/export/"><strong>DATA EXPORT</strong></a></p>
+<h3 id="bookmark">
+  BOOKMARK
+  <a class="anchor" href="#bookmark">#</a>
+</h3>
+<p>Set a bookmark for the record. Later can be loaded from bookmarks at any time.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+ 
+
+      
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#input-fields">Input fields</a>
+          <ul>
+            <li><a href="#product-no">Product No.</a></li>
+            <li><a href="#product-name">Product Name</a></li>
+            <li><a href="#product-type">Product Type</a></li>
+            <li><a href="#unit-tax-web-item">Unit, Tax, Web Item</a></li>
+            <li><a href="#comment">Comment</a></li>
+          </ul>
+        </li>
+        <li><a href="#related-data">Related data</a>
+          <ul>
+            <li><a href="#metadatadocsclientsettingsmetadata"><a href="/docs/client/settings/metadata"><strong>METADATA</strong></a></a></li>
+            <li><a href="#barcode-qr-code">BARCODE (QR CODE)</a></li>
+            <li><a href="#eventdocsclientresourcesevent"><a href="/docs/client/resources/event"><strong>EVENT</strong></a></a></li>
+            <li><a href="#price">PRICE</a></li>
+          </ul>
+        </li>
+        <li><a href="#operations">Operations</a>
+          <ul>
+            <li><a href="#report">REPORT</a></li>
+            <li><a href="#bookmark">BOOKMARK</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

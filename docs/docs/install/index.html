@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install --beta nervatura Checking service status and last logs:
+$ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
+Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
+&quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
+$ npm run nervatura Prebuild binaries #   Linux and Windows x64">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Installation" />
+<meta property="og:description" content="Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install --beta nervatura Checking service status and last logs:
+$ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
+Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
+&quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
+$ npm run nervatura Prebuild binaries #   Linux and Windows x64" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/docs/install/" /><meta property="article:section" content="docs" />
+
+
+
+<title>Installation | Nervatura</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/book.min.990e3c19292e85852047b5ab2df5110988802825306dbb53cd52d25aee669a31.css" ><!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+</head>
+<body dir="ltr">
+  
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+  
+    
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><img src="/logo.svg" alt="Logo" /><span>Nervatura</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/model/" class="">Object Model</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/install/" class=" active">Installation</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/start/" class="">Getting Started</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/start/database/" class="">Create a new database</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/start/customization/" class="">Customization</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/service/" class="">Nervatura Service</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/cli/" class="">CLI AND CGO API</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/api/" class="">HTTP OPEN API</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/grpc/" class="">gRPC API</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/client/" class="">Nervatura Client</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-7b063bf698b3ac559c74fd717794893c" class="toggle"  />
+    <label for="section-7b063bf698b3ac559c74fd717794893c" class="flex justify-between">
+      <a role="button" class="">Document and Payment</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/document/" class="">Document</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/item/" class="">Document Item</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/payment/" class="">Payment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-d7327658f2ed6b96e5082fd4735d57a6" class="toggle"  />
+    <label for="section-d7327658f2ed6b96e5082fd4735d57a6" class="flex justify-between">
+      <a role="button" class="">Stock Control</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/shipping/" class="">Shipping</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/delivery/" class="">Delivery</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/inventory/" class="">Inventory control</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/waybill/" class="">Tool movement</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/production/" class="">Production</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/formula/" class="">Formula</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-abd30df49557c5db7a1d52452ceb8aa8" class="toggle"  />
+    <label for="section-abd30df49557c5db7a1d52452ceb8aa8" class="flex justify-between">
+      <a role="button" class="">Resources</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/customer/" class="">Customer</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/product/" class="">Product</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/employee/" class="">Employee</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/tool/" class="">Tool</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/project/" class="">Project</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/event/" class="">Event</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-d7c02b9fdb7add8d1736c268ca2d8afb" class="toggle"  />
+    <label for="section-d7c02b9fdb7add8d1736c268ca2d8afb" class="flex justify-between">
+      <a role="button" class="">Settings</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/setting/" class="">Default settings</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/numberdef/" class="">Document numbering</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/usergroup/" class="">Access rights</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/uimenu/" class="">Menu shortcuts</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/metadata/" class="">Metadata</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/groups/" class="">Groups</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/place/" class="">Place</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/currency/" class="">Currency</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/rate/" class="">Interest and Rate</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-17a6b96d75ff23ae8268645da80805cf" class="toggle"  />
+    <label for="section-17a6b96d75ff23ae8268645da80805cf" class="flex justify-between">
+      <a role="button" class="">Program</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/psetting/" class="">Program settings</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/browser/" class="">Data browser</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/report/" class="">Report</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/notes/" class="">Report notes</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/printqueue/" class="">Report queue</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/export/" class="">Data export</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/editor/" class="">Report Editor</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/nervatura/nervatura" target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+    
+
+      
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Installation</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#installation">Installation</a>
+          <ul>
+            <li><a href="#docker-image"><strong>Docker</strong> image</a></li>
+            <li><a href="#snap-package-linux-daemon"><strong>Snap</strong> package (Linux daemon)</a></li>
+            <li><a href="#nodejs-npm">Node.js <strong>NPM</strong></a></li>
+            <li><a href="#prebuild-binaries">Prebuild binaries</a></li>
+            <li><a href="#other-platforms">Other platforms</a></li>
+          </ul>
+        </li>
+        <li><a href="#configuration-options">Configuration Options</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+      
+
+      
+      
+  <article class="markdown"><h2 id="installation">
+  Installation
+  <a class="anchor" href="#installation">#</a>
+</h2>
+<h3 id="docker-image">
+  <strong>Docker</strong> image
+  <a class="anchor" href="#docker-image">#</a>
+</h3>
+<pre tabindex="0"><code>$ docker pull nervatura/nervatura:latest
+</code></pre><h3 id="snap-package-linux-daemon">
+  <strong>Snap</strong> package (Linux daemon)
+  <a class="anchor" href="#snap-package-linux-daemon">#</a>
+</h3>
+<pre tabindex="0"><code>$ sudo snap install --beta nervatura
+</code></pre><p>Checking service status and last logs:</p>
+<pre tabindex="0"><code>$ systemctl status -l snap.nervatura.nervatura.service
+</code></pre><p>Default snap data and http.log path:  <code>/var/snap/nervatura/common</code></p>
+<h3 id="nodejs-npm">
+  Node.js <strong>NPM</strong>
+  <a class="anchor" href="#nodejs-npm">#</a>
+</h3>
+<pre tabindex="0"><code>$ npm install --save nervatura
+</code></pre><p>Add a run script to your <code>package.json</code> file like this:</p>
+<p><code>&quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }</code></p>
+<pre tabindex="0"><code>$ npm run nervatura
+</code></pre><h3 id="prebuild-binaries">
+  Prebuild binaries
+  <a class="anchor" href="#prebuild-binaries">#</a>
+</h3>
+<p>
+  <a href="https://github.com/nervatura/nervatura-service/releases/latest">Linux and Windows x64</a></p>
+<h3 id="other-platforms">
+  Other platforms
+  <a class="anchor" href="#other-platforms">#</a>
+</h3>
+<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-service.git
+$ cd nervatura-service
+$ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
+  go build -tags &quot;$(TAGS)&quot; -ldflags=&quot;-w -s -X main.Version=$(VERSION)&quot; \
+  -o $(APP_NAME) main.go
+</code></pre><p>See more: 
+  <a href="https://golangdocs.com/building-applications-in-golang">Building Applications in GoLang</a></p>
+<h2 id="configuration-options">
+  Configuration Options
+  <a class="anchor" href="#configuration-options">#</a>
+</h2>
+<p>The application uses environment variables to set configuration options. It will be read from the 
+  <a href="https://github.com/nervatura/nervatura-service/blob/master/.env.example">.env.example</a> file. Set the environment variables as needed!</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+ 
+
+      
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#installation">Installation</a>
+          <ul>
+            <li><a href="#docker-image"><strong>Docker</strong> image</a></li>
+            <li><a href="#snap-package-linux-daemon"><strong>Snap</strong> package (Linux daemon)</a></li>
+            <li><a href="#nodejs-npm">Node.js <strong>NPM</strong></a></li>
+            <li><a href="#prebuild-binaries">Prebuild binaries</a></li>
+            <li><a href="#other-platforms">Other platforms</a></li>
+          </ul>
+        </li>
+        <li><a href="#configuration-options">Configuration Options</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

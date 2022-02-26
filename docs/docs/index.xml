@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Introduction on Nervatura</title>
+    <link>/docs/</link>
+    <description>Recent content in Introduction on Nervatura</description>
+    <generator>Hugo -- gohugo.io</generator><atom:link href="/docs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Object Model</title>
+      <link>/docs/model/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/model/</guid>
+      <description>Overview #  It is a general open-data model, which can store all information generated in the operation of a usual corporation. This covers all manufacturer, retailer and service companies (or governmental units) where the business operation can be defined and described within a GOODS (items, services to be sold, provided) – CLIENT (the recipient of goods) - RESOURCE (assets used to produce the goods) triangle.
+The open-data principle regulates the access to our business data.</description>
+    </item>
+    
+    <item>
+      <title>Installation</title>
+      <link>/docs/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/install/</guid>
+      <description>Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install --beta nervatura Checking service status and last logs:
+$ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
+Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
+&amp;quot;scripts&amp;quot;: { &amp;quot;nervatura&amp;quot;: &amp;quot;./node_modules/nervatura/bin/nervatura&amp;quot; }
+$ npm run nervatura Prebuild binaries #   Linux and Windows x64</description>
+    </item>
+    
+  </channel>
+</rss>

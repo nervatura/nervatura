@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Input fields #  Product No. #  One of the items of the PRODUCT. Field filling is compulsory. Its value can be defined using a search field but can be set with the help of a barcode as well.
+When the product has been chosen the program will display on the form all available (already defined) data about the product: Description, Unit, Tax Rate, Discount, Unit Price.
+The price of the product is searched by taking into account the following criteria: (product and transaction side), current day, currency, volume, customer.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Document Item" />
+<meta property="og:description" content="Input fields #  Product No. #  One of the items of the PRODUCT. Field filling is compulsory. Its value can be defined using a search field but can be set with the help of a barcode as well.
+When the product has been chosen the program will display on the form all available (already defined) data about the product: Description, Unit, Tax Rate, Discount, Unit Price.
+The price of the product is searched by taking into account the following criteria: (product and transaction side), current day, currency, volume, customer." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/docs/client/document/item/" /><meta property="article:section" content="docs" />
+
+
+
+<title>Document Item | Nervatura</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/book.min.990e3c19292e85852047b5ab2df5110988802825306dbb53cd52d25aee669a31.css" ><!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+</head>
+<body dir="ltr">
+  
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+  
+    
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><img src="/logo.svg" alt="Logo" /><span>Nervatura</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/model/" class="">Object Model</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/install/" class="">Installation</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/start/" class="">Getting Started</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/start/database/" class="">Create a new database</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/start/customization/" class="">Customization</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/service/" class="">Nervatura Service</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/cli/" class="">CLI AND CGO API</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/api/" class="">HTTP OPEN API</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/service/grpc/" class="">gRPC API</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/client/" class="">Nervatura Client</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-7b063bf698b3ac559c74fd717794893c" class="toggle" checked />
+    <label for="section-7b063bf698b3ac559c74fd717794893c" class="flex justify-between">
+      <a role="button" class="">Document and Payment</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/document/" class="">Document</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/item/" class=" active">Document Item</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/document/payment/" class="">Payment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-d7327658f2ed6b96e5082fd4735d57a6" class="toggle"  />
+    <label for="section-d7327658f2ed6b96e5082fd4735d57a6" class="flex justify-between">
+      <a role="button" class="">Stock Control</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/shipping/" class="">Shipping</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/delivery/" class="">Delivery</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/inventory/" class="">Inventory control</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/waybill/" class="">Tool movement</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/production/" class="">Production</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/stock/formula/" class="">Formula</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-abd30df49557c5db7a1d52452ceb8aa8" class="toggle"  />
+    <label for="section-abd30df49557c5db7a1d52452ceb8aa8" class="flex justify-between">
+      <a role="button" class="">Resources</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/customer/" class="">Customer</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/product/" class="">Product</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/employee/" class="">Employee</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/tool/" class="">Tool</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/project/" class="">Project</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/resources/event/" class="">Event</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-d7c02b9fdb7add8d1736c268ca2d8afb" class="toggle"  />
+    <label for="section-d7c02b9fdb7add8d1736c268ca2d8afb" class="flex justify-between">
+      <a role="button" class="">Settings</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/setting/" class="">Default settings</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/numberdef/" class="">Document numbering</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/usergroup/" class="">Access rights</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/uimenu/" class="">Menu shortcuts</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/metadata/" class="">Metadata</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/groups/" class="">Groups</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/place/" class="">Place</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/currency/" class="">Currency</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/settings/rate/" class="">Interest and Rate</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-17a6b96d75ff23ae8268645da80805cf" class="toggle"  />
+    <label for="section-17a6b96d75ff23ae8268645da80805cf" class="flex justify-between">
+      <a role="button" class="">Program</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/psetting/" class="">Program settings</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/browser/" class="">Data browser</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/report/" class="">Report</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/notes/" class="">Report notes</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/printqueue/" class="">Report queue</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/export/" class="">Data export</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/client/program/editor/" class="">Report Editor</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/nervatura/nervatura" target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+    
+
+      
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Document Item</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#input-fields">Input fields</a>
+          <ul>
+            <li><a href="#product-no">Product No.</a></li>
+            <li><a href="#description-unit">Description, Unit</a></li>
+            <li><a href="#tax-rate">Tax Rate</a></li>
+            <li><a href="#own-stock">Own Stock</a></li>
+            <li><a href="#option">Option</a></li>
+            <li><a href="#deposit">Deposit</a></li>
+            <li><a href="#discount">Discount</a></li>
+            <li><a href="#quantity-discount-unit-price-net-amount-amount">Quantity, Discount, Unit Price, Net Amount, Amount</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+      
+
+      
+      
+  <article class="markdown"><h2 id="input-fields">
+  Input fields
+  <a class="anchor" href="#input-fields">#</a>
+</h2>
+<h3 id="product-no">
+  Product No.
+  <a class="anchor" href="#product-no">#</a>
+</h3>
+<p>One of the items of the 
+  <a href="/docs/client/resources/product/#product-no."><strong>PRODUCT</strong></a>. Field filling is compulsory. Its value can be defined using a search field but can be set with the help of a barcode as well.</p>
+<blockquote class="book-hint info">
+  <p>When the product has been chosen the program will display on the form all available (already defined) data about the product: Description, Unit, Tax Rate, Discount, Unit Price.</p>
+<p>The price of the product is searched by taking into account the following criteria: (product and transaction side), current day, currency, volume, customer. With specified amount (if zero, then adjusted to one) calculates the Net Amount and Amount prices based on the Unit Price.</p>
+
+</blockquote>
+
+<h3 id="description-unit">
+  Description, Unit
+  <a class="anchor" href="#description-unit">#</a>
+</h3>
+<p>By default, the Product Name and Unit, but ones are free to specify any data.</p>
+<h3 id="tax-rate">
+  Tax Rate
+  <a class="anchor" href="#tax-rate">#</a>
+</h3>
+<p>A valid item of the <strong>TAX</strong>. By default, the Product Tax. If it is changed the program will recalculate the values.</p>
+<h3 id="own-stock">
+  Own Stock
+  <a class="anchor" href="#own-stock">#</a>
+</h3>
+<p>Technical field for creating specific reports. Usage is optional.</p>
+<h3 id="option">
+  Option
+  <a class="anchor" href="#option">#</a>
+</h3>
+<p>OFFER. To indicate special/optional items of the offer. Usage is optional.</p>
+<h3 id="deposit">
+  Deposit
+  <a class="anchor" href="#deposit">#</a>
+</h3>
+<p>INVOICE. To handle the item lines of the advance payment.</p>
+<h3 id="discount">
+  Discount
+  <a class="anchor" href="#discount">#</a>
+</h3>
+<p>By default the value of the 
+  <a href="/docs/client/resources/customer/#discount"><strong>CUSTOMER</strong></a> discount field. If the product has a valid customer price, the value will always be zero!</p>
+<h3 id="quantity-discount-unit-price-net-amount-amount">
+  Quantity, Discount, Unit Price, Net Amount, Amount
+  <a class="anchor" href="#quantity-discount-unit-price-net-amount-amount">#</a>
+</h3>
+<p>If any of the fields is changed, based on the indicated value the program will recalculate the others.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+ 
+
+      
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#input-fields">Input fields</a>
+          <ul>
+            <li><a href="#product-no">Product No.</a></li>
+            <li><a href="#description-unit">Description, Unit</a></li>
+            <li><a href="#tax-rate">Tax Rate</a></li>
+            <li><a href="#own-stock">Own Stock</a></li>
+            <li><a href="#option">Option</a></li>
+            <li><a href="#deposit">Deposit</a></li>
+            <li><a href="#discount">Discount</a></li>
+            <li><a href="#quantity-discount-unit-price-net-amount-amount">Quantity, Discount, Unit Price, Net Amount, Amount</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
