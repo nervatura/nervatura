@@ -2,15 +2,15 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Getting Started on Nervatura</title>
-    <link>/docs/start/</link>
+    <link>https://nervatura.github.io/nervatura/docs/start/</link>
     <description>Recent content in Getting Started on Nervatura</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="/docs/start/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator><atom:link href="https://nervatura.github.io/nervatura/docs/start/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Create a new database</title>
-      <link>/docs/start/database/</link>
+      <link>https://nervatura.github.io/nervatura/docs/start/database/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/docs/start/database/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/start/database/</guid>
       <description>Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database
 Supported database adapters: sqlite3, postgres, mysql
 For examples:
@@ -24,10 +24,10 @@ The SQLite databases are created automatically. Other types of databases must be
     
     <item>
       <title>Customization</title>
-      <link>/docs/start/customization/</link>
+      <link>https://nervatura.github.io/nervatura/docs/start/customization/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/docs/start/customization/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/start/customization/</guid>
       <description>Customize the appearance #   Nervatura Client language translation   Create a file based on the client_config.json file. All subtitles can be found here. Set NT_CLIENT_CONFIG environment variable value to YOUR_CLIENT_CONFIG_FILE_PATH Docker container: mount local folder to the container   Nervatura Client custom remote functions: MENU SHORTCUTS
   Custom PDF Report font
    Set NT_FONT_FAMILY environment variable value to YOUR_FONT_FAMILY_NAME Set NT_FONT_DIR environment variable value to YOUR_FONTS_PATH Valid font type and filename form: FAMILY_NAME-Regular.</description>
