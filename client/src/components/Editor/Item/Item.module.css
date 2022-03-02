@@ -1,0 +1,17 @@
+.formPanel {
+  width: 100%;
+  border-top: none;
+  border-bottom: none;
+  border-radius: 0px;
+}
+
+.itemTitle {
+  font-weight: bold;
+}
+
+.itemTitlePre {
+  font-weight: bold;
+  padding-right: 6px;
+  opacity: 0.5;
+}
+

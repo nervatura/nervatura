@@ -1,6 +1,6 @@
 {
   "name": "nervatura",
-  "version": "5.0.0-beta.21",
+  "version": "5.0.0-beta.22",
   "description": "Open Source Business Management Framework",
   "keywords": [
     "business management",
@@ -40,10 +40,9 @@
     "preuninstall": "node postinstall.js uninstall"
   },
   "service": {
-    "version": "5.0.0-beta.20",
     "name": "nervatura",
     "path": "./bin",
-    "url": "https://github.com/nervatura/nervatura-service/releases/download/v{{version}}/nervatura_{{version}}_{{platform}}_{{arch}}.tar.gz"
+    "url": "https://github.com/nervatura/nervatura/releases/download/v{{version}}/nervatura_{{version}}_{{platform}}_{{arch}}.tar.gz"
   },
   "dependencies": {
     "mkdirp": "^1.0.4",

@@ -1,5 +1,118 @@
-## 5+
-see https://raw.githubusercontent.com/nervatura/nervatura-service/master/CHANGELOG
+## 5.0.0-beta.21-22
+
+## 5.0.0-beta.20
+- new docs page (https://nervatura.github.io/nervatura/)
+- client app container code refactoring: Setting
+- client app update help links
+- upgrade dependencies
+
+## 5.0.0-beta.19
+- client app components code refactoring: Setting, Toastify
+- client app components replacement: Pagination, Table, List, rtf editor
+- client app code-splitting and build size optimization
+- client app - other bug fixes and performance optimization
+- upgrade dependencies
+
+## 5.0.0-beta.18
+- client app components code refactoring: Editor, ReportEditor
+- client app code-splitting and build size optimization
+- upgrade dependencies
+
+## 5.0.0-beta.17
+- client app components/container code refactoring: Search 
+- other unit tests and bug fixes
+- upgrade dependencies
+
+## 5.0.0-beta.16
+- client app components/container code refactoring: SideBar 
+- client app container code unit tests and bug fixes: App, Sql
+- upgrade dependencies
+
+## 5.0.0-beta.15
+- client app components code refactoring: Form/Field, Form/Row, Modal/Audit, Modal/Bookmark, Modal/Formula, Modal/InputBox, Modal/Menu, Modal/Report, Modal/Selector, Modal/Server, Modal/Shipping, Modal/Stock, Modal/Template, Modal/Total, Modal/Trans 
+- client app container code unit tests: Dataset, Forms, Queries
+- upgrade dependencies
+
+## 5.0.0-beta.14
+- nervatura package service/sendEmail: SMTP TLS min. version config (see more .env.example file)
+- demo data bool value bug fixes
+- client app components code refactoring: Button, DateTime, Icon, Input, Label, List, Paginator, Select, Spinner, Table, Login, MenuBar
+- client app container code refactoring: Login
+- upgrade dependencies
+
+## 5.0.0-beta.13
+- nervatura package unit tests (97%) and bug fixes: api, report
+- database package unit tests (98%) and bug fixes: sql
+- utils package unit tests (90%) and bug fixes
+- report package unit tests (95%) and bug fixes
+- client app userconfig query filter escape
+- upgrade dependencies
+
+## 5.0.0-beta.12
+- client app component to manage application updates
+- client app price input and item creation bug fixes
+- client app toast component update and bug fixes
+- nervatura package unit tests (87%) and bug fixes: service
+- remove all md5 dependencies
+
+## 5.0.0-beta.11
+- upgrade dependencies
+- nervatura package unit tests (80%) and bug fixes: api, nervastore, nervatura
+- report package unit tests (83%) and bug fixes
+- user password change bug fixes
+- app and service packages u. test optimization
+- nervatura docs update
+
+## 5.0.0-beta.10
+- app package unit tests (94%) and bug fixes: app, cli, grpc, http
+- service package unit tests (100%) and bug fixes: admin, cli, grpc, http
+- Admin UI loader indicator
+- http Cache-Control header: no-cache, private, max-age=0
+- sql driver: mysql hashtable field type bug fixes
+
+## 5.0.0-beta.9
+- upgrade dependencies
+- service package u. tests: http, cli
+- http and cli api bug fixes
+- create database default values bug fixes
+- add database version config
+- http api docs update
+- hash algorithm replacement: md5 -> sha256
+- customer token api restrictions
+- security fixes (gosec)
+
+## 5.0.0-beta.7 - 5.0.0-beta.8
+- Nervatura Client fixes
+
+## 5.0.0-beta.6
+- Nervatura Client login url bug fixes
+
+## 5.0.0-beta.5
+- CGO (C shared library) API -> Linux and Windows x64 support
+- Python and Node.js CGO API example
+- text update fixes
+- report template fixes: employee, invoice, offer, order, production, project, receipt, rental, worksheet
+- report external directory setting fixes
+- sql driver sqlite datetime fixes
+- Nervatura Client decimal point input fixes
+- Nervatura Client: version numbering change
+
+## 5.0.0-beta.4
+- Nervatura Client login fixes
+
+## 5.0.0-beta.3
+- code quality and stability fixes
+- server-side Python sample app
+
+## 5.0.0-beta.2
+- mysql database connection bug fixes
+- upgrade mysql support to v8
+- API UserLogin response: + service version
+- ADMIN GUI: configurations list
+- Client bug fixes and service version control
+- prebuild dist: arm64
+- snapcrafts support
+- new env. value: NT_HTTP_LOG_FILE
 
 ## 4.0.7
   - API AuthUserLogin and ApiView bug fixes

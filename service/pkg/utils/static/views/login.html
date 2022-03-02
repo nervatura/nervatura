@@ -1,0 +1,88 @@
+{{ define "login" }}
+{{ template "header" . }}
+<div class="page {{if not .theme }} light {{else}} {{ .theme }} {{end}} ">
+  <div class="row full primary bold" >
+    <div class="cell padding-normal" >
+      <span>Nervatura Admin</span>
+    </div>
+    <div class="cell padding-normal align-right" >
+      <span>{{ .view_version }}: {{ .version }}</span>
+    </div>
+  </div>
+  <form action="/admin" method="POST" novalidate id="menu">
+    <input type="hidden" name="formID" value="menu">
+    <input type="hidden" name="pageID" value="login">
+    <input type="hidden" name="theme" value="{{ .theme }}">
+    <div class="row full section-small container-small" >
+      <div class="cell" >
+        <div class="cell padding-small" >
+          <button name="menu" type="submit" value="database" >
+            {{ .view_database }}
+          </button>
+        </div>
+        <div class="cell padding-small" >
+          <button name="menu" type="submit" value="client" >
+            {{ .view_client }}
+          </button>
+        </div>
+        <div class="cell padding-small" >
+          <button name="menu" type="submit" value="docs" >
+            {{ .view_docs }}
+          </button>
+        </div>
+      </div>
+      <div class="cell padding-small align-right" >
+        <button name="menu" type="submit" value="theme" title="{{ .view_theme }}" class="padding-small" >
+          <span class="large padding-tiny" >{{if eq .theme "dark" }}&#9788;{{else}}&#9790;{{end}}</span>
+        </button>
+      </div>
+    </div>
+  </form>
+  <form action="/admin" method="POST" onsubmit="return(showLoader(true));" id="login">
+    <input type="hidden" name="formID" value="login">
+    <input type="hidden" name="theme" value="{{ .theme }}">
+    <div class="row full primary bold" >
+      <div class="cell padding-normal" >
+        <span>{{ .view_login }}</span>
+      </div>
+      <div class="cell align-right container" >
+        <button class="primary success-color" form="login" type="submit" >
+          {{ .view_submit }}
+        </button>
+      </div>
+    </div>
+    <div class="row full section-small" >
+      <div class="row full container-small section-small-bottom" >
+        <div class="cell mobile">
+          <div class="cell padding-small mobile" >
+            <div class="padding-small" >
+              <span class="bold">{{ .view_username }}</span>
+            </div>
+            <input class="full" name="username" type="text" value="{{ .username }}"/>
+          </div>
+          <div class="cell padding-small mobile" >
+            <div class="padding-small" >
+              <span class="bold">{{ .view_password }}</span>
+            </div>
+            <input class="full" name="password" type="password" value="{{ .password }}"/>
+          </div>
+          <div class="cell padding-small mobile" >
+            <div class="padding-small" >
+              <span class="bold">{{ .view_database }}</span>
+            </div>
+            <input class="full" name="database" type="text" value="{{ .database }}"/>
+          </div>
+        </div>
+      </div>
+      {{ with .errors.login }}
+      <div class="row container-small" >
+        <div class="cell error padding-normal bold">
+          <span>{{ . }}</span>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+  </form>
+</div>
+{{ template "footer" . }}
+{{ end }}

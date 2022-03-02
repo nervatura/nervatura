@@ -1,0 +1,81 @@
+{{range .Files}}
+
+{{range .Services -}}
+# {{.Description}}
+
+Nervatura [gRPC](https://grpc.io/) specification. For more examples, see 
+- [Node.js sample application](https://github.com/nervatura/nervatura-express)
+- [Python sample application](https://github.com/nervatura/nervatura-fastapi)
+
+| Method Name | Request Type | Response Type | Description |
+| --- | --- | --- | --- |
+{{range .Methods -}}
+| {{.Name}} | [{{.RequestLongType}}](#{{.RequestLongType | lower | replace "." ""}}) | [{{.ResponseLongType}}](#{{.ResponseLongType | lower | replace "." ""}}) | {{ .Description}} |
+{{end}} 
+{{end}} 
+<br />
+
+---
+# Table of Contents
+
+{{if .HasMessages}}
+- Messages
+  {{range .Messages}}  - [{{.LongName}}](#{{.LongName | lower | replace "." ""}})
+  {{end}}
+{{end}}
+{{if .HasEnums}}
+- Enums
+  {{range .Enums}}  - [{{.LongName}}](#{{.LongName | lower | replace "." ""}})
+  {{end}}
+{{end}}
+{{end}}
+- [Scalar Value Types](#scalar-value-types)
+{{range .Files}}
+<br />
+
+---
+# Messages
+
+{{range .Messages}}
+
+## {{.LongName}}
+{{.Description}}
+
+{{if .HasFields}}
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+{{range .Fields -}}
+	| {{if .IsOneof}}[**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) {{.OneofDecl}}.{{end}}{{.Name}} | [{{if .IsMap}}map {{else}}{{.Label}} {{end}}{{.LongType}}](#{{.LongType | lower | replace "." ""}}) | {{if .Description}}{{.Description}}{{if .DefaultValue}} Default: {{.DefaultValue}}{{end}}{{else}}{{end}} |
+{{end}}
+<br />
+{{end}}
+{{end}}
+
+---
+# Enums
+
+{{range .Enums}}
+
+## {{.LongName}}
+{{.Description}}
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+{{range .Values -}}
+	| {{.Name}} | {{.Number}} | {{if .Description}}[{{.Description}}](#{{.Description | lower | replace "." ""}}){{end}} |
+{{end}}
+<br />
+{{end}}
+{{end}}
+
+---
+# Scalar Value Types
+
+| .proto Type | Notes | C++ Type | Java Type | Python Type |
+| ----------- | ----- | -------- | --------- | ----------- |
+| <div><h4 id="double" /></div><a name="double" /> double |  | double | double | float |
+| <div><h4 id="int64" /></div><a name="int64" /> int64 | Uses variable-length encoding | int64 | long | int/long |
+| <div><h4 id="bool" /></div><a name="bool" /> bool |  | bool | boolean | boolean |
+| <div><h4 id="string" /></div><a name="string" /> string | A string must always contain UTF-8 encoded or 7-bit ASCII text. | string | String | str/unicode |
+| <div><h4 id="bytes" /></div><a name="bytes" /> bytes | May contain any arbitrary sequence of bytes. | string | ByteString | str |
+

@@ -1,0 +1,112 @@
+{
+  "name": "nervatura-client",
+  "description": "Business Management Application",
+  "version": "5.0.0-beta.22",
+  "keywords": [
+    "business management",
+    "open-data",
+    "customer",
+    "employee",
+    "product",
+    "invoice",
+    "order",
+    "offer",
+    "stock control",
+    "payment",
+    "inventory",
+    "rental",
+    "project",
+    "express",
+    "PDF reporting"
+  ],
+  "author": "Csaba Kappel <kappel.csaba@gmail.com> (http://nervatura.com)",
+  "license": "EUPL-1.2",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nervatura/nervatura-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nervatura/nervatura/issues"
+  },
+  "homepage": ".",
+  "scripts": {
+    "analyze": "source-map-explorer './build/static/js/*.js'",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -b build -d build",
+    "prebuild": "npm run generate-build-meta",
+    "generate-build-meta": "./node_modules/react-clear-cache/bin/cli.js",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/{!(service-worker),}.js"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/builder-webpack5": "^6.4.19",
+    "@storybook/manager-webpack5": "^6.4.19",
+    "@storybook/node-logger": "^6.4.19",
+    "@storybook/preset-create-react-app": "^4.0.1",
+    "@storybook/react": "^6.4.19",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "date-fns": "^2.28.0",
+    "gh-pages": "^3.2.3",
+    "immutability-helper": "^3.1.1",
+    "pell": "^1.0.6",
+    "print-js": "^1.6.0",
+    "react": "^17.0.2",
+    "react-clear-cache": "^1.4.12",
+    "react-dom": "^17.0.2",
+    "react-flatpickr": "^3.10.7",
+    "react-scripts": "5.0.0",
+    "react-table": "^7.7.0",
+    "react-test-renderer": "^17.0.2",
+    "react-toastify": "^8.1.1",
+    "remotedev-react-state": "^0.1.0",
+    "sanitize.css": "^13.0.0",
+    "source-map-explorer": "^2.5.2",
+    "whatwg-fetch": "^3.6.2"
+  },
+  "files": [
+    "build"
+  ],
+  "dependencies": {}
+}

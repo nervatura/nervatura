@@ -1,0 +1,14 @@
+.formPanel {
+  width: 100%;
+  border-top: none;
+  border-bottom: none;
+  border-radius: 0px;
+}
+
+.addButton {
+  padding: 6px 16px;
+}
+
+.paginatorCell {
+  padding-left: 8px;
+}

@@ -1,0 +1,35 @@
+.viewPanel {
+  width: 100%;
+}
+
+.editCol {
+  cursor: pointer;
+}
+
+.deleteCol {
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.editCol:hover {
+  color: var(--success);
+}
+
+.deleteCol:hover {
+  color: var(--danger);
+}
+
+.totalLabel {
+  font-size: 13px;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.totalValue {
+  font-size: 13px;
+  white-space: nowrap;
+  font-weight: bold;
+  padding: 4px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+}

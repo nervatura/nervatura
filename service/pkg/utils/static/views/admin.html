@@ -1,0 +1,230 @@
+{{ define "admin" }}
+{{ template "header" . }}
+<div class="page {{if not .theme }} light {{else}} {{ .theme }} {{end}}">
+  <form action="/admin" method="POST" novalidate id="menu">
+    <input type="hidden" name="formID" value="menu">
+    <input type="hidden" name="pageID" value="admin">
+    <input type="hidden" name="theme" value="{{ .theme }}">
+    <div class="row full primary bold" >
+      <div class="cell padding-normal" >
+        <span>Nervatura Admin</span>
+      </div>
+      <div class="cell padding-normal align-right" >
+        <span>{{ .view_version }}: {{ .version }}</span>
+      </div>
+    </div>
+    <div class="row full section-small container-small" >
+      <div class="cell" >
+        <div class="cell padding-small" >
+          <button name="menu" type="submit" value="logout" >
+            {{ .view_logout }}
+          </button>
+        </div>
+        <div class="cell padding-small" >
+          <button name="menu" type="submit" value="client" >
+            {{ .view_client }}
+          </button>
+        </div>
+        <div class="cell padding-small" >
+          <button name="menu" type="submit" value="docs" >
+            {{ .view_docs }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <form action="/admin" method="POST" onsubmit="return(showLoader(true));" id="admin">
+    <input type="hidden" name="formID" value="admin">
+    <input type="hidden" name="theme" value="{{ .theme }}">
+    <div class="row full primary bold" >
+      <div class="cell padding-normal" >
+        <span>{{ .view_token }}</span>
+      </div>
+      <div class="cell align-right container" >
+        <button class="primary success-color" name="cmd" type="submit" value="refresh" >
+          {{ .view_refresh }}
+        </button>
+      </div>
+    </div>
+    <div class="row full section-small" >
+      <div class="row full container-small" >
+        <div class="cell padding-small" >
+          <textarea class="full tiny" name="token" readonly="true" >{{ .token }}</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="row full primary bold" >
+      <div class="cell padding-normal" >
+        <span>{{ .view_password_change }}</span>
+      </div>
+      <div class="cell align-right container" >
+        <button class="primary success-color" name="cmd" type="submit" value="password" >
+          {{ .view_submit }}
+        </button>
+      </div>
+    </div>
+    <div class="row full container-small section-small-bottom" >
+      <div class="cell mobile">
+        <div class="cell padding-small mobile" >
+          <div class="padding-small" >
+            <span class="bold">{{ .view_username }}</span>
+          </div>
+          <input class="full" name="username" type="text" value="{{ .username }}"/>
+        </div>
+        <div class="cell padding-small mobile" >
+          <div class="padding-small" >
+            <span class="bold">{{ .view_password }}</span>
+          </div>
+          <input class="full" name="password" type="password" value="{{ .password }}"/>
+        </div>
+        <div class="cell padding-small mobile" >
+          <div class="padding-small" >
+            <span class="bold">{{ .view_confirm }}</span>
+          </div>
+          <input class="full" name="confirm" type="password" value="{{ .confirm }}"/>
+        </div>
+      </div>
+    </div>
+    <div class="row full primary bold" >
+      <div class="cell padding-normal" >
+        <span>{{ .view_report }}</span>
+      </div>
+      <div class="cell align-right container" >
+        <button class="primary success-color" name="cmd" type="submit" value="list" >
+          {{ .view_list }}
+        </button>
+      </div>
+    </div>
+    <div class="row full container-small section-small" >
+      <div class="cell padding-small mobile">
+        <div class="cell padding-small mobile" >
+          <span class="bold">{{ .view_report_key }}</span>
+        </div>
+        <div class="cell padding-small mobile" >
+          <input class="full" name="reportkey" type="text" value="{{ .reportkey }}"/>
+        </div>
+        <div class="cell mobile" >
+          <div class="cell padding-small" >
+            <button class="primary success-color" name="cmd" type="submit" value="install" >
+              {{ .view_install }}
+            </button>
+          </div>
+          <div class="cell padding-small" >
+            <button class="primary success-color" name="cmd" type="submit" value="delete" >
+              {{ .view_delete }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ if .success }}
+    <div class="row container-small" >
+      <div class="cell success-color padding-normal bold">
+        <span>{{ .success }}</span>
+      </div>
+    </div>
+    {{ end }}
+    {{ with .errors.admin }}
+    <div class="row container-small" >
+      <div class="cell error padding-normal bold">
+        <span>{{ . }}</span>
+      </div>
+    </div>
+    {{ end }}
+    {{if .result}}
+    <div class="container section-small-bottom" >
+      <div class="results small">
+        <div class="row nowrap" >
+          <div class="trow bold" >
+            <div class="cell padding-small" >
+              {{ .view_report_key }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .view_installed }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .view_name }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .view_description }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .view_type }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .view_filename }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .view_label }}
+            </div>
+          </div>
+          {{range .result}}
+          <div class="trow" >
+            <div class="cell padding-small" >
+              {{ .reportkey }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .installed }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .repname }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .description }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .reptype }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .filename }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .label }}
+            </div>
+          </div>
+          {{end}}
+        </div>
+      </div>
+    </div>
+    {{end}}
+    <div class="row full primary bold" >
+      <div class="cell padding-normal" >
+        <span>{{ .view_configuration }}</span>
+      </div>
+      <div class="cell align-right container" >
+        <button class="primary success-color" name="cmd" type="submit" value="env_list" >
+          {{ .view_list }}
+        </button>
+      </div>
+    </div>
+    {{if .env_result}}
+    <div class="container section" >
+      <div class="results small">
+        <div class="row nowrap" >
+          <div class="trow bold" >
+            <div class="cell padding-small" >
+              {{ .view_envkey }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .view_envvalue }}
+            </div>
+          </div>
+          {{range .env_result}}
+          <div class="trow" >
+            <div class="cell padding-small" >
+              {{ .envkey }}
+            </div>
+            <div class="cell padding-small" >
+              {{ .envvalue }}
+            </div>
+          </div>
+          {{end}}
+        </div>
+      </div>
+    </div>
+    {{end}}
+
+  </form>
+</div>
+{{ template "footer" . }}
+{{ end }}

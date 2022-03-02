@@ -1,8 +1,26 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
 # Logs
 logs
 *.log
 npm-debug.log*
 package-lock.json
+yarn-debug.log*
+yarn-error.log*
+
+# testing
+/coverage
 
 # Runtime data
 pids
@@ -33,6 +51,18 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
+# misc
+.DS_Store
+.env.local
+.env.development
+.env.development.local
+.env.test.local
+.env.production.local
+.devcontainer
+package-lock.json
+yarn.lock
+.eslintcache
+
 # Python and editors
 **.pyc
 **.pyo
@@ -41,7 +71,6 @@ node_modules
 .project
 .pydevproject
 .settings
-.vscode
 .eslintrc.json
 jsonconfig.json
 
@@ -54,3 +83,20 @@ data/storage/*
 bin
 Makefile
 .hugo_build.lock
+
+.vscode
+./nervatura
+./nervatura.exe
+vendor
+build
+.scannerwork
+dist/
+.env
+Makefile
+test.db
+empty.db
+*.log
+.goreleaser.yml
+data/test/*.pdf
+data/test/*.xml
+data/test/*.txt

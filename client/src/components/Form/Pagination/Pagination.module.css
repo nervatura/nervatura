@@ -1,0 +1,15 @@
+.inputStyle {
+  padding: 7px;
+  width: 60px!important;
+  font-weight: bold;
+}
+
+.pageSize {
+  padding: 7px;
+}
+
+.buttonStyle {
+  padding: 8px;
+  font-size: 15px;
+  margin: 1px 2px 2px;
+}
