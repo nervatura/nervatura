@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	_ "github.com/joho/godotenv/autoload"
-	db "github.com/nervatura/nervatura-service/pkg/database"
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	srv "github.com/nervatura/nervatura-service/pkg/service"
+	db "github.com/nervatura/nervatura/service/pkg/database"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	srv "github.com/nervatura/nervatura/service/pkg/service"
 )
 
 const testDatabase = "sqlite://file::memory:?cache=shared"

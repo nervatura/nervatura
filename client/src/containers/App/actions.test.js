@@ -363,9 +363,6 @@ describe('appActions', () => {
 
     const setData = jest.fn()
     const it_store = update(app_store, {
-      session: {$merge: {
-        configServer: true
-      }},
       login: {$merge: {
         data: {
           token: "token"
@@ -397,11 +394,7 @@ describe('appActions', () => {
     window.fetch.mockReturnValue(Promise.resolve(res));
 
     const setData = jest.fn()
-    const it_store = update(app_store, {
-      session: {$merge: {
-        configServer: false
-      }}
-    })
+    const it_store = update(app_store, {})
     const options = {
       token: "token",
       headers: {}
@@ -423,11 +416,7 @@ describe('appActions', () => {
     window.fetch.mockReturnValue(Promise.resolve(res));
 
     const setData = jest.fn()
-    const it_store = update(app_store, {
-      session: {$merge: {
-        configServer: false
-      }}
-    })
+    const it_store = update(app_store, {})
     const options = {}
     
     const resultData = await appActions(it_store, setData).requestData("/test", options, true)
@@ -444,11 +433,7 @@ describe('appActions', () => {
     window.fetch.mockReturnValue(Promise.resolve(res));
 
     const setData = jest.fn()
-    const it_store = update(app_store, {
-      session: {$merge: {
-        configServer: false
-      }}
-    })
+    const it_store = update(app_store, {})
     const options = {}
     
     let resultData = await appActions(it_store, setData).requestData("/test", options, true)

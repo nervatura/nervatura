@@ -9,8 +9,9 @@ export const LoginPage = ({
 }) => {
   return <Login {...data} 
     theme={current.theme} lang={current.lang} 
-    version={session.version} locales={locales} configServer={session.configServer}
-    changeData={changeData} getText={getText} onLogin={onLogin} setTheme={setTheme} setLocale={setLocale} />
+    version={session.version} locales={locales}
+    changeData={changeData} getText={getText} onLogin={onLogin} 
+    setTheme={setTheme} setLocale={setLocale} />
 }
 
 LoginPage.propTypes = {

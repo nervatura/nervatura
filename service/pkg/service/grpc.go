@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	pb "github.com/nervatura/nervatura-service/pkg/proto"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	pb "github.com/nervatura/nervatura/service/pkg/proto"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 // RPCService implements the Nervatura API service

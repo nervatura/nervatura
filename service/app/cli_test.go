@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	srv "github.com/nervatura/nervatura-service/pkg/service"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	srv "github.com/nervatura/nervatura/service/pkg/service"
 )
 
 func Test_cliServer_StartService(t *testing.T) {

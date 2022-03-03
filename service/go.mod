@@ -1,4 +1,4 @@
-module github.com/nervatura/nervatura-service
+module github.com/nervatura/nervatura/service
 
 go 1.17
 

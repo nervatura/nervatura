@@ -9,7 +9,7 @@ import Button from 'components/Form/Button'
 import Icon from 'components/Form/Icon'
 
 export const Login = ({ 
-  theme, version, locales, configServer, lang, 
+  theme, version, locales, lang, 
   username, password, database, server,
   onLogin, setTheme, setLocale, getText, changeData,
   ...props 
@@ -62,7 +62,7 @@ export const Login = ({
                     onEnter={onLogin} />
                 </div>
               </div>
-              {(!configServer)?<div className="row full" >
+              {(process.env.REACT_APP_CONFIG !== "SERVER")?<div className="row full" >
                 <div className="padding-normal full" >
                   <Label value={getText("login_server")} className="bold" />
                 </div>
@@ -120,10 +120,6 @@ Login.propTypes = {
    */
   lang: PropTypes.string.isRequired,
   /**
-   * Show / hide server url input value
-   */
-  configServer: PropTypes.bool.isRequired,
-  /**
    * Login username value
    */
   username: PropTypes.string.isRequired,
@@ -166,7 +162,6 @@ Login.defaultProps = {
   version: "",
   locales: {},
   lang: "en",
-  configServer: false,
   username: "",
   password: "",
   database: "",

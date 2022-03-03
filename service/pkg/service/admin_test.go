@@ -8,8 +8,8 @@ import (
 	"testing"
 	"text/template"
 
-	db "github.com/nervatura/nervatura-service/pkg/database"
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
+	db "github.com/nervatura/nervatura/service/pkg/database"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 )
 
 func TestAdminService_LoadTemplates(t *testing.T) {

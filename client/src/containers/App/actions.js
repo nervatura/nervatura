@@ -313,7 +313,7 @@ export const appActions = (data, setData) => {
       if (!silent){
         setData("current", { "request": true })
       }
-      let url = (data.session.configServer)?
+      let url = (process.env.REACT_APP_CONFIG === "SERVER")?
         data.session.proxy+data.session.apiPath+path : data.login.server+path
       const token = (data.login.data) ? data.login.data.token : options.token || ""
       if (!options.headers)

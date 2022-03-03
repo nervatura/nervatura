@@ -6,7 +6,7 @@ import (
 	"path"
 	"testing"
 
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 func createGoReport(t *testing.T) (rpt *Report) {

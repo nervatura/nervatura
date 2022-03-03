@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 const (

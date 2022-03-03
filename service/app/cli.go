@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	srv "github.com/nervatura/nervatura-service/pkg/service"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	srv "github.com/nervatura/nervatura/service/pkg/service"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 type cliServer struct {

@@ -3,7 +3,7 @@ package main
 import (
 	"C"
 
-	"github.com/nervatura/nervatura-service/app"
+	"github.com/nervatura/nervatura/service/app"
 )
 
 var (

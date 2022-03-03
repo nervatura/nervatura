@@ -10,9 +10,9 @@ import (
 	"net"
 	"time"
 
-	pb "github.com/nervatura/nervatura-service/pkg/proto"
-	srv "github.com/nervatura/nervatura-service/pkg/service"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	pb "github.com/nervatura/nervatura/service/pkg/proto"
+	srv "github.com/nervatura/nervatura/service/pkg/service"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"

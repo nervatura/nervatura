@@ -12,10 +12,10 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload" // load .env file automatically
-	db "github.com/nervatura/nervatura-service/pkg/database"
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	srv "github.com/nervatura/nervatura-service/pkg/service"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	db "github.com/nervatura/nervatura/service/pkg/database"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	srv "github.com/nervatura/nervatura/service/pkg/service"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 	"golang.org/x/sync/errgroup"
 )
 

@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 // HTTPService implements the Nervatura API service

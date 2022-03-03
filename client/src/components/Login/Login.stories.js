@@ -15,7 +15,6 @@ Default.args = {
   version: store.session.version,
   locales: { en:{en: "English"}, jp:{"jp": "日本語"} , au:{} },
   lang: "en",
-  configServer: false,
   getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key }),
   //changeData: (key, value) => {},
   //setLocale: (value) => {}
@@ -27,5 +26,4 @@ DarkLogin.args = {
   theme: "dark",
   username: "admin",
   database: "demo",
-  configServer: true
 }

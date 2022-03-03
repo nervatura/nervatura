@@ -5,7 +5,7 @@ import (
 	"path"
 	"testing"
 
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 func TestNervaStore_getReportRefValues(t *testing.T) {

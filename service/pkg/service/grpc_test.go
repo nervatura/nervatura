@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"testing"
 
-	db "github.com/nervatura/nervatura-service/pkg/database"
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	pb "github.com/nervatura/nervatura-service/pkg/proto"
+	db "github.com/nervatura/nervatura/service/pkg/database"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	pb "github.com/nervatura/nervatura/service/pkg/proto"
 )
 
 func TestRPCService_itemMap(t *testing.T) {

@@ -9,5 +9,5 @@ Please see more the [**Nervatura Docs**](https://nervatura.github.io/nervatura/)
 
 More info see http://nervatura.com.
 
-[![GoDoc](https://godoc.org/github.com/nervatura/nervatura-service?status.svg)](https://godoc.org/github.com/nervatura/nervatura-service)
+[![GoDoc](https://godoc.org/github.com/nervatura/nervatura/service?status.svg)](https://godoc.org/github.com/nervatura/nervatura/service)
 

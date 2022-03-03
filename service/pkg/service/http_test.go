@@ -9,8 +9,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	db "github.com/nervatura/nervatura-service/pkg/database"
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
+	db "github.com/nervatura/nervatura/service/pkg/database"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 )
 
 func TestHTTPService_ClientConfig(t *testing.T) {

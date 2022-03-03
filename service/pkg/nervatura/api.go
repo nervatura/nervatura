@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/argon2id"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 /*

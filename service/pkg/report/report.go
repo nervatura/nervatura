@@ -23,7 +23,7 @@ import (
 	"github.com/boombuler/barcode/ean"
 	"github.com/boombuler/barcode/qr"
 	"github.com/boombuler/barcode/twooffive"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 const (

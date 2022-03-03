@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 func TestAPI_getHashvalue(t *testing.T) {

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/nervatura/nervatura-service/pkg/proto";
+option go_package = "github.com/nervatura/nervatura/service/pkg/proto";
 
 package nervatura;
 

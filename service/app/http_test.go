@@ -15,8 +15,8 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi/v5"
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	srv "github.com/nervatura/nervatura-service/pkg/service"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	srv "github.com/nervatura/nervatura/service/pkg/service"
 )
 
 func Test_httpServer_StartService(t *testing.T) {

@@ -10,8 +10,8 @@ import (
 	"reflect"
 	"testing"
 
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
-	srv "github.com/nervatura/nervatura-service/pkg/service"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
+	srv "github.com/nervatura/nervatura/service/pkg/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	nt "github.com/nervatura/nervatura-service/pkg/nervatura"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 )
 
 func Test_registerDriver(t *testing.T) {

@@ -32,7 +32,9 @@
   "scripts": {
     "analyze": "source-map-explorer './build/static/js/*.js'",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "REACT_APP_CONFIG=DEV react-scripts build",
+    "build:server": "REACT_APP_CONFIG=SERVER BUILD_PATH=../service/pkg/utils/static/client react-scripts build",
+    "build:dev": "REACT_APP_CONFIG=DEV BUILD_PATH=../../nervatura-client/docs react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --coverage --watchAll",
     "predeploy": "yarn build",

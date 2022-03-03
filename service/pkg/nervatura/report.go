@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nervatura/nervatura-service/pkg/report"
-	ut "github.com/nervatura/nervatura-service/pkg/utils"
+	"github.com/nervatura/nervatura/service/pkg/report"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 func (nstore *NervaStore) getReportRefValues(options IM) (nervatype string, refValues IM, err error) {
