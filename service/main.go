@@ -5,7 +5,7 @@ Features
 
 Nervatura is a business management framework. It can handle any type of business related information,
 starting from customer details, up to shipping, stock or payment information. Developed as open-source
-project and can be used freely under the scope of LGPLv3 License (http://www.gnu.org/licenses/lgpl.html).
+project and can be used freely under the scope of LGPLv3 License.
 
 The framework is based on Nervatura Object Model (https://nervatura.github.io/nervatura/docs/model) specification.
 It is a general open-data model, which can store all information generated in the operation of a usual corporation.
