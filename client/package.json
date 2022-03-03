@@ -19,11 +19,11 @@
     "express",
     "PDF reporting"
   ],
-  "author": "Csaba Kappel <kappel.csaba@gmail.com> (http://nervatura.com)",
-  "license": "EUPL-1.2",
+  "author": "Csaba Kappel <info@nervatura.com> (http://nervatura.com)",
+  "license": "LGPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nervatura/nervatura-client.git"
+    "url": "git+https://github.com/nervatura/nervatura.git"
   },
   "bugs": {
     "url": "https://github.com/nervatura/nervatura/issues"
@@ -32,13 +32,11 @@
   "scripts": {
     "analyze": "source-map-explorer './build/static/js/*.js'",
     "start": "react-scripts start",
-    "build": "REACT_APP_CONFIG=DEV react-scripts build",
-    "build:server": "REACT_APP_CONFIG=SERVER BUILD_PATH=../service/pkg/utils/static/client react-scripts build",
+    "build": "REACT_APP_CONFIG=SERVER BUILD_PATH=../service/pkg/utils/static/client react-scripts build",
+    "build:map": "GENERATE_SOURCEMAP=true REACT_APP_CONFIG=DEV react-scripts build",
     "build:dev": "REACT_APP_CONFIG=DEV BUILD_PATH=../../nervatura-client/docs react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --coverage --watchAll",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -b build -d build",
     "prebuild": "npm run generate-build-meta",
     "generate-build-meta": "./node_modules/react-clear-cache/bin/cli.js",
     "storybook": "start-storybook -p 6006",
@@ -90,7 +88,6 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "date-fns": "^2.28.0",
-    "gh-pages": "^3.2.3",
     "immutability-helper": "^3.1.1",
     "pell": "^1.0.6",
     "print-js": "^1.6.0",

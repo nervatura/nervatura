@@ -19,7 +19,7 @@
     "express",
     "PDF reporting"
   ],
-  "author": "Csaba Kappel <kappel.csaba@gmail.com> (http://nervatura.com)",
+  "author": "Csaba Kappel <info@nervatura.com> (http://nervatura.com)",
   "license": "LGPL-3.0",
   "homepage": "http://nervatura.com",
   "repository": {
