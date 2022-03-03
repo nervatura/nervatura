@@ -9,9 +9,9 @@ bookToC: true
 
 ![service](/images/service.svg)
 
-## [**APIService**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#APIService)
+## [**APIService**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#APIService)
 
-### [**AdminService**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#AdminService)
+### [**AdminService**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#AdminService)
 
 ### [**HTTPService**](/docs/service/api)
 
@@ -19,15 +19,15 @@ bookToC: true
 
 ### [**CLIService**](/docs/service/cli)
 
-# [**API**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#API)
+# [**API**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#API)
 
-## [**NervaStore**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#NervaStore)
+## [**NervaStore**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#NervaStore)
 
-## [**DataDriver**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#DataDriver)
+## [**DataDriver**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#DataDriver)
 
-### [**SQLDriver**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/database)
+### [**SQLDriver**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/database)
 
-## [**Report**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/report)
+## [**Report**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/report)
 
-### [**Generator**](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/report#Generator)
+### [**Generator**](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/report#Generator)
 

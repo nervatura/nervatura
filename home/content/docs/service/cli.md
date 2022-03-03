@@ -23,7 +23,7 @@ $ docker exec -i nervatura /nervatura \
 
 Golang docs:
 
-[![GoDoc](https://godoc.org/github.com/nervatura/nervatura-service?status.svg)](https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#CLIService)
+[![GoDoc](https://godoc.org/github.com/nervatura/nervatura-service?status.svg)](https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#CLIService)
 
 ## CGO API
 
