@@ -341,7 +341,7 @@
        <g id="id9">
         <rect class="BoundingBox" stroke="none" fill="none" x="13261" y="1450" width="1038" height="4049"/>
         <path fill="none" stroke="rgb(52,101,164)" d="M 14297,3474 L 14297,5497 13262,5497 13262,1451 14297,1451 14297,3474 Z"/>
-        <text class="TextShape" transform="rotate(-90 13937 5099)"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="13937" y="5099"><tspan id="id50" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#NervaStore"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#NervaStore">NervaStore</a></tspan></tspan></tspan></text>
+        <text class="TextShape" transform="rotate(-90 13937 5099)"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="13937" y="5099"><tspan id="id50" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#NervaStore"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#NervaStore">NervaStore</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id50</desc>
        </g>
       </g>
@@ -382,7 +382,7 @@
       <g class="com.sun.star.drawing.TextShape">
        <g id="id15">
         <rect class="BoundingBox" stroke="none" fill="none" x="4974" y="1813" width="4422" height="1083"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="734px" font-weight="700"><tspan class="TextPosition" x="5224" y="2603"><tspan id="id51" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#APIService"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#APIService">APIService</a></tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="734px" font-weight="700"><tspan class="TextPosition" x="5224" y="2603"><tspan id="id51" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#APIService"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#APIService">APIService</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id51</desc>
        </g>
       </g>
@@ -390,7 +390,7 @@
        <g id="id16">
         <rect class="BoundingBox" stroke="none" fill="none" x="4697" y="3759" width="4700" height="1085"/>
         <path fill="none" stroke="rgb(52,101,164)" d="M 7047,4842 L 4698,4842 4698,3760 9395,3760 9395,4842 7047,4842 Z"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="4948" y="4435"><tspan id="id52" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#AdminService"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#AdminService">AdminService</a></tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="4948" y="4435"><tspan id="id52" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#AdminService"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#AdminService">AdminService</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id52</desc>
        </g>
       </g>
@@ -398,7 +398,7 @@
        <g id="id17">
         <rect class="BoundingBox" stroke="none" fill="none" x="4697" y="8964" width="4700" height="1085"/>
         <path fill="none" stroke="rgb(52,101,164)" d="M 7047,10047 L 4698,10047 4698,8965 9395,8965 9395,10047 7047,10047 Z"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="4948" y="9640"><tspan id="id53" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#CLIService"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/service#CLIService">CLIService</a></tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="4948" y="9640"><tspan id="id53" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#CLIService"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/service#CLIService">CLIService</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id53</desc>
        </g>
       </g>
@@ -492,7 +492,7 @@
        <g id="id25">
         <rect class="BoundingBox" stroke="none" fill="none" x="13262" y="11276" width="1038" height="3222"/>
         <path fill="none" stroke="rgb(52,101,164)" d="M 14298,12887 L 14298,14496 13263,14496 13263,11277 14298,11277 14298,12887 Z"/>
-        <text class="TextShape" transform="rotate(-90 13938 13868)"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="13938" y="13868"><tspan id="id56" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/report"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/report">Report</a></tspan></tspan></tspan></text>
+        <text class="TextShape" transform="rotate(-90 13938 13868)"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="610px" font-weight="700"><tspan class="TextPosition" x="13938" y="13868"><tspan id="id56" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/report"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/report">Report</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id56</desc>
        </g>
       </g>
@@ -501,7 +501,7 @@
         <rect class="BoundingBox" stroke="none" fill="none" x="10979" y="1417" width="1145" height="13011"/>
         <path fill="rgb(114,159,207)" fill-opacity="0.102" stroke="rgb(255,255,255)" stroke-opacity="0.102" d="M 12122,7922 L 12122,14426 10980,14426 10980,1418 12122,1418 12122,7922 Z"/>
         <path fill="none" stroke="rgb(52,101,164)" d="M 12122,7922 L 12122,14426 10980,14426 10980,1418 12122,1418 12122,7922 Z"/>
-        <text class="TextShape" transform="rotate(-90 11805 8531)"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="734px" font-weight="700"><tspan class="TextPosition" x="11805" y="8531"><tspan id="id57" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#API"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#API">API</a></tspan></tspan></tspan></text>
+        <text class="TextShape" transform="rotate(-90 11805 8531)"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="734px" font-weight="700"><tspan class="TextPosition" x="11805" y="8531"><tspan id="id57" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#API"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#API">API</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id57</desc>
        </g>
       </g>
@@ -2435,7 +2435,7 @@
       <g class="com.sun.star.drawing.TextShape">
        <g id="id47">
         <rect class="BoundingBox" stroke="none" fill="none" x="15936" y="1750" width="3815" height="1188"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Serif, serif" font-size="635px" font-weight="700"><tspan class="TextPosition" x="16290" y="2559"><tspan id="id58" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#DataDriver"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/nervatura#DataDriver">DataDriver</a></tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Serif, serif" font-size="635px" font-weight="700"><tspan class="TextPosition" x="16290" y="2559"><tspan id="id58" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#DataDriver"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/nervatura#DataDriver">DataDriver</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id58</desc>
        </g>
       </g>
@@ -2443,14 +2443,14 @@
        <g id="id48">
         <rect class="BoundingBox" stroke="none" fill="none" x="15999" y="3749" width="4503" height="1190"/>
         <path fill="none" stroke="rgb(52,101,164)" d="M 18250,4937 L 16000,4937 16000,3750 20500,3750 20500,4937 18250,4937 Z"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Serif, serif" font-size="635px" font-style="italic" font-weight="700"><tspan class="TextPosition" x="16805" y="4559"><tspan id="id59" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/database"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/database">SQLDriver</a></tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Serif, serif" font-size="635px" font-style="italic" font-weight="700"><tspan class="TextPosition" x="16805" y="4559"><tspan id="id59" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/database"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/database">SQLDriver</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id59</desc>
        </g>
       </g>
       <g class="com.sun.star.drawing.TextShape">
        <g id="id49">
         <rect class="BoundingBox" stroke="none" fill="none" x="16000" y="9813" width="3815" height="1188"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Serif, serif" font-size="635px" font-weight="700"><tspan class="TextPosition" x="16493" y="10622"><tspan id="id60" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/report#Generator"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura-service/pkg/report#Generator">Generator</a></tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Serif, serif" font-size="635px" font-weight="700"><tspan class="TextPosition" x="16493" y="10622"><tspan id="id60" fill="rgb(111,164,220)" stroke="none" class="UrlField" xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/report#Generator"><a xlink:href="https://pkg.go.dev/github.com/nervatura/nervatura/service/pkg/report#Generator">Generator</a></tspan></tspan></tspan></text>
         <desc class="HyperlinkIdList">id60</desc>
        </g>
       </g>
