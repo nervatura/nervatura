@@ -22,6 +22,7 @@ export const store = {
   session: {
     version: packageData.version,
     locales: locales,
+    serverURL: process.env.REACT_APP_CONFIG,
     proxy: process.env.REACT_APP_PROXY||"",
     apiPath: "/api",
     engines: ["sqlite", "sqlite3", "mysql", "postgres", "mssql"],

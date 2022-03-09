@@ -1,6 +1,8 @@
-import { queryByAttribute } from '@testing-library/react'
+import { queryByAttribute, fireEvent } from '@testing-library/react'
 import ReactDOM from 'react-dom';
 import update from 'immutability-helper';
+import printJS from 'print-js'
+
 import { templateActions } from './actions'
 import { templateElements } from './Template'
 
@@ -8,6 +10,7 @@ import { appActions, saveToDisk } from 'containers/App/actions'
 import { getText as appGetText, store as app_store  } from 'config/app'
 
 jest.mock("containers/App/actions");
+jest.mock("print-js");
 
 const getById = queryByAttribute.bind(null, 'id');
 const sample_template = require('../../config/sample.json')
@@ -57,6 +60,7 @@ describe('templateActions', () => {
       showToast: jest.fn()
     })
     saveToDisk.mockReturnValue()
+    printJS.mockReturnValue()
   });
 
   afterEach(() => {
@@ -967,6 +971,418 @@ describe('templateActions', () => {
     }}})
     templateActions(it_store, setData).deleteData("dtkey")
     expect(setData).toHaveBeenCalledTimes(8);
+  })
+
+  it('setCurrentData', () => {
+    const setData = jest.fn()
+    let it_store = update(store, {template: {$merge:{
+      key: "_sample"
+    }}})
+    templateActions(it_store, setData).setCurrentData(
+      { name: "labels", type: "list" }
+    )
+    expect(setData).toHaveBeenCalledTimes(1)
+
+    it_store = update(store, {template: {$merge:{
+      key: "template"
+    }}})
+    templateActions(it_store, setData).setCurrentData(
+      { name: "html_text", type: "string" }
+    )
+    expect(setData).toHaveBeenCalledTimes(2)
+
+    templateActions(it_store, setData).setCurrentData(
+      { name: "items", type: "table" }
+    )
+    expect(setData).toHaveBeenCalledTimes(3)
+
+    templateActions(it_store, setData).setCurrentData(
+      { name: "new", type: "new",
+        values: { name: "new_text", type: "string", columns: "" } 
+      })
+    expect(setData).toHaveBeenCalledTimes(4)
+
+    templateActions(it_store, setData).setCurrentData(
+      { name: "new", type: "new",
+        values: { name: "new_list", type: "list", columns: "" } 
+      })
+    expect(setData).toHaveBeenCalledTimes(5)
+
+    templateActions(it_store, setData).setCurrentData(
+      { name: "new", type: "new",
+        values: { name: "new_table", type: "table", columns: "col1,col2" } 
+      })
+    expect(setData).toHaveBeenCalledTimes(6)
+
+    templateActions(it_store, setData).setCurrentData(null)
+    expect(setData).toHaveBeenCalledTimes(7)
+
+    templateActions(it_store, setData).setCurrentData(
+      { name: "new", type: "new",
+        values: { name: "", type: "table", columns: "col1,col2" } 
+      })
+    expect(setData).toHaveBeenCalledTimes(7)
+
+    templateActions(it_store, setData).setCurrentData(
+      { name: "new", type: "new",
+        values: { name: "new_table", type: "table", columns: "" } 
+      })
+    expect(setData).toHaveBeenCalledTimes(7)
+
+    templateActions(store, setData).getDataTable([])
+
+  })
+
+  it('setCurrentDataItem', () => {
+    const sample = update(sample_template, {})
+    let setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        // onCancel
+        const btn_cancel = getById(container, 'btn_cancel')
+        btn_cancel.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    let it_store = update(store, {template: {$merge:{
+      key: "_sample",
+      current_data: {
+        name: "labels",
+        type: "list",
+        items: templateActions(store, setData).getDataList(sample.data.labels)
+      }
+    }}})
+    templateActions(it_store, setData).setCurrentDataItem("title")
+    expect(setData).toHaveBeenCalledTimes(1)
+
+    templateActions(it_store, setData).setCurrentDataItem()
+    expect(setData).toHaveBeenCalledTimes(4)
+
+    setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        const input_value = getById(container, 'input_value')
+        fireEvent.change(input_value, {target: {value: "value"}})
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    templateActions(it_store, setData).setCurrentDataItem()
+    expect(setData).toHaveBeenCalledTimes(3)
+
+    setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        const input_value = getById(container, 'input_value')
+        fireEvent.change(input_value, {target: {value: "title"}})
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    templateActions(it_store, setData).setCurrentDataItem()
+    expect(setData).toHaveBeenCalledTimes(2)
+
+    it_store = update(store, {template: {$merge:{
+      key: "template",
+      current_data: {
+        name: "items",
+        type: "table",
+        items: templateActions(store, setData).getDataTable(sample.data.items)
+      }
+    }}})
+    templateActions(it_store, setData).setCurrentDataItem()
+    expect(setData).toHaveBeenCalledTimes(3)
+  
+  })
+
+  it('deleteDataItem', () => {
+    const sample = update(sample_template, {})
+    let setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        // onCancel
+        const btn_cancel = getById(container, 'btn_cancel')
+        btn_cancel.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    let it_store = update(store, {template: {$merge:{
+      key: "_sample",
+      current_data: {
+        name: "labels",
+        type: "list",
+        items: templateActions(store, setData).getDataList(sample.data.labels)
+      }
+    }}})
+    templateActions(it_store, setData).deleteDataItem({ key: "title" })
+    expect(setData).toHaveBeenCalledTimes(4)
+
+    setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    it_store = update(store, {template: {$merge:{
+      key: "template",
+      current_data: {
+        name: "items",
+        type: "table",
+        items: templateActions(store, setData).getDataTable(sample.data.items)
+      }
+    }}})
+    templateActions(it_store, setData).deleteDataItem({ _index: 1 })
+    expect(setData).toHaveBeenCalledTimes(3)
+
+    it_store = update(store, {template: {$merge:{
+      key: "template",
+      current_data: {
+        name: "test",
+        type: "table",
+        items: templateActions(store, setData).getDataTable([{ col1: 1, col2: "col2" }])
+      },
+      template: {
+        data: {
+          test: [{ col1: 1, col2: "col2" }]
+        }
+      }
+    }}})
+    templateActions(it_store, setData).deleteDataItem({ _index: 0 })
+    expect(setData).toHaveBeenCalledTimes(6)
+
+  })
+
+  it('editDataItem', () => {
+    const sample = update(sample_template, {})
+    let setData = jest.fn()
+    let it_store = update(store, {template: {$merge:{
+      key: "_sample",
+      current_data: {
+        name: "labels",
+        type: "list",
+        items: templateActions(store, setData).getDataList(sample.data.labels),
+        item: "title"
+      }
+    }}})
+    templateActions(it_store, setData).editDataItem({ value: "value" })
+    expect(setData).toHaveBeenCalledTimes(1)
+
+    it_store = update(store, {template: {$merge:{
+      key: "template",
+      current_data: {
+        name: "html_text",
+        type: "string",
+      }
+    }}})
+    templateActions(it_store, setData).editDataItem({ value: "value" })
+    expect(setData).toHaveBeenCalledTimes(2)
+
+    it_store = update(store, {template: {$merge:{
+      current_data: {
+        name: "items",
+        type: "table",
+        items: templateActions(store, setData).getDataTable(sample.data.items),
+        item: {
+          text: "Lorem ipsum dolor1", number: "3", date: "2014.01.08", _index: 0,
+        }
+      }
+    }}})
+    templateActions(it_store, setData).editDataItem({ value: "value", field: "text", _index: 0, })
+    expect(setData).toHaveBeenCalledTimes(3)
+
+  })
+
+  it('addTemplateData', () => {
+    let setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        const input_name = getById(container, 'name')
+        fireEvent.change(input_name, {target: {value: "test"}})
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        // onCancel
+        const btn_cancel = getById(container, 'btn_cancel')
+        btn_cancel.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    templateActions(store, setData).addTemplateData()
+    expect(setData).toHaveBeenCalledTimes(4)
+  })
+
+  it('showPreview', () => {
+    let setData = jest.fn()
+    let it_store = update(store, {template: {$merge:{
+      key: "_sample"
+    }}})
+    templateActions(it_store, setData).showPreview("portrait")
+
+    appActions.mockReturnValue({
+      getText: jest.fn((key)=>(key)),
+      requestData: jest.fn(async () => ({ error: {} })),
+      resultError: jest.fn(),
+      showToast: jest.fn()
+    })
+    setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        const input_value = getById(container, 'input_value')
+        fireEvent.change(input_value, {target: {value: "test"}})
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        // onCancel
+        const btn_cancel = getById(container, 'btn_cancel')
+        btn_cancel.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        fireEvent.change(input_value, {target: {value: ""}})
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    it_store = update(store, {template: {$merge:{
+      key: "template"
+    }}})
+    templateActions(it_store, setData).showPreview()
+    expect(setData).toHaveBeenCalledTimes(5)
+  })
+
+  it('changeTemplateData', () => {
+    const setData = jest.fn()
+    templateActions(store, setData).changeTemplateData({ key: "tabView", value: "data" })
+    expect(setData).toHaveBeenCalledTimes(1)
+  })
+
+  it('changeCurrentData', () => {
+    const setData = jest.fn()
+    templateActions(store, setData).changeCurrentData({ key: "add_item", value: "row" })
+    expect(setData).toHaveBeenCalledTimes(1)
+  })
+
+  it('checkTemplate', () => {
+    let setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        // onCancel
+        const btn_cancel = getById(container, 'btn_cancel')
+        btn_cancel.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+      }
+      if(callback){callback()}
+    })
+    let it_store = update(store, {template: {$merge:{
+      dirty: true
+    }}})
+    templateActions(it_store, setData).checkTemplate("NEW_BLANK")
+    expect(setData).toHaveBeenCalledTimes(6)
+
+    setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        // onCancel
+        const btn_cancel = getById(container, 'btn_cancel')
+        btn_cancel.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      }
+      if(callback){callback()}
+    })
+    appActions.mockReturnValue({
+      getText: jest.fn((key)=>(key)),
+      requestData: jest.fn(async () => ({ error: {} })),
+      resultError: jest.fn(),
+      showToast: jest.fn()
+    })
+    templateActions(it_store, setData).checkTemplate("NEW_SAMPLE")
+    expect(setData).toHaveBeenCalledTimes(6)
+
+    it_store = update(store, {template: {$merge:{
+      dirty: false
+    }}})
+    templateActions(it_store, setData).checkTemplate("LOAD_SETTING")
+    expect(setData).toHaveBeenCalledTimes(7)
+
+  })
+
+  it('createTemplate', () => {
+    let setData = jest.fn((key, data, callback)=>{
+      if((key === "current") && data.modalForm ){
+        const container = document.createElement('div');
+        ReactDOM.render(data.modalForm, container);
+
+        // onOK
+        const btn_ok = getById(container, 'btn_ok')
+        btn_ok.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+        // onCancel
+        const btn_cancel = getById(container, 'btn_cancel')
+        btn_cancel.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
+      }
+      if(callback){callback()}
+    })
+    let it_store = update(store, {template: {$merge:{
+      dbtemp: { id: 1, test: "value" }
+    }}})
+    templateActions(it_store, setData).createTemplate()
+    expect(setData).toHaveBeenCalledTimes(3)
+
+    it_store = update(store, {template: {template: {meta: {$merge:{
+      nervatype: "trans"
+    }}}}})
+    appActions.mockReturnValue({
+      getText: jest.fn((key)=>(key)),
+      requestData: jest.fn(async () => ({ error: {} })),
+      resultError: jest.fn(),
+      showToast: jest.fn()
+    })
+    templateActions(it_store, setData).createTemplate()
+    expect(setData).toHaveBeenCalledTimes(6)
+
   })
 
 })

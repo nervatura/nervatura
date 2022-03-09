@@ -26,4 +26,5 @@ DarkLogin.args = {
   theme: "dark",
   username: "admin",
   database: "demo",
+  serverURL: "SERVER"
 }

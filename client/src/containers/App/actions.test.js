@@ -363,6 +363,9 @@ describe('appActions', () => {
 
     const setData = jest.fn()
     const it_store = update(app_store, {
+      session: {$merge: {
+        serverURL: "SERVER"
+      }},
       login: {$merge: {
         data: {
           token: "token"

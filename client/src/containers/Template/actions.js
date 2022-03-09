@@ -764,12 +764,6 @@ export const templateActions = (data, setData) => {
               type: cdata.values.type 
             }})
             switch (values.type) {
-              case "string":
-                setting = update(setting, { template: {data: {$merge: {
-                  [values.name]: ""
-                }}}})
-                break;
-
               case "list":
                 setting = update(setting, { template: {data: {$merge: {
                   [values.name]: {}
@@ -794,8 +788,12 @@ export const templateActions = (data, setData) => {
                 values.fields = table_data.fields
                 break;
 
-                default:
-                  break;
+              case "string":
+              default:  
+                setting = update(setting, { template: {data: {$merge: {
+                  [values.name]: ""
+                }}}})
+                break;
             }
             setting = update(setting, {$merge: {
               dataset: getDataset(setting.template.data)
@@ -895,7 +893,8 @@ export const templateActions = (data, setData) => {
     if(typeof value === "undefined"){
       if(setting.current_data.type === "list"){
         newList()
-      } else if(setting.current_data.type === "table"){
+      } 
+      if(setting.current_data.type === "table"){
         newTable()
       }
     } else {
@@ -1049,36 +1048,31 @@ export const templateActions = (data, setData) => {
       loadPreview(params)
     } else {
       params.nervatype = setting.template.meta.nervatype
-      if(setting.preview && (setting.docnumber !== "")){
-        params.refnumber = setting.docnumber
-        loadPreview(params)
-      } else {
-        setData("current", { modalForm: 
-          <InputBox 
-            title={app.getText("template_preview_data")}
-            message={app.getText("template_preview_input").replace("docname",params.nervatype)}
-            value={setting.docnumber} showValue={true}
-            labelOK={app.getText("msg_ok")}
-            labelCancel={app.getText("msg_cancel")}
-            onCancel={() => {
-              setData("current", { modalForm: null })
-            }}
-            onOK={(value) => {
-              setData("current", { modalForm: null }, async ()=>{
-                if(value !== ""){
-                  const template = update(setting.template, {$merge: {
-                    docnumber: value
-                  }})
-                  setData("template", { template: template })
-                  params.refnumber = value
-                  loadPreview(params)
-                }
-              })
-            }}
-          />,
-          side: "hide"
-        })
-      }
+      setData("current", { modalForm: 
+        <InputBox 
+          title={app.getText("template_preview_data")}
+          message={app.getText("template_preview_input").replace("docname",params.nervatype)}
+          value={setting.docnumber} showValue={true}
+          labelOK={app.getText("msg_ok")}
+          labelCancel={app.getText("msg_cancel")}
+          onCancel={() => {
+            setData("current", { modalForm: null })
+          }}
+          onOK={(value) => {
+            setData("current", { modalForm: null }, async ()=>{
+              if(value !== ""){
+                const template = update(setting, {$merge: {
+                  docnumber: value
+                }})
+                setData("template", template )
+                params.refnumber = value
+                loadPreview(params)
+              }
+            })
+          }}
+        />,
+        side: "hide"
+      })
     }
   }
 
@@ -1098,7 +1092,7 @@ export const templateActions = (data, setData) => {
     setData("template", setting)
   }
 
-  const checkTemplate = (options, nextKey) => {
+  const checkTemplate = (nextKey) => {
     const cbNext = {
       NEW_BLANK: () => setTemplate({ type: "_blank" }),
       NEW_SAMPLE: () => setTemplate({ type: "_sample" }),
@@ -1206,6 +1200,8 @@ export const templateActions = (data, setData) => {
     editDataItem: editDataItem,
     editItem: editItem,
     exportTemplate: exportTemplate,
+    getDataList: getDataList,
+    getDataTable: getDataTable,
     getElementType: getElementType,
     getDataset: getDataset,
     goNext: goNext,

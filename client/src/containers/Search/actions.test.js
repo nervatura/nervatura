@@ -183,6 +183,9 @@ describe('searchActions', () => {
     searchActions(it_store, setData).showServerCmd(4)
     expect(setData).toHaveBeenCalledTimes(12);
 
+    it_store = update(store, {session: {$merge: {
+      serverURL: "SERVER"
+    }}})
     searchActions(it_store, setData).showServerCmd(3)
     expect(setData).toHaveBeenCalledTimes(15);
 

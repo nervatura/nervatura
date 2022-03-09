@@ -39,13 +39,12 @@ Default.args = {
       export_deffield_value: "Customer 7", fieldtype: "customer", deffield: 222 }
   ],
   fields: {
-    name: { fieldtype:'string', label: "Name" },
+    name: { fieldtype:'string', label: "Name", textAlign: "left" },
     valid: { fieldtype:'bool', label: "Valid" },
     from: { fieldtype:'date', label: "From" },
-    start: { fieldtype:'time', label: "Start" },
+    start: { fieldtype:'time' },
     stamp: { fieldtype:'datetime', label: "Stamp" },
     levels: { fieldtype: 'number', label: "Levels", format: true, verticalAlign: "middle" },
-    videos: { fieldtype: 'number', textAlign: "center" },
     deffield: { fieldtype: 'deffield', label: "Deffield" },
     editor: { columnDef: { 
       id: "editor",

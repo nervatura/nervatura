@@ -116,7 +116,7 @@ export const searchActions = (data, setData) => {
               if (options.cmd.methodName === "get") {
                 let server = options.cmd.address || ""
                 if((server === "") && options.cmd.funcname && (options.cmd.funcname !== "")){
-                  server = (process.env.REACT_APP_CONFIG === "SERVER")?
+                  server = (data.session.serverURL === "SERVER")?
                     data.session.proxy+data.session.apiPath+"/"+options.cmd.funcname : 
                     data.login.server+"/"+options.cmd.funcname
                 }

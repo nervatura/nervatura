@@ -15,20 +15,20 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/signintech/gopdf v0.10.8
 	github.com/unrolled/secure v1.10.0
-	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
+	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20220224120231-95c6836cb0e7 // indirect
+	golang.org/x/sys v0.0.0-20220307203707-22a9840ba4d7 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20220222213610-43724f9ea8cf // indirect
-	google.golang.org/grpc v1.44.0
+	google.golang.org/genproto v0.0.0-20220308174144-ae0e22291548 // indirect
+	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
-	modernc.org/cc/v3 v3.35.22 // indirect
-	modernc.org/ccgo/v3 v3.15.13 // indirect
-	modernc.org/libc v1.14.5 // indirect
+	modernc.org/cc/v3 v3.35.24 // indirect
+	modernc.org/ccgo/v3 v3.15.16 // indirect
+	modernc.org/libc v1.14.8 // indirect
 	modernc.org/mathutil v1.4.1 // indirect
-	modernc.org/memory v1.0.5 // indirect
-	modernc.org/sqlite v1.14.7
+	modernc.org/memory v1.0.6 // indirect
+	modernc.org/sqlite v1.14.8
 	modernc.org/strutil v1.1.1 // indirect
 )
 

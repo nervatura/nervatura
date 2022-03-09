@@ -30,7 +30,7 @@ export const Template = ({
       className={`${styles.sidebar} ${((side !== "auto")? side : "")} ${className}`} >
       {itemMenu("cmd_back",
         `${"medium"} ${styles.itemButton} ${styles.selected}`, 
-        ["checkTemplate",[{}, "LOAD_SETTING"]],
+        ["checkTemplate",["LOAD_SETTING"]],
         <Label value={getText("label_back")} 
           leftIcon={<Icon iconKey="Reply" />} iconWidth="25px"  />
       )}
@@ -62,13 +62,13 @@ export const Template = ({
       <div key="tmp_sep_3" className={styles.separator} />
       {itemMenu("cmd_blank",
         `${"full medium"} ${styles.itemButton}`,
-        ["checkTemplate", [{}, 'NEW_BLANK']],
+        ["checkTemplate", ['NEW_BLANK']],
         <Label value={getText("template_new_blank")} 
           leftIcon={<Icon iconKey="Plus" />} iconWidth="25px" />
       )}
       {itemMenu("cmd_sample",
         `${"full medium"} ${styles.itemButton}`,
-        ["checkTemplate", [{}, 'NEW_SAMPLE']],
+        ["checkTemplate", ['NEW_SAMPLE']],
         <Label value={getText("template_new_sample")} 
           leftIcon={<Icon iconKey="Plus" />} iconWidth="25px" />
       )}

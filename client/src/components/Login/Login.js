@@ -11,7 +11,7 @@ import Icon from 'components/Form/Icon'
 export const Login = ({ 
   theme, version, locales, lang, 
   username, password, database, server,
-  onLogin, setTheme, setLocale, getText, changeData,
+  onLogin, setTheme, setLocale, getText, changeData, serverURL,
   ...props 
 }) => {
   return (
@@ -62,7 +62,7 @@ export const Login = ({
                     onEnter={onLogin} />
                 </div>
               </div>
-              {(process.env.REACT_APP_CONFIG !== "SERVER")?<div className="row full" >
+              {(serverURL !== "SERVER")?<div className="row full" >
                 <div className="padding-normal full" >
                   <Label value={getText("login_server")} className="bold" />
                 </div>
@@ -135,6 +135,7 @@ Login.propTypes = {
    * Server URL
    */
   server: PropTypes.string.isRequired,
+  serverURL: PropTypes.string,
   /**
    * Login handler
    */
@@ -166,6 +167,7 @@ Login.defaultProps = {
   password: "",
   database: "",
   server: "",
+  serverURL: process.env.REACT_APP_CONFIG,
   changeData: undefined,
   getText: undefined,
   onLogin: undefined,

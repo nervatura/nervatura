@@ -1,4 +1,7 @@
 ## 5.0.0-beta.21-22
+- new nervatura docs/client/service monorepo
+- client app container u. test: Template
+- upgrade dependencies
 
 ## 5.0.0-beta.20
 - new docs page (https://nervatura.github.io/nervatura/)

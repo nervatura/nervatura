@@ -128,7 +128,7 @@ export const TableView = ({
       } else {
         let coldef = {
           accessor: fieldname,
-          Header: fields[fieldname].label || "",
+          Header: fields[fieldname].label || fieldname,
           headerStyle: {},
           cellStyle: {}
         }
