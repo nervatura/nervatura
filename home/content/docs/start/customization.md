@@ -24,7 +24,7 @@ bookToC: true
 
 ## Bearer Authentication
 
-Environment variables: [.env.example](https://github.com/nervatura/nervatura-service/blob/master/.env.example)<br />
+Environment variables: [.env.example](https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example)<br />
 User authentication is based on the *employee.username* or *customer.custnumber* fields. The identifier can be the following types: username (employee), email, phone number (customer).<br />
 Passwords are not stored in the employee or customer tables. They are anonymized and stored in a unique table with [strong encryption](https://github.com/P-H-C/phc-winner-argon2).
 
@@ -32,11 +32,11 @@ External authorization: ```NT_TOKEN_PUBLIC_KEY_TYPE```, ```NT_TOKEN_PUBLIC_KEY_U
 
 ## Other Recipes
 
-- [CHANGELOG](https://raw.githubusercontent.com/nervatura/nervatura-service/master/CHANGELOG
+- [CHANGELOG](https://raw.githubusercontent.com/nervatura/nervatura/master/CHANGELOG
 )
-- [![GoDoc](https://godoc.org/github.com/nervatura/nervatura-service?status.svg)](https://godoc.org/github.com/nervatura/nervatura-service)
-- [gRPC API proto file](https://github.com/nervatura/nervatura/tree/master/dist)
+- [![GoDoc](https://godoc.org/github.com/nervatura/nervatura?status.svg)](https://godoc.org/github.com/nervatura/nervatura/service)
+- [gRPC API proto file](https://github.com/nervatura/nervatura/blob/master/service/pkg/proto/api.proto)
 - [Python gRPC packages](https://pypi.org/project/nervatura/)
-- [Report templates files](https://github.com/nervatura/nervatura-service/tree/master/pkg/utils/static/templates)
+- [Report templates files](https://github.com/nervatura/nervatura/tree/master/service/pkg/utils/static/templates)
 - [Node.js sample application](https://github.com/nervatura/nervatura-express)
 - [Python sample application](https://github.com/nervatura/nervatura-fastapi)

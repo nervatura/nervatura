@@ -1,3 +1,8 @@
+## 5.0.0-beta.21-22
+- new nervatura docs/client/service monorepo
+- client app container u. test: Template
+- upgrade dependencies
+
 ## 5.0.0-beta.20
 - new docs page (https://nervatura.github.io/nervatura/)
 - client app container code refactoring: Setting
@@ -111,3 +116,184 @@
 - prebuild dist: arm64
 - snapcrafts support
 - new env. value: NT_HTTP_LOG_FILE
+
+## 4.0.7
+  - API AuthUserLogin and ApiView bug fixes
+
+## 4.0.5
+  - API AuthUserLogin: added engine (database type) result
+
+## 4.0.4
+  - nervastore init bug fixes
+
+## 4.0.3
+  - demo.js bug fixes
+  - service/get_report bug fixes
+
+## 4.0.2
+- set JWT Token kid value: external JWT X509 public keys supports
+
+## 4.0.1
+- API auth_user customer login usergroup bug fixes
+
+## 4.0.0
+- new generic programming interface: Nervatura API
+- NAS, NDI, NPI are still usable but outdated
+- NPI JWT token auth. support
+- all settings are based on environment variables
+- built-in Bearer Authentication support
+- new documentation and demo applications: nervatura-docs, nervatura-demo
+- new free PWA Client: nervatura-client
+
+## 3.2.2
+- security update
+
+## 3.2.1
+- excel report: replaced python xlwt -> node-xlsx
+- remove all python dependencies
+
+## 3.2.0
+- new client/server side JavaScript PDF generation: nervatura-report package (jspdf + pdfkit)
+- remove public/js/Report.js (-> nervatura-report/dist/report.browser.js)
+- move docs/report.html -> nervatura-report/docs
+- remove python fpdf package
+
+## 3.1.0
+- NAS: move some special functions to nervatura-express (-> lib/ext/nas.js)
+- JEST Testing Framework support (/test dir)
+
+## 3.0.8
+- nervastore: rollback callback function bug fixes
+- adapter mysql: charset and insecureAuth (connection options)
+
+## 3.0.7
+- ndi, nervastore, npi, tool: rollback callback function bug fixes
+
+## 3.0.6
+- nervastore getIdFromRefnumber function bug fixes
+
+## 3.0.5
+- Config check_value function bug fixes
+
+## 3.0.4
+- NPI: invalid reporkey fixes
+- new server setting value: REPORT_DIR (lib/settings.json - overrides the nervatura/report)
+
+## 3.0.3
+- NDI: set username fixes
+- NDI: currency digit rounding fixes
+- NDI: validator bug fixes
+- Nervatura Report: Report.js/report.py image width/height fixes
+
+## 3.0.2
+- JSON Web Token support
+- NDI: fxprice/vatamound calc. fixes
+
+## 3.0.1
+- new placetype: other
+- new additional data type: time
+- some bug fixes
+
+## 3.0.0
+- Separating the structure of the application: core and frameworks packages
+- Serverless functions support (Azure, Google, Lambda, OpenWhisk)
+- SES Admin
+- IBM Cloud support
+- new, simpler settings
+
+## 2.5.5
+- Amazon Web Services (AWS) support (see more Admin Guide)
+- NAS Admin: Amazon (OAuth 2.0) authentication support
+- remove config enforces_ssl setting (use the NODE_ENV variable)
+
+## 2.5.4
+- Microsoft Azure support (see more Admin Guide)
+- NAS Admin: Azure AD OpenID Connect authentication support
+- remove config port setting
+- new config settings: enforces_ssl, pg_ssl, mysql_ssl, mssql_encrypt, long_timeout
+
+## 2.5.3
+- Google App Engine support (see more Admin Guide)
+- NAS: added support for Google Datastore (GAE default)
+- NAS Admin: Google (OAuth 2.0) authentication support
+- NPI: new sendEmail function 
+- NPI docs: Email sending with attached invoice example
+- Email Service Provider: smtp(nodemailer), Mailjet support
+- remove express-session (+ connect-sqlite3, level-session-store)
+- new: cookie-session
+- custom homepage support (see more Admin Guide)
+- default express port: 8080
+
+## 2.5.2
+- NAS Database settings bug fixes
+- Docker mssql container image (linux) support (see more Admin Guide)
+
+## 2.5.1
+- Docker file fixes
+
+## 2.5.0
+- remove all GUI jquery dependencies:
+  bootstrap -> w3.css, bootstrap-datetimepicker -> flatpickr
+  glyphicons -> font-awesome
+- NDI Wizard bug fixes
+- Nervatura Report bug fixes
+- set npm packages: 
+  new: w3.css, flatpickr, font-awesome, 
+  from public folder: highlight.js, jspdf, pdfjs-dist
+- React Sample application (ES6 and Webpack)
+
+## 2.3.1
+- express and npm libs upgrade
+- docs corrections and additions
+- some bug fixes
+
+## 2.3.0
+- NAS Admin, NDI Wizard, Report DEMO: jquery-mobile replaced with bootstrap & jquery 3 upgrade
+- express and npm libs upgrade
+- Nervatura Touch developer mode support
+- some bug fixes
+
+## 2.2.2
+- language file fixes and new logo
+- docs corrections
+- report templates fixes
+
+## 2.2.1
+- Docker mssql/remote database (see more Admin Guide)
+
+## 2.2.0
+- tools/getReport: fixes mysql syntaxt error
+- Nervatura Report: fixes default Petty Cash Voucher(cash/in), Project Sheet templates 
+- nervastore/delete_data: fixes additional data delete
+- added support for Docker (see more Admin Guide)
+
+## 2.1.5
+- NDI: fixes sql datatype
+- NDI: remove link/linktype field
+- NOM docs: update objects/transtype relations
+
+## 2.1.4
+
+- new default barcode(qr code) types: AZTEC,CODABAR,CODE_128,CODE_39,CODE_93,DATA_MATRIX,EAN_13,EAN_8,ITF,MSI,PDF417,QR_CODE,RSS_EXPANDED,RSS14,UPC_A,UPC_E
+- Nervatura Report: rename code39(->CODE_39) and i2of5(->ITF) barcodes, update def. invoice template, add def. receipt (~invoice without customer) template
+- NOM docs: transtype relations
+- remove storetype, placetype/store, movetype/store groups values
+- some bug fixes
+
+## 2.1.1-2.1.3
+
+- fixes app config/server settings ini values
+- fixes OpenShift install version bug (0.10 -> 4.4.3)
+- some bug fixes
+
+## 2.1.0
+
+- new Admin Guide
+- performance and security patches
+- added support for OpenShift
+- Nervatura Report templates fixes
+- many bug fixes
+
+## 2.0.0
+
+- initial commit

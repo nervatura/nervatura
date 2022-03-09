@@ -843,13 +843,13 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#prebuild-binaries">#</a>
 </h3>
 <p>
-  <a href="https://github.com/nervatura/nervatura-service/releases/latest">Linux and Windows x64</a></p>
+  <a href="https://github.com/nervatura/nervatura/releases">Linux and Windows x64</a></p>
 <h3 id="other-platforms">
   Other platforms
   <a class="anchor" href="#other-platforms">#</a>
 </h3>
-<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-service.git
-$ cd nervatura-service
+<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura.git
+$ cd nervatura
 $ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
   go build -tags &quot;$(TAGS)&quot; -ldflags=&quot;-w -s -X main.Version=$(VERSION)&quot; \
   -o $(APP_NAME) main.go
@@ -860,7 +860,7 @@ $ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
   <a class="anchor" href="#configuration-options">#</a>
 </h2>
 <p>The application uses environment variables to set configuration options. It will be read from the 
-  <a href="https://github.com/nervatura/nervatura-service/blob/master/.env.example">.env.example</a> file. Set the environment variables as needed!</p>
+  <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example">.env.example</a> file. Set the environment variables as needed!</p>
 </article>
  
       

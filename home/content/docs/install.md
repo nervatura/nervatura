@@ -42,12 +42,12 @@ $ npm run nervatura
 
 ### Prebuild binaries
 
-[Linux and Windows x64](https://github.com/nervatura/nervatura-service/releases/latest)
+[Linux and Windows x64](https://github.com/nervatura/nervatura/releases)
 
 ### Other platforms
 ```
-$ git clone https://github.com/nervatura/nervatura-service.git
-$ cd nervatura-service
+$ git clone https://github.com/nervatura/nervatura.git
+$ cd nervatura
 $ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
   go build -tags "$(TAGS)" -ldflags="-w -s -X main.Version=$(VERSION)" \
   -o $(APP_NAME) main.go
@@ -56,4 +56,4 @@ See more: [Building Applications in GoLang](https://golangdocs.com/building-appl
 
 ## Configuration Options
 
-The application uses environment variables to set configuration options. It will be read from the [.env.example](https://github.com/nervatura/nervatura-service/blob/master/.env.example) file. Set the environment variables as needed!
+The application uses environment variables to set configuration options. It will be read from the [.env.example](https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example) file. Set the environment variables as needed!
