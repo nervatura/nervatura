@@ -189,7 +189,7 @@ export const Quick = ({ getText }) => {
             where:[["inf.groupvalue","=","'disabled'"],["and","a.usergroup","=", usergroupId]]}]]]},
       columns: [
         ["repname", "r.repname"],
-        ["rlabel", "r.label"],
+        ["label", "r.label"],
         ["description", "r.description"]]
     };},
     

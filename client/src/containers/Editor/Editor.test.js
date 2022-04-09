@@ -45,6 +45,8 @@ describe('<Editor />', () => {
     })
     editorActions.mockReturnValue({
       editItem: jest.fn(),
+      checkEditor: jest.fn(),
+      prevTransNumber: jest.fn()
     })
   });
   
@@ -53,10 +55,17 @@ describe('<Editor />', () => {
   });
 
   it('renders in the Main state', () => {
-    const setData = jest.fn()
+    const setData = jest.fn((key, data, callback)=>{ if(callback){callback()} })
+    let it_store = update(store, {$merge: {
+      current: {
+        content: { 
+          ntype: "trans", ttype: "invoice", id: 5, item: {} 
+        }
+      }
+    }})
 
     const { container, rerender } = render(
-      <AppProvider value={{ data: store, setData: setData }}>
+      <AppProvider value={{ data: it_store, setData: setData }}>
         <Editor id="edit" />
       </AppProvider>
     );
@@ -66,6 +75,10 @@ describe('<Editor />', () => {
     const btn_selector = getById(container, 'sel_show_customer_id')
     fireEvent.click(btn_selector)
 
+    //prevTransNumber
+    //const cmd_arrow_left = getById(container, 'cmd_arrow_left')
+    //fireEvent.click(cmd_arrow_left)
+
     //editItem
     const field_notes = getById(container, 'field_notes')
     fireEvent.change(field_notes, {target: {value: "test data"}})
@@ -73,7 +86,12 @@ describe('<Editor />', () => {
     //changeCurrentData
     const btn_fieldvalue = getById(container, 'btn_fieldvalue')
     fireEvent.click(btn_fieldvalue)
-    expect(setData).toHaveBeenCalledTimes(1);
+    expect(setData).toHaveBeenCalledTimes(2);
+
+    //changeData
+    const state_new = getById(container, 'state_new')
+    fireEvent.click(state_new)
+    expect(setData).toHaveBeenCalledTimes(3);
 
     rerender(
       <AppProvider value={{ data: store, setData: setData }}>
@@ -81,7 +99,7 @@ describe('<Editor />', () => {
       </AppProvider>
     )
 
-    let it_store = update(store, {edit: {current: {$merge: {
+    it_store = update(store, {edit: {current: {$merge: {
       item: null
     }}}})
     render(
@@ -95,7 +113,11 @@ describe('<Editor />', () => {
     const setData = jest.fn()
     const it_store = update(store, {$merge: {
       edit: {
-        ...EditorMeta.args
+        ...EditorMeta.args,
+        side_view: "edit",
+        panel: {
+          help: true, arrow: true
+        }
       }
     }})
 
@@ -105,6 +127,12 @@ describe('<Editor />', () => {
       </AppProvider>
     );
     expect(getById(container, 'edit')).toBeDefined();
+
+    const cmd_help = getById(container, 'cmd_help')
+    fireEvent.click(cmd_help)
+
+    const cmd_arrow_left = getById(container, 'cmd_arrow_left')
+    fireEvent.click(cmd_arrow_left)
 
   });
 

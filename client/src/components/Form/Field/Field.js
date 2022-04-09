@@ -378,7 +378,7 @@ export const Field = ({
               ttype: fieldMap.transtype, 
               id: value 
             }, 
-            "LOAD_EDITOR", undefined
+            "LOAD_EDITOR"
           ])
           } >{llabel}</span>
       </div>
@@ -424,7 +424,7 @@ export const Field = ({
             { ntype: selector.ntype, 
               ttype: selector.ttype, 
               id: selector.id }, 
-            'LOAD_EDITOR', undefined
+            'LOAD_EDITOR'
           ])} >{selector.text}</span>:null}
       </div>)
       return <div {...props} 

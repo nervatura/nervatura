@@ -1,3 +1,8 @@
+## 5.0.1
+- client app container code refactoring: Edit
+- client app unit test coverage: 100%
+- go 1.18, react 18
+
 ## 5.0.0-beta.21-22
 - new nervatura docs/client/service monorepo
 - client app container u. test: Template

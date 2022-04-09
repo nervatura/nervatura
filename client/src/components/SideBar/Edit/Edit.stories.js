@@ -1,5 +1,5 @@
 import update from 'immutability-helper';
-import { Edit, SIDE_VISIBILITY } from "./Edit";
+import { Edit, SIDE_VISIBILITY, SIDE_VIEW } from "./Edit";
 
 import { getText, store } from 'config/app';
 
@@ -13,7 +13,7 @@ const Template = (args) => <Edit {...args} />
 export const Default = Template.bind({});
 Default.args = {
   side: SIDE_VISIBILITY.AUTO,
-  edit: false, 
+  view: SIDE_VIEW.NEW,
   module: {
     current: {
       type: "invoice",
@@ -123,7 +123,7 @@ export const NewItem = Template.bind({});
 NewItem.args = {
   ...Default.args,
   side: SIDE_VISIBILITY.SHOW,
-  edit: true,
+  view: SIDE_VIEW.EDIT,
   module: update(Default.args.module, {$merge: {
     current: {},
     group_key: "new_transitem"
@@ -172,7 +172,7 @@ NewResource.args = {
 export const Document = Template.bind({});
 Document.args = {
   ...Default.args,
-  edit: true,
+  view: SIDE_VIEW.EDIT,
   module: update(Default.args.module, {$merge: {
     form_dirty: true,
     dirty: true,
@@ -185,7 +185,7 @@ Document.args = {
 export const DocumentDeleted = Template.bind({});
 DocumentDeleted.args = {
   ...Default.args,
-  edit: true,
+  view: SIDE_VIEW.EDIT,
   module: update(update(Default.args.module, {panel: {$merge: {
     state: "deleted",
     cancellation: true,
@@ -201,7 +201,7 @@ DocumentDeleted.args = {
 export const DocumentCancellation = Template.bind({});
 DocumentCancellation.args = {
   ...Default.args,
-  edit: true,
+  view: SIDE_VIEW.EDIT,
   module: update(Default.args.module, {panel: {$merge: {
     state: "cancellation",
     back: true,
@@ -219,7 +219,7 @@ DocumentCancellation.args = {
 export const DocumentClosed = Template.bind({});
 DocumentClosed.args = {
   ...Default.args,
-  edit: true,
+  view: SIDE_VIEW.EDIT,
   module: update(Default.args.module, {panel: {$merge: {
     state: "closed",
     save: false,
@@ -231,7 +231,7 @@ DocumentClosed.args = {
 export const DocumentReadonly = Template.bind({});
 DocumentReadonly.args = {
   ...Default.args,
-  edit: true,
+  view: SIDE_VIEW.EDIT,
   module: update(Default.args.module, {panel: {$merge: {
     state: "readonly",
   }}})
@@ -240,7 +240,7 @@ DocumentReadonly.args = {
 export const DocumentNoOptions = Template.bind({});
 DocumentNoOptions.args = {
   ...Default.args,
-  edit: true,
+  view: SIDE_VIEW.EDIT,
   module: update(Default.args.module, {$merge: {
     panel: undefined,
     

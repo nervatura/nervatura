@@ -11,7 +11,7 @@ export const EditorView = ({
   return (
     <Fragment>
       <SideBar side={current.side}
-        edit={current.edit} module={data} forms={forms}
+        view={data.side_view} module={data} forms={forms}
         newFilter={login.edit_new} auditFilter={login.audit_filter}
         onEvent={onEvent} getText={getText} />
       {(data.current.item)?<div className={`${"page padding-normal"} ${current.theme}`} >
@@ -57,8 +57,7 @@ EditorView.defaultProps = {
 export default memo(EditorView, (prevProps, nextProps) => {
   return (
     (prevProps.data === nextProps.data) &&
-    (prevProps.current.side === nextProps.current.side) &&
-    (prevProps.current.edit === nextProps.current.edit)
+    (prevProps.current.side === nextProps.current.side)
   )
 })
 

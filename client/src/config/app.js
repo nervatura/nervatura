@@ -26,7 +26,7 @@ export const store = {
     proxy: process.env.REACT_APP_PROXY||"",
     apiPath: "/api",
     engines: ["sqlite", "sqlite3", "mysql", "postgres", "mssql"],
-    service: ["dev", "5.0.0-beta.19", "5.0.0-beta.20", "5.0.0-beta.22"],
+    service: ["dev", "5.0.0-beta.20", "5.0.0-beta.22", "5.0.1"],
     helpPage: "https://nervatura.github.io/nervatura/docs/client/"
   },
   ui: {

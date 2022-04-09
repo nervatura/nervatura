@@ -1,7 +1,7 @@
 Open Source Nervatura PWA Client
 =========================
 
-The Nervatura Client is part of the Nervatura Framework and can be used freely under the scope of [EUPL-1.2 License](https://opensource.org/licenses/EUPL-1.2).
+The Nervatura Client is part of the Nervatura Framework and can be used freely under the scope of [LGPLv3 License](http://www.gnu.org/licenses/lgpl.html).
 
 Last build host: [Nervatura Client](https://nervatura.github.io/nervatura-client)
 

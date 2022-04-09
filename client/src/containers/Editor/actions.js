@@ -36,9 +36,8 @@ export const editorActions = (data, setData) => {
       if(!dec) dec= 0;
       let factor= Math.pow(10,dec);
       return Math.floor(n*factor+((n*factor*10)%10>=5?1:0))/factor;
-    } else {
-      return n
     }
+    return n
   }
 
   const reportPath = (params) => {
@@ -84,7 +83,7 @@ export const editorActions = (data, setData) => {
       app.resultError(result)
       return false
     }
-    const resultUrl = URL.createObjectURL(result, {type : (params.type === "pdf") ? "application/pdf" : "application/xml; charset=UTF-8"})
+    const resultUrl = URL.createObjectURL(result, {type : (params.type === "xml") ? "application/xml; charset=UTF-8" : "application/pdf"})
     if(params.type === "print"){
       printJS({
         printable: resultUrl,
@@ -172,35 +171,22 @@ export const editorActions = (data, setData) => {
     let _filters = [];
     data.edit.current.fieldvalue.forEach((rfdata) => {
       if (rfdata.selected) {
-        if(rfdata.fieldtype === "bool"){
-          _filters.push(`filters[${rfdata.name}]=${(rfdata.fieldtype)?"1":"0"}`)
-        } else {
-          _filters.push(`filters[${rfdata.name}]=${rfdata.value}`)
-        }
+        _filters.push(`filters[${rfdata.name}]=${rfdata.value}`)
       }
     })
     const report = data.edit.current.item
     const params = {
-      type: "auto",
+      type: (output === "xml") ? "xml" : "auto",
+      ctype: (output === "xml") 
+        ? "application/xml; charset=UTF-8" 
+        : (output === "csv") 
+          ? "text/csv; charset=UTF-8" 
+          : "application/pdf",
       template: report.reportkey, 
       title: report.reportkey,
       orient: report.orientation, 
       size: report.size,
       filters: _filters.join("&")
-    }
-    switch (output) {      
-      case "xml":
-        params.type = "xml"
-        params.ctype = "application/xml; charset=UTF-8"
-        break;
-      
-      case "csv":
-        params.ctype = "text/csv; charset=UTF-8"
-        break;
-
-      default:
-        params.ctype = "application/pdf"
-        break;
     }
     const result = await app.requestData(reportPath(params), {})
     if(result && result.error){
@@ -300,7 +286,8 @@ export const editorActions = (data, setData) => {
       template: form,
       panel: form.options.panel,
       caption: form.options.title,
-      audit: app.getAuditFilter(edit.current.type, edit.current.transtype)[0]
+      audit: app.getAuditFilter(edit.current.type, edit.current.transtype)[0],
+      side_view: "edit"
     }})
     if (edit.audit==="disabled") {
       return false
@@ -420,6 +407,9 @@ export const editorActions = (data, setData) => {
         }})
         switch (rfdata.fieldtype) {
           case "bool":
+            tfrow = update(tfrow, {$merge: {
+              value: 0
+            }})
             break;
           case "valuelist":
             tfrow = update(tfrow, {$merge: {
@@ -448,7 +438,7 @@ export const editorActions = (data, setData) => {
           case "float":
             if(typeof(tfrow.value) === "undefined"){
               tfrow = update(tfrow, {$merge: {
-                value: (rfdata.defvalue && rfdata.defvalue !== "") ? rfdata.defvalue : "0"
+                value: (rfdata.defvalue && rfdata.defvalue !== "") ? rfdata.defvalue : 0
               }})
             }
             break;
@@ -600,7 +590,7 @@ export const editorActions = (data, setData) => {
       view: options.form||'form'
     }}})
     setData("edit", edit)
-    setData("current", { module: "edit", edit: true, side: "hide" })
+    setData("current", { module: "edit", side: "hide" })
   }
 
   const loadEditor = async (params) => {
@@ -609,8 +599,7 @@ export const editorActions = (data, setData) => {
       dataset: { },
       current: { type: ntype, transtype: ttype },
       dirty: false,
-      form_dirty: false,
-      preview: null
+      form_dirty: false
     }})
     let proitem;
     if (id===null) {
@@ -651,82 +640,70 @@ export const editorActions = (data, setData) => {
       }
     })
 
-    if(views.length > 0){
-      if (ntype !== "report") {
-        dataset["report"]().forEach(info => {
-          let view = {
-            key: info.infoName,
-            sql: sql.report[info.infoName](ntype),
-            values: []
-          }
-          if(info.infoName === "report"){
-            if(ntype !== "printqueue"){
-              view.values.push(data.login.data.employee.usergroup)
-              view.values.push(edit.current.type)
-            }
-          } else if(info.infoName === "message"){
-            view.values.push(edit.current.type)
-            view.values.push(edit.current.type)
-          } else {
-            view.values.push(edit.current.type)
-          }
-          if (edit.current.type ==="trans") {
-            const _where = ["and","r.transtype","=",[[],{select:["id"], from:"groups", 
-                where:[["groupname","=","'transtype'"],["and","groupvalue","=","?"]]}]]
-            if(info.infoName === "message"){
-              view.sql.where[0][2][0].from[0][0][0].where[0].push(_where)
-              view.sql.where[0][2][0].from[0][0][1].where[0].push(_where)
-              view.values.splice(1, 0, edit.current.transtype)
-            } else {
-              view.sql.where.push(_where)
-            }
-            view.values.push(edit.current.transtype)
-          }
-          views = update(views, {$push: [{
-            key: view.key,
-            text: getSql(data.login.data.engine, view.sql).sql,
-            values: view.values
-          }]})
-        })
-      }
-
-      let options = { method: "POST", data: views }
-      let view = await app.requestData("/view", options)
-      if(view.error){
-        return app.resultError(view)
-      }
-      edit = update(edit, {dataset: {
-        $merge: view
-      }})
-      if (id===null) {
-        if (proitem === null) {
-          proitem = initItem({tablename: ntype, transtype: ttype, 
-            dataset: edit.dataset, current: edit.current});
+    //if(views.length > 0){
+    if (ntype !== "report") {
+      dataset["report"]().forEach(info => {
+        let view = {
+          key: info.infoName,
+          sql: sql.report[info.infoName](ntype),
+          values: []
         }
-        if (ttype === "delivery") {
-          proitem = update(proitem, {$merge: {
-            direction: edit.dataset.groups.filter((group)=> {
-              return ((group.groupname === "direction") && (group.groupvalue === "transfer"))
-            })[0].id
-          }})
+        if(ntype !== "printqueue"){
+          view.values.push(data.login.data.employee.usergroup)
+          view.values.push(edit.current.type)
         }
-        edit = update(edit, { dataset: {$merge: {
-          [ntype]: [proitem]
-        }}})
-      }
-      setData("edit", edit, ()=>{
-        if (!params.cb_key || (params.cb_key ==="SET_EDITOR")) {
-          if (ntype==="trans") {
-            if(params.shipping){
-              return setEditor(params, forms["shipping"](edit.dataset[ntype][0], edit, getSetting("ui")), edit)
-            } else {
-              return setEditor(params, forms[ttype](edit.dataset[ntype][0], edit, getSetting("ui")), edit)
-            }
-          } else {
-            return setEditor(params, forms[ntype](edit.dataset[ntype][0], edit, getSetting("ui")), edit)
-          }
+        if (edit.current.type ==="trans") {
+          const _where = ["and","r.transtype","=",[[],{select:["id"], from:"groups", 
+              where:[["groupname","=","'transtype'"],["and","groupvalue","=","?"]]}]]
+          view.sql.where.push(_where)
+          view.values.push(edit.current.transtype)
         }
+        views = update(views, {$push: [{
+          key: view.key,
+          text: getSql(data.login.data.engine, view.sql).sql,
+          values: view.values
+        }]})
       })
+    }
+
+    let options = { method: "POST", data: views }
+    let view = await app.requestData("/view", options)
+    if(view.error){
+      return app.resultError(view)
+    }
+    edit = update(edit, {dataset: {
+      $merge: view
+    }})
+    if (id===null) {
+      if (proitem === null) {
+        proitem = initItem({tablename: ntype, transtype: ttype, 
+          dataset: edit.dataset, current: edit.current});
+      }
+      if (ttype === "delivery") {
+        proitem = update(proitem, {$merge: {
+          direction: edit.dataset.groups.filter((group)=> {
+            return ((group.groupname === "direction") && (group.groupvalue === "transfer"))
+          })[0].id
+        }})
+      }
+      edit = update(edit, { dataset: {$merge: {
+        [ntype]: [proitem]
+      }}})
+    }
+    setData("edit", edit, ()=>{
+      if (!params.cb_key || (params.cb_key ==="SET_EDITOR")) {
+        if (ntype==="trans") {
+          if(params.shipping){
+            return setEditor(params, forms["shipping"](edit.dataset[ntype][0], edit, getSetting("ui")), edit)
+          } else {
+            return setEditor(params, forms[ttype](edit.dataset[ntype][0], edit, getSetting("ui")), edit)
+          }
+        } else {
+          return setEditor(params, forms[ntype](edit.dataset[ntype][0], edit, getSetting("ui")), edit)
+        }
+      }
+    })
+    /*
     } else {
       edit = update(edit, { dataset: {$merge: {
         [ntype]: [initItem({ tablename: ntype, transtype: ttype, 
@@ -738,11 +715,12 @@ export const editorActions = (data, setData) => {
         }
       })
     }
+    */
   }
 
   const setEditorItem = (options) => {
     let edit = update(data.edit, {})
-    let dkey = forms[options.fkey]({}, edit, getSetting("ui")).options.data
+    let dkey = forms[options.fkey](undefined, edit, getSetting("ui")).options.data
     if (typeof dkey === "undefined") {
       dkey = options.fkey
     }
@@ -913,21 +891,12 @@ export const editorActions = (data, setData) => {
           }})
           break;
 
-        case "customer":
-        case "tool":
-        case "trans":
-        case "transitem":
-        case "transmovement":
-        case "transpayment":
-        case "product":
-        case "project":
-        case "employee":
-        case "place":
-          _selector = true;
-          break;
-
         default:
           break;
+      }
+      if(["customer", "tool", "trans", "transitem", "transmovement", "transpayment", 
+        "product", "project", "employee", "place"].includes(_fieldtype)){
+        _selector = true;
       }
       if (_selector) {
         app.onSelector(_fieldtype, "", (row, filter)=>{
@@ -1251,23 +1220,16 @@ export const editorActions = (data, setData) => {
   }
 
   const checkSubtype = (type, subtype, item) => {
-    if(subtype !== null){
-      switch (type) {
-        case "customer":
-          return (subtype === item.custtype)
-        case "place":
-          return (subtype === item.placetype)
-        case "product":
-          return (subtype === item.protype)
-        case "tool":
-          return (subtype === item.toolgroup)
-        case "trans":
-          return (subtype === item.transtype)
-        default:
-          break
-      }
+    const result = {
+      customer: (subtype === item.custtype),
+      place: (subtype === item.placetype),
+      product: (subtype === item.protype),
+      tool: (subtype === item.toolgroup),
+      trans: (subtype === item.transtype)
     }
-    return true
+    if(subtype === null)
+      return true
+    return (typeof result[type] === "undefined") ? true : result[type]
   }
 
   const saveEditor = async () => {
@@ -1276,7 +1238,8 @@ export const editorActions = (data, setData) => {
     let values = tableValues(edit.current.type, edit.current.item)
     values = await validator(edit.current.type, values)
     if(values.error){
-      return app.resultError(values)
+      app.resultError(values)
+      return null
     }
 
     if (edit.current.item.id === null && edit.dataset.deffield) {
@@ -1336,13 +1299,11 @@ export const editorActions = (data, setData) => {
         }}}})
       }
     }
-    if (typeof edit.current.fieldvalue !== "undefined") {
-      for (let i=0; i < edit.current.fieldvalue.length; i++) {
-        if (edit.current.fieldvalue[i].ref_id === null) {
-          edit = update(edit, {current: { fieldvalue: { [i]: {$merge: {
-            ref_id: edit.current.item.id
-          }}}}})
-        }
+    for (let i=0; i < edit.current.fieldvalue.length; i++) {
+      if (edit.current.fieldvalue[i].ref_id === null) {
+        edit = update(edit, {current: { fieldvalue: { [i]: {$merge: {
+          ref_id: edit.current.item.id
+        }}}}})
       }
     }
 
@@ -1363,7 +1324,8 @@ export const editorActions = (data, setData) => {
           }
           let view = await app.requestData("/view", params)
           if(view.error){
-            return app.resultError(view)
+            app.resultError(view)
+            return null
           }
           if (view.fields.length > 0) {
             Object.keys(view.fields[0]).forEach((fieldname) => {
@@ -1602,7 +1564,7 @@ export const editorActions = (data, setData) => {
       let audit = data.login.data.audit.filter(item => (
         (item.nervatypeName === "trans") && (item.subtypeName === transtype)))[0]
       if (typeof audit !== "undefined") {
-        if (audit.item.inputfilterName==="disabled"){
+        if (audit.inputfilterName==="disabled"){
           app.showToast({ type: "info",
             title: app.getText("msg_warning"), 
             message: app.getText("msg_create_disabled_err")+" "+transtype })
@@ -1631,8 +1593,7 @@ export const editorActions = (data, setData) => {
         message: app.getText("msg_create_cancellation_err1") })
       return false;
     }
-    if (options.transcast==="cancellation" && (transtype==="invoice" || transtype==="receipt") 
-      && base_trans.deleted===0) {
+    if (options.transcast==="cancellation" && ["invoice", "receipt"].includes(transtype) && base_trans.deleted===0) {
         app.showToast({ type: "info",
           title: app.getText("msg_warning"), 
           message: app.getText("msg_create_cancellation_err2") })
@@ -1689,7 +1650,8 @@ export const editorActions = (data, setData) => {
       if (typeof default_deadline !== "undefined") {
         values.duedate = formatISO(addDays(new Date(), parseInt(default_deadline.value,10)), { representation: 'date' })+"T00:00:00"
       }
-    } else if (transtype === "receipt") {
+    }
+    if (transtype === "receipt") {
       values.customer_id = null;
     }
     const _refnum = check_refnumber({
@@ -1764,7 +1726,8 @@ export const editorActions = (data, setData) => {
       }
       let view = await app.requestData("/view", params)
       if(view.error){
-        return app.resultError(view)
+        app.resultError(view)
+        return null
       }
       if (view.fields.length > 0) {
         Object.keys(view.fields[0]).forEach((fieldname) => {
@@ -1822,16 +1785,14 @@ export const editorActions = (data, setData) => {
         //create from order,worksheet and rent, on base the delivery rows
         data.edit.dataset.transitem_shipping.forEach(inv_item => {
           const item = data.edit.dataset.item.filter(
-            oitem => (oitem.id === inv_item.id)
+            oitem => (`${oitem.id}-${oitem.product_id}` === inv_item.id)
           )[0]
           if (typeof item!=="undefined") {
-            let iqty = inv_item.sqty;
-            if(data.edit.dataset.groups.filter(
-              group => (group.id === base_trans.direction))[0].groupvalue === "out"){
-                iqty = -inv_item.sqty
-            }
+            const direction = data.edit.dataset.groups.filter(
+              group => (group.id === base_trans.direction))[0].groupvalue
+            let iqty = (direction === "out") ? -parseFloat(inv_item.sqty) : parseFloat(inv_item.sqty);
             if (item.deleted===0 && iqty>0) {
-              if (!Object.keys(products).includes(item.product_id)){
+              if (!Object.keys(products).includes(String(item.product_id))){
                 iqty -= get_product_qty(data.edit.dataset.transitem_invoice, 
                   item.product_id, 0);
                 products[item.product_id] = true;
@@ -1851,7 +1812,7 @@ export const editorActions = (data, setData) => {
             if (options.netto_qty && data.edit.dataset.transitem_invoice) {
               //create from order,worksheet and rent, on base the invoice rows
               let iqty = base_item.qty;
-              if (!Object.keys(products).includes(base_item.product_id)){
+              if (!Object.keys(products).includes(String(base_item.product_id))){
                 iqty -= get_product_qty(data.edit.dataset.transitem_invoice, 
                   base_item.product_id, 0);
                 products[base_item.product_id] = true;
@@ -1870,14 +1831,17 @@ export const editorActions = (data, setData) => {
       }
               
       //put to deposit rows
-      items.forEach(item => {
+      const _items = update([], {$set: items})
+      _items.forEach(item => {
         if (item.deposit === 1) {
           let dqty = get_product_qty(data.edit.dataset.transitem_invoice, 
             item.product_id, 1);
           if (dqty !== 0) {
             let sitem = tableValues("item", item)
             sitem.qty = -dqty;
-            items.unshift(sitem);
+            items = update(items, {
+              $unshift: [sitem]
+            })
           }
         }
       });
@@ -1889,7 +1853,8 @@ export const editorActions = (data, setData) => {
       });
     }
     
-    items.forEach(item => {
+    const _items = update([], {$set: items})
+    _items.forEach(item => {
       item.id = null;
       item.trans_id = values.id;
       item.ownstock = 0;
@@ -1908,7 +1873,9 @@ export const editorActions = (data, setData) => {
         sitem.netamount = -sitem.netamount;
         sitem.vatamount = -sitem.vatamount;
         sitem.amount = -sitem.amount;
-        items.push(sitem);
+        items = update(items, {
+          $push: [sitem]
+        })
       }
     });
 
@@ -1986,7 +1953,7 @@ export const editorActions = (data, setData) => {
           ilink.nervatype_2 = nt_item;
           ilink.ref_id_2 = reflinks[li].item_id;
           links.push(ilink);
-        } else if (reflinks[li].ref_id !== null) {
+        } else {
           ilink.ref_id_1 = result[data.edit.dataset.movement.findIndex(
             item => (item.id === reflinks[li].ref_id)
           )].id
@@ -2093,7 +2060,7 @@ export const editorActions = (data, setData) => {
     })
   }
 
-  const checkEditor = (options, cbKeyTrue, cbKeyFalse) => {
+  const checkEditor = (options, cbKeyTrue) => {
     const cbNext = (cbKey) =>{
       switch (cbKey) {
         case "LOAD_EDITOR":
@@ -2105,7 +2072,7 @@ export const editorActions = (data, setData) => {
         case "LOAD_FORMULA":
           setData("current", { modalForm: 
             <Formula 
-              formula=""
+              formula={options.formula}
               partnumber={data.edit.dataset.movement_head[0].partnumber}
               description={data.edit.dataset.movement_head[0].description}
               formulaValues={data.edit.dataset.formula_head.map(
@@ -2138,10 +2105,9 @@ export const editorActions = (data, setData) => {
           break;
       }
     }
-    if ((data.edit.dirty === true && data.edit.current.item) ||
-      (data.edit.dirty === true && (data.edit.current.type==="template")) || 
+    if ((data.edit.dirty === true && data.edit.current.item) || 
       (data.edit.form_dirty === true && data.edit.current.form)) {
-        setData("current", { modalForm: 
+        return setData("current", { modalForm: 
           <InputBox 
             title={app.getText("msg_warning")}
             message={app.getText("msg_dirty_text")}
@@ -2151,46 +2117,29 @@ export const editorActions = (data, setData) => {
             labelCancel={app.getText("msg_cancel")}
             onCancel={() => {
               setData("current", { modalForm: null }, ()=>{
-                if (cbKeyFalse) {
-                  setData("edit", { dirty: false, form_dirty: false }, ()=>{
-                    cbNext(cbKeyFalse)
-                  })
-                } else {
-                  cbNext(cbKeyTrue)
-                }
+                cbNext(cbKeyTrue)
               })
             }}
             onOK={(value) => {
               setData("current", { modalForm: null }, async ()=>{
-                let edit = false
-                if (data.edit.form_dirty) {
-                  edit = await saveEditorForm()
-                } else {
-                  if (data.edit.current.type==="template"){
-                    
-                  } else {
-                    edit = await saveEditor()
-                  }
-                }
+                const edit = (data.edit.form_dirty) 
+                  ? await saveEditorForm()
+                  : await saveEditor()
                 if(edit){
                   return setData("edit", edit, ()=>{
                     cbNext(cbKeyTrue)
                   })
                 }
-                return cbNext(cbKeyFalse)
               })
             }}
           />,
           side: "hide"
         })
-    } else if (cbKeyFalse) {
-      cbNext(cbKeyFalse);
-    } else {
-      cbNext(cbKeyTrue);
     }
+    cbNext(cbKeyTrue);
   }
   
-  const checkTranstype = async (options, cbKeyTrue, cbKeyFalse) => {
+  const checkTranstype = async (options, cbKeyTrue) => {
     if ((options.ntype==="trans" || options.ntype==="transitem" || 
       options.ntype==="transmovement" || options.ntype==="transpayment") && 
       options.ttype===null) {
@@ -2208,9 +2157,9 @@ export const editorActions = (data, setData) => {
         if(view.error){
           return app.resultError(view)
         }
-        checkEditor({ntype:"trans", ttype:view.transtype[0].groupvalue, id:options.id}, cbKeyTrue, cbKeyFalse)
+        checkEditor({...options, ntype:"trans", ttype:view.transtype[0].groupvalue, id:options.id}, cbKeyTrue)
     } else {
-      checkEditor(options, cbKeyTrue, cbKeyFalse)
+      checkEditor(options, cbKeyTrue)
     }
   }
 
@@ -2228,7 +2177,7 @@ export const editorActions = (data, setData) => {
       return app.resultError(view)
     }
     if (view.stock.length === 0){
-      app.showToast({ type: "info",
+      return app.showToast({ type: "info",
         title: app.getText("msg_warning"), 
         message: app.getText("ms_no_stock") })
     }
@@ -2243,8 +2192,8 @@ export const editorActions = (data, setData) => {
     })
   }
   
-  const exportQueue = async (edit, item) => {
-    const options = edit.current.item
+  const exportQueue = async (item) => {
+    const options = data.edit.current.item
     await reportOutput({
       type: options.mode, 
       template: item.reportkey, 
@@ -2260,10 +2209,10 @@ export const editorActions = (data, setData) => {
     })
   }
 
-  const setFormActions = (options, editData) => {
+  const setFormActions = (options) => {
 
     const row = options.row || {}
-    let edit = editData || data.edit
+    let edit = update({}, {$set: data.edit})
     switch (options.params.action) {
       case "loadEditor":
         checkEditor({
@@ -2349,7 +2298,7 @@ export const editorActions = (data, setData) => {
         break;
 
       case "exportQueueItem":
-        exportQueue(edit, row)
+        exportQueue(row)
         break;
     
       default:
@@ -2387,21 +2336,14 @@ export const editorActions = (data, setData) => {
     const direction = data.edit.dataset.groups.filter(
       item => (item.id === data.edit.current.item.direction))[0].groupvalue
     let _sql = {
-      select:["max(id) as id"], from:"trans", where:[["transtype","=","?"]]
+      select:["max(id) as id"], from:"trans", where:[["transtype","=","?"], ["and","id","<","?"]]
     }
-    let values = [data.edit.current.item.transtype]
-    if (transtype !== "cash" && transtype !== "waybill") {
+    let values = [data.edit.current.item.transtype, data.edit.current.item.id]
+    if(!["cash", "waybill"].includes(transtype)){
       _sql.where.push(["and","direction","=","?"])
       values.push(data.edit.current.item.direction)
     }
-    if (data.edit.current.item.id !== null) {
-      _sql.where.push(["and","id","<","?"])
-      values.push(data.edit.current.item.id)
-    }
-    if ((transtype === "invoice" && direction === "out") || 
-      (transtype === "receipt" && direction === "out")|| (transtype === "cash")) {
-      
-    } else {
+    if(!["invoice_out", "receipt_out", "cash_out", "cash_in"].includes(`${transtype}_${direction}`)){
       _sql.where.push(["and","deleted","=","0"])
     }
     const filter = getTransFilter(_sql, values)
@@ -2431,13 +2373,11 @@ export const editorActions = (data, setData) => {
       where:[["transtype","=","?"],["and","id",">","?"]]
     }
     let values = [data.edit.current.item.transtype, data.edit.current.item.id]
-    if (transtype !== "cash" && transtype !== "waybill") {
+    if(!["cash", "waybill"].includes(transtype)){
       _sql.where.push(["and","direction","=","?"])
       values.push(data.edit.current.item.direction)
     }
-    if ((transtype === "invoice" && direction === "out") || 
-      (transtype === "receipt" && direction === "out") || (transtype === "cash")) {} 
-    else {
+    if(!["invoice_out", "receipt_out", "cash_out", "cash_in"].includes(`${transtype}_${direction}`)){
       _sql.where.push(["and","deleted","=","0"])
     }
     const filter = getTransFilter(_sql, values)
@@ -2454,9 +2394,7 @@ export const editorActions = (data, setData) => {
       return app.resultError(view)
     }
     if (view.next[0].id === null) {
-      if (transtype==="delivery" && direction!=="transfer") {
-        return
-      } else {
+      if(!["delivery_out", "delivery_in"].includes(`${transtype}_${direction}`)){
         checkEditor({ntype: "trans", ttype: transtype, id: null}, 'LOAD_EDITOR')
       }
     } else {
@@ -2600,23 +2538,6 @@ export const editorActions = (data, setData) => {
     saveToDisk(icsUrl, filename);
   }
 
-  const loadPrice = async (trans, item) => {
-    const options = { method: "POST", 
-      data: {
-        key: "getPriceValue",
-        values: {
-          vendorprice: item.vendorprice, 
-          product_id: item.product_id,
-          posdate: trans.transdate, 
-          curr: trans.curr, 
-          qty: item.qty, 
-          customer_id: trans.customer_id
-        }
-      }
-    }
-    return app.requestData("/function", options)
-  }
-
   const calcPrice = (_calcmode, item) => {
     
     let rate = data.edit.dataset.tax.filter(tax => (tax.id === parseInt(item.tax_id,10)))[0]
@@ -2627,12 +2548,6 @@ export const editorActions = (data, setData) => {
     
     let netAmount = 0; let vatAmount = 0; let amount = 0; let fxPrice = 0;
     switch(_calcmode) {
-      case "fxprice":
-        fxPrice = parseFloat(item.fxprice)
-        netAmount = round(fxPrice*(1-parseFloat(item.discount)/100)*parseFloat(item.qty),parseInt(digit,10))
-        vatAmount = round(fxPrice*(1-parseFloat(item.discount)/100)*parseFloat(item.qty)*parseFloat(rate),parseInt(digit,10))
-        amount = round(netAmount+vatAmount, parseInt(digit,10))
-        break;
         
       case "netamount":
         netAmount = parseFloat(item.netamount)
@@ -2651,7 +2566,14 @@ export const editorActions = (data, setData) => {
           fxPrice = round(netAmount/(1-parseFloat(item.discount)/100)/parseFloat(item.qty),parseInt(digit,10))
         }
         break;
+
       default:
+      case "fxprice":
+        fxPrice = parseFloat(item.fxprice)
+        netAmount = round(fxPrice*(1-parseFloat(item.discount)/100)*parseFloat(item.qty),parseInt(digit,10))
+        vatAmount = round(fxPrice*(1-parseFloat(item.discount)/100)*parseFloat(item.qty)*parseFloat(rate),parseInt(digit,10))
+        amount = round(netAmount+vatAmount, parseInt(digit,10))
+        break;
     }
     return update(item, {$merge: {
       fxprice: fxPrice,
@@ -2661,11 +2583,28 @@ export const editorActions = (data, setData) => {
     }})
   }
 
-  const editItem = async (options, editData) => {
-    let edit = update({}, {$set: editData})
-    if((options.name === "fieldvalue_value") || (options.name === "fieldvalue_notes") || (options.name === "fieldvalue_deleted")){
+  const editItem = async (options) => {
+    const loadPrice = async (trans, item) => {
+      const params = { method: "POST", 
+        data: {
+          key: "getPriceValue",
+          values: {
+            vendorprice: item.vendorprice, 
+            product_id: item.product_id,
+            posdate: trans.transdate, 
+            curr: trans.curr, 
+            qty: item.qty, 
+            customer_id: trans.customer_id
+          }
+        }
+      }
+      return app.requestData("/function", params)
+    }
+
+    let edit = update({}, {$set: data.edit})
+    if(["fieldvalue_value", "fieldvalue_notes", "fieldvalue_deleted"].includes(options.name)){
       const fieldvalue_idx = edit.current.fieldvalue.findIndex((item)=>(item.id === options.id))
-      if( (fieldvalue_idx > -1) && ((edit.audit==="all") || (edit.audit==="update"))){
+      if((fieldvalue_idx > -1) && ["all", "update"].includes(edit.audit)){
         edit = update(edit, {$merge: {
           dirty: true,
         }})
@@ -2971,17 +2910,17 @@ export const editorActions = (data, setData) => {
     setData("edit", edit)
   }
 
-  const setPattern = ( options, editData ) => {
+  const setPattern = ( options ) => {
     const { key } = options
     const updatePattern = async (values) => {
-      const options = { method: "POST", data: values }
-      let result = await app.requestData("/pattern", options)
+      const params = { method: "POST", data: values }
+      let result = await app.requestData("/pattern", params)
       if(result.error){
         return app.resultError(result)
       }
-      checkEditor({ntype: editData.current.type, 
-        ttype: editData.current.transtype, 
-        id: editData.current.item.id, form:"fnote"}, 'LOAD_EDITOR')
+      checkEditor({ntype: data.edit.current.type, 
+        ttype: data.edit.current.transtype, 
+        id: data.edit.current.item.id, form:"fnote"}, 'LOAD_EDITOR')
     }
     const patternBox = {
       default: {
@@ -2992,11 +2931,11 @@ export const editorActions = (data, setData) => {
         showValue: false,
         defaultOK: true,
         ok: (value) => {
-          let pattern = update(editData.dataset.pattern, {})
+          let pattern = update(data.edit.dataset.pattern, {})
           pattern.forEach((element, index) => {
             pattern = update(pattern, {
               [index]: { $merge: {
-                defpattern: (element.id === parseInt(editData.current.template,10)) ? 1 : 0
+                defpattern: (element.id === parseInt(data.edit.current.template,10)) ? 1 : 0
               }}
             })
           });
@@ -3011,11 +2950,11 @@ export const editorActions = (data, setData) => {
         showValue: false,
         defaultOK: true,
         ok: (value) => {
-          let pattern = editData.dataset.pattern.filter((item) => 
-            (item.id === parseInt(editData.current.template,10) ))[0]
+          let pattern = data.edit.dataset.pattern.filter((item) => 
+            (item.id === parseInt(data.edit.current.template,10) ))[0]
           if(pattern){
             pattern = update(pattern, {$merge: {
-              notes: editData.current.item.fnote
+              notes: data.edit.current.item.fnote
             }})
             updatePattern([pattern])
           }
@@ -3042,9 +2981,9 @@ export const editorActions = (data, setData) => {
               return app.showToast({ type: "error", title: app.getText("msg_warning"), 
                 message: app.getText("msg_value_exists") })
             }
-            const pattern = update(initItem({tablename: "pattern", current: editData.current}), {$merge: {
+            const pattern = update(initItem({tablename: "pattern", current: data.edit.current}), {$merge: {
               description: value,
-              defpattern: (editData.dataset.pattern.length === 0) ? 1 : 0
+              defpattern: (data.edit.dataset.pattern.length === 0) ? 1 : 0
             }})
             updatePattern([pattern])
           }
@@ -3058,8 +2997,8 @@ export const editorActions = (data, setData) => {
         showValue: false,
         defaultOK: false,
         ok: (value) => {
-          let pattern = editData.dataset.pattern.filter((item) => 
-            (item.id === parseInt(editData.current.template,10) ))[0]
+          let pattern = data.edit.dataset.pattern.filter((item) => 
+            (item.id === parseInt(data.edit.current.template,10) ))[0]
           if(pattern){
             pattern = update(pattern, {$merge: {
               deleted: 1,
@@ -3071,16 +3010,16 @@ export const editorActions = (data, setData) => {
       }
     }
     if(key !== "new"){
-      if(!editData.current.template || (editData.current.template === "")){
+      if(!data.edit.current.template || (data.edit.current.template === "")){
         return app.showToast({ type: "error", title: app.getText("msg_warning"), 
           message: app.getText("msg_pattern_missing") })
       }
     }
     if(key === "load"){
-      const pattern = editData.dataset.pattern.filter((item) => 
-        (item.id === parseInt(editData.current.template,10) ))[0]
+      const pattern = data.edit.dataset.pattern.filter((item) => 
+        (item.id === parseInt(data.edit.current.template,10) ))[0]
       if(pattern){
-        let edit = update(editData, {
+        let edit = update(data.edit, {
           current: { item: { $merge: {
             fnote: pattern.notes
           }}}
@@ -3115,28 +3054,191 @@ export const editorActions = (data, setData) => {
     }
   }
 
+  const shippingAddAll = () => {
+    let edit = update({}, {$set: data.edit})
+    edit.dataset.shipping_items_.forEach(sitem => {
+      if (sitem.diff !== 0 && sitem.edited !== true) {
+        edit = update(edit, {dataset: { shiptemp: {$push: [{ 
+          "id": sitem.item_id+"-"+sitem.product_id,
+          "item_id": sitem.item_id, 
+          "product_id": sitem.product_id,  
+          "product": sitem.product, 
+          "partnumber": sitem.partnumber,
+          "partname": sitem.partname, 
+          "unit": sitem.unit, 
+          "batch_no":"", 
+          "qty":sitem.diff, 
+          "diff":0,
+          "oqty": sitem.qty, 
+          "tqty": sitem.tqty
+        }]}}})
+      }
+    });
+    setEditor({shipping: true, form:"shiptemp_items"}, edit.template, edit)
+  }
+
+  const setPassword = (username) =>{
+    if(!username && data.edit.current){
+      username = data.edit.dataset[data.edit.current.type][0].username
+    }
+    setData("current", { module: "setting", content: { username: username, nextKey: "PASSWORD_FORM" }, side: "hide" })
+  }
+
+  const setLink = (type, field) =>{
+    setData("current", { side: "hide" }, ()=>{
+      let link_id = (data.edit.current.transtype === "cash") ? 
+      data.edit.current.extend.id : data.edit.current.form.id;
+      checkEditor(
+        { fkey: type, id: null, link_field: field, link_id: link_id }, 'SET_EDITOR_ITEM')
+    })    
+  }
+
+  const editorBack = () =>{
+    if(data.edit.current.form){
+      checkEditor({
+        ntype: data.edit.current.type, 
+        ttype: data.edit.current.transtype, 
+        id: data.edit.current.item.id,
+        form: data.edit.current.form_type}, 'LOAD_EDITOR')
+    } else {
+      if(data.edit.current.form_type === "transitem_shipping"){
+        checkEditor({
+          ntype: data.edit.current.type, 
+          ttype: data.edit.current.transtype, 
+          id: data.edit.current.item.id,
+          form: data.edit.current.form_type}, 'LOAD_EDITOR')
+      } else {
+        let reftype = data.login.data.groups.filter((item)=> {
+          return (item.id === data.edit.current.item.nervatype)
+        })[0].groupvalue
+        checkEditor({ntype: reftype, 
+          ttype: null, id: data.edit.current.item.ref_id,
+          form: data.edit.current.type}, 'LOAD_EDITOR')
+      }
+    }
+  }
+
+  const editorSave = async () => {
+    let edit = null
+    if(data.edit.current.form){
+      edit = await saveEditorForm()
+    } else {
+      edit = await saveEditor()
+    }
+    if(edit){
+      loadEditor({
+        ntype: edit.current.type, 
+        ttype: edit.current.transtype, 
+        id: edit.current.item.id,
+        form: edit.current.view
+      })
+    }
+  }
+
+  const editorDelete = () => {
+    if(data.edit.current.form){
+      deleteEditorItem({
+        fkey: data.edit.current.form_type, 
+        table: data.edit.current.form_datatype, 
+        id: data.edit.current.form.id
+      })
+    } else {
+      deleteEditor()
+    }
+  }
+
+  const editorNew = (params) =>{
+    if(params.ttype === "shipping"){
+      app.onSelector("transitem_delivery", "", (row, filter)=>{
+        const params = row.id.split("/")
+        checkEditor({ 
+          ntype: params[0], ttype: params[1], id: parseInt(params[2],10), 
+          shipping: true
+        }, 'LOAD_EDITOR')
+      })
+    /*
+    } else if(data.edit.current.form){
+      editor.checkEditor({
+        fkey: params.fkey || data.edit.current.form_type, 
+        id: null}, 'SET_EDITOR_ITEM')
+    */
+    } else {
+      checkEditor({
+        ntype: params.ntype || data.edit.current.type, 
+        ttype: params.ttype || data.edit.current.transtype, 
+        id: null}, 'LOAD_EDITOR')
+    }
+  }
+
+  const transCopy = (ctype) => {
+    if (ctype === "create") {
+      checkEditor({}, "CREATE_TRANS_OPTIONS");
+    } else {
+      setData("current", { modalForm: 
+        <InputBox 
+          title={app.getText("msg_warning")}
+          message={app.getText("msg_copy_text")}
+          infoText={app.getText("msg_delete_info")}
+          defaultOK={true}
+          labelOK={app.getText("msg_ok")}
+          labelCancel={app.getText("msg_cancel")}
+          onCancel={() => {
+            setData("current", { modalForm: null })
+          }}
+          onOK={(value) => {
+            setData("current", { modalForm: null }, () => {
+              checkEditor({ cmdtype: "copy", transcast: ctype }, "CREATE_TRANS");
+            })
+          }}
+        />,
+        side: "hide"
+      })
+    }
+  }
+
   return {
-    round: round,
-    createReport: createReport,
-    exportQueueAll: exportQueueAll,
-    searchQueue: searchQueue,
-    reportOutput: reportOutput,
-    reportSettings: reportSettings,
+    addPrintQueue: addPrintQueue,
+    calcFormula: calcFormula,
+    calcPrice: calcPrice,
     checkEditor: checkEditor,
+    checkSubtype: checkSubtype,
     checkTranstype: checkTranstype,
-    loadEditor: loadEditor,
-    setEditor: setEditor,
-    setFormActions: setFormActions,
-    deleteEditorItem: deleteEditorItem,
+    createReport: createReport,
+    createShipping: createShipping,
+    createTrans: createTrans,
+    createTransOptions: createTransOptions,
     deleteEditor: deleteEditor,
-    prevTransNumber: prevTransNumber,
+    deleteEditorItem: deleteEditorItem,
+    editItem: editItem,
+    editorBack: editorBack,
+    editorDelete: editorDelete,
+    editorNew: editorNew,
+    editorSave: editorSave,
+    exportEvent: exportEvent,
+    exportQueueAll: exportQueueAll,
+    exportQueue: exportQueue,
+    getTransFilter: getTransFilter,
+    loadEditor: loadEditor,
+    newFieldvalue: newFieldvalue,
     nextTransNumber: nextTransNumber,
-    setFieldvalue: setFieldvalue,
+    prevTransNumber: prevTransNumber,
+    reportOutput: reportOutput,
+    reportPath: reportPath,
+    reportSettings: reportSettings,
+    round: round,
     saveEditorForm: saveEditorForm,
     saveEditor: saveEditor,
-    createShipping: createShipping,
-    exportEvent: exportEvent,
-    editItem: editItem,
-    setPattern: setPattern
+    searchQueue: searchQueue,
+    setEditorItem: setEditorItem,
+    setEditor: setEditor,
+    setFieldvalue: setFieldvalue,
+    setFormActions: setFormActions,
+    setLink: setLink,
+    setPassword: setPassword,
+    setPattern: setPattern,
+    shippingAddAll: shippingAddAll,
+    showStock: showStock,
+    tableValues: tableValues,
+    transCopy: transCopy
   }
 }

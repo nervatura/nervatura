@@ -107,7 +107,7 @@ export const Meta = ({
           {(current.deffield && (current.deffield !== ""))?<div className="cell" >
             <Button id="btn_new"
               className={`${"border-button"} ${styles.addButton}`} 
-              onClick={ ()=>onEvent("checkEditor",[{fieldname: current.deffield}, 'NEW_FIELDVALUE', undefined]) }
+              onClick={ ()=>onEvent("checkEditor",[{fieldname: current.deffield}, 'NEW_FIELDVALUE']) }
               value={<Label value={getText("label_new")} 
                 leftIcon={<Icon iconKey="Plus" />} iconWidth="20px" />}
             />

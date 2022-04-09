@@ -84,8 +84,7 @@ export const Validator = (data, setData) => {
           msg_err = app.getText("msg_required")  +" "+ app.getText("customer_custname")
         } else if (values.custtype === null || values.custtype === "") {
           msg_err = app.getText("msg_required")  +" "+ app.getText("customer_custtype")
-        }
-        else if(values.id === null && (values.custnumber !== null && values.custnumber !== "")) {
+        } else if(values.id === null && (values.custnumber !== null && values.custnumber !== "")) {
           msg_err = await checkUniqueKey(["custnumber","=","?"], [values.custnumber])
         } else if(values.custnumber === null) {
           msg_err = await nextNumber("custnumber", "custnumber")
@@ -309,8 +308,7 @@ export const Validator = (data, setData) => {
         //if (values.duedate !== null) {
           //values.duedate = getValidDateTime(values.duedate)
         //}
-        if ((transtype==="offer" || transtype==="order" || transtype==="worksheet" || 
-          transtype==="rent" || transtype==="invoice") && 
+        if (["offer", "order", "worksheet", "rent", "invoice"].includes(transtype) && 
           (values.customer_id === null || values.customer_id === "")) {
           msg_err = app.getText("msg_required")  +" "+ app.getText("customer_custname")
         } else if (transtype==="cash" && (values.place_id === null || values.place_id === "")) {
@@ -507,29 +505,26 @@ export const InitItem = (data, setData) => {
           id: null, nervatype_1: null, ref_id_1: null, nervatype_2: null, 
           ref_id_2: null, deleted: 0
         }})
-        switch (current.form_type) {
-          case "invoice_link":
-            link = update(link, {$merge: {
-              nervatype_1: store.groups.filter((group)=> {
-                return ((group.groupname === "nervatype") && (group.groupvalue === "payment"))
-              })[0].id,
-              nervatype_2: store.groups.filter((group)=> {
-                return ((group.groupname === "nervatype") && (group.groupvalue === "trans"))
-              })[0].id,
-              ref_id_2: current.item.id
-            }})
-            break;
-          case "payment_link":
-            link = update(link, {$merge: {
-              nervatype_1: store.groups.filter((group)=> {
-                return ((group.groupname === "nervatype") && (group.groupvalue === "payment"))
-              })[0].id,
-              nervatype_2: store.groups.filter((group)=> {
-                return ((group.groupname === "nervatype") && (group.groupvalue === "trans"))
-              })[0].id
-            }})
-            break;
-          default:
+        if(current.form_type === "invoice_link"){
+          link = update(link, {$merge: {
+            nervatype_1: store.groups.filter((group)=> {
+              return ((group.groupname === "nervatype") && (group.groupvalue === "payment"))
+            })[0].id,
+            nervatype_2: store.groups.filter((group)=> {
+              return ((group.groupname === "nervatype") && (group.groupvalue === "trans"))
+            })[0].id,
+            ref_id_2: current.item.id
+          }})
+        }
+        if(current.form_type === "payment_link"){
+          link = update(link, {$merge: {
+            nervatype_1: store.groups.filter((group)=> {
+              return ((group.groupname === "nervatype") && (group.groupvalue === "payment"))
+            })[0].id,
+            nervatype_2: store.groups.filter((group)=> {
+              return ((group.groupname === "nervatype") && (group.groupvalue === "trans"))
+            })[0].id
+          }})
         }
         return link;
       
@@ -623,23 +618,20 @@ export const InitItem = (data, setData) => {
           shippingdate: null, product_id: null, product: "", movetype: null, 
           tool_id: null, qty: 0, place_id: null, shared: 0, notes: null, deleted: 0
         }})
-        switch (current.transtype) {
-          case "formula":
-            movement_head = update(movement_head, {$merge: {
-              movetype: dataset.groups.filter((group)=> {
-                return ((group.groupname === "movetype") && (group.groupvalue === "head"))
-              })[0].id
-            }})
-            break;
-          case "production":
-            movement_head = update(movement_head, {$merge: {
-              movetype: dataset.groups.filter((group)=> {
-                return ((group.groupname === "movetype") && (group.groupvalue === "inventory"))
-              })[0].id,
-              shared: 1
-            }})
-            break;
-          default:
+        if(current.transtype === "formula"){
+          movement_head = update(movement_head, {$merge: {
+            movetype: dataset.groups.filter((group)=> {
+              return ((group.groupname === "movetype") && (group.groupvalue === "head"))
+            })[0].id
+          }})
+        }
+        if(current.transtype === "production"){
+          movement_head = update(movement_head, {$merge: {
+            movetype: dataset.groups.filter((group)=> {
+              return ((group.groupname === "movetype") && (group.groupvalue === "inventory"))
+            })[0].id,
+            shared: 1
+          }})
         }
         return movement_head;
           

@@ -1,6 +1,8 @@
-FROM golang:1.17-alpine AS builder
+FROM golang:1.18-alpine AS builder
 
 ARG APP_MODULES=all
+ARG APP_VNUM=dev
+ARG APP_NAME=nervatura
 
 # Move to working directory (/build).
 WORKDIR /build
@@ -16,7 +18,8 @@ COPY . .
 
 # Set necessary environmet variables needed for our image and build the API server.
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
-RUN make release TAGS=${APP_MODULES}
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "$APP_MODULES" -ldflags="-w -s -X main.version=$APP_VNUM" -o $APP_NAME main.go
+RUN upx --best --lzma $APP_NAME
 
 FROM scratch
 

@@ -12,8 +12,13 @@ export const SIDE_VISIBILITY = {
   HIDE: "hide"
 }
 
+export const SIDE_VIEW = {
+  EDIT: "edit",
+  NEW: "new"
+}
+
 export const Edit = ({ 
-  side, newFilter, auditFilter, edit, module, forms,
+  side, newFilter, auditFilter, view, module, forms,
   className,
   getText, onEvent,
   ...props 
@@ -88,7 +93,7 @@ export const Edit = ({
       panels.push(
         itemMenu("cmd_save",
           `${"full medium"} ${styles.itemButton} ${((current.form && form_dirty)||(!current.form && dirty))?styles.selected:""}`,
-          ["saveEditor"],
+          ["editorSave"],
           <Label value={getText("label_save")} 
             leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />
         )
@@ -161,7 +166,7 @@ export const Edit = ({
         panels.push(
           itemMenu("cmd_formula",
             `${"full medium"} ${styles.itemButton}`, 
-            ["checkEditor", [{}, 'LOAD_FORMULA', undefined]],
+            ["checkEditor", [{}, 'LOAD_FORMULA']],
           <Label value={getText("label_formula")} 
             leftIcon={<Icon iconKey="Magic" />} iconWidth="20px"  />
           )    
@@ -473,23 +478,23 @@ export const Edit = ({
       <div className="row full section-small container">
         <div className="cell half">
           {itemMenu("state_new", 
-            `${"full medium"} ${(edit && current.item)?styles.groupButton:styles.selectButton}`,
-            ["editState"],
+            `${"full medium"} ${((view === SIDE_VIEW.EDIT) && current.item)?styles.groupButton:styles.selectButton}`,
+            ["changeData", ["side_view", "new"]],
             <Label value={getText("label_new")} 
               leftIcon={<Icon iconKey="Plus" />} iconWidth="20px"  />
           )}
         </div>
         <div className="cell half">
           {itemMenu("state_edit", 
-            `${"full medium"} ${(edit && current.item)?styles.selectButton:styles.groupButton}`,
-            ["editState"],
+            `${"full medium"} ${((view === SIDE_VIEW.EDIT) && current.item)?styles.selectButton:styles.groupButton}`,
+            ["changeData", ["side_view", "edit"]],
             <Label value={getText("label_edit")} 
               leftIcon={<Icon iconKey="Edit" />} iconWidth="20px"  />,
             (!current.item) ? true : false
           )}
         </div>
       </div>:null}
-      {((edit && current.form) || (edit && current.item))
+      {(((view === SIDE_VIEW.EDIT) && current.form) || ((view === SIDE_VIEW.EDIT) && current.item))
         ? editItems(panel) : newItems()}
     </div>
   )
@@ -500,7 +505,7 @@ Edit.propTypes = {
    * SideBar visibility
    */
   side: PropTypes.oneOf(Object.values(SIDE_VISIBILITY)).isRequired,
-  edit: PropTypes.bool.isRequired, 
+  view: PropTypes.oneOf(Object.values(SIDE_VIEW)).isRequired, 
   module: PropTypes.shape({
     current: PropTypes.object, 
     form_dirty: PropTypes.bool,
@@ -525,7 +530,7 @@ Edit.propTypes = {
 
 Edit.defaultProps = {
   side: SIDE_VISIBILITY.AUTO,
-  edit: true, 
+  view: SIDE_VIEW.EDIT, 
   module: {
     current: {}, 
     form_dirty: false,
