@@ -16,7 +16,7 @@ $ docker pull nervatura/nervatura:latest
 ### **Snap** package (Linux daemon)
 
 ```
-$ sudo snap install --beta nervatura
+$ sudo snap install nervatura
 ```
 
 Checking service status and last logs:
