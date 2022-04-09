@@ -21,7 +21,7 @@ The open-data principle regulates the access to our business data.</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/install/</guid>
-      <description>Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install --beta nervatura Checking service status and last logs:
+      <description>Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install nervatura Checking service status and last logs:
 $ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
 Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
 &amp;quot;scripts&amp;quot;: { &amp;quot;nervatura&amp;quot;: &amp;quot;./node_modules/nervatura/bin/nervatura&amp;quot; }
