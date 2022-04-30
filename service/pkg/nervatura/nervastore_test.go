@@ -84,6 +84,67 @@ func TestNervaStore_connected(t *testing.T) {
 	}
 }
 
+func TestNervaStore_Connection(t *testing.T) {
+	type fields struct {
+		ds       DataDriver
+		User     *User
+		Customer IM
+		models   IM
+		config   IM
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		wantConn struct {
+			Alias     string
+			Connected bool
+			Engine    string
+		}
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				ds: &testDriver{Config: IM{}},
+			},
+			wantConn: struct {
+				Alias     string
+				Connected bool
+				Engine    string
+			}{
+				Alias:     "test",
+				Connected: true,
+				Engine:    "test",
+			},
+		},
+		{
+			name: "nil",
+			wantConn: struct {
+				Alias     string
+				Connected bool
+				Engine    string
+			}{
+				Alias:     "",
+				Connected: false,
+				Engine:    "",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			nstore := &NervaStore{
+				ds:       tt.fields.ds,
+				User:     tt.fields.User,
+				Customer: tt.fields.Customer,
+				models:   tt.fields.models,
+				config:   tt.fields.config,
+			}
+			if gotConn := nstore.Connection(); !reflect.DeepEqual(gotConn, tt.wantConn) {
+				t.Errorf("NervaStore.Connection() = %v, want %v", gotConn, tt.wantConn)
+			}
+		})
+	}
+}
+
 func Test_validFieldValue(t *testing.T) {
 	type args struct {
 		nervatype string

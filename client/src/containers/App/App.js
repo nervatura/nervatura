@@ -31,20 +31,12 @@ class App extends Component {
     }
     window.addEventListener("scroll", this.onScroll.bind(this), {passive: true});
     //window.addEventListener('resize', this.onResize.bind(this), {passive: true})
-    const [ current, params ] = this.getPath(window.location)
-    if(current === "hash" && params.access_token){
-      this.setHashToken(params)
-    } else if(current === "search" && params.code){
-      this.setCodeToken(params)
-    } else {
-      this.loadConfig()
-      this.onResize()
-    }
+    this.loadConfig()
   }
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll.bind(this));
-    window.removeEventListener("resize", this.onScroll.bind(this));
+    //window.removeEventListener("resize", this.onScroll.bind(this));
   }
 
   render() {

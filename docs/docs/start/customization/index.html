@@ -127,6 +127,19 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://nervatura.github.io/nervatura/docs/start/examples/" class="">Examples</a>
+  
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -786,7 +799,6 @@ https://github.com/alex-shpak/hugo-book
       <ul>
         <li><a href="#customize-the-appearance">Customize the appearance</a></li>
         <li><a href="#bearer-authentication">Bearer Authentication</a></li>
-        <li><a href="#other-recipes">Other Recipes</a></li>
       </ul>
     </li>
   </ul>
@@ -832,40 +844,30 @@ https://github.com/alex-shpak/hugo-book
 <li>Docker container: mount local folder to the container</li>
 </ul>
 <ol start="4">
-<li>Modify installed Nervatura report definitions: 
-  <a href="https://nervatura.github.io/nervatura/docs/client/program/editor/"><strong>REPORT EDITOR</strong></a></li>
+<li>
+<p>Modify installed Nervatura report definitions: 
+  <a href="https://nervatura.github.io/nervatura/docs/client/program/editor/"><strong>REPORT EDITOR</strong></a></p>
+</li>
+<li>
+<p>The basic report definition files 
+  <a href="https://github.com/nervatura/nervatura/tree/master/service/pkg/utils/static/templates">can be found here</a>.</p>
+</li>
 </ol>
 <h2 id="bearer-authentication">
   Bearer Authentication
   <a class="anchor" href="#bearer-authentication">#</a>
 </h2>
 <p>Environment variables: 
-  <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example">.env.example</a><br />
-User authentication is based on the <em>employee.username</em> or <em>customer.custnumber</em> fields. The identifier can be the following types: username (employee), email, phone number (customer).<br />
-Passwords are not stored in the employee or customer tables. They are anonymized and stored in a unique table with 
+  <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example">.env.example</a></p>
+<p>User authentication is based on the <em>employee.username</em> or <em>employee.registration_key</em> fields. <br />
+To match the username, Nervatura login processing associates the token fields in the
+following order: <em>login</em>.<em><strong>username</strong></em> = <em>token</em>.<em><strong>username</strong></em> || <em>token</em>.<em><strong>user_id</strong></em> ||
+<em>token</em>.<em><strong>sub</strong></em> || <em>token</em>.<em><strong>email</strong></em></p>
+<p>Passwords are not stored in the employee or customer tables. They are anonymized and stored in a unique table with 
   <a href="https://github.com/P-H-C/phc-winner-argon2">strong encryption</a>.</p>
-<p>External authorization: <code>NT_TOKEN_PUBLIC_KEY_TYPE</code>, <code>NT_TOKEN_PUBLIC_KEY_URL</code></p>
-<h2 id="other-recipes">
-  Other Recipes
-  <a class="anchor" href="#other-recipes">#</a>
-</h2>
-<ul>
-<li>
-  <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/CHANGELOG">CHANGELOG</a></li>
-<li>
-  <a href="https://godoc.org/github.com/nervatura/nervatura/service">
-  <img src="https://godoc.org/github.com/nervatura/nervatura?status.svg" alt="GoDoc" /></a></li>
-<li>
-  <a href="https://github.com/nervatura/nervatura/blob/master/service/pkg/proto/api.proto">gRPC API proto file</a></li>
-<li>
-  <a href="https://pypi.org/project/nervatura/">Python gRPC packages</a></li>
-<li>
-  <a href="https://github.com/nervatura/nervatura/tree/master/service/pkg/utils/static/templates">Report templates files</a></li>
-<li>
-  <a href="https://github.com/nervatura/nervatura-express">Node.js sample application</a></li>
-<li>
-  <a href="https://github.com/nervatura/nervatura-fastapi">Python sample application</a></li>
-</ul>
+<p>Custom token-based, password-free login can also be used. Password-based login can be enabled or disabled with the <code>NT_PASSWORD_LOGIN</code> option value.</p>
+<p><strong>You can find more information about this in the</strong> 
+  <a href="https://nervatura.github.io/nervatura/docs/start/examples/"><strong>Examples</strong></a>.</p>
 </article>
  
       
@@ -909,7 +911,6 @@ Passwords are not stored in the employee or customer tables. They are anonymized
       <ul>
         <li><a href="#customize-the-appearance">Customize the appearance</a></li>
         <li><a href="#bearer-authentication">Bearer Authentication</a></li>
-        <li><a href="#other-recipes">Other Recipes</a></li>
       </ul>
     </li>
   </ul>

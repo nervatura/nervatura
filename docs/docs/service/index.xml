@@ -34,8 +34,8 @@ CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposi
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/service/grpc/</guid>
-      <description>Overview #  Nervatura gRPC specification. For more examples, see
-  Node.js sample application  Python sample application     Method Name Request Type Response Type Description     UserLogin  RequestUserLogin  ResponseUserLogin Logs in user by username and password   UserPassword  RequestUserPassword  ResponseEmpty User (employee or customer) password change.   TokenLogin  RequestEmpty  ResponseTokenLogin JWT token auth.   TokenRefresh  RequestEmpty  ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists.</description>
+      <description>Overview #  Nervatura gRPC specification. For more examples, see Nervatura example application
+   Method Name Request Type Response Type Description     UserLogin  RequestUserLogin  ResponseUserLogin Logs in user by username and password   UserPassword  RequestUserPassword  ResponseEmpty User (employee or customer) password change.   TokenLogin  RequestEmpty  ResponseTokenLogin JWT token auth.   TokenRefresh  RequestEmpty  ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists.</description>
     </item>
     
   </channel>

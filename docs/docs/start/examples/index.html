@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Overview #  Items to the list can be added by REPORT command of the forms specified in Report Type, then by the Report Queue command.
-Input fields #  DATA FILTER #   Report Type: CUSTOMER, PRODUCT, EMPLOYEE, TOOL, PROJECT, ORDER, OFFER, INVOICE, RECEIPT, RENTAL, WORKSHEET, DELIVERY, CORRECTION, TOOL MOVEMENT, PRODUCTION, FORMULA, BANK STATEMENT, PETTY CASH Start Date / End Date: The date when added to the REPORT QUEUE list Document No.">
+<meta name="description" content="Quick Start #  Node.js #  git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
+Examples #  Create a demo database #    HTTP, CLI, CGO , gRPC All examples require a demo database. Please run this first!  Basic password login #    HTTP, CLI, CGO , gRPC  Custom token (passwordless) login #    HTTP, CLI, CGO , gRPC public/private key pair example  Nervatura Client custom token login #    HTTP, CLI, CGO , gRPC with the HMAC algorithm example Authorization Code Implicit (token) Grant error or logout callback  Using external API for token based authentication #    HTTP, gRPC use of an external identification service provider (Facebook, GitHub, Google, Firebase and others)  Nervatura Client language translation #    client_config.">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Report queue" />
-<meta property="og:description" content="Overview #  Items to the list can be added by REPORT command of the forms specified in Report Type, then by the Report Queue command.
-Input fields #  DATA FILTER #   Report Type: CUSTOMER, PRODUCT, EMPLOYEE, TOOL, PROJECT, ORDER, OFFER, INVOICE, RECEIPT, RENTAL, WORKSHEET, DELIVERY, CORRECTION, TOOL MOVEMENT, PRODUCTION, FORMULA, BANK STATEMENT, PETTY CASH Start Date / End Date: The date when added to the REPORT QUEUE list Document No." />
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Examples" />
+<meta property="og:description" content="Quick Start #  Node.js #  git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
+Examples #  Create a demo database #    HTTP, CLI, CGO , gRPC All examples require a demo database. Please run this first!  Basic password login #    HTTP, CLI, CGO , gRPC  Custom token (passwordless) login #    HTTP, CLI, CGO , gRPC public/private key pair example  Nervatura Client custom token login #    HTTP, CLI, CGO , gRPC with the HMAC algorithm example Authorization Code Implicit (token) Grant error or logout callback  Using external API for token based authentication #    HTTP, gRPC use of an external identification service provider (Facebook, GitHub, Google, Firebase and others)  Nervatura Client language translation #    client_config." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nervatura.github.io/nervatura/docs/client/program/printqueue/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://nervatura.github.io/nervatura/docs/start/examples/" /><meta property="article:section" content="docs" />
 
 
 
-<title>Report queue | Nervatura</title>
+<title>Examples | Nervatura</title>
 <link rel="manifest" href="https://nervatura.github.io/nervatura/manifest.json">
 <link rel="icon" href="https://nervatura.github.io/nervatura/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="https://nervatura.github.io/nervatura/book.min.990e3c19292e85852047b5ab2df5110988802825306dbb53cd52d25aee669a31.css" integrity="sha256-mQ48GSkuhYUgR7WrLfURCYiAKCUwbbtTzVLSWu5mmjE=" crossorigin="anonymous"><!--
@@ -132,7 +132,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="https://nervatura.github.io/nervatura/docs/start/examples/" class="">Examples</a>
+    <a href="https://nervatura.github.io/nervatura/docs/start/examples/" class=" active">Examples</a>
   
 
         </li>
@@ -616,7 +616,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-17a6b96d75ff23ae8268645da80805cf" class="toggle" checked />
+    <input type="checkbox" id="section-17a6b96d75ff23ae8268645da80805cf" class="toggle"  />
     <label for="section-17a6b96d75ff23ae8268645da80805cf" class="flex justify-between">
       <a role="button" class="">Program</a>
     </label>
@@ -684,7 +684,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="https://nervatura.github.io/nervatura/docs/client/program/printqueue/" class=" active">Report queue</a>
+    <a href="https://nervatura.github.io/nervatura/docs/client/program/printqueue/" class="">Report queue</a>
   
 
         </li>
@@ -777,7 +777,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="https://nervatura.github.io/nervatura/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>Report queue</strong>
+  <strong>Examples</strong>
 
   <label for="toc-control">
     
@@ -795,17 +795,22 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li>
       <ul>
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#input-fields">Input fields</a>
+        <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
-            <li><a href="#data-filter">DATA FILTER</a></li>
-            <li><a href="#options">OPTIONS</a></li>
+            <li><a href="#nodejs">Node.js</a></li>
           </ul>
         </li>
-        <li><a href="#operations">Operations</a>
+        <li><a href="#examples"><strong>Examples</strong></a>
           <ul>
-            <li><a href="#search">SEARCH</a></li>
-            <li><a href="#export-all">EXPORT ALL</a></li>
+            <li><a href="#create-a-demo-database">Create a demo database</a></li>
+            <li><a href="#basic-password-login">Basic password login</a></li>
+            <li><a href="#custom-token-passwordless-login">Custom token (passwordless) login</a></li>
+            <li><a href="#nervatura-client-custom-token-login">Nervatura Client custom token login</a></li>
+            <li><a href="#using-external-api-for-token-based-authentication">Using external API for token based authentication</a></li>
+            <li><a href="#nervatura-client-language-translation">Nervatura Client language translation</a></li>
+            <li><a href="#create-an-invoice">Create an invoice</a></li>
+            <li><a href="#nervatura-client-menu-shortcuts">Nervatura Client menu shortcuts</a></li>
+            <li><a href="#nervatura-csv-report-example">Nervatura CSV Report Example</a></li>
           </ul>
         </li>
       </ul>
@@ -823,62 +828,138 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h2 id="overview">
-  Overview
-  <a class="anchor" href="#overview">#</a>
+  <article class="markdown"><h2 id="quick-start">
+  <strong>Quick Start</strong>
+  <a class="anchor" href="#quick-start">#</a>
 </h2>
-<p>Items to the list can be added by <strong>REPORT</strong> command of the forms specified in <strong>Report Type</strong>, then by the <strong>Report Queue</strong> command.</p>
-<h2 id="input-fields">
-  Input fields
-  <a class="anchor" href="#input-fields">#</a>
+<h3 id="nodejs">
+  Node.js
+  <a class="anchor" href="#nodejs">#</a>
+</h3>
+<pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
+cd nervatura-examples/node
+npm install
+npm start
+</code></pre><p>Open your browser to http://localhost:8080</p>
+<h2 id="examples">
+  <strong>Examples</strong>
+  <a class="anchor" href="#examples">#</a>
 </h2>
-<h3 id="data-filter">
-  DATA FILTER
-  <a class="anchor" href="#data-filter">#</a>
+<h3 id="create-a-demo-database">
+  Create a demo database
+  <a class="anchor" href="#create-a-demo-database">#</a>
 </h3>
 <ul>
-<li><strong>Report Type</strong>: CUSTOMER, PRODUCT, EMPLOYEE, TOOL, PROJECT, ORDER, OFFER, INVOICE, RECEIPT, RENTAL,
-WORKSHEET, DELIVERY, CORRECTION, TOOL MOVEMENT, PRODUCTION, FORMULA, BANK STATEMENT, PETTY CASH</li>
-<li><strong>Start Date / End Date</strong>: The date when added to the REPORT QUEUE list</li>
-<li><strong>Document No.</strong>: Number of the transaction, event or resource (eg. Invoice No., Customer No., Serial etc.).</li>
-<li><strong>Username</strong>: The user who has added it to the REPORT QUEUE list</li>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li><em>All examples require a demo database. Please run this first!</em></li>
 </ul>
-<h3 id="options">
-  OPTIONS
-  <a class="anchor" href="#options">#</a>
+<h3 id="basic-password-login">
+  Basic password login
+  <a class="anchor" href="#basic-password-login">#</a>
 </h3>
 <ul>
-<li><strong>Export Mode</strong>: PRINT, PDF, XML. When command <strong>EXPORT ALL</strong> is used it is mandatory to fill in, in case of printing it is not taken into account by the program.</li>
-<li><strong>Orientation</strong>: Portrait, Landscape</li>
-<li><strong>Size</strong>: A3, A4, A5, Letter, Legal</li>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
 </ul>
-<blockquote class="book-hint info">
-  The PRINT mode additional parameters are the <strong>Size</strong> and <strong>Orientation</strong>. The number of <strong>Copies</strong> is specified per each item (list row).
-</blockquote>
-
-<h2 id="operations">
-  Operations
-  <a class="anchor" href="#operations">#</a>
-</h2>
-<h3 id="search">
-  SEARCH
-  <a class="anchor" href="#search">#</a>
+<h3 id="custom-token-passwordless-login">
+  Custom token (passwordless) login
+  <a class="anchor" href="#custom-token-passwordless-login">#</a>
 </h3>
-<p>Lists the items filtered by the REPORT QUEUE <strong>DATA FILTER</strong> or all.</p>
-<blockquote class="book-hint info">
-  When <strong>SEARCH</strong> is used the <strong>OPTIONS</strong> and <strong>DATA FILTER</strong> part closes automatically, can be opened any time again by selecting the header.
-</blockquote>
-
-<h3 id="export-all">
-  EXPORT ALL
-  <a class="anchor" href="#export-all">#</a>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>public/private key pair example</li>
+</ul>
+<h3 id="nervatura-client-custom-token-login">
+  Nervatura Client custom token login
+  <a class="anchor" href="#nervatura-client-custom-token-login">#</a>
 </h3>
-<p>Exports all the items listed in REPORT QUEUE in the format specified in <strong>Export Mode</strong> option. More information: 
-  <a href="https://nervatura.github.io/nervatura/docs/client/program/export/"><strong>DATA EXPORT</strong></a></p>
-<blockquote class="book-hint info">
-  Only the PDF and XML options are available in <strong>Export Mode</strong>. Additional parameters for PDF the <strong>Orientation</strong> and <strong>Size</strong>. The PRINT option only works for items selected line by line. Thus it is possible for each row to export it to either PDF or XML formats.
-</blockquote>
-
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>with the HMAC algorithm example</li>
+<li>Authorization Code</li>
+<li>Implicit (token) Grant</li>
+<li>error or logout callback</li>
+</ul>
+<h3 id="using-external-api-for-token-based-authentication">
+  Using external API for token based authentication
+  <a class="anchor" href="#using-external-api-for-token-based-authentication">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>use of an external identification service provider (Facebook, GitHub, Google, Firebase and others)</li>
+</ul>
+<h3 id="nervatura-client-language-translation">
+  Nervatura Client language translation
+  <a class="anchor" href="#nervatura-client-language-translation">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://github.com/nervatura/nervatura/tree/master/dist">client_config.json</a> file example</li>
+</ul>
+<h3 id="create-an-invoice">
+  Create an invoice
+  <a class="anchor" href="#create-an-invoice">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>creating or updating a new or existing customer, customer address and contact data</li>
+<li>create a new invoice</li>
+<li>create and download a PDF invoice</li>
+</ul>
+<h3 id="nervatura-client-menu-shortcuts">
+  Nervatura Client menu shortcuts
+  <a class="anchor" href="#nervatura-client-menu-shortcuts">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>External page - GET type example</li>
+<li>Email sending - POST type example</li>
+</ul>
+<h3 id="nervatura-csv-report-example">
+  Nervatura CSV Report Example
+  <a class="anchor" href="#nervatura-csv-report-example">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>simple customer contact list example</li>
+<li>input parameters</li>
+</ul>
 </article>
  
       
@@ -920,17 +1001,22 @@ WORKSHEET, DELIVERY, CORRECTION, TOOL MOVEMENT, PRODUCTION, FORMULA, BANK STATEM
   <ul>
     <li>
       <ul>
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#input-fields">Input fields</a>
+        <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
-            <li><a href="#data-filter">DATA FILTER</a></li>
-            <li><a href="#options">OPTIONS</a></li>
+            <li><a href="#nodejs">Node.js</a></li>
           </ul>
         </li>
-        <li><a href="#operations">Operations</a>
+        <li><a href="#examples"><strong>Examples</strong></a>
           <ul>
-            <li><a href="#search">SEARCH</a></li>
-            <li><a href="#export-all">EXPORT ALL</a></li>
+            <li><a href="#create-a-demo-database">Create a demo database</a></li>
+            <li><a href="#basic-password-login">Basic password login</a></li>
+            <li><a href="#custom-token-passwordless-login">Custom token (passwordless) login</a></li>
+            <li><a href="#nervatura-client-custom-token-login">Nervatura Client custom token login</a></li>
+            <li><a href="#using-external-api-for-token-based-authentication">Using external API for token based authentication</a></li>
+            <li><a href="#nervatura-client-language-translation">Nervatura Client language translation</a></li>
+            <li><a href="#create-an-invoice">Create an invoice</a></li>
+            <li><a href="#nervatura-client-menu-shortcuts">Nervatura Client menu shortcuts</a></li>
+            <li><a href="#nervatura-csv-report-example">Nervatura CSV Report Example</a></li>
           </ul>
         </li>
       </ul>

@@ -1762,14 +1762,14 @@ func (ds *SQLDriver) QueryKey(options IM, trans interface{}) (result []IM, err e
 
 	keys := map[string]func(options IM) (string, IL, error){
 		"user": func(options IM) (string, IL, error) {
-			params := IL{options["username"]}
+			params := IL{options["username"], options["username"]}
 			sqlString =
 				`select e.id, e.username, e.empnumber, e.usergroup, ug.groupvalue as scope, 
 				case when dg.groupvalue is null then '' else dg.groupvalue end as department
 				from employee e
 				inner join groups ug on e.usergroup = ug.id
 				left join groups dg on e.department = dg.id
-				where e.deleted = 0 and e.inactive = 0 and e.username = ` + ds.getPrmString(1) + ``
+				where e.deleted = 0 and e.inactive = 0 and ((e.username = ` + ds.getPrmString(1) + `) or (e.registration_key = ` + ds.getPrmString(2) + `))`
 			return sqlString, params, nil
 		},
 

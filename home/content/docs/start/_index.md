@@ -54,7 +54,7 @@ Of course, the environment variables can also be set permanently (see more Syste
 
 ### Node.js
 
-See [Node.js sample application](https://github.com/nervatura/nervatura-express)
+See [Examples](/docs/start/examples)
 
 ### Python
 
@@ -70,7 +70,9 @@ API-KEY: **DEMO_API_KEY**<br />
 Alias name: **demo**<br />
 Demo database: **true**
 
-## 2. Login to the database: [**Nervatura Client**](http://localhost:5000/client/)
+## 2. Login to the database: 
+
+[**Nervatura Client**](http://localhost:5000/client/)
 
 Username: **admin**<br />
 Password: **Empty password: Please change after the first login!**<br />

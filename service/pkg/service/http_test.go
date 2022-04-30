@@ -491,6 +491,91 @@ func TestHTTPService_UserPassword(t *testing.T) {
 	}
 }
 
+func TestHTTPService_TokenValidate(t *testing.T) {
+	type fields struct {
+		Config        map[string]interface{}
+		GetNervaStore func(database string) *nt.NervaStore
+		GetParam      func(req *http.Request, name string) string
+		GetTokenKeys  func() map[string]map[string]string
+	}
+	type args struct {
+		w http.ResponseWriter
+		r *http.Request
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		result int
+	}{
+		{
+			name: "validate_ok",
+			fields: fields{
+				Config: nt.IM{
+					"version": testData.version,
+				},
+				GetNervaStore: func(database string) *nt.NervaStore {
+					return nt.New(testData.driver, nt.IM{
+						"NT_HASHTABLE":         testData.hashTable,
+						"NT_TOKEN_PRIVATE_KEY": testData.tokenKey,
+					})
+				},
+				GetTokenKeys: func() map[string]map[string]string {
+					return nil
+				},
+			},
+			args: args{
+				w: httptest.NewRecorder(),
+				r: httptest.NewRequest("GET", "/refresh", nil),
+			},
+			result: http.StatusOK,
+		},
+		{
+			name: "validate_unauthorized",
+			fields: fields{
+				Config: nt.IM{},
+				GetNervaStore: func(database string) *nt.NervaStore {
+					return nt.New(testData.driver, nt.IM{
+						"NT_HASHTABLE":         testData.hashTable,
+						"NT_TOKEN_PRIVATE_KEY": testData.tokenKey,
+					})
+				},
+				GetTokenKeys: func() map[string]map[string]string {
+					return nil
+				},
+			},
+			args: args{
+				w: httptest.NewRecorder(),
+				r: httptest.NewRequest("GET", "/refresh", nil),
+			},
+			result: http.StatusUnauthorized,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			srv := &HTTPService{
+				Config:        tt.fields.Config,
+				GetNervaStore: tt.fields.GetNervaStore,
+				GetParam:      tt.fields.GetParam,
+				GetTokenKeys:  tt.fields.GetTokenKeys,
+			}
+			if tt.name != "validate_unauthorized" {
+				tt.args.r.Header.Set("Authorization", "Bearer "+testData.adminToken)
+				ctx, err := srv.TokenLogin(tt.args.r)
+				if err != nil {
+					t.Fatal(err)
+				}
+				tt.args.r = tt.args.r.WithContext(ctx)
+			}
+			srv.TokenValidate(tt.args.w, tt.args.r)
+			if status := tt.args.w.(*httptest.ResponseRecorder).Code; status != tt.result {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, tt.result)
+			}
+		})
+	}
+}
+
 func TestHTTPService_TokenRefresh(t *testing.T) {
 	type fields struct {
 		Config        map[string]interface{}

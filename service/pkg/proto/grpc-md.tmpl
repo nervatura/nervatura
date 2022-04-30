@@ -1,16 +1,22 @@
 {{range .Files}}
 
 {{range .Services -}}
-# {{.Description}}
+---
+title: gRPC API
+type: docs
+weight: 30
+bookToC: true
+---
+
+# Overview
 
 Nervatura [gRPC](https://grpc.io/) specification. For more examples, see 
-- [Node.js sample application](https://github.com/nervatura/nervatura-express)
-- [Python sample application](https://github.com/nervatura/nervatura-fastapi)
+[Nervatura example application](https://github.com/nervatura/nervatura-example)
 
 | Method Name | Request Type | Response Type | Description |
 | --- | --- | --- | --- |
 {{range .Methods -}}
-| {{.Name}} | [{{.RequestLongType}}](#{{.RequestLongType | lower | replace "." ""}}) | [{{.ResponseLongType}}](#{{.ResponseLongType | lower | replace "." ""}}) | {{ .Description}} |
+| {{.Name}} | [{{.RequestLongType}}](/docs/service/grpc#{{.RequestLongType | lower | replace "." ""}}) | [{{.ResponseLongType}}](/docs/service/grpc#{{.ResponseLongType | lower | replace "." ""}}) | {{ .Description}} |
 {{end}} 
 {{end}} 
 <br />
@@ -20,12 +26,12 @@ Nervatura [gRPC](https://grpc.io/) specification. For more examples, see
 
 {{if .HasMessages}}
 - Messages
-  {{range .Messages}}  - [{{.LongName}}](#{{.LongName | lower | replace "." ""}})
+  {{range .Messages}}  - [{{.LongName}}](/docs/service/grpc#{{.LongName | lower | replace "." ""}})
   {{end}}
 {{end}}
 {{if .HasEnums}}
 - Enums
-  {{range .Enums}}  - [{{.LongName}}](#{{.LongName | lower | replace "." ""}})
+  {{range .Enums}}  - [{{.LongName}}](/docs/service/grpc#{{.LongName | lower | replace "." ""}})
   {{end}}
 {{end}}
 {{end}}
@@ -45,7 +51,7 @@ Nervatura [gRPC](https://grpc.io/) specification. For more examples, see
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 {{range .Fields -}}
-	| {{if .IsOneof}}[**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) {{.OneofDecl}}.{{end}}{{.Name}} | [{{if .IsMap}}map {{else}}{{.Label}} {{end}}{{.LongType}}](#{{.LongType | lower | replace "." ""}}) | {{if .Description}}{{.Description}}{{if .DefaultValue}} Default: {{.DefaultValue}}{{end}}{{else}}{{end}} |
+	| {{if .IsOneof}}[**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) {{.OneofDecl}}.{{end}}{{.Name}} | [{{if .IsMap}}map {{else}}{{.Label}} {{end}}{{.LongType}}](/docs/service/grpc#{{.LongType | lower | replace "." ""}}) | {{if .Description}}{{.Description}}{{if .DefaultValue}} Default: {{.DefaultValue}}{{end}}{{else}}{{end}} |
 {{end}}
 <br />
 {{end}}
@@ -62,7 +68,7 @@ Nervatura [gRPC](https://grpc.io/) specification. For more examples, see
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 {{range .Values -}}
-	| {{.Name}} | {{.Number}} | {{if .Description}}[{{.Description}}](#{{.Description | lower | replace "." ""}}){{end}} |
+	| {{.Name}} | {{.Number}} | {{if .Description}}[{{.Description}}](/docs/service/grpc#{{.Description | lower | replace "." ""}}){{end}} |
 {{end}}
 <br />
 {{end}}

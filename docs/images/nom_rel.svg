@@ -927,7 +927,7 @@
     <g>
       <rect style="fill: #f3f3ff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="-720.25" y="-874.55" width="212.25" height="20"/>
       <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="-614.125" y="-858.55">employee</text>
-      <rect style="fill: #f3f3ff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="-720.25" y="-854.55" width="212.25" height="180"/>
+      <rect style="fill: #f3f3ff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="-720.25" y="-854.55" width="212.25" height="164"/>
       <polygon style="fill: #000000; fill-opacity: 1; stroke: none" fill-rule="evenodd" points="-717.25,-844.55 -715.25,-841.55 -713.25,-844.55 -715.25,-847.55 "/>
       <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:700" x="-711.25" y="-838.55">id</text>
       <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:700" x="-598.55" y="-838.55">integer</text>
@@ -951,22 +951,19 @@
       <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-742.55">department</text>
       <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-598.55" y="-742.55">[groupname]</text>
       <ellipse style="fill: none; stroke-opacity: 1; stroke-width: 0.2; stroke: #000000" cx="-715.25" cy="-732.55" rx="2" ry="2"/>
-      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-726.55">password</text>
+      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-726.55">registration_key</text>
       <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-598.55" y="-726.55">text</text>
-      <ellipse style="fill: none; stroke-opacity: 1; stroke-width: 0.2; stroke: #000000" cx="-715.25" cy="-716.55" rx="2" ry="2"/>
-      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-710.55">registration_key</text>
-      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-598.55" y="-710.55">text</text>
+      <ellipse style="fill: #000000; fill-opacity: 1; stroke: none" cx="-715.25" cy="-716.55" rx="2" ry="2"/>
+      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-710.55">inactive</text>
+      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-598.55" y="-710.55">boolean</text>
       <ellipse style="fill: #000000; fill-opacity: 1; stroke: none" cx="-715.25" cy="-700.55" rx="2" ry="2"/>
-      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-694.55">inactive</text>
+      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-694.55">deleted</text>
       <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-598.55" y="-694.55">boolean</text>
-      <ellipse style="fill: #000000; fill-opacity: 1; stroke: none" cx="-715.25" cy="-684.55" rx="2" ry="2"/>
-      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-711.25" y="-678.55">deleted</text>
-      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-598.55" y="-678.55">boolean</text>
     </g>
     <g>
-      <polyline style="fill: none; stroke-opacity: 1; stroke-width: 2; stroke: #000000" points="-667.188,-674.55 -667.188,-635.459 -675.05,-635.459 -675.05,-607.368 "/>
+      <polyline style="fill: none; stroke-opacity: 1; stroke-width: 2; stroke: #000000" points="-667.188,-690.55 -667.188,-643.459 -675.05,-643.459 -675.05,-607.368 "/>
       <polygon style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" fill-rule="evenodd" points="-680.05,-607.368 -675.05,-597.368 -670.05,-607.368 "/>
-      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:italic;font-weight:normal" x="-662.188" y="-658.55">groups_employee</text>
+      <text font-size="12.8" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:italic;font-weight:normal" x="-662.188" y="-674.55">groups_employee</text>
     </g>
     <g>
       <rect style="fill: #f3f3ff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="-288.75" y="-147.456" width="190.95" height="20"/>

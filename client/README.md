@@ -5,7 +5,7 @@ The Nervatura Client is part of the Nervatura Framework and can be used freely u
 
 Last build host: [Nervatura Client](https://nervatura.github.io/nervatura-client)
 
-Node.js example: https://github.com/nervatura/nervatura-express
+Examples: https://github.com/nervatura/nervatura-examples
 ## Docs & Community
 
 Please see more the [**Nervatura Docs**](https://nervatura.github.io/nervatura/)

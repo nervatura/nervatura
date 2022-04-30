@@ -305,6 +305,9 @@ export const appActions = (data, setData) => {
   }
 
   const signOut = () => {
+    if(data.login.callback){
+      return window.location.replace(data.login.callback)
+    }
     setData("login", { data: null, token: null })
   }
 
@@ -639,6 +642,62 @@ export const appActions = (data, setData) => {
     return formProps
   }
 
+  const tokenError = (err, callback) => {
+    if(callback){
+      return window.location.replace(`${callback}?error=${window.btoa(err.message)}`)
+    }
+    setData("current", { "request": false })
+    resultError(err)
+  }
+
+  const tokenValidation = async (params) => {
+    const options = {
+      method: "GET", token: params.access_token,
+    }
+    const validate = await requestData("/auth/validate", options)
+    if(validate.error){
+      return tokenError(validate.error, params.callback)
+    }
+    const login = update(data.login, {$merge: {
+      username: validate.username,
+      database: validate.database,
+      callback: params.callback,
+      auth: {
+        token: params.access_token,
+        engine: validate.engine,
+        version: validate.version
+      }
+    }})
+    setData("login", login )
+    window.history.replaceState(null, null, window.location.pathname)
+  }
+
+  const setCodeToken = async (params) => {
+    if(params.callback){
+      const options = {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          code: params.code
+        })
+      }
+      try {
+        setData("current", { "request": true })
+        const result = await request(params.callback, options)
+        if(result.access_token){
+          return tokenValidation({ access_token: result.access_token, callback: result.callback })
+        }
+        tokenError(result, params.error)
+      } catch (err) {
+        tokenError(err, params.error)
+      }
+    } else {
+      tokenError({
+        id: "error_unauthorized", type: "error", message: "Unauthorized user"
+      }, params.error)
+    }
+  }
+
   return {
     createHistory: createHistory,
     getAuditFilter: getAuditFilter,
@@ -651,8 +710,10 @@ export const appActions = (data, setData) => {
     requestData: requestData,
     resultError: resultError,
     saveBookmark: saveBookmark,
+    setCodeToken: setCodeToken,
     showHelp: showHelp,
     showToast: showToast,
     signOut: signOut,
+    tokenValidation: tokenValidation
   }
 }

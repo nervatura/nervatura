@@ -714,8 +714,10 @@ export const Forms = ({ getText }) => {
             map: {source:"contact", value:"ref_id", text:"phone", extend:true}},
           {name:"id", label: getText("contact_mobil"), datatype:"string",
             map: {source:"contact", value:"ref_id", text:"mobil", extend:true}}]},
-        {rowtype:"field", name:"id", label: getText("contact_email"), datatype:"string",
-          map: {source:"contact", value:"ref_id", text:"email", extend:true}},
+        {rowtype:"col2", columns: [
+          {name:"id", label: getText("contact_email"), datatype:"string",
+            map: {source:"contact", value:"ref_id", text:"email", extend:true}},
+          {name:"registration_key", label: getText("employee_registration_key"), datatype:"string"}]},
         {rowtype:"col3", columns: [
           {name:"startdate", label: getText("employee_startdate"), datatype:"date", empty: true},
           {name:"enddate", label: getText("employee_enddate"), datatype:"date", empty: true},

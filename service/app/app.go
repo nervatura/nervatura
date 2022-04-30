@@ -86,9 +86,15 @@ func New(version string, args nt.SM) (app *App, err error) {
 		return nil, err
 	}
 
-	err = app.setPrivateKey()
+	err = app.setTokenKey("private")
 	if err != nil {
 		app.errorLog.Printf(ut.GetMessage("error_private_key"), err)
+		return nil, err
+	}
+
+	err = app.setTokenKey("public")
+	if err != nil {
+		app.errorLog.Printf(ut.GetMessage("error_public_key"), err)
 		return nil, err
 	}
 
@@ -135,10 +141,10 @@ func (app *App) setConfig() {
 	} else {
 		app.config["NT_API_KEY"] = ut.ToString(os.Getenv("NT_API_KEY"), ut.RandString(32))
 	}
+	app.config["NT_PASSWORD_LOGIN"] = ut.ToBoolean(os.Getenv("NT_PASSWORD_LOGIN"), true)
 
 	app.config["NT_TOKEN_ISS"] = ut.ToString(os.Getenv("NT_TOKEN_ISS"), "nervatura")
-	app.config["NT_TOKEN_KID"] = ut.ToString(os.Getenv("NT_TOKEN_KID"), ut.GetHash("nervatura"))
-	app.config["NT_TOKEN_PRIVATE_KEY_TYPE"] = ut.ToString(os.Getenv("NT_TOKEN_PRIVATE_KEY_TYPE"), "KEY")
+	app.config["NT_TOKEN_PRIVATE_KID"] = ut.ToString(os.Getenv("NT_TOKEN_PRIVATE_KID"), ut.GetHash("nervatura"))
 	isServer := func() bool {
 		if ut.Contains(os.Args, "-c") && !ut.Contains(os.Args, "server") {
 			return true
@@ -156,7 +162,9 @@ func (app *App) setConfig() {
 		app.config["NT_TOKEN_PRIVATE_KEY"] = ut.ToString(os.Getenv("NT_TOKEN_PRIVATE_KEY"), ut.RandString(32))
 	}
 	app.config["NT_TOKEN_EXP"] = ut.ToFloat(os.Getenv("NT_TOKEN_EXP"), 6)
-	app.config["NT_TOKEN_PUBLIC_KEY_TYPE"] = ut.ToString(os.Getenv("NT_TOKEN_PUBLIC_KEY_TYPE"), "RSA")
+
+	app.config["NT_TOKEN_PUBLIC_KID"] = ut.ToString(os.Getenv("NT_TOKEN_PUBLIC_KID"), "public")
+	app.config["NT_TOKEN_PUBLIC_KEY"] = ut.ToString(os.Getenv("NT_TOKEN_PUBLIC_KEY"), "")
 	app.config["NT_TOKEN_PUBLIC_KEY_URL"] = ut.ToString(os.Getenv("NT_TOKEN_PUBLIC_KEY_URL"), "")
 
 	app.config["NT_HASHTABLE"] = ut.ToString(os.Getenv("NT_HASHTABLE"), "ref17890714")
@@ -214,7 +222,7 @@ func (app *App) setConfig() {
 		}
 	}
 
-	info := []string{"NT_API_KEY", "NT_TOKEN_KID", "NT_TOKEN_PRIVATE_KEY"}
+	info := []string{"NT_API_KEY", "NT_TOKEN_PRIVATE_KID", "NT_TOKEN_PRIVATE_KEY"}
 	for i := 0; i < len(info); i++ {
 		if os.Getenv(info[i]) == "" && app.args == nil {
 			app.infoLog.Println(info[i] + ": " + app.config[info[i]].(string))
@@ -222,10 +230,9 @@ func (app *App) setConfig() {
 	}
 }
 
-func (app *App) setPrivateKey() error {
-	pkey := app.config["NT_TOKEN_PRIVATE_KEY"].(string)
-	kid := app.config["NT_TOKEN_KID"].(string)
-	ktype := app.config["NT_TOKEN_PRIVATE_KEY_TYPE"].(string)
+func (app *App) setTokenKey(keyType string) error {
+	pkey := app.config["NT_TOKEN_"+strings.ToUpper(keyType)+"_KEY"].(string)
+	kid := app.config["NT_TOKEN_"+strings.ToUpper(keyType)+"_KID"].(string)
 	if pkey != "" {
 		//file or key?
 		if _, err := os.Stat(pkey); err == nil {
@@ -236,10 +243,10 @@ func (app *App) setPrivateKey() error {
 			pkey = string(content)
 		}
 		app.tokenKeys[kid] = nt.SM{
-			"type":  "private",
-			"ktype": ktype,
+			"type":  keyType,
 			"value": pkey,
 		}
+		app.config["NT_TOKEN_"+strings.ToUpper(keyType)+"_KEY"] = pkey
 	}
 	return nil
 }

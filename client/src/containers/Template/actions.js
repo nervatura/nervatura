@@ -592,11 +592,18 @@ export const templateActions = (data, setData) => {
       })
     }
     if (options.type === "template"){
+      let report_template = {}
+      try {
+        report_template = JSON.parse(options.dataset.template[0].report)
+      } catch (err) {
+        setData("current", { module: "setting" })
+        return app.resultError({ error: { message: err.message } })
+      }
       blank = update(blank, {$merge: {
         id: options.dataset.template[0].id,
         key: options.dataset.template[0].reportkey,
         title: options.dataset.template[0].repname,
-        template: JSON.parse(options.dataset.template[0].report),
+        template: report_template,
         dbtemp: options.dataset.template[0]
       }})
       blank = update(blank, {$merge: {

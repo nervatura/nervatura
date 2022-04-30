@@ -503,6 +503,7 @@ export const en = {
   employee_view: "Employee Data",
   employee_empnumber: "Employee No.",
   employee_username: "Username",
+  employee_registration_key: "Registration Key",
   employee_startdate: "Start Date",
   employee_enddate: "End Date",
   employee_usergroup: "Usergroup",

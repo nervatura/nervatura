@@ -505,6 +505,14 @@ func getValue(value interface{}) *pb.Value {
 	return &pb.Value{Value: &pb.Value_Text{Text: ut.ToString(value, "")}}
 }
 
+func getIL(slist []string) []interface{} {
+	ilist := make([]interface{}, len(slist))
+	for i, v := range slist {
+		ilist[i] = v
+	}
+	return ilist
+}
+
 func getIValue(value *pb.Value) interface{} {
 	switch v := value.Value.(type) {
 	case *pb.Value_Boolean:
@@ -514,6 +522,9 @@ func getIValue(value *pb.Value) interface{} {
 	case *pb.Value_Text:
 		if v.Text == "null" || v.Text == "" {
 			return nil
+		}
+		if strings.HasPrefix(v.Text, "numberdef,") {
+			return getIL(strings.Split(v.Text, ","))
 		}
 		return v.Text
 	}

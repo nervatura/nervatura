@@ -787,6 +787,31 @@ func TestAPI_UserLogin(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "password_login_disabled",
+			fields: fields{
+				NStore: testData.getNervaStore(IM{
+					"QueryKey": func(options IM) ([]IM, error) {
+						return []IM{
+							{"id": int64(1), "custnumber": "DMCUST/00001"},
+						}, nil
+					},
+					"Query": func(queries []Query) ([]IM, error) {
+						return []IM{
+							{"value": testData.validHash},
+						}, nil
+					},
+					"NT_PASSWORD_LOGIN": false,
+				}, nil, IM{"id": int64(1), "custnumber": "DMCUST/00001"}),
+			},
+			args: args{
+				options: IM{
+					"username": "admin",
+					"password": testData.validPass,
+				},
+			},
+			wantErr: true,
+		},
+		{
 			name: "missing_database",
 			fields: fields{
 				NStore: testData.getNervaStore(IM{}, nil, nil),

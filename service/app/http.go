@@ -79,7 +79,6 @@ func (s *httpServer) StartService() error {
 
 func (s *httpServer) setPublicKeys() {
 	publicUrl := s.app.config["NT_TOKEN_PUBLIC_KEY_URL"].(string)
-	ktype := s.app.config["NT_TOKEN_PUBLIC_KEY_TYPE"].(string)
 	if publicUrl != "" {
 		res, err := http.Get(publicUrl)
 		if err != nil {
@@ -100,7 +99,6 @@ func (s *httpServer) setPublicKeys() {
 		for key, value := range tokenKeys {
 			s.app.tokenKeys[key] = map[string]string{
 				"type":  "public",
-				"ktype": ktype,
 				"value": value,
 			}
 		}
@@ -275,6 +273,7 @@ func (s *httpServer) setRoutes() {
 				r.Use(s.tokenAuth)
 				r.Post("/password", s.service.UserPassword)
 				r.Get("/refresh", s.service.TokenRefresh)
+				r.Get("/validate", s.service.TokenValidate)
 			})
 		})
 

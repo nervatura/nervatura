@@ -40,15 +40,14 @@ func Test_httpServer_StartService(t *testing.T) {
 			fields: fields{
 				app: &App{
 					config: nt.IM{
-						"version":                  "test",
-						"NT_HTTP_TLS_ENABLED":      true,
-						"NT_HTTP_PORT":             int64(-1),
-						"NT_HTTP_READ_TIMEOUT":     float64(30),
-						"NT_HTTP_WRITE_TIMEOUT":    float64(30),
-						"NT_TLS_CERT_FILE":         "../data/x509/server_cert.pem",
-						"NT_TLS_KEY_FILE":          "../data/x509/server_key.pem",
-						"NT_TOKEN_PUBLIC_KEY_TYPE": "RSA",
-						"NT_TOKEN_PUBLIC_KEY_URL":  "https://www.googleapis.com/oauth2/v1/certs",
+						"version":                 "test",
+						"NT_HTTP_TLS_ENABLED":     true,
+						"NT_HTTP_PORT":            int64(-1),
+						"NT_HTTP_READ_TIMEOUT":    float64(30),
+						"NT_HTTP_WRITE_TIMEOUT":   float64(30),
+						"NT_TLS_CERT_FILE":        "../data/x509/server_cert.pem",
+						"NT_TLS_KEY_FILE":         "../data/x509/server_key.pem",
+						"NT_TOKEN_PUBLIC_KEY_URL": "https://www.googleapis.com/oauth2/v1/certs",
 
 						"NT_CORS_ENABLED":           true,
 						"NT_CORS_ALLOW_ORIGINS":     strings.Split("*", ","),
@@ -130,9 +129,8 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 			fields: fields{
 				app: &App{
 					config: nt.IM{
-						"version":                  "test",
-						"NT_TOKEN_PUBLIC_KEY_TYPE": "RSA",
-						"NT_TOKEN_PUBLIC_KEY_URL":  "httpsx://www.googleapis.coma",
+						"version":                 "test",
+						"NT_TOKEN_PUBLIC_KEY_URL": "httpsx://www.googleapis.coma",
 					},
 					infoLog:   log.New(os.Stdout, "INFO: ", log.LstdFlags),
 					errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),
@@ -145,9 +143,8 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 			fields: fields{
 				app: &App{
 					config: nt.IM{
-						"version":                  "test",
-						"NT_TOKEN_PUBLIC_KEY_TYPE": "RSA",
-						"NT_TOKEN_PUBLIC_KEY_URL":  "https://www.google.com",
+						"version":                 "test",
+						"NT_TOKEN_PUBLIC_KEY_URL": "https://www.google.com",
 					},
 					infoLog:   log.New(os.Stdout, "INFO: ", log.LstdFlags),
 					errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),

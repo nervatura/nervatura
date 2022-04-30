@@ -645,6 +645,13 @@ describe('editorActions', () => {
     editorActions(it_store, setData).setEditor(options, form )
     expect(setData).toHaveBeenCalledTimes(18)
 
+    it_store = update(it_store, {edit: {dataset: {report: {0: {$merge:{
+      report: ""
+    }}}}}})
+    form = forms["report"](it_store.edit.current.item, {}, getSetting("ui"))
+    editorActions(it_store, setData).setEditor(options, form )
+    expect(setData).toHaveBeenCalledTimes(19)
+
     it_store = update(store, {edit: {$merge:{
       ...InvoiceData.args
     }}})
@@ -671,7 +678,7 @@ describe('editorActions', () => {
       }}
     })
     editorActions(it_store, setData).setEditor(options, form )
-    expect(setData).toHaveBeenCalledTimes(20)
+    expect(setData).toHaveBeenCalledTimes(21)
 
     it_store = update(it_store, {edit: {
       current: {$merge: {
@@ -690,7 +697,7 @@ describe('editorActions', () => {
       }}
     }})
     editorActions(it_store, setData).setEditor(options, form )
-    expect(setData).toHaveBeenCalledTimes(22)
+    expect(setData).toHaveBeenCalledTimes(23)
 
   })
 

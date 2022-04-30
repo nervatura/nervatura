@@ -124,22 +124,26 @@ export const searchActions = (data, setData) => {
                   window.open(server+"?"+query.toString(), '_system')
                 }
               } else {
-                let params = { method: "POST", 
-                  data: {
-                    key: options.cmd.funcname || options.cmd.menukey,
-                    values: values
-                  }
+                const params_data = {
+                  key: options.cmd.funcname || options.cmd.menukey,
+                  values: values
                 }
                 let result
                 if(options.cmd.address && (options.cmd.address !== "")){
                   try {
-                    result = await request(options.cmd.address, options)
+                    result = await request(options.cmd.address, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(params_data)
+                    })
                   } catch (error) {
                     app.resultError(error)
                     return null
                   }
                 } else {
-                  result = await app.requestData("/function", params)
+                  result = await app.requestData("/function", {
+                    method: "POST", data: params_data
+                  })
                 }
                 if(result.error){
                   app.resultError(result)

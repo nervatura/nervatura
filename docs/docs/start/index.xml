@@ -33,5 +33,15 @@ The SQLite databases are created automatically. Other types of databases must be
    Set NT_FONT_FAMILY environment variable value to YOUR_FONT_FAMILY_NAME Set NT_FONT_DIR environment variable value to YOUR_FONTS_PATH Valid font type and filename form: FAMILY_NAME-Regular.</description>
     </item>
     
+    <item>
+      <title>Examples</title>
+      <link>https://nervatura.github.io/nervatura/docs/start/examples/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervatura.github.io/nervatura/docs/start/examples/</guid>
+      <description>Quick Start #  Node.js #  git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
+Examples #  Create a demo database #    HTTP, CLI, CGO , gRPC All examples require a demo database. Please run this first!  Basic password login #    HTTP, CLI, CGO , gRPC  Custom token (passwordless) login #    HTTP, CLI, CGO , gRPC public/private key pair example  Nervatura Client custom token login #    HTTP, CLI, CGO , gRPC with the HMAC algorithm example Authorization Code Implicit (token) Grant error or logout callback  Using external API for token based authentication #    HTTP, gRPC use of an external identification service provider (Facebook, GitHub, Google, Firebase and others)  Nervatura Client language translation #    client_config.</description>
+    </item>
+    
   </channel>
 </rss>

@@ -464,6 +464,15 @@ func Test_getIValue(t *testing.T) {
 			want: "value",
 		},
 		{
+			name: "numberdef key",
+			args: args{
+				value: &pb.Value{Value: &pb.Value_Text{Text: "numberdef,order_out"}},
+			},
+			want: []interface{}{
+				"numberdef", "order_out",
+			},
+		},
+		{
 			name: "invalid",
 			args: args{
 				value: &pb.Value{},

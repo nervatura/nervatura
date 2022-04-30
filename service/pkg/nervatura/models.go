@@ -97,7 +97,7 @@ func DataModel() IM {
 			"employee": IM{
 				"_access":          SL{"employee"},
 				"_key":             SL{"empnumber"},
-				"_fields":          SL{"id", "empnumber", "username", "usergroup", "startdate", "enddate", "department", "password", "registration_key", "inactive", "deleted"},
+				"_fields":          SL{"id", "empnumber", "username", "usergroup", "startdate", "enddate", "department", "registration_key", "inactive", "deleted"},
 				"id":               MF{Type: "id"},
 				"empnumber":        MF{Type: "string", Length: 150, NotNull: true, Unique: true, Default: "nextnumber"},
 				"username":         MF{Type: "string", Length: 150, Unique: true},
@@ -105,7 +105,6 @@ func DataModel() IM {
 				"startdate":        MF{Type: "date"},
 				"enddate":          MF{Type: "date"},
 				"department":       MF{References: SL{"groups", "RESTRICT", noAction}, Requires: IM{"department": SL{}}},
-				"password":         MF{Type: "password", Length: 512},
 				"registration_key": MF{Type: "string", Length: 512},
 				"inactive":         MF{Type: "integer", Default: int64(0), NotNull: true, Requires: IM{"bool": true}},
 				"deleted":          MF{Type: "integer", Default: int64(0), NotNull: true, Requires: IM{"bool": true}}},

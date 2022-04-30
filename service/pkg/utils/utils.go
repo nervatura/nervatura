@@ -350,7 +350,7 @@ func CreateToken(username, database string, config map[string]interface{}) (stri
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token.Header["kid"] = ToString(config["NT_TOKEN_KID"], GetHash("nervatura"))
+	token.Header["kid"] = ToString(config["NT_TOKEN_PRIVATE_KID"], GetHash("nervatura"))
 	return token.SignedString([]byte(ToString(config["NT_TOKEN_PRIVATE_KEY"], GetHash(time.Now().Format("20060102")))))
 }
 
@@ -365,20 +365,26 @@ func TokenDecode(tokenString string) (map[string]interface{}, error) {
 	return nil, err
 }
 
-func parsePEM(key map[string]string) (interface{}, error) {
-	if key["ktype"] == "RSA" && key["type"] == "private" {
-		return jwt.ParseRSAPrivateKeyFromPEM([]byte(key["value"]))
+func parsePEM(method, stype string, value []byte) (interface{}, error) {
+	if method == "RSA" && stype == "private" {
+		return jwt.ParseRSAPrivateKeyFromPEM(value)
 	}
-	if key["ktype"] == "ECP" && key["type"] == "private" {
-		return jwt.ParseECPrivateKeyFromPEM([]byte(key["value"]))
+	if method == "ECDSA" && stype == "private" {
+		return jwt.ParseECPrivateKeyFromPEM(value)
 	}
-	if key["ktype"] == "RSA" && key["type"] == "public" {
-		return jwt.ParseRSAPublicKeyFromPEM([]byte(key["value"]))
+	if method == "EdDSA" && stype == "private" {
+		return jwt.ParseEdPrivateKeyFromPEM(value)
 	}
-	if key["ktype"] == "ECP" && key["type"] == "public" {
-		return jwt.ParseECPublicKeyFromPEM([]byte(key["value"]))
+	if method == "RSA" && stype == "public" {
+		return jwt.ParseRSAPublicKeyFromPEM(value)
 	}
-	return []byte(key["value"]), nil
+	if method == "ECDSA" && stype == "public" {
+		return jwt.ParseECPublicKeyFromPEM(value)
+	}
+	if method == "EdDSA" && stype == "public" {
+		return jwt.ParseEdPublicKeyFromPEM(value)
+	}
+	return value, nil
 }
 
 /*
@@ -387,12 +393,33 @@ ParseToken - Parse, validate, and return a token data.
 func ParseToken(tokenString string, keyMap map[string]map[string]string, config map[string]interface{}) (map[string]interface{}, error) {
 	data := make(map[string]interface{})
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		algType := ""
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); ok {
+			// RS256, RS384, RS512
+			algType = "RSA"
+		}
+		if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
+			// ES256, ES384, ES512
+			algType = "ECDSA"
+		}
+		if _, ok := token.Method.(*jwt.SigningMethodEd25519); ok {
+			// EdDSA
+			algType = "EdDSA"
+		}
+		if _, ok := token.Method.(*jwt.SigningMethodRSAPSS); ok {
+			// PS256, PS384, PS512
+			algType = "PSS"
+		}
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
+			// HS256, HS384, HS512
+			algType = "HMAC"
+		}
+		if algType == "" {
 			return nil, errors.New("Unexpected signing method: " + token.Header["alg"].(string))
 		}
-		kid := ToString(token.Header["kid"], ToString(config["NT_TOKEN_KID"], GetHash("nervatura")))
+		kid := ToString(token.Header["kid"], ToString(config["NT_TOKEN_PRIVATE_KID"], GetHash("nervatura")))
 		if keyMap, found := keyMap[kid]; found {
-			return parsePEM(keyMap)
+			return parsePEM(algType, keyMap["type"], []byte(keyMap["value"]))
 		}
 		return []byte(ToString(config["NT_TOKEN_PRIVATE_KEY"], GetHash(time.Now().Format("20060102")))), nil
 	})
@@ -409,22 +436,22 @@ func ParseToken(tokenString string, keyMap map[string]map[string]string, config 
 		return data, err
 	}
 
+	data["database"] = claims["database"]
 	if _, found := claims["database"]; !found {
 		if ToString(config["NT_ALIAS_DEFAULT"], "") == "" {
 			return data, errors.New(GetMessage("missing_database"))
 		}
 		data["database"] = ToString(config["NT_ALIAS_DEFAULT"], "")
 	}
-	data["database"] = claims["database"]
 	data["username"] = ""
 	if _, found := claims["username"]; found {
 		data["username"] = claims["username"]
-	} else if _, found := claims["custnumber"]; found {
-		data["username"] = claims["custnumber"]
+	} else if _, found := claims["user_id"]; found {
+		data["username"] = claims["user_id"]
+	} else if _, found := claims["sub"]; found {
+		data["username"] = claims["sub"]
 	} else if _, found := claims["email"]; found {
 		data["username"] = claims["email"]
-	} else if _, found := claims["phone_number"]; found {
-		data["username"] = claims["phone_number"]
 	}
 	if data["username"] == "" {
 		return data, errors.New(GetMessage("missing_user"))

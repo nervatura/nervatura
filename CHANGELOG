@@ -1,3 +1,21 @@
+## 5.0.2
+- new example repository: https://github.com/nervatura/nervatura-examples (node.js)
+- docs: bug fixes for grpc page links
+- docs: new examples page
+- docs additional modified pages: customization, getting started
+- client app: add employee form registration_key input field
+- client app: custom token login support (authorization code or direct token login + error/logout callback)
+- client app: empty report error handling
+- client app: server shortcuts bug fixes (external address POST type)
+- service new config options: NT_PASSWORD_LOGIN, NT_TOKEN_PUBLIC_KEY, NT_TOKEN_PUBLIC_KID
+- service removed config options: NT_TOKEN_PRIVATE_KEY_TYPE, NT_TOKEN_PUBLIC_KEY_TYPE
+- service renamed config options: NT_TOKEN_KID -> NT_TOKEN_PRIVATE_KID
+- service: better external token support (see more nervatura-examples)
+- service: disable or enable password login
+- service: removed employee schema password field
+- service: add http api TokenValidate function
+- upgrade dependencies
+
 ## 5.0.1
 - client app container code refactoring: Edit
 - client app unit test coverage: 100%

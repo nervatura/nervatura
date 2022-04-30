@@ -257,6 +257,9 @@ Returns a access token and the type of database.
 
 */
 func (api *API) UserLogin(options IM) (string, string, error) {
+	if !ut.ToBoolean(api.NStore.config["NT_PASSWORD_LOGIN"], true) {
+		return "", "", errors.New(ut.GetMessage("password_login_disabled"))
+	}
 	if _, found := options["database"]; !found {
 		if ut.ToString(api.NStore.config["NT_ALIAS_DEFAULT"], "") == "" {
 			return "", "", errors.New(ut.GetMessage("missing_database"))

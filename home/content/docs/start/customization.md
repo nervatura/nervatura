@@ -22,21 +22,19 @@ bookToC: true
 
 4. Modify installed Nervatura report definitions: [**REPORT EDITOR**](/docs/client/program/editor)
 
+5. The basic report definition files [can be found here](https://github.com/nervatura/nervatura/tree/master/service/pkg/utils/static/templates).
+
 ## Bearer Authentication
 
-Environment variables: [.env.example](https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example)<br />
-User authentication is based on the *employee.username* or *customer.custnumber* fields. The identifier can be the following types: username (employee), email, phone number (customer).<br />
+Environment variables: [.env.example](https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example)
+
+User authentication is based on the *employee.username* or *employee.registration_key* fields. <br />
+To match the username, Nervatura login processing associates the token fields in the 
+following order: *login*.***username*** = *token*.***username*** || *token*.***user_id*** || 
+*token*.***sub*** || *token*.***email***
+
 Passwords are not stored in the employee or customer tables. They are anonymized and stored in a unique table with [strong encryption](https://github.com/P-H-C/phc-winner-argon2).
 
-External authorization: ```NT_TOKEN_PUBLIC_KEY_TYPE```, ```NT_TOKEN_PUBLIC_KEY_URL```
+Custom token-based, password-free login can also be used. Password-based login can be enabled or disabled with the ```NT_PASSWORD_LOGIN``` option value.
 
-## Other Recipes
-
-- [CHANGELOG](https://raw.githubusercontent.com/nervatura/nervatura/master/CHANGELOG
-)
-- [![GoDoc](https://godoc.org/github.com/nervatura/nervatura?status.svg)](https://godoc.org/github.com/nervatura/nervatura/service)
-- [gRPC API proto file](https://github.com/nervatura/nervatura/blob/master/service/pkg/proto/api.proto)
-- [Python gRPC packages](https://pypi.org/project/nervatura/)
-- [Report templates files](https://github.com/nervatura/nervatura/tree/master/service/pkg/utils/static/templates)
-- [Node.js sample application](https://github.com/nervatura/nervatura-express)
-- [Python sample application](https://github.com/nervatura/nervatura-fastapi)
+**You can find more information about this in the** [**Examples**](/docs/start/examples).

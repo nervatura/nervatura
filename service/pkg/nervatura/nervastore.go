@@ -40,6 +40,18 @@ func (nstore *NervaStore) connected() (bool, error) {
 	return nstore.ds.Connection().Connected, nil
 }
 
+// Connection - get nstore conn. properties
+func (nstore *NervaStore) Connection() (conn struct {
+	Alias     string
+	Connected bool
+	Engine    string
+}) {
+	if nstore.ds == nil {
+		return conn
+	}
+	return nstore.ds.Connection()
+}
+
 func validFieldValue(nervatype string) bool {
 	if nervatype[0:2] == "ui" {
 		return false

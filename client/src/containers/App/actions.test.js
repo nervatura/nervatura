@@ -10,6 +10,7 @@ import InputBox from 'components/Modal/InputBox'
 
 jest.mock("react-toastify");
 
+const { history, location } = window;
 const getById = queryByAttribute.bind(null, 'id');
 
 it('getSql', () => {
@@ -313,6 +314,14 @@ describe('request', () => {
 describe('appActions', () => {
 
   beforeEach(() => {
+    delete window.history;
+    window.history = {
+      replaceState: jest.fn()
+    }
+    delete window.location
+    window.location = {
+      replace: jest.fn()
+    }
     window.fetch = jest.fn()
     toast.mockReturnValue({
       error: jest.fn(),
@@ -325,6 +334,8 @@ describe('appActions', () => {
   
   afterEach(() => {
     jest.clearAllMocks();
+    window.history = history;
+    window.location = location;
   });
   
   it('getText', () => {
@@ -349,6 +360,14 @@ describe('appActions', () => {
   it('signOut', () => {
     const setData = jest.fn()
     appActions(app_store, setData).signOut()
+    expect(setData).toHaveBeenCalledTimes(1);
+
+    const it_store = update(app_store, {
+      login: {$merge: {
+        callback: "/callback"
+      }}
+    })
+    appActions(it_store, setData).signOut()
     expect(setData).toHaveBeenCalledTimes(1);
   });
 
@@ -1139,6 +1158,87 @@ describe('appActions', () => {
     const formProps = await appActions(it_store, setData).onSelector("customer", "", setSelector)
     formProps.onSearch("")
     expect(setData).toHaveBeenCalledTimes(1);
+  })
+
+  it('setCodeToken', async () => {
+    const setData = jest.fn()
+    await appActions(app_store, setData).setCodeToken({}, {})
+    expect(setData).toHaveBeenCalledTimes(1);
+
+    const cb_res = new Response('{"access_token":"access_token"}', {
+      status: 200,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const vd_res = new Response('{"username":"username","database":"database","engine":"engine","version":"version"}', {
+      status: 200,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    window.fetch.mockImplementation((url, options) => {
+      if(url === "/callback") {
+        return Promise.resolve(cb_res)
+      }
+      return Promise.resolve(vd_res)
+    });
+    await appActions(app_store, setData).setCodeToken(
+      { code: "code", callback: "/callback" })
+    expect(setData).toHaveBeenCalledTimes(5);
+
+  })
+
+  it('setCodeToken missing', async () => {
+    const setData = jest.fn()
+    await appActions(app_store, setData).setCodeToken({})
+    expect(setData).toHaveBeenCalledTimes(1);
+
+    const cb_res = new Response('{}', {
+      status: 200,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    window.fetch.mockReturnValue(Promise.resolve(cb_res));
+    await appActions(app_store, setData).setCodeToken(
+      { code: "code", callback: "/callback" })
+    expect(setData).toHaveBeenCalledTimes(3);
+
+  })
+
+  it('setCodeToken error', async () => {
+    const setData = jest.fn()
+    await appActions(app_store, setData).setCodeToken({})
+    expect(setData).toHaveBeenCalledTimes(1);
+
+    const cb_res = new Response('{}', {
+      status: 401,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    window.fetch.mockReturnValue(Promise.reject(cb_res));
+    await appActions(app_store, setData).setCodeToken(
+      { code: "code", callback: "/callback" })
+    expect(setData).toHaveBeenCalledTimes(3);
+
+  })
+
+  it('tokenValidation error', async () => {
+    const setData = jest.fn()
+    const res = new Response('{"code":200}', {
+      status: 200,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    window.fetch.mockReturnValue(Promise.resolve(res));
+    await appActions(app_store, setData).tokenValidation({ callback: "/callback" })
+    expect(setData).toHaveBeenCalledTimes(2);
   })
 
 })

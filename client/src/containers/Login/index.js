@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 
@@ -18,6 +18,19 @@ const Login = (props) => {
   state.data = update(state.data, {$merge: { ...data[state.key] }})
   state.current = update(state.current, {$merge: { ...data.current }})
   state.locales = update(state.locales, {$merge: { ...data.session.locales }})
+
+  useEffect(() => {
+    if(state.data.auth){
+      const auth = state.data.auth
+      setData("login", { auth: null }, async () => {
+        const resultData = await state.loginData(auth)
+        if(resultData.error){
+          return app.resultError(resultData)
+        }
+        state.setLogin(resultData)
+      })
+    }
+  }, [setData, state, app]);
 
   state.getText = (key, defValue) => {
     return app.getText(key, defValue)
@@ -210,26 +223,30 @@ const Login = (props) => {
       if(resultData.error){
         return app.resultError(resultData)
       }
-      if (resultData.userlogin === "t" || resultData.userlogin === "true") {
-        const log = await state.userLog(resultData)
-        if(log.error){
-          return app.resultError(log)
-        }
-      }
-
-      //setData("search", { filters: {}, columns: {}, result: [], view: null, vkey: null })
-      //setData("edit", { fdataset: {}, current: {}, dirty: false, form_dirty: false, history: [], selector: {} })
-      //setData("setting", { dirty: false, result: [] })
-      setData("current", { module: "search" })
-      setData(state.key, { data: resultData })
-      localStorage.setItem("database", state.data.database);
-      localStorage.setItem("username", state.data.username);
-      localStorage.setItem("server", state.data.server);
-      app.loadBookmark({ user_id: resultData.employee.id, token: result.token })
+      state.setLogin(resultData)
 
     } else {
       app.resultError(result)
     }
+  }
+
+  state.setLogin = async (loginData) => {
+    if (loginData.userlogin === "t" || loginData.userlogin === "true") {
+      const log = await state.userLog(loginData)
+      if(log.error){
+        return app.resultError(log)
+      }
+    }
+
+    //setData("search", { filters: {}, columns: {}, result: [], view: null, vkey: null })
+    //setData("edit", { fdataset: {}, current: {}, dirty: false, form_dirty: false, history: [], selector: {} })
+    //setData("setting", { dirty: false, result: [] })
+    setData("current", { module: "search" })
+    setData(state.key, { data: loginData })
+    localStorage.setItem("database", state.data.database);
+    localStorage.setItem("username", state.data.username);
+    localStorage.setItem("server", state.data.server);
+    app.loadBookmark({ user_id: loginData.employee.id, token: loginData.token })
   }
 
   state.changeData = (key, value) => {

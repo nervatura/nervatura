@@ -389,7 +389,13 @@ export const editorActions = (data, setData) => {
     });
 
     if (edit.current.type === "report") {
-      const template = JSON.parse(edit.dataset.report[0].report)
+      let template = { fields: {} }
+      try {
+        template = JSON.parse(edit.dataset.report[0].report)
+      } catch (err) {
+        setData("current", { module: "search" })
+        return app.resultError({ error: { message: err.message } })
+      }
       Object.keys(template.fields).forEach((fieldname, index) => {
         const rfdata = template.fields[fieldname]
         const selected = (rfdata.selected)?

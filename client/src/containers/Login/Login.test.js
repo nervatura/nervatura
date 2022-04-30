@@ -342,4 +342,87 @@ describe('<Login />', () => {
     expect(setData).toHaveBeenCalledTimes(0)
   });
 
+  it('useEffect', () => {
+    appActions.mockReturnValue({
+      getText: jest.fn(),
+      requestData: jest.fn(async (path, options) => {
+        if(String(path).endsWith("/auth/login")){
+          return {
+            token: "token", engine: "sqlite", version: "dev"
+          }
+        }
+        if(options.data[0].key === "employee"){
+          return {
+            employee: [{ id: 1, usergroup: 0 }], menuCmds: [], menuFields: [], 
+            userlogin: [{ value: "false" }], 
+            groups: [{ id: 1, groupname: "transfilter", groupvalue: "all" }]
+          }
+        }
+        if(options.data[0].key === "audit"){
+          return {
+            audit: [
+              { nervatypeName: "trans", subtypeName: "invoice", inputfilterName: "update", supervisor: 0 },
+              { nervatypeName: "trans", subtypeName: "worksheet", inputfilterName: "disabled", supervisor: 0 },
+              { nervatypeName: "tool", subtypeName: null, inputfilterName: "disabled", supervisor: 0 },
+            ], 
+            transfilter: [{ id: 1, transfilterName: "update" }]
+          }
+        }
+        return {}
+      }),
+      resultError: jest.fn(),
+      loadBookmark: jest.fn(({user_id, callback})=>{ 
+        if(callback){callback()} 
+      }),
+    })
+    const setData = jest.fn((key, data, callback)=>{ 
+      if(callback){callback()} 
+    })
+    const it_store = update(app_store, {
+      login: {$merge: {
+        auth: {
+          token: "token", engine: "engine"
+        }
+      }}
+    })
+
+    render(
+      <AppProvider value={{ data: it_store, setData: setData }}>
+        <Login id="test_login" />
+      </AppProvider>
+    );
+    expect(setData).toHaveBeenCalledTimes(1)
+
+  })
+
+  it('useEffect error', () => {
+    appActions.mockReturnValue({
+      getText: jest.fn(),
+      requestData: jest.fn(async (path, options) => {
+        return { error: {} }
+      }),
+      resultError: jest.fn(),
+      loadBookmark: jest.fn(({user_id, callback})=>{ 
+        if(callback){callback()} 
+      }),
+    })
+    const setData = jest.fn((key, data, callback)=>{ 
+      if(callback){callback()} 
+    })
+    const it_store = update(app_store, {
+      login: {$merge: {
+        auth: {
+          token: "token", engine: "engine"
+        }
+      }}
+    })
+
+    render(
+      <AppProvider value={{ data: it_store, setData: setData }}>
+        <Login id="test_login" />
+      </AppProvider>
+    );
+    expect(setData).toHaveBeenCalledTimes(1)
+  })
+
 });

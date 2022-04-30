@@ -132,6 +132,22 @@ func (srv *HTTPService) UserPassword(w http.ResponseWriter, r *http.Request) {
 	srv.respondMessage(w, http.StatusNoContent, nil, http.StatusBadRequest, err)
 }
 
+func (srv *HTTPService) TokenValidate(w http.ResponseWriter, r *http.Request) {
+	nstore, err := srv.getStore(r.Context(), false)
+	if err != nil {
+		srv.respondMessage(w, 0, nil, http.StatusUnauthorized, err)
+		return
+	}
+	conn := nstore.Connection()
+	results := nt.SM{
+		"username": nstore.User.Username,
+		"database": conn.Alias,
+		"engine":   conn.Engine,
+		"version":  srv.Config["version"].(string),
+	}
+	srv.respondMessage(w, http.StatusOK, results, http.StatusBadRequest, err)
+}
+
 func (srv *HTTPService) TokenRefresh(w http.ResponseWriter, r *http.Request) {
 	if r.Context().Value(NstoreCtxKey) == nil {
 		srv.respondMessage(w, 0, nil, http.StatusUnauthorized, errors.New(ut.GetMessage("error_unauthorized")))
@@ -289,36 +305,51 @@ func (srv *HTTPService) ReportDelete(w http.ResponseWriter, r *http.Request) {
 	srv.respondMessage(w, http.StatusNoContent, nil, http.StatusBadRequest, err)
 }
 
-func reportQueryFilters(values url.Values) nt.IM {
+func reportQueryFilters(values nt.SM) nt.IM {
 	options := nt.IM{"filters": nt.IM{}}
 	for key, value := range values {
 		if strings.HasPrefix(key, "filters[") {
 			fkey := key[8 : len(key)-1]
-			options["filters"].(nt.IM)[fkey] = value[0]
+			options["filters"].(nt.IM)[fkey] = value
 		} else {
 			switch key {
 			case "report_id":
-				options["report_id"] = ut.ToInteger(value[0], 0)
+				options["report_id"] = ut.ToInteger(value, 0)
 			case "output":
-				options["output"] = value[0]
-				if value[0] == "data" {
+				options["output"] = value
+				if value == "data" {
 					options["output"] = "tmp"
 				}
 			default:
-				options[key] = value[0]
+				options[key] = value
 			}
 		}
 	}
 	return options
 }
 
-func reportFilters(values url.Values, body io.ReadCloser) nt.IM {
+func reportFilters(values nt.SM, body io.ReadCloser) nt.IM {
 	if len(values) > 0 {
 		return reportQueryFilters(values)
 	}
 	data := nt.IM{}
 	_ = ut.ConvertFromReader(body, &data)
 	return data
+}
+
+func queryMap(url string) nt.SM {
+	// Request.URL.Query fixes
+	values := make(nt.SM, 0)
+	query := strings.Split(url, "?")
+	if len(query) > 1 {
+		svalues := strings.Split(query[1], "&")
+		for i := 0; i < len(svalues); i++ {
+			if len(strings.Split(svalues[i], "=")) > 1 {
+				values[strings.Split(svalues[i], "=")[0]] = strings.Split(svalues[i], "=")[1]
+			}
+		}
+	}
+	return values
 }
 
 func (srv *HTTPService) Report(w http.ResponseWriter, r *http.Request) {
@@ -328,7 +359,7 @@ func (srv *HTTPService) Report(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	options := reportFilters(r.URL.Query(), r.Body)
+	options := reportFilters(queryMap(r.RequestURI), r.Body)
 
 	results, err := (&nt.API{NStore: nstore}).Report(options)
 	if err != nil {
@@ -339,16 +370,16 @@ func (srv *HTTPService) Report(w http.ResponseWriter, r *http.Request) {
 		srv.respondMessage(w, http.StatusOK, results, http.StatusBadRequest, err)
 		return
 	}
-	if results["filetype"] == "csv" {
-		w.Header().Set(contentKey, "text/csv")
-		w.Write([]byte(results["template"].(string)))
+	filetype := nt.SM{
+		"csv":    "text/csv",
+		"xml":    "application/xml",
+		"base64": "application/pdf",
+		"pdf":    "application/pdf",
+	}
+	w.Header().Set(contentKey, filetype[results["filetype"].(string)])
+	if results["filetype"] == "pdf" {
+		w.Write(results["template"].([]uint8))
 		return
 	}
-	if results["filetype"] == "xml" {
-		w.Header().Set(contentKey, "application/xml")
-		w.Write([]byte(results["template"].(string)))
-		return
-	}
-	w.Header().Set(contentKey, "application/pdf")
-	w.Write(results["template"].([]uint8))
+	w.Write([]byte(results["template"].(string)))
 }

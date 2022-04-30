@@ -873,10 +873,22 @@ describe('templateActions', () => {
     templateActions(store, setData).setTemplate(options)
     expect(setData).toHaveBeenCalledTimes(2)
 
+    options = update(store.template, {$merge: {
+      type: "template",
+      dataset: {
+        template: [{
+          id: "id", reportkey: "reportkey", repname: "repname",
+          report: ""
+        }]
+      }
+    }})
+    templateActions(store, setData).setTemplate(options)
+    expect(setData).toHaveBeenCalledTimes(3)
+
     templateActions(store, setData).setTemplate({
       type: "_sample"
     })
-    expect(setData).toHaveBeenCalledTimes(4)
+    expect(setData).toHaveBeenCalledTimes(5)
   })
 
   it('saveTemplate', () => {

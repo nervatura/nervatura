@@ -926,7 +926,9 @@ func TestTokenDecode(t *testing.T) {
 
 func Test_parsePEM(t *testing.T) {
 	type args struct {
-		key map[string]string
+		method string
+		stype  string
+		value  []byte
 	}
 	tests := []struct {
 		name    string
@@ -936,62 +938,70 @@ func Test_parsePEM(t *testing.T) {
 		{
 			name: "RSA_private",
 			args: args{
-				key: map[string]string{
-					"ktype": "RSA",
-					"type":  "private",
-					"value": "ABABABA",
-				},
-			},
-			wantErr: true,
-		},
-		{
-			name: "ECP_private",
-			args: args{
-				key: map[string]string{
-					"ktype": "ECP",
-					"type":  "private",
-					"value": "ABABABA",
-				},
+				method: "RSA",
+				stype:  "private",
+				value:  []byte("ABABABA"),
 			},
 			wantErr: true,
 		},
 		{
 			name: "RSA_public",
 			args: args{
-				key: map[string]string{
-					"ktype": "RSA",
-					"type":  "public",
-					"value": "ABABABA",
-				},
+				method: "RSA",
+				stype:  "public",
+				value:  []byte("ABABABA"),
 			},
 			wantErr: true,
 		},
 		{
-			name: "ECP_public",
+			name: "ECDSA_private",
 			args: args{
-				key: map[string]string{
-					"ktype": "ECP",
-					"type":  "public",
-					"value": "ABABABA",
-				},
+				method: "ECDSA",
+				stype:  "private",
+				value:  []byte("ABABABA"),
+			},
+			wantErr: true,
+		},
+		{
+			name: "ECDSA_public",
+			args: args{
+				method: "ECDSA",
+				stype:  "public",
+				value:  []byte("ABABABA"),
+			},
+			wantErr: true,
+		},
+		{
+			name: "EdDSA_private",
+			args: args{
+				method: "EdDSA",
+				stype:  "private",
+				value:  []byte("ABABABA"),
+			},
+			wantErr: true,
+		},
+		{
+			name: "EdDSA_public",
+			args: args{
+				method: "EdDSA",
+				stype:  "public",
+				value:  []byte("ABABABA"),
 			},
 			wantErr: true,
 		},
 		{
 			name: "not_found",
 			args: args{
-				key: map[string]string{
-					"ktype": "BSA",
-					"type":  "public",
-					"value": "ABABABA",
-				},
+				method: "BSA",
+				stype:  "public",
+				value:  []byte("ABABABA"),
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := parsePEM(tt.args.key)
+			_, err := parsePEM(tt.args.method, tt.args.stype, tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("parsePEM() error = %v, wantErr %v", err, tt.wantErr)
 				return

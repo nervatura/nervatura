@@ -1,6 +1,7 @@
 import { render, queryByAttribute } from '@testing-library/react'
 import { create } from 'react-test-renderer';
 
+import { toast } from 'react-toastify';
 import { Default as EditDefault } from 'components/SideBar/Edit/Edit.stories'
 import InputBox from 'components/Modal/InputBox'
 
@@ -8,6 +9,8 @@ import App from './index';
 import { guid, request, appActions } from './actions'
 
 jest.mock("./actions");
+jest.mock("react-toastify");
+
 const getById = queryByAttribute.bind(null, 'id');
 const { location } = window;
 
@@ -20,10 +23,9 @@ describe('<App />', () => {
   beforeEach(() => {
     delete window.location;
     window.location = { 
-      assign: jest.fn(),
+      replace: jest.fn(),
       pathname: "/"
     };
-
     global.Storage.prototype.setItem = jest.fn((key, value) => {
       local[key] = value
     })
@@ -31,10 +33,18 @@ describe('<App />', () => {
 
     appActions.mockReturnValue({
       getText: jest.fn(),
+      tokenValidation: jest.fn(),
+      setCodeToken: jest.fn(),
       resultError: jest.fn(),
     })
     request.mockReturnValue({})
     guid.mockReturnValue({})
+    toast.mockReturnValue({
+      error: jest.fn(),
+      warning: jest.fn(),
+      success: jest.fn(),
+      info: jest.fn(),
+    })
   });
 
   afterEach(() => {
@@ -180,61 +190,6 @@ describe('<App />', () => {
     app.onResize()
   })
 
-  it('setHashToken', () => {
-    const testRenderer = create(<App />);
-    const app = testRenderer.getInstance()
-    app.setHashToken({ access_token: "" })
-    app.setHashToken({ path: "/", access_token: "" })
-  })
-
-  it('setCodeToken', () => {
-    const testRenderer = create(<App />);
-    let app = testRenderer.getInstance()
-    request.mockReturnValue({
-      access_token: "access_token"
-    })
-    app.loadConfig = ()=>({
-      provider_token_callback: "/",
-      provider_client_id: "client_id",
-      provider_client_secret: "client_secret",
-      provider_token_login: "/"
-    })
-    app.setCodeToken({ code: "code", path: "/" })
-    app.setCodeToken({})
-  })
-
-  it('setCodeToken missing token', () => {
-    const testRenderer = create(<App />);
-    let app = testRenderer.getInstance()
-    request.mockReturnValue({
-    })
-    app.loadConfig = ()=>({
-      provider_token_callback: "/",
-      provider_client_id: "client_id",
-      provider_client_secret: "client_secret",
-      provider_token_login: "/"
-    })
-    app.setCodeToken({ code: "code", path: "/" })
-  })
-
-  it('setCodeToken error', () => {
-    const testRenderer = create(<App />);
-    let app = testRenderer.getInstance()
-    request.mockImplementation(() => {
-      throw new Error();
-    })
-    app.loadConfig = ()=>({
-      provider_token_login: "/",
-      provider_token_callback: "/"
-    })
-    app.setCodeToken({})
-    
-    app.loadConfig = ()=>({
-      provider_token_callback: "/"
-    })
-    app.setCodeToken({})
-  })
-
   it('loadConfig', () => {
     const testRenderer = create(<App />);
     const app = testRenderer.getInstance()
@@ -244,12 +199,36 @@ describe('<App />', () => {
         de: {}
       }
     })
-    app.loadConfig(true)
-    app.loadConfig(false)
+    app.loadConfig()
+
     request.mockImplementation(() => {
       throw new Error();
     })
     app.loadConfig(false)
+  })
+
+  it('loadConfig setCodeToken', () => {
+    window.location = { 
+      replace: jest.fn(),
+      pathname: "/",
+      search: "?code=g0ZGZmNjVmOWIjNTk2NTk4ZTYyZGI3",
+      hash: ""
+    };
+    const testRenderer = create(<App />);
+    const app = testRenderer.getInstance()
+    app.loadConfig()
+  })
+
+  it('loadConfig tokenValidation', () => {
+    window.location = { 
+      replace: jest.fn(),
+      pathname: "/",
+      search: "",
+      hash: "#access_token=g0ZGZmNjVmOWIjNTk2NTk4ZTYyZGI3"
+    };
+    const testRenderer = create(<App />);
+    const app = testRenderer.getInstance()
+    app.loadConfig()
   })
 
 })

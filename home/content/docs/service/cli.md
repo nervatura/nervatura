@@ -31,5 +31,4 @@ The CGO API a standard shared object binary file (.so or .dll) exposing Nervatur
 
 ## For more examples, 
 see 
-- [Node.js sample application](https://github.com/nervatura/nervatura-express)
-- [Python sample application](https://github.com/nervatura/nervatura-fastapi)
+- [Nervatura examples](https://github.com/nervatura/nervatura-examples)
