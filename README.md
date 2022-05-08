@@ -30,8 +30,7 @@ or CSV data files
 - sample report templates and [**REPORT EDITOR**](https://nervatura.github.io/nervatura/docs/client/program/editor) GUI
 - PWA [**CLIENT**](https://nervatura.github.io/nervatura/docs/client) application and a basic **ADMIN** interface
 
-The client and report interface supports [multilingualism](https://nervatura.github.io/nervatura/docs/start/customization#customize-the-appearance). The framework can be easily extended with additional interfaces and functions in the supported languages: 
-C, C#, C++, Dart, Go, Java, Kotlin, Node, Objective-C, PHP, Python, Ruby (CGO and gRPC API)
+The client and report interface supports [multilingualism](https://nervatura.github.io/nervatura/docs/start/customization#customize-the-appearance). The framework can be easily extended with additional interfaces and functions in the any languages. See the [**Examples**](https://nervatura.github.io/nervatura/docs/start/examples) for more information.
 
 [**Installation**](https://nervatura.github.io/nervatura/docs/install) and [**Quick Start**](https://nervatura.github.io/nervatura/docs/start)
 
