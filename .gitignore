@@ -100,3 +100,4 @@ empty.db
 data/test/*.pdf
 data/test/*.xml
 data/test/*.txt
+data/demo.db
