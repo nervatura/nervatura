@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload" // load .env file automatically
 	db "github.com/nervatura/nervatura/service/pkg/database"
 	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
@@ -50,6 +51,8 @@ func New(version string, args nt.SM) (app *App, err error) {
 	app.infoLog = log.New(os.Stdout, "INFO: ", log.LstdFlags)
 	app.errorLog = log.New(os.Stdout, "ERROR: ", log.LstdFlags)
 	app.httpLog = log.New(os.Stdout, "", log.LstdFlags)
+	app.setEnv()
+
 	app.config["NT_APP_LOG_FILE"] = ut.ToString(args["NT_APP_LOG_FILE"], os.Getenv("NT_APP_LOG_FILE"))
 	if app.config["NT_APP_LOG_FILE"] != "" {
 		f, err := os.OpenFile(app.config["NT_APP_LOG_FILE"].(string), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
@@ -109,6 +112,18 @@ func New(version string, args nt.SM) (app *App, err error) {
 	}
 
 	return app, err
+}
+
+func (app *App) setEnv() {
+	for index, arg := range os.Args[1:] {
+		if arg == "-env" && len(os.Args[1:]) > index+1 {
+			envFile := os.Args[1:][index+1]
+			err := godotenv.Load(envFile)
+			if err != nil {
+				app.errorLog.Printf(ut.GetMessage("error_opening_env"), err)
+			}
+		}
+	}
 }
 
 func (app *App) setConfig() {

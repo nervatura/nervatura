@@ -81,6 +81,8 @@ func (s *cliServer) parseFlags() {
 
 	var help bool
 	flag.BoolVar(&help, "help", false, ut.GetMessage("cli_usage"))
+	var env string
+	flag.StringVar(&env, "env", "", ut.GetMessage("cli_flag_env"))
 	var cmd string
 	flag.StringVar(&cmd, "c", "server", ut.GetMessage("cli_flag_c")+strings.Join(cmds[:10], ", ")+",\n"+strings.Join(cmds[10:], ", "))
 	var token string

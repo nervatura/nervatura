@@ -51,5 +51,4 @@ or CSV data files
 - sample report templates and [**REPORT EDITOR**](/docs/client/program/editor) GUI
 - PWA [**CLIENT**](/docs/client) application and a basic ADMIN interface
 
-The client and report interface supports [multilingualism](/docs/start/customization#customize-the-appearance). The framework can be easily extended with additional interfaces and functions in the supported languages: 
-C, C#, C++, Dart, Go, Java, Kotlin, Node, Objective-C, PHP, Python, Ruby (CGO and gRPC API)
+The client and report interface supports [multilingualism](/docs/start/customization#customize-the-appearance). The framework can be easily extended with additional interfaces and functions in any languages. See the [**Examples**](/docs/start/examples) for more information

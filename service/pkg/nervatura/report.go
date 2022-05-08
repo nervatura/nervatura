@@ -87,9 +87,9 @@ func (nstore *NervaStore) getReportDataWhere(reportTemplate, filters IM, sources
 	setWhere := func(wkey, fieldname, rel string) {
 		fstr := ""
 		if fields[fieldname].(IM)["sql"] == nil || fields[fieldname].(IM)["sql"] == "" {
-			fstr = fieldname + rel + filters[fieldname].(string)
+			fstr = fieldname + rel + ut.ToString(filters[fieldname], "")
 		} else {
-			fstr = strings.ReplaceAll(fstr, "@"+fieldname, filters[fieldname].(string))
+			fstr = strings.ReplaceAll(fstr, "@"+fieldname, ut.ToString(filters[fieldname], ""))
 		}
 		if _, found := whereStr[wkey]; !found {
 			whereStr[wkey] = " and " + fstr
@@ -103,7 +103,7 @@ func (nstore *NervaStore) getReportDataWhere(reportTemplate, filters IM, sources
 			if fieldname == "@id" {
 				for index := 0; index < len(sources); index++ {
 					ds := sources[index]
-					ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@id", value.(string))
+					ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@id", ut.ToString(value, ""))
 				}
 			} else {
 				return whereStr, errors.New(ut.GetMessage("invalid_fieldname") + ": " + fieldname)
@@ -127,13 +127,13 @@ func (nstore *NervaStore) getReportDataWhere(reportTemplate, filters IM, sources
 				ds := sources[index]
 				if fields[fieldname].(IM)["wheretype"] == "where" {
 					if fields[fieldname].(IM)["dataset"] == ds["dataset"] {
-						setWhere(fields[fieldname].(IM)["dataset"].(string), fieldname, rel)
+						setWhere(ut.ToString(fields[fieldname].(IM)["dataset"], ""), fieldname, rel)
 					}
 				} else {
 					if fields[fieldname].(IM)["sql"] == nil || fields[fieldname].(IM)["sql"] == "" {
-						ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, filters[fieldname].(string))
+						ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, ut.ToString(filters[fieldname], ""))
 					} else {
-						fstr := strings.ReplaceAll(fields[fieldname].(IM)["sql"].(string), "@"+fieldname, filters[fieldname].(string))
+						fstr := strings.ReplaceAll(ut.ToString(fields[fieldname].(IM)["sql"], ""), "@"+fieldname, ut.ToString(filters[fieldname], ""))
 						ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, fstr)
 					}
 				}
@@ -150,7 +150,7 @@ func (nstore *NervaStore) getReportData(reportTemplate, filters IM, sources []SM
 		for key, label := range labels {
 			for si := 0; si < len(sources); si++ {
 				sources[si]["sqlstr"] = strings.ReplaceAll(
-					sources[si]["sqlstr"], "={{"+key+"}}", label.(string))
+					sources[si]["sqlstr"], "={{"+key+"}}", ut.ToString(label, ""))
 			}
 		}
 	}
@@ -327,7 +327,7 @@ func (nstore *NervaStore) getReport(options IM) (results IM, err error) {
 				dsValues := SM{"dataset": dkey, "sqlstr": ""}
 				for engine, sql := range ds.(IM) {
 					if (engine == "default" && dsValues["sqlstr"] == "") || engine == cengine {
-						dsValues["sqlstr"] = sql.(string)
+						dsValues["sqlstr"] = ut.ToString(sql, "")
 					}
 				}
 				sources = append(sources, dsValues)

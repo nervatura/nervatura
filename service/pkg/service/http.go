@@ -337,10 +337,11 @@ func reportFilters(values nt.SM, body io.ReadCloser) nt.IM {
 	return data
 }
 
-func queryMap(url string) nt.SM {
+func queryMap(uri string) nt.SM {
 	// Request.URL.Query fixes
 	values := make(nt.SM, 0)
-	query := strings.Split(url, "?")
+	uri, _ = url.QueryUnescape(uri)
+	query := strings.Split(uri, "?")
 	if len(query) > 1 {
 		svalues := strings.Split(query[1], "&")
 		for i := 0; i < len(svalues); i++ {

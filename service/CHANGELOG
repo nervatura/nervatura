@@ -1,3 +1,13 @@
+## 5.0.3
+- example: new python examples
+- example: node client login (authorization code) bug fixes
+- service: http Report url unescape bug fixes
+- service: getReport interface type conversion bug fixes
+- service: env file commad line parameter
+- docs: python examples
+- client: url parameter decoding bug fixes
+- upgrade dependencies
+
 ## 5.0.2
 - new example repository: https://github.com/nervatura/nervatura-examples (node.js)
 - docs: bug fixes for grpc page links

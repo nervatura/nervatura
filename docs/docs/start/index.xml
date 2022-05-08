@@ -39,8 +39,12 @@ The SQLite databases are created automatically. Other types of databases must be
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/examples/</guid>
-      <description>Quick Start #  Node.js #  git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
-Examples #  Create a demo database #    HTTP, CLI, CGO , gRPC All examples require a demo database. Please run this first!  Basic password login #    HTTP, CLI, CGO , gRPC  Custom token (passwordless) login #    HTTP, CLI, CGO , gRPC public/private key pair example  Nervatura Client custom token login #    HTTP, CLI, CGO , gRPC with the HMAC algorithm example Authorization Code Implicit (token) Grant error or logout callback  Using external API for token based authentication #    HTTP, gRPC use of an external identification service provider (Facebook, GitHub, Google, Firebase and others)  Nervatura Client language translation #    client_config.</description>
+      <description>Quick Start #  Node.js #  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
+Python #    Download the Python examples
+$ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/python $ pip install -r requirements.txt $ python main.py Open your browser to http://localhost:8000
+  Download the Nervatura
+    Linux
+$ mkdir bin $ cd bin Linux x64</description>
     </item>
     
   </channel>

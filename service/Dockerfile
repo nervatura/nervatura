@@ -7,7 +7,8 @@ ARG APP_NAME=nervatura
 # Move to working directory (/build).
 WORKDIR /build
 
-RUN apk add --no-cache upx make
+RUN apk add --no-cache upx 
+# RUN apk add --no-cache make gcc g++
 
 # Copy and download dependency using go mod.
 COPY go.mod go.sum ./
@@ -20,11 +21,13 @@ COPY . .
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "$APP_MODULES" -ldflags="-w -s -X main.version=$APP_VNUM" -o $APP_NAME main.go
 RUN upx --best --lzma $APP_NAME
+#RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -buildmode=c-shared -tags "$APP_MODULES" -ldflags="-w -s -X main.version=$APP_VNUM" -o $APP_NAME.so shared/main.go
 
 FROM scratch
 
 # Copy binary and config files from /build to root folder of scratch container.
 COPY --from=builder ["/build/nervatura", "/"]
+#COPY --from=builder ["/build/nervatura.so", "/shared/nervatura.so"]
 
 # Export necessary port.
 EXPOSE 5000

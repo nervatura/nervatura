@@ -52,15 +52,9 @@ nervatura
 ```
 Of course, the environment variables can also be set permanently (see more SystemPropertiesAdvanced.exe). In this case, the server can be started from anywhere, not just in the session.
 
-### Node.js
+### NPM
 
-See [Examples](/docs/start/examples)
-
-### Python
-
-[Python gRPC packages](https://pypi.org/project/nervatura/)
-
-See [Python sample application](https://github.com/nervatura/nervatura-fastapi)
+See [Node.js Examples](/docs/start/examples)
 
 ### Admin GUI
 

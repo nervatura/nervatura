@@ -862,7 +862,7 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#other-platforms">#</a>
 </h3>
 <pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura.git
-$ cd nervatura
+$ cd nervatura/service
 $ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
   go build -tags &quot;$(TAGS)&quot; -ldflags=&quot;-w -s -X main.Version=$(VERSION)&quot; \
   -o $(APP_NAME) main.go
@@ -874,7 +874,9 @@ $ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
 </h2>
 <p>The application uses environment variables to set configuration options. It will be read from the 
   <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example">.env.example</a> file. Set the environment variables as needed!</p>
-</article>
+<p>The <code>.env</code> file can be created in the current working directory, where the command is executed (in development mode). The name and location of the configuration file can also be specified in the command line parameters:</p>
+<pre tabindex="0"><code>$ nervatura -env /path/.env.example
+</code></pre></article>
  
       
 

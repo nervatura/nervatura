@@ -179,6 +179,7 @@ describe('<App />', () => {
     const testRenderer = create(<App />);
     const app = testRenderer.getInstance()
     app.getPath({hash: "abc"})
+    app.getPath({hash: "#code=123&baba=haho&semmi="})
     app.getPath({search: "abc"})
     app.getPath({pathname: "abc/abc"})
   })
@@ -211,8 +212,8 @@ describe('<App />', () => {
     window.location = { 
       replace: jest.fn(),
       pathname: "/",
-      search: "?code=g0ZGZmNjVmOWIjNTk2NTk4ZTYyZGI3",
-      hash: ""
+      search: "",
+      hash: "#code=g0ZGZmNjVmOWIjNTk2NTk4ZTYyZGI3"
     };
     const testRenderer = create(<App />);
     const app = testRenderer.getInstance()

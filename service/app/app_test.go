@@ -427,3 +427,49 @@ func TestApp_GetResults(t *testing.T) {
 		})
 	}
 }
+
+func TestApp_setEnv(t *testing.T) {
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	type fields struct {
+		services  map[string]srv.APIService
+		defConn   nt.DataDriver
+		infoLog   *log.Logger
+		errorLog  *log.Logger
+		httpLog   *log.Logger
+		args      map[string]string
+		tokenKeys map[string]map[string]string
+		config    map[string]interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		{
+			name: "env_file",
+			fields: fields{
+				infoLog:  log.New(os.Stdout, "INFO: ", log.LstdFlags),
+				errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+			},
+		},
+	}
+	//osArgs := os.Args
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := &App{
+				services:  tt.fields.services,
+				defConn:   tt.fields.defConn,
+				infoLog:   tt.fields.infoLog,
+				errorLog:  tt.fields.errorLog,
+				httpLog:   tt.fields.httpLog,
+				args:      tt.fields.args,
+				tokenKeys: tt.fields.tokenKeys,
+				config:    tt.fields.config,
+			}
+			if tt.name == "env_file" {
+				os.Args = append(os.Args, "-env", ".env.example")
+			}
+			app.setEnv()
+		})
+	}
+}

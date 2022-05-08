@@ -26,7 +26,10 @@ class App extends AppComponent {
     const getParams = (prmString) => {
       let params = {}
       prmString.split('&').forEach(prm => {
-        params[prm.split("=")[0]] = prm.split("=")[1]
+        const index = String(prm).indexOf("=")
+        const fname = String(prm).substring(0,(index >0)?index:String(prm).length)
+        const value = ((index > -1) && (index < String(prm).length)) ? String(prm).substring(index+1) : ""
+        params[fname] = value
       });
       return params
     }
@@ -71,11 +74,13 @@ class App extends AppComponent {
           this.setData("current", {lang: localStorage.getItem("lang")} )
         }
       const [ current, params ] = this.getPath(window.location)
-      if(current === "hash" && params.access_token){
-        app.tokenValidation(params)
-      }
-      if(current === "search" && params.code){
-        app.setCodeToken(params)
+      if(current === "hash"){ 
+        if (params.access_token){
+          app.tokenValidation(params)
+        }
+        if(params.code){
+          app.setCodeToken(params)
+        }
       }
     } catch (error) {
       app.resultError(error)
