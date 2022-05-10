@@ -31,24 +31,11 @@ Open your browser to http://localhost:8080
 
 2. Download the Nervatura
 
-  - Linux
+  - Linux x64
     ```
     $ mkdir bin
     $ cd bin
-    ```
-    Linux x64
-    ```
     $ curl -L -s https://api.github.com/repos/nervatura/nervatura/releases/latest | grep -o -E "https://(.*)nervatura_(.*)_linux_amd64.tar.gz" | wget -qi -
-    ```
-    Linux ARM
-    ```
-    $ curl -L -s https://api.github.com/repos/nervatura/nervatura/releases/latest | grep -o -E "https://(.*)nervatura_(.*)_linux_arm64.tar.gz" | wget -qi -
-    ```
-    Linux x386
-    ```
-    $ curl -L -s https://api.github.com/repos/nervatura/nervatura/releases/latest | grep -o -E "https://(.*)nervatura_(.*)_linux_386.tar.gz" | wget -qi -
-    ```
-    ```
     $ tar -zxf *.gz
     $ rm *.gz
     ```

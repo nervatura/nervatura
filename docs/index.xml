@@ -207,8 +207,8 @@ Department #  An item of the department group should be set in this field.</desc
 Python #    Download the Python examples
 $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/python $ pip install -r requirements.txt $ python main.py Open your browser to http://localhost:8000
   Download the Nervatura
-    Linux
-$ mkdir bin $ cd bin Linux x64</description>
+    Linux x64
+$ mkdir bin $ cd bin $ curl -L -s https://api.</description>
     </item>
     
     <item>
