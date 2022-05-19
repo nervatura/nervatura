@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Quick Start #  Node.js #  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
-Python #    Download the Python examples
-$ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/python $ pip install -r requirements.txt $ python main.py Open your browser to http://localhost:8000
-  Download the Nervatura
-    Linux x64
-$ mkdir bin $ cd bin $ curl -L -s https://api.">
+<meta name="description" content="Quick Start #  Node.js and NPM #  Recommended API:
+  gRPC  CGO (Linux and Windows x64)  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
+You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
+Python and Snap or prebuild binaries #  Recommended API:">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Examples" />
-<meta property="og:description" content="Quick Start #  Node.js #  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
-Python #    Download the Python examples
-$ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/python $ pip install -r requirements.txt $ python main.py Open your browser to http://localhost:8000
-  Download the Nervatura
-    Linux x64
-$ mkdir bin $ cd bin $ curl -L -s https://api." />
+<meta property="og:description" content="Quick Start #  Node.js and NPM #  Recommended API:
+  gRPC  CGO (Linux and Windows x64)  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
+You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
+Python and Snap or prebuild binaries #  Recommended API:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/start/examples/" /><meta property="article:section" content="docs" />
 
@@ -805,8 +801,9 @@ https://github.com/alex-shpak/hugo-book
       <ul>
         <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
-            <li><a href="#nodejs">Node.js</a></li>
-            <li><a href="#python">Python</a></li>
+            <li><a href="#nodejs-and-npm"><strong>Node.js and NPM</strong></a></li>
+            <li><a href="#python-and-snap-or-prebuild-binaries"><strong>Python and Snap or prebuild binaries</strong></a></li>
+            <li><a href="#go-and-docker"><strong>Go and Docker</strong></a></li>
           </ul>
         </li>
         <li><a href="#examples"><strong>Examples</strong></a>
@@ -841,19 +838,36 @@ https://github.com/alex-shpak/hugo-book
   <strong>Quick Start</strong>
   <a class="anchor" href="#quick-start">#</a>
 </h2>
-<h3 id="nodejs">
-  Node.js
-  <a class="anchor" href="#nodejs">#</a>
+<h3 id="nodejs-and-npm">
+  <strong>Node.js and NPM</strong>
+  <a class="anchor" href="#nodejs-and-npm">#</a>
 </h3>
+<p>Recommended API:</p>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> (Linux and Windows x64)</li>
+</ul>
 <pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
 $ cd nervatura-examples/node
 $ npm install
 $ npm start
 </code></pre><p>Open your browser to http://localhost:8080</p>
-<h3 id="python">
-  Python
-  <a class="anchor" href="#python">#</a>
+<p>You do not need a Nervatura backend server to use the 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>. Automatic server start can be turned off with <code>NT_EXAMPLE_SERVICE_DISABLED=true</code>  (see in the <code>nervatura-examples/node/.env</code> file).</p>
+<h3 id="python-and-snap-or-prebuild-binaries">
+  <strong>Python and Snap or prebuild binaries</strong>
+  <a class="anchor" href="#python-and-snap-or-prebuild-binaries">#</a>
 </h3>
+<p>Recommended API:</p>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> (Linux and Windows x64)</li>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+</ul>
 <ol>
 <li>
 <p>Download the Python examples</p>
@@ -864,32 +878,55 @@ $ python main.py
 </code></pre><p>Open your browser to http://localhost:8000</p>
 </li>
 <li>
-<p>Download the Nervatura</p>
+<p>Nervatura backend</p>
 </li>
 </ol>
 <ul>
 <li>
-<p>Linux x64</p>
-<pre tabindex="0"><code>$ mkdir bin
-$ cd bin
-$ curl -L -s https://api.github.com/repos/nervatura/nervatura/releases/latest | grep -o -E &quot;https://(.*)nervatura_(.*)_linux_amd64.tar.gz&quot; | wget -qi -
-$ tar -zxf *.gz
-$ rm *.gz
+<p>Linux</p>
+<pre tabindex="0"><code>$ sudo snap install nervatura
+</code></pre><p>The 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> is ready to use. To use the 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a> and 
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, start Nervatura service with the .env.example settings (<code>nervatura-examples/python</code> directory):</p>
+<pre tabindex="0"><code>$ /snap/nervatura/current/nervatura -env $(pwd)/.env.example
 </code></pre></li>
 <li>
 <p>Windows users:</p>
 <ul>
 <li>download the 
-  <a href="https://github.com/nervatura/nervatura/releases/latest">latest version</a> to the <code>/bin</code> directory</li>
-<li>change the value of the <code>NT_EXAMPLE_SERVICE_PATH</code> (<code>.env.example</code> file): &ldquo;bin/nervatura&rdquo; -&gt; &ldquo;bin/nervatura.exe&rdquo;</li>
-<li>change the value of the <code>NT_EXAMPLE_SERVICE_LIB</code> (<code>.env.example</code> file): &ldquo;bin/nervatura.so&rdquo; -&gt; &ldquo;bin/nervatura.dll&rdquo;</li>
+  <a href="https://github.com/nervatura/nervatura/releases/latest">latest version</a> to the <code>nervatura-examples/python/bin</code> directory</li>
+<li>change the value of the <code>NT_EXAMPLE_SERVICE_PATH</code> (<code>nervatura-examples/python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura&rdquo; -&gt; &ldquo;bin/nervatura.exe&rdquo;</li>
+<li>change the value of the <code>NT_EXAMPLE_SERVICE_LIB</code> (<code>nervatura-examples/python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura.so&rdquo; -&gt; &ldquo;bin/nervatura.dll&rdquo;</li>
 </ul>
-</li>
-</ul>
-<ol start="3">
-<li>
-<p>Start the Nervatura backend server (gRPC and HTTP examples)</p>
+<p>Start the Nervatura backend server (
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a> and 
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a> examples)</p>
 <pre tabindex="0"><code>  $ bin/nervatura -env .env.example
+</code></pre></li>
+</ul>
+<h3 id="go-and-docker">
+  <strong>Go and Docker</strong>
+  <a class="anchor" href="#go-and-docker">#</a>
+</h3>
+<p>Recommended API:</p>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+</ul>
+<ol>
+<li>
+<p>Download the Go examples</p>
+<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
+$ cd nervatura-examples/go
+$ go mod vendor
+$ go run ./main.go
+</code></pre><p>Open your browser to http://localhost:7000</p>
+</li>
+<li>
+<p>Nervatura backend (<code>nervatura-examples/go</code> directory)</p>
+<pre tabindex="0"><code>$ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
 </ol>
 <h2 id="examples">
@@ -1054,8 +1091,9 @@ $ rm *.gz
       <ul>
         <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
-            <li><a href="#nodejs">Node.js</a></li>
-            <li><a href="#python">Python</a></li>
+            <li><a href="#nodejs-and-npm"><strong>Node.js and NPM</strong></a></li>
+            <li><a href="#python-and-snap-or-prebuild-binaries"><strong>Python and Snap or prebuild binaries</strong></a></li>
+            <li><a href="#go-and-docker"><strong>Go and Docker</strong></a></li>
           </ul>
         </li>
         <li><a href="#examples"><strong>Examples</strong></a>
