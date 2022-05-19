@@ -332,7 +332,7 @@ func GetMessage(key string) string {
 /*
 CreateToken - create/refresh a Nervatura JWT token
 */
-func CreateToken(username, database string, config map[string]interface{}) (string, error) {
+func CreateToken(username, database string, config map[string]interface{}) (result string, err error) {
 	// ntClaims is a custom Nervatura claims type
 	type ntClaims struct {
 		Username string `json:"username"`
@@ -349,9 +349,23 @@ func CreateToken(username, database string, config map[string]interface{}) (stri
 			Issuer:    ToString(config["NT_TOKEN_ISS"], "nervatura"),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	alg := ToString(config["NT_TOKEN_ALG"], "HS256")
+	token := jwt.NewWithClaims(jwt.GetSigningMethod(alg), claims)
 	token.Header["kid"] = ToString(config["NT_TOKEN_PRIVATE_KID"], GetHash("nervatura"))
-	return token.SignedString([]byte(ToString(config["NT_TOKEN_PRIVATE_KEY"], GetHash(time.Now().Format("20060102")))))
+	var key interface{} = []byte(ToString(config["NT_TOKEN_PRIVATE_KEY"], GetHash(time.Now().Format("20060102"))))
+	if strings.HasPrefix(alg, "RS") {
+		key, err = parsePEM("RSA", "private", key.([]byte))
+	}
+	if strings.HasPrefix(alg, "ES") {
+		key, err = parsePEM("ECDSA", "private", key.([]byte))
+	}
+	if strings.HasPrefix(alg, "EdDSA") {
+		key, err = parsePEM("EdDSA", "private", key.([]byte))
+	}
+	if err != nil {
+		return "", err
+	}
+	return token.SignedString(key)
 }
 
 /*

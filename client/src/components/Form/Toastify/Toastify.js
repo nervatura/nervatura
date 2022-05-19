@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-toast.configure({});
-
 export const TOAST_TYPE = {
   ERROR: "error",
   WARNING: "warning",

@@ -9,7 +9,11 @@ import App from './index';
 import { guid, request, appActions } from './actions'
 
 jest.mock("./actions");
-jest.mock("react-toastify");
+jest.mock('react-toastify', () => {
+  const actual = jest.requireActual('react-toastify');
+  Object.assign(actual, {toast: jest.fn()});
+  return actual;
+});
 
 const getById = queryByAttribute.bind(null, 'id');
 const { location } = window;

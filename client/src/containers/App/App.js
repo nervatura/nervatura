@@ -1,4 +1,5 @@
 import React, { Component, Suspense, lazy } from 'react'
+import { ToastContainer } from 'react-toastify';
 
 // Import CSS reset and Global Styles
 import 'sanitize.css/sanitize.css';
@@ -59,6 +60,7 @@ class App extends Component {
     
     return (
       <AppProvider value={{ data: this.state, setData: this.setData }}>
+        <ToastContainer />
         <Suspense fallback={<Spinner />}>
           {protector()}
         </Suspense>

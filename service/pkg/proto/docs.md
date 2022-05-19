@@ -753,7 +753,8 @@ No parameters
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 | key | [ string](/docs/service/grpc#string) | Server function name |
-| values | [map RequestFunction.ValuesEntry](/docs/service/grpc#requestfunctionvaluesentry) | The array of parameter values |
+| values | [map RequestFunction.ValuesEntry](/docs/service/grpc#requestfunctionvaluesentry) | The map of parameter values |
+| value | [ bytes](/docs/service/grpc#bytes) | Any json object. If it exists, the values are skip! |
 
 <br />
 

@@ -192,8 +192,10 @@ message ResponseView {
 message RequestFunction {
   // Server function name
   string key = 1;
-  // The array of parameter values
+  // The map of parameter values
   map<string, Value> values = 2;
+  // Any json object. If it exists, the values are skip!
+  bytes value = 3;
 }
 
 message ResponseFunction {

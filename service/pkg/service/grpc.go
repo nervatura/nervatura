@@ -803,6 +803,13 @@ func (srv *RPCService) Function(ctx context.Context, req *pb.RequestFunction) (r
 		"key":    req.Key,
 		"values": srv.fieldsToIMap(req.Values),
 	}
+	if req.Value != nil {
+		var values interface{}
+		err = ut.ConvertFromByte(req.Value, &values)
+		if err == nil {
+			options["values"] = values
+		}
+	}
 	result, err := api.Function(options)
 	if err != nil {
 		return res, err

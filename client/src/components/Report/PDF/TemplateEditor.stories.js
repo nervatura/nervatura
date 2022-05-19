@@ -6,6 +6,18 @@ import { templateElements } from 'containers/Template/Template'
 export default {
   title: "Report/TemplateEditor",
   component: TemplateEditor,
+  argTypes: {
+    onEvent: {
+      name: "onEvent",
+      description: "onEvent click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onEvent" 
+    },
+  }
 }
 
 const Template = (args) => <TemplateEditor {...args} />
@@ -48,7 +60,7 @@ Default.args = {
     ]
   },
   className: "light",
-  onEvent: undefined,
+  onEvent: ()=>{},
   getText: getText
 }
 

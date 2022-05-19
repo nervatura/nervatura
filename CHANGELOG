@@ -1,3 +1,10 @@
+## 5.0.4
+- example: new go examples
+- docs: go examples
+- gRPC API: new Function request parameter
+- service new config options: NT_TOKEN_ALG (set the token signing method algorithm)
+- upgrade dependencies
+
 ## 5.0.3
 - example: new python examples
 - example: node client login (authorization code) bug fixes

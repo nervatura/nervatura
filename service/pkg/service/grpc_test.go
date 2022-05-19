@@ -1511,6 +1511,32 @@ func TestRPCService_Function(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "function_value",
+			args: args{
+				ctx: context.WithValue(context.Background(), NstoreCtxKey,
+					testData.getApi(nt.New(testData.driver, config), testData.adminToken)),
+				req: &pb.RequestFunction{
+					Key:    "nextNumber",
+					Values: nil,
+					Value:  []byte(`{"numberkey":"custnumber","step":false}`),
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "function_ConvertFromByte_error",
+			args: args{
+				ctx: context.WithValue(context.Background(), NstoreCtxKey,
+					testData.getApi(nt.New(testData.driver, config), testData.adminToken)),
+				req: &pb.RequestFunction{
+					Key:    "nextNumber",
+					Values: nil,
+					Value:  []byte(`{"numberkey":`),
+				},
+			},
+			wantErr: true,
+		},
+		{
 			name: "function_scope_error",
 			args: args{
 				ctx: context.WithValue(context.Background(), NstoreCtxKey,
