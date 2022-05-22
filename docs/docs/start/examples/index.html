@@ -6,13 +6,13 @@
 <meta name="description" content="Quick Start #  Node.js and NPM #  Recommended API:
   gRPC  CGO (Linux and Windows x64)  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or prebuild binaries #  Recommended API:">
+Python and Snap or Windows setup #  Recommended API:">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Examples" />
 <meta property="og:description" content="Quick Start #  Node.js and NPM #  Recommended API:
   gRPC  CGO (Linux and Windows x64)  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or prebuild binaries #  Recommended API:" />
+Python and Snap or Windows setup #  Recommended API:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/start/examples/" /><meta property="article:section" content="docs" />
 
@@ -802,7 +802,7 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
             <li><a href="#nodejs-and-npm"><strong>Node.js and NPM</strong></a></li>
-            <li><a href="#python-and-snap-or-prebuild-binaries"><strong>Python and Snap or prebuild binaries</strong></a></li>
+            <li><a href="#python-and-snap-or-windows-setup"><strong>Python and Snap or Windows setup</strong></a></li>
             <li><a href="#go-and-docker"><strong>Go and Docker</strong></a></li>
           </ul>
         </li>
@@ -857,9 +857,9 @@ $ npm start
 <p>You do not need a Nervatura backend server to use the 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>. Automatic server start can be turned off with <code>NT_EXAMPLE_SERVICE_DISABLED=true</code>  (see in the <code>nervatura-examples/node/.env</code> file).</p>
-<h3 id="python-and-snap-or-prebuild-binaries">
-  <strong>Python and Snap or prebuild binaries</strong>
-  <a class="anchor" href="#python-and-snap-or-prebuild-binaries">#</a>
+<h3 id="python-and-snap-or-windows-setup">
+  <strong>Python and Snap or Windows setup</strong>
+  <a class="anchor" href="#python-and-snap-or-windows-setup">#</a>
 </h3>
 <p>Recommended API:</p>
 <ul>
@@ -893,17 +893,17 @@ $ python main.py
 <pre tabindex="0"><code>$ /snap/nervatura/current/nervatura -env $(pwd)/.env.example
 </code></pre></li>
 <li>
-<p>Windows users:</p>
+<p>Windows:</p>
 <ul>
-<li>download the 
-  <a href="https://github.com/nervatura/nervatura/releases/latest">latest version</a> to the <code>nervatura-examples/python/bin</code> directory</li>
-<li>change the value of the <code>NT_EXAMPLE_SERVICE_PATH</code> (<code>nervatura-examples/python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura&rdquo; -&gt; &ldquo;bin/nervatura.exe&rdquo;</li>
-<li>change the value of the <code>NT_EXAMPLE_SERVICE_LIB</code> (<code>nervatura-examples/python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura.so&rdquo; -&gt; &ldquo;bin/nervatura.dll&rdquo;</li>
+<li>download and install the 
+  <a href="https://github.com/nervatura/nervatura/releases/latest">nervatura_VERSION_windows_amd64.exe</a> setup program</li>
+<li>change the value of the <code>NT_EXAMPLE_SERVICE_PATH</code> (<code>nervatura-examples/python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura&rdquo; -&gt; &ldquo;nervatura&rdquo;</li>
+<li>change the value of the <code>NT_EXAMPLE_SERVICE_LIB</code> (<code>nervatura-examples/python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura.so&rdquo; -&gt; &ldquo;C:/ProgramData/Nervatura/nervatura.dll&rdquo;</li>
 </ul>
 <p>Start the Nervatura backend server (
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a> examples)</p>
-<pre tabindex="0"><code>  $ bin/nervatura -env .env.example
+<pre tabindex="0"><code>  $ nervatura -env .env.example
 </code></pre></li>
 </ul>
 <h3 id="go-and-docker">
@@ -982,7 +982,6 @@ $ go run ./main.go
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
 , 
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
-<li>with the HMAC algorithm example</li>
 <li>Authorization Code</li>
 <li>Implicit (token) Grant</li>
 <li>error or logout callback</li>
@@ -1092,7 +1091,7 @@ $ go run ./main.go
         <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
             <li><a href="#nodejs-and-npm"><strong>Node.js and NPM</strong></a></li>
-            <li><a href="#python-and-snap-or-prebuild-binaries"><strong>Python and Snap or prebuild binaries</strong></a></li>
+            <li><a href="#python-and-snap-or-windows-setup"><strong>Python and Snap or Windows setup</strong></a></li>
             <li><a href="#go-and-docker"><strong>Go and Docker</strong></a></li>
           </ul>
         </li>

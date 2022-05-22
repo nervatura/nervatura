@@ -7,7 +7,7 @@ Open Source Business Management Framework
 
 Nervatura is a business management framework based on **open-data principle**. It can handle any type of business related information, starting from customer details, up to shipping, stock or payment information.
 
-The framework is based on Nervatura [Object Model](https://nervatura.github.io/nervatura/docs/model) specification. The main aspects of its design were:
+The main aspects of its design were:
 
 * simple and transparent structure
 * capability of storing different data types of an average company

@@ -206,7 +206,7 @@ Department #  An item of the department group should be set in this field.</desc
       <description>Quick Start #  Node.js and NPM #  Recommended API:
   gRPC  CGO (Linux and Windows x64)  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or prebuild binaries #  Recommended API:</description>
+Python and Snap or Windows setup #  Recommended API:</description>
     </item>
     
     <item>

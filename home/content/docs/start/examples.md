@@ -23,7 +23,7 @@ Open your browser to http://localhost:8080
 
 You do not need a Nervatura backend server to use the [CLI](/docs/service/cli#cli-api) and [CGO](/docs/service/cli#cgo-api). Automatic server start can be turned off with `NT_EXAMPLE_SERVICE_DISABLED=true`  (see in the `nervatura-examples/node/.env` file).
 
-### **Python and Snap or prebuild binaries**
+### **Python and Snap or Windows setup**
 
 Recommended API:  
 - [CGO](/docs/service/cli#cgo-api) (Linux and Windows x64)
@@ -50,15 +50,15 @@ Recommended API:
     $ /snap/nervatura/current/nervatura -env $(pwd)/.env.example
     ```
 
-  - Windows users:
-    - download the [latest version](https://github.com/nervatura/nervatura/releases/latest) to the `nervatura-examples/python/bin` directory
-    - change the value of the `NT_EXAMPLE_SERVICE_PATH` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura" -> "bin/nervatura.exe"
-    - change the value of the `NT_EXAMPLE_SERVICE_LIB` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura.so" -> "bin/nervatura.dll"
+  - Windows:
+    - download and install the [nervatura_VERSION_windows_amd64.exe](https://github.com/nervatura/nervatura/releases/latest) setup program
+    - change the value of the `NT_EXAMPLE_SERVICE_PATH` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura" -> "nervatura"
+    - change the value of the `NT_EXAMPLE_SERVICE_LIB` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura.so" -> "C:/ProgramData/Nervatura/nervatura.dll"
 
     Start the Nervatura backend server ([gRPC](/docs/service/grpc) and [HTTP](/docs/service/api) examples)
 
     ```
-      $ bin/nervatura -env .env.example
+      $ nervatura -env .env.example
     ```
 ### **Go and Docker**
 
@@ -103,7 +103,6 @@ Recommended API:
   
   - [HTTP](/docs/service/api), [CLI](/docs/service/cli#cli-api), [CGO](/docs/service/cli#cgo-api)
   , [gRPC](/docs/service/grpc)
-  - with the HMAC algorithm example
   - Authorization Code
   - Implicit (token) Grant
   - error or logout callback
