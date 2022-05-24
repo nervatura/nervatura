@@ -11,9 +11,17 @@ Full command line API. Program usage:
 ```
 $ docker exec -i nervatura /nervatura -h
 ```
-Without Docker:
+Windows (PowerShell):
 ```
-$ ./nervatura -h
+& "C:\Program Files\Nervatura\nervatura.exe" -h
+```
+Linux Snap:
+```
+$ /snap/nervatura/current/nervatura -h
+```
+NPM:
+```
+$ ./node_modules/nervatura/bin/nervatura -h
 ```
 Example:
 ```

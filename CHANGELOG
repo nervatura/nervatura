@@ -1,3 +1,8 @@
+## 5.0.5
+- install: new Windows setup program
+- install: Windows Package Manager
+- docs modified pages: installation, getting started, examples, cli api
+
 ## 5.0.4
 - example: new go examples
 - docs: go examples

@@ -7,14 +7,14 @@
 $ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
 Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
 &quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
-$ npm run nervatura Prebuild binaries #   Linux and Windows x64">
+$ npm run nervatura Winget (Windows Package Manager) #  $ winget install --id Nervatura.">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Installation" />
 <meta property="og:description" content="Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install nervatura Checking service status and last logs:
 $ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
 Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
 &quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
-$ npm run nervatura Prebuild binaries #   Linux and Windows x64" />
+$ npm run nervatura Winget (Windows Package Manager) #  $ winget install --id Nervatura." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/install/" /><meta property="article:section" content="docs" />
 
@@ -806,6 +806,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#docker-image"><strong>Docker</strong> image</a></li>
             <li><a href="#snap-package-linux-daemon"><strong>Snap</strong> package (Linux daemon)</a></li>
             <li><a href="#nodejs-npm">Node.js <strong>NPM</strong></a></li>
+            <li><a href="#winget-windows-package-manager"><strong>Winget</strong> (Windows Package Manager)</a></li>
             <li><a href="#prebuild-binaries">Prebuild binaries</a></li>
             <li><a href="#other-platforms">Other platforms</a></li>
           </ul>
@@ -851,12 +852,17 @@ https://github.com/alex-shpak/hugo-book
 </code></pre><p>Add a run script to your <code>package.json</code> file like this:</p>
 <p><code>&quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }</code></p>
 <pre tabindex="0"><code>$ npm run nervatura
+</code></pre><h3 id="winget-windows-package-manager">
+  <strong>Winget</strong> (Windows Package Manager)
+  <a class="anchor" href="#winget-windows-package-manager">#</a>
+</h3>
+<pre tabindex="0"><code>$ winget install --id Nervatura.Nervatura --source winget
 </code></pre><h3 id="prebuild-binaries">
   Prebuild binaries
   <a class="anchor" href="#prebuild-binaries">#</a>
 </h3>
 <p>
-  <a href="https://github.com/nervatura/nervatura/releases">Linux and Windows x64</a></p>
+  <a href="https://github.com/nervatura/nervatura/releases">Linux and Windows</a></p>
 <h3 id="other-platforms">
   Other platforms
   <a class="anchor" href="#other-platforms">#</a>
@@ -922,6 +928,7 @@ $ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
             <li><a href="#docker-image"><strong>Docker</strong> image</a></li>
             <li><a href="#snap-package-linux-daemon"><strong>Snap</strong> package (Linux daemon)</a></li>
             <li><a href="#nodejs-npm">Node.js <strong>NPM</strong></a></li>
+            <li><a href="#winget-windows-package-manager"><strong>Winget</strong> (Windows Package Manager)</a></li>
             <li><a href="#prebuild-binaries">Prebuild binaries</a></li>
             <li><a href="#other-platforms">Other platforms</a></li>
           </ul>

@@ -4,19 +4,23 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="CLI API #  Full command line API. Program usage:
-$ docker exec -i nervatura /nervatura -h Without Docker:
-$ ./nervatura -h Example:
+$ docker exec -i nervatura /nervatura -h Windows (PowerShell):
+&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot; -h Linux Snap:
+$ /snap/nervatura/current/nervatura -h NPM:
+$ ./node_modules/nervatura/bin/nervatura -h Example:
 $ docker exec -i nervatura /nervatura \ -c UserLogin -o &quot;{\&quot;username\&quot;:\&quot;admin\&quot;,\&quot;database\&quot;:\&quot;demo\&quot;}&quot; Golang docs:
  
-CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Go, Python, Ruby, Node, and Java.">
+CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs.">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="CLI AND CGO API" />
 <meta property="og:description" content="CLI API #  Full command line API. Program usage:
-$ docker exec -i nervatura /nervatura -h Without Docker:
-$ ./nervatura -h Example:
+$ docker exec -i nervatura /nervatura -h Windows (PowerShell):
+&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot; -h Linux Snap:
+$ /snap/nervatura/current/nervatura -h NPM:
+$ ./node_modules/nervatura/bin/nervatura -h Example:
 $ docker exec -i nervatura /nervatura \ -c UserLogin -o &quot;{\&quot;username\&quot;:\&quot;admin\&quot;,\&quot;database\&quot;:\&quot;demo\&quot;}&quot; Golang docs:
  
-CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Go, Python, Ruby, Node, and Java." />
+CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/service/cli/" /><meta property="article:section" content="docs" />
 
@@ -827,8 +831,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 <p>Full command line API. Program usage:</p>
 <pre tabindex="0"><code>$ docker exec -i nervatura /nervatura -h
-</code></pre><p>Without Docker:</p>
-<pre tabindex="0"><code>$ ./nervatura -h
+</code></pre><p>Windows (PowerShell):</p>
+<pre tabindex="0"><code>&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot; -h
+</code></pre><p>Linux Snap:</p>
+<pre tabindex="0"><code>$ /snap/nervatura/current/nervatura -h
+</code></pre><p>NPM:</p>
+<pre tabindex="0"><code>$ ./node_modules/nervatura/bin/nervatura -h
 </code></pre><p>Example:</p>
 <pre tabindex="0"><code>$ docker exec -i nervatura /nervatura \
   -c UserLogin -o &quot;{\&quot;username\&quot;:\&quot;admin\&quot;,\&quot;database\&quot;:\&quot;demo\&quot;}&quot;

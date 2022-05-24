@@ -7,7 +7,7 @@ bookToC: true
 
 ## **Quick Start**
 
-### **Node.js and NPM**
+### **Node.js** and **NPM**
 
 Recommended API: 
 - [gRPC](/docs/service/grpc) 
@@ -23,7 +23,7 @@ Open your browser to http://localhost:8080
 
 You do not need a Nervatura backend server to use the [CLI](/docs/service/cli#cli-api) and [CGO](/docs/service/cli#cgo-api). Automatic server start can be turned off with `NT_EXAMPLE_SERVICE_DISABLED=true`  (see in the `nervatura-examples/node/.env` file).
 
-### **Python and Snap or Windows setup**
+### **Python** and **Snap** or **Windows Package Manager**
 
 Recommended API:  
 - [CGO](/docs/service/cli#cgo-api) (Linux and Windows x64)
@@ -51,16 +51,18 @@ Recommended API:
     ```
 
   - Windows:
-    - download and install the [nervatura_VERSION_windows_amd64.exe](https://github.com/nervatura/nervatura/releases/latest) setup program
-    - change the value of the `NT_EXAMPLE_SERVICE_PATH` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura" -> "nervatura"
-    - change the value of the `NT_EXAMPLE_SERVICE_LIB` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura.so" -> "C:/ProgramData/Nervatura/nervatura.dll"
+    ```
+    winget install --id Nervatura.Nervatura --source winget
+    ```
+    - change the value of the `NT_EXAMPLE_SERVICE_PATH` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura" -> *"C:/Program Files/Nervatura/nervatura.exe"*
+    - change the value of the `NT_EXAMPLE_SERVICE_LIB` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura.so" -> *"C:/ProgramData/Nervatura/nervatura.dll"*
 
-    Start the Nervatura backend server ([gRPC](/docs/service/grpc) and [HTTP](/docs/service/api) examples)
+    Start the Nervatura backend server ([gRPC](/docs/service/grpc) and [HTTP](/docs/service/api) examples) with the .env.example settings (`nervatura-examples/python` directory):
 
     ```
-      $ nervatura -env .env.example
+      & "C:\Program Files\Nervatura\nervatura.exe" -env .env.example
     ```
-### **Go and Docker**
+### **Go** and **Docker**
 
 Recommended API:
 - [gRPC](/docs/service/grpc)

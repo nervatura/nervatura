@@ -850,14 +850,16 @@ $ docker run -i -t --rm --name nervatura \
 </h3>
 <p>Open a PowerShell and set the (temporary) variables:</p>
 <pre tabindex="0"><code>$env:NT_API_KEY=&quot;DEMO_API_KEY&quot;
-$env:NT_ALIAS_DEMO=&quot;sqlite://file:///C:/YOUR_DATA_PATH/demo.db&quot;
-</code></pre><p>The &ldquo;C:/YOUR_DATA_PATH&rdquo; is an existing and writable directory, e.g. <code>$env:NT_ALIAS_DEMO=&quot;sqlite://file:///C:/mydata/demo.db&quot;</code> The SQLite database are created automatically.</p>
-<p>Launch nervatura CLI (in the same command window!), and create a database:</p>
-<pre tabindex="0"><code>nervatura -c DatabaseCreate -k DEMO_API_KEY -o '{\&quot;database\&quot;:\&quot;demo\&quot;,\&quot;demo\&quot;:true}'
-</code></pre><p>Launch nervatura server (in the same command window!):</p>
-<pre tabindex="0"><code>nervatura
-</code></pre><p>Of course, the environment variables can also be set permanently (see more SystemPropertiesAdvanced.exe). In this case, the server can be started from anywhere, not just in the session.</p>
-<h3 id="npm">
+$env:NT_ALIAS_DEMO=&quot;sqlite://file:///C:/ProgramData/Nervatura/data/demo.db?cache=shared&amp;mode=rwc&quot;
+</code></pre><p>Launch nervatura CLI (in the same command window!), and create a database:</p>
+<pre tabindex="0"><code>&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot; -c DatabaseCreate -k DEMO_API_KEY -o '{\&quot;database\&quot;:\&quot;demo\&quot;,\&quot;demo\&quot;:true}'
+</code></pre><p>Default Nervatura data directory: <code>C:/ProgramData/Nervatura</code></p>
+<p>Launch nervatura server (in the same command window or Start menu):</p>
+<pre tabindex="0"><code>&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot;
+</code></pre><p>Of course, the environment variables can also be set permanently (see more SystemPropertiesAdvanced.exe). In this case, the server can be started from anywhere.</p>
+<p>Alternatively, the settings can be specified in the parameter:</p>
+<pre tabindex="0"><code>&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot; -env C:\ProgramData\Nervatura\.env.example
+</code></pre><h3 id="npm">
   NPM
   <a class="anchor" href="#npm">#</a>
 </h3>

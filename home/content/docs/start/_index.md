@@ -37,20 +37,24 @@ $ sudo NT_API_KEY=DEMO_API_KEY \
 Open a PowerShell and set the (temporary) variables:
 ```
 $env:NT_API_KEY="DEMO_API_KEY"
-$env:NT_ALIAS_DEMO="sqlite://file:///C:/YOUR_DATA_PATH/demo.db"
+$env:NT_ALIAS_DEMO="sqlite://file:///C:/ProgramData/Nervatura/data/demo.db?cache=shared&mode=rwc"
 ```
-The "C:/YOUR_DATA_PATH" is an existing and writable directory, e.g. `$env:NT_ALIAS_DEMO="sqlite://file:///C:/mydata/demo.db"` The SQLite database are created automatically.
-
 Launch nervatura CLI (in the same command window!), and create a database:
 ```
-nervatura -c DatabaseCreate -k DEMO_API_KEY -o '{\"database\":\"demo\",\"demo\":true}'
+& "C:\Program Files\Nervatura\nervatura.exe" -c DatabaseCreate -k DEMO_API_KEY -o '{\"database\":\"demo\",\"demo\":true}'
 ```
+Default Nervatura data directory: `C:/ProgramData/Nervatura`
 
-Launch nervatura server (in the same command window!):
+Launch nervatura server (in the same command window or Start menu):
 ```
-nervatura
+& "C:\Program Files\Nervatura\nervatura.exe"
 ```
-Of course, the environment variables can also be set permanently (see more SystemPropertiesAdvanced.exe). In this case, the server can be started from anywhere, not just in the session.
+Of course, the environment variables can also be set permanently (see more SystemPropertiesAdvanced.exe). In this case, the server can be started from anywhere.
+
+Alternatively, the settings can be specified in the parameter:
+```
+& "C:\Program Files\Nervatura\nervatura.exe" -env C:\ProgramData\Nervatura\.env.example
+```
 
 ### NPM
 

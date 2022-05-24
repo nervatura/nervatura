@@ -12,11 +12,13 @@
       
       <guid>https://nervatura.github.io/nervatura/docs/service/cli/</guid>
       <description>CLI API #  Full command line API. Program usage:
-$ docker exec -i nervatura /nervatura -h Without Docker:
-$ ./nervatura -h Example:
+$ docker exec -i nervatura /nervatura -h Windows (PowerShell):
+&amp;amp; &amp;quot;C:\Program Files\Nervatura\nervatura.exe&amp;quot; -h Linux Snap:
+$ /snap/nervatura/current/nervatura -h NPM:
+$ ./node_modules/nervatura/bin/nervatura -h Example:
 $ docker exec -i nervatura /nervatura \ -c UserLogin -o &amp;quot;{\&amp;quot;username\&amp;quot;:\&amp;quot;admin\&amp;quot;,\&amp;quot;database\&amp;quot;:\&amp;quot;demo\&amp;quot;}&amp;quot; Golang docs:
  
-CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Go, Python, Ruby, Node, and Java.</description>
+CGO API #  The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs.</description>
     </item>
     
     <item>
@@ -206,7 +208,7 @@ Department #  An item of the department group should be set in this field.</desc
       <description>Quick Start #  Node.js and NPM #  Recommended API:
   gRPC  CGO (Linux and Windows x64)  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or Windows setup #  Recommended API:</description>
+Python and Snap or Windows Package Manager #  Recommended API:</description>
     </item>
     
     <item>
@@ -229,7 +231,7 @@ Python and Snap or Windows setup #  Recommended API:</description>
 $ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
 Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
 &amp;quot;scripts&amp;quot;: { &amp;quot;nervatura&amp;quot;: &amp;quot;./node_modules/nervatura/bin/nervatura&amp;quot; }
-$ npm run nervatura Prebuild binaries #   Linux and Windows x64</description>
+$ npm run nervatura Winget (Windows Package Manager) #  $ winget install --id Nervatura.</description>
     </item>
     
     <item>

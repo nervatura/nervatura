@@ -40,9 +40,15 @@ Add a run script to your `package.json` file like this:
 $ npm run nervatura
 ```
 
+### **Winget** (Windows Package Manager)
+
+```
+$ winget install --id Nervatura.Nervatura --source winget
+```
+
 ### Prebuild binaries
 
-[Linux and Windows x64](https://github.com/nervatura/nervatura/releases)
+[Linux and Windows](https://github.com/nervatura/nervatura/releases)
 
 ### Other platforms
 ```
