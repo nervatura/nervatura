@@ -34,7 +34,7 @@ The client and report interface supports [multilingualism](https://nervatura.git
 
 See the [**Examples**](https://nervatura.github.io/nervatura/docs/start/examples) for more information:
 - [Node.js and NPM](https://nervatura.github.io/nervatura/docs/start/examples/#nodejs-and-npm)
-- [Python and Snap (or prebuild binaries)](https://nervatura.github.io/nervatura/docs/start/examples/#python-and-snap-or-prebuild-binaries)
+- [Python and Snap or Windows Package Manager](https://nervatura.github.io/nervatura/docs/start/examples/#python-and-snap-or-windows-package-manager)
 - [Go and Docker](https://nervatura.github.io/nervatura/docs/start/examples/#go-and-docker)
 
 [**Installation**](https://nervatura.github.io/nervatura/docs/install) and [**Quick Start**](https://nervatura.github.io/nervatura/docs/start)
