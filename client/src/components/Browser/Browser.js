@@ -146,20 +146,20 @@ export const Browser = ({
               </div>
               <div className="cell align-right" >
                 <Button id="btn_bookmark"
-                  className={`${"border-button small-button"} ${styles.barButton}`} 
+                  className={`${"border-button"} ${styles.smallButton} ${styles.barButton}`} 
                   onClick={()=>onEvent("bookmarkSave",[])} 
                   value={<Label value={getText("browser_bookmark")} 
                     leftIcon={<Icon iconKey="Star" height={14} width={15.75} />} />}
                 />
                 <Button id="btn_export"
-                  className={`${"border-button small-button"} ${styles.barButton}`} 
+                  className={`${"border-button"} ${styles.smallButton} ${styles.barButton}`} 
                   disabled={(result.length === 0)?"disabled":""}
                   onClick={ ()=>onEvent("exportResult",[exportFields()]) }
                   value={<Label value={getText("browser_export")} 
                     leftIcon={<Icon iconKey="Download" height={14} width={14} />} />}
                 />
                 <Button id="btn_help"
-                  className={`${"border-button small-button"} ${styles.barButton}`} 
+                  className={`${"border-button"} ${styles.smallButton} ${styles.barButton}`} 
                   onClick={()=>onEvent("showHelp",["program/browser"])} 
                   value={<Label value={getText("browser_help")} 
                     leftIcon={<Icon iconKey="QuestionCircle" height={14} width={14} />} />}
@@ -287,7 +287,7 @@ export const Browser = ({
               </div>
               {(viewDef.actions_new)?<div className={`${"cell"} ${styles.resultTitlePlus}`}>
                 <Button id="btn_actions_new"
-                  className={`${"small-button"}`} 
+                  className={styles.smallButton} 
                   onClick={ ()=>onEvent("setFormActions",[{ params: viewDef.actions_new, row: undefined }]) } 
                   value={<Icon iconKey="Plus" />}
                 />

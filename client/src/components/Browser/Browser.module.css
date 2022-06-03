@@ -9,6 +9,11 @@
   padding: 8px 16px;
 }
 
+.smallButton {
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
 .barButton {
   border-radius: 0px;
   margin-left: -0.7px;

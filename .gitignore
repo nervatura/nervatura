@@ -103,3 +103,5 @@ data/test/*.txt
 demo.db
 private.key
 public.key
+service/CHANGELOG
+service/LICENSE

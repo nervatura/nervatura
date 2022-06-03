@@ -41,7 +41,7 @@ Default.args = {
       { deleted: 0, fieldname: "4e451b7f-72d1-b19c-7cbe-2c80495b5a8e",
         id: 100, notes: null, ref_id: 5, value: "blue" },
       { deleted: 0, fieldname: "2b0bd752-2f00-cbdb-a4ee-6741d890c8a6",
-        id: 101, notes: null, ref_id: 5, value: "nervatura.github.io/" }
+        id: 101, notes: null, ref_id: 5, value: "nervatura.github.io/" },
     ],
     view: "form"
   }, 

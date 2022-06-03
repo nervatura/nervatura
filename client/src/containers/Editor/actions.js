@@ -1240,42 +1240,13 @@ export const editorActions = (data, setData) => {
 
   const saveEditor = async () => {
     let edit = update(data.edit, {})
+    const newItem = (edit.current.item.id === null)
 
     let values = tableValues(edit.current.type, edit.current.item)
     values = await validator(edit.current.type, values)
     if(values.error){
       app.resultError(values)
       return null
-    }
-
-    if (edit.current.item.id === null && edit.dataset.deffield) {
-      edit.dataset.deffield.forEach((deffield) => {
-        if(deffield.addnew === 1){
-          const subtype = checkSubtype(edit.current.type,
-            deffield.subtype, edit.current.item);
-          const item = edit.current.fieldvalue.filter(item => (item.fieldname === deffield.fieldname))[0]
-          if(!item && subtype){
-            const fieldtype = edit.dataset.groups.filter(item => (item.id === deffield.fieldtype))[0].groupvalue
-            switch (fieldtype) {
-              case "bool":
-              case "integer":
-              case "float":
-                edit = update(edit, { current: {$merge: {
-                  fieldvalue: setFieldvalue(edit.current.fieldvalue, 
-                    deffield.fieldname, null, null, 0)
-                }}})
-                break;
-              case "valuelist":
-                edit = update(edit, { current: {$merge: {
-                  fieldvalue: setFieldvalue(edit.current.fieldvalue, 
-                    deffield.fieldname, null, null, deffield.valuelist.split("|")[0])
-                }}})
-                break;
-              default:
-            }
-          }
-        }
-      });
     }
 
     let result = await app.requestData("/"+edit.current.type, { method: "POST", data: [values] })
@@ -1314,32 +1285,30 @@ export const editorActions = (data, setData) => {
     }
 
     if (edit.current.type === "trans") {
-      edit = update(edit, { current: {$merge: {
-        fieldvalue: setFieldvalue(edit.current.fieldvalue, 
-          "trans_transcast", edit.current.item.id, null, "normal")
-      }}})
       switch (edit.current.transtype) {
         case "invoice":
-          const params = { 
-            method: "POST", 
-            data: [{ 
-              key: "fields",
-              text: getSql(data.login.data.engine, sql.trans.invoice_customer()).sql,
-              values: [edit.current.item.customer_id]
-            }]
-          }
-          let view = await app.requestData("/view", params)
-          if(view.error){
-            app.resultError(view)
-            return null
-          }
-          if (view.fields.length > 0) {
-            Object.keys(view.fields[0]).forEach((fieldname) => {
-              edit = update(edit, { current: {$merge: {
-                fieldvalue: setFieldvalue(edit.current.fieldvalue, 
-                  fieldname, edit.current.item.id, null, view.fields[0][fieldname])
-              }}})
-            })
+          if(!newItem){
+            const params = { 
+              method: "POST", 
+              data: [{ 
+                key: "fields",
+                text: getSql(data.login.data.engine, sql.trans.invoice_customer()).sql,
+                values: [edit.current.item.customer_id]
+              }]
+            }
+            let view = await app.requestData("/view", params)
+            if(view.error){
+              app.resultError(view)
+              return null
+            }
+            if (view.fields.length > 0) {
+              Object.keys(view.fields[0]).forEach((fieldname) => {
+                edit = update(edit, { current: {$merge: {
+                  fieldvalue: setFieldvalue(edit.current.fieldvalue, 
+                    fieldname, edit.current.item.id, null, view.fields[0][fieldname])
+                }}})
+              })
+            }
           }
           break;
         case "worksheet":
@@ -1707,7 +1676,7 @@ export const editorActions = (data, setData) => {
 
     let fieldvalue = [];
     data.edit.current.fieldvalue.forEach((cfield) => {
-      if(cfield.fieldname !== "trans_transcast"){
+      if((cfield.fieldname !== "trans_transcast") && (transtype !== "invoice")){
         let deffield = data.edit.dataset.deffield.filter(
           item => (item.fieldname === cfield.fieldname)
         )[0]
@@ -1721,26 +1690,6 @@ export const editorActions = (data, setData) => {
         } 
       }
     })
-    if (transtype === "invoice") {
-      const params = { 
-        method: "POST", 
-        data: [{ 
-          key: "fields",
-          text: getSql(data.login.data.engine, sql.trans.invoice_customer()).sql,
-          values: [values.customer_id]
-        }]
-      }
-      let view = await app.requestData("/view", params)
-      if(view.error){
-        app.resultError(view)
-        return null
-      }
-      if (view.fields.length > 0) {
-        Object.keys(view.fields[0]).forEach((fieldname) => {
-          fieldvalue = setFieldvalue(fieldvalue, fieldname, values.id, view.fields[0][fieldname]) 
-        })
-      }
-    }
 
     if(fieldvalue.length > 0){
       result = await app.requestData("/fieldvalue", { method: "POST", data: fieldvalue })

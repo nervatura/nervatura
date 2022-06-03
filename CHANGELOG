@@ -2,6 +2,8 @@
 - install: new Windows setup program
 - install: Windows Package Manager
 - docs modified pages: installation, getting started, examples, cli api
+- client: create/copy invoice duplicated fieldvalues bug fixes
+- upgrade dependencies
 
 ## 5.0.4
 - example: new go examples

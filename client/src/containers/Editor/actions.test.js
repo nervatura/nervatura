@@ -1484,7 +1484,7 @@ describe('editorActions', () => {
     appActions.mockReturnValue({
       getText: jest.fn((key)=>(key)),
       requestData: jest.fn(async (path, options) => {
-        return [1,2]
+        return [1,2,3,4]
       }),
       resultError: jest.fn(),
       showToast: jest.fn(),
@@ -1501,13 +1501,17 @@ describe('editorActions', () => {
       }})
     } ))
     it_store = update(it_store, {edit: {current: {$merge:{
-      transtype: "worksheet"
+      transtype: "worksheet",
+      fieldvalue: [
+        { id: null, fieldname: 'trans_wsrepair', ref_id: null,
+          value: 22, notes: null, deleted: 0 }]
     }}}})
     values = await editorActions(it_store, setData).saveEditor()
     expect(values).toBeDefined()
 
     it_store = update(it_store, {edit: {current: {$merge:{
-      transtype: "rent"
+      transtype: "rent",
+      fieldvalue: []
     }}}})
     values = await editorActions(it_store, setData).saveEditor()
     expect(values).toBeDefined()
@@ -1940,6 +1944,7 @@ describe('editorActions', () => {
     })
     expect(value).toBeNull()
 
+    /*
     appActions.mockReturnValue({
       getText: jest.fn((key)=>(key)),
       requestData: jest.fn(async (path, options) => {
@@ -1966,6 +1971,7 @@ describe('editorActions', () => {
       cmdtype: "copy", transcast: "normal",
     })
     expect(value).toBeNull()
+    */
 
     appActions.mockReturnValue({
       getText: jest.fn((key)=>(key)),
@@ -2450,6 +2456,50 @@ describe('editorActions', () => {
     })
     value = await editorActions(it_store, setData).createTrans({
       cmdtype: "copy",
+    })
+    expect(value).toBeNull()
+
+    appActions.mockReturnValue({
+      getText: jest.fn((key)=>(key)),
+      requestData: jest.fn(async (path, options) => {
+        if(path === "/fieldvalue") { 
+          return { error: {} }
+        }
+        return [1,2]
+      }),
+      resultError: jest.fn(),
+      showToast: jest.fn(),
+      createHistory: jest.fn(),
+      onSelector: jest.fn((selectorType, selectorFilter, setSelector) => {
+        if(setSelector){
+          setSelector({id: "1/1/1"})
+        }
+      }),
+    })
+    it_store = update(store, {edit: {$merge:{
+      ...InvoiceData.args
+    }}})
+    it_store = update(it_store, {edit: {
+      dataset: {trans: {0: {$merge:{
+        transtype: 57
+      }}}}
+    }})
+    it_store = update(it_store, {edit: {
+      current: { $merge:{
+        fieldvalue: [
+          { deleted: 0, fieldname: "2b0bd752-2f00-cbdb-a4ee-6741d890c8a6",
+            id: 101, notes: null, ref_id: 5, value: "nervatura.github.io/" },
+          { deleted: 1, fieldname: "sample_customer_float", id: 59, name: "deleted_value",
+            notes: null, ref_id: 5, value: "2" },
+          { deleted: 0, fieldname: "trans_custinvoice_compname", id: 59, name: "deleted_value",
+            notes: null, ref_id: 5, value: "2" },
+          { deleted: 0, fieldname: "link_qty", id: 59, name: "deleted_value",
+            notes: null, ref_id: 5, value: "2" },
+        ]
+      }}
+    }})
+    value = await editorActions(it_store, setData).createTrans({
+      cmdtype: "create",
     })
     expect(value).toBeNull()
 
