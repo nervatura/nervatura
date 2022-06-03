@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/argon2id"
+	ver "github.com/mcuadros/go-version"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
@@ -100,17 +101,27 @@ func (api *API) authUser(options IM) error {
 /*
 checkVersion - database version check
 */
-func (api *API) checkVersion() error {
+func (api *API) checkVersion() (err error) {
 	version := ut.ToString(api.NStore.config["version"], "")
 
 	dbsUpdate := func(dbVersion string) error {
-		var err error
-		if dbVersion == "" {
-			_, err = api.NStore.ds.Update(Update{Model: "fieldvalue", Values: IM{
-				"fieldname": "version", "value": version,
-			}})
+		verUpdate := map[string]func() error{
+			"": func() error {
+				_, err = api.NStore.ds.Update(Update{Model: "fieldvalue", Values: IM{
+					"fieldname": "version", "value": version,
+				}})
+				return err
+			},
+			"5.0.5": func() error {
+				_, err = api.NStore.ds.QuerySQL(`delete from fieldvalue where id not in(
+					select min(id) from fieldvalue group by fieldname, ref_id) and fieldname 
+					in('trans_transcast','trans_custinvoice_compname','trans_custinvoice_comptax',
+					'trans_custinvoice_compaddress','trans_custinvoice_custname','trans_custinvoice_custtax',
+					'trans_custinvoice_custaddress')`, []interface{}{}, nil)
+				return err
+			},
 		}
-		return err
+		return verUpdate[dbVersion]()
 	}
 
 	query := []Query{{
@@ -124,6 +135,12 @@ func (api *API) checkVersion() error {
 	}
 	if len(result) == 0 {
 		return dbsUpdate("")
+	}
+	if ut.ToString(result[0]["value"], "") == "dev" {
+		return nil
+	}
+	if ver.Compare(ut.ToString(result[0]["value"], ""), "5.0.5", "<") {
+		return dbsUpdate("5.0.5")
 	}
 	return nil
 }
