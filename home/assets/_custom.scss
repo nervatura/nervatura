@@ -3,6 +3,40 @@
 // @import "plugins/numbered";
 // @import "plugins/scrollbars";
 
+body, html {
+  height: 100%;;
+  color: #777;
+}
+
+.bgimg-home, .bgimg-about, .bgimg-touch, .bgimg-terms, .bgimg-eula {
+  background-attachment: fixed;
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.bgimg-framework, .bgimg-contact, .bgimg-download, .bgimg-video {
+  background-attachment: fixed;
+  background-position: top;
+  background-repeat: repeat;
+  background-size: contain;
+}
+
+.bgimg-path {
+  background-attachment: scroll;
+  background-position: center;
+  background-repeat: repeat-x;
+  background-size: contain;
+}
+
+/* Turn off scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+  .bgimg-home, .bgimg-about, .bgimg-framework, .bgimg-touch, .bgimg-download, 
+  .bgimg-video, .bgimg-contact, .bgimg-terms, .bgimg-eula, .bgimg-path {
+    background-attachment: scroll;
+  }
+}
+
 .left { float: left; }
 .right { float: right; }
 .align-left { text-align: left; }
@@ -91,7 +125,7 @@
 }
 
 .home-page {
-  top: $navbar-height;
+  margin-top: $navbar-height;
   min-width: 20rem;
   flex-grow: 1;
 }

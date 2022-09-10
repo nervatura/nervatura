@@ -1,3 +1,6 @@
+## 5.0.6
+- upgrade dependencies
+
 ## 5.0.5
 - install: new Windows setup program
 - install: Windows Package Manager
