@@ -1,3 +1,10 @@
+## 5.0.7
+- client-component: new framework and dependency free native web client component
+- client-component: nt-button, nt-date, nt-field, nt-icon, nt-input, nt-label, nt-list, nt-number, nt-pagination, nt-row, nt-select, nt-spinner, nt-table, nt-toast components and tests
+- client-component: login-page, LoginController components and tests
+- client-component: nervatura-client, AppController, StateController components
+- upgrade dependencies
+
 ## 5.0.6
 - upgrade dependencies
 

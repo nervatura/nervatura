@@ -1,7 +1,7 @@
 {
   "name": "nervatura-client",
   "description": "Business Management Application",
-  "version": "5.0.6",
+  "version": "5.0.7",
   "keywords": [
     "business management",
     "open-data",
@@ -76,18 +76,18 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.5.10",
-    "@storybook/addon-essentials": "^6.5.10",
-    "@storybook/addon-links": "^6.5.10",
-    "@storybook/builder-webpack5": "^6.5.10",
-    "@storybook/manager-webpack5": "^6.5.10",
-    "@storybook/node-logger": "^6.5.10",
+    "@storybook/addon-actions": "^6.5.12",
+    "@storybook/addon-essentials": "^6.5.12",
+    "@storybook/addon-links": "^6.5.12",
+    "@storybook/builder-webpack5": "^6.5.12",
+    "@storybook/manager-webpack5": "^6.5.12",
+    "@storybook/node-logger": "^6.5.12",
     "@storybook/preset-create-react-app": "^4.1.2",
-    "@storybook/react": "^6.5.10",
+    "@storybook/react": "^6.5.12",
     "@testing-library/jest-dom": "^5.16.5ya",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-    "date-fns": "^2.29.2",
+    "date-fns": "^2.29.3",
     "immutability-helper": "^3.1.1",
     "pell": "^1.0.6",
     "print-js": "^1.6.0",
@@ -101,7 +101,7 @@
     "react-toastify": "^9.0.8",
     "remotedev-react-state": "^0.1.0",
     "sanitize.css": "^13.0.0",
-    "source-map-explorer": "^2.5.2",
+    "source-map-explorer": "^2.5.3",
     "whatwg-fetch": "^3.6.2"
   },
   "files": [
