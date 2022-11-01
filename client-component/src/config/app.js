@@ -1,6 +1,8 @@
 /* c8 ignore start */
 import * as locales from './locales.js';
 
+import { APP_MODULE, SIDE_VISIBILITY, APP_THEME } from './enums.js'
+
 const publicHost = "nervatura.github.io"
 const basePath = "/api"
 
@@ -25,14 +27,12 @@ export const store = {
     helpPage: "https://nervatura.github.io/nervatura/docs/client/"
   },
   ui: {
-    toastTime: 7000,
+    toastTimeout: 4, // sec
     paginationPage: 10,
     selectorPage: 5,
     history: 5,
     timeIntervals: 15,
     searchSubtract: 3, // months
-    filter_opt_1: [["===","EQUAL"],["==N","IS NULL"],["!==","NOT EQUAL"]],
-    filter_opt_2: [["===","EQUAL"],["==N","IS NULL"],["!==","NOT EQUAL"],[">==",">="],["<==","<="]],
     export_sep: ";",
     page_size: "a4",
     page_orient: "portrait",
@@ -72,9 +72,9 @@ export const store = {
     ]
   },
   current: { 
-    home: "search", module: "login", side: "auto",
+    home: APP_MODULE.SEARCH, module: APP_MODULE.LOGIN, side: SIDE_VISIBILITY.AUTO,
     lang: (localStorage.getItem("lang") && locales[localStorage.getItem("lang")]) ? localStorage.getItem("lang") : "en",
-    theme: localStorage.getItem("theme") || "light"
+    theme: localStorage.getItem("theme") || APP_THEME.LIGHT
   },
   login: { 
     username: localStorage.getItem("username") || "",
@@ -92,25 +92,3 @@ export const store = {
   template: { dirty: false }, 
   bookmark: { history: null, bookmark: [] }
 }
-
-/* c8 ignore stop */
-
-/*
-
-export const getSetting = (key) => {
-  switch (key) {    
-    case "ui":
-      let values = update({}, {$set: store.ui})
-      for (const ikey in values) {
-        if(localStorage.getItem(ikey)){
-          values[ikey] = localStorage.getItem(ikey)
-        }
-      }
-      return values
-
-    default:
-      return localStorage.getItem(key) || store.ui[key] || "";
-  }
-}
-
-*/

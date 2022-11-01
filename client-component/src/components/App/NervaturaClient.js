@@ -1,17 +1,39 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, nothing } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import variablesCSS from '../../config/variables.js';
+import { APP_MODULE, TOAST_TYPE } from '../../config/enums.js'
 import { styles } from './NervaturaClient.styles.js'
 
 import { StateController } from '../../controllers/StateController.js'
 import { AppController } from '../../controllers/AppController.js'
 import { LoginController } from '../../controllers/LoginController.js'
+import { MenuController } from '../../controllers/MenuController.js'
+import { SearchController } from '../../controllers/SearchController.js'
+import { Queries } from '../../controllers/Queries.js'
+import { Quick } from '../../controllers/Quick.js'
 
 import { store as storeConfig } from '../../config/app.js'
 
-import '../LoginPage/login-page.js'
-import '../Form/NtSpinner/nt-spinner.js'
-import '../Form/NtToast/nt-toast.js'
+import '../Form/Spinner/form-spinner.js'
+import '../Form/Toast/form-toast.js'
+import '../Login/client-login.js'
+import '../MenuBar/client-menubar.js'
+import '../Search/client-search.js'
+
+const InputBox = ({ 
+  title, message, infoText, value, defaultOK, showValue, labelCancel, labelOK, onEvent 
+}) => html`<modal-inputbox
+    title="${ifDefined(title)}"
+    message="${ifDefined(message)}"
+    infoText="${ifDefined(infoText)}"
+    value="${ifDefined(value)}"
+    labelCancel="${ifDefined(labelCancel)}"
+    labelOK="${ifDefined(labelOK)}"
+    ?defaultOK="${defaultOK||false}"
+    ?showValue="${showValue||false}"
+    .onEvent=${onEvent}
+  ></modal-inputbox>`
 
 export class NervaturaClient extends LitElement {
 
@@ -29,42 +51,63 @@ export class NervaturaClient extends LitElement {
   constructor() {
     super();
     this.state = new StateController(this, storeConfig)
+    this.inputBox = InputBox
+    this.queries= Queries({ getText: (key) => this.msg(key,{ id: key }) })
+    this.quick= {...Quick}
   }
 
   connectedCallback() {
     super.connectedCallback();
-    // window.addEventListener("scroll", this._onScroll.bind(this), {passive: true});
-    // window.addEventListener('resize', this._onResize.bind(this));
+    // window.addEveListener("scroll", this._onScroll.bind(this), {passive: true});
+    // window.addEveListener('resize', this._onResize.bind(this));
     this._loadConfig()
   }
 
   disconnectedCallback() {
-    // window.removeEventListener("scroll", this._onScroll.bind(this));
-    // window.removeEventListener('resize', this._onResize.bind(this));
+    // window.removeEveListener("scroll", this._onScroll.bind(this));
+    // window.removeEveListener('resize', this._onResize.bind(this));
     super.disconnectedCallback();
   }
   
   _onResize() {
-    if((this.state.data.current.clientHeight !== window.innerHeight) || 
-      (this.state.data.current.clientWidth !== window.innerWidth)){
+    const { current } = this.state.data
+    if((current.clientHeight !== window.innerHeight) || 
+      (current.clientWidth !== window.innerWidth)){
         this.setData("current", {
-          ...this.state.data.current,
           clientHeight: window.innerHeight, clientWidth: window.innerWidth
         })
     }
   }
 
   _onScroll() {
+    const { current } = this.state.data
     const scrollTop = ((document.body.scrollTop > 100) || (document.documentElement.scrollTop > 100))
-    if(this.state.data.current.scrollTop !== scrollTop){
+    if(current.scrollTop !== scrollTop){
       this.setData("current", {
-        ...this.state.data.current,
         scrollTop
       })
     }
   }
 
+  getSetting(key) {
+    const { ui } = this.state.data
+    switch (key) {    
+      case "ui":
+        const values = {...ui}
+        Object.keys(values).forEach(ikey => {
+          if(localStorage.getItem(ikey)){
+            values[ikey] = localStorage.getItem(ikey)
+          }
+        });
+        return values
+  
+      default:
+        return localStorage.getItem(key) || ui[key] || "";
+    }
+  }
+
   async _loadConfig(){
+    const { session } = this.state.data
     const getPath = (location) => {
       const getParams = (prmString) => {
         const params = {}
@@ -86,7 +129,7 @@ export class NervaturaClient extends LitElement {
       return [path[0], path.slice(1)]
     }
 
-    let config = {...this.state.data.session}
+    let config = {...session}
     try {
       const app = new AppController(this, this.getStore())
       const result = await app.request(`${this.state.data.login.server}/config`, {
@@ -106,13 +149,12 @@ export class NervaturaClient extends LitElement {
       if(localStorage.getItem("lang") && config.locales[localStorage.getItem("lang")] 
         && (localStorage.getItem("lang") !== this.state.data.current.lang)){
           this.setData("current", {
-            ...this.state.data.current,
             lang: localStorage.getItem("lang")
           })
         }
       const [ current, params ] = getPath(window.location)
       if(current === "hash"){ 
-        const login = new LoginController(this, this.getStore(), new AppController(this, this.getStore()))
+        const login = new LoginController(this, app)
         if (params.access_token){
           login.tokenValidation(params)
         }
@@ -122,7 +164,7 @@ export class NervaturaClient extends LitElement {
       }
     } catch (error) {
       this.setData("error", error )
-      this.showToast("error", error.message)
+      this.showToast(TOAST_TYPE.ERROR, error.message)
     }
   }
 
@@ -131,7 +173,8 @@ export class NervaturaClient extends LitElement {
       data: this.state.data,
       setData: (...args) => this.setData(...args),
       showToast: (...args) => this.showToast(...args),
-      msg: (...args) => this.msg(...args)
+      msg: (...args) => this.msg(...args),
+      getSetting: (...args) => this.getSetting(...args),
     }
   }
 
@@ -139,13 +182,13 @@ export class NervaturaClient extends LitElement {
     this.state.data = { key, value, update }
   }
 
-  showToast(toastType, toastValue) {
-    this.setData("current", {
-      ...this.state.data.current,
-      toastType, toastValue
-    })
-    if(this.state.data.current.toast){
-      this.state.data.current.toast.show()
+  showToast(type, value, toastTimeout) {
+    const { current } = this.state.data
+    const timeout = (typeof(toastTimeout) !== "undefined") ? toastTimeout : this.getSetting("toastTimeout")
+    if(current.toast){
+      current.toast.show({
+        type, value, timeout
+      })
     }
   }
 
@@ -163,37 +206,57 @@ export class NervaturaClient extends LitElement {
 
   protector(){
     const { data } = this.state
-    if(data.login.data){
+    const { current, session } = this.state.data
+    const app = new AppController(this, this.getStore())
+    if(data[APP_MODULE.LOGIN].data){
       return html`
-      <div theme="${data.current.theme}" class=${["main"].join(' ')}>
-        <span>${data.login.data.token}</span>
+      <div class="client-menubar">
+        <client-menubar id="menuBar"
+          side="${current.side}"
+          module="${current.module}"
+          ?scrollTop="${current.scrollTop}"
+          .bookmark="${data[APP_MODULE.BOOKMARK]}"
+          selectorPage=${this.getSetting("selectorPage")}
+          .msg="${(...args)=>this.msg(...args)}"
+          .onEvent="${new MenuController(this, app)}"
+        ></client-menubar>
+      </div>
+      <div theme="${current.theme}" class="main">
+        ${(current.module === APP_MODULE.SEARCH) ? html`<client-search
+          id="search" .data=${data[APP_MODULE.SEARCH]} side="${current.side}"
+          .queries="${this.queries}"
+          .quick="${this.quick}"
+          .auditFilter="${data[APP_MODULE.LOGIN].data.audit_filter}"
+          paginationPage=${this.getSetting("paginationPage")}
+          .onEvent=${new SearchController(this, app)}
+          .msg=${(...args)=>this.msg(...args)}
+        ></client-search>` :nothing}
+        ${(current.modalForm) ? current.modalForm : nothing}
       </div>`
     }
     return html`
-      <login-page id="loginPage"
-        version="${this.state.data.session.version}"
-        serverURL="${this.state.data.session.serverURL}"
-        .locales="${{...this.state.data.session.locales}}"
-        lang="${this.state.data.current.lang}"
+      <client-login id="Login"
+        version="${session.version}"
+        serverURL="${session.serverURL}"
+        .locales="${{...session.locales}}"
+        lang="${current.lang}"
         .msg="${(...args)=>this.msg(...args)}"
-        theme="${this.state.data.current.theme}"
-        .data="${{...this.state.data.login}}"
-        .onEvent="${new LoginController(this, this.getStore(), new AppController(this, this.getStore()))}"
+        theme="${current.theme}"
+        .data="${{...data[APP_MODULE.LOGIN]}}"
+        .onEvent="${new LoginController(this, app)}"
        >
-      </login-page>
+      </client-login>
     `;
   }
 
   render() {
-    const { data } = this.state
+    const { current } = this.state.data
     return html`
-      <nt-toast
-        id="appToast"
-        type="${this.state.data.current.toastType}"
-        .store="${this.getStore()}"
-      >${this.state.data.current.toastValue}</nt-toast>
+      <form-toast id="appToast" 
+        .store="${this.getStore()}" 
+        timeout=${this.getSetting("toastTimeout")} ></form-toast>
       ${this.protector()}
-      ${(data.current.request)?html`<nt-spinner></nt-spinner>`:``}
+      ${(current.request)?html`<form-spinner></form-spinner>`:``}
     `
   }
 }

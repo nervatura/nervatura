@@ -3,7 +3,6 @@ package nervatura
 import (
 	"errors"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -162,9 +161,8 @@ TokenLogin - database JWT token auth.
 
 Example:
 
-  options := map[string]interface{}{"token": "JWT_token"}
-  err := getAPI().TokenLogin(options)
-
+	options := map[string]interface{}{"token": "JWT_token"}
+	err := getAPI().TokenLogin(options)
 */
 func (api *API) TokenLogin(options IM) error {
 	tokenString := ut.ToString(options["token"], "")
@@ -187,12 +185,11 @@ UserPassword - set/change a user password
 
 Example:
 
-  options = map[string]interface{}{
-    "username": "demo",
-    "password": "321",
-    "confirm": "321"}
-  err = api.UserPassword(options)
-
+	options = map[string]interface{}{
+	  "username": "demo",
+	  "password": "321",
+	  "confirm": "321"}
+	err = api.UserPassword(options)
 */
 func (api *API) UserPassword(options IM) error {
 	if _, found := options["username"]; !found {
@@ -266,12 +263,11 @@ UserLogin - database user login
 
 Returns a access token and the type of database.
 
-  options := map[string]interface{}{
-    "database": "alias_name",
-    "username": "username",
-    "password": "password"}
-  token, engine, err := getAPI().UserLogin(options)
-
+	options := map[string]interface{}{
+	  "database": "alias_name",
+	  "username": "username",
+	  "password": "password"}
+	token, engine, err := getAPI().UserLogin(options)
 */
 func (api *API) UserLogin(options IM) (string, string, error) {
 	if !ut.ToBoolean(api.NStore.config["NT_PASSWORD_LOGIN"], true) {
@@ -324,12 +320,11 @@ All data will be destroyed!
 
 Example:
 
-  options := map[string]interface{}{
-    "database": alias,
-    "demo": true,
-    "report_dir": ""}
-  _, err := getAPI().DatabaseCreate(options)
-
+	options := map[string]interface{}{
+	  "database": alias,
+	  "demo": true,
+	  "report_dir": ""}
+	_, err := getAPI().DatabaseCreate(options)
 */
 func (api *API) DatabaseCreate(options IM) ([]SM, error) {
 	logData := []SM{}
@@ -524,15 +519,15 @@ Delete - delete a record
 
 Examples:
 
-  Delete data by ID:
+	Delete data by ID:
 
-  options = map[string]interface{}{"nervatype": "address", "id": 2}
-  err = api.Delete(options)
+	options = map[string]interface{}{"nervatype": "address", "id": 2}
+	err = api.Delete(options)
 
-  Delete data by Key:
+	Delete data by Key:
 
-  options = map[string]interface{}{"nervatype": "address", "key": "customer/DMCUST/00001~1"}
-  err = api.Delete(options)
+	options = map[string]interface{}{"nervatype": "address", "key": "customer/DMCUST/00001~1"}
+	err = api.Delete(options)
 */
 func (api *API) Delete(options IM) error {
 	if _, found := options["id"]; found {
@@ -550,17 +545,16 @@ Get - returns one or more records
 
 Examples:
 
-  Find data by Filter:
+	Find data by Filter:
 
-  options = map[string]interface{}{"nervatype": "customer", "metadata": true,
-    "filter": "custname;==;First Customer Co.|custnumber;in;DMCUST/00001,DMCUST/00002"}
-  _, err = api.Get(options)
+	options = map[string]interface{}{"nervatype": "customer", "metadata": true,
+	  "filter": "custname;==;First Customer Co.|custnumber;in;DMCUST/00001,DMCUST/00002"}
+	_, err = api.Get(options)
 
-  Find data by IDs:
+	Find data by IDs:
 
-  options = map[string]interface{}{"nervatype": "customer", "metadata": true, "ids": "2,4"}
-  _, err = api.Get(options)
-
+	options = map[string]interface{}{"nervatype": "customer", "metadata": true, "ids": "2,4"}
+	_, err = api.Get(options)
 */
 func (api *API) Get(options IM) (results []IM, err error) {
 	nervatype := ut.ToString(options["nervatype"], "")
@@ -647,17 +641,17 @@ Only "select" queries and functions can be executed. Changes to the data are not
 
 Examples:
 
-  options := []map[string]interface{}{
-    map[string]interface{}{
-      "key":    "customers",
-      "text":   "select c.id, ct.groupvalue as custtype, c.custnumber, c.custname from customer c inner join groups ct on c.custtype = ct.id where c.deleted = 0 and c.custnumber <> 'HOME'",
-    },
-    map[string]interface{}{
-      "key":    "invoices",
-      "text":   "select t.id, t.transnumber, tt.groupvalue as transtype, td.groupvalue as direction, t.transdate, c.custname, t.curr, items.amount from trans t inner join groups tt on t.transtype = tt.id inner join groups td on t.direction = td.id inner join customer c on t.customer_id = c.id inner join ( select trans_id, sum(amount) amount from item where deleted = 0 group by trans_id) items on t.id = items.trans_id where t.deleted = 0 and tt.groupvalue = 'invoice'",
-    },
-  }
-  _, err = api.View(options)
+	options := []map[string]interface{}{
+	  map[string]interface{}{
+	    "key":    "customers",
+	    "text":   "select c.id, ct.groupvalue as custtype, c.custnumber, c.custname from customer c inner join groups ct on c.custtype = ct.id where c.deleted = 0 and c.custnumber <> 'HOME'",
+	  },
+	  map[string]interface{}{
+	    "key":    "invoices",
+	    "text":   "select t.id, t.transnumber, tt.groupvalue as transtype, td.groupvalue as direction, t.transdate, c.custname, t.curr, items.amount from trans t inner join groups tt on t.transtype = tt.id inner join groups td on t.direction = td.id inner join customer c on t.customer_id = c.id inner join ( select trans_id, sum(amount) amount from item where deleted = 0 group by trans_id) items on t.id = items.trans_id where t.deleted = 0 and tt.groupvalue = 'invoice'",
+	  },
+	}
+	_, err = api.View(options)
 */
 func (api *API) View(options []IM) (results IM, err error) {
 	results = IM{}
@@ -708,50 +702,49 @@ Function - call a server-side function
 
 Examples:
 
-  The next value from the numberdef table (customer, product, invoice etc.):
+	  The next value from the numberdef table (customer, product, invoice etc.):
 
-  options := map[string]interface{}{
-    "key": "nextNumber",
-    "values": map[string]interface{}{
-      "numberkey": "custnumber",
-      "step":      false,
-    },
-  }
-  _, err = api.Function(options)
+	  options := map[string]interface{}{
+	    "key": "nextNumber",
+	    "values": map[string]interface{}{
+	      "numberkey": "custnumber",
+	      "step":      false,
+	    },
+	  }
+	  _, err = api.Function(options)
 
-  Product price (current date, all customer, all qty):
+	  Product price (current date, all customer, all qty):
 
-  options = map[string]interface{}{
-    "key": "getPriceValue",
-    "values": map[string]interface{}{
-      "curr":        "EUR",
-      "product_id":  2,
-      "customer_id": 2,
-    },
-  }
-  _, err = api.Function(options)
+	  options = map[string]interface{}{
+	    "key": "getPriceValue",
+	    "values": map[string]interface{}{
+	      "curr":        "EUR",
+	      "product_id":  2,
+	      "customer_id": 2,
+	    },
+	  }
+	  _, err = api.Function(options)
 
-  Email sending with attached report:
+	  Email sending with attached report:
 
-	options := map[string]interface{}{
-		"key": "sendEmail",
-		"values": map[string]interface{}{
-			"provider": "smtp",
-			"email": map[string]interface{}{
-				"from": "info@nervatura.com", "name": "Nervatura",
-				"recipients": []interface{}{
-					map[string]interface{}{"email": "sample@company.com"}},
-				"subject": "Demo Invoice",
-				"text":    "Email sending with attached invoice",
-				"attachments": []interface{}{
-					map[string]interface{}{
-						"reportkey": "ntr_invoice_en",
-						"nervatype": "trans",
-						"refnumber": "DMINV/00001"}},
+		options := map[string]interface{}{
+			"key": "sendEmail",
+			"values": map[string]interface{}{
+				"provider": "smtp",
+				"email": map[string]interface{}{
+					"from": "info@nervatura.com", "name": "Nervatura",
+					"recipients": []interface{}{
+						map[string]interface{}{"email": "sample@company.com"}},
+					"subject": "Demo Invoice",
+					"text":    "Email sending with attached invoice",
+					"attachments": []interface{}{
+						map[string]interface{}{
+							"reportkey": "ntr_invoice_en",
+							"nervatype": "trans",
+							"refnumber": "DMINV/00001"}},
+				},
 			},
-		},
-	}
-
+		}
 */
 func (api *API) Function(options IM) (results interface{}, err error) {
 	key := ut.ToString(options["key"], "")
@@ -986,42 +979,41 @@ If the ID (or Key) value is missing, it creates a new item. Returns the all new/
 
 Examples:
 
-  addressData := []map[string]interface{}{
-    map[string]interface{}{
-      "nervatype":         10,
-      "ref_id":            2,
-      "zipcode":           "12345",
-      "city":              "BigCity",
-      "notes":             "Create a new item by IDs",
-      "address_metadata1": "value1",
-      "address_metadata2": "value2~note2"},
-    map[string]interface{}{
-      "id":                6,
-      "zipcode":           "54321",
-      "city":              "BigCity",
-      "notes":             "Update an item by IDs",
-      "address_metadata1": "value1",
-      "address_metadata2": "value2~note2"},
-    map[string]interface{}{
-      "keys": map[string]interface{}{
-        "nervatype": "customer",
-        "ref_id":    "customer/DMCUST/00001"},
-      "zipcode":           "12345",
-      "city":              "BigCity",
-      "notes":             "Create a new item by Keys",
-      "address_metadata1": "value1",
-      "address_metadata2": "value2~note2"},
-    map[string]interface{}{
-      "keys": map[string]interface{}{
-        "id": "customer/DMCUST/00001~1"},
-      "zipcode":           "54321",
-      "city":              "BigCity",
-      "notes":             "Update an item by Keys",
-      "address_metadata1": "value1",
-      "address_metadata2": "value2~note2"}}
+	addressData := []map[string]interface{}{
+	  map[string]interface{}{
+	    "nervatype":         10,
+	    "ref_id":            2,
+	    "zipcode":           "12345",
+	    "city":              "BigCity",
+	    "notes":             "Create a new item by IDs",
+	    "address_metadata1": "value1",
+	    "address_metadata2": "value2~note2"},
+	  map[string]interface{}{
+	    "id":                6,
+	    "zipcode":           "54321",
+	    "city":              "BigCity",
+	    "notes":             "Update an item by IDs",
+	    "address_metadata1": "value1",
+	    "address_metadata2": "value2~note2"},
+	  map[string]interface{}{
+	    "keys": map[string]interface{}{
+	      "nervatype": "customer",
+	      "ref_id":    "customer/DMCUST/00001"},
+	    "zipcode":           "12345",
+	    "city":              "BigCity",
+	    "notes":             "Create a new item by Keys",
+	    "address_metadata1": "value1",
+	    "address_metadata2": "value2~note2"},
+	  map[string]interface{}{
+	    "keys": map[string]interface{}{
+	      "id": "customer/DMCUST/00001~1"},
+	    "zipcode":           "54321",
+	    "city":              "BigCity",
+	    "notes":             "Update an item by Keys",
+	    "address_metadata1": "value1",
+	    "address_metadata2": "value2~note2"}}
 
-  _, err = api.Update("address", addressData)
-
+	_, err = api.Update("address", addressData)
 */
 func (api *API) Update(nervatype string, data []IM) (results []int64, err error) {
 	if _, found := api.NStore.models[nervatype]; !found {
@@ -1093,39 +1085,38 @@ Report - server-side PDF and CSV report generation
 
 Examples:
 
-  Customer PDF invoice:
+	Customer PDF invoice:
 
-  options := map[string]interface{}{
-    "reportkey":   "ntr_invoice_en",
-    "orientation": "portrait",
-    "size":        "a4",
-    "nervatype":   "trans",
-    "refnumber":   "DMINV/00001",
-  }
-  _, err = api.Report(options)
+	options := map[string]interface{}{
+	  "reportkey":   "ntr_invoice_en",
+	  "orientation": "portrait",
+	  "size":        "a4",
+	  "nervatype":   "trans",
+	  "refnumber":   "DMINV/00001",
+	}
+	_, err = api.Report(options)
 
-  Customer invoice XML data:
+	Customer invoice XML data:
 
-  options = map[string]interface{}{
-    "reportkey": "ntr_invoice_en",
-    "output":    "xml",
-    "nervatype": "trans",
-    "refnumber": "DMINV/00001",
-  }
-  _, err = api.Report(options)
+	options = map[string]interface{}{
+	  "reportkey": "ntr_invoice_en",
+	  "output":    "xml",
+	  "nervatype": "trans",
+	  "refnumber": "DMINV/00001",
+	}
+	_, err = api.Report(options)
 
-  CSV report:
+	CSV report:
 
-  options = map[string]interface{}{
-    "reportkey": "csv_vat_en",
-    "filters": map[string]interface{}{
-      "date_from": "2014-01-01",
-      "date_to":   "2019-01-01",
-      "curr":      "EUR",
-    },
-  }
-  _, err = api.Report(options)
-
+	options = map[string]interface{}{
+	  "reportkey": "csv_vat_en",
+	  "filters": map[string]interface{}{
+	    "date_from": "2014-01-01",
+	    "date_to":   "2019-01-01",
+	    "curr":      "EUR",
+	  },
+	}
+	_, err = api.Report(options)
 */
 func (api *API) Report(options IM) (results IM, err error) {
 	return api.NStore.getReport(options)
@@ -1136,11 +1127,10 @@ ReportList - returns all installable files from the NT_REPORT_DIR (environment v
 
 Example:
 
-  options := map[string]interface{}{
-    "report_dir": "",
-  }
-  _, err = api.ReportList(options)
-
+	options := map[string]interface{}{
+	  "report_dir": "",
+	}
+	_, err = api.ReportList(options)
 */
 func (api *API) ReportList(options IM) (results []IM, err error) {
 	query := []Query{{
@@ -1195,7 +1185,7 @@ func (api *API) ReportList(options IM) (results []IM, err error) {
 	} else {
 		err = filepath.Walk(reportDir, func(path string, info os.FileInfo, err error) error {
 			if filepath.Ext(path) == ".json" {
-				if file, err := ioutil.ReadFile(filepath.Clean(path)); err == nil {
+				if file, err := os.ReadFile(filepath.Clean(path)); err == nil {
 					fileInfo(file, info.Name())
 				} else {
 					return err
@@ -1216,11 +1206,10 @@ ReportDelete - delete a report from the database
 
 Example:
 
-  options := nt.IM{
-    "reportkey": "ntr_cash_in_en",
-  }
-  err = api.ReportDelete(options)
-
+	options := nt.IM{
+	  "reportkey": "ntr_cash_in_en",
+	}
+	err = api.ReportDelete(options)
 */
 func (api *API) ReportDelete(options IM) (err error) {
 	reportkey := ut.ToString(options["reportkey"], "")
@@ -1250,12 +1239,11 @@ ReportInstall - install a report to the database
 
 Example:
 
-  options := nt.IM{
-    "report_dir": "",
-    "reportkey":  "ntr_cash_in_en",
-  }
-  _, err = api.ReportInstall(options)
-
+	options := nt.IM{
+	  "report_dir": "",
+	  "reportkey":  "ntr_cash_in_en",
+	}
+	_, err = api.ReportInstall(options)
 */
 func (api *API) ReportInstall(options IM) (result int64, err error) {
 	reportkey := ut.ToString(options["reportkey"], "")
@@ -1267,7 +1255,7 @@ func (api *API) ReportInstall(options IM) (result int64, err error) {
 	if reportDir == "" {
 		file, err = ut.Report.ReadFile(path.Join("static", "templates", reportkey+".json"))
 	} else {
-		file, err = ioutil.ReadFile(filepath.Clean(filepath.Join(reportDir, reportkey+".json")))
+		file, err = os.ReadFile(filepath.Clean(filepath.Join(reportDir, reportkey+".json")))
 	}
 	if err != nil {
 		return result, err

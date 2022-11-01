@@ -7,9 +7,9 @@ import (
 	"context"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -51,7 +51,7 @@ func (srv *HTTPService) respondMessage(w http.ResponseWriter, code int, payload 
 func (srv *HTTPService) ClientConfig(w http.ResponseWriter, r *http.Request) {
 	config := nt.IM{}
 	if srv.Config["NT_CLIENT_CONFIG"] != "" {
-		if content, err := ioutil.ReadFile(srv.Config["NT_CLIENT_CONFIG"].(string)); err == nil {
+		if content, err := os.ReadFile(srv.Config["NT_CLIENT_CONFIG"].(string)); err == nil {
 			_ = ut.ConvertFromByte(content, &config)
 		}
 	}

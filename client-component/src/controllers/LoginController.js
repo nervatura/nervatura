@@ -1,7 +1,9 @@
+import { APP_MODULE, LOGIN_PAGE_EVENT } from '../config/enums.js'
+
 export class LoginController {
-  constructor(host, store, app) {
+  constructor(host, app) {
     this.host = host;
-    this.store = store;
+    this.store = app.store;
     this.app = app;
     host.addController(this);
   }
@@ -22,7 +24,7 @@ export class LoginController {
   
   async loginData(params) {
     let data = {
-      ...this.store.data.login,
+      ...this.store.data[APP_MODULE.LOGIN],
       token: params.token, engine: params.engine 
     }
     let views = [
@@ -198,8 +200,8 @@ export class LoginController {
     const options = {
       method: "POST",
       data: {
-        username: data.login.username, password: data.login.password,
-        database: data.login.database
+        username: data[APP_MODULE.LOGIN].username, password: data[APP_MODULE.LOGIN].password,
+        database: data[APP_MODULE.LOGIN].database
       }
     }
     const result = await this.app.requestData("/auth/login", options)
@@ -230,25 +232,23 @@ export class LoginController {
     }
 
     setData("current", {
-      ...data.current,
-      module: "search"
+      module: APP_MODULE.SEARCH
     })
-    setData("login", {
-      ...data.login,
+    setData(APP_MODULE.LOGIN, {
       data: loginData
     })
-    localStorage.setItem("database", data.login.database);
-    localStorage.setItem("username", data.login.username);
-    localStorage.setItem("server", data.login.server);
+    localStorage.setItem("database", data[APP_MODULE.LOGIN].database);
+    localStorage.setItem("username", data[APP_MODULE.LOGIN].username);
+    localStorage.setItem("server", data[APP_MODULE.LOGIN].server);
     this.app.loadBookmark({ user_id: loginData.employee.id, token: loginData.token })
   }
 
   tokenError(err, callback) {
+    /* c8 ignore next 3 */
     if(callback){
       return window.location.replace(`${callback}?error=${window.btoa(err.message)}`)
     }
-    this.store.setData("current", {
-      ...this.store.data.current, 
+    this.store.setData("current", { 
       request: false 
     })
     return this.app.resultError(err)
@@ -262,8 +262,7 @@ export class LoginController {
     if(validate.error){
       return this.tokenError(validate.error, params.callback)
     }
-    this.store.setData("login", {
-      ...this.store.data.login,
+    this.store.setData(APP_MODULE.LOGIN, {
       username: validate.username,
       database: validate.database,
       callback: params.callback,
@@ -291,7 +290,6 @@ export class LoginController {
       }
       try {
         this.store.setData("current", {
-          ...this.store.data.current, 
           request: true 
         })
         const result = await this.app.request(params.callback, options)
@@ -311,23 +309,21 @@ export class LoginController {
 
   onPageEvent({key, data}){
     switch (key) {
-      case "change":
-        this.store.setData("login", {
-          ...this.store.data.login, 
+      case LOGIN_PAGE_EVENT.CHANGE:
+        this.store.setData(APP_MODULE.LOGIN, {
           [data.fieldname]: data.value 
         })
         break;
 
-      case "theme":
-      case "lang":
-        this.store.setData("current", {
-          ...this.store.data.current, 
+      case LOGIN_PAGE_EVENT.THEME:
+      case LOGIN_PAGE_EVENT.LANG:
+        this.store.setData("current", { 
           [key]: data 
         })
         localStorage.setItem([key], data);
         break;
       
-      case "login":
+      case LOGIN_PAGE_EVENT.LOGIN:
         this.onLogin()
         break;
     

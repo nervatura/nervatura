@@ -12,6 +12,7 @@ html, :host, *[theme="light"] {
   --neutral-2: 255, 255, 255;
   --accent-1: 0, 28, 50;
   --accent-1b: 0, 71, 93;
+  --accent-1c: 255, 255, 255;
   --base-0: 255, 255, 255;
   --base-1: 235, 235, 235;
   --base-2: 245, 245, 245;
@@ -31,6 +32,7 @@ html, :host, *[theme="light"] {
   --neutral-2: 0, 0, 0;
   --accent-1: 0, 28, 50;
   --accent-1b: 0, 71, 93;
+  --accent-1c: 255, 255, 255;
   --base-0: 0, 0, 2;
   --base-1: 15, 15, 15;
   --base-2: 25, 25, 25;

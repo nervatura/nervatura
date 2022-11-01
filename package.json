@@ -1,6 +1,6 @@
 {
   "name": "nervatura",
-  "version": "5.0.7",
+  "version": "5.0.8",
   "description": "Open Source Business Management Framework",
   "keywords": [
     "business management",
@@ -47,6 +47,6 @@
   "dependencies": {
     "mkdirp": "^1.0.4",
     "request": "^2.88.2",
-    "tar": "^6.1.11"
+    "tar": "^6.1.12"
   }
 }

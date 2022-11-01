@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/signal"
@@ -251,7 +250,7 @@ func (app *App) setTokenKey(keyType string) error {
 	if pkey != "" {
 		//file or key?
 		if _, err := os.Stat(pkey); err == nil {
-			content, err := ioutil.ReadFile(filepath.Clean(pkey))
+			content, err := os.ReadFile(filepath.Clean(pkey))
 			if err != nil {
 				return err
 			}

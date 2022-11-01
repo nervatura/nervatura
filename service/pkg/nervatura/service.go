@@ -13,7 +13,7 @@ import (
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
-//GetService - call Nervatura server side functions and services
+// GetService - call Nervatura server side functions and services
 func (nstore *NervaStore) GetService(key string, options IM) (interface{}, error) {
 
 	switch key {
@@ -31,7 +31,7 @@ func (nstore *NervaStore) GetService(key string, options IM) (interface{}, error
 	return nil, errors.New(ut.GetMessage("unknown_method") + ": " + key)
 }
 
-//nextNumber - get the next value from the numberdef table (transnumber, custnumber, partnumber etc.)
+// nextNumber - get the next value from the numberdef table (transnumber, custnumber, partnumber etc.)
 func (nstore *NervaStore) nextNumber(options IM) (retnumber string, err error) {
 
 	numberkey := ut.ToString(options["numberkey"], "")
@@ -136,7 +136,7 @@ func (nstore *NervaStore) nextNumber(options IM) (retnumber string, err error) {
 	return retnumber, nil
 }
 
-//getPriceValue - get product price
+// getPriceValue - get product price
 func (nstore *NervaStore) getPriceValue(options IM) (results IM, err error) {
 	results = IM{"price": float64(0), "discount": float64(0)}
 	params := IM{

@@ -3,7 +3,6 @@ package report
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"path"
 	"strings"
 
@@ -343,7 +342,7 @@ func (gen *genGoPDF) Save2Pdf() ([]byte, error) {
 	if err := gen.pdf.Write(ba); err != nil {
 		return nil, err
 	}
-	return ioutil.ReadAll(ba)
+	return io.ReadAll(ba)
 }
 
 // Save2PdfFile writes the PDF document to file

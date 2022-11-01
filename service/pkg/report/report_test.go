@@ -2,7 +2,7 @@ package report
 
 import (
 	"image/color"
-	"io/ioutil"
+	"os"
 	"path"
 	"testing"
 
@@ -220,7 +220,7 @@ func TestCreateGoReport(t *testing.T) {
 func TestXMLData(t *testing.T) {
 	rpt := createGoReport(t)
 	dataXml := rpt.Save2Xml()
-	if err := ioutil.WriteFile("../../data/test/data.xml", []byte(dataXml), 0644); err != nil {
+	if err := os.WriteFile("../../data/test/data.xml", []byte(dataXml), 0644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -236,7 +236,7 @@ func TestJSONReport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = ioutil.WriteFile("../../data/test/json.pdf", pdf, 0644); err != nil {
+	if err = os.WriteFile("../../data/test/json.pdf", pdf, 0644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -252,7 +252,7 @@ func TestBase64Report(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := ioutil.WriteFile("../../data/test/base64.txt", []byte(base64Str), 0644); err != nil {
+	if err := os.WriteFile("../../data/test/base64.txt", []byte(base64Str), 0644); err != nil {
 		t.Fatal(err)
 	}
 

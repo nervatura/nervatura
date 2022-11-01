@@ -85,7 +85,7 @@ export const en = {
   search_place_warehouse: "WAREHOUSE",
   
   search_office: "BACK OFFICE",
-  title_printqueue: " REPORT QUEUE",
+  title_printqueue: "REPORT QUEUE",
   title_rate: "INTEREST AND RATE",
   title_servercmd: "SERVER SHORTCUTS",
   
