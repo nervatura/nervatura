@@ -1,5 +1,4 @@
 import { LitElement, html } from 'lit';
-// import { msg } from '@lit/localize';
 
 import '../../Form/Label/form-label.js'
 import '../../Form/Icon/form-icon.js'
@@ -13,12 +12,10 @@ import { MODAL_EVENT, PAGINATION_TYPE, BUTTON_TYPE, BOOKMARK_VIEW } from '../../
 export class Bookmark extends LitElement {
   constructor() {
     super();
-    /* c8 ignore next 1 */
-    this.msg = (defValue) => defValue
     this.bookmark = { history: null, bookmark: [] }
     this.tabView = BOOKMARK_VIEW.BOOKMARK
     this.pageSize = 5;
-    this.values = {}
+    this.onEvent = {}
   }
 
   static get properties() {
@@ -26,7 +23,7 @@ export class Bookmark extends LitElement {
       bookmark: { type: Object },
       tabView: { type: String },
       pageSize: { type: Number },
-      values: { type: Object },
+      onEvent: { type: Object },
     };
   }
 
@@ -37,7 +34,7 @@ export class Bookmark extends LitElement {
   }
 
   _onModalEvent(key, data){
-    if(this.onEvent && this.onEvent.onModalEvent){
+    if(this.onEvent.onModalEvent){
       this.onEvent.onModalEvent({ key, data })
     }
     this.dispatchEvent(
@@ -163,7 +160,7 @@ export class Bookmark extends LitElement {
                 editIcon="${(this.tabView === "bookmark") ? "Star" : "History"}"
                 .onEdit=${(row)=>this._onModalEvent(MODAL_EVENT.SELECTED, { view: this.tabView, row })}
                 .onDelete=${
-                  (this.tabView === "bookmark") ? (row)=>this._onModalEvent(MODAL_EVENT.DELETE, { bookmark_id: row.bookmark_id, menubar: this.values.menubar }) : null 
+                  (this.tabView === "bookmark") ? (row)=>this._onModalEvent(MODAL_EVENT.DELETE, { bookmark_id: row.bookmark_id }) : null 
                 }
               ></form-list>
             </div>

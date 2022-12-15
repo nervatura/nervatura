@@ -15,7 +15,6 @@ html, :host {
 }
 .main {
   background-color: rgb(var(--base-0));
-  height: 100%;
   width: 100%;
   position: absolute;
   left: 0;

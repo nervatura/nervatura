@@ -6,6 +6,8 @@ html, :host {
   --font-size: 14px;
   --menu-top-height: 43.5px;
   --menu-side-width: 250px;
+  --light: 255, 255, 255;
+  --dark: 0, 0, 2;
 }
 html, :host, *[theme="light"] {
   --neutral-1: 0, 0, 0;

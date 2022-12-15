@@ -2,7 +2,7 @@ import { expect } from '@open-wc/testing';
 
 import { Queries } from './Queries.js'
 
-const query = Queries({ getText: (key)=> key })
+const query = Queries({ msg: (key)=> key })
 
 it('Queries', () => {
   expect(query.customer().options).to.exist

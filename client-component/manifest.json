@@ -5,7 +5,7 @@
   "description": "Business Management Application",
   "icons": [
     {
-      "src": "../assets/favicon.svg",
+      "src": "./favicon.svg",
       "type": "image/svg+xml",
       "sizes": "512x512"
     }

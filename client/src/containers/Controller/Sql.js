@@ -1273,7 +1273,7 @@ export const Sql = ({ getText }) => {
         
         shipping_delivery: () => {
           let sql ={
-            select:["t.id","{CCS}p.unit{SEP}' | '{SEP}{CAS_TEXT}mv.qty {CAE_TEXT}{SEP}' | '{SEP}mv.notes{CCE} as lslabel",
+            select:["t.id","{CCS}p.unit{SEP}' | '{SEP}{CAS_TEXT}mv.qty {CAE_TEXT}{SEP}' | '{SEP}case when mv.notes is null then '' else mv.notes end{CCE} as lslabel",
               "{CCS}p.partnumber{SEP}' | '{SEP}p.description{CCE} as lsvalue",
               "{CCS}t.transnumber{SEP}' | '{SEP} "+
                 "{CAS_TEXT}{FMS_DATETIME}mv.shippingdate {FME_DATETIME} {CAE_TEXT}"+

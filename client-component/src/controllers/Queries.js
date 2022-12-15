@@ -1,5 +1,9 @@
-export const Queries = ({ getText }) => ({
-    
+import { ACTION_EVENT } from '../config/enums.js'
+
+export const Queries = (app) => {
+  const { msg } = app
+  const getText = (key) => msg(key,{ id: key })
+  return {
     customer: () => ({
       options: {
         deffield_sql: {
@@ -1006,7 +1010,7 @@ export const Queries = ({ getText }) => ({
         columns: {ratetype:true, ratedate:true, curr:true, ratevalue:true},
         label: getText("rate_view"),
         actions_new: {
-          action: "loadEditor", ntype: "rate", ttype: null},
+          action: ACTION_EVENT.LOAD_EDITOR, ntype: "rate", ttype: null},
         fields: {
           ratetype: {fieldtype:'string', wheretype:'where', orderby:0, 
             label:getText("rate_ratetype"), sqlstr:'rtype.groupvalue '},
@@ -2096,4 +2100,5 @@ export const Queries = ({ getText }) => ({
             from:"groups", where:[["groupname","=","'nervatype'"],["and","groupvalue","=","'payment'"]]}]],
             ["and","ln.nervatype_2","=",[{select:["id"], from:"groups", 
               where:[["groupname","=","'nervatype'"],["and","groupvalue","=","'trans'"]]}]]]}}})
-  })
+  }
+}

@@ -41,7 +41,10 @@ div {
   width: 100%; 
 }
 .separator {
-  height: 15px;
+  height: 10px;
+  width: 100%;
+  border: none;
+  margin: 0;
 }
 .panel-group {
   padding: 2px 8px 3px;

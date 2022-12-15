@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, nothing } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -400,7 +400,7 @@ export class Table extends LitElement {
             ?canNextPage=${(this.currentPage < pageCount)} 
             ?hidePageSize=${this.hidePaginatonSize}
             .onEvent=${(key, value) => this._onPagination(key, value)} ></form-pagination>
-        </div>`:``}
+        </div>`:nothing}
         ${(this.tableFilter) ?
         html`<div class="row full" >
           <div class="cell" >
@@ -420,9 +420,9 @@ export class Table extends LitElement {
               .style="${{ padding: "8px 16px", "border-radius": 0, margin: "1px 0 2px 1px" }}"
               @click=${()=>this._onAddItem()} type="${BUTTON_TYPE.BORDER}"
             >${this.labelAdd}</form-button>
-          </div>`:``}
-        </div>`:``}
-      </div>`:``}
+          </div>`:nothing}
+        </div>`:nothing}
+      </div>`:nothing}
       <div class="table-wrap" >
         <table id="${this.id}" name="${ifDefined(this.name)}"
           class="ui-table" style="${styleMap(this.style)}" >
@@ -439,7 +439,7 @@ export class Table extends LitElement {
           ?canNextPage=${(this.currentPage < pageCount)} 
           ?hidePageSize=${this.hidePaginatonSize}
           .onEvent=${(key, value) => this._onPagination(key, value)} ></form-pagination>
-    </div>`:``}
+    </div>`:nothing}
     `
   }
 

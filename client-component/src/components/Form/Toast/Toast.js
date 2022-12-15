@@ -36,18 +36,16 @@ export class Toast extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    if(this.store){
-      const { setData } = this.store
-      setData("current", {
+    if(this.setData){
+      this.setData("current", {
         toast: this
       }, false)
     }
   }
 
   disconnectedCallback() {
-    if(this.store){
-      const { setData } = this.store
-      setData("current", {
+    if(this.setData){
+      this.setData("current", {
         toast: null
       }, false)
     }

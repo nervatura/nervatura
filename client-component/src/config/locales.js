@@ -142,7 +142,7 @@ export const en = {
   title_dbsettings: "DEFAULT SETTINGS",
   title_numberdef: "DOC. NUMBERING",
   title_usergroup: "ACCESS RIGHTS",
-  title_printer: "PRINT PDF",
+  title_printer: "OPEN PDF",
   title_menucmd: "MENU SHORTCUTS",
   title_log: "DATABASE LOG",
   
@@ -201,7 +201,7 @@ export const en = {
   label_export_event: "iCAL EXPORT",
   label_barcode_scan: "BARCODE SCAN",
   label_export_data: "DATA EXPORT",
-  label_print: "PRINT PDF",
+  label_print: "OPEN PDF",
   label_printqueue: "REPORT QUEUE",
   label_groups: "GROUP",
   label_previous: "PREVIOUS",

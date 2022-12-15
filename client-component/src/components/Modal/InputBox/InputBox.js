@@ -2,7 +2,7 @@ import { LitElement, html, nothing } from 'lit';
 
 import '../../Form/Label/form-label.js'
 import '../../Form/Button/form-button.js'
-
+import '../../Form/Input/form-input.js'
 
 import { styles } from './InputBox.styles.js'
 import { MODAL_EVENT, BUTTON_TYPE, INPUT_TYPE } from '../../../config/enums.js'

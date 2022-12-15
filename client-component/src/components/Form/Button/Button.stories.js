@@ -4,7 +4,7 @@ import '../../StoryContainer/story-container.js';
 import './form-button.js';
 import '../Label/form-label.js';
 
-import { BUTTON_TYPE, APP_THEME } from '../../../config/enums.js'
+import { BUTTON_TYPE, APP_THEME, TEXT_ALIGN } from '../../../config/enums.js'
 
 export default {
   title: 'Form/Button',
@@ -18,6 +18,10 @@ export default {
     type: {
       control: 'select',
       options: Object.values(BUTTON_TYPE),
+    },
+    align: {
+      control: 'select',
+      options: Object.values(TEXT_ALIGN),
     },
     onClick: {
       name: "onClick",
@@ -44,7 +48,7 @@ export default {
 
 export function Template({ 
   id, name, theme, 
-  type, style, disabled, small, autofocus, full, selected, hidelabel, value, icon,
+  type, style, disabled, small, autofocus, full, selected, hidelabel, value, icon, align, badge,
   onClick, onEnter }) {
   const component = html`<form-button
     id="${id}"
@@ -52,12 +56,14 @@ export function Template({
     .value="${value}"
     .icon="${icon}"
     type="${type}"
+    align="${align}"
     ?disabled="${disabled}"
     ?autofocus="${autofocus}"
     ?small="${small}"
     ?full="${full}"
     ?selected="${selected}"
     ?hidelabel="${hidelabel}"
+    badge="${badge}"
     label="test" 
     .style="${style}"
     .onClick=${onClick}
@@ -72,6 +78,7 @@ Default.args = {
   theme: APP_THEME.LIGHT,
   name: undefined,
   type: BUTTON_TYPE.DEFAULT,
+  align: TEXT_ALIGN.CENTER,
   small: false,
   full: false,
   selected: false,
@@ -86,9 +93,10 @@ Dark.args = {
   ...Default.args,
   theme: APP_THEME.DARK,
   type: BUTTON_TYPE.DEFAULT,
+  align: TEXT_ALIGN.RIGHT,
   value: "Default dark",
   icon: "InfoCircle",
-  hidelabel: true
+  hidelabel: true,
 };
 
 export const Primary = Template.bind({});
@@ -96,6 +104,7 @@ Primary.args = {
   ...Default.args,
   theme: APP_THEME.LIGHT,
   type: BUTTON_TYPE.PRIMARY,
+  align: TEXT_ALIGN.CENTER,
   value: "Primary",
   icon: "Check",
   selected: true
@@ -115,7 +124,8 @@ Border.args = {
   theme: APP_THEME.LIGHT,
   type: BUTTON_TYPE.BORDER,
   value: "Border",
-  full: true
+  full: true,
+  badge: 7
 };
 
 export const BorderDark = Template.bind({});

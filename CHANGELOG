@@ -1,3 +1,7 @@
+## 5.0.8-5.0.9
+- client-component: new web components, controller classes and tests
+- upgrade dependencies
+
 ## 5.0.7
 - client-component: new framework and dependency free native web client component
 - client-component: nt-button, nt-date, nt-field, nt-icon, nt-input, nt-label, nt-list, nt-number, nt-pagination, nt-row, nt-select, nt-spinner, nt-table, nt-toast components and tests

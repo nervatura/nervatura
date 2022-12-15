@@ -7,7 +7,7 @@ export class StateController {
   }
 
   get data(){
-    return {...this._data}
+    return this._data
   }
 
   set data(props) {

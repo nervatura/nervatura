@@ -41,7 +41,11 @@ export function Template({ id, side, module, scrollTop, theme, onMenuEvent }) {
     side="${side}"
     module="${module}"
     ?scrollTop="${scrollTop}"
-    .onEvent=${{ onMenuEvent }}
+    .onEvent=${{ 
+      onMenuEvent 
+    }}
+    .msg=${(defValue) => defValue}
+    .app=${{ store: {} }}
   ></client-menubar>`
   return html`<story-container theme="${theme}">${component}</story-container>`;
 }

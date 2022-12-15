@@ -19,6 +19,12 @@ export const BUTTON_TYPE = {
   BORDER: "border", 
 }
 
+export const TEXT_ALIGN = {
+  LEFT: "left",
+  CENTER: "center", 
+  RIGHT: "right", 
+}
+
 export const INPUT_TYPE = {
   TEXT: "text",
   COLOR: "color", 
@@ -44,6 +50,11 @@ export const SIDE_VISIBILITY = {
   HIDE: "hide"
 }
 
+export const SIDE_VIEW = {
+  EDIT: "edit",
+  NEW: "new"
+}
+
 export const MENU_EVENT = {
   SIDEBAR: "sidebar",
   MODULE: "module",
@@ -51,10 +62,28 @@ export const MENU_EVENT = {
 }
 
 export const SIDE_EVENT = {
+  BACK: "back",
   CHANGE: "change",
-  SEARCH_QUICK: "search_quick",
-  SEARCH_BROWSER: "search_browser",
-  CHECK_EDITOR: "check_editor"
+  QUICK: "quick",
+  BROWSER: "browser",
+  CHECK: "check",
+  PREV_NUMBER: "prev_number",
+  NEXT_NUMBER: "next_number",
+  SAVE: "save",
+  DELETE: "delete",
+  NEW: "new",
+  COPY: "copy",
+  LINK: "link",
+  PASSWORD: "password",
+  SHIPPING_ADD_ALL: "shipping_add_all",
+  SHIPPING_CREATE: "shipping_create",
+  REPORT_SETTINGS: "report_settings",
+  SEARCH_QUEUE: "search_queue",
+  EXPORT_QUEUE_ALL: "export_queue_all",
+  CREATE_REPORT: "create_report",
+  EXPORT_EVENT: "export_event",
+  SAVE_BOOKMARK: "save_bookmark",
+  HELP: "help"
 }
 
 export const LOGIN_PAGE_EVENT = {
@@ -109,3 +138,37 @@ export const BROWSER_FILTER = [
   [">==", ">="],
   ["<==", "<="]
 ]
+
+export const EDIT_EVENT = {
+  CHANGE: "change",
+  CHECK_EDITOR: "check_editor",
+  CHECK_TRANSTYPE: "check_transtype",
+  EDIT_ITEM: "edit_item",
+  SET_PATTERN: "set_pattern",
+  SELECTOR: "selector",
+  FORM_ACTION: "form_action"
+}
+
+export const EDITOR_EVENT = {
+  LOAD_EDITOR: "load_editor",
+  SET_EDITOR: "set_editor",
+  SET_EDITOR_ITEM: "set_editor_item",
+  LOAD_FORMULA: "load_formula",
+  NEW_FIELDVALUE: "new_fieldvalue",
+  CREATE_TRANS: "create_trans",
+  CREATE_TRANS_OPTIONS: "create_trans_options",
+  FORM_ACTIONS: "form_actions"
+}
+
+export const ACTION_EVENT = {
+  LOAD_EDITOR: "load_editor",
+  NEW_EDITOR_ITEM: "new_editor_item",
+  EDIT_EDITOR_ITEM: "edit_editor_item",
+  DELETE_EDITOR_ITEM: "delete_editor_item",
+  LOAD_SHIPPING: "load_shipping",
+  ADD_SHIPPING_ROW: "add_shipping_row",
+  SHOW_SHIPPING_STOCK: "show_shipping_stock",
+  EDIT_SHIPPING_ROW: "edit_shipping_row",
+  DELETE_SHIPPING_ROW: "delete_shipping_row",
+  EXPORT_QUEUE_ITEM: "export_queue_item"
+}

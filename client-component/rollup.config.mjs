@@ -24,7 +24,7 @@ const baseConfig = createSpaConfig({
   injectServiceWorker: false,
   workbox: false,
   html: {
-    // extractAssets: false
+    extractAssets: false,
     minify: true
   }
 });
@@ -42,10 +42,7 @@ export default merge(baseConfig, {
       lit: ['lit'],
       icon: ['./src/components/Form/Icon/form-icon.js'],
       locales: ['./src/config/locales.js'],
-      login: ['./src/components/Login/client-login.js'],
-      search: ['./src/components/Search/client-search.js'],
-      queries: ['./src/controllers/Queries.js'],
-      quick: ['./src/controllers/Quick.js'],
+      // app: ['./src/controllers/AppController.js'],
     },
 
   },
@@ -58,7 +55,9 @@ export default merge(baseConfig, {
     copy({
       targets: [
         { src: 'assets/robots.txt', dest: 'dist' },
-        { src: 'assets/meta.json', dest: 'dist' }
+        { src: 'assets/meta.json', dest: 'dist' },
+        { src: 'manifest.json', dest: 'dist' },
+        { src: 'favicon.svg', dest: 'dist' }
       ],
     }),
   ]

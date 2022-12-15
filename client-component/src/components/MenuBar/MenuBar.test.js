@@ -29,6 +29,9 @@ describe('MenuBar', () => {
     const bookmark = menuBar.shadowRoot.querySelector('#mnu_bookmark_large')
     bookmark.click()
     sinon.assert.callCount(onMenuEvent, 3);
+
+    const modalBookmark = menuBar.modalBookmark()
+    expect(modalBookmark).to.exist;
   })
 
   it('renders in the ScrollTop state', async () => {

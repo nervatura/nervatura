@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, nothing } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -156,7 +156,7 @@ export class List extends LitElement {
           id="${`row_edit_${index}`}" class="edit-cell" 
           @click=${(event)=>this._onEdit(event, row, index)} >
           <form-icon iconKey="${this.editIcon}" ></form-icon>
-        </div>` : ``}
+        </div>` : nothing}
         <div id="${`row_item_${index}`}"
           class="value-cell ${(this.onEdit) ? "cursor" : ""}"
           @click=${(this.onEdit) ? (event)=>this._onEdit(event, row, index) : null}>
@@ -171,7 +171,7 @@ export class List extends LitElement {
           id="${`row_delete_${index}`}" class="delete-cell" 
           @click=${(event)=>this._onDelete(event, row, index)} >
           <form-icon iconKey="${this.deleteIcon}" ></form-icon>
-        </div>` : ``}
+        </div>` : nothing}
       </li>`);
   }
 
@@ -191,7 +191,7 @@ export class List extends LitElement {
             ?canNextPage=${(this.currentPage < pageCount)} 
             ?hidePageSize=${this.hidePaginatonSize}
             .onEvent=${(key, value) => this._onPagination(key, value)} ></form-pagination>
-        </div>`:``}
+        </div>`:nothing}
         ${(this.listFilter) ?
         html`<div class="row full" >
           <div class="cell" >
@@ -212,9 +212,9 @@ export class List extends LitElement {
               @click=${()=>this._onAddItem()} type="${BUTTON_TYPE.BORDER}"
             >${this.labelAdd}
             </form-button>
-          </div>`:``}
-        </div>`:``}
-      </div>`:``}
+          </div>`:nothing}
+        </div>`:nothing}
+      </div>`:nothing}
       <ul id="${this.id}" name="${ifDefined(this.name)}"
         class="list" style="${styleMap(this.style)}" >
         ${this.renderRows(rows, pageCount)}
@@ -228,7 +228,7 @@ export class List extends LitElement {
           ?canNextPage=${(this.currentPage < pageCount)} 
           ?hidePageSize=${this.hidePaginatonSize}
           .onEvent=${(key, value) => this._onPagination(key, value)} ></form-pagination>
-    </div>`:``}
+    </div>`:nothing}
     `
   }
 

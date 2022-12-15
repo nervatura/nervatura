@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import './form-pagination.js';
 import { Template, Default, Items } from  './Pagination.stories.js';
 
-describe('NumberInput', () => {
+describe('Pagination', () => {
   afterEach(() => {
     // Restore the default sandbox here
     sinon.restore();

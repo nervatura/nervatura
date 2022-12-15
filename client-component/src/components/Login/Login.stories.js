@@ -28,7 +28,9 @@ export default {
   }
 };
 
-export function Template({ id, version, lang, serverURL, data, locales, theme, onPageEvent, msg }) {
+const msg = (defaultValue, props) => _locales.en[props.id] || defaultValue
+
+export function Template({ id, version, lang, serverURL, data, locales, theme, onPageEvent }) {
   const component = html`<client-login
     id="${id}"
     version="${version}"
@@ -37,7 +39,10 @@ export function Template({ id, version, lang, serverURL, data, locales, theme, o
     lang="${lang}"
     .locales="${locales}"
     .data="${data}"
-    .onEvent=${{ onPageEvent }}
+    .onEvent=${{ 
+      onPageEvent
+    }}
+    .app=${{ store: {} }}
     .msg=${msg}
   ></client-login>`
   return html`<story-container theme="${theme}">${component}</story-container>`;
@@ -57,8 +62,7 @@ Default.args = {
   },
   locales: {
     en:{en: "English"}, jp:{"jp": "日本語"} , au:{}
-  },
-  msg: (defaultValue, props) => _locales.en[props.id] || defaultValue
+  }
 }
 
 export const DarkServer = Template.bind({});

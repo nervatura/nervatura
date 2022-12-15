@@ -2597,11 +2597,9 @@ export const editorActions = (data, setData) => {
               fxprice: !isNaN(parseFloat(price.price)) ? parseFloat(price.price) : 0,
               discount: !isNaN(parseFloat(price.discount)) ? parseFloat(price.discount) : 0
             }}}})
-            if(options.event_type === "blur"){
-              edit = update(edit, {current: {$merge: {
-                form : calcPrice("fxprice", edit.current.form)
-              }}})
-            }
+            edit = update(edit, {current: {$merge: {
+              form : calcPrice("fxprice", edit.current.form)
+            }}})
           } else {
             switch(options.name) {
               case "qty":
@@ -2624,7 +2622,7 @@ export const editorActions = (data, setData) => {
               case "fxprice":
               case "tax_id":
               case "discount":
-                if(options.event_type === "blur"){
+                if((options.event_type === "blur") || (options.name === "tax_id")){
                   edit = update(edit, {current: {$merge: {
                     form : calcPrice("fxprice", edit.current.form)
                   }}})

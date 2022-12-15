@@ -22,12 +22,12 @@ export default {
   }
 };
 
-export function Template({ id, name, theme, type, style, value, timeout, store }) {
+export function Template({ id, name, theme, type, style, value, timeout, setData }) {
   const component = html`<form-toast
     id="${id}"
     name="${name}"
     .style="${style}"
-    .store="${store}"
+    .setData="${setData}"
   ></form-toast>`
   return html`<story-container theme="${theme}">
   ${component}
@@ -53,10 +53,7 @@ Error.args = {
   type: TOAST_TYPE.ERROR,
   value: html`<i>This is an error message.</i>`,
   timeout: 0,
-  store: {
-    data: {},
-    setData: ()=>{}
-  }
+  setData: ()=>{}
 }
 
 export const Success = Template.bind({});

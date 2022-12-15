@@ -5,6 +5,12 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { styles } from './DateTime.styles.js'
 import { DATETIME_TYPE } from '../../../config/enums.js'
 
+const valueLength = {
+  [DATETIME_TYPE.TIME]: 5,
+  [DATETIME_TYPE.DATE]: 10,
+  [DATETIME_TYPE.DATETIME]: 16,
+}
+
 export class DateTime extends LitElement {
   constructor() {
     super();
@@ -49,15 +55,8 @@ export class DateTime extends LitElement {
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    if((this.type === DATETIME_TYPE.DATE) && (this.value.length > 10)){
-      this.value = this.value.slice(0,10)
-    }
-  }
-
   _defaultValue(){
-    const defaultValue = new Date().toISOString()
+    const defaultValue = `${new Date().toISOString().slice(0,10)}T${new Date().toLocaleTimeString("en",{hour12: false}).replace("24","00").slice(0,5)}`
     switch (this.type) {
       case DATETIME_TYPE.DATE:
         return String(defaultValue).split("T")[0]
@@ -66,12 +65,13 @@ export class DateTime extends LitElement {
         return String(defaultValue).split("T")[1].split(".")[0]
 
       default:
-        return String(defaultValue).substring(0,16);
+        return defaultValue;
     }
   }
 
   _onInput(e){
-    const onChange = (value) => {
+    const onChange = (_value) => {
+      const value = (this.type !== DATETIME_TYPE.DATE) ? `${_value}:00` : _value
       if(value !== this.value){
         if(this.onChange){
           this.onChange({ value, old: this.value})
@@ -143,11 +143,15 @@ export class DateTime extends LitElement {
   }
 
   render() {
+    let value = this.value
+    if(value.length > valueLength[this.type]){
+      value = value.slice(0,valueLength[this.type])
+    }
     return html`<input 
       id="${this.id}"
       name="${ifDefined(this.name)}"
       .type="${this.type}"
-      .value="${this.value}"
+      .value="${value}"
       ?disabled="${this.disabled}"
       ?readonly="${this.readonly}"
       ?autofocus="${this.autofocus}"

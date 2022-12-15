@@ -14,7 +14,6 @@ button {
   vertical-align: middle;
   overflow: hidden;
   text-decoration: none;
-  text-align: center;
   cursor:pointer;
   white-space:nowrap;
   -webkit-touch-callout:none;
@@ -27,6 +26,7 @@ button {
   border-width: 1px;
   transition: 0.1s all ease-out;
   box-sizing: border-box;
+  vertical-align: middle;
 }
 button[button-type='primary'] {
   color: rgba(var(--accent-1c), 0.85);
@@ -66,12 +66,38 @@ button:focus, button:hover {
   color: rgb(var(--functional-yellow))!important;
   fill: rgb(var(--functional-yellow))!important;
 }
+button[button-type='border'].selected {
+  border-color: rgb(var(--functional-yellow))!important;
+}
+.right {
+  float: right;
+}
+.badge {
+  font-weight: bold;
+  font-size: 14px;
+  color: rgb(var(--accent-1));
+  fill: rgb(var(--accent-1));
+  background-color: rgb(var(--accent-1c));
+  display: inline-block;
+  padding: 1px 7px;
+  text-align: center;
+  border-radius: 50%;
+}
 .small {
   font-size: 12px;
   padding: 6px 8px!important;
 }
 .full{
   width: 100%;
+}
+.left {
+  text-align: left;
+}
+.center {
+  text-align: center
+}
+.right {
+  text-align: right
 }
 @media (max-width:600px){
   .hidelabel slot { 

@@ -32,12 +32,16 @@ export default {
   }
 };
 
-export function Template({ id, bookmark, tabView, theme, onModalEvent, msg }) {
+const msg = (defaultValue, props) => locales.en[props.id] || defaultValue
+
+export function Template({ id, bookmark, tabView, theme, onModalEvent }) {
   const component = html`<modal-bookmark
     id="${id}"
     .bookmark="${bookmark}"
     tabView="${tabView}"
-    .onEvent=${{ onModalEvent }}
+    .onEvent=${{ 
+      onModalEvent
+    }}
     .msg=${msg}
   ></modal-bookmark>`
   return html`<story-container theme="${theme}">${component}</story-container>`;
@@ -48,8 +52,7 @@ Default.args = {
   id: "bookmark",
   theme: APP_THEME.LIGHT,
   bookmark: { history: null, bookmark: [] },
-  tabView: BOOKMARK_VIEW.BOOKMARK,
-  msg: (defaultValue, props) => locales.en[props.id] || defaultValue
+  tabView: BOOKMARK_VIEW.BOOKMARK
 }
 
 export const BookmarkData = Template.bind({});

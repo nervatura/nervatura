@@ -1,4 +1,4 @@
-import { APP_MODULE, MODAL_EVENT, BROWSER_EVENT, SIDE_EVENT, SIDE_VISIBILITY, TOAST_TYPE } from '../config/enums.js'
+import { APP_MODULE, MODAL_EVENT, BROWSER_EVENT, SIDE_EVENT, SIDE_VISIBILITY, TOAST_TYPE, EDITOR_EVENT } from '../config/enums.js'
 
 export const getFilterWhere = (filter) => {
   switch (filter.filtertype) {
@@ -40,108 +40,59 @@ export const defaultFilterValue = (fieldtype) => {
 }
 
 export class SearchController {
-  constructor(host, app) {
+  constructor(host) {
     this.host = host;
-    this.store = app.store;
-    this.app = app;
+    this.app = host.app
+    this.store = host.app.store
+    this.module = {}
+    
+    this.addFilter = this.addFilter.bind(this)
+    this.browserView = this.browserView.bind(this)
+    this.deleteFilter = this.deleteFilter.bind(this)
+    this.editCell = this.editCell.bind(this)
+    this.editFilter = this.editFilter.bind(this)
+    this.editRow = this.editRow.bind(this)
+    this.exportResult = this.exportResult.bind(this)
+    this.onBrowserEvent = this.onBrowserEvent.bind(this)
+    this.onModalEvent = this.onModalEvent.bind(this)
+    this.onSideEvent = this.onSideEvent.bind(this)
+    this.quickSearch = this.quickSearch.bind(this)
+    this.saveBookmark = this.saveBookmark.bind(this)
+    this.setColumns = this.setColumns.bind(this)
+    this.setModule = this.setModule.bind(this)
+    this.showBrowser = this.showBrowser.bind(this)
+    this.showServerCmd = this.showServerCmd.bind(this)
+    this.showTotal = this.showTotal.bind(this)
     host.addController(this);
   }
 
-  hostConnected() {
-    const { setData, data } = this.store
-    if(data.current.content && data.current.content[APP_MODULE.SEARCH]){
-      const content = data.current.content[APP_MODULE.SEARCH]
-      setData("current", { content: null })
-      this.showBrowser(...content)
-    }
+  setModule(moduleRef){
+    this.module = moduleRef
   }
 
-  async showBrowser(vkey, view, searchData){
-    const { queries } = this.host
-    const { setData, data } = this.store
-    const search_data = searchData || data[APP_MODULE.SEARCH]
-    setData("current", { side: SIDE_VISIBILITY.HIDE })
-    let search = {
-      ...search_data,
-      seltype: "browser",
-      vkey, 
-      view: (typeof view==="undefined") ? Object.keys(queries[vkey]())[1] : view, 
-      result: [], deffield:[],
-      show_dropdown: false,
-      show_header: (typeof search_data.show_header === "undefined") ? true : search_data.show_header,
-      show_columns: (typeof search_data.show_columns === "undefined") ? false : search_data.show_columns,
-      page: search_data.page || 1,
+  addFilter() {
+    const { queries } = this.app.modules
+    const { setData } = this.store
+    const { vkey, view, filters } = this.store.data[APP_MODULE.SEARCH]
+    const viewDef = queries[vkey]()[view]
+    const frow = viewDef.fields[Object.keys(viewDef.fields)[0]]
+    const _filters = {...filters,
+      [view]: [...filters[view], {
+        id: new Date().getTime().toString(),
+        fieldtype: frow.fieldtype,
+        fieldname: Object.keys(viewDef.fields)[0],
+        sqlstr: frow.sqlstr,
+        wheretype: frow.wheretype,
+        filtertype: "===",
+        value: defaultFilterValue(frow.fieldtype)
+      }]
     }
-    const views = [
-      { key: "deffield",
-        text: this.app.getSql(data[APP_MODULE.LOGIN].data.engine, 
-          queries[vkey]().options.deffield_sql).sql,
-        values: [] 
-      }
-    ]
-    const options = { method: "POST", data: views }
-    const result = await this.app.requestData("/view", options)
-    if(result.error){
-      return this.app.resultError(result)
-    }
-    search = {
-      ...search,
-      deffield: result.deffield
-    }
-    if(!search.filters[search.view]){
-      search = {
-        ...search,
-        filters: {
-          ...search.filters,
-          [search.view]: []
-        }
-      }
-    }
-    const viewDef = queries[vkey]()[search.view]
-    if (typeof search.columns[search.view] === "undefined") {
-      search = {
-        ...search,
-        columns: {
-          ...search.columns,
-          [search.view]: {}
-        }
-      }
-      for(let fic = 0; fic < Object.keys(viewDef.columns).length; fic += 1) {
-        const fieldname = Object.keys(viewDef.columns)[fic];
-        search = {
-          ...search,
-          columns: {
-            ...search.columns,
-            [search.view]: {
-              ...search.columns[search.view],
-              [fieldname]: viewDef.columns[fieldname]
-            }
-          }
-        }
-      }
-    }
-    if (Object.keys(search.columns[search.view]).length === 0) {
-      for(let v = 0; v < 3; v += 1) {
-        const fieldname = Object.keys(viewDef.fields)[v];
-        search = {
-          ...search,
-          columns: {
-            ...search.columns,
-            [search.view]: {
-              ...search.columns[search.view],
-              [fieldname]: true
-            }
-          }
-        }
-      }
-    }
-    setData(APP_MODULE.SEARCH, search)
-    setData("current", { module: APP_MODULE.SEARCH })
-    return true
+    setData(APP_MODULE.SEARCH, { filters: _filters })
   }
 
   async browserView() {
-    const { queries } = this.host
+    const { queries } = this.app.modules
+    const { getDataFilter, getUserFilter, getSql, requestData, resultError } = this.app
     const { setData, data } = this.store
     const { vkey, view, filters } = this.store.data[APP_MODULE.SEARCH]
     const query = queries[vkey]()[view]
@@ -175,7 +126,7 @@ export class SearchController {
       }
     }
 
-    _where = this.app.getDataFilter(vkey, [], view)
+    _where = getDataFilter(vkey, [], view)
     if(_where.length > 0){
       _sql = {
         ..._sql,
@@ -183,7 +134,7 @@ export class SearchController {
       }
     }
 
-    const userFilter = this.app.getUserFilter(vkey)
+    const userFilter = getUserFilter(vkey)
     if(userFilter.where.length > 0){
       _sql = {
         ..._sql,
@@ -194,37 +145,17 @@ export class SearchController {
 
     const views = [
       { key: "result",
-        text: this.app.getSql(data[APP_MODULE.LOGIN].data.engine, _sql).sql,
+        text: getSql(data[APP_MODULE.LOGIN].data.engine, _sql).sql,
         values: params 
       }
     ]
     const options = { method: "POST", data: views }
-    const oview = await this.app.requestData("/view", options)
+    const oview = await requestData("/view", options)
     if(oview.error){
-      return this.app.resultError(oview)
+      return resultError(oview)
     }
     setData(APP_MODULE.SEARCH, { result: oview.result, dropdown: "", page: 1 })
     return true
-  }
-
-  addFilter() {
-    const { queries } = this.host
-    const { setData } = this.store
-    const { vkey, view, filters } = this.store.data[APP_MODULE.SEARCH]
-    const viewDef = queries[vkey]()[view]
-    const frow = viewDef.fields[Object.keys(viewDef.fields)[0]]
-    const _filters = {...filters,
-      [view]: [...filters[view], {
-        id: new Date().getTime().toString(),
-        fieldtype: frow.fieldtype,
-        fieldname: Object.keys(viewDef.fields)[0],
-        sqlstr: frow.sqlstr,
-        wheretype: frow.wheretype,
-        filtertype: "===",
-        value: defaultFilterValue(frow.fieldtype)
-      }]
-    }
-    setData(APP_MODULE.SEARCH, { filters: _filters })
   }
 
   deleteFilter(index) {
@@ -237,8 +168,29 @@ export class SearchController {
     setData(APP_MODULE.SEARCH, { filters: _filters })
   }
 
+  editCell({ fieldname, value, row }) {
+    const { currentModule } = this.app
+    const params = value.split("/")
+    let options = { 
+      ntype: params[0], 
+      ttype: params[1], 
+      id: params[2] 
+    }
+    if(fieldname === "id"){
+      options = {
+        ...options,
+        form: row.form,
+        form_id: row.form_id
+      }
+    }
+    currentModule({ 
+      data: { module: APP_MODULE.EDIT }, 
+      content: { fkey: "checkEditor", args: [options, EDITOR_EVENT.LOAD_EDITOR] }
+    })
+  }
+
   editFilter({index, fieldname, value}) {
-    const { queries } = this.host
+    const { queries } = this.app.modules
     const { setData, data } = this.store
     const { vkey, view, filters } = this.store.data[APP_MODULE.SEARCH]
 
@@ -336,175 +288,8 @@ export class SearchController {
     setData(APP_MODULE.SEARCH, { filters: _filters })
   }
 
-  setColumns(fieldname, visible) {
-    const { setData } = this.store
-    const { view, columns } = this.store.data[APP_MODULE.SEARCH]
-    if(visible){
-      setData(APP_MODULE.SEARCH, { 
-        columns: {
-          ...columns,
-          [view]: {
-            ...columns[view],
-            [fieldname]: true
-          }
-        }
-      })
-    } else {
-      const { [fieldname]: value, ...viewCols } = columns[view];
-      setData(APP_MODULE.SEARCH, { 
-        columns: {
-          ...columns,
-          [view]: viewCols
-        }
-      })
-    }
-  }
-
-  showTotal({fields, totalFields}, ref){
-    const { setData } = this.store
-    const { result } = this.store.data[APP_MODULE.SEARCH]
-    const getValidValue = (value) => {
-      if(Number.isNaN(parseFloat(value))) {
-        return 0
-      }
-      return parseFloat(value)
-    }
-    let total = totalFields
-    const isDeffield = Object.keys(fields).includes("deffield_value")
-    result.forEach(row => {
-      if (isDeffield) {
-        if (typeof total.totalFields[row.fieldname] !== "undefined") {
-          total = {
-            ...total,
-            totalFields: {
-              ...total.totalFields,
-              [row.fieldname]: total.totalFields[row.fieldname] + getValidValue(row.export_deffield_value)
-            }
-          }
-        }
-      } else {
-        Object.keys(total.totalFields).forEach(fieldname => {
-          if (typeof row[`export_${fieldname}`] !== "undefined") {
-            total = {
-              ...total,
-              totalFields: {
-                ...total.totalFields,
-                [fieldname]: total.totalFields[fieldname] + getValidValue(row[`export_${fieldname}`])
-              }
-            }
-          } else {
-            total = {
-              ...total,
-              totalFields: {
-                ...total.totalFields,
-                [fieldname]: total.totalFields[fieldname] + getValidValue(row[fieldname])
-              }
-            }
-          }
-        });
-      }
-    })
-    setData("current", { modalForm: ref.modalTotal(total) })
-  }
-
-  showServerCmd(menu_id, ref) {
-    const { setData, showToast } = this.store
-    const login = this.store.data[APP_MODULE.LOGIN]
-    const { session } = this.store.data
-    const menuCmd = login.data.menuCmds.filter(item => (item.id === parseInt(menu_id, 10)))[0]
-    if(menuCmd){
-      const menuFields = login.data.menuFields.filter(item => (item.menu_id === parseInt(menu_id, 10)))
-      const _values = {}
-      menuFields.forEach(mfield => {
-        switch (mfield.fieldtypeName) {
-          case "bool":
-            _values[mfield.fieldname] = false
-            break;
-          case "float":
-          case "integer":
-            _values[mfield.fieldname] = 0
-            break;
-          default:
-            _values[mfield.fieldname] = ""
-            break;
-        }
-      });
-      const modalForm = ref.modalServer({
-        cmd: {...menuCmd}, 
-        fields: [...menuFields], 
-        values: _values,
-        onEvent: {
-          onModalEvent: async (modalResult) => {
-            setData("current", { modalForm: null })
-            if(modalResult.key === MODAL_EVENT.OK){
-              const options = modalResult.data
-              const query = new URLSearchParams();
-              const values = {...options.values}
-              options.fields.forEach((field) => {
-                if (field.fieldtypeName === "bool") {
-                  query.append(field.fieldname, (options.values[field.fieldname])?1:0)
-                  values[field.fieldname] = (options.values[field.fieldname])?1:0
-                } else {
-                  query.append(field.fieldname, options.values[field.fieldname])
-                }
-              })
-              if (options.cmd.methodName === "get") {
-                let server = options.cmd.address || ""
-                /* c8 ignore start */
-                if((server === "") && options.cmd.funcname && (options.cmd.funcname !== "")){
-                  server = (session.serverURL === "SERVER")?
-                    `${session.proxy+session.apiPath}/${options.cmd.funcname}` : 
-                    `${login.server}/${options.cmd.funcname}`
-                }
-                if (server!=="") {
-                  window.open(`${server}?${query.toString()}`, '_system')
-                }
-                /* c8 ignore end */
-              } else {
-                const params_data = {
-                  key: options.cmd.funcname || options.cmd.menukey,
-                  values
-                }
-                let result
-                if(options.cmd.address && (options.cmd.address !== "")){
-                  try {
-                    result = await this.app.request(options.cmd.address, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify(params_data)
-                    })
-                  /* c8 ignore start */
-                  } catch (error) {
-                    this.app.resultError(error)
-                    return null
-                  }
-                  /* c8 ignore end */
-                } else {
-                  result = await this.app.requestData("/function", {
-                    method: "POST", data: params_data
-                  })
-                }
-                if(result.error){
-                  this.app.resultError(result)
-                  return null
-                }
-                let message = result
-                if(typeof result === "object"){
-                  message = JSON.stringify(result,null,"  ")
-                }
-                showToast(TOAST_TYPE.SUCCESS, message, 0)
-              }
-            }
-            return true
-          }
-        }
-      })
-      setData("current", { modalForm })
-    }
-  }
-
-  editRow(row, ref) {
-    const { setData } = this.store
+  editRow(row) {
+    const { currentModule } = this.app
     const params = row.id.split("/")
     const options = { 
       ntype: params[0], 
@@ -513,43 +298,17 @@ export class SearchController {
       item: row 
     }
     if (options.ntype === "servercmd") {
-      this.showServerCmd(options.id, ref)
+      this.showServerCmd(options.id)
     } else {
-      setData("current", { module: APP_MODULE.EDIT, content: {[APP_MODULE.EDIT]: options} })
+      currentModule({ 
+        data: { module: APP_MODULE.EDIT }, 
+        content: { fkey: "checkEditor", args: [options, EDITOR_EVENT.LOAD_EDITOR] }
+      })
     }
-  }
-
-  editCell({ fieldname, value, row }) {
-    const { setData } = this.store
-    const params = value.split("/")
-    let options = { 
-      ntype: params[0], 
-      ttype: params[1], 
-      id: params[2] 
-    }
-    if(fieldname === "id"){
-      options = {
-        ...options,
-        form: row.form,
-        form_id: row.form_id
-      }
-    }
-    setData("current", { module: APP_MODULE.EDIT, content: {[APP_MODULE.EDIT]: options} })
-  }
-
-  async quickSearch(filter) {
-    const { setData } = this.store
-    const { qview } = this.store.data[APP_MODULE.SEARCH]
-    const view = await this.app.quickSearch(qview, filter)
-    if(view.error){
-      return this.app.resultError(view)
-    }
-    setData(APP_MODULE.SEARCH, { result: view.result, qfilter: filter, page: 1 })
-    return true
   }
 
   exportResult(fields) {
-    const { getSetting } = this.store
+    const { getSetting, saveToDisk } = this.app
     const { result, view } = this.store.data[APP_MODULE.SEARCH]
     const filename = `${view}.csv`
     let data = ""
@@ -560,42 +319,11 @@ export class SearchController {
       data += `${cols.join(getSetting("export_sep"))  }\n`
     });
     const csvUrl = URL.createObjectURL(new Blob([data], {type : 'text/csv;charset=utf-8;'}))
-    this.app.saveToDisk(csvUrl, filename)
+    saveToDisk(csvUrl, filename)
   }
 
-  saveBookmark(){
-    const { queries } = this.host
-    const { vkey, view } = this.store.data[APP_MODULE.SEARCH]
-    this.app.saveBookmark(["browser", queries[vkey]()[view].label])
-  }
-
-  onModalEvent({key, data, ref}){
-    const { setData } = this.store
-    switch (key) {
-      case MODAL_EVENT.CANCEL:
-        setData("current", { modalForm: null })
-        break;
-      
-      case MODAL_EVENT.SEARCH:
-        this.quickSearch(data.value)
-        break;
-
-      case MODAL_EVENT.SELECTED:
-        this.editRow(data.value, ref)
-        break;
-
-      case MODAL_EVENT.CURRENT_PAGE:
-        setData(APP_MODULE.SEARCH, {
-          page: data.value 
-        })
-        break;
-    
-      default:
-        break;
-    }
-  }
-
-  onBrowserEvent({key, data, ref}){
+  onBrowserEvent({key, data}){
+    const { showHelp, currentModule } = this.app
     const { setData } = this.store
     switch (key) {
       case BROWSER_EVENT.CHANGE:
@@ -643,9 +371,9 @@ export class SearchController {
         break;
 
       case BROWSER_EVENT.SET_FORM_ACTIONS:
-        setData("current", { 
-          module: APP_MODULE.EDIT, 
-          content: { [APP_MODULE.EDIT]: {...data, nextKey: "FORM_ACTIONS" } } 
+        currentModule({ 
+          data: { module: APP_MODULE.EDIT }, 
+          content: { fkey: "checkEditor", args: [data, EDITOR_EVENT.FORM_ACTIONS] }
         })
         break;
 
@@ -654,11 +382,37 @@ export class SearchController {
         break;
 
       case BROWSER_EVENT.SHOW_HELP:
-        this.app.showHelp(data.value)
+        showHelp(data.value)
         break;
 
       case BROWSER_EVENT.SHOW_TOTAL:
-        this.showTotal(data, ref)
+        this.showTotal(data)
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+  onModalEvent({key, data}){
+    const { setData } = this.store
+    switch (key) {
+      case MODAL_EVENT.CANCEL:
+        setData("current", { modalForm: null })
+        break;
+      
+      case MODAL_EVENT.SEARCH:
+        this.quickSearch(data.value)
+        break;
+
+      case MODAL_EVENT.SELECTED:
+        this.editRow(data.value)
+        break;
+
+      case MODAL_EVENT.CURRENT_PAGE:
+        setData(APP_MODULE.SEARCH, {
+          page: data.value 
+        })
         break;
     
       default:
@@ -667,6 +421,7 @@ export class SearchController {
   }
 
   onSideEvent({key, data}){
+    const { currentModule } = this.app
     const { setData } = this.store
     switch (key) {
       case SIDE_EVENT.CHANGE:
@@ -675,11 +430,11 @@ export class SearchController {
         })
         break;
 
-      case SIDE_EVENT.SEARCH_BROWSER:
+      case SIDE_EVENT.BROWSER:
         this.showBrowser(data.value)
         break;
 
-      case SIDE_EVENT.SEARCH_QUICK:
+      case SIDE_EVENT.QUICK:
         setData(APP_MODULE.SEARCH, { 
           seltype: "selector",
           result: [], qview: data.value, qfilter: "", page: 1 
@@ -687,12 +442,288 @@ export class SearchController {
         setData("current", { side: SIDE_VISIBILITY.HIDE })
         break;
     
-      case SIDE_EVENT.CHECK_EDITOR:
-        setData("current", { module: APP_MODULE.EDIT, content: { [APP_MODULE.EDIT]: data } })
+      case SIDE_EVENT.CHECK:
+        currentModule({ 
+          data: { module: APP_MODULE.EDIT }, 
+          content: { fkey: "checkEditor", args: [data, EDITOR_EVENT.LOAD_EDITOR] }
+        })
         break;
 
       default:
         break;
     }
+  }
+
+  async quickSearch(filter) {
+    const { setData } = this.store
+    const { quickSearch, resultError } = this.app
+    const { qview } = this.store.data[APP_MODULE.SEARCH]
+    const view = await quickSearch(qview, filter)
+    if(view.error){
+      return resultError(view)
+    }
+    setData(APP_MODULE.SEARCH, { result: view.result, qfilter: filter, page: 1 })
+    return true
+  }
+
+  saveBookmark(){
+    const { queries } = this.app.modules
+    const { saveBookmark } = this.app
+    const { vkey, view } = this.store.data[APP_MODULE.SEARCH]
+    saveBookmark(["browser", queries[vkey]()[view].label])
+  }
+
+  setColumns(fieldname, visible) {
+    const { setData } = this.store
+    const { view, columns } = this.store.data[APP_MODULE.SEARCH]
+    if(visible){
+      setData(APP_MODULE.SEARCH, { 
+        columns: {
+          ...columns,
+          [view]: {
+            ...columns[view],
+            [fieldname]: true
+          }
+        }
+      })
+    } else {
+      const { [fieldname]: value, ...viewCols } = columns[view];
+      setData(APP_MODULE.SEARCH, { 
+        columns: {
+          ...columns,
+          [view]: viewCols
+        }
+      })
+    }
+  }
+
+  async showBrowser(vkey, view, searchData){
+    const { queries } = this.app.modules
+    const { getSql, requestData, resultError } = this.app
+    const { setData, data } = this.store
+    const search_data = searchData || data[APP_MODULE.SEARCH]
+    setData("current", { side: SIDE_VISIBILITY.HIDE })
+    let search = {
+      ...search_data,
+      seltype: "browser",
+      vkey, 
+      view: (typeof view==="undefined") ? Object.keys(queries[vkey]())[1] : view, 
+      result: [], deffield:[],
+      show_dropdown: false,
+      show_header: (typeof search_data.show_header === "undefined") ? true : search_data.show_header,
+      show_columns: (typeof search_data.show_columns === "undefined") ? false : search_data.show_columns,
+      page: search_data.page || 1,
+    }
+    const views = [
+      { key: "deffield",
+        text: getSql(data[APP_MODULE.LOGIN].data.engine, 
+          queries[vkey]().options.deffield_sql).sql,
+        values: [] 
+      }
+    ]
+    const options = { method: "POST", data: views }
+    const result = await requestData("/view", options)
+    if(result.error){
+      return resultError(result)
+    }
+    search = {
+      ...search,
+      deffield: result.deffield
+    }
+    if(!search.filters[search.view]){
+      search = {
+        ...search,
+        filters: {
+          ...search.filters,
+          [search.view]: []
+        }
+      }
+    }
+    const viewDef = queries[vkey]()[search.view]
+    if (typeof search.columns[search.view] === "undefined") {
+      search = {
+        ...search,
+        columns: {
+          ...search.columns,
+          [search.view]: {}
+        }
+      }
+      for(let fic = 0; fic < Object.keys(viewDef.columns).length; fic += 1) {
+        const fieldname = Object.keys(viewDef.columns)[fic];
+        search = {
+          ...search,
+          columns: {
+            ...search.columns,
+            [search.view]: {
+              ...search.columns[search.view],
+              [fieldname]: viewDef.columns[fieldname]
+            }
+          }
+        }
+      }
+    }
+    if (Object.keys(search.columns[search.view]).length === 0) {
+      for(let v = 0; v < 3; v += 1) {
+        const fieldname = Object.keys(viewDef.fields)[v];
+        search = {
+          ...search,
+          columns: {
+            ...search.columns,
+            [search.view]: {
+              ...search.columns[search.view],
+              [fieldname]: true
+            }
+          }
+        }
+      }
+    }
+    setData(APP_MODULE.SEARCH, search)
+    return true
+  }
+
+  showServerCmd(menu_id) {
+    const { modalServer } = this.module
+    const { request, resultError, requestData, showToast } = this.app
+    const { setData } = this.store
+    const login = this.store.data[APP_MODULE.LOGIN]
+    const { session } = this.store.data
+    const menuCmd = login.data.menuCmds.filter(item => (item.id === parseInt(menu_id, 10)))[0]
+    if(menuCmd){
+      const menuFields = login.data.menuFields.filter(item => (item.menu_id === parseInt(menu_id, 10)))
+      const _values = {}
+      menuFields.forEach(mfield => {
+        switch (mfield.fieldtypeName) {
+          case "bool":
+            _values[mfield.fieldname] = false
+            break;
+          case "float":
+          case "integer":
+            _values[mfield.fieldname] = 0
+            break;
+          default:
+            _values[mfield.fieldname] = ""
+            break;
+        }
+      });
+      const modalForm = modalServer({
+        cmd: {...menuCmd}, 
+        fields: [...menuFields], 
+        values: _values,
+        onEvent: {
+          onModalEvent: async (modalResult) => {
+            setData("current", { modalForm: null })
+            if(modalResult.key === MODAL_EVENT.OK){
+              const options = modalResult.data
+              const query = new URLSearchParams();
+              const values = {...options.values}
+              options.fields.forEach((field) => {
+                if (field.fieldtypeName === "bool") {
+                  query.append(field.fieldname, (options.values[field.fieldname])?1:0)
+                  values[field.fieldname] = (options.values[field.fieldname])?1:0
+                } else {
+                  query.append(field.fieldname, options.values[field.fieldname])
+                }
+              })
+              if (options.cmd.methodName === "get") {
+                let server = options.cmd.address || ""
+                /* c8 ignore start */
+                if((server === "") && options.cmd.funcname && (options.cmd.funcname !== "")){
+                  server = (session.serverURL === "SERVER")?
+                    `${session.proxy+session.apiPath}/${options.cmd.funcname}` : 
+                    `${login.server}/${options.cmd.funcname}`
+                }
+                if (server!=="") {
+                  window.open(`${server}?${query.toString()}`, '_system')
+                }
+                /* c8 ignore end */
+              } else {
+                const params_data = {
+                  key: options.cmd.funcname || options.cmd.menukey,
+                  values
+                }
+                let result
+                if(options.cmd.address && (options.cmd.address !== "")){
+                  try {
+                    result = await request(options.cmd.address, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(params_data)
+                    })
+                  /* c8 ignore start */
+                  } catch (error) {
+                    resultError(error)
+                    return null
+                  }
+                  /* c8 ignore end */
+                } else {
+                  result = await requestData("/function", {
+                    method: "POST", data: params_data
+                  })
+                }
+                if(result.error){
+                  resultError(result)
+                  return null
+                }
+                let message = result
+                if(typeof result === "object"){
+                  message = JSON.stringify(result,null,"  ")
+                }
+                showToast(TOAST_TYPE.SUCCESS, message, 0)
+              }
+            }
+            return true
+          }
+        }
+      })
+      setData("current", { modalForm })
+    }
+  }
+
+  showTotal({fields, totalFields}){
+    const { modalTotal } = this.module
+    const { setData } = this.store
+    const { result } = this.store.data[APP_MODULE.SEARCH]
+    const getValidValue = (value) => {
+      if(Number.isNaN(parseFloat(value))) {
+        return 0
+      }
+      return parseFloat(value)
+    }
+    let total = totalFields
+    const isDeffield = Object.keys(fields).includes("deffield_value")
+    result.forEach(row => {
+      if (isDeffield) {
+        if (typeof total.totalFields[row.fieldname] !== "undefined") {
+          total = {
+            ...total,
+            totalFields: {
+              ...total.totalFields,
+              [row.fieldname]: total.totalFields[row.fieldname] + getValidValue(row.export_deffield_value)
+            }
+          }
+        }
+      } else {
+        Object.keys(total.totalFields).forEach(fieldname => {
+          if (typeof row[`export_${fieldname}`] !== "undefined") {
+            total = {
+              ...total,
+              totalFields: {
+                ...total.totalFields,
+                [fieldname]: total.totalFields[fieldname] + getValidValue(row[`export_${fieldname}`])
+              }
+            }
+          } else {
+            total = {
+              ...total,
+              totalFields: {
+                ...total.totalFields,
+                [fieldname]: total.totalFields[fieldname] + getValidValue(row[fieldname])
+              }
+            }
+          }
+        });
+      }
+    })
+    setData("current", { modalForm: modalTotal(total) })
   }
 }

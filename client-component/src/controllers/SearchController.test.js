@@ -8,8 +8,6 @@ import { Queries } from './Queries.js'
 
 const host = { 
   addController: ()=>{},
-  inputBox: (prm)=>(prm),
-  queries: Queries({ getText: (key)=>key })
 }
 const store = {
   data: {
@@ -23,22 +21,26 @@ const store = {
     }
   },
   setData: sinon.spy(),
-  showToast: sinon.spy(),
-  msg: (value)=>value,
-  getSetting: sinon.spy(),
 }
 const app = {
   store,
+  modules: {
+    queries: Queries({ msg: (key)=> key }),
+  },
+  msg: (value)=>value,
   requestData: () => ({}),
   resultError: sinon.spy(),
   loadBookmark: () => ({}),
   showHelp: sinon.spy(),
+  showToast: sinon.spy(),
+  getSetting: sinon.spy(),
   getSql: () =>({
     sql: "",
     prmCount: 1
   }),
   getDataFilter: ()=>[[]],
-  getUserFilter: ()=>({ where: [[]], params: [[]] })
+  getUserFilter: ()=>({ where: [[]], params: [[]] }),
+  currentModule: sinon.spy(),
 }
 
 describe('SearchController', () => {
@@ -52,21 +54,22 @@ describe('SearchController', () => {
       getSql: () =>({
         sql: "",
         prmCount: 1
-      })
+      }),
+      currentModule: sinon.spy(),
     }
 
-    const search = new SearchController(host, testApp)
+    const search = new SearchController({...host, app: testApp})
     search.onSideEvent({ key: SIDE_EVENT.CHANGE, data: { fieldname: "", value: "" } })
     sinon.assert.callCount(testApp.store.setData, 1);
 
-    search.onSideEvent({ key: SIDE_EVENT.SEARCH_BROWSER, data: { value: "customer" } })
+    search.onSideEvent({ key: SIDE_EVENT.BROWSER, data: { value: "customer" } })
     sinon.assert.callCount(testApp.store.setData, 2);
 
-    search.onSideEvent({ key: SIDE_EVENT.SEARCH_QUICK, data: { value: "" } })
+    search.onSideEvent({ key: SIDE_EVENT.QUICK, data: { value: "" } })
     sinon.assert.callCount(testApp.store.setData, 4);
 
-    search.onSideEvent({ key: SIDE_EVENT.CHECK_EDITOR, data: {} })
-    sinon.assert.callCount(testApp.store.setData, 5);
+    search.onSideEvent({ key: SIDE_EVENT.CHECK, data: {} })
+    sinon.assert.callCount(testApp.currentModule, 1);
 
     search.onSideEvent({})
 
@@ -102,10 +105,15 @@ describe('SearchController', () => {
       },
       saveBookmark: sinon.spy(),
       saveToDisk: sinon.spy(),
-      showHelp: sinon.spy()
+      showHelp: sinon.spy(),
+      currentModule: sinon.spy(),
     }
 
-    let search = new SearchController(host, testApp)
+    let search = new SearchController({...host, app: testApp})
+    search.module = {
+      modalServer: (prm)=>({...prm}),
+      modalTotal: (prm)=>({...prm}),
+    }
     search.onBrowserEvent({ key: BROWSER_EVENT.CHANGE, data: { fieldname: "", value: "" } })
     sinon.assert.callCount(testApp.store.setData, 1);
 
@@ -132,20 +140,21 @@ describe('SearchController', () => {
 
     search.onBrowserEvent({ key: BROWSER_EVENT.EDIT_CELL, data: { 
       fieldname: "id", value: "ntype/ttype/id", row: { form: "form", form_id: 1 } } })
-    sinon.assert.callCount(testApp.store.setData, 7);
+    sinon.assert.callCount(testApp.currentModule, 1);
 
     search.onBrowserEvent({ key: BROWSER_EVENT.SET_COLUMNS, data: { 
       fieldname: "description", value: true } })
-    sinon.assert.callCount(testApp.store.setData, 8);
+    sinon.assert.callCount(testApp.store.setData, 7);
     search.onBrowserEvent({ key: BROWSER_EVENT.SET_COLUMNS, data: { 
       fieldname: "description", value: false } })
-    sinon.assert.callCount(testApp.store.setData, 9);
+    sinon.assert.callCount(testApp.store.setData, 8);
 
     search.onBrowserEvent({ key: BROWSER_EVENT.SET_FORM_ACTIONS, data: {} })
-    sinon.assert.callCount(testApp.store.setData, 10);
+    sinon.assert.callCount(testApp.currentModule, 2);
 
-    await search.onBrowserEvent({ key: BROWSER_EVENT.SHOW_BROWSER, data: { value: "transmovement", view: "InventoryView" } })
-    sinon.assert.callCount(testApp.store.setData, 13);
+    await search.onBrowserEvent({ key: BROWSER_EVENT.SHOW_BROWSER, 
+      data: { value: "transmovement", view: "InventoryView" } })
+    sinon.assert.callCount(testApp.store.setData, 10);
 
     search.onBrowserEvent({ key: BROWSER_EVENT.SHOW_HELP, data: { value: "" } })
     sinon.assert.callCount(testApp.showHelp, 1);
@@ -154,15 +163,15 @@ describe('SearchController', () => {
       data: { 
         fields: { sqty: {} }, 
         totalFields: { totalFields: { sqty: 0, qt: 0 }, totalLabels: { sqty: "Quantity", qt: "NA" }, count: 2 } 
-      }, ref: { modalTotal: sinon.spy() } })
-    sinon.assert.callCount(testApp.store.setData, 14);
+      }})
+    sinon.assert.callCount(testApp.store.setData, 11);
 
     search.onBrowserEvent({ key: BROWSER_EVENT.SHOW_TOTAL, 
       data: { 
         fields: { deffield_value: {} }, 
         totalFields: { totalFields: { deffield: 0 }, totalLabels: { deffield: "Deffield" }, count: 1 } 
-      }, ref: { modalTotal: sinon.spy() } })
-    sinon.assert.callCount(testApp.store.setData, 15);
+      }})
+    sinon.assert.callCount(testApp.store.setData, 12);
 
     search.onBrowserEvent({})
 
@@ -191,7 +200,7 @@ describe('SearchController', () => {
       }
     }
 
-    search = new SearchController(host, testApp)
+    search = new SearchController({...host, app: testApp})
     await search.onBrowserEvent({ key: BROWSER_EVENT.BROWSER_VIEW, data: {} })
     sinon.assert.callCount(testApp.resultError, 1);
 
@@ -200,7 +209,11 @@ describe('SearchController', () => {
 
     search.onBrowserEvent({ key: BROWSER_EVENT.EDIT_FILTER, data: { index: 0, fieldname: "fieldname", value: "custname" } })
     sinon.assert.callCount(testApp.store.setData, 2);
+
+    await search.showBrowser("transmovement", "InventoryView", { show_header: true, show_columns: true })
+    sinon.assert.callCount(testApp.store.setData, 3);
   
+    search.setModule({})
   })
 
   it('onModalEvent', async () => {
@@ -210,10 +223,11 @@ describe('SearchController', () => {
         ...app.store,
         setData: sinon.spy()
       },
-      quickSearch: sinon.spy(()=>({ result: {} }))
+      quickSearch: sinon.spy(()=>({ result: {} })),
+      currentModule: sinon.spy(),
     }
 
-    let search = new SearchController(host, testApp)
+    let search = new SearchController({...host, app: testApp})
     search.onModalEvent({ key: MODAL_EVENT.CANCEL, data: {} })
     sinon.assert.callCount(testApp.store.setData, 1);
 
@@ -229,44 +243,17 @@ describe('SearchController', () => {
       resultError: sinon.spy()
     }
 
-    search = new SearchController(host, testApp)
+    search = new SearchController({...host, app: testApp})
     await search.onModalEvent({ key: MODAL_EVENT.SEARCH, data: { value: "" } })
     sinon.assert.callCount(testApp.resultError, 1);
 
-    search.onModalEvent({ key: MODAL_EVENT.SELECTED, data: { value: { id: "ntype/ttype/1" } }, ref: { modalServer: (prm)=>({prm}) } })
-    sinon.assert.callCount(testApp.store.setData, 4);
+    search.onModalEvent({ key: MODAL_EVENT.SELECTED, data: { value: { id: "ntype/ttype/1" } }})
+    sinon.assert.callCount(testApp.currentModule, 1);
 
-    search.onModalEvent({ key: MODAL_EVENT.SELECTED, data: { value: { id: "servercmd//1" } }, ref: { modalServer: (prm)=>({prm}) } })
-    sinon.assert.callCount(testApp.store.setData, 4);
+    search.onModalEvent({ key: MODAL_EVENT.SELECTED, data: { value: { id: "servercmd//1" } }})
+    sinon.assert.callCount(testApp.store.setData, 3);
 
     search.onModalEvent({})
-
-  })
-
-  it('hostConnected', async () => {
-    const testApp = {
-      ...app,
-      store: {
-        ...app.store,
-        data: {
-          ...app.store.data,
-          current: {
-            ...app.store.data.current,
-            content: { [APP_MODULE.SEARCH]: [ 
-              "transmovement", "InventoryView", 
-              { show_header: true, show_columns: true } 
-            ] }
-          }
-        },
-        setData: sinon.spy()
-      },
-      requestData: sinon.spy(()=>({ error: {} })),
-      resultError: sinon.spy()
-    }
-
-    const search = new SearchController(host, testApp)
-    await search.hostConnected()
-    sinon.assert.callCount(testApp.resultError, 1);
 
   })
 
@@ -344,7 +331,6 @@ describe('SearchController', () => {
           }
         },
         setData: (key, data) => {
-          // debugger;
           if(data && data.modalForm){
             data.modalForm.onEvent.onModalEvent({ key: MODAL_EVENT.CANCEL })
             data.modalForm.onEvent.onModalEvent({ 
@@ -377,10 +363,16 @@ describe('SearchController', () => {
       requestData: () => ({}),
       resultError: sinon.spy(),
       request: () => ({ error: {} }),
-      showToast: sinon.spy(),
     }
-    const search = new SearchController(host, testApp)
-    search.showServerCmd(1, { modalServer: (prm)=>(prm)})
+    const search = new SearchController({
+      ...host, 
+      app: testApp
+    })
+    search.module = {
+      modalServer: (prm)=>({...prm}),
+      modalTotal: (prm)=>({...prm}),
+    }
+    search.showServerCmd(1)
 
   })
 

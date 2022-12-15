@@ -541,8 +541,8 @@ describe('Field', () => {
     expect(testField).to.exist;
 
     const input = testField.shadowRoot.querySelector('#test_field');
-    input._onInput({ target: { value: "2021-12-24" } })
-    expect(input.value).to.equal("2021-12-24");
+    input._onInput({ target: { value: "2021-12-24T11:34" } })
+    expect(input.value).to.equal("2021-12-24T11:34:00");
     sinon.assert.callCount(onEdit, 1);
   })
 

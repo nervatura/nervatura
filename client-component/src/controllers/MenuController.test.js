@@ -6,23 +6,27 @@ import { APP_MODULE, SIDE_VISIBILITY, MENU_EVENT, MODAL_EVENT } from '../config/
 
 const host = { 
   addController: ()=>{},
-  inputBox: (prm)=>(prm),
+  modalBookmark: sinon.spy(),
 }
 const store = {
   data: {
     ...storeConfig
   },
   setData: sinon.spy(),
-  msg: (value)=>value,
-  showToast: sinon.spy(),
 }
 const app = {
+  host: {
+    inputBox: (prm)=>(prm),
+  },
   store,
+  showToast: sinon.spy(),
   requestData: () => ({ value: "OK" }),
   resultError: sinon.spy(),
   loadBookmark: () => ({}),
   signOut: sinon.spy(),
   showHelp: sinon.spy(),
+  currentModule: sinon.spy(),
+  msg: (value)=>value,
 }
 
 describe('MenuController', () => {
@@ -35,11 +39,12 @@ describe('MenuController', () => {
       },
       signOut: sinon.spy(),
       showHelp: sinon.spy(),
+      currentModule: sinon.spy(),
     }
     const scrollTo = sinon.spy()
     Object.defineProperty(window, 'scrollTo', { value: scrollTo });
 
-    let menu = new MenuController(host, testApp)
+    let menu = new MenuController({...host, app: testApp})
     menu.onMenuEvent({ key: MENU_EVENT.SIDEBAR, data: {} })
     sinon.assert.callCount(testApp.store.setData, 1);
 
@@ -53,10 +58,10 @@ describe('MenuController', () => {
     sinon.assert.callCount(testApp.store.setData, 2);
 
     menu.onMenuEvent({ key: MENU_EVENT.MODULE, data: { value: APP_MODULE.EDIT } })
-    sinon.assert.callCount(testApp.store.setData, 3);
+    sinon.assert.callCount(testApp.currentModule, 1);
 
     menu.onMenuEvent({ key: MENU_EVENT.MODULE, data: { value: APP_MODULE.SETTING } })
-    sinon.assert.callCount(testApp.store.setData, 5);
+    sinon.assert.callCount(testApp.currentModule, 2);
 
     menu.onMenuEvent({ key: MENU_EVENT.SCROLL, data: {} })
     sinon.assert.callCount(scrollTo, 1);
@@ -78,7 +83,7 @@ describe('MenuController', () => {
       },
     }
 
-    menu = new MenuController(host, testApp)
+    menu = new MenuController({...host, app: testApp})
     menu.onMenuEvent({ key: MENU_EVENT.SIDEBAR, data: {} })
     sinon.assert.callCount(testApp.store.setData, 1);
 
@@ -94,19 +99,20 @@ describe('MenuController', () => {
       requestData: () => ({}),
       resultError: sinon.spy(),
       loadBookmark: () => ({}),
+      currentModule: sinon.spy(),
     }
-    let menu = new MenuController(host, testApp)
+    let menu = new MenuController({...host, app: testApp})
     menu.onModalEvent({ key: MODAL_EVENT.CANCEL, data: {} })
     sinon.assert.callCount(testApp.store.setData, 1);
 
     menu.onModalEvent({ key: MODAL_EVENT.SELECTED, data: { view: "bookmark", row: {} } })
-    sinon.assert.callCount(testApp.store.setData, 2);
+    sinon.assert.callCount(testApp.currentModule, 1);
 
     menu.onModalEvent({ 
       key: MODAL_EVENT.SELECTED, 
       data: { view: "bookmark", row: { cfgroup: "browser", filters: {}, columns: {} } } 
     })
-    sinon.assert.callCount(testApp.store.setData, 3);
+    sinon.assert.callCount(testApp.currentModule, 2);
 
     testApp = {
       ...app,
@@ -124,8 +130,8 @@ describe('MenuController', () => {
       resultError: sinon.spy(),
       loadBookmark: () => ({}),
     }
-    menu = new MenuController(host, testApp)
-    menu.onModalEvent({ key: MODAL_EVENT.DELETE, data: { bookmark_id: 1, menubar: { _onBookmark: sinon.spy() } } })
+    menu = new MenuController({...host, app: testApp})
+    menu.onModalEvent({ key: MODAL_EVENT.DELETE, data: { bookmark_id: 1 } })
 
     testApp = {
       ...app,
@@ -141,8 +147,8 @@ describe('MenuController', () => {
       resultError: sinon.spy(),
       loadBookmark: () => ({}),
     }
-    menu = new MenuController(host, testApp)
-    menu.onModalEvent({ key: MODAL_EVENT.DELETE, data: { bookmark_id: 1, menubar: { _onBookmark: sinon.spy() } } })
+    menu = new MenuController({...host, app: testApp})
+    menu.onModalEvent({ key: MODAL_EVENT.DELETE, data: { bookmark_id: 1 } })
 
     menu.onModalEvent({ key: "missing", data: {} })
 

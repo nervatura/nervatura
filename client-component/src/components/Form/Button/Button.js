@@ -5,6 +5,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import '../Icon/form-icon.js';
 
 import { styles } from './Button.style.js'
+import { TEXT_ALIGN } from '../../../config/enums.js'
 
 export class Button extends LitElement {
   constructor() {
@@ -12,6 +13,7 @@ export class Button extends LitElement {
     this.id = Math.random().toString(36).slice(2);
     this.type = undefined
     this.name = undefined
+    this.align = TEXT_ALIGN.CENTER
     this.icon = undefined
     this.label = ""
     this.disabled = false
@@ -20,6 +22,7 @@ export class Button extends LitElement {
     this.small = false
     this.selected = false
     this.hidelabel = false
+    this.badge = undefined
     this.style = {}
   }
 
@@ -28,6 +31,7 @@ export class Button extends LitElement {
       id: { type: String },
       name: { type: String, reflect: true },
       type: { type: String },
+      align: { type: String },
       label: { type: String },
       icon: { type: String },
       disabled: { type: Boolean, reflect: true },
@@ -36,6 +40,7 @@ export class Button extends LitElement {
       small: { type: Boolean },
       selected: { type: Boolean },
       hidelabel: { type: Boolean },
+      badge: { type: Number },
       style: { type: Object }
     };
   }
@@ -94,13 +99,18 @@ export class Button extends LitElement {
       ?autofocus="${this.autofocus}"
       aria-label="${ifDefined(this.label)}"
       title="${ifDefined(this.label)}"
-      class=${`${["small", "full", "selected", "hidelabel"].filter(key => (this[key])).join(" ")}`}
+      class=${`${["small", "full", "selected", "hidelabel"].filter(key => (this[key])).join(" ")} ${this.align}`}
       style="${styleMap(this.style)}"
       @click=${this._onClick}
       @keydown=${this._onKeyEvent}
       @keypress=${this._onKeyEvent}>
-        ${(this.icon) ?html`<form-icon iconKey="${this.icon}"></form-icon>` : nothing}
+        ${(this.icon && (this.align !== TEXT_ALIGN.RIGHT)) 
+          ? html`<form-icon iconKey="${this.icon}" width=20 ></form-icon>` : nothing}
         <slot id="value"></slot>
+        ${(this.icon && (this.align === TEXT_ALIGN.RIGHT)) 
+          ? html`<form-icon iconKey="${this.icon}" width=20 ></form-icon>` : nothing}
+        ${(this.badge) 
+          ? html`<span class="right" ><span class="badge" >${this.badge}</span></span>` : nothing}
       </button>`;
   }
 

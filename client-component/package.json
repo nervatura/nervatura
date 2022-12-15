@@ -44,26 +44,26 @@
     "coverage": "web-dev-server --root-dir coverage/lcov-report --port 1234 --open"
   },
   "dependencies": {
-    "lit": "^2.4.0"
+    "lit": "^2.4.1"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.6.6",
-    "@open-wc/building-rollup": "^2.0.2",
-    "@open-wc/eslint-config": "^8.0.2",
-    "@open-wc/testing": "^3.1.6",
+    "@open-wc/building-rollup": "^2.2.1",
+    "@open-wc/eslint-config": "^9.0.0",
+    "@open-wc/testing": "^3.1.7",
     "@rollup/plugin-replace": "^5.0.1",
     "@web/dev-server": "^0.1.35",
     "@web/dev-server-storybook": "^0.5.4",
     "@web/test-runner": "^0.14.1",
     "deepmerge": "^4.2.2",
-    "eslint": "^8.26.0",
+    "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.0",
     "rimraf": "^3.0.2",
-    "rollup": "^3.2.4",
+    "rollup": "^3.5.1",
     "rollup-plugin-copy": "^3.4.0",
-    "sinon": "^14.0.1"
+    "sinon": "^15.0.0"
   },
   "eslintConfig": {
     "rules": {

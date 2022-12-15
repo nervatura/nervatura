@@ -1,5 +1,4 @@
 import { LitElement, html, nothing } from 'lit';
-// import { msg } from '@lit/localize';
 
 import '../../Form/Label/form-label.js'
 import '../../Form/Icon/form-icon.js'

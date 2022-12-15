@@ -57,8 +57,8 @@ describe('Date', () => {
     const testDate = element.querySelector('#test_date');
     expect(testDate).to.exist;
 
-    testDate._onInput({ target: { value: "2024-12-24" } })
-    expect(testDate.value).to.equal("2024-12-24");
+    testDate._onInput({ target: { value: "2024-12-24T22:10" } })
+    expect(testDate.value).to.equal("2024-12-24T22:10:00");
 
     testDate._onInput({ target: { value: "" } })
     expect(testDate.value).to.not.equal("");

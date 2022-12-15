@@ -8,11 +8,6 @@ const basePath = "/api"
 
 const version = "__VERSION__"
 const serverURL = "__SERVER__"
-/*
-const locales = {
-  en: { key: "en", en: "English" }
-}
-*/
 
 // Default read and write application context data
 export const store = {
@@ -79,7 +74,6 @@ export const store = {
   login: { 
     username: localStorage.getItem("username") || "",
     database: localStorage.getItem("database") || "",
-    value: 123,
     server: 
       (!localStorage.getItem("server") || (localStorage.getItem("server") === ""))
       ? (window.location.hostname !== publicHost) ? window.location.origin+basePath : ""

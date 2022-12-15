@@ -1,9 +1,10 @@
 import { LitElement, html, nothing } from 'lit';
-// import { msg } from '@lit/localize';
 
 import '../Form/Label/form-label.js'
 import '../Form/Icon/form-icon.js'
 import '../Modal/Bookmark/modal-bookmark.js'
+
+import { MenuController } from '../../controllers/MenuController.js'
 
 import { styles } from './MenuBar.styles.js'
 import { SIDE_VISIBILITY, APP_MODULE, MENU_EVENT } from '../../config/enums.js'
@@ -11,12 +12,13 @@ import { SIDE_VISIBILITY, APP_MODULE, MENU_EVENT } from '../../config/enums.js'
 export class MenuBar extends LitElement {
   constructor() {
     super();
-    this.msg = (defValue) => defValue
     this.scrollTop = false
     this.side = SIDE_VISIBILITY.AUTO
     this.module = APP_MODULE.SEARCH
     this.bookmark = { history: null, bookmark: [] }
     this.selectorPage = 5
+    this.onEvent = new MenuController(this)
+    this.modalBookmark = this.modalBookmark.bind(this)
   }
 
   static get properties() {
@@ -26,6 +28,7 @@ export class MenuBar extends LitElement {
       scrollTop: { type: Boolean },
       bookmark: { type: Object },
       selectorPage: { type: Number },
+      onEvent: { type: Object },
     };
   }
 
@@ -36,7 +39,7 @@ export class MenuBar extends LitElement {
   }
 
   _onMenuEvent(key, data){
-    if(this.onEvent && this.onEvent.onMenuEvent){
+    if(this.onEvent.onMenuEvent){
       this.onEvent.onMenuEvent({ key, data })
     }
     this.dispatchEvent(
@@ -49,16 +52,14 @@ export class MenuBar extends LitElement {
     );
   }
 
-  _onBookmark(bookmark) {
-    const modalForm = html`<modal-bookmark
+  modalBookmark(bookmark) {
+    return html`<modal-bookmark
       .bookmark="${bookmark || this.bookmark}"
       tabView="bookmark"
       pageSize=${this.selectorPage}
-      .msg="${this.msg}"
       .onEvent=${this.onEvent}
-      .values=${{ menubar: this }}
+      .msg=${this.msg}
     ></modal-bookmark>`
-    this._onMenuEvent( MENU_EVENT.MODULE, { value: APP_MODULE.BOOKMARK, modalForm } )
   }
 
   selected(key) {
@@ -106,7 +107,7 @@ export class MenuBar extends LitElement {
         </div>
         <div id="mnu_bookmark_large" 
           class="hide-small hide-medium menuitem"
-          @click=${() => this._onBookmark()}>
+          @click=${() => this._onMenuEvent( MENU_EVENT.MODULE, { value: APP_MODULE.BOOKMARK } )}>
           <form-label class="menu-label ${this.selected(APP_MODULE.BOOKMARK)}"
             value="${this.msg("Bookmark", { id: "menu_bookmark" })}"
             leftIcon="Star" ></form-label>
@@ -144,7 +145,7 @@ export class MenuBar extends LitElement {
         </div>
         <div id="mnu_bookmark_medium" 
           class="right hide-large menuitem"
-          @click=${() => this._onBookmark()}>
+          @click=${() => this._onMenuEvent( MENU_EVENT.MODULE, { value: APP_MODULE.BOOKMARK } )}>
           <span class="hide-small"><form-label class="menu-label ${this.selected(APP_MODULE.BOOKMARK)}"
             value="${this.msg("Bookmark", { id: "menu_bookmark" })}"
             leftIcon="Star" ></form-label></span>

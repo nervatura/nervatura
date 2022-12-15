@@ -4,22 +4,25 @@ import { LoginController } from './LoginController.js'
 import { store as storeConfig } from '../config/app.js'
 import { LOGIN_PAGE_EVENT } from '../config/enums.js'
 
-const host = { addController: ()=>{} }
+const host = { 
+  addController: ()=>{}, 
+}
 const store = {
   data: {
     ...storeConfig
   },
   setData: ()=>{},
-  msg: (value)=>value,
-  showToast: sinon.spy(),
 }
 const app = {
   store,
+  showToast: sinon.spy(),
   requestData: () => ({ value: "OK" }),
   getSql: () =>({
     sql: "",
     prmCount: 1
-  })
+  }),
+  currentModule: sinon.spy(),
+  msg: (value)=>value,
 }
 
 describe('LoginController', () => {
@@ -37,7 +40,7 @@ describe('LoginController', () => {
       resultError: sinon.spy()
     }
     // debugger;
-    let login = new LoginController(host, testApp)
+    let login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.resultError, 1);
 
@@ -46,7 +49,7 @@ describe('LoginController', () => {
       ...testApp,
       requestData: () => ({ token: "token", engine: "engine_error" }),
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.resultError, 2);
 
@@ -55,7 +58,7 @@ describe('LoginController', () => {
       ...testApp,
       requestData: () => ({ token: "token", engine: "sqlite", version: "version_error" }),
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.resultError, 3);
 
@@ -75,7 +78,7 @@ describe('LoginController', () => {
       },
       resultError: sinon.spy()
     }
-    let login = new LoginController(host, testApp)
+    let login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.resultError, 1);
 
@@ -96,7 +99,7 @@ describe('LoginController', () => {
         return { error: {} }
       },
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.resultError, 2);
 
@@ -124,7 +127,7 @@ describe('LoginController', () => {
         return { error: {} }
       },
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.resultError, 3);
 
@@ -158,7 +161,7 @@ describe('LoginController', () => {
       },
       loadBookmark: sinon.spy()
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.loadBookmark, 1);
 
@@ -191,7 +194,7 @@ describe('LoginController', () => {
         return {}
       }
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.onLogin()
     sinon.assert.callCount(testApp.loadBookmark, 2);
   })
@@ -228,7 +231,7 @@ describe('LoginController', () => {
       loadBookmark: sinon.spy()
     }
     
-    let login = new LoginController(host, testApp)
+    let login = new LoginController({...host, app: testApp})
     await login.tokenValidation({ code: "code", callback: "/callback" })
     sinon.assert.callCount(testApp.loadBookmark, 1);
 
@@ -237,7 +240,7 @@ describe('LoginController', () => {
     //   ...testApp,
     //   requestData: () => ({ error: {} }),
     // }
-    // login = new LoginController(host, testApp)
+    // login = new LoginController({...host, app: testApp})
     // await login.tokenValidation({ code: "code", callback: "/callback" })
 
     // tokenError error
@@ -245,7 +248,7 @@ describe('LoginController', () => {
       ...testApp,
       requestData: () => ({ error: {} }),
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.tokenValidation({ code: "code" })
     sinon.assert.callCount(testApp.resultError, 1);
 
@@ -261,7 +264,7 @@ describe('LoginController', () => {
         return { error: {} }
       }
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.tokenValidation({ code: "code" })
     sinon.assert.callCount(testApp.resultError, 2);
     
@@ -275,7 +278,7 @@ describe('LoginController', () => {
       resultError: sinon.spy(),
       loadBookmark: sinon.spy()
     }
-    let login = new LoginController(host, testApp)
+    let login = new LoginController({...host, app: testApp})
     await login.setCodeToken({ code: "code", callback: "/callback" })
     sinon.assert.callCount(testApp.resultError, 1);
 
@@ -286,7 +289,7 @@ describe('LoginController', () => {
       resultError: sinon.spy(),
       loadBookmark: sinon.spy()
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.setCodeToken({ code: "code", callback: "/callback" })
     sinon.assert.callCount(testApp.resultError, 1);
 
@@ -299,12 +302,12 @@ describe('LoginController', () => {
       resultError: sinon.spy(),
       loadBookmark: sinon.spy()
     }
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.setCodeToken({ code: "code", callback: "/callback" })
     sinon.assert.callCount(testApp.resultError, 1);
 
     // callback error
-    login = new LoginController(host, testApp)
+    login = new LoginController({...host, app: testApp})
     await login.setCodeToken({ code: "code" })
     sinon.assert.callCount(testApp.resultError, 2);
 
@@ -320,7 +323,7 @@ describe('LoginController', () => {
       requestData: () => ({ error: {} }),
       resultError: sinon.spy(),
     }
-    const login = new LoginController(host, testApp)
+    const login = new LoginController({...host, app: testApp})
     login.onPageEvent({ key: LOGIN_PAGE_EVENT.CHANGE, data: { fieldname: "fieldname", value: "value" } })
     sinon.assert.callCount(testApp.store.setData, 1);
 

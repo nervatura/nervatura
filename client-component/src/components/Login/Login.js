@@ -1,5 +1,4 @@
 import { LitElement, html } from 'lit';
-// import { msg } from '@lit/localize';
  
 import '../Form/Button/form-button.js'
 import '../Form/Select/form-select.js'
@@ -9,19 +8,18 @@ import '../Form/Label/form-label.js'
 
 import { styles } from './Login.styles.js'
 import { LOGIN_PAGE_EVENT, BUTTON_TYPE, INPUT_TYPE, APP_THEME } from '../../config/enums.js'
+import { LoginController } from '../../controllers/LoginController.js'
 
 export class Login extends LitElement {
   constructor() {
     super();
-    /* c8 ignore next 1 */
-    this.msg = (defValue) => defValue
     this.version = ""
     this.serverURL = ""
     this.theme = APP_THEME.LIGHT
     this.lang = "en"
     this.locales = []
     this.data = {}
-    this.onEvent = {}
+    this.onEvent = new LoginController(this)
   }
 
   static get properties() {

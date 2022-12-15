@@ -10,7 +10,7 @@ import '../Select/form-select.js'
 import '../DateTime/form-datetime.js'
 
 import { styles } from './Field.styles.js'
-import { BUTTON_TYPE, DATETIME_TYPE, INPUT_TYPE } from '../../../config/enums.js'
+import { BUTTON_TYPE, DATETIME_TYPE, INPUT_TYPE, EDIT_EVENT, EDITOR_EVENT } from '../../../config/enums.js'
 
 export class Field extends LitElement {
   constructor() {
@@ -376,7 +376,7 @@ export class Field extends LitElement {
           this.field.options.forEach((element) => {
             let _label = element[1]
             if(this.msg(_label, { id: _label })){
-              _label = this.msg("", { id: _label })
+              _label = this.msg(_label, { id: _label })
             }
             if (typeof this.field.olabel !== "undefined") {
               _label = this.msg(`${this.field.olabel}_${element[1]}`, { id: `${this.field.olabel}_${element[1]}` });
@@ -424,12 +424,12 @@ export class Field extends LitElement {
         return html`<div 
           name="${fieldName}" style="${styleMap(this.style)}" class="link" >
           <span id=${`link_${fieldMap.lnktype}_${fieldName}`} class="link-text" 
-            @click="${()=>this._onEvent("checkEditor", [
+            @click="${()=>this._onEvent(EDIT_EVENT.CHECK_EDITOR, [
               { ntype: fieldMap.lnktype, 
                 ttype: fieldMap.transtype, 
                 id: value 
               }, 
-              "LOAD_EDITOR"
+              EDITOR_EVENT.LOAD_EDITOR
             ])
             }" >${llabel}</span>
         </div>`
@@ -472,11 +472,11 @@ export class Field extends LitElement {
           ${(selector.text !== "") ? html`<span 
             id=${`sel_link_${fieldName}`}
             class="link-text"
-            @click="${()=>this._onEvent("checkTranstype", [
+            @click="${()=>this._onEvent(EDIT_EVENT.CHECK_TRANSTYPE, [
               { ntype: selector.ntype, 
                 ttype: selector.ttype, 
                 id: selector.id }, 
-              'LOAD_EDITOR'
+              EDITOR_EVENT.LOAD_EDITOR
             ])}" >${selector.text}</span>`:null}
         </div>`)
         return html`<div id="${this.id}" 

@@ -37,7 +37,7 @@ export class Label extends LitElement {
         class="row ${(this.centered)?`centered`:``}">
         <div class="cell label_icon_left">
           ${html`<form-icon 
-            iconKey="${this.leftIcon}" 
+            iconKey="${this.leftIcon}" width=20
             color="${ifDefined(this.iconStyle.color)}"
             .style="${this.iconStyle}"></form-icon>`}
         </div>
@@ -52,7 +52,7 @@ export class Label extends LitElement {
           style="${styleMap(this.style)}" >${this.value}</div>
         <div class="cell label_icon_right">
           ${html`<form-icon 
-            iconKey="${this.rightIcon}" 
+            iconKey="${this.rightIcon}" width=20
             color="${ifDefined(this.iconStyle.color)}"
             .style="${this.iconStyle}"></form-icon>`}
         </div>
