@@ -1,219 +1,207 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, FlipStringOn, FlipStringOff, FlipTextOn, FlipTextOff, FlipImageOn, FlipImageOff,
+import './form-row.js';
+
+import { Template, Default, FlipStringOn, FlipStringOff, FlipTextOn, FlipTextOff, FlipImageOn, FlipImageOff,
   FlipChecklistOn, FlipChecklistOff, Field, Reportfield, ReportfieldEmpty, Fieldvalue,
-  Col2, Col3, Col4, Missing, Label } from './Row.stories';
+  Col2, Col3, Col4, Missing, Label } from './Row.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+  describe('Field', () => {
+    afterEach(() => {
+      // Restore the default sandbox here
+      sinon.restore();
+    });
+  
+    it('renders in the Default state', async () => {
+      const element = await fixture(Template({
+        ...Default.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-it('renders in the Default state', () => {
-  const { container } = render(
-    <Default {...Default.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    it('renders in the FlipStringOn state', async () => {
+      const onEdit = sinon.spy()
+      const element = await fixture(Template({
+        ...FlipStringOn.args, onEdit
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
 
-});
+      const checkbox = testRow.shadowRoot.querySelector('#checkbox_title');
+      checkbox.click()
+      sinon.assert.calledOnce(onEdit);
+    })
 
-it('renders in the Label state', () => {
-  const { container } = render(
-    <Label {...Label.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    it('renders in the FlipStringOff state', async () => {
+      const element = await fixture(Template({
+        ...FlipStringOff.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-});
+    it('renders in the FlipTextOn state', async () => {
+      const element = await fixture(Template({
+        ...FlipTextOn.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-it('renders in the FlipStringOn state', () => {
-  const onEdit = jest.fn()
+    it('renders in the FlipTextOff state', async () => {
+      const element = await fixture(Template({
+        ...FlipTextOff.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-  const { container } = render(
-    <FlipStringOn {...FlipStringOn.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    it('renders in the FlipImageOn state', async () => {
+      const onEdit = sinon.spy()
+      let element = await fixture(Template({
+        ...FlipImageOn.args, onEdit
+      }));
+      let testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
 
-  const checkbox = getById(container, 'checkbox_title')
-  fireEvent.click(checkbox)
-  expect(onEdit).toHaveBeenCalledTimes(1);
+      testRow._onTextInput({ target: { value: "data:image" } })
+      sinon.assert.calledOnce(onEdit);
 
-});
+      const fileSrc = testRow.shadowRoot.querySelector('#file_src')
+      fileSrc.onChange({ value: "" })
+      sinon.assert.calledTwice(onEdit);
+      expect(fileSrc.value).to.equal('');
 
-it('renders in the FlipStringOff state', () => {
-  const { container } = render(
-    <FlipStringOff {...FlipStringOff.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+      element = await fixture(Template({
+        ...FlipImageOn.args,
+        values: { src: "" }
+      }));
+      testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
 
-});
+    })
 
-it('renders in the FlipTextOn state', () => {
-  const { container } = render(
-    <FlipTextOn {...FlipTextOn.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    it('renders in the FlipImageOff state', async () => {
+      const element = await fixture(Template({
+        ...FlipImageOff.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-});
+    it('renders in the FlipChecklistOn state', async () => {
+      const onEdit = sinon.spy()
+      const element = await fixture(Template({
+        ...FlipChecklistOn.args, onEdit
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
 
-it('renders in the FlipTextOff state', () => {
-  const { container } = render(
-    <FlipTextOff {...FlipTextOff.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+      const checklist = testRow.shadowRoot.querySelector('#checklist_border_0');
+      checklist.click()
+      sinon.assert.calledOnce(onEdit);
+    })
 
-});
+    it('renders in the FlipChecklistOff state', async () => {
+      const element = await fixture(Template({
+        ...FlipChecklistOff.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-it('renders in the FlipImageOn state', () => {
-  const onEdit = jest.fn()
+    it('renders in the Field state', async () => {
+      const element = await fixture(Template({
+        ...Field.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-  const { container } = render(
-    <FlipImageOn {...FlipImageOn.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    it('renders in the Reportfield state', async () => {
+      const onEdit = sinon.spy()
+      const element = await fixture(Template({
+        ...Reportfield.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
 
-  const input_src = getById(container, 'input_src')
-  fireEvent.change(input_src, {target: {value: "data:image"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
+      const posdate = testRow.shadowRoot.querySelector('#cb_posdate');
+      posdate.click()
+      sinon.assert.callCount(onEdit, 0);
+    })
 
-  const file_src = getById(container, 'file_src')
-  fireEvent.change(file_src, {target: {value: ""}})
-  expect(onEdit).toHaveBeenCalledTimes(2);
+    it('renders in the ReportfieldEmpty state', async () => {
+      const onEdit = sinon.spy()
+      const element = await fixture(Template({
+        ...ReportfieldEmpty.args, onEdit
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
 
-  render(
-    <FlipImageOn {...FlipImageOn.args} 
-      values={{ src: "" }} />
-  )
+      const curr = testRow.shadowRoot.querySelector('#cb_curr');
+      curr.click()
+      sinon.assert.callCount(onEdit, 1);
+    })
 
-  render(
-    <FlipImageOn {...FlipImageOn.args} 
-      values={{ src: "data:image" }} />
-  )
+    it('renders in the Fieldvalue state', async () => {
+      const onEdit = sinon.spy()
+      const element = await fixture(Template({
+        ...Fieldvalue.args, onEdit
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
 
-  render(
-    <FlipImageOn {...FlipImageOn.args} 
-      values={{ src: "data" }} />
-  )
+      const deleteRow = testRow.shadowRoot.querySelector('#delete_sample_customer_float');
+      deleteRow.click()
+      sinon.assert.callCount(onEdit, 1);
 
-});
+      const customerFloat = testRow.shadowRoot.querySelector('#notes_sample_customer_float')
+      customerFloat._onInput({ target: { value: "12", valueAsNumber: 12 } })
+      sinon.assert.calledTwice(onEdit);
+      expect(customerFloat.value).to.equal("12");
+    })
 
-it('renders in the FlipImageOff state', () => {
-  const { container } = render(
-    <FlipImageOff {...FlipImageOff.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    it('renders in the Col2 state', async () => {
+      const element = await fixture(Template({
+        ...Col2.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-});
+    it('renders in the Col3 state', async () => {
+      const element = await fixture(Template({
+        ...Col3.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-it('renders in the FlipChecklistOn state', () => {
-  const onEdit = jest.fn()
+    it('renders in the Col4 state', async () => {
+      const element = await fixture(Template({
+        ...Col4.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-  const { container } = render(
-    <FlipChecklistOn {...FlipChecklistOn.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    it('renders in the Missing state', async () => {
+      const element = await fixture(Template({
+        ...Missing.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-  const checkbox = getById(container, 'checklist_border_0')
-  fireEvent.click(checkbox)
-  expect(onEdit).toHaveBeenCalledTimes(1);
+    it('renders in the Label state', async () => {
+      const element = await fixture(Template({
+        ...Label.args
+      }));
+      const testRow = element.querySelector('#test_row');
+      expect(testRow).to.exist;
+    })
 
-});
-
-it('renders in the FlipChecklistOff state', () => {
-  const { container } = render(
-    <FlipChecklistOff {...FlipChecklistOff.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the Field state', () => {
-  const { container } = render(
-    <Field {...Field.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the Reportfield state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <Reportfield {...Reportfield.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const cb_posdate = getById(container, 'cb_posdate')
-  fireEvent.click(cb_posdate)
-  expect(onEdit).toHaveBeenCalledTimes(0);
-
-});
-
-it('renders in the ReportfieldEmpty state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <ReportfieldEmpty {...ReportfieldEmpty.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const cb_curr = getById(container, 'cb_curr')
-  fireEvent.click(cb_curr)
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-});
-
-it('renders in the Fieldvalue state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <Fieldvalue {...Fieldvalue.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const checkbox = getById(container, 'delete_sample_customer_float')
-  fireEvent.click(checkbox)
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  const notes = getById(container, 'notes_sample_customer_float')
-  fireEvent.change(notes, {target: {value: "value"}})
-  expect(onEdit).toHaveBeenCalledTimes(2);
-
-  render(
-    <Fieldvalue {...Fieldvalue.args} id="test_input" 
-      data={{
-        dataset: {}, 
-        current: {}, 
-        audit: "readonly"}} />
-  );
-
-});
-
-it('renders in the Col2 state', () => {
-  const { container } = render(
-    <Col2 {...Col2.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the Col3 state', () => {
-  const { container } = render(
-    <Col3 {...Col3.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the Col4 state', () => {
-  const { container } = render(
-    <Col4 {...Col4.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the Missing state', () => {
-  const { container } = render(
-    <Missing {...Missing.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
+})

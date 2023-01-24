@@ -1,148 +1,162 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
 
-import 'styles/style.css';
-import styles from './Menu.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Input/form-input.js'
+import '../../Form/NumberInput/form-number.js'
+import '../../Form/Select/form-select.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Input from 'components/Form/Input'
-import Select from 'components/Form/Select'
-import Icon from 'components/Form/Icon'
+import { styles } from './Menu.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE, INPUT_TYPE } from '../../../config/enums.js'
 
-export const Menu = ({
-  idKey, menu_id, fieldname, description, fieldtype, fieldtypeOptions, orderby, className,
-  getText, onClose, onMenu,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    fieldname: fieldname,
-    description: description,
-    fieldtype: fieldtype,
-    orderby: orderby
-  })
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={getText("title_menucmd")} 
-                  leftIcon={<Icon iconKey="Share" />} iconWidth="20px" />
+export class Menu extends LitElement {
+  constructor() {
+    super();
+    this.idKey = null
+    this.menu_id = 0 
+    this.fieldname = ""
+    this.description = "" 
+    this.fieldtype = 0
+    this.fieldtypeOptions = [] 
+    this.orderby = 0
+  }
+
+  static get properties() {
+    return {
+      idKey: { type: Object },
+      menu_id: { type: Number },
+      fieldname: { type: String },
+      description: { type: String },
+      fieldtype: { type: Number },
+      fieldtypeOptions: { type: Array },
+      orderby: { type: Number },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  _onValueChange(key, value){
+    this[key] = value
+  }
+  
+  render() {
+    const { idKey, menu_id, fieldname, description, orderby, fieldtype, fieldtypeOptions } = this
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="Share"
+                value="${this.msg("", { id: "title_menucmd" })}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "menufields_fieldname" })}" 
+                    ></form-label>
+                  </div>
+                  <form-input id="fieldname"
+                    type="${INPUT_TYPE.TEXT}"
+                    label="${this.msg("", { id: "menufields_fieldname" })}" 
+                    .onChange=${(event) => this._onValueChange("fieldname", event.value)}
+                    value="${fieldname}" ?full=${true}
+                  ></form-input>
+                </div>
               </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "menufields_description" })}" 
+                    ></form-label>
+                  </div>
+                  <form-input id="description"
+                    type="${INPUT_TYPE.TEXT}"
+                    label="${this.msg("", { id: "menufields_description" })}" 
+                    .onChange=${(event) => this._onValueChange("description", event.value)}
+                    value="${description}" ?full=${true}
+                  ></form-input>
+                </div>
+              </div>
+              <div class="row full">
+                <div class="cell padding-small half" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "menufields_fieldtype" })}" 
+                    ></form-label>
+                  </div>
+                  <form-select id="fieldtype" 
+                    label="${this.msg("", {id: "menufields_fieldtype"})}" ?full="${true}"
+                    .onChange=${(value) => this._onValueChange("fieldtype", parseInt(value.value,10)) }
+                    .options=${fieldtypeOptions} .isnull="${false}" value="${String(fieldtype)}" 
+                  ></form-select>
+                </div>
+                <div class="cell padding-small half" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "menufields_orderby" })}" 
+                    ></form-label>
+                  </div>
+                  <form-number id="orderby" 
+                    label="${this.msg("", { id: "menufields_orderby" })}"
+                    ?integer="${false}" value="${orderby}"
+                    .onChange=${(event) => this._onValueChange("orderby", event.value)}
+                  ></form-number>
+                </div>
               </div>
             </div>
           </div>
-          <div className="section-small">
-            <div className="row full container-small">
-              <div className="row full">
-                <div className={`${"cell padding-small"}`} >
-                  <div>
-                    <Label className="bold" value={getText("menufields_fieldname")} />
-                  </div>
-                  <Input id="fieldname"
-                    className="full" value={state.fieldname}
-                    onChange={ (value)=>setState({ ...state, fieldname: value }) } />
-                </div>
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_cancel" icon="Times"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL, {})} 
+                  ?full="${true}" label="${this.msg("", { id: "msg_cancel" })}"
+                >${this.msg("", { id: "msg_cancel" })}</form-button>
               </div>
-            </div>
-            <div className="row full container-small">
-              <div className="row full">
-                <div className={`${"cell padding-small"}`} >
-                  <div>
-                    <Label className="bold" value={getText("menufields_description")} />
-                  </div>
-                  <Input id="description"
-                    className="full" value={state.description}
-                    onChange={ (value)=>setState({ ...state, description: value }) } />
-                </div>
-              </div>
-            </div>
-            <div className="row full container-small">
-              <div className="cell padding-small half">
-                <div className="row full">
-                  <Label className="bold" value={getText("menufields_fieldtype")} />
-                </div>
-                <Select id="fieldtype" 
-                  className="full" value={String(state.fieldtype)}
-                  onChange={ (value)=>setState({ ...state, fieldtype: parseInt(value,10) }) }
-                  options={fieldtypeOptions} />
-              </div>
-              <div className="cell padding-small half">
-                <div className="row full">
-                  <Label className="bold" value={getText("menufields_orderby")} />
-                </div>
-                <Input id="orderby"
-                  className="full align-right" value={String(state.orderby)} type="integer"
-                  onChange={ (value)=>setState({ ...state, orderby: value }) } />
+              <div class="cell padding-small half" >
+                <form-button id="btn_ok" icon="Check"
+                  ?disabled="${(fieldname === "") || (description === "")}"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, { 
+                    value: { id: idKey, menu_id, fieldname, description, fieldtype, orderby } 
+                  })} 
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_ok" })}"
+                >${this.msg("", { id: "msg_ok" })}</form-button>
               </div>
             </div>
           </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_cancel" 
-                  className={`${"full"} ${styles.closeIcon} `}
-                  onClick={onClose} 
-                  value={<Label center value={getText("msg_cancel")} 
-                    leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />}
-                />
-              </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_ok"
-                  className={`${"full primary"}`}
-                  disabled={((state.fieldname === "")||(state.description === ""))?"disabled":""}
-                  onClick={ ()=>onMenu({
-                    id: idKey, menu_id: menu_id, fieldname: state.fieldname, description: state.description, 
-                    fieldtype: state.fieldtype, orderby: state.orderby
-                  }) }
-                  value={<Label center value={getText("msg_ok")} 
-                    leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />}
-                />
-              </div>
-            </div>
-          </div> 
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Menu.propTypes = {
-  idKey: PropTypes.number,
-  menu_id: PropTypes.number.isRequired, 
-  fieldname: PropTypes.string.isRequired, 
-  description: PropTypes.string.isRequired, 
-  fieldtype: PropTypes.number.isRequired, 
-  fieldtypeOptions: PropTypes.array.isRequired, 
-  orderby: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-  /**
-    * Close form handle (modal style)
-    */ 
-  onClose: PropTypes.func,
-  onMenu: PropTypes.func
-}
-
-Menu.defaultProps = {
-  idKey: null,
-  menu_id: 0, 
-  fieldname: "", 
-  description: "", 
-  fieldtype: 0, 
-  fieldtypeOptions: [], 
-  orderby: 0,
-  className: "",
-  getText: undefined,
-  onClose: undefined,
-  onMenu: undefined
-}
-
-export default Menu;

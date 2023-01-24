@@ -1,49 +1,55 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Disabled } from './Template.stories';
+import './modal-template.js';
+import { Template, Default, DarkForm } from  './Template.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Audit', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onData = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const template = element.querySelector('#template');
+    expect(template).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_settings"
-    onData={onData} onClose={onClose} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const closeIcon = template.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnCancel = template.shadowRoot.querySelector('#btn_cancel')
+    btnCancel.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_cancel = getById(container, 'btn_cancel')
-  fireEvent.click(btn_cancel)
-  expect(onClose).toHaveBeenCalledTimes(2);
+    const btnOK = template.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const name = getById(container, 'name')
-  fireEvent.change(name, {target: {value: "name"}})
-  expect(name.value).toEqual("name");
+    const fieldname = template.shadowRoot.querySelector('#name');
+    fieldname._onInput({ target: { value: "name" } })
+    expect(fieldname.value).to.equal("name");
 
-  const columns = getById(container, 'columns')
-  fireEvent.change(columns, {target: {value: "col3,col4,col5"}})
-  expect(columns.value).toEqual("col3,col4,col5");
+    template._onTextInput({ target: { value: "col3,col4,col5" } })
+    expect(template.columns).to.equal("col3,col4,col5");
 
-  const type = getById(container, 'type')
-  fireEvent.change(type, {target: {value: "list"}})
-  expect(type.value).toEqual("list");
+    const fieldtype = template.shadowRoot.querySelector('#type');
+    fieldtype._onInput({ target: { value: "list" } })
+    expect(fieldtype.value).to.equal("list");
 
-  const btn_ok = getById(container, 'btn_ok')
-  fireEvent.click(btn_ok)
-  expect(onData).toHaveBeenCalledTimes(1);
+  })
 
-})
+  it('renders in the DarkForm state', async () => {
+    const element = await fixture(Template({
+      ...DarkForm.args
+    }));
+    const template = element.querySelector('#template');
+    expect(template).to.exist;
 
-it('renders in the Disabled state', () => {
-  const { container } = render(
-    <Disabled {...Disabled.args} id="test_settings" />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+  })
+
 })

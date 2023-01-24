@@ -1,41 +1,46 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Disabled } from './Formula.stories';
+import './modal-formula.js';
+import { Template, Default, Disabled } from  './Formula.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Formula', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onFormula = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const formula = element.querySelector('#formula');
+    expect(formula).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_settings"
-    onFormula={onFormula} onClose={onClose} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const closeIcon = formula.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnCancel = formula.shadowRoot.querySelector('#btn_cancel')
+    btnCancel.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_cancel = getById(container, 'btn_cancel')
-  fireEvent.click(btn_cancel)
-  expect(onClose).toHaveBeenCalledTimes(2);
+    const btnOK = formula.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const btn_formula = getById(container, 'btn_formula')
-  fireEvent.click(btn_formula)
-  expect(onFormula).toHaveBeenCalledTimes(1);
+    const selFormula = formula.shadowRoot.querySelector('#sel_formula');
+    selFormula._onInput({ target: { value: "" } })
+    expect(selFormula.value).to.equal("");
+  })
 
-  const formula = getById(container, 'formula')
-  fireEvent.change(formula, {target: {value: "19"}})
-  expect(formula.value).toEqual("19");
+  it('renders in the Disabled state', async () => {
+    const element = await fixture(Template({
+      ...Disabled.args
+    }));
+    const formula = element.querySelector('#formula');
+    expect(formula).to.exist;
+  })
 
-})
-
-it('renders in the Disabled state', () => {
-  const { container } = render(
-    <Disabled {...Disabled.args} id="test_settings" />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
 })

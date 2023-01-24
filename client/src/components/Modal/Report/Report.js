@@ -1,176 +1,177 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
 
-import { store } from 'config/app'
-import 'styles/style.css';
-import styles from './Report.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Select/form-select.js'
+import '../../Form/NumberInput/form-number.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Input from 'components/Form/Input'
-import Select from 'components/Form/Select'
-import Icon from 'components/Form/Icon'
+import { styles } from './Report.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE } from '../../../config/enums.js'
 
-export const Report = ({
-  title, template, templates, orient, size, copy, className,
-  getText, onClose, onOutput,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    template: template,
-    orient: orient,
-    size: size,
-    copy: copy
-  })
-  const reportOutput = (otype) => {
-    onOutput({ 
-      type: otype, template: state.template, title: title,
-      orient: state.orient, size: state.size, copy: state.copy 
-    })
+export class Report extends LitElement {
+  constructor() {
+    super();
+    this.title = ""
+    this.template = ""
+    this.templates = []
+    this.report_orientation = []
+    this.report_size = []
+    this.orient = "portrait"
+    this.size = "a4" 
+    this.copy = 1
   }
-  const report_orientation= store.ui.report_orientation.map(item => { 
-    return { value: item[0], text: getText(item[1]) } 
-  })
-  const report_size = store.ui.report_size.map(item => { 
-    return { value: item[0], text: item[1] } 
-  })
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={title} leftIcon={<Icon iconKey="ChartBar" />} iconWidth="20px" />
+
+  static get properties() {
+    return {
+      title: { type: String },
+      templates: { type: Array },
+      report_orientation: { type: Array },
+      report_size: { type: Array },
+      template: { type: String },
+      orient: { type: String },
+      size: { type: String },
+      copy: { type: Number },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, value){
+    const { template, orient, size, copy, title } = this
+    const data = {
+      type: value, template, orient, size, copy, title
+    }
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  _onValueChange(key, value){
+    this[key] = value
+  }
+  
+  render() {
+    const { title, template, templates, orient, size, copy, report_size, report_orientation } = this
+    const _report_orientation= report_orientation.map(item => ({ value: item[0], text: this.msg("", { id: item[1] }) }))
+    const _report_size = report_size.map(item => ({ value: item[0], text: item[1] }))
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="ChartBar"
+                value="${title}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, "") }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div class="label-padding">
+                    <form-label
+                      value="${this.msg("", { id: "msg_template" })}" 
+                    ></form-label>
+                  </div>
+                  <form-select id="template" 
+                    label="${this.msg("", { id: "msg_template" })}"
+                    .onChange=${(event) => this._onValueChange("template", event.value)}
+                    .options=${templates} .isnull="${true}" value="${template}" 
+                  ></form-select>
+                </div>
               </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
+            </div>
+            <div class="section-row" >
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div class="label-padding" >
+                    <form-label
+                      value="${this.msg("", { id: "msg_report_prop" })}" 
+                    ></form-label>
+                  </div>
+                  <div class="cell" >
+                    <form-select id="orient" 
+                      label="${orient}"
+                      .onChange=${(event) => this._onValueChange("orient", event.value)}
+                      .options=${_report_orientation} .isnull="${false}" value="${orient}" 
+                    ></form-select>
+                  </div>
+                  <div class="cell" >
+                    <form-select id="size" 
+                      label="${size}"
+                      .onChange=${(event) => this._onValueChange("size", event.value)}
+                      .options=${_report_size} .isnull="${false}" value="${size}" 
+                    ></form-select>
+                  </div>
+                  <div class="cell" >
+                    <form-number id="copy" 
+                      label="${copy}" .style=${{ width: "60px" }}
+                      ?integer="${true}" value="${copy}"
+                      .onChange=${(event) => this._onValueChange("copy", event.value)}
+                    ></form-number>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="row full container-small section-small">
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" text="msg_template" />
-                </div>
-                <Select id="template"
-                  className="full" value={state.template}
-                  onChange={ (value)=>setState({ ...state, template: value }) }
-                  options={templates} />
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_print"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, "print" )}
+                  ?disabled="${(template==="")}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_print" })}"
+                >${this.msg("", { id: "msg_print" })}</form-button>
+              </div>
+              <div class="cell padding-small half" >
+                <form-button id="btn_pdf"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, "pdf" )} 
+                  ?disabled="${(template==="")}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_export_pdf" })}"
+                >${this.msg("", { id: "msg_export_pdf" })}</form-button>
               </div>
             </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" text="msg_report_prop" />
-                </div>
-                <Select id="orient"
-                  value={state.orient}
-                  onChange={ (value)=>setState({ ...state, orient: value }) }
-                  options={report_orientation} />
-                <Select id="size"
-                  value={state.size}
-                  onChange={ (value)=>setState({ ...state, size: value }) }
-                  options={report_size} />
-                <Input id="copy"
-                  className={`${styles.copyInput}`} 
-                  type="integer" value={state.copy} 
-                  onChange={ (value)=>setState({ ...state, copy: value }) } />
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_xml"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, "xml" )}
+                  ?disabled="${(template==="")}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_export_xml" })}"
+                >${this.msg("", { id: "msg_export_xml" })}</form-button>
               </div>
-            </div> 
+              <div class="cell padding-small half" >
+                <form-button id="btn_printqueue"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, "printqueue" )} 
+                  ?disabled="${(template==="")}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_printqueue" })}"
+                >${this.msg("", { id: "msg_printqueue" })}</form-button>
+              </div>
+            </div>
           </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_print"
-                  className={`${"full primary"}`} 
-                  disabled={(template==="")?"disabled":""}
-                  onClick={()=>reportOutput("print")}
-                  label={getText("msg_print")} />
-              </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_pdf"
-                  className={`${"full primary"}`} 
-                  disabled={(template==="")?"disabled":""}
-                  onClick={()=>reportOutput("pdf")}
-                  label={getText("msg_export_pdf")} />
-              </div>
-            </div>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_xml"
-                  className={`${"full primary"}`} 
-                  disabled={(template==="")?"disabled":""}
-                  onClick={()=>reportOutput("xml")} 
-                  label={getText("msg_export_xml")} />
-              </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_printqueue"
-                  className={`${"full primary"}`} 
-                  disabled={(template==="")?"disabled":""}
-                  onClick={()=>reportOutput("printqueue")}
-                  label={getText("msg_printqueue")} />
-              </div>
-            </div>
-          </div> 
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Report.propTypes = {
-  /**
-   * Form title
-   */
-  title: PropTypes.string.isRequired,
-  /**
-   * Default report template
-   */
-  template: PropTypes.string.isRequired,
-  /**
-   * Report templates
-   */
-  templates: PropTypes.array.isRequired,
-  /**
-   * Default page orientation
-   */
-  orient: PropTypes.string.isRequired,
-  /**
-   * Default page size
-   */
-  size: PropTypes.string.isRequired,
-  /**
-   * Default copy value 
-   */ 
-  copy: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func, 
-   /**
-    * Close form handle (modal style)
-    */ 
-  onClose: PropTypes.func,
-  /**
-   * Selected output type handle
-   */
-  onOutput: PropTypes.func,
-}
-
-Report.defaultProps = {
-  title: "",
-  template: "",
-  templates: [],
-  orient: "portrait",
-  size: "a4", 
-  copy: 1,
-  className: "",
-  getText: undefined, 
-  onClose: undefined,
-  onOutput: undefined,
-}
-
-export default Report;

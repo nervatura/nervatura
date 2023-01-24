@@ -1,130 +1,139 @@
-import PropTypes from 'prop-types';
-import styles from './Input.module.css';
+import { LitElement, html } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
-import { getSetting, DECIMAL_SEPARATOR } from 'config/app'
+import { styles } from './Input.styles.js'
+import { INPUT_TYPE } from '../../../config/enums.js'
 
-export const INPUT_TYPE = {
-  TEXT: "text",
-  INTEGER: "integer",
-  NUMBER: "number",
-  COLOR: "color",
-  FILE: "file",
-  PASSWORD: "password",
-}
+export class Input extends LitElement {
+  constructor() {
+    super();
+    this.id = Math.random().toString(36).slice(2);
+    this.type = INPUT_TYPE.TEXT
+    this.value = ""
+    this.name = undefined
+    this.placeholder = undefined
+    this.label = ""
+    this.disabled = false
+    this.readonly = false
+    this.autofocus = false
+    this.accept = undefined
+    this.maxlength = undefined
+    this.size = undefined
+    this.full = false
+    this.style = {}
+  }
 
-export const Input = ({ 
-  type, separator, value, minValue, maxValue, focus, className,
-  onChange, onBlur, onEnter,
-  ...props 
-}) => {
-  return <input {...props} 
-    type={[INPUT_TYPE.INTEGER,INPUT_TYPE.NUMBER].includes(type)?INPUT_TYPE.TEXT:type}
-    value={([INPUT_TYPE.INTEGER,INPUT_TYPE.NUMBER].includes(type))
-      ? String(value).replace(DECIMAL_SEPARATOR.POINT,separator) : value}
-    className={`${className} ${styles.inputStyle} ${([INPUT_TYPE.INTEGER,INPUT_TYPE.NUMBER].includes(type))?"align-right":""} `}
-    onChange={(event) => {
-      event.stopPropagation();
-      let inputValue = event.target.value
-      if([INPUT_TYPE.INTEGER,INPUT_TYPE.NUMBER].includes(type)){
-        inputValue = (type === "number") ? 
-          String(event.target.value).replace(new RegExp(`[^0-9${separator}-]`, "g"), "") : 
-          String(event.target.value).replace(/[^0-9-]|-(?=.)/g,'')
-        if(inputValue === ""){
-          inputValue = 0
-        }
-        if(!String(inputValue).endsWith(separator) 
-          || (String(inputValue).endsWith(separator) 
-            && (String(inputValue).match(new RegExp(`[${separator}]`, "g")).length > 1)) 
-          || String(inputValue).endsWith(separator+separator)){
-            inputValue = parseFloat(String(inputValue).replace(separator,DECIMAL_SEPARATOR.POINT))
-          if(minValue && (inputValue < minValue)){
-            inputValue = minValue
+  static get properties() {
+    return {
+      id: { type: String },
+      name: { type: String, reflect: true },
+      type: { 
+        type: String, 
+        converter: (value) => {
+          if(!Object.values(INPUT_TYPE).includes(value)){
+            return INPUT_TYPE.TEXT
           }
-          if(maxValue && (inputValue > maxValue)){
-            inputValue = maxValue
+          return value
+        } 
+      },
+      value: { 
+        type: String, reflect: true,
+      },
+      placeholder: { type: String },
+      label: { type: String },
+      disabled: { type: Boolean, reflect: true },
+      readonly: { type: Boolean, reflect: true },
+      autofocus: { type: Boolean, reflect: true },
+      accept: { type: String, reflect: true },
+      maxlength: { type: Number, reflect: true },
+      size: { type: Number, reflect: true },
+      full: { type: Boolean },
+      style: { type: Object },
+    };
+  }
+
+  _onInput(e){
+    const value = (this.type === INPUT_TYPE.FILE) ? e.target.files : e.target.value
+    if(value !== this.value){
+      if(this.onChange){
+        this.onChange({ 
+          value, 
+          old: this.value
+        })
+      }
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          bubbles: true, composed: true,
+          detail: {
+            value, old: this.value
           }
-        }
-      }
-      onChange(inputValue)
-    }}
-    onKeyDown={(event)=>{
-      event.stopPropagation();
-      if((event.keyCode === 13) && onEnter){
-        onEnter(value)
-      }
-    }}
-    onBlur={(event) => {
-      event.stopPropagation();
-      let inputValue = event.target.value
-      if([INPUT_TYPE.INTEGER,INPUT_TYPE.NUMBER].includes(type)){
-        inputValue = 0
-        if((type === "number") 
-          && !isNaN(parseFloat(String(event.target.value).replace(separator,DECIMAL_SEPARATOR.POINT)))){
-            inputValue = parseFloat(String(event.target.value).replace(separator,DECIMAL_SEPARATOR.POINT))
-        }
-        if((type === "integer") && !isNaN(parseInt(event.target.value))){
-          inputValue = parseInt(event.target.value,10)
-        }
-        if(!onBlur &&(String(inputValue) !== event.target.value)){
-          onChange(inputValue)
-        }
-      }
-      if(onBlur){
-        onBlur(inputValue)
-      }
-    }}
-  />
-}
+        })
+      );
+      this.value = value
+    }
+    if(this._input.value !== value){
+      this._input.value = value
+    }
+  }
 
-Input.propTypes = {
-  /**
-    * Input type
-    */
-  type: PropTypes.oneOf(Object.values(INPUT_TYPE)).isRequired,
-  /**
-   * Number type decimal separator
-   */
-  separator: PropTypes.oneOf(Object.values(DECIMAL_SEPARATOR)).isRequired,
-  /**
-   * Input value
-   */
-  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-  /**
-   * Number/integer type minimum value limit
-   */
-  minValue: PropTypes.number,
-  /**
-  * Number/integer type maximum value limit
-  */
-  maxValue: PropTypes.number,
-  /**
-  * Value change event
-  */
-  onChange: PropTypes.func,
-  /**
-  * Lost focus event
-  */
-  onBlur: PropTypes.func,
-  /**
-  * Enter key event
-  */
-  onEnter: PropTypes.func,
-  /**
-   * Input style
-   */
-  className: PropTypes.string,
-}
+  _onKeyEvent (e) {
+    const onEnter = () => {
+      if(this.onEnter){
+        this.onEnter({ value: this.value })
+        this.dispatchEvent(
+          new CustomEvent('enter', {
+            bubbles: true, composed: true,
+            detail: {
+              value: this.value
+            }
+          })
+        );
+      }
+    }
+    if (e.type === 'keydown' || e.type === 'keypress') {
+      e.stopPropagation();
+    }
+    // Here we prevent keydown on enter key from modifying the value
+    if (e.type === 'keydown' && e.keyCode === 13) {
+      e.preventDefault();
+      onEnter();
+    }
+    // Request implicit submit with keypress on enter key
+    if (!this.readonly && e.type === 'keypress' && e.keyCode === 13) {
+      onEnter();
+    }
+  }
 
-Input.defaultProps = {
-  type: INPUT_TYPE.TEXT,
-  separator: getSetting("decimal_sep"),
-  value: "",
-  minValue: undefined,
-  maxValue: undefined,
-  className: "",
-  onChange: undefined,
-  onBlur: undefined,
-  onEnter: undefined,
-}
+  firstUpdated() {
+    this._input = this.renderRoot.querySelector('input');
+  }
 
-export default Input;
+  render() {
+    return html`<input 
+      id="${this.id}"
+      name="${ifDefined(this.name)}"
+      .type="${this.type}"
+      .value="${this.value}"
+      placeholder="${ifDefined(this.placeholder)}"
+      ?disabled="${this.disabled}"
+      ?readonly="${this.readonly}"
+      ?autofocus="${this.autofocus}"
+      aria-label="${ifDefined(this.label)}"
+      accept="${ifDefined(this.accept)}"
+      maxlength="${ifDefined(this.maxlength)}"
+      size="${ifDefined(this.size)}"
+      class="${(this.full)?"full":""}"
+      style="${styleMap(this.style)}"
+      @input=${this._onInput}
+      @keydown=${this._onKeyEvent}
+      @keypress=${this._onKeyEvent}
+    >`
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+}

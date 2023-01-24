@@ -1,16 +1,13 @@
-import { render, queryByAttribute } from '@testing-library/react';
+import { html } from 'lit';
+import { fixture, expect } from '@open-wc/testing';
 
-import '@testing-library/jest-dom/extend-expect';
+import './form-spinner.js';
 
-import { Default } from './Spinner.stories';
-
-const getById = queryByAttribute.bind(null, 'id');
-
-it('renders in the Default state', () => {
-
-  const { container } = render(
-    <Default {...Default.args} />
-  );
-  expect(getById(container, 'app_loading')).toBeDefined();
+describe('Button', () => {
+  it('renders in the Default state', async () => {
+    const element = await fixture(html`<form-spinner></form-spinner>`);
+    const spinner = element.shadowRoot.querySelector('.loading');
+    expect(spinner).to.exist;
+  })
 
 });

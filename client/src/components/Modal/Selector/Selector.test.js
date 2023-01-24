@@ -1,45 +1,52 @@
-import { render, fireEvent, queryByAttribute, screen } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, QuickView } from './Selector.stories';
+import './modal-selector.js';
+import { Template, Default, QuickView } from  './Selector.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('MenuBar', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onSelect = jest.fn()
-  const onSearch = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const selector = element.querySelector('#selector');
+    expect(selector).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_selector"
-      onSelect={onSelect} onSearch={onSearch} onClose={onClose} />
-  );
-  expect(getById(container, 'test_selector')).toBeDefined();
+    const closeIcon = selector.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const row_item = screen.getAllByRole('row')[2]
+    const btnSearch = selector.shadowRoot.querySelector('#selector_btn_search')
+    btnSearch.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  fireEvent.click(row_item)
-  expect(onSelect).toHaveBeenCalledTimes(1);
+    const filter = selector.shadowRoot.querySelector('#selector_filter');
+    filter._onInput({ target: { value: "value" } })
+    expect(filter.value).to.equal("value");
+    filter._onKeyEvent({ 
+      stopPropagation: sinon.spy(), 
+      type: "keypress", keyCode: 13 
+    })
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const table = selector.shadowRoot.querySelector('#selector_result')
+    const tableRow = table.shadowRoot.querySelector('#row_customer-2')
+    tableRow.click()
+    sinon.assert.callCount(onModalEvent, 4);
+  })
 
-  const btn_search = getById(container, 'btn_search')
-  fireEvent.click(btn_search)
-  expect(onSearch).toHaveBeenCalledTimes(1);
+  it('renders in the QuickView state', async () => {
+    const element = await fixture(Template({
+      ...QuickView.args
+    }));
+    const selector = element.querySelector('#selector');
+    expect(selector).to.exist;
+  })
 
-  const filter = getById(container, 'filter')
-  fireEvent.change(filter, {target: {value: "filter"}})
-  expect(filter.value).toEqual("filter");
-  fireEvent.keyDown(filter, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onSearch).toHaveBeenCalledTimes(2)
-
-})
-
-it('renders in the QuickView state', () => {
-  const { container } = render(
-    <QuickView {...QuickView.args} id="test_selector" />
-  );
-  expect(getById(container, 'test_selector')).toBeDefined();
 })

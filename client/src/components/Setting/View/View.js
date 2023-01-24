@@ -1,118 +1,121 @@
-import { Fragment } from 'react';
-import PropTypes from 'prop-types';
-import update from 'immutability-helper';
+import { LitElement, html } from 'lit';
 
-import Icon from 'components/Form/Icon'
-import Label from 'components/Form/Label'
-import Table from 'components/Form/Table';
-import List from 'components/Form/List';
+import '../../Form/Label/form-label.js'
+import '../../Form/Table/form-table.js'
+import '../../Form/List/form-list.js'
+import '../../Form/Icon/form-icon.js'
 
-import styles from './View.module.css';
-import { getSetting } from 'config/app'
+import { styles } from './View.styles.js'
+import { SETTING_EVENT, PAGINATION_TYPE } from '../../../config/enums.js'
 
-export const View = ({ 
-  data, className,
-  paginationPage, dateFormat, timeFormat,
-  getText, onEvent,
-  ...props 
-}) => {
-  const { caption, icon, view, actions, page } = data
-  let fields = {}
-  if(view.type === "table"){
-    if(actions.edit){
-      fields = update(fields, {$merge: {
-        edit: { columnDef: {
-          id: "edit",
-          Header: "",
-          headerStyle: {},
-          Cell: ({ row, value }) => {
-            return <Fragment>
-              <div className={`${"cell"} ${styles.editCol}`} >
-                <Icon id={"edit_"+row.original["id"]}
-                  iconKey="Edit" width={24} height={21.3} 
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onEvent("setViewActions", [actions.edit, row.original])
-                  }}
-                  className={styles.editCol} />
-              </div>
-            </Fragment>
-          },
-          cellStyle: { width: 30, padding: "7px 3px 3px 8px" }
-        }}
-      }})
+export class View extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.id = Math.random().toString(36).slice(2);
+    this.data = {
+      caption: "",
+      icon: "",
+      view: {},
+      actions: {},
     }
-    fields = update(fields, {$merge: {...view.fields}})
+    this.paginationPage = 10
+    this.onEvent = {}
   }
-  const onPage = (page) => {
-    onEvent("changeData",["page", page])
+
+  static get properties() {
+    return {
+      id: { type: String },
+      data: { type: Object },
+      paginationPage: { type: Number },
+      onEvent: { type: Object }
+    };
   }
-  return (
-    <div {...props} className={`${styles.width800} ${className}`}>
-      <div className={`${styles.panel}`} >
-        <div className={`${styles.panelTitle} ${"primary"}`}>
-          <Label value={caption} 
-            leftIcon={<Icon iconKey={icon} />} iconWidth="20px" />
-        </div>
-        <div className={`${"section-small"} ${styles.settingPanel}`} >
-          <div className="row full container section-small-bottom" >
-            <div className={`${styles.viewPanel}`} >
-              <div className="row full" >
-                {(view.type === "table")?
-                <Table rowKey="id"
-                  fields={fields} rows={view.result} tableFilter={true}
-                  filterPlaceholder={getText("placeholder_filter")}
-                  onAddItem={(actions.new) ? () => onEvent("setViewActions", [actions.new]) : undefined}
-                  onRowSelected={(actions.edit) ? (row) => onEvent("setViewActions", [actions.edit, row]) : undefined}
-                  labelAdd={getText("label_new")} labelYes={getText("label_yes")} labelNo={getText("label_no")} 
-                  dateFormat={dateFormat} timeFormat={timeFormat} 
-                  paginationPage={paginationPage} paginationTop={true}
-                  currentPage={page} onCurrentPage={onPage} />:
-                <List rows={view.result}
-                  listFilter={true} filterPlaceholder={getText("placeholder_filter")}
-                  onAddItem={(actions.new) ? () => onEvent("setViewActions", [actions.new]) : undefined}
-                  labelAdd={getText("label_new")}
-                  paginationPage={paginationPage} paginationTop={true} 
-                  onEdit={(actions.edit) ? (row) => onEvent("setViewActions", [actions.edit, row]) : undefined} 
-                  onDelete={(actions.delete) ? (row) => onEvent("setViewActions", [actions.delete, row]) : undefined}
-                  currentPage={page} onCurrentPage={onPage} />}
-              </div>
-            </div>
-          </div>
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onSettingEvent(key, data){
+    if(this.onEvent.onSettingEvent){
+      this.onEvent.onSettingEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('setting_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  render() {
+    const { caption, icon, view, actions, page } = this.data
+    let fields = {}
+    if(view.type === "table"){
+      if(actions.edit){
+        fields = {...fields,
+          edit: { columnDef: { 
+            id: "edit",
+            Header: "",
+            headerStyle: {},
+            Cell: ({ row }) => html`<form-icon id=${`edit_${row.id}`}
+                iconKey="Edit" width=24 height=21.3
+                .style=${{ cursor: "pointer", fill: "rgb(var(--functional-green))" }}
+                @click=${ (event)=>{
+                  event.stopPropagation();
+                  this._onSettingEvent(SETTING_EVENT.FORM_ACTION , { params: actions.edit, row, ref: this })
+                }}
+              ></form-icon>`,
+            cellStyle: { width: 30, padding: "4px 3px 3px 8px" }
+          }}
+        }
+      }
+      fields = { ...fields, ...view.fields }
+    }
+    return html`<div class="panel" >
+      <div class="panel-title">
+        <div class="cell">
+          <form-label class="title-cell"
+            value="${caption}" leftIcon="${icon}"
+          ></form-label>
         </div>
       </div>
-    </div>
-  )
+      <div class="section full">
+        <div class="section-row">
+          ${(view.type === "table") ? html`<form-table id="view_table"
+            .fields=${fields} .rows=${view.result} ?tableFilter=${true}
+            filterPlaceholder="${this.msg("", { id: "placeholder_filter" })}"
+            .onAddItem=${(actions.new) 
+              ? () => this._onSettingEvent(SETTING_EVENT.FORM_ACTION, { params: actions.new } ) : undefined }
+            .onRowSelected=${(actions.edit) 
+              ? (row) => this._onSettingEvent(SETTING_EVENT.FORM_ACTION, { params: actions.edit, row }) : undefined }
+            labelYes=${this.msg("", { id: "label_yes" })} 
+            labelNo=${this.msg("", { id: "label_no" })} 
+            labelAdd=${this.msg("", { id: "label_new" })}  
+            pageSize=${this.paginationPage} pagination="${PAGINATION_TYPE.TOP}"
+            currentPage="${page}"
+            .onCurrentPage=${(value)=>this._onSettingEvent(SETTING_EVENT.CURRENT_PAGE, { value })}
+          ></form-table>` : html`<form-list id="view_list"
+            .rows=${view.result} ?listFilter=${true}
+            filterPlaceholder=${this.msg("", { id: "placeholder_filter" })}
+            .onAddItem=${(actions.new) 
+              ? () => this._onSettingEvent(SETTING_EVENT.FORM_ACTION , { params: actions.new } ) : undefined}
+            labelAdd=${this.msg("", { id: "label_new" })}
+            pageSize=${this.paginationPage} pagination="${PAGINATION_TYPE.TOP}" 
+            .onEdit=${(actions.edit) 
+              ? (row) => this._onSettingEvent(SETTING_EVENT.FORM_ACTION , { params: actions.edit, row } ) : undefined}
+            .onDelete=${(actions.delete) 
+              ? (row) => this._onSettingEvent(SETTING_EVENT.FORM_ACTION , { params: actions.delete, row } ) : undefined}
+            currentPage="${page}"
+            .onCurrentPage=${(value)=>this._onSettingEvent(SETTING_EVENT.CURRENT_PAGE, { value })}
+          ></form-list>`}
+        </div>
+      </div>
+    </div>`
+  }
 }
-
-View.propTypes = {
-  data: PropTypes.shape({
-    caption: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-    view: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired,
-  }).isRequired,
-  paginationPage: PropTypes.number.isRequired, 
-  dateFormat: PropTypes.string, 
-  timeFormat: PropTypes.string,
-  className: PropTypes.string,
-  onEvent: PropTypes.func,
-  getText: PropTypes.func,
-}
-
-View.defaultProps = {
-  data: {
-    caption: "",
-    icon: "",
-    view: {},
-    actions: {},
-  },
-  paginationPage: getSetting("paginationPage"),
-  dateFormat: getSetting("dateFormat"),
-  timeFormat: getSetting("timeFormat"),
-  className: "",
-  onEvent: undefined,
-  getText: undefined,
-}
-
-export default View;

@@ -1,16 +1,51 @@
-import { Form } from "./Form";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './setting-form.js';
+
+import { APP_THEME, ACTION_EVENT } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "Setting/Form",
-  component: Form,
-}
+  title: 'Setting/Form',
+  component: 'setting-form',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    onSettingEvent: {
+      name: "onSettingEvent",
+      description: "onSettingEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onSettingEvent" 
+    }
+  }
+};
 
-const Template = (args) => <Form {...args} />
+const msg = (defaultValue, props) => locales.en[props.id] || defaultValue
+
+export function Template({ 
+  id, data, theme, onSettingEvent
+}) {
+  const component = html`<setting-form
+    id="${id}"
+    .data="${data}"
+    .onEvent=${{ onSettingEvent }}
+    .msg=${msg}
+  ></setting-form>`
+  return html`<story-container theme="${theme}" >${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "setting_form",
+  theme: APP_THEME.LIGHT,
   data: {
     caption: "DEFAULT SETTINGS",
     icon: "Cog",
@@ -70,10 +105,7 @@ Default.args = {
       ],
       fields: null,
     }
-  },
-  className: "light",
-  onEvent: undefined,
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key })
+  }
 }
 
 export const Items = Template.bind({});
@@ -108,9 +140,9 @@ Items.args = {
             type: "table",
             data: "ui_menufields",
             actions: {
-              new: { action: "editMenuField" },
-              edit: { action: "editMenuField" },
-              delete: { action: "deleteItemRow", table: "ui_menufields" }
+              new: { action: ACTION_EVENT.EDIT_MENU_FIELD },
+              edit: { action: ACTION_EVENT.EDIT_MENU_FIELD },
+              delete: { action: ACTION_EVENT.DELETE_ITEM_ROW, table: "ui_menufields" }
             },
             fields: {
               fieldname: { fieldtype: "string", label: "Name" },

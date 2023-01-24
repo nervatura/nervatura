@@ -1,49 +1,59 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import '@testing-library/jest-dom/extend-expect';
+import './form-pagination.js';
+import { Template, Default, Items } from  './Pagination.stories.js';
 
-import { Default, Items } from './Pagination.stories';
+describe('Pagination', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-const getById = queryByAttribute.bind(null, 'id');
+  it('renders in the Default state', async () => {
+    const element = await fixture(Template({
+      ...Default.args
+    }));
+    const testPagination = element.querySelector('#test_pagination');
+    expect(testPagination).to.exist;
 
-it('renders in the Default state', () => {
+    await expect(testPagination).shadowDom.to.be.accessible();
+  })
 
-  const { container } = render(
-    <Default {...Default.args} id="test_paginator" />
-  );
-  expect(getById(container, 'test_paginator')).toBeDefined();
+  it('renders in the Items state', async () => {
+    const onEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Items.args, onEvent
+    }));
+    const testPagination = element.querySelector('#test_pagination');
+    expect(testPagination).to.exist;
 
-});
+    testPagination._onEvent("gotoPage", 1, true)
+    sinon.assert.calledOnce(onEvent);
 
-it('renders in the Items state', () => {
-  const onEvent = jest.fn()
-  const { container } = render(
-    <Items {...Items.args} id="test_paginator" onEvent={onEvent} />
-  );
-  expect(getById(container, 'test_paginator')).toBeDefined();
-  
-  const btn_first = getById(container, 'btn_first')
-  fireEvent.click(btn_first)
-  expect(onEvent).toHaveBeenCalledTimes(1);
+    const input = testPagination.shadowRoot.querySelector('#pagination_input_goto')
+    input._onInput({ target: { value: 50 } })
+    sinon.assert.calledTwice(onEvent);
 
-  const btn_previous = getById(container, 'btn_previous')
-  fireEvent.click(btn_previous)
-  expect(onEvent).toHaveBeenCalledTimes(2);
+    const btnFirst = testPagination.shadowRoot.querySelector('#pagination_btn_first');
+    expect(btnFirst).to.exist;
+    btnFirst.click()
 
-  const btn_next = getById(container, 'btn_next')
-  fireEvent.click(btn_next)
-  expect(onEvent).toHaveBeenCalledTimes(3);
+    const btnNext = testPagination.shadowRoot.querySelector('#pagination_btn_next');
+    expect(btnNext).to.exist;
+    btnNext.click()
 
-  const btn_last = getById(container, 'btn_last')
-  fireEvent.click(btn_last)
-  expect(onEvent).toHaveBeenCalledTimes(4);
+    const btnPrevious = testPagination.shadowRoot.querySelector('#pagination_btn_previous');
+    expect(btnPrevious).to.exist;
+    btnPrevious.click()
 
-  const input_goto = getById(container, 'input_goto')
-  fireEvent.change(input_goto, {target: {value: "1"}})
-  expect(onEvent).toHaveBeenCalledTimes(5);
+    const btnLast = testPagination.shadowRoot.querySelector('#pagination_btn_last');
+    expect(btnLast).to.exist;
+    btnLast.click()
 
-  const sel_page_size = getById(container, 'sel_page_size')
-  fireEvent.change(sel_page_size, {target: {value: "50"}})
-  expect(onEvent).toHaveBeenCalledTimes(6);
+    const pageSize = testPagination.shadowRoot.querySelector('#pagination_page_size');
+    pageSize._onInput({ target: { value: 5 } })
+    expect(pageSize.value).to.equal(5);
+  })
 
-});
+})

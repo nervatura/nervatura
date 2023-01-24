@@ -1,15 +1,73 @@
-import { Row } from "./Row";
-import { getText, store } from 'config/app';
+import { html } from 'lit';
+
+import '../../StoryContainer/story-container.js';
+import './form-row.js';
+
+import { APP_THEME } from '../../../config/enums.js'
 
 export default {
-  title: "Form/Row",
-  component: Row
-}
+  title: 'Form/Row',
+  component: 'form-row',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    onEdit: {
+      name: "onEdit",
+      description: "onEdit click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onEdit" 
+    },
+    onEvent: {
+      name: "onEvent",
+      description: "onEvent click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onEvent" 
+    },
+    onSelector: {
+      name: "onSelector",
+      description: "onSelector click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onSelector" 
+    }
+  }
+};
 
-const Template = (args) => <Row {...args} />
+export function Template({ id, theme, 
+  row, values, options, data, style, 
+  onEdit, onEvent, onSelector }) {
+  const component = html`<form-row
+    id="${id}"
+    .row="${row}"
+    .values="${values}"
+    .options="${options}"
+    .data="${data}"
+    .style="${style}"
+    .onEdit=${onEdit}
+    .onEvent=${onEvent}
+    .onSelector=${onSelector}
+  ></form-row>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "test_row",
+  theme: APP_THEME.LIGHT,
   row: {
     rowtype: "label",
     name: "description",
@@ -24,16 +82,23 @@ Default.args = {
     current: {}, 
     audit: "all",
   },
-  className: "light",
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key }),
-  onEdit: undefined,
-  onEvent: undefined,
-  onSelector: undefined,
+  style: {},
+  /*
+  msg: (defaultValue, props) => {
+    let value = defaultValue
+    const { locales } = storeConfig.session
+    if(locales.en[props.id]){
+      value = locales.en[props.id]
+    }
+    return value
+  }
+  */
 }
 
 export const Label = Template.bind({});
 Label.args = {
   ...Default.args,
+  theme: APP_THEME.DARK,
   row: {
     rowtype: "label",
     label: "Label text",
@@ -46,6 +111,7 @@ export const FlipStringOn = Template.bind({});
 FlipStringOn.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "title",
     datatype: "string",
@@ -61,6 +127,7 @@ export const FlipStringOff = Template.bind({});
 FlipStringOff.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "title",
     datatype: "string",
@@ -72,8 +139,9 @@ FlipStringOff.args = {
 export const FlipTextOn = Template.bind({});
 FlipTextOn.args = {
   ...Default.args,
-  className: "dark",
+  theme: APP_THEME.DARK,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "html",
     datatype: "text",
@@ -90,6 +158,7 @@ export const FlipTextOff = Template.bind({});
 FlipTextOff.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "html",
     datatype: "text",
@@ -104,6 +173,7 @@ export const FlipImageOn = Template.bind({});
 FlipImageOn.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "src",
     datatype: "image",
@@ -125,6 +195,7 @@ export const FlipImageOff = Template.bind({});
 FlipImageOff.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "src",
     datatype: "image",
@@ -137,6 +208,7 @@ export const FlipChecklistOn = Template.bind({});
 FlipChecklistOn.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "border",
     datatype: "checklist",
@@ -163,6 +235,7 @@ export const FlipChecklistOff = Template.bind({});
 FlipChecklistOff.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "flip",
     name: "border",
     datatype: "checklist",
@@ -187,6 +260,7 @@ export const Field = Template.bind({});
 Field.args = {
   ...Default.args,
   row: {
+    id: "id",
     rowtype: "field",
     name: "customer_id",
     label: "Customer Name",
@@ -218,7 +292,7 @@ Field.args = {
     }, 
     current: {}, 
     audit: "all",
-  },
+  }
 }
 
 export const Reportfield = Template.bind({});

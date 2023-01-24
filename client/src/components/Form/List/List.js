@@ -1,220 +1,235 @@
-import { useState, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { useTable, usePagination } from 'react-table'
+import { LitElement, html, nothing } from 'lit';
+import { styleMap } from 'lit/directives/style-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
-import 'styles/style.css';
-import styles from './List.module.css';
+import '../Icon/form-icon.js';
+import '../Input/form-input.js'
+import '../Button/form-button.js'
+import '../Pagination/form-pagination.js'
 
-import { getSetting } from 'config/app'
-import Icon from 'components/Form/Icon'
-import Button from 'components/Form/Button'
-import Label from 'components/Form/Label'
-import Input from 'components/Form/Input'
-import Pagination from 'components/Form/Pagination'
+import { styles } from './List.styles.js'
+import { PAGINATION_TYPE, BUTTON_TYPE, INPUT_TYPE } from '../../../config/enums.js'
 
-export const ListView = ({
-  rows, labelAdd, addIcon, editIcon, deleteIcon,
-  listFilter, filterPlaceholder, filterValue,
-  currentPage, paginationPage, paginationTop, paginatonScroll, hidePaginatonSize,
-  onEdit, onAddItem, onDelete, onCurrentPage,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    filter: filterValue,
-  })
+export class List extends LitElement {
+  constructor() {
+    super();
+    this.id = Math.random().toString(36).slice(2);
+    this.name = undefined;
+    this.rows = [];
+    this.pagination = PAGINATION_TYPE.TOP;
+    this.currentPage = 1;
+    this.pageSize = 10;
+    this.hidePaginatonSize = false;
+    this.listFilter = false;
+    this.filterPlaceholder = undefined;
+    this.filterValue = "";
+    this.labelAdd = "";
+    this.addIcon = "Plus";
+    this.editIcon = "Edit";
+    this.deleteIcon = "Times";
+    this.style = {};
+  }
 
-  const columns = useMemo(() => [ { accessor: "list" } ],[])
-  const data = useMemo(() => {
+  static get properties() {
+    return {
+      id: { type: String },
+      name: { type: String },
+      rows: { type: Array },
+      pagination: { type: String },
+      currentPage: { type: Number },
+      pageSize: { type: Number },
+      hidePaginatonSize: { type: Boolean },
+      listFilter: { type: Boolean },
+      filterPlaceholder: { type: String },
+      filterValue: { type: String },
+      labelAdd: { type: String },
+      addIcon: { type: String },
+      editIcon: { type: String },
+      deleteIcon: { type: String },
+      style: { type: Object },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    if(this.currentPage > Math.ceil(this.rows.length/this.pageSize)){
+      this.currentPage = Math.ceil(this.rows.length/this.pageSize)
+    }
+    if(this.currentPage < 1) {
+      this.currentPage = 1
+    }
+  }
+
+  _onPagination(key, value) {
+    if(key === "setPageSize"){
+      this.currentPage = 1
+      this.pageSize = value
+      return
+    }
+    this.currentPage = value
+    if(this.onCurrentPage){
+      this.onCurrentPage(value)
+    }
+  }
+
+  _onEdit(e, rowData, index) {
+    e.stopPropagation();
+    if(this.onEdit){
+      this.onEdit(rowData, index);
+    }
+    this.dispatchEvent(new CustomEvent('edit', {
+      bubbles: true, composed: true,
+      detail: {
+        rowData, index
+      }
+    }));
+  }
+
+  _onDelete(e, rowData, index) {
+    e.stopPropagation();
+    if(this.onDelete){
+      this.onDelete(rowData, index);
+    }
+    this.dispatchEvent(new CustomEvent('delete', {
+      bubbles: true, composed: true,
+      detail: {
+        rowData, index
+      }
+    }));
+  }
+
+  _onAddItem() {
+    if(this.onAddItem){
+      this.onAddItem({});
+    }
+    this.dispatchEvent(new CustomEvent('add_item', {
+      bubbles: true, composed: true,
+      detail: {}
+    }));
+  }
+
+  _onFilterChange(data){
+    this.filterValue = data.value
+    this.dispatchEvent(
+      new CustomEvent('filter_change', {
+        bubbles: true, composed: true,
+        detail: {
+          ...data
+        }
+      })
+    );
+  }
+
+  filterRows() {
+    let pageRows = this.rows
     const getValidRow = (row, filter)=>{
       if(String(row.lslabel).toLowerCase().indexOf(filter)>-1 || 
         String(row.lsvalue).toLowerCase().indexOf(filter)>-1){
           return true
-      } else {
-        return false
       }
+      return false
     }
-    if(state.filter !== ""){
-      let _rows = []; let _filter = String(state.filter).toLowerCase()
-      rows.forEach(function(frow) {
-        if(getValidRow(frow,_filter)){
-          _rows.push(frow);
-        }
-      });
-      return _rows;
-    } else {
-      return rows
+    if(this.listFilter && (this.filterValue !== "")){
+      pageRows = pageRows.filter(row => getValidRow(row, String(this.filterValue).toLowerCase()))
     }
-  } , [rows, state.filter])
-
-  const { prepareRow, page, canPreviousPage, canNextPage, pageCount,
-    gotoPage, nextPage, previousPage, setPageSize,
-    state: { pageIndex, pageSize },
-  } = useTable(
-    { columns, data,
-      initialState: { pageIndex: currentPage, pageSize: paginationPage },
-    },
-    usePagination
-  )
-
-  const onPagination = (key, args) => {
-    const pevents = {
-      gotoPage: gotoPage, nextPage: nextPage, previousPage: previousPage, setPageSize: setPageSize
-    }
-    pevents[key](...args)
-    if(paginatonScroll){
-      window.scrollTo(0,0);
-    }
-    if(onCurrentPage && (key !== "setPageSize")){
-      onCurrentPage(args[0])
-    }
+    return pageRows
   }
 
-  const showPaginator = (pageCount > 1)
-  return (
-    <div {...props}>
-      {(listFilter || (showPaginator && paginationTop))?<div>
-        {(showPaginator && paginationTop) ?
-          <Pagination pageIndex={pageIndex} pageSize={pageSize} pageCount={pageCount} 
-            canPreviousPage={canPreviousPage} canNextPage={canNextPage} hidePageSize={hidePaginatonSize}
-            onEvent={onPagination} />:null}
-        {(listFilter) ? <div className="row full">
-          <div className="cell" >
-            <Input id="filter" type="text" className={styles.filterInput}
-              placeholder={filterPlaceholder} value={state.filter}
-              onChange={(value) => setState({ ...state, filter: value })} />
+  renderRows(rows, pageCount) {
+    let pageRows = rows
+    if((this.pagination !== PAGINATION_TYPE.NONE) && (pageCount > 1)){
+      const start = (this.currentPage-1)*this.pageSize;
+      const end = this.currentPage*this.pageSize;
+      // pageRows = pageRows.filter((row, index) => (index >= start && index < end))
+      pageRows = pageRows.slice(start, end)
+    }
+    return pageRows
+      .map((row, index)=> html`<li class="list-row border-bottom">
+        ${(this.onEdit) ? html`<div 
+          id="${`row_edit_${index}`}" class="edit-cell" 
+          @click=${(event)=>this._onEdit(event, row, index)} >
+          <form-icon iconKey="${this.editIcon}" ></form-icon>
+        </div>` : nothing}
+        <div id="${`row_item_${index}`}"
+          class="value-cell ${(this.onEdit) ? "cursor" : ""}"
+          @click=${(this.onEdit) ? (event)=>this._onEdit(event, row, index) : null}>
+          <div class="border-bottom label" >
+            <span>${row.lslabel}</span>
           </div>
-          {(onAddItem)?<div className="cell" style={{width:20}} >
-            <Button id="btn_add" 
-              className={`${"border-button"} ${styles.addButton}`}
-              value={<Label className="addLabel" 
-                leftIcon={addIcon} value={labelAdd} />} 
-              onClick={(event)=>onAddItem(event)} />
-          </div>:null}
-        </div>: null}
-      </div>:null}
-      <ul className={`${"list"} ${styles.list}`} >
-        {page.map((row, index) => {
-          prepareRow(row)
-          return <li 
-          key={index}
-          className={`${"border-bottom"} ${styles.listRow}`} >
-          {(onEdit)?<div id={`row_edit_${index}`}
-            className={`${styles.editCell}`} onClick={()=>onEdit(row.original)} >
-            {editIcon}
-          </div>:null}
-          <div id={`row_item_${index}`}
-            className={`${styles.valueCell} ${(onEdit)?styles.cursor:""}`} 
-            onClick={()=>(onEdit)?onEdit(row.original):null}>
-            <div className={`${"border-bottom"} ${styles.label}`} >
-              <span>{row.original.lslabel}</span>
-            </div>
-            <div className={`${styles.value}`} >
-              <span>{row.original.lsvalue}</span>
-            </div>
+          <div class="value" >
+            <span>${row.lsvalue}</span>
           </div>
-          {(onDelete)?<div id={`row_delete_${index}`}
-            className={`${styles.deleteCell}`} onClick={()=>onDelete(row.original)} >
-            {deleteIcon}
-          </div>:null}
-        </li>})}
+        </div>
+        ${(this.onDelete) ? html`<div 
+          id="${`row_delete_${index}`}" class="delete-cell" 
+          @click=${(event)=>this._onDelete(event, row, index)} >
+          <form-icon iconKey="${this.deleteIcon}" ></form-icon>
+        </div>` : nothing}
+      </li>`);
+  }
+
+  render() {
+    const rows = this.filterRows()
+    const pageCount = Math.ceil(rows.length/this.pageSize)
+    const topPagination = ((pageCount > 1) && ((this.pagination === PAGINATION_TYPE.TOP) || (this.pagination === PAGINATION_TYPE.ALL)))
+    const bottomPagination = ((pageCount > 1) && ((this.pagination === PAGINATION_TYPE.BOTTOM) || (this.pagination === PAGINATION_TYPE.ALL)))
+    return html`<div class="responsive" >
+      ${(this.listFilter || topPagination) ?
+      html`<div>
+        ${topPagination ?
+        html`<div>
+          <form-pagination id="${`${this.id}_top_pagination`}"
+            pageIndex=${this.currentPage} pageSize=${this.pageSize} pageCount=${pageCount} 
+            ?canPreviousPage=${(this.currentPage > 1)} 
+            ?canNextPage=${(this.currentPage < pageCount)} 
+            ?hidePageSize=${this.hidePaginatonSize}
+            .onEvent=${(key, value) => this._onPagination(key, value)} ></form-pagination>
+        </div>`:nothing}
+        ${(this.listFilter) ?
+        html`<div class="row full" >
+          <div class="cell" >
+            <form-input id="filter" type="${INPUT_TYPE.TEXT}" 
+              .style="${{ "border-radius": 0, margin: "1px 0 2px" }}"
+              label="${ifDefined(this.filterPlaceholder)}"
+              placeholder="${ifDefined(this.filterPlaceholder)}"
+              value="${this.filterValue}" ?full="${true}"
+              .onChange=${
+                (event) => this._onFilterChange({ value: event.value, old: this.filterValue }) 
+              }
+            ></form-input>
+          </div>
+          ${(this.onAddItem)?html`<div class="cell" style="${styleMap({ width: "20px" })}" >
+            <form-button id="btn_add" icon="${this.addIcon}"
+              label="${this.labelAdd}"
+              .style="${{ padding: "8px 16px", "border-radius": 0, margin: "1px 0 2px 1px" }}"
+              @click=${()=>this._onAddItem()} type="${BUTTON_TYPE.BORDER}"
+            >${this.labelAdd}
+            </form-button>
+          </div>`:nothing}
+        </div>`:nothing}
+      </div>`:nothing}
+      <ul id="${this.id}" name="${ifDefined(this.name)}"
+        class="list" style="${styleMap(this.style)}" >
+        ${this.renderRows(rows, pageCount)}
       </ul>
-      {(showPaginator && !paginationTop) ? <div className="padding-tiny">
-        <Pagination pageIndex={pageIndex} pageSize={pageSize} pageCount={pageCount} 
-          canPreviousPage={canPreviousPage} canNextPage={canNextPage} hidePageSize={hidePaginatonSize}
-          onEvent={onPagination} /></div>:null}
     </div>
-  )
-}
+    ${bottomPagination ?
+      html`<div>
+        <form-pagination id="${`${this.id}_bottom_pagination`}"
+          pageIndex=${this.currentPage} pageSize=${this.pageSize} pageCount=${pageCount} 
+          ?canPreviousPage=${(this.currentPage > 1)} 
+          ?canNextPage=${(this.currentPage < pageCount)} 
+          ?hidePageSize=${this.hidePaginatonSize}
+          .onEvent=${(key, value) => this._onPagination(key, value)} ></form-pagination>
+    </div>`:nothing}
+    `
+  }
 
-ListView.propTypes = {
-  /**
-   * List rows
-   */
-  rows: PropTypes.arrayOf(PropTypes.shape({
-    lslabel: PropTypes.string.isRequired,
-    lsvalue: PropTypes.string.isRequired,
-  })).isRequired,
-  /**
-   * Current pagination page number
-   */
-  currentPage: PropTypes.number.isRequired,
-  /**
-   * Pagination row number / page
-   */
-  paginationPage: PropTypes.number.isRequired,
-  /**
-   * at the top or bottom of the list
-   */
-  paginationTop: PropTypes.bool.isRequired,
-  /**
-   * Scroll to top after pagination change
-   */
-  paginatonScroll: PropTypes.bool.isRequired,
-  hidePaginatonSize: PropTypes.bool.isRequired,
-  /**
-   * Show/hide filter input 
-   */ 
-  listFilter: PropTypes.bool.isRequired,
-  /**
-   * Filter input placeholder 
-   */ 
-  filterPlaceholder: PropTypes.string,
-  /**
-   * Filter init value
-   */
-  filterValue: PropTypes.string,
-  /**
-   * Add button label
-   */
-  labelAdd: PropTypes.string.isRequired,
-  /**
-   * Icon element (svg)
-   */   
-  addIcon: PropTypes.any.isRequired,
-  /**
-   * Icon element (svg)
-   */
-  editIcon: PropTypes.any.isRequired,
-  /**
-   * Icon element (svg)
-   */ 
-  deleteIcon: PropTypes.any.isRequired,
-  /**
-   * List row click handle
-   */
-  onEdit: PropTypes.func,
-  /**
-   * Add new row handle
-   */
-  onAddItem: PropTypes.func,
-  /**
-   * Delete row handle 
-   */ 
-  onDelete: PropTypes.func,
-  /**
-   * Paginator select handle 
-   */ 
-  onCurrentPage: PropTypes.func,
 }
-
-ListView.defaultProps = {
-  rows: [],
-  currentPage: 0,
-  paginationPage: getSetting("paginationPage"),
-  paginationTop: true,
-  paginatonScroll: false,
-  hidePaginatonSize: false,
-  listFilter: true,
-  filterPlaceholder: undefined,
-  filterValue: "",
-  labelAdd: "",
-  addIcon: <Icon iconKey="Plus" />,
-  editIcon: <Icon iconKey="Edit" width={24} height={21.3} />,
-  deleteIcon: <Icon iconKey="Times" width={19} height={27.6} />,
-  onEdit: undefined,
-  onAddItem: undefined,
-  onDelete: undefined,
-  onCurrentPage: undefined
-}
-
-export default ListView;

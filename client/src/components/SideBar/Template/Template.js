@@ -1,130 +1,163 @@
-import { Fragment } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
 
-import styles from './Template.module.css';
+import '../../Form/Button/form-button.js'
 
-import Icon from 'components/Form/Icon'
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
+import { styles } from './Template.styles.js'
+import { SIDE_VISIBILITY, SIDE_EVENT, BUTTON_TYPE, TEXT_ALIGN } from '../../../config/enums.js'
 
-export const SIDE_VISIBILITY = {
-  AUTO: "auto",
-  SHOW: "show",
-  HIDE: "hide"
-}
-
-export const Template = ({ 
-  side, templateKey, dirty, className,
-  getText, onEvent,
-  ...props 
-}) => {
-  const itemMenu = (keyValue, classValue, eventValue, labelValue) => {
-    return <Button id={keyValue} key={keyValue}
-      className={classValue}
-      onClick={ ()=>onEvent(...eventValue) }
-      value={labelValue}
-    />
+export class Template extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.side = SIDE_VISIBILITY.AUTO
+    this.templateKey = ""
+    this.dirty = false 
   }
-  return(
-    <div {...props}
-      className={`${styles.sidebar} ${((side !== "auto")? side : "")} ${className}`} >
-      {itemMenu("cmd_back",
-        `${"medium"} ${styles.itemButton} ${styles.selected}`, 
-        ["checkTemplate",["LOAD_SETTING"]],
-        <Label value={getText("label_back")} 
-          leftIcon={<Icon iconKey="Reply" />} iconWidth="25px"  />
-      )}
-      <div key="tmp_sep_1" className={styles.separator} />
 
-      {(!["_blank", "_sample"].includes(templateKey))?
-      <Fragment>
-        <div key="tmp_sep_2" className={styles.separator} />
-        {itemMenu("cmd_save",
-          `${"full medium"} ${styles.itemButton} ${(dirty)?styles.selected:""}`,
-          ["saveTemplate", [true]],
-          <Label value={getText("template_save")} 
-            leftIcon={<Icon iconKey="Check" />} iconWidth="25px"  />
-        )}
-        {itemMenu("cmd_create",
-          `${"full medium"} ${styles.itemButton}`,
-          ["createTemplate", []],
-          <Label value={getText("template_create_from")} 
-            leftIcon={<Icon iconKey="Sitemap" />} iconWidth="25px" />
-        )}
-        {itemMenu("cmd_delete",
-          `${"full medium"} ${styles.itemButton}`,
-          ["deleteTemplate", []],
-          <Label value={getText("label_delete")} 
-            leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />
-        )}
-      </Fragment>:null}
+  static get properties() {
+    return {
+      side: { type: String, reflect: true },
+      templateKey: { type: String },  
+      dirty: { type: Boolean },
+    };
+  }
 
-      <div key="tmp_sep_3" className={styles.separator} />
-      {itemMenu("cmd_blank",
-        `${"full medium"} ${styles.itemButton}`,
-        ["checkTemplate", ['NEW_BLANK']],
-        <Label value={getText("template_new_blank")} 
-          leftIcon={<Icon iconKey="Plus" />} iconWidth="25px" />
-      )}
-      {itemMenu("cmd_sample",
-        `${"full medium"} ${styles.itemButton}`,
-        ["checkTemplate", ['NEW_SAMPLE']],
-        <Label value={getText("template_new_sample")} 
-          leftIcon={<Icon iconKey="Plus" />} iconWidth="25px" />
-      )}
+  static get styles () {
+    return [
+      styles
+    ]
+  }
 
-      <div key="tmp_sep_4" className={styles.separator} />
-      {itemMenu("cmd_print",
-        `${"full medium"} ${styles.itemButton}`, 
-        ["showPreview", []],
-        <Label value={getText("label_print")} 
-          leftIcon={<Icon iconKey="Print" />} iconWidth="25px"  />
-      )}
-      {itemMenu("cmd_json",
-        `${"full medium"} ${styles.itemButton}`,
-        ["exportTemplate", []],
-        <Label value={getText("template_export_json")} 
-          leftIcon={<Icon iconKey="Code" />} iconWidth="25px" />
-      )}
+  _onSideEvent(key, data){
+    if(this.onEvent && this.onEvent.onSideEvent){
+      this.onEvent.onSideEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('side_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
 
-      <div key="tmp_sep_5" className={styles.separator} />
-      {itemMenu("cmd_help",
-        `${"full medium"} ${styles.itemButton}`, 
-        ["showHelp", ["program/editor"]],
-        <Label value={getText("label_help")} 
-          leftIcon={<Icon iconKey="QuestionCircle" />} iconWidth="20px"  />
-      )}
+  itemMenu({id, selected, eventValue, label, iconKey, full}){
+    const btnSelected = (typeof(selected) === "undefined") ? false : selected
+    const btnFull = (typeof(full) === "undefined") ? true : full
+    const style = {
+      "border-radius": "0",
+      "border-color": "rgba(var(--accent-1c), 0.2)",
+    }
+    return(
+      html`<form-button 
+        id="${id}" label="${label}"
+        ?full="${btnFull}" ?selected="${btnSelected}"
+        align=${TEXT_ALIGN.LEFT}
+        .style="${style}"
+        icon="${iconKey}" type="${BUTTON_TYPE.PRIMARY}"
+        @click=${()=>this._onSideEvent( ...eventValue )} 
+      >${label}</form-button>`
+    )
+  }
 
-    </div>
-  )
-  
+  formItems(){
+    const panels = []
+
+    panels.push(
+      this.itemMenu({
+        id: "cmd_back",
+        selected: true, 
+        eventValue: [SIDE_EVENT.CHECK, { value: "LOAD_SETTING" }],
+        label: this.msg("", { id: "label_back" }), 
+        iconKey: "Reply", full: false, 
+      })
+    )
+    panels.push(html`<hr id="back_sep" class="separator" />`)
+
+    if(!["_blank", "_sample"].includes(this.templateKey)){
+      panels.push(html`<hr id="tmp_sep_2" class="separator" />`)
+      panels.push(
+        this.itemMenu({
+          id: "cmd_save",
+          selected: this.dirty,
+          eventValue: [SIDE_EVENT.SAVE, true],
+          label: this.msg("", { id: "template_save" }), 
+          iconKey: "Check"
+        })
+      )
+      panels.push(
+        this.itemMenu({
+          id: "cmd_create",
+          eventValue: [SIDE_EVENT.CREATE_REPORT, {}],
+          label: this.msg("", { id: "template_create_from" }), 
+          iconKey: "Sitemap"
+        })
+      )
+      panels.push(
+        this.itemMenu({
+          id: "cmd_delete",
+          eventValue: [SIDE_EVENT.DELETE, {}],
+          label: this.msg("", { id: "label_delete" }), 
+          iconKey: "Times"
+        })
+      )
+    }
+
+    panels.push(html`<hr id="tmp_sep_3" class="separator" />`)
+    panels.push(
+      this.itemMenu({
+        id: "cmd_blank",
+        eventValue: [SIDE_EVENT.CHECK, { value: SIDE_EVENT.BLANK }],
+        label: this.msg("", { id: "template_new_blank" }), 
+        iconKey: "Plus"
+      })
+    )
+    panels.push(
+      this.itemMenu({
+        id: "cmd_sample",
+        eventValue: [SIDE_EVENT.CHECK, { value: SIDE_EVENT.SAMPLE }],
+        label: this.msg("", { id: "template_new_sample" }), 
+        iconKey: "Plus"
+      })
+    )
+
+    panels.push(html`<hr id="tmp_sep_4" class="separator" />`)
+    panels.push(
+      this.itemMenu({
+        id: "cmd_print",
+        eventValue: [SIDE_EVENT.REPORT_SETTINGS, { value: "PREVIEW" }],
+        label: this.msg("", { id: "label_print" }), 
+        iconKey: "Eye"
+      })
+    )
+    panels.push(
+      this.itemMenu({
+        id: "cmd_json",
+        eventValue: [SIDE_EVENT.REPORT_SETTINGS, { value: "JSON" }],
+        label: this.msg("", { id: "template_export_json" }), 
+        iconKey: "Code"
+      })
+    )
+
+    panels.push(html`<hr id="tmp_sep_5" class="separator" />`)
+    panels.push(
+      this.itemMenu({
+        id: "cmd_help", 
+        eventValue: [SIDE_EVENT.HELP, { value: "program/editor" }],
+        label: this.msg("", { id: "label_help" }), 
+        iconKey: "QuestionCircle"
+      })
+    )
+
+    return panels
+  }
+
+  render() {
+    return html`<div class="sidebar ${(this.side !== "auto") ? this.side : ""}" >
+    ${this.formItems()}
+    </div>`
+  }
+
 }
-
-Template.propTypes = {
-  /**
-   * SideBar visibility
-   */
-  side: PropTypes.oneOf(Object.values(SIDE_VISIBILITY)).isRequired,
-  templateKey: PropTypes.string.isRequired,
-  dirty: PropTypes.bool,
-  className: PropTypes.string, 
-  /**
-   * Menu selection handle
-   */
-  onEvent: PropTypes.func,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-}
-
-Template.defaultProps = {
-  side: SIDE_VISIBILITY.AUTO,
-  templateKey: "",
-  dirty: false, 
-  className: "",  
-  onEvent: undefined,
-  getText: undefined,
-}
-
-export default Template;

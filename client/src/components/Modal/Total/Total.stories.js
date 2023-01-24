@@ -1,16 +1,47 @@
-import { Total } from "./Total";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './modal-total.js';
+
+import { APP_THEME } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "Modal/Total",
-  component: Total
-}
+  title: 'Modal/Total',
+  component: 'modal-total',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    onModalEvent: {
+      name: "onModalEvent",
+      description: "onModalEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onModalEvent" 
+    },
+  }
+};
 
-const Template = (args) => <Total {...args} />
+export function Template({ id, total, theme, onModalEvent, msg }) {
+  const component = html`<modal-total
+    id="${id}"
+    .total=${total}
+    .onEvent=${{ onModalEvent }}
+    .msg=${msg}
+  ></modal-total>`
+  return html`<story-container theme="${theme}" >${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "total",
+  theme: APP_THEME.LIGHT,
   total: {
     totalFields: {
       netamount: 11221,
@@ -26,13 +57,11 @@ Default.args = {
     },
     count: 4,
   },
-  className: "light",
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key }),
-  onClose: undefined,
+  msg: (defaultValue, props) => locales.en[props.id] || defaultValue
 }
 
 export const DarkTotal = Template.bind({});
 DarkTotal.args = {
   ...Default.args,
-  className: "dark",
+  theme: APP_THEME.DARK,
 }

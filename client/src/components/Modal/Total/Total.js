@@ -1,93 +1,103 @@
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
 
-import 'styles/style.css';
-import styles from './Total.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Icon/form-icon.js'
+import '../../Form/Input/form-input.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Input from 'components/Form/Input'
-import Icon from 'components/Form/Icon'
 
-export const Total = ({
-  total, className,
-  getText, onClose,
-  ...props 
-}) => {
-  const formatNumber = (number) => {
-    return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+import { styles } from './Total.style.js'
+import { MODAL_EVENT, BUTTON_TYPE, INPUT_TYPE } from '../../../config/enums.js'
+
+export class Total extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.total = {
+      totalFields: {},
+      totalLabels: {},
+      count: 0
+    }
   }
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={getText("browser_total")} 
-                  leftIcon={<Icon iconKey="InfoCircle" />} iconWidth="20px" />
-              </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
+
+  static get properties() {
+    return {
+      total: { type: Object }
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+  
+  render() {
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="InfoCircle"
+                value="${this.msg("Total", { id: "browser_total" })}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              ${Object.keys(this.total.totalFields).map(fieldname => 
+                html`<div class="table-row full">
+                  <div class="cell padding-tiny mobile">
+                    <form-label
+                      value="${this.total.totalLabels[fieldname]}" 
+                    ></form-label>
+                  </div>
+                  <div class="cell padding-tiny mobile">
+                    <form-input type="${INPUT_TYPE.TEXT}"
+                      label="${this.total.totalLabels[fieldname]}"
+                      .style=${{ "font-weight": "bold", "text-align": "right" }}
+                      value="${new Intl.NumberFormat('default').format(this.total.totalFields[fieldname])}"
+                      ?disabled=${true} ?full=${true}
+                    ></form-input>
+                  </div>
+                </div>`)}
+            </div>
+          </div>
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small" >
+                <form-button id="btn_ok" icon="Check"
+                  label="${this.msg("", { id: "msg_ok" })}"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL, {})} 
+                  ?autofocus="${true}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                >${this.msg("", { id: "msg_ok" })}</form-button>
               </div>
             </div>
           </div>
-          <div className="row full container section-small">
-            {Object.keys(total.totalFields).map(fieldname => 
-              <div key={fieldname} className="row full mobile">
-                <div className="cell bold padding-tiny">
-                  <Label className="bold" value={total.totalLabels[fieldname]} />
-                </div>
-                <div className="cell padding-tiny right mobile">
-                  <Input className={`${"align-right bold"} ${styles.maxInput}`} 
-                    value={formatNumber(total.totalFields[fieldname])} 
-                    disabled="disabled" />
-                </div>
-              </div>)}
-          </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small"}`} >
-                <Button id="btn_ok"
-                  className={`${"full primary"}`} 
-                  onClick={onClose}
-                  value={<Label center value={getText("msg_ok")} 
-                    leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />}
-                />
-              </div>
-            </div>
-          </div> 
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Total.propTypes = {
-  total: PropTypes.shape({
-    totalFields: PropTypes.object.isRequired,
-    totalLabels: PropTypes.object.isRequired,
-    count: PropTypes.number.isRequired,
-  }).isRequired,
-  className: PropTypes.string.isRequired,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-  /**
-    * Close form handle (modal style)
-    */ 
-  onClose: PropTypes.func,
-}
-
-Total.defaultProps = {
-  total: {
-    totalFields: {},
-    totalLabels: {},
-    count: 0
-  },
-  className: "",
-  getText: undefined,
-  onClose: undefined,
-}
-
-export default Total;

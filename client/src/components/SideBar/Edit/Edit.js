@@ -1,550 +1,551 @@
-import PropTypes from 'prop-types';
+import { LitElement, html, nothing } from 'lit';
+import { styleMap } from 'lit/directives/style-map.js';
 
-import styles from './Edit.module.css';
+import '../../Form/Icon/form-icon.js'
+import '../../Form/Button/form-button.js'
 
-import Icon from 'components/Form/Icon'
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
+import { styles } from './Edit.styles.js'
+import { SIDE_VISIBILITY, SIDE_EVENT, BUTTON_TYPE, SIDE_VIEW, TEXT_ALIGN, EDITOR_EVENT } from '../../../config/enums.js'
 
-export const SIDE_VISIBILITY = {
-  AUTO: "auto",
-  SHOW: "show",
-  HIDE: "hide"
-}
-
-export const SIDE_VIEW = {
-  EDIT: "edit",
-  NEW: "new"
-}
-
-export const Edit = ({ 
-  side, newFilter, auditFilter, view, module, forms,
-  className,
-  getText, onEvent,
-  ...props 
-}) => {
-  const { current, form_dirty, dirty, panel, dataset, group_key } = module
-  const itemMenu = (keyValue, classValue, eventValue, labelValue, disabledValue) => {
-    return <Button id={keyValue} key={keyValue}
-      className={classValue} disabled={(disabledValue)?"disabled":""}
-      onClick={ ()=>onEvent(...eventValue) }
-      value={labelValue}
-    />
-  }
-  const groupMenu = (keyValue, classValue, groupKey, labelValue) => {
-    return <Button id={keyValue} key={keyValue}
-      className={classValue}
-      onClick={ ()=>onEvent("changeData", ["group_key", groupKey]) }
-      value={labelValue}
-    />
-  }
-  const editItems = (options)=>{
-    if (typeof options === "undefined") {
-      options = {}
+export class Edit extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.side = SIDE_VISIBILITY.AUTO
+    this.view = SIDE_VIEW.EDIT
+    this.module = {
+      current: {}, 
+      form_dirty: false,
+      dirty: false,
+      panel: {}, 
+      dataset: {}, 
+      group_key: ""
     }
-    let panels = []
+    this.newFilter = []
+    this.auditFilter = {} 
+    this.forms = {}
+  }
+
+  static get properties() {
+    return {
+      side: { type: String, reflect: true },
+      view: { type: String, reflect: true },
+      newFilter: { type: Array }, 
+      auditFilter: { type: Object },  
+      module: { type: Object }, 
+      forms: { type: Object }
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onSideEvent(key, data){
+    if(this.onEvent && this.onEvent.onSideEvent){
+      this.onEvent.onSideEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('side_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  itemMenu({id, selected, eventValue, label, iconKey, full, disabled, align, color}){
+    const btnSelected = (typeof(selected) === "undefined") ? false : selected
+    const btnFull = (typeof(full) === "undefined") ? true : full
+    const btnDisabled = (typeof(disabled) === "undefined") ? false : disabled
+    const btnAlign = (typeof(align) === "undefined") ? TEXT_ALIGN.LEFT : align
+    const style = {
+      "border-radius": "0",
+      "border-color": "rgba(var(--accent-1c), 0.2)",
+    }
+    if(color){
+      style.color = color
+      style.fill = color
+    }
+    return(
+      html`<form-button 
+        id="${id}" label="${label}"
+        ?full="${btnFull}" ?disabled="${btnDisabled}" ?selected="${btnSelected}"
+        align=${btnAlign}
+        .style="${style}"
+        icon="${iconKey}" type="${BUTTON_TYPE.PRIMARY}"
+        @click=${()=>this._onSideEvent( ...eventValue )} 
+      >${label}</form-button>`
+    )
+  }
+
+  editItems(_options){
+    const { current, dirty, form_dirty, dataset } = this.module
+    const options = (typeof _options === "undefined") ? {} : _options
+    const panels = []
 
     if (options.back === true || current.form) {
       panels.push(
-        itemMenu("cmd_back",
-          `${"medium"} ${styles.itemButton} ${styles.selected}`, 
-          ["editorBack"],
-          <Label value={getText("label_back")} 
-            leftIcon={<Icon iconKey="Reply" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_back",
+          selected: true, 
+          eventValue: [SIDE_EVENT.BACK, {}],
+          label: this.msg("", { id: "label_back" }), 
+          iconKey: "Reply", full: false, 
+        })
       )
-      panels.push(<div key="back_sep" className={styles.separator} />)
+      panels.push(html`<hr id="back_sep" class="separator" />`)
     }
 
     if (options.arrow === true) {
       panels.push(
-        itemMenu("cmd_arrow_left", 
-          `${"full medium"} ${styles.itemButton}`, 
-          ["prevTransNumber"],
-          <Label value={getText("label_previous")} 
-            leftIcon={<Icon iconKey="ArrowLeft" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_arrow_left", 
+          eventValue: [SIDE_EVENT.PREV_NUMBER, {}],
+          label: this.msg("", { id: "label_previous" }), 
+          iconKey: "ArrowLeft"
+        })
       )
       panels.push(
-        itemMenu("cmd_arrow_right",
-          `${"full medium"} ${styles.itemButton}`, 
-          ["nextTransNumber"],
-          <Label value={getText("label_next")} 
-            rightIcon={<Icon iconKey="ArrowRight" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_arrow_right", 
+          eventValue: [SIDE_EVENT.NEXT_NUMBER, {}],
+          label: this.msg("", { id: "label_next" }), 
+          iconKey: "ArrowRight", align: TEXT_ALIGN.RIGHT
+        })
       )
-      panels.push(<div key="arrow_sep" className={styles.separator} />)
+      panels.push(html`<hr id="arrow_sep" class="separator" />`)
     }
 
     if (options.state && options.state !== "normal") {
       const color = (options.state === "deleted") 
-        ? "red" : (options.state === "cancellation") 
-          ? "orange" : "white"
+        ? "rgb(var(--functional-red))" : (options.state === "cancellation") 
+          ? "rgb(var(--functional-yellow))" : "rgba(var(--accent-1c), 0.85)"
       const icon = (["closed", "readonly"].includes(options.state)) 
         ? "Lock" : "ExclamationTriangle"
-      panels.push(<div key="cmd_state" className={`${"full padding-small large"} ${styles.stateLabel}`} >
-        <Label value={getText("label_"+options.state)} style={{ color: color }}
-          leftIcon={<Icon iconKey={icon} color={color} />} iconWidth="25px"  />
-      </div>)
-      panels.push(<div key="state_sep" className={styles.separator} />)
+      panels.push(html`<div key="cmd_state" class="state-label" >
+        <form-icon iconKey="${icon}" .style="${{ fill: color }}" ></form-icon>
+        <span style="${styleMap({ color, fill: color, "vertical-align": "middle" })}" >${this.msg("", { id: `label_${options.state}` })}</span>
+      </div>`)
+      panels.push(html`<hr id="state_sep" class="separator" />`)
     }
 
     if (options.save !== false) {
       panels.push(
-        itemMenu("cmd_save",
-          `${"full medium"} ${styles.itemButton} ${((current.form && form_dirty)||(!current.form && dirty))?styles.selected:""}`,
-          ["editorSave"],
-          <Label value={getText("label_save")} 
-            leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_save",
+          selected: !!(((current.form && form_dirty)||(!current.form && dirty))),
+          eventValue: [SIDE_EVENT.SAVE, {}],
+          label: this.msg("", { id: "label_save" }), 
+          iconKey: "Check"
+        })
       )
     }
     if (options.delete !== false && options.state === "normal") {
       panels.push(
-        itemMenu("cmd_delete",
-          `${"full medium"} ${styles.itemButton}`, 
-          ["editorDelete"],
-          <Label value={getText("label_delete")} 
-            leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_delete", 
+          eventValue: [SIDE_EVENT.DELETE, {}],
+          label: this.msg("", { id: "label_delete" }), 
+          iconKey: "Times"
+        })
       )
     }
     if (options.new !== false && options.state === "normal" && !current.form) {
       panels.push(
-        itemMenu("cmd_new",
-          `${"full medium"} ${styles.itemButton}`, 
-          ["editorNew",[{}]],
-          <Label value={getText("label_new")} 
-            leftIcon={<Icon iconKey="Plus" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_new", 
+          eventValue: [SIDE_EVENT.NEW, [{}]],
+          label: this.msg("", { id: "label_new" }), 
+          iconKey: "Plus"
+        })
       )
     }
 
     if (options.trans === true) {
-      panels.push(<div key="trans_sep" className={styles.separator} />)
+      panels.push(html`<hr id="trans_sep" class="separator" />`)
       if (options.copy !== false) {
         panels.push(
-          itemMenu("cmd_copy",
-            `${"full medium"} ${styles.itemButton}`,
-            ["transCopy",["normal"]],
-              <Label value={getText("label_copy")} 
-                leftIcon={<Icon iconKey="Copy" />} iconWidth="20px" />
-          )
+          this.itemMenu({
+            id: "cmd_copy",
+            eventValue: [SIDE_EVENT.COPY, { value: "normal" }],
+            label: this.msg("", { id: "label_copy" }),
+            iconKey: "Copy"
+          })
         );
       }
       if (options.create !== false) {
         panels.push(
-          itemMenu("cmd_create",
-            `${"full medium"} ${styles.itemButton}`,
-            ["transCopy",["create"]],
-            <Label value={getText("label_create")} 
-              leftIcon={<Icon iconKey="Sitemap" />} iconWidth="20px" />
-          )
+          this.itemMenu({
+            id: "cmd_create",
+            eventValue: [SIDE_EVENT.COPY, { value: "create" }],
+            label: this.msg("", { id: "label_create" }), 
+            iconKey: "Sitemap"
+          })
         );
       }
       if (options.corrective === true && options.state === "normal") {
         panels.push(
-          itemMenu("cmd_corrective",
-            `${"full medium"} ${styles.itemButton}`,
-            ["transCopy",["amendment"]],
-            <Label value={getText("label_corrective")} 
-              leftIcon={<Icon iconKey="Share" />} iconWidth="20px" />
-          )
+          this.itemMenu({
+            id: "cmd_corrective",
+            eventValue: [SIDE_EVENT.COPY, { value: "amendment" }],
+            label: this.msg("", { id: "label_corrective" }), 
+            iconKey: "Share"
+          })
         );
       }
       if (options.cancellation === true && options.state !== "cancellation") {
         panels.push(
-          itemMenu("cmd_cancellation",
-            `${"full medium"} ${styles.itemButton}`,
-            ["transCopy",["cancellation"]],
-            <Label value={getText("label_cancellation")} 
-              leftIcon={<Icon iconKey="Undo" />} iconWidth="20px" />
-          )
+          this.itemMenu({
+            id: "cmd_cancellation",
+            eventValue: [SIDE_EVENT.COPY, { value: "cancellation" }],
+            label: this.msg("", { id: "label_cancellation" }), 
+            iconKey: "Undo"
+          })
         );
       }
       if (options.formula === true) {
         panels.push(
-          itemMenu("cmd_formula",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["checkEditor", [{}, 'LOAD_FORMULA']],
-          <Label value={getText("label_formula")} 
-            leftIcon={<Icon iconKey="Magic" />} iconWidth="20px"  />
-          )    
+          this.itemMenu({
+            id: "cmd_formula", 
+            eventValue: [SIDE_EVENT.CHECK, [{}, EDITOR_EVENT.LOAD_FORMULA]],
+            label: this.msg("", { id: "label_formula" }), 
+            iconKey: "Magic"
+          })    
         )
       }
     }
 
     if (options.link === true) {
       panels.push(
-        itemMenu("cmd_link",
-          `${"full medium"} ${styles.itemButton}`, 
-          ["setLink",[options.link_type, options.link_field]],
-          <Label value={options.link_label} 
-            leftIcon={<Icon iconKey="Link" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_link", 
+          eventValue: [SIDE_EVENT.LINK, { type: options.link_type, field: options.link_field }],
+          label: options.link_label,
+          iconKey: "Link"
+        })
       )
     }
 
     if (options.password === true) {
       panels.push(
-        itemMenu("cmd_password",
-          `${"full medium"} ${styles.itemButton}`, 
-          ["setPassword"],
-          <Label value={getText("title_password")} 
-            leftIcon={<Icon iconKey="Lock" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_password", 
+          eventValue: [SIDE_EVENT.PASSWORD, {}],
+          label: this.msg("", { id: "title_password" }), 
+          iconKey: "Lock"
+        })
       )
     }
 
     if (options.shipping === true) {
       panels.push(
-        itemMenu("cmd_shipping_all",
-          `${"full medium"} ${styles.itemButton}`, 
-          ["shippingAddAll"],
-          <Label value={getText("shipping_all_label")} 
-            leftIcon={<Icon iconKey="Plus" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_shipping_all", 
+          eventValue: [SIDE_EVENT.SHIPPING_ADD_ALL, {}],
+          label: this.msg("", { id: "shipping_all_label" }), 
+          iconKey: "Plus"
+        })
       )
       panels.push(
-        itemMenu("cmd_shipping_create",
-          `${"full medium"} ${styles.itemButton} ${(dataset.shiptemp.length > 0)?styles.selected:""}`,
-          ["createShipping"],
-          <Label value={getText("shipping_create_label")} 
-            leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_shipping_create",
+          selected: (dataset.shiptemp && (dataset.shiptemp.length > 0)),
+          eventValue: [SIDE_EVENT.SHIPPING_CREATE, {}],
+          label: this.msg("", { id: "shipping_create_label" }), 
+          iconKey: "Check"
+        })
       )
     }
 
     if (options.more === true) {
-      panels.push(<div key="more_sep_1" className={styles.separator} />)
+      panels.push(html`<hr id="more_sep_1" class="separator" />`)
       if (options.report !== false) {
         panels.push(
-          itemMenu("cmd_report",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["reportSettings", []],
-            <Label value={getText("label_report")} 
-              leftIcon={<Icon iconKey="ChartBar" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_report",
+            eventValue: [SIDE_EVENT.REPORT_SETTINGS, {}],
+            label: this.msg("", { id: "label_report" }), 
+            iconKey: "ChartBar"
+          })
         )
       }
       if (options.search === true) {
         panels.push(
-          itemMenu("cmd_search",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["searchQueue"],
-            <Label value={getText("label_search")} 
-              leftIcon={<Icon iconKey="Search" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_search", 
+            eventValue: [SIDE_EVENT.SEARCH_QUEUE, {}],
+            label: this.msg("", { id: "label_search" }), 
+            iconKey: "Search"
+          })
         )
       }
       if (options.export_all === true && options.state === "normal") {
         panels.push(
-          itemMenu("cmd_export_all",
-            `${"full medium"} ${styles.itemButton}`, 
-             ["exportQueueAll"],
-            <Label value={getText("label_export_all")} 
-              leftIcon={<Icon iconKey="Download" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_export_all", 
+            eventValue: [SIDE_EVENT.EXPORT_QUEUE_ALL, {}],
+            label: this.msg("", { id: "label_export_all" }), 
+            iconKey: "Download"
+          })
         )
       }
       if (options.print === true) {
         panels.push(
-          itemMenu("cmd_print",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["createReport",["print"]],
-            <Label value={getText("label_print")} 
-              leftIcon={<Icon iconKey="Print" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_print", 
+            eventValue: [SIDE_EVENT.CREATE_REPORT, { value: "print" }],
+            label: this.msg("", { id: "label_print" }), 
+            iconKey: "Print"
+          })
         )
       }
       if (options.export_pdf === true && options.state === "normal") {
         panels.push(
-          itemMenu("cmd_export_pdf",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["createReport",["pdf"]],
-          <Label value={getText("label_export_pdf")} 
-            leftIcon={<Icon iconKey="Download" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_export_pdf", 
+            eventValue: [SIDE_EVENT.CREATE_REPORT, { value: "pdf" }],
+            label: this.msg("", { id: "label_export_pdf" }), 
+            iconKey: "Download"
+          })
         )
       }
       if (options.export_xml === true && options.state === "normal") {
         panels.push(
-          itemMenu("cmd_export_xml",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["createReport",["xml"]],
-            <Label value={getText("label_export_xml")} 
-              leftIcon={<Icon iconKey="Code" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_export_xml", 
+            eventValue: [SIDE_EVENT.CREATE_REPORT, { value: "xml" }],
+            label: this.msg("", { id: "label_export_xml" }), 
+            iconKey: "Code"
+          })
         )
       }
       if (options.export_csv === true && options.state === "normal") {
         panels.push(
-          itemMenu("cmd_export_csv",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["createReport",["csv"]],
-            <Label value={getText("label_export_csv")} 
-              leftIcon={<Icon iconKey="Download" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_export_csv", 
+            eventValue: [SIDE_EVENT.CREATE_REPORT, { value: "csv" }],
+            label: this.msg("", { id: "label_export_csv" }), 
+            iconKey: "Download"
+          })
         )
       }
       if (options.export_event === true && options.state === "normal") {
         panels.push(
-          itemMenu("cmd_export_event",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["exportEvent"],
-            <Label value={getText("label_export_event")} 
-              leftIcon={<Icon iconKey="Calendar" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_export_event", 
+            eventValue: [SIDE_EVENT.EXPORT_EVENT, {}],
+            label: this.msg("", { id: "label_export_event" }), 
+            iconKey: "Calendar"
+          })
         )
       }
-      panels.push(<div key="more_sep_2" className={styles.separator} />)
+
+      panels.push(html`<hr id="more_sep_2" class="separator" />`)
       if (options.bookmark !== false && options.state === "normal") {
         panels.push(
-          itemMenu("cmd_bookmark",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["saveBookmark",[options.bookmark]],
-            <Label value={getText("label_bookmark")} 
-              leftIcon={<Icon iconKey="Star" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_bookmark",
+            eventValue: [SIDE_EVENT.SAVE_BOOKMARK, { value: options.bookmark }],
+            label: this.msg("", { id: "label_bookmark" }), 
+            iconKey: "Star"
+          })
         )
       }
       if (options.help !== false) {
         panels.push(
-          itemMenu("cmd_help",
-            `${"full medium"} ${styles.itemButton}`, 
-            ["showHelp",[options.help]],
-            <Label value={getText("label_help")} 
-              leftIcon={<Icon iconKey="QuestionCircle" />} iconWidth="20px"  />
-          )
+          this.itemMenu({
+            id: "cmd_help", 
+            eventValue: [SIDE_EVENT.HELP, { value: options.help }],
+            label: this.msg("", { id: "label_help" }), 
+            iconKey: "QuestionCircle"
+          })
         )
       }
     }
 
     if (options.more !== true && typeof options.help !== "undefined") {
-      panels.push(<div key="help_sep" className={styles.separator} />)
+      panels.push(html`<hr id="help_sep" class="separator" />`)
       panels.push(
-        itemMenu("cmd_help",
-          `${"full medium"} ${styles.itemButton}`, 
-          ["showHelp",[options.help]],
-          <Label value={getText("label_help")} 
-            leftIcon={<Icon iconKey="QuestionCircle" />} iconWidth="20px"  />
-        )
+        this.itemMenu({
+          id: "cmd_help", 
+          eventValue: [SIDE_EVENT.HELP, { value: options.help }],
+          label: this.msg("", { id: "label_help" }), 
+          iconKey: "QuestionCircle"
+        })
       )
     }
-    
+
     return panels
   }
-  const groupButton = (key) => {
-    if(key === group_key){
-      return styles.selectButton
-    }
-    return styles.groupButton
-  }
-  const newItems = ()=>{
-    let mnu_items = []
 
-    if(newFilter[0].length > 0){
-      mnu_items.push(<div key="0" className="row full">
-        {groupMenu("new_transitem_group", 
-          `${"full medium"} ${groupButton("new_transitem")}`, 
-          "new_transitem",
-          <Label value={getText("search_transitem")} 
-            leftIcon={<Icon iconKey="FileText" />} iconWidth="25px"  />
-        )}
-        {(group_key === "new_transitem")?<div className={`${"row full"} ${styles.panelGroup}`} >
-          {newFilter[0].map(transtype =>{
-            if (auditFilter.trans[transtype][0] === "all"){ 
+  newItems(){
+    const { group_key } = this.module
+    const mnu_items = []
+
+    if(this.newFilter[0].length > 0){
+      mnu_items.push(html`<div class="row full">
+        ${this.itemMenu({
+          id: "new_transitem_group", 
+          selected: (group_key === "new_transitem"),
+          eventValue: [SIDE_EVENT.CHANGE, { fieldname: "group_key", value: "new_transitem" }],
+          label: this.msg("", { id: "search_transitem" }), 
+          iconKey: "FileText"
+        })}
+        ${(group_key === "new_transitem") ? html`<div class="row full panel-group" >
+          ${this.newFilter[0].map(transtype =>{
+            if (this.auditFilter.trans[transtype][0] === "all"){ 
               return (
-                itemMenu(transtype, 
-                  `${"full medium primary"} ${styles.panelButton}`, 
-                  ["editorNew",[{ntype: 'trans', ttype: transtype}]],
-                  <Label value={getText("title_"+transtype)} 
-                    leftIcon={<Icon iconKey="FileText" />} iconWidth="25px"  />
-                )
+                this.itemMenu({
+                  id: transtype,  
+                  eventValue: [SIDE_EVENT.NEW, [{ntype: 'trans', ttype: transtype}]],
+                  label: this.msg("", { id: `title_${transtype}` }), 
+                  iconKey: "FileText", color: "rgb(var(--functional-blue))"
+                })
               ) 
-            } else { 
-              return null 
-            }
+            } 
+            return nothing
           })}
-        </div>:null}
-      </div>)
+        </div>` : nothing }
+      </div>`)
     }
 
-    if(newFilter[1].length > 0){
-      mnu_items.push(<div key="1" className="row full">
-        {groupMenu(
-          "new_transpayment_group", 
-          `${"full medium"} ${groupButton("new_transpayment")}`, 
-          "new_transpayment",
-          <Label value={getText("search_transpayment")} 
-            leftIcon={<Icon iconKey="Money" />} iconWidth="25px"  />
-        )}
-        {(group_key === "new_transpayment")?<div className={`${"row full"} ${styles.panelGroup}`} >
-          {newFilter[1].map(transtype =>{
-            if (auditFilter.trans[transtype][0] === "all"){ 
+    if(this.newFilter[1].length > 0){
+      mnu_items.push(html`<div class="row full">
+        ${this.itemMenu({
+          id: "new_transpayment_group",
+          selected: (group_key === "new_transpayment"),
+          eventValue: [SIDE_EVENT.CHANGE, { fieldname: "group_key", value: "new_transpayment" }],
+          label: this.msg("", { id: "search_transpayment" }), 
+          iconKey: "Money"
+        })}
+        ${(group_key === "new_transpayment") ? html`<div class="row full panel-group" >
+          ${this.newFilter[1].map(transtype =>{
+            if (this.auditFilter.trans[transtype][0] === "all"){ 
               return (
-                itemMenu(transtype, 
-                  `${"full medium primary"} ${styles.panelButton}`, 
-                  ["editorNew",[{ntype: 'trans', ttype: transtype}]],
-                  <Label value={getText("title_"+transtype)} 
-                    leftIcon={<Icon iconKey="Money" />} iconWidth="25px"  />
-                )
+                this.itemMenu({
+                  id: transtype,  
+                  eventValue: [SIDE_EVENT.NEW, [{ntype: 'trans', ttype: transtype}]],
+                  label: this.msg("", { id: `title_${transtype}` }), 
+                  iconKey: "Money", color: "rgb(var(--functional-blue))"
+                })
               ) 
-            } else { 
-              return null 
             }
+            return nothing
           })}
-        </div>:null}
-      </div>)
+        </div>` : nothing }
+      </div>`)
     }
 
-    if(newFilter[2].length > 0){
-      mnu_items.push(<div key="2" className="row full">
-        {groupMenu("new_transmovement_group", 
-          `${"full medium"} ${groupButton("new_transmovement")}`, 
-          "new_transmovement",
-          <Label value={getText("search_transmovement")} 
-            leftIcon={<Icon iconKey="Truck" />} iconWidth="25px"  />
-        )}
-        {(group_key === "new_transmovement")?<div className={`${"row full"} ${styles.panelGroup}`} >
-          {newFilter[2].map(transtype => {
-            if (auditFilter.trans[transtype][0] === "all"){
+    if(this.newFilter[2].length > 0){
+      mnu_items.push(html`<div class="row full">
+        ${this.itemMenu({
+          id: "new_transmovement_group",
+          selected: (group_key === "new_transmovement"),
+          eventValue: [SIDE_EVENT.CHANGE, { fieldname: "group_key", value: "new_transmovement" }],
+          label: this.msg("", { id: "search_transmovement" }), 
+          iconKey: "Truck"
+        })}
+        ${(group_key === "new_transmovement") ? html`<div class="row full panel-group" >
+          ${this.newFilter[2].map(transtype => {
+            if (this.auditFilter.trans[transtype][0] === "all"){
               if(transtype === "delivery"){
                 return ([
-                  itemMenu("shipping", 
-                    `${"full medium primary"} ${styles.panelButton}`, 
-                    ["editorNew",[{ntype: 'trans', ttype: "shipping"}]],
-                    <Label value={getText("title_"+transtype)} 
-                      leftIcon={<Icon iconKey={forms[transtype]().options.icon} />} iconWidth="25px"  />
-                  ),
-                  itemMenu(transtype, 
-                    `${"full medium primary"} ${styles.panelButton}`, 
-                    ["editorNew",[{ntype: 'trans', ttype: transtype}]],
-                    <Label value={getText("title_transfer")} 
-                      leftIcon={<Icon iconKey={forms[transtype]().options.icon} />} iconWidth="25px"  />
-                  )
+                  this.itemMenu({
+                    id: "shipping",  
+                    eventValue: [SIDE_EVENT.NEW, [{ntype: 'trans', ttype: "shipping"}]],
+                    label: this.msg("", { id: `title_${transtype}` }), 
+                    iconKey: this.forms[transtype]().options.icon, 
+                    color: "rgb(var(--functional-blue))"
+                  }),
+                  this.itemMenu({
+                    id: transtype,  
+                    eventValue: [SIDE_EVENT.NEW, [{ntype: 'trans', ttype: transtype}]],
+                    label: this.msg("", { id: "title_transfer" }), 
+                    iconKey: this.forms[transtype]().options.icon, 
+                    color: "rgb(var(--functional-blue))"
+                  })
                 ])
-              } else {
-                return (
-                  itemMenu(transtype,
-                    `${"full medium primary"} ${styles.panelButton}`, 
-                    ["editorNew",[{ntype: 'trans', ttype: transtype}]],
-                    <Label value={getText("title_"+transtype)} 
-                      leftIcon={<Icon iconKey={forms[transtype]().options.icon} />} iconWidth="25px"  />
-                  )
-                )
-              } 
-            } else { 
-              return null 
-            }
+              }
+              return (
+                this.itemMenu({
+                  id: transtype, 
+                  eventValue: [SIDE_EVENT.NEW, [{ntype: 'trans', ttype: transtype}]],
+                  label: this.msg("", { id: `title_${transtype}` }), 
+                  iconKey: this.forms[transtype]().options.icon, 
+                  color: "rgb(var(--functional-blue))"
+                })
+              )
+            } 
+            return nothing
           })}
-        </div>:null}
-      </div>)
+        </div>` : nothing }
+      </div>`)
     }
 
-    if(newFilter[3].length > 0){
-      mnu_items.push(<div key="3" className="row full">
-        {groupMenu("new_resources_group", 
-          `${"full medium"} ${groupButton("new_resources")}`, 
-          "new_resources",
-          <Label value={getText("title_resources")} 
-            leftIcon={<Icon iconKey="Wrench" />} iconWidth="25px"  />
-        )}
-        {(group_key === "new_resources")?<div className={`${"row full"} ${styles.panelGroup}`} >
-          {newFilter[3].map(ntype =>{
-            if (auditFilter[ntype][0] === "all"){ 
+    if(this.newFilter[3].length > 0){
+      mnu_items.push(html`<div class="row full">
+        ${this.itemMenu({
+          id: "new_resources_group",
+          selected: (group_key === "new_resources"),
+          eventValue: [SIDE_EVENT.CHANGE, { fieldname: "group_key", value: "new_resources" }],
+          label: this.msg("", { id: "title_resources" }), 
+          iconKey: "Wrench"
+        })}
+        ${(group_key === "new_resources") ? html`<div class="row full panel-group" >
+          ${this.newFilter[3].map(ntype =>{
+            if (this.auditFilter[ntype][0] === "all"){ 
               return (
-                itemMenu(ntype, 
-                  `${"full medium primary"} ${styles.panelButton}`, 
-                  ["editorNew", [{ntype: ntype, ttype: null}]],
-                  <Label value={getText("title_"+ntype)} 
-                    leftIcon={<Icon iconKey={forms[ntype]().options.icon} />} iconWidth="25px"  />
-                )
+                this.itemMenu({
+                  id: ntype,  
+                  eventValue: [SIDE_EVENT.NEW, [{ntype, ttype: null}]],
+                  label: this.msg("", { id: `title_${ntype}` }), 
+                  iconKey: this.forms[ntype]().options.icon,
+                  color: "rgb(var(--functional-blue))"
+                })
               ) 
-            } else { 
-              return null 
-            }
+            } 
+            return nothing
           })}
-        </div>:null}
-      </div>)
+        </div>` : nothing }
+      </div>`)
     }
 
     return mnu_items
   }
-  return (
-    <div {...props}
-      className={`${styles.sidebar} ${((side !== "auto")? side : "")} ${className}`} >
-      {(!current.form && (current.form_type !== "transitem_shipping"))?
-      <div className="row full section-small container">
-        <div className="cell half">
-          {itemMenu("state_new", 
-            `${"full medium"} ${((view === SIDE_VIEW.EDIT) && current.item)?styles.groupButton:styles.selectButton}`,
-            ["changeData", ["side_view", "new"]],
-            <Label value={getText("label_new")} 
-              leftIcon={<Icon iconKey="Plus" />} iconWidth="20px"  />
-          )}
-        </div>
-        <div className="cell half">
-          {itemMenu("state_edit", 
-            `${"full medium"} ${((view === SIDE_VIEW.EDIT) && current.item)?styles.selectButton:styles.groupButton}`,
-            ["changeData", ["side_view", "edit"]],
-            <Label value={getText("label_edit")} 
-              leftIcon={<Icon iconKey="Edit" />} iconWidth="20px"  />,
-            (!current.item) ? true : false
-          )}
-        </div>
-      </div>:null}
-      {(((view === SIDE_VIEW.EDIT) && current.form) || ((view === SIDE_VIEW.EDIT) && current.item))
-        ? editItems(panel) : newItems()}
-    </div>
-  )
-}
 
-Edit.propTypes = {
-  /**
-   * SideBar visibility
-   */
-  side: PropTypes.oneOf(Object.values(SIDE_VISIBILITY)).isRequired,
-  view: PropTypes.oneOf(Object.values(SIDE_VIEW)).isRequired, 
-  module: PropTypes.shape({
-    current: PropTypes.object, 
-    form_dirty: PropTypes.bool,
-    dirty: PropTypes.bool,
-    panel: PropTypes.object, 
-    dataset: PropTypes.object, 
-    group_key: PropTypes.string
-  }).isRequired, 
-  newFilter: PropTypes.array.isRequired,
-  auditFilter: PropTypes.object.isRequired,
-  forms: PropTypes.object.isRequired,
-  className: PropTypes.string,
-  /** 
-   * Menu selection handle
-  */
-  onEvent: PropTypes.func,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-}
+  render() {
+    const { current, panel } = this.module
+    return html`<div class="sidebar ${(this.side !== "auto") ? this.side : ""}" >
+      ${(!current.form && (current.form_type !== "transitem_shipping")) ?
+        html`<div class="row full container">
+          <div class="cell half">
+            ${this.itemMenu({
+              id: "state_new",
+              selected: !(((this.view === SIDE_VIEW.EDIT) && current.item)),
+              eventValue: [SIDE_EVENT.CHANGE, { fieldname: "side_view", value: "new" }],
+              label: this.msg("", { id: "label_new" }), 
+              iconKey: "Plus", align: TEXT_ALIGN.CENTER
+            })}
+          </div>
+          <div class="cell half">
+            ${this.itemMenu({
+              id: "state_edit", 
+              selected: !!(((this.view === SIDE_VIEW.EDIT) && current.item)),
+              eventValue: [SIDE_EVENT.CHANGE, { fieldname: "side_view", value: "edit" }],
+              label: this.msg("", { id: "label_edit"}), 
+              iconKey: "Edit", disabled: (!current.item), align: TEXT_ALIGN.CENTER
+            })}
+          </div>
+        </div>` : nothing
+      }
+      ${(((this.view === SIDE_VIEW.EDIT) && current.form) || ((this.view === SIDE_VIEW.EDIT) && current.item))
+        ? this.editItems(panel) : this.newItems()}
+     </div>`
+  }
 
-Edit.defaultProps = {
-  side: SIDE_VISIBILITY.AUTO,
-  view: SIDE_VIEW.EDIT, 
-  module: {
-    current: {}, 
-    form_dirty: false,
-    dirty: false,
-    panel: {}, 
-    dataset: {}, 
-    group_key: ""
-  }, 
-  newFilter: [],
-  auditFilter: {}, 
-  forms: {}, 
-  className: "",
-  onEvent: undefined,  
-  getText: undefined,
 }
-
-export default Edit;

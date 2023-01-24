@@ -1,166 +1,172 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
 
-import parseISO from 'date-fns/parseISO'
-import format from 'date-fns/format'
+import '../../Form/Label/form-label.js'
+import '../../Form/Icon/form-icon.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/List/form-list.js'
+import '../InputBox/modal-inputbox.js'
 
-import { getSetting } from 'config/app'
-import 'styles/style.css';
-import styles from './Bookmark.module.css';
+import { styles } from './Bookmark.styles.js'
+import { MODAL_EVENT, PAGINATION_TYPE, BUTTON_TYPE, BOOKMARK_VIEW } from '../../../config/enums.js'
 
-import Label from 'components/Form/Label'
-import List from 'components/Form/List'
-import Button from 'components/Form/Button'
-import Icon from 'components/Form/Icon'
+export class Bookmark extends LitElement {
+  constructor() {
+    super();
+    this.bookmark = { history: null, bookmark: [] }
+    this.tabView = BOOKMARK_VIEW.BOOKMARK
+    this.pageSize = 5;
+    this.onEvent = {}
+  }
 
-export const Bookmark = ({
-  bookmark, tabView, paginationPage, dateFormat, timeFormat,
-  getText, onClose, onSelect, onDelete, className,
-  ...props 
-}) => {
-  const setBookmark = ()=> bookmark.bookmark.map(item => {
-    let bvalue = JSON.parse(item.cfvalue)
-    let value = {
-      bookmark_id: item.id,
-      id: bvalue.id,
-      cfgroup: item.cfgroup,
-      ntype: bvalue.ntype,
-      transtype: (bvalue.ntype === "trans") ? bvalue.transtype : null,
-      vkey: bvalue.vkey,
-      view: bvalue.view,
-      filters: bvalue.filters,
-      columns: bvalue.columns,
-      lslabel: item.cfname, 
-      lsvalue: format(parseISO(bvalue.date), dateFormat)
+  static get properties() {
+    return {
+      bookmark: { type: Object },
+      tabView: { type: String },
+      pageSize: { type: Number },
+      onEvent: { type: Object },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
     }
-    if(item.cfgroup === "editor"){
-      if (bvalue.ntype==="trans") {
-        value.lsvalue += " | " + getText("title_"+bvalue.transtype) + " | " + bvalue.info
-      } else {
-        value.lsvalue += " | " + getText("title_"+bvalue.ntype) + " | " + bvalue.info
-      }
-    }
-    if(item.cfgroup === "browser"){
-      value.lsvalue += " | " + getText("browser_"+bvalue.vkey)
-    }
-    return value
-  })
-  const setHistory = ()=> {
-    if(bookmark.history && bookmark.history.cfvalue){
-      const history_values = JSON.parse(bookmark.history.cfvalue)
-      return history_values.map(item => {
-        return {
-          id: item.id, 
-          lslabel: item.title, 
-          type: item.type,
-          lsvalue: format(parseISO(item.datetime), dateFormat+" "+timeFormat)+" | "+ getText("label_"+item.type,item.type), 
-          ntype: item.ntype, transtype: item.transtype
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
         }
       })
+    );
+  }
+
+  _onTabView(view) {
+    this.tabView = view
+  }
+
+  setBookmark() {
+    return this.bookmark.bookmark.map(item => {
+      const bvalue = JSON.parse(item.cfvalue)
+      const value = {
+        bookmark_id: item.id,
+        id: bvalue.id,
+        cfgroup: item.cfgroup,
+        ntype: bvalue.ntype,
+        transtype: (bvalue.ntype === "trans") ? bvalue.transtype : null,
+        vkey: bvalue.vkey,
+        view: bvalue.view,
+        filters: bvalue.filters,
+        columns: bvalue.columns,
+        lslabel: item.cfname, 
+        lsvalue: new Intl.DateTimeFormat(
+          'default', {
+            year: 'numeric', month: '2-digit', day: '2-digit'
+          }
+        ).format(new Date(bvalue.date))
+      }
+      if(item.cfgroup === "editor"){
+        if (bvalue.ntype==="trans") {
+          value.lsvalue += ` | ${  this.msg(`title_${bvalue.transtype}`, { id: `title_${bvalue.transtype}` })  } | ${  bvalue.info}`
+        } else {
+          value.lsvalue += ` | ${  this.msg(`title_${bvalue.ntype}`, { id: `title_${bvalue.ntype}` })  } | ${  bvalue.info}`
+        }
+      }
+      if(item.cfgroup === "browser"){
+        value.lsvalue += ` | ${  this.msg(`browser_${bvalue.vkey}`, { id: `browser_${bvalue.vkey}` })}`
+      }
+      return value
+    })
+  }
+
+  setHistory() {
+    if(this.bookmark.history && this.bookmark.history.cfvalue){
+      const history_values = JSON.parse(this.bookmark.history.cfvalue)
+      return history_values.map(item => ({
+        id: item.id, 
+        lslabel: item.title, 
+        type: item.type,
+        lsvalue: `${new Intl.DateTimeFormat(
+          'default', {
+            year: 'numeric', month: '2-digit', day: '2-digit', 
+            hour: '2-digit', minute: '2-digit', hour12: false
+          }
+        ).format(new Date(item.datetime))} | ${ this.msg(`label_${item.type}`, { id: `label_${item.type}` })}`, 
+        ntype: item.ntype, transtype: item.transtype
+      }))
     }
     return []
   }
-  const [ state, setState ] = useState({
-    tabView: tabView,
-    bookmarkList: setBookmark(),
-    historyList: setHistory()
-  })
-  return(
-    <div className={`${"modal"} ${styles.modal} ${className}`}  >
-        <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-          <div className={`${styles.panel}`} >
-            <div className={`${styles.panelTitle} ${"primary"}`}>
-              <div className="row full">
-                <div className="cell">
-                  <Label value={getText("title_bookmark")} leftIcon={<Icon iconKey="Star" />} iconWidth="20px" />
-                </div>
-                <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                  <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
-                </div>
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.bookmarkList = this.setBookmark()
+    this.historyList = this.setHistory()
+  }
+
+  render() {
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label 
+                value="${this.msg("Nervatura Bookmark", { id: "title_bookmark" })}" 
+                class="title-cell" leftIcon="Star" >
+              </form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              <div class="cell half" >
+                <form-button id="btn_bookmark"
+                  .style="${{ "border-radius": 0 }}" icon="Star"
+                  label="${this.msg("", { id: "title_bookmark_list" })}"
+                  @click=${()=>this._onTabView(BOOKMARK_VIEW.BOOKMARK)} 
+                  type="${(this.tabView === BOOKMARK_VIEW.BOOKMARK) ? BUTTON_TYPE.PRIMARY : ""}"
+                  ?full="${true}" ?selected="${(BOOKMARK_VIEW.BOOKMARK === this.tabView)}" >
+                  ${this.msg("", { id: "title_bookmark_list" })}</form-button>
+              </div>
+              <div class="cell half" >
+                <form-button id="btn_history"
+                  .style="${{ "border-radius": 0 }}" icon="History"
+                  label="${this.msg("", { id: "title_history" })}"
+                  @click=${()=>this._onTabView(BOOKMARK_VIEW.HISTORY)} 
+                  type="${(this.tabView === BOOKMARK_VIEW.HISTORY) ? BUTTON_TYPE.PRIMARY : ""}" 
+                  ?full="${true}" ?selected="${(BOOKMARK_VIEW.HISTORY === this.tabView)}" >
+                  ${this.msg("", { id: "title_history" })}</form-button>
               </div>
             </div>
-            <div className="section" >
-              <div className="row full container section-small-bottom" >
-                <div className="cell half" >
-                  <Button id="btn_bookmark"
-                    className={`${"full"} ${styles.tabButton} ${(state.tabView === "bookmark")?styles.selected:""} ${(state.tabView === "bookmark")?"primary":""}`} 
-                    onClick={()=>setState({ ...state, tabView: "bookmark" })} 
-                    value={<Label value={getText("title_bookmark_list")} leftIcon={<Icon iconKey="Star" />} />}
-                  />
-                </div>
-                <div className={`${"cell half"}`} >
-                  <Button id="btn_history"
-                    className={`${"full"} ${styles.tabButton} ${(state.tabView === "history")?styles.selected:""} ${(state.tabView === "history")?"primary":""}`} 
-                    onClick={()=>setState({ ...state, tabView: "history" })} 
-                    value={<Label value={getText("title_history")} leftIcon={<Icon iconKey="History" />} />}
-                  />
-                </div>
-              </div>
-              <div className="row full container section-small-bottom" >
-                <List 
-                  rows={(state.tabView === "bookmark") ? state.bookmarkList : state.historyList} 
-                  editIcon={(state.tabView === "bookmark") ? <Icon iconKey="Star" /> : <Icon iconKey="History" />}
-                  listFilter={true} filterPlaceholder={getText("placeholder_filter")}
-                  paginationPage={paginationPage} paginationTop={true} hidePaginatonSize={true}
-                  onEdit={(row)=>onSelect(state.tabView, row)}  
-                  onDelete={(state.tabView === "bookmark") ? (row)=>onDelete(row.bookmark_id) : null} />
-              </div>
+            <div class="section-row" >
+              <form-list id="bookmark_list"
+                .rows="${(this.tabView === "bookmark") ? this.bookmarkList : this.historyList}"
+                pagination="${PAGINATION_TYPE.TOP}"
+                pageSize="${this.pageSize}"
+                ?listFilter="${true}"
+                ?hidePaginatonSize="${true}"
+                filterPlaceholder="${this.msg("Filter", { id: "placeholder_filter" })}"
+                editIcon="${(this.tabView === "bookmark") ? "Star" : "History"}"
+                .onEdit=${(row)=>this._onModalEvent(MODAL_EVENT.SELECTED, { view: this.tabView, row })}
+                .onDelete=${
+                  (this.tabView === "bookmark") ? (row)=>this._onModalEvent(MODAL_EVENT.DELETE, { bookmark_id: row.bookmark_id }) : null 
+                }
+              ></form-list>
             </div>
-         </div>
+          </div>
+        </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Bookmark.propTypes = {
-  /**
-   * Bookmark/history data
-   */
-  bookmark: PropTypes.object.isRequired,
-  /**
-   * Bokkmark view
-   */
-  tabView: PropTypes.oneOf(["bookmark","history"]).isRequired,
-  /**
-   * Pagination row number / page
-   */
-  paginationPage: PropTypes.number.isRequired,
-   /**
-   * Locale date format
-   */
-  dateFormat: PropTypes.string,
-  /**
-   * Locale time format 
-   */ 
-  timeFormat: PropTypes.string,
-  /**
-   * onSelect row handle 
-   */ 
-  onSelect: PropTypes.func,
-  /**
-   * Delete row handle 
-   */ 
-  onDelete: PropTypes.func,
-  /**
-   * Close form handle 
-   */ 
-  onClose: PropTypes.func,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-}
-
-Bookmark.defaultProps = {
-  bookmark: { history: null, bookmark: [] },
-  tabView: "bookmark",
-  paginationPage: getSetting("selectorPage"),
-  dateFormat: getSetting("dateFormat"),
-  timeFormat: getSetting("timeFormat"),
-  onSelect: undefined,
-  onDelete: undefined,
-  onClose: undefined,
-  getText: undefined,
-}
-
-export default Bookmark;

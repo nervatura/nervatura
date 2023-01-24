@@ -1,58 +1,67 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, DarkLogin } from './Login.stories';
+import './client-login.js';
+import { Template, Default, DarkServer } from  './Login.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Login', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const setLocale = jest.fn()
-  const changeData = jest.fn()
-  const setTheme = jest.fn()
+  it('renders in the Default state', async () => {
+    const onPageEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onPageEvent
+    }));
+    const Login = element.querySelector('#login_page');
+    expect(Login).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_login"
-    changeData={changeData}  setLocale={setLocale} setTheme={setTheme} />
-  );
-  expect(getById(container, 'test_login')).toBeDefined();
+    const loginButton = Login.shadowRoot.querySelector('#login')
+    loginButton._onClick({
+      stopPropagation: sinon.spy()
+    })
+    sinon.assert.calledOnce(onPageEvent);
 
-  const username = getById(container, 'username')
-  fireEvent.change(username, {target: {value: "username"}})
-  expect(changeData).toHaveBeenCalledTimes(1);
+    const username = Login.shadowRoot.querySelector('#username')
+    username._onInput({ target: { value: "value" } })
+    sinon.assert.calledTwice(onPageEvent);
+    expect(username.value).to.equal("value");
 
-  const password = getById(container, 'password')
-  fireEvent.change(password, {target: {value: "password"}})
-  expect(changeData).toHaveBeenCalledTimes(2);
+    const password = Login.shadowRoot.querySelector('#password')
+    password._onKeyEvent({ 
+      stopPropagation: sinon.spy(), preventDefault: sinon.spy(),
+      type: "keydown", keyCode: 13 
+    })
+    sinon.assert.calledThrice(onPageEvent);
 
-  const database = getById(container, 'database')
-  fireEvent.change(database, {target: {value: "database"}})
-  expect(changeData).toHaveBeenCalledTimes(3);
+    const database = Login.shadowRoot.querySelector('#database')
+    database._onKeyEvent({ 
+      stopPropagation: sinon.spy(), preventDefault: sinon.spy(),
+      type: "keydown", keyCode: 13 
+    })
+    sinon.assert.callCount(onPageEvent, 4);
 
-  const server = getById(container, 'server')
-  fireEvent.change(server, {target: {value: "server"}})
-  expect(changeData).toHaveBeenCalledTimes(4);
+    const theme = Login.shadowRoot.querySelector('#theme')
+    theme.click()
+    sinon.assert.callCount(onPageEvent, 5);
 
-  const sb_lang = getById(container, 'lang')
-  fireEvent.change(sb_lang, {target: {value: "jp"}})
-  expect(setLocale).toHaveBeenCalledTimes(1);
+    const lang = Login.shadowRoot.querySelector('#lang');
+    lang._onInput({ target: { value: "de" } })
+    expect(lang.value).to.equal("de");
+    loginButton.click()
+    
+    await expect(Login).shadowDom.to.be.accessible();
+  })
 
-  const cmd_theme = getById(container, 'theme')
-  fireEvent.click(cmd_theme)
-  expect(setTheme).toHaveBeenCalledTimes(1);
+  it('renders in the DarkServer state', async () => {
+    const element = await fixture(Template({...DarkServer.args}));
+    const Login = element.querySelector('#login_page');
+    expect(Login).to.exist;
 
-});
+    const loginButton = Login.shadowRoot.querySelector('#login')
+    loginButton.click()
+  })
 
-it('renders in the DarkLogin state', () => {
-  const onLogin = jest.fn()
-
-  const { container } = render(
-    <DarkLogin {...DarkLogin.args} id="test_login"
-    onLogin={onLogin} />
-  );
-  expect(getById(container, 'test_login')).toBeDefined();
-
-  const cmd_login = getById(container, 'login')
-  fireEvent.click(cmd_login)
-  expect(onLogin).toHaveBeenCalledTimes(1);
-
-});
+})

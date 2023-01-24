@@ -85,7 +85,7 @@ export const en = {
   search_place_warehouse: "WAREHOUSE",
   
   search_office: "BACK OFFICE",
-  title_printqueue: " REPORT QUEUE",
+  title_printqueue: "REPORT QUEUE",
   title_rate: "INTEREST AND RATE",
   title_servercmd: "SERVER SHORTCUTS",
   
@@ -142,7 +142,7 @@ export const en = {
   title_dbsettings: "DEFAULT SETTINGS",
   title_numberdef: "DOC. NUMBERING",
   title_usergroup: "ACCESS RIGHTS",
-  title_printer: "PRINT PDF",
+  title_printer: "OPEN PDF",
   title_menucmd: "MENU SHORTCUTS",
   title_log: "DATABASE LOG",
   
@@ -201,7 +201,7 @@ export const en = {
   label_export_event: "iCAL EXPORT",
   label_barcode_scan: "BARCODE SCAN",
   label_export_data: "DATA EXPORT",
-  label_print: "PRINT PDF",
+  label_print: "OPEN PDF",
   label_printqueue: "REPORT QUEUE",
   label_groups: "GROUP",
   label_previous: "PREVIOUS",
@@ -671,13 +671,8 @@ export const en = {
   program_page: "Data count/page",
   program_history: "History size",
   program_export_sep: "Export data sep.",
-  program_decimal_sep: "Decimal sep.",
   program_page_size: "Default paper size",
-  program_date_format: "Date representation",
   program_auto_focus: "Auto focus",
-  program_barcode_scanner: "Barcode Scanner",
-  program_disabled_scanner: "Missing or disabled Barcode Scanner.",
-  program_calendar: "Calendar location",
   
   report_previous: "PREVIOUS PAGE",
   report_next: "NEXT PAGE",

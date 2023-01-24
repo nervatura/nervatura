@@ -1,137 +1,141 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html, nothing } from 'lit';
 
-import 'styles/style.css';
-import styles from './Template.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Select/form-select.js'
+import '../../Form/Input/form-input.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Input from 'components/Form/Input'
-import Select from 'components/Form/Select'
-import Icon from 'components/Form/Icon'
+import { styles } from './Template.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE, TEMPLATE_DATA_TYPE, INPUT_TYPE } from '../../../config/enums.js'
 
-export const DATA_TYPE = {
-  TEXT: "string",
-  LIST: "list",
-  TABLE: "table"
-}
+export class Template extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.type = TEMPLATE_DATA_TYPE.TEXT
+    this.name = ""
+    this.columns = ""
+  }
 
-export const Template = ({
-  type, name, columns, className,
-  getText, onClose, onData,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    type: type,
-    name: name,
-    columns: columns
-  })
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={getText("template_label_new_data")} 
-                  leftIcon={<Icon iconKey="Plus" />} iconWidth="20px" />
-              </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
-              </div>
+  static get properties() {
+    return {
+      type: { type: String },
+      name: { type: String }, 
+      columns: { type: String }
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  _onValueChange(key, value){
+    this[key] = value
+  }
+
+  _onTextInput(event){
+    this._onValueChange("columns", event.target.value)
+  }
+
+  render() {
+    const { type, name, columns } = this
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="Plus"
+                value="${this.msg("", { id: "template_label_new_data" })}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
             </div>
           </div>
-          <div className="section-small">
-            <div className="row full container-small">
-              <div className="cell padding-small half">
-                <div className="row full">
-                  <Label className="bold" value={getText("template_data_type")} />
+          <div class="section" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <div>
+                  <form-label
+                    value="${this.msg("", { id: "template_data_type" })}" 
+                  ></form-label>
                 </div>
-                <Select id="type"
-                  className="full" value={state.type} autoFocus={true}
-                  onChange={ (value)=>setState({ ...state, type: value }) }
-                  options={Object.keys(DATA_TYPE).map(key => {
-                    return { value: DATA_TYPE[key], text: key }
-                  })} />
+                <form-select id="type" 
+                  label="${this.msg("", { id: "template_data_type" })}" 
+                  ?full=${true} .isnull="${false}" value="${type}"
+                  .onChange=${(event) => this._onValueChange("type", event.value)}
+                  .options=${Object.keys(TEMPLATE_DATA_TYPE).map(key => ({ value: TEMPLATE_DATA_TYPE[key], text: key }))}  
+                ></form-select>
               </div>
-              <div className="cell padding-small half">
-                <div className="row full">
-                  <Label className="bold" value={getText("template_data_name")} />
+              <div class="cell padding-small half" >
+                <div>
+                  <form-label
+                    value="${this.msg("", { id: "template_data_name" })}" 
+                  ></form-label>
                 </div>
-                <Input id="name"
-                  className="full" value={state.name} 
-                  onChange={ (value)=>setState({ ...state, name: value }) } />
+                <form-input id="name"
+                  type="${INPUT_TYPE.TEXT}"
+                  label="${this.msg("", { id: "template_data_name" })}" 
+                  .onChange=${(event) => this._onValueChange("name", event.value)}
+                  value="${name}" ?full=${true}
+                ></form-input>
               </div>
             </div>
-            {(state.type === DATA_TYPE.TABLE)?<div className="row full container-small">
-              <div className="row full">
-                <div className={`${"cell padding-small"}`} >
-                  <div>
-                    <Label className="bold" value={getText("template_data_columns")} />
-                  </div>
+            ${(type === TEMPLATE_DATA_TYPE.TABLE) ? html`<div class="section-row" >
+              <div class="cell padding-small" >
+                <div>
+                  <form-label
+                    value="${this.msg("", { id: "template_data_columns" })}" 
+                  ></form-label>
+                </div>
                   <textarea id="columns"
-                    className={`${"full"} ${styles.textareaStyle}`} value={state.columns} rows={3}
-                    onChange={ (event)=>setState({ ...state, columns: event.target.value }) } />
-                </div>
+                    rows=3 .value="${columns}"
+                    @input="${this._onTextInput}"
+                  ></textarea>
               </div>
-            </div>:null}
+            </div>` : nothing }
           </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_cancel"
-                  className={`${"full"} ${styles.closeIcon} `}
-                  onClick={ ()=>onClose() }
-                  value={<Label center value={getText("msg_cancel")} 
-                    leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />}
-                />
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_cancel" icon="Times"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL, {})} 
+                  ?full="${true}" label="${this.msg("", { id: "msg_cancel" })}"
+                >${this.msg("", { id: "msg_cancel" })}</form-button>
               </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_ok"
-                  className={`${"full primary"}`}
-                  disabled={(state.name==="")?"disabled":""}
-                  onClick={ ()=>onData({
-                    name: state.name, type: state.type, columns: state.columns
-                  }) }
-                  value={<Label center value={getText("msg_ok")} 
-                    leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />}
-                />
+              <div class="cell padding-small half" >
+                <form-button id="btn_ok" icon="Check"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, { 
+                    value: { name, type, columns }
+                  })} 
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_ok" })}"
+                >${this.msg("", { id: "msg_ok" })}</form-button>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Template.propTypes = {
-  type: PropTypes.oneOf(Object.values(DATA_TYPE)).isRequired,
-  name: PropTypes.string.isRequired,
-  /**
-   * Columns names (separated by commas) - TABLE
-   */
-  columns: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-  /**
-    * Close form handle (modal style)
-    */ 
-  onClose: PropTypes.func,
-  onData: PropTypes.func
-}
-
-Template.defaultProps = {
-  type: DATA_TYPE.TEXT,
-  name: "",
-  columns: "",
-  className: "",
-  getText: undefined,
-  onClose: undefined,
-  onData: undefined
-}
-
-export default Template;

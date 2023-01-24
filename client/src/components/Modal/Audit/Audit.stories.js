@@ -1,16 +1,60 @@
-import { Audit } from "./Audit";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './modal-audit.js';
+
+import { APP_THEME } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
+
+const msg = (defaultValue, props) => locales.en[props.id] || defaultValue
 
 export default {
-  title: "Modal/Audit",
-  component: Audit
-}
+  title: 'Modal/Audit',
+  component: 'modal-audit',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    onModalEvent: {
+      name: "onModalEvent",
+      description: "onModalEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onModalEvent" 
+    },
+  }
+};
 
-const Template = (args) => <Audit {...args} />
+export function Template({ 
+  id, idKey, usergroup, nervatype, subtype, inputfilter, supervisor,
+  typeOptions, subtypeOptions, inputfilterOptions, theme, onModalEvent 
+}) {
+  const component = html`<modal-audit
+    id="${id}"
+    idKey="${idKey}"
+    usergroup="${usergroup}"
+    nervatype="${nervatype}"
+    subtype="${subtype}"
+    inputfilter="${inputfilter}"
+    supervisor="${supervisor}"
+    .typeOptions="${typeOptions}"
+    .subtypeOptions="${subtypeOptions}"
+    .inputfilterOptions="${inputfilterOptions}"
+    .onEvent=${{ onModalEvent }}
+    .msg=${msg}
+  ></modal-audit>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "audit",
+  theme: APP_THEME.LIGHT,
   idKey: null,
   usergroup: 1,
   nervatype: 6,
@@ -54,16 +98,12 @@ Default.args = {
     { value: "108", text: "update" }
   ],
   supervisor: 1,
-  className: "light",
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key }),
-  onClose: undefined,
-  onAudit: undefined,
 }
 
 export const Existing = Template.bind({});
 Existing.args = {
   ...Default.args,
-  className: "dark",
+  theme: APP_THEME.DARK,
   idKey: 1,
   nervatype: 31,
   subtype: 61,

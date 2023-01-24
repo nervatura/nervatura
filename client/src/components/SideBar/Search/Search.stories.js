@@ -1,16 +1,53 @@
-import { Search, SIDE_VISIBILITY } from "./Search";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './sidebar-search.js';
+
+import { SIDE_VISIBILITY, APP_THEME } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "SideBar/Search",
-  component: Search,
-}
+  title: 'Sidebar/Search',
+  component: 'sidebar-search',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    side: {
+      control: 'select',
+      options: Object.values(SIDE_VISIBILITY),
+    },
+    onSideEvent: {
+      name: "onSideEvent",
+      description: "onSideEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onSideEvent" 
+    },
+  }
+};
 
-const Template = (args) => <Search {...args} />
+export function Template({ id, side, groupKey, auditFilter, theme, onSideEvent, msg }) {
+  const component = html`<sidebar-search
+    id="${id}"
+    side="${side}"
+    groupKey="${groupKey}"
+    .auditFilter="${auditFilter}"
+    .onEvent=${{ onSideEvent }}
+    .msg=${msg}
+  ></sidebar-search>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "side_bar",
+  theme: APP_THEME.LIGHT,
   side: SIDE_VISIBILITY.AUTO,
   groupKey: "transitem", 
   auditFilter: {
@@ -38,9 +75,8 @@ Default.args = {
     project: ["all", 1],
     setting: ["all", 1],
     audit: ["all", 1]
-  },  
-  onEvent: undefined,
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key })
+  },
+  msg: (defaultValue, props) => locales.en[props.id] || defaultValue
 }
 
 export const Office = Template.bind({});

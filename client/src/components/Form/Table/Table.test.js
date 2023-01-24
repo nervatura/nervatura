@@ -1,86 +1,90 @@
-import { render, fireEvent, screen, queryByAttribute } from '@testing-library/react';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import '@testing-library/jest-dom/extend-expect';
+import './form-table.js';
+import { Template, Default, BottomPagination, TopPagination, Filtered } from  './Table.stories.js';
 
-import { Default, TopPagination, BottomPagination, Filtered } from './Table.stories';
+describe('Table', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-const getById = queryByAttribute.bind(null, 'id');
+  it('renders in the Default state', async () => {
+    const onRowSelected = sinon.spy()
+    const onEditCell = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onRowSelected, onEditCell
+    }));
+    const testTable = element.querySelector('#test_table');
+    expect(testTable).to.exist;
 
-beforeEach(() => {
-  Object.defineProperty(global.window, 'scrollTo', { value: jest.fn() });
-});
+    const linkCell = testTable.shadowRoot.querySelector('#link_2')
+    linkCell.click()
+    sinon.assert.calledOnce(onEditCell);
 
-afterEach(() => {
-  jest.clearAllMocks();
-});
+    const tableRow = testTable.shadowRoot.querySelector('#row_1')
+    tableRow.click()
+    sinon.assert.calledOnce(onRowSelected);
 
-it('renders in the Default state', () => {
+    // await expect(testTable).shadowDom.to.be.accessible();
+  })
 
-  const { container } = render(
-    <Default {...Default.args} id="test_table" />
-  );
-  expect(getById(container, 'test_table')).toBeDefined();
+  it('renders in the BottomPagination state', async () => {
+    const element = await fixture(Template({
+      ...BottomPagination.args
+    }));
+    const testTable = element.querySelector('#test_table');
+    expect(testTable).to.exist;
 
-  const row_selected = screen.getAllByRole('row')[2]
-  fireEvent.click(row_selected)
+  })
 
-});
+  it('renders in the TopPagination state', async () => {
+    const element = await fixture(Template({
+      ...TopPagination.args
+    }));
+    const testTable = element.querySelector('#test_table');
+    expect(testTable).to.exist;
 
-it('renders in the TopPagination state', () => {
-  const onRowSelected = jest.fn()
-  const onCurrentPage = jest.fn()
-  const onEditCell = jest.fn()
+  })
 
-  const { container } = render(
-    <TopPagination {...TopPagination.args} id="test_table"
-      onRowSelected={onRowSelected} onCurrentPage={onCurrentPage} onEditCell={onEditCell} />
-  );
-  expect(getById(container, 'test_table')).toBeDefined();
+  it('renders in the Filtered state', async () => {
+    const onCurrentPage = sinon.spy()
+    const onAddItem = sinon.spy()
+    const element = await fixture(Template({
+      ...Filtered.args, onCurrentPage, onAddItem
+    }));
+    const testTable = element.querySelector('#test_table');
+    expect(testTable).to.exist;
 
-  const row_selected = screen.getAllByRole('row')[2]
-  fireEvent.click(row_selected)
-  expect(onRowSelected).toHaveBeenCalledTimes(1);
+    const pagination = testTable.shadowRoot.querySelector('#test_table_top_pagination')
+    const btnLast = pagination.shadowRoot.querySelector('#pagination_btn_last')
+    btnLast._onClick({
+      stopPropagation: sinon.spy()
+    })
+    sinon.assert.calledOnce(onCurrentPage);
 
-  const link_cell = screen.getByText('Name link')
-  fireEvent.click(link_cell)
-  expect(onEditCell).toHaveBeenCalledTimes(1);
+    const pageSize = pagination.shadowRoot.querySelector('#pagination_page_size');
+    pageSize._onInput({ target: { value: 10 } })
+    expect(pageSize.value).to.equal(10);
 
-  const page_2 = screen.getByText("2")
-  fireEvent.click(page_2)
-  expect(onCurrentPage).toHaveBeenCalledTimes(1);
+    const filter = testTable.shadowRoot.querySelector('#filter');
+    filter._onInput({ target: { value: "value" } })
+    expect(filter.value).to.equal("value");
 
-  const sort_header = screen.getAllByText('Stamp')[0]
-  fireEvent.click(sort_header)
-  fireEvent.click(sort_header)
+    const btnAdd = testTable.shadowRoot.querySelector('#btn_add')
+    btnAdd._onClick({
+      stopPropagation: sinon.spy()
+    })
+    sinon.assert.calledOnce(onAddItem);
 
-});
+    const sortCol = testTable.shadowRoot.querySelector('.sort-none')
+    sortCol.click()
+    sortCol.click()
 
-it('renders in the BottomPagination state', () => {
+    testTable.sortAsc = true
+    sortCol.click()
+    
+  })
 
-  const { container } = render(
-    <BottomPagination {...BottomPagination.args} id="test_table" />
-  );
-  expect(getById(container, 'test_table')).toBeDefined();
-
-  const page_1 = screen.getByText("1")
-  fireEvent.click(page_1)
-
-});
-
-it('renders in the Filtered state', () => {
-  const onAddItem = jest.fn()
-
-  const { container } = render(
-    <Filtered {...Filtered.args} id="test_table" onAddItem={onAddItem} />
-  );
-  expect(getById(container, 'test_table')).toBeDefined();
-
-  const btn_add = getById(container, 'btn_add')
-  fireEvent.click(btn_add)
-  expect(onAddItem).toHaveBeenCalledTimes(1);
-
-  const filter = getById(container, 'filter')
-  fireEvent.change(filter, {target: {value: "filter"}})
-  expect(filter.value).toEqual("filter");
-
-});
+})

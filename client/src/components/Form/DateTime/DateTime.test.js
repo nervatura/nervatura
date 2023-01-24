@@ -1,75 +1,84 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, DateInput, TimeInput } from './DateTime.stories';
+import './form-datetime.js';
+import { Template, Default, DateTime, Time } from  './DateTime.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Date', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onChange = jest.fn()
+  it('renders in the Default state', async () => {
+    const onChange = sinon.spy()
+    const onEnter = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onChange, onEnter
+    }));
+    const testDate = element.querySelector('#test_date');
+    expect(testDate).to.exist;
+    expect(testDate.value).to.equal("");
 
-  const { container } = render(
-    <Default {...Default.args} id="test_date"
-      onChange={onChange} />
-  );
-  const test_input = getById(container, 'test_date')
-  expect(test_input).toBeDefined();
+    testDate._onInput({ target: { value: "2024-12-24" } })
+    sinon.assert.calledOnce(onChange);
+    expect(testDate.value).to.equal("2024-12-24");
 
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onChange).toHaveBeenCalledTimes(1);
-  
-  test_input.value = ""
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onChange).toHaveBeenCalledTimes(2);
+    testDate._onBlur()
+    expect(testDate.value).to.equal("2024-12-24");
 
-});
+    testDate._onKeyEvent({ 
+      stopPropagation: sinon.spy(), preventDefault: sinon.spy(),
+      type: "keydown", keyCode: 13 
+    })
+    sinon.assert.calledOnce(onEnter);
 
-it('renders in the DateInput state', () => {
-  const onChange = jest.fn()
+    testDate._onKeyEvent({ 
+      stopPropagation: sinon.spy(), 
+      type: "keypress", keyCode: 13 
+    })
+    sinon.assert.calledTwice(onEnter);
 
-  const { container } = render(
-    <DateInput {...DateInput.args} id="test_date" 
-      onChange={onChange} />
-  );
-  const test_input = getById(container, 'test_date')
-  expect(test_input).toBeDefined();
+    testDate._onKeyEvent({ 
+      stopPropagation: sinon.spy(), 
+      type: "keypress", keyCode: 20 
+    })
+    sinon.assert.calledTwice(onEnter);
 
-  fireEvent.change(test_input, {target: {value: test_input.value}})
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onChange).toHaveBeenCalledTimes(0);
+    testDate._onFocus()
 
-  fireEvent.change(test_input, {target: {value: "2021-12-24"}})
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onChange).toHaveBeenCalledTimes(1);
-  
-  fireEvent.change(test_input, {target: {value: ""}})
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onChange).toHaveBeenCalledTimes(2);
+    testDate._defaultValue()
 
-});
+    await expect(testDate).shadowDom.to.be.accessible();
+  })
 
-it('renders in the TimeInput state', () => {
-  const onChange = jest.fn()
+  it('renders in the DateTime state', async () => {
+    const element = await fixture(Template({...DateTime.args}));
+    const testDate = element.querySelector('#test_date');
+    expect(testDate).to.exist;
 
-  const { container } = render(
-    <TimeInput {...TimeInput.args} id="test_date" 
-      onChange={onChange}/>
-  );
-  const test_input = getById(container, 'test_date')
-  expect(test_input).toBeDefined();
+    testDate._onInput({ target: { value: "2024-12-24T22:10" } })
+    expect(testDate.value).to.equal("2024-12-24T22:10:00");
 
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onChange).toHaveBeenCalledTimes(1);
+    testDate._onInput({ target: { value: "" } })
+    expect(testDate.value).to.not.equal("");
+  })
 
-});
+  it('renders in the Time state', async () => {
+    const element = await fixture(Template({...Time.args}));
+    const testDate = element.querySelector('#test_date');
+    expect(testDate).to.exist;
 
-it('onChange', () => {
-  const { container } = render(
-    <TimeInput {...TimeInput.args} id="test_date" value="" />
-  );
-  const test_input = getById(container, 'test_date')
-  expect(test_input).toBeDefined();
+    testDate._defaultValue()
+  })
 
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
+  it('renders in the invalid type state', async () => {
+    const element = await fixture(Template({
+      ...Default.args,
+      type: "number"
+    }));
+    const testDate = element.querySelector('#test_date');
+    expect(testDate).to.exist;
+  })
 
 });

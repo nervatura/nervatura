@@ -1,31 +1,39 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, DarkTotal } from './Total.stories';
+import './modal-total.js';
+import { Template, Default, DarkTotal } from  './Total.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Total', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const total = element.querySelector('#total');
+    expect(total).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_settings" onClose={onClose} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const closeIcon = total.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnOK = total.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_ok = getById(container, 'btn_ok')
-  fireEvent.click(btn_ok)
-  expect(onClose).toHaveBeenCalledTimes(2);
+  })
 
-})
+  it('renders in the DarkTotal state', async () => {
+    const element = await fixture(Template({
+      ...DarkTotal.args
+    }));
+    const total = element.querySelector('#total');
+    expect(total).to.exist;
+  })
 
-it('renders in the DarkTotal state', () => {
-  const { container } = render(
-    <DarkTotal {...DarkTotal.args} id="test_settings" />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
 })

@@ -1,188 +1,182 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html, nothing } from 'lit';
 
-import 'styles/style.css';
-import styles from './Trans.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Select/form-select.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Select from 'components/Form/Select'
-import Icon from 'components/Form/Icon'
+import { styles } from './Trans.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE } from '../../../config/enums.js'
 
-export const Trans = ({
-  baseTranstype, transtype, direction, doctypes, directions, refno, 
-  nettoDiv, netto, fromDiv, from, elementCount, className,
-  getText, onClose, onCreate,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    transtype: transtype,
-    direction: direction,
-    refno: refno,
-    netto: netto,
-    from: from,
-    nettoDiv: nettoDiv,
-    fromDiv: fromDiv
-  })
-  const setTranstype = (value) => {
-    let nettoDiv = state.nettoDiv
-    let fromDiv = state.fromDiv
+export class Trans extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.baseTranstype = ""
+    this.transtype = ""
+    this.direction = ""
+    this.doctypes = []
+    this.directions = []
+    this.refno = true
+    this.nettoDiv = false 
+    this.netto = true 
+    this.fromDiv = false 
+    this.from = false
+    this.elementCount = 0
+  }
+
+  static get properties() {
+    return {
+      baseTranstype: { type: String },
+      transtype: { type: String }, 
+      direction: { type: String }, 
+      doctypes: { type: Array }, 
+      directions: { type: Array }, 
+      refno: { type: Boolean }, 
+      nettoDiv: { type: Boolean }, 
+      netto: { type: Boolean }, 
+      fromDiv: { type: Boolean }, 
+      from: { type: Boolean }, 
+      elementCount: { type: Number },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  _onValueChange(key, value){
+    this[key] = value
+  }
+
+  _setTranstype(value) {
+    const { baseTranstype, elementCount } = this
     if(["invoice","receipt"].includes(value) && ["order","rent","worksheet"].includes(baseTranstype)){
-        nettoDiv = true
+        this.nettoDiv = true
         if(elementCount===0){
-          fromDiv = true
+          this.fromDiv = true
         }
     } else {
-      nettoDiv = false
-      fromDiv = false
+      this.nettoDiv = false
+      this.fromDiv = false
     }
-    setState({ ...state, transtype: value, nettoDiv: nettoDiv, fromDiv: fromDiv })
+    this.transtype = value
   }
-  const typeOptions = doctypes.map(dt => { return { value: dt, text: dt } })
-  const dirOptions = directions.map(dir => { return { value: dir, text: dir } })
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={getText("msg_create_title")} 
-                  leftIcon={<Icon iconKey="FileText" />} iconWidth="20px" />
+
+  render() {
+    const { transtype, direction, refno, from, fromDiv, netto, nettoDiv, doctypes, directions } = this
+    const typeOptions = doctypes.map(dt => ({ value: dt, text: dt }))
+    const dirOptions = directions.map(dir => ({ value: dir, text: dir }))
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="FileText"
+                value="${this.msg("", { id: "msg_create_title" })}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              <div class="cell padding-small" >
+                <form-label
+                  value="${this.msg("", { id: "msg_create_new" })}" 
+                ></form-label>
               </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
+            </div>
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-select id="transtype" label="transtype" ?full=${true}
+                  .onChange=${(value) => this._setTranstype(value.value)}
+                  .options=${typeOptions} .isnull="${false}" value="${transtype}" 
+                ></form-select>
+              </div>
+              <div class="cell padding-small half" >
+                <form-select id="direction" label="direction" ?full=${true}
+                  .onChange=${(value) => this._onValueChange("direction", value.value)}
+                  .options=${dirOptions} .isnull="${false}" value="${direction}" 
+                ></form-select>
+              </div>
+            </div>
+            <div class="section-row" >
+              <div class="cell padding-small" >
+                <form-label id="refno"
+                  value="${this.msg("", { id: "msg_create_setref" })}"
+                  leftIcon="${(refno)?"CheckSquare":"SquareEmpty"}"
+                  .style=${{ cursor: "pointer" }} .iconStyle=${{ cursor: "pointer" }}
+                  @click=${() => this._onValueChange("refno", !refno)}
+                ></form-label>
+              </div>
+            </div>
+            ${(nettoDiv) ? html`<div class="section-row" >
+              <div class="cell padding-small" >
+                <form-label id="netto"
+                  value="${this.msg("", { id: "msg_create_deduction" })}"
+                  leftIcon="${(netto)?"CheckSquare":"SquareEmpty"}"
+                  .style=${{ cursor: "pointer" }} .iconStyle=${{ cursor: "pointer" }}
+                  @click=${() => this._onValueChange("netto", !netto)}
+                ></form-label>
+              </div>
+            </div>` : nothing}
+            ${(fromDiv) ? html`<div class="section-row" >
+              <div class="cell padding-small" >
+                <form-label id="from"
+                  value="${this.msg("", { id: "msg_create_delivery" })}"
+                  leftIcon="${(from)?"CheckSquare":"SquareEmpty"}"
+                  .style=${{ cursor: "pointer" }} .iconStyle=${{ cursor: "pointer" }}
+                  @click=${() => this._onValueChange("from", !from)}
+                ></form-label>
+              </div>
+            </div>` : nothing}
+          </div>
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_cancel" icon="Times"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL, {})} 
+                  ?full="${true}" label="${this.msg("", { id: "msg_cancel" })}"
+                >${this.msg("", { id: "msg_cancel" })}</form-button>
+              </div>
+              <div class="cell padding-small half" >
+                <form-button id="btn_ok" icon="Check"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, { 
+                    newTranstype: transtype, 
+                    newDirection: direction, 
+                    refno, 
+                    fromInventory: (from && fromDiv), 
+                    nettoQty: (netto && nettoDiv)
+                  })} 
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_ok" })}"
+                >${this.msg("", { id: "msg_ok" })}</form-button>
               </div>
             </div>
           </div>
-          <div className="row full container-small section-small">
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" value={getText("msg_create_new")} />
-                </div>
-              </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell half padding-small"}`} >
-                <Select id="transtype" 
-                  className="full" value={state.transtype} 
-                  onChange={ (value)=>setTranstype(value) }
-                  options={typeOptions} />
-              </div>
-              <div className={`${"cell half padding-small"}`} >
-                <Select id="direction" 
-                  className="full" value={state.direction} 
-                  onChange={ (value)=>setState({ ...state, direction: value }) }
-                  options={dirOptions} />
-              </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div id="refno"
-                  className={`${"padding-small"} ${styles.editCol}`} 
-                  onClick={()=>setState({ ...state, refno: !state.refno })}>
-                  <Label className="bold" value={getText("msg_create_setref")} 
-                    leftIcon={<Icon iconKey={(state.refno)?"CheckSquare":"SquareEmpty"} />} />
-                </div>
-              </div>
-            </div>
-            {(state.nettoDiv)?<div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div id="netto"
-                  className={`${"padding-small"} ${styles.editCol}`} 
-                  onClick={()=>setState({ ...state, netto: !state.netto })}>
-                  <Label className="bold" value={getText("msg_create_deduction")} 
-                    leftIcon={<Icon iconKey={(state.netto)?"CheckSquare":"SquareEmpty"} />} />
-                </div>
-              </div>
-            </div>:null}
-            {(state.fromDiv)?<div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div id="from"
-                  className={`${"padding-small"} ${styles.editCol}`} 
-                  onClick={()=>setState({ ...state, from: !state.from })}>
-                  <Label className="bold" value={getText("msg_create_delivery")} 
-                    leftIcon={<Icon iconKey={(state.from)?"CheckSquare":"SquareEmpty"} />} />
-                </div>
-              </div>
-            </div>:null}
-          </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_cancel" 
-                  className={`${"full"} ${styles.closeIcon} `}
-                  onClick={ ()=>onClose() }
-                  value={<Label center value={getText("msg_cancel")} 
-                    leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />}
-                />
-              </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_create" 
-                  className={`${"full primary"}`} 
-                  onClick={ ()=>onCreate({ 
-                    newTranstype: state.transtype, 
-                    newDirection: state.direction, 
-                    refno: state.refno, 
-                    fromInventory: (state.from && state.fromDiv), 
-                    nettoQty: (state.netto && state.nettoDiv)
-                  }) }
-                  value={<Label center value={getText("msg_ok")} 
-                    leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />}
-                />
-              </div>
-            </div>
-          </div> 
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Trans.propTypes = {
-  baseTranstype: PropTypes.string.isRequired,
-  transtype: PropTypes.string.isRequired, 
-  direction: PropTypes.string.isRequired, 
-  doctypes: PropTypes.array.isRequired, 
-  directions: PropTypes.array.isRequired, 
-  refno: PropTypes.bool.isRequired, 
-  nettoDiv: PropTypes.bool.isRequired, 
-  netto: PropTypes.bool.isRequired, 
-  fromDiv: PropTypes.bool.isRequired, 
-  from: PropTypes.bool.isRequired, 
-  elementCount: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-  /**
-    * Close form handle (modal style)
-    */ 
-  onClose: PropTypes.func,
-  /**
-   * Create a new document
-   */
-  onCreate: PropTypes.func
-}
-
-Trans.defaultProps = {
-  baseTranstype: "",
-  transtype: "",
-  direction: "",
-  doctypes: [],
-  directions: [],
-  refno: true, 
-  nettoDiv: false, 
-  netto: true, 
-  fromDiv: false, 
-  from: false,
-  elementCount: 0,
-  className: "",
-  getText: undefined,
-  onClose: undefined,
-  onCreate: undefined
-}
-
-export default Trans;

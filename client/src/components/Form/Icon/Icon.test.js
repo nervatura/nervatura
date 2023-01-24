@@ -1,25 +1,42 @@
-import { render, queryByAttribute } from '@testing-library/react';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import '@testing-library/jest-dom/extend-expect';
+import './form-icon.js';
+import { Template, Default, ColorPointer, InvalidIcon } from  './Icon.stories.js';
 
-import { Default, ColorPointer } from './Icon.stories';
+describe('Icon', () => {
+  beforeEach(async () => {
+    
+  });
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-const getById = queryByAttribute.bind(null, 'id');
+  it('renders in the Default state', async () => {
+    const element = await fixture(Template({
+      ...Default.args
+    }));
+    const icon = element.querySelector('#test_icon');
+    expect(icon).to.exist;
 
-it('renders in the Default state', () => {
+    await expect(element).shadowDom.to.be.accessible();
+  })
 
-  const { container } = render(
-    <Default {...Default.args} id="default" />
-  );
-  expect(getById(container, 'default')).toBeDefined();
+  it('renders in the ColorPointer state', async () => {
+    const element = await fixture(Template({
+      ...ColorPointer.args
+    }));
+    const icon = element.querySelector('#test_icon');
+    expect(icon).to.exist;
+  })
 
-});
-
-it('renders in the ColorPointer state', () => {
-
-  const { container } = render(
-    <ColorPointer {...ColorPointer.args} id="color" />
-  );
-  expect(getById(container, 'color')).toBeDefined();
+  it('renders in the InvalidIcon state', async () => {
+    const element = await fixture(Template({
+      ...InvalidIcon.args
+    }));
+    const icon = element.querySelector('#test_icon');
+    expect(icon).to.exist;
+  })
 
 });

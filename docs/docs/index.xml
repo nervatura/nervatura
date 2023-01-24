@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Introduction on Nervatura</title>
+    <title>About on Nervatura</title>
     <link>https://nervatura.github.io/nervatura/docs/</link>
-    <description>Recent content in Introduction on Nervatura</description>
+    <description>Recent content in About on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator><atom:link href="https://nervatura.github.io/nervatura/docs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Object Model</title>

@@ -1,53 +1,59 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, BookmarkData, DarkTheme } from './Bookmark.stories';
+import './modal-bookmark.js';
+import { Template, Default, BookmarkData, DarkTheme } from  './Bookmark.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Bookmark', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
+  it('renders in the Default state', async () => {
+    const element = await fixture(Template({
+      ...Default.args
+    }));
+    const bookmark = element.querySelector('#bookmark');
+    expect(bookmark).to.exist;
+  })
 
-  const { container } = render(
-    <Default {...Default.args} id="test_bookmark" />
-  );
-  expect(getById(container, 'test_bookmark')).toBeDefined();
-})
+  it('renders in the BookmarkData state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...BookmarkData.args, onModalEvent
+    }));
+    const bookmark = element.querySelector('#bookmark');
+    expect(bookmark).to.exist;
 
-it('renders in the BookmarkData state', () => {
-  const onSelect = jest.fn()
-  const onDelete = jest.fn()
-  const onClose = jest.fn()
+    const list = bookmark.shadowRoot.querySelector('#bookmark_list')
+    const row = list.shadowRoot.querySelector('#row_item_1')
+    row.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const { container } = render(
-    <BookmarkData {...BookmarkData.args} id="test_bookmark" 
-      onSelect={onSelect} onDelete={onDelete} onClose={onClose} />
-  );
-  expect(getById(container, 'test_bookmark')).toBeDefined();
+    const rowDelete = list.shadowRoot.querySelector('#row_delete_1')
+    rowDelete.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const row_item = getById(container, 'row_item_1')
-  fireEvent.click(row_item)
-  expect(onSelect).toHaveBeenCalledTimes(1);
+    const closeIcon = bookmark.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const row_delete = getById(container, 'row_delete_1')
-  fireEvent.click(row_delete)
-  expect(onDelete).toHaveBeenCalledTimes(1);
+    const btnHistory = bookmark.shadowRoot.querySelector('#btn_history')
+    btnHistory.click()
+    expect(bookmark.tabView).to.equal("history");
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnBookmark = bookmark.shadowRoot.querySelector('#btn_bookmark')
+    btnBookmark.click()
+    expect(bookmark.tabView).to.equal("bookmark");
+  })
 
-  const btn_bookmark = getById(container, 'btn_bookmark')
-  fireEvent.click(btn_bookmark)
+  it('renders in the DarkTheme state', async () => {
+    const element = await fixture(Template({
+      ...DarkTheme.args
+    }));
+    const bookmark = element.querySelector('#bookmark');
+    expect(bookmark).to.exist;
+  })
 
-  const btn_history = getById(container, 'btn_history')
-  fireEvent.click(btn_history)
-  
-})
-
-it('renders in the DarkTheme state', () => {
-
-  const { container } = render(
-    <DarkTheme {...DarkTheme.args} id="test_bookmark" />
-  );
-  expect(getById(container, 'test_bookmark')).toBeDefined();
 })

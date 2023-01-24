@@ -1,43 +1,50 @@
-import { render, queryByAttribute } from '@testing-library/react';
+import { fixture, expect } from '@open-wc/testing';
 
-import '@testing-library/jest-dom/extend-expect';
+import './form-label.js';
+import { Template, Default, LeftIcon, RightIcon, Centered, LabelStyle } from  './Label.stories.js';
 
-import { Default, LeftIcon, RightIcon, Centered } from './Label.stories';
+describe('Label', () => {
 
-const getById = queryByAttribute.bind(null, 'id');
+  it('renders in the Default state', async () => {
+    const element = await fixture(Template({
+      ...Default.args
+    }));
+    const label = element.querySelector('#test_label');
+    expect(label).to.exist;
 
-it('renders in the Default state', () => {
+    await expect(label).shadowDom.to.be.accessible();
+  })
 
-  const { container } = render(
-    <Default {...Default.args} id="test_label" />
-  );
-  expect(getById(container, 'test_label')).toBeDefined();
+  it('renders in the LeftIcon state', async () => {
+    const element = await fixture(Template({
+      ...LeftIcon.args
+    }));
+    const label = element.querySelector('#test_label');
+    expect(label).to.exist;
+  })
 
-});
+  it('renders in the RightIcon state', async () => {
+    const element = await fixture(Template({
+      ...RightIcon.args
+    }));
+    const label = element.querySelector('#test_label');
+    expect(label).to.exist;
+  })
 
-it('renders in the LeftIcon state', () => {
+  it('renders in the Centered state', async () => {
+    const element = await fixture(Template({
+      ...Centered.args
+    }));
+    const label = element.querySelector('#test_label');
+    expect(label).to.exist;
+  })
 
-  const { container } = render(
-    <LeftIcon {...LeftIcon.args} id="test_label" />
-  );
-  expect(getById(container, 'test_label')).toBeDefined();
-
-});
-
-it('renders in the RightIcon state', () => {
-
-  const { container } = render(
-    <RightIcon {...RightIcon.args} id="test_label" />
-  );
-  expect(getById(container, 'test_label')).toBeDefined();
-
-});
-
-it('renders in the Centered state', () => {
-
-  const { container } = render(
-    <Centered {...Centered.args} id="test_label" />
-  );
-  expect(getById(container, 'test_label')).toBeDefined();
+  it('renders in the LabelStyle state', async () => {
+    const element = await fixture(Template({
+      ...LabelStyle.args
+    }));
+    const label = element.querySelector('#test_label');
+    expect(label).to.exist;
+  })
 
 });

@@ -1,129 +1,128 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
 
-import 'styles/style.css';
-import styles from './Formula.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Input/form-input.js'
+import '../../Form/Select/form-select.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Input from 'components/Form/Input'
-import Select from 'components/Form/Select'
-import Icon from 'components/Form/Icon'
+import { styles } from './Formula.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE, INPUT_TYPE } from '../../../config/enums.js'
 
-export const Formula = ({
-  formula, formulaValues, partnumber, description, className,
-  getText, onClose, onFormula,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    formula: formula,
-  })
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={getText("label_formula")} leftIcon={<Icon iconKey="Magic" />} iconWidth="20px" />
-              </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
-              </div>
+export class Formula extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.formula = "" 
+    this.formulaValues = [] 
+    this.partnumber = ""
+    this.description = ""
+  }
+
+  static get properties() {
+    return {
+      formula: { type: String },
+      formulaValues: { type: Array },
+      partnumber: { type: String },
+      description: { type: String },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  _onFormulaChange(value){
+    this.formula = value
+  }
+  
+  render() {
+    const { formula, partnumber, formulaValues, description } = this
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="Magic"
+                value="${this.msg("", { id: "label_formula" })}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
             </div>
           </div>
-          <div className="row full container-small section-small">
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" value={getText("product_partnumber")} />
+          <div class="section" >
+            <div class="section-row" >
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "product_partnumber" })}" 
+                    ></form-label>
+                  </div>
+                  <form-input type="${INPUT_TYPE.TEXT}"
+                    label="${partnumber}" .style=${{ "font-weight": "bold" }}
+                    value="${partnumber}" ?disabled=${true} ?full=${true}
+                  ></form-input>
                 </div>
-                <Input className="full" value={partnumber}
-                  disabled="disabled" />
               </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <Input className="full" value={description}
-                  disabled="disabled" />
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <form-input type="${INPUT_TYPE.TEXT}"
+                    label="${description}" value="${description}" 
+                    ?disabled=${true} ?full=${true}
+                  ></form-input>
+                </div>
               </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <Select id="formula"
-                  className="full" value={state.formula} placeholder=""
-                  onChange={ (value)=>setState({ ...state, formula: value }) }
-                  options={formulaValues} />
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <form-select id="sel_formula" label="${this.msg("", {id: "label_formula"})}"
+                    .onChange=${(value) => this._onFormulaChange(value.value) }
+                    .options=${formulaValues} .isnull="${true}" value="${formula}" 
+                  ></form-select>
+                </div>
               </div>
             </div>
           </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_cancel"
-                  className={`${"full"} ${styles.closeIcon} `} 
-                  disabled={(state.formula==="")?"disabled":""}
-                  onClick={ ()=>onClose() } 
-                  value={<Label center value={getText("msg_cancel")} leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />}
-                />
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_cancel" icon="Times"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL, {})} 
+                  ?full="${true}" label="${this.msg("", { id: "msg_cancel" })}"
+                >${this.msg("", { id: "msg_cancel" })}</form-button>
               </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_formula"
-                  className={`${"full primary"}`} 
-                  disabled={(state.formula==="")?"disabled":""}
-                  onClick={ ()=>onFormula(parseInt(state.formula,10)) } 
-                  value={<Label center value={getText("msg_ok")} leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />}
-                />
+              <div class="cell padding-small half" >
+                <form-button id="btn_ok" icon="Check"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, { value: parseInt(formula, 10) })} 
+                  ?disabled="${(formula === "")}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_ok" })}"
+                >${this.msg("", { id: "msg_ok" })}</form-button>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Formula.propTypes = {
-  /**
-   * Default formula ID
-   */
-  formula: PropTypes.string.isRequired,
-  /**
-   * Product formula values
-   */
-  formulaValues: PropTypes.array.isRequired,
-  /**
-   * Product public key
-   */
-  partnumber: PropTypes.string.isRequired,
-  /**
-   * Product description
-   */
-  description: PropTypes.string.isRequired, 
-  className: PropTypes.string.isRequired,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-  /**
-    * Close form handle (modal style)
-    */ 
-  onClose: PropTypes.func,
-  /**
-   * Loading selected formula
-   */
-  onFormula: PropTypes.func
-}
-
-Formula.defaultProps = {
-  formula: "",
-  formulaValues: [],
-  partnumber: "",
-  description: "",
-  className: "",
-  getText: undefined,
-  onClose: undefined,
-  onFormula: undefined
-}
-
-export default Formula;

@@ -1,131 +1,174 @@
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
-import Flatpickr from "react-flatpickr";
-import formatISO from 'date-fns/formatISO'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
-import isEqual from 'date-fns/isEqual'
+import { styles } from './DateTime.styles.js'
+import { DATETIME_TYPE } from '../../../config/enums.js'
 
-import { German } from "flatpickr/dist/l10n/de.js"
-import { Spanish } from "flatpickr/dist/l10n/es.js"
-import { French } from "flatpickr/dist/l10n/fr.js"
-import { Italian } from "flatpickr/dist/l10n/it.js"
-import { Portuguese } from "flatpickr/dist/l10n/pt.js"
-
-import "flatpickr/dist/themes/dark.css";
-import './DateTime.css';
-
-import { getSetting } from 'config/app'
-
-const locales = {
-  de: German, es: Spanish, fr: French, it: Italian, pt: Portuguese 
+const valueLength = {
+  [DATETIME_TYPE.TIME]: 5,
+  [DATETIME_TYPE.DATE]: 10,
+  [DATETIME_TYPE.DATETIME]: 16,
 }
 
-const dateStyle = [
-  ["yyyy-MM-dd", "Y-m-d"], 
-  ["dd-MM-yyyy", "d-m-Y"], 
-  ["MM-dd-yyyy", "m-d-Y"]
-]
-
-export const DateTime = ({ 
-  value, dateTime, isEmpty, showTimeSelectOnly,
-  dateFormat, timeFormat, locale, className,
-  onChange,
-  ...props 
-}) => {
-  let calDateFormat = dateStyle.filter(value => (value[0] === dateFormat))[0][1]
-  if(dateTime){
-    calDateFormat += " H:i"
+export class DateTime extends LitElement {
+  constructor() {
+    super();
+    this.id = Math.random().toString(36).slice(2)
+    this.name = undefined
+    this.value = ""
+    this.type = DATETIME_TYPE.DATE
+    this.label = undefined
+    this.isnull = true
+    this.picker = false
+    this.disabled = false
+    this.readonly = false
+    this.autofocus = false
+    this.full = false
+    this.style = {}
   }
-  const selectedDate = () => {
-    let dateValue = (value) ? parseISO(value) : null
-    if(value && !isValid(dateValue) && showTimeSelectOnly){
-      dateValue = new Date(formatISO(new Date(), { representation: 'date' })+"T"+value)
-    }
-    return dateValue
-  } 
 
-  const setValue = ( selectedDate ) => {
-    if(onChange){
-      if(typeof selectedDate === "undefined"){
-        if(isEmpty){
-          return onChange(null)
-        }
-        return onChange(value)
-      }
-      if(showTimeSelectOnly){
-        return onChange(formatISO(selectedDate, { representation: 'time' }))  
-      }
-      if(!dateTime){
-        return onChange(formatISO(selectedDate, { representation: 'date' }))  
-      }
-      return onChange(formatISO(selectedDate))
-    }
-  }
-  return(
-    <Flatpickr {...props} className={`${className}`}
-      options={{ 
-        allowInput: true, 
-        time_24hr: true,
-        enableTime: (dateTime || showTimeSelectOnly),
-        noCalendar: showTimeSelectOnly,
-        locale: (locale !== "en") ? locales[locale] : null,
-        dateFormat: calDateFormat,
-        onChange: (selectedDates) => {
-          if(!isEqual(selectedDates[0], selectedDate())){
-            setValue( selectedDates[0] )
+  static get properties() {
+    return {
+      id: { type: String },
+      name: { type: String, reflect: true },
+      value: { 
+        type: String, reflect: true,
+      },
+      type: { 
+        type: String, 
+        converter: (value) => {
+          if(!Object.values(DATETIME_TYPE).includes(value)){
+            return DATETIME_TYPE.DATE
           }
+          return value
+        } 
+      },
+      label: { type: String },
+      isnull: { type: Boolean },
+      picker: { type: Boolean },
+      disabled: { type: Boolean, reflect: true },
+      readonly: { type: Boolean, reflect: true },
+      autofocus: { type: Boolean, reflect: true },
+      full: { type: Boolean },
+      style: { type: Object },
+    };
+  }
+
+  _defaultValue(){
+    const defaultValue = `${new Date().toISOString().slice(0,10)}T${new Date().toLocaleTimeString("en",{hour12: false}).replace("24","00").slice(0,5)}`
+    switch (this.type) {
+      case DATETIME_TYPE.DATE:
+        return String(defaultValue).split("T")[0]
+
+      case DATETIME_TYPE.TIME:
+        return String(defaultValue).split("T")[1].split(".")[0]
+
+      default:
+        return defaultValue;
+    }
+  }
+
+  _onInput(e){
+    const onChange = (_value) => {
+      const value = (this.type !== DATETIME_TYPE.DATE) ? `${_value}:00` : _value
+      if(value !== this.value){
+        if(this.onChange){
+          this.onChange({ value, old: this.value})
         }
-      }}
-      value={selectedDate()}
-    />
-  )
-}
+        this.dispatchEvent(
+          new CustomEvent('change', {
+            bubbles: true, composed: true,
+            detail: {
+              value, old: this.value
+            }
+          })
+        );
+        this.value = value
+      }
+      if(this._input.value !== value){
+        this._input.value = value
+      }
+    }
+    if(e.target.value !== this.value){
+      if((e.target.value === "") && !this.isnull){
+        onChange(this._defaultValue())
+        return
+      }
+      onChange(e.target.value)
+    }
+  }
 
-DateTime.propTypes = {
-  /**
-   * Calendar selected value
-   */
-  value: PropTypes.string,
-  /**
-   * Date or Datetime input
-   */ 
-  dateTime: PropTypes.bool.isRequired,
-  /**
-   * Enabled empty (null) value 
-   */ 
-  isEmpty: PropTypes.bool.isRequired,
-  /**
-   * Time input 
-   */ 
-  showTimeSelectOnly: PropTypes.bool.isRequired,
-  /**
-   * Locale date format
-   */
-  dateFormat: PropTypes.string,
-  /**
-    * Locale time format 
-    */ 
-  timeFormat: PropTypes.string,
-  /**
-   * Calendar locale
-   */
-  locale: PropTypes.string,
-  /**
-   * onChange handle
-   */
-  onChange: PropTypes.func,
-}
+  _onBlur(){
+    this._input.value = this.value
+  }
 
-DateTime.defaultProps = {
-  value: undefined,
-  dateTime: true,
-  isEmpty: true,
-  showTimeSelectOnly: false,
-  dateFormat: getSetting("dateFormat"),
-  timeFormat: getSetting("timeFormat"),
-  locale: getSetting("calendar"),
-  onChange: undefined
-}
+  _onKeyEvent (e) {
+    const onEnter = () => {
+      if(this.onEnter){
+        this.onEnter({ value: this.value })
+        this.dispatchEvent(
+          new CustomEvent('enter', {
+            bubbles: true, composed: true,
+            detail: {
+              value: this.value
+            }
+          })
+        );
+      }
+    }
+    if (e.type === 'keydown' || e.type === 'keypress') {
+      e.stopPropagation();
+    }
+    // Here we prevent keydown on enter key from modifying the value
+    if (e.type === 'keydown' && e.keyCode === 13) {
+      e.preventDefault();
+      onEnter();
+    }
+    // Request implicit submit with keypress on enter key
+    if (!this.readonly && e.type === 'keypress' && e.keyCode === 13) {
+      onEnter();
+    }
+  }
 
-export default DateTime;
+  _onFocus () {
+    /* c8 ignore next 3 */
+    if(this.picker){
+      this._input.showPicker()
+    }
+  }
+
+  firstUpdated() {
+    this._input = this.renderRoot.querySelector('input');
+  }
+
+  render() {
+    let value = this.value
+    if(value.length > valueLength[this.type]){
+      value = value.slice(0,valueLength[this.type])
+    }
+    return html`<input 
+      id="${this.id}"
+      name="${ifDefined(this.name)}"
+      .type="${this.type}"
+      .value="${value}"
+      ?disabled="${this.disabled}"
+      ?readonly="${this.readonly}"
+      ?autofocus="${this.autofocus}"
+      aria-label="${ifDefined(this.label)}" 
+      style="${styleMap(this.style)}"
+      class="${(this.full)?"full":""}"
+      @input=${this._onInput}
+      @blur=${this._onBlur}
+      @keydown=${this._onKeyEvent}
+      @keypress=${this._onKeyEvent}
+      @focus=${this._onFocus}
+    >`
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+}

@@ -1,58 +1,65 @@
-import { render, queryByAttribute, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Office } from './Search.stories';
+import './sidebar-search.js';
+import { Template, Default, Office } from  './Search.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('SideBar-Search', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onEvent = jest.fn()
+  it('renders in the Default state', async () => {
+    const onSideEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onSideEvent
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_menu" onEvent={onEvent} />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+    const btnView = sideBar.shadowRoot.querySelector('#btn_view_transitem')
+    btnView.click()
+    sinon.assert.callCount(onSideEvent, 1);
 
-  const btn_view = getById(container, 'btn_view_transitem')
-  fireEvent.click(btn_view)
-  expect(onEvent).toHaveBeenCalledTimes(1);
+    const btnBrowser = sideBar.shadowRoot.querySelector('#btn_browser_transitem')
+    btnBrowser.click()
+    sinon.assert.callCount(onSideEvent, 2);
 
-  const btn_browser = getById(container, 'btn_browser_transitem')
-  fireEvent.click(btn_browser)
-  expect(onEvent).toHaveBeenCalledTimes(2);
+    const btnGroup = sideBar.shadowRoot.querySelector('#btn_group_customer')
+    btnGroup.click()
+    sinon.assert.callCount(onSideEvent, 3);
 
-  const btn_group = getById(container, 'btn_group_customer')
-  fireEvent.click(btn_group)
-  expect(onEvent).toHaveBeenCalledTimes(3);
+    const btnReport = sideBar.shadowRoot.querySelector('#btn_report')
+    btnReport.click()
+    sinon.assert.callCount(onSideEvent, 5);
 
-  const btn_report = getById(container, 'btn_report')
-  fireEvent.click(btn_report)
-  expect(onEvent).toHaveBeenCalledTimes(5);
+    const btnOffice = sideBar.shadowRoot.querySelector('#btn_office')
+    btnOffice.click()
+    sinon.assert.callCount(onSideEvent, 6);
 
-  const btn_office = getById(container, 'btn_office')
-  fireEvent.click(btn_office)
-  expect(onEvent).toHaveBeenCalledTimes(6);
+  })
 
-})
+  it('renders in the Office state', async () => {
+    const onSideEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Office.args, onSideEvent
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
 
-it('renders in the Office state', () => {
-  const onEvent = jest.fn()
+    const btnPrintqueue = sideBar.shadowRoot.querySelector('#btn_printqueue')
+    btnPrintqueue.click()
+    sinon.assert.callCount(onSideEvent, 1);
 
-  const { container } = render(
-    <Office {...Office.args} id="test_menu" onEvent={onEvent} />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+    const btnRate = sideBar.shadowRoot.querySelector('#btn_rate')
+    btnRate.click()
+    sinon.assert.callCount(onSideEvent, 2);
 
-  const btn_printqueue = getById(container, 'btn_printqueue')
-  fireEvent.click(btn_printqueue)
-  expect(onEvent).toHaveBeenCalledTimes(1);
+    const btnServercmd = sideBar.shadowRoot.querySelector('#btn_servercmd')
+    btnServercmd.click()
+    sinon.assert.callCount(onSideEvent, 3);
 
-  const btn_rate = getById(container, 'btn_rate')
-  fireEvent.click(btn_rate)
-  expect(onEvent).toHaveBeenCalledTimes(2);
-
-  const btn_servercmd = getById(container, 'btn_servercmd')
-  fireEvent.click(btn_servercmd)
-  expect(onEvent).toHaveBeenCalledTimes(3);
+  })
 
 })

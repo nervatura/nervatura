@@ -1,74 +1,76 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Existing, Disabled } from './Audit.stories';
+import './modal-audit.js';
+import { Template, Default, Existing, Disabled } from  './Audit.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Audit', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onAudit = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const audit = element.querySelector('#audit');
+    expect(audit).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_settings"
-      onAudit={onAudit} onClose={onClose} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const closeIcon = audit.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnCancel = audit.shadowRoot.querySelector('#btn_cancel')
+    btnCancel.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_cancel = getById(container, 'btn_cancel')
-  fireEvent.click(btn_cancel)
-  expect(onClose).toHaveBeenCalledTimes(2);
+    const btnOK = audit.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const nervatype = getById(container, 'nervatype')
-  fireEvent.change(nervatype, {target: {value: "18"}})
-  expect(nervatype.value).toEqual("18");
+    const nervatype = audit.shadowRoot.querySelector('#nervatype');
+    nervatype._onInput({ target: { value: "18" } })
+    expect(nervatype.value).to.equal("18");
 
-  fireEvent.change(nervatype, {target: {value: "28"}})
-  expect(nervatype.value).toEqual("28");
+    nervatype._onInput({ target: { value: "28" } })
+    expect(nervatype.value).to.equal("28");
 
-  fireEvent.change(nervatype, {target: {value: "10"}})
-  expect(nervatype.value).toEqual("10");
+    nervatype._onInput({ target: { value: "10" } })
+    expect(nervatype.value).to.equal("10");
 
-  const inputfilter = getById(container, 'inputfilter')
-  fireEvent.change(inputfilter, {target: {value: "106"}})
-  expect(inputfilter.value).toEqual("106");
+    const inputfilter = audit.shadowRoot.querySelector('#inputfilter');
+    inputfilter._onInput({ target: { value: "106" } })
+    expect(inputfilter.value).to.equal("106");
 
-  const supervisor = getById(container, 'supervisor')
-  fireEvent.click(supervisor)
-  expect(getById(container, 'check_0')).toBeDefined();
-  fireEvent.click(supervisor)
-  expect(getById(container, 'check_1')).toBeDefined();
+    const supervisor = audit.shadowRoot.querySelector('#supervisor')
+    supervisor.click()
+    expect(audit.supervisor).to.equal(0);
 
-  const btn_ok = getById(container, 'btn_ok')
-  fireEvent.click(btn_ok)
-  expect(onAudit).toHaveBeenCalledTimes(1);
+  })
 
-})
+  it('renders in the Existing state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Existing.args, onModalEvent
+    }));
+    const audit = element.querySelector('#audit');
+    expect(audit).to.exist;
 
-it('renders in the Existing state', () => {
-  const onAudit = jest.fn()
-  const { container } = render(
-    <Existing {...Existing.args} id="test_settings" onAudit={onAudit} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const subtype = audit.shadowRoot.querySelector('#subtype');
+    subtype._onInput({ target: { value: "58" } })
+    expect(subtype.value).to.equal("58");
 
-  const subtype = getById(container, 'subtype')
-  fireEvent.change(subtype, {target: {value: "58"}})
-  expect(subtype.value).toEqual("58");
+  })
 
-  const btn_ok = getById(container, 'btn_ok')
-  fireEvent.click(btn_ok)
-  expect(onAudit).toHaveBeenCalledTimes(1);
-})
+  it('renders in the Disabled state', async () => {
+    const element = await fixture(Template({
+      ...Disabled.args
+    }));
+    const audit = element.querySelector('#audit');
+    expect(audit).to.exist;
 
-it('renders in the Disabled state', () => {
-  const { container } = render(
-    <Disabled {...Disabled.args} id="test_settings" />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+  })
 
 })

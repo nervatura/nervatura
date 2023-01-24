@@ -1,67 +1,85 @@
-import { render, queryByAttribute, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import update from 'immutability-helper';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Items, Log } from './Form.stories';
+import './setting-form.js';
+import { Template, Default, Items, Log } from  './Form.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Setting-Form', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onEvent = jest.fn()
+  it('renders in the Default state', async () => {
+    const onSettingEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onSettingEvent
+    }));
+    const form = element.querySelector('#setting_form');
+    expect(form).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_editor" onEvent={onEvent} />
-  );
-  expect(getById(container, "test_editor")).toBeDefined();
+    const inputRow = form.shadowRoot.querySelector('#row_2')
+    const fieldvalue = inputRow.shadowRoot.querySelector('#field_fieldvalue_value').shadowRoot.querySelector('#field_fieldvalue_value')
+    fieldvalue._onInput({ target: { value: "abc" } })
+    sinon.assert.callCount(onSettingEvent, 1);
 
-  const field_value = getById(container, 'field_fieldvalue_value')
-  fireEvent.change(field_value, {target: {value: "test data"}})
-  expect(onEvent).toHaveBeenCalledTimes(1);
+  })
 
-})
+  it('renders in the Items state', async () => {
+    const onSettingEvent = sinon.spy()
+    let element = await fixture(Template({
+      ...Items.args, onSettingEvent
+    }));
+    let form = element.querySelector('#setting_form');
+    expect(form).to.exist;
 
-it('renders in the Items state', () => {
-  const onEvent = jest.fn()
+    const formView = form.shadowRoot.querySelector('#form_view')
+    const btnAdd = formView.shadowRoot.querySelector('#btn_add')
+    btnAdd.click()
+    sinon.assert.callCount(onSettingEvent, 1);
 
-  const { container } = render(
-    <Items {...Items.args} id="test_editor" onEvent={onEvent} />
-  );
-  expect(getById(container, "test_editor")).toBeDefined();
-  
-  const btn_add = getById(container, 'btn_add')
-  fireEvent.click(btn_add)
-  expect(onEvent).toHaveBeenCalledTimes(1);
+    const rowEdit = formView.shadowRoot.querySelector('#edit_1')
+    rowEdit.click()
+    sinon.assert.callCount(onSettingEvent, 2);
 
-  const btn_edit = getById(container, 'edit_1')
-  fireEvent.click(btn_edit)
-  expect(onEvent).toHaveBeenCalledTimes(2);
+    const rowDelete = formView.shadowRoot.querySelector('#delete_1')
+    rowDelete.click()
+    sinon.assert.callCount(onSettingEvent, 3);
 
-  const btn_delete = getById(container, 'delete_1')
-  fireEvent.click(btn_delete)
-  expect(onEvent).toHaveBeenCalledTimes(3);
+    const delete_data = {
+      ...Items.args.data,
+      current: {
+        ...Items.args.data.current,
+        template: {
+          ...Items.args.data.current.template,
+          view: {
+            ...Items.args.data.current.template.view,
+            items: {
+              ...Items.args.data.current.template.view.items,
+              actions: {
+                ...Items.args.data.current.template.view.items.actions,
+                delete: null
+              }
+            }
+          }
+        }
+      }
+    }
+    element = await fixture(Template({
+      ...Items.args, data: delete_data
+    }));
+    form = element.querySelector('#setting_form');
+    expect(form).to.exist;
 
-  const delete_data = update(Items.args.data, {current: {template: {view: {items: {actions: {$merge: {
-    delete: null
-  }}}}}}})
-  render(
-    <Items {...Items.args} id="test_editor" data={delete_data}  />
-  )
+  })
 
-  const edit_data = update(Items.args.data, {current: {template: {view: {items: {actions: {$merge: {
-    edit: null
-  }}}}}}})
-  render(
-    <Items {...Items.args} id="test_editor" data={edit_data}  />
-  )
+  it('renders in the Log state', async () => {
+    const element = await fixture(Template({
+      ...Log.args
+    }));
+    const form = element.querySelector('#setting_form');
+    expect(form).to.exist;
 
-})
-
-it('renders in the Log state', () => {
-  const onEvent = jest.fn()
-
-  const { container } = render(
-    <Log {...Log.args} id="test_editor" onEvent={onEvent} />
-  );
-  expect(getById(container, "test_editor")).toBeDefined();
+  })
 
 })

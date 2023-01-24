@@ -1,7 +1,7 @@
 /*
 Open Source Business Management Framework
 
-Features
+# Features
 
 Nervatura is a business management framework. It can handle any type of business related information,
 starting from customer details, up to shipping, stock or payment information. Developed as open-source
@@ -30,23 +30,22 @@ or CSV data files
 
 • sample report templates and REPORT EDITOR (https://nervatura.github.io/nervatura/docs/client/program/editor) GUI
 
-• PWA CLIENT (https://nervatura.github.io/nervatura/docs/client) application and a basic **ADMIN** interface
+• CLIENT (https://nervatura.github.io/nervatura/docs/client) Web Component application and a basic **ADMIN** interface
 
 The client and report interface supports multilingualism (https://nervatura.github.io/nervatura/docs/start/customization#customize-the-appearance).
 
 The framework can be easily extended with additional interfaces and functions in the supported languages:
 C#, C++, Dart, Go, Java, Kotlin, Node, Objective-C, PHP, Python, Ruby
 
-Installation
+# Installation
 
 https://nervatura.github.io/nervatura/docs/install
 
-Quick Start
+# Quick Start
 
 https://nervatura.github.io/nervatura/docs/start
 
 More info see http://www.nervatura.com.
-
 */
 package main
 

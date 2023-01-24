@@ -1,131 +1,107 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html, nothing } from 'lit';
 
-import 'styles/style.css';
-import styles from './InputBox.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Input/form-input.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Input from 'components/Form/Input'
-import Icon from 'components/Form/Icon'
+import { styles } from './InputBox.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE, INPUT_TYPE } from '../../../config/enums.js'
 
-export const InputBox = ({
-  title, message, infoText, value, labelCancel, labelOK, defaultOK, showValue, className,
-  onOK, onCancel,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    value: value,
-  })
-  return (
-    <div className={`${"modal"} ${styles.modal} ${className}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={title} />
+export class InputBox extends LitElement {
+  constructor() {
+    super();
+    this.title = ""
+    this.message = ""
+    this.infoText = undefined
+    this.value = ""
+    this.labelCancel = "Cancel"
+    this.labelOK = "OK"
+    this.defaultOK = false
+    this.showValue = false
+    this.values = {}
+  }
+
+  static get properties() {
+    return {
+      title: { type: String },
+      message: { type: String },
+      infoText: { type: String },
+      value: { type: String, reflect: true },
+      labelOK: { type: String },
+      labelCancel: { type: String },
+      defaultOK: { type: Boolean },
+      showValue: { type: Boolean },
+      values: { type: Object }
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key){
+    const input_value = this.renderRoot.querySelector('#input_value') || {}
+    const data = {
+      value: input_value.value,
+      values: this.values
+    }
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+  
+  render() {
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label value="${this.title}" class="title-cell" ></form-label>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              <div class="input">${this.message}</div>
+              ${(this.infoText)?
+                html`<div class="info">${this.infoText}</div>` : nothing}
+              ${(this.showValue)?
+                html`<div class="info">
+                  <form-input id="input_value" type="${INPUT_TYPE.TEXT}" label="${this.title}"
+                    value="${this.value}" ?full="${true}"
+                    .onEnter=${()=>this._onModalEvent(MODAL_EVENT.OK)}
+                  ></form-input>
+                </div>` : nothing}
+            </div>
+          </div>
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_cancel" icon="Times"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL)} 
+                  ?full="${true}" label="${this.labelCancel}"
+                >${this.labelCancel}</form-button>
+              </div>
+              <div class="cell padding-small half" >
+                <form-button id="btn_ok" icon="Check"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK)} 
+                  ?autofocus="${(this.showValue) ? false : this.defaultOK}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" label="${this.labelOK}"
+                >${this.labelOK}</form-button>
               </div>
             </div>
           </div>
-          <div className="row full container-small section-small">
-            <div className="cell padding-normal">
-              <div className={`${styles.input}`}>{message}</div>
-              {(infoText)?
-                <div className={`${"section-small-top"} ${styles.info}`}>
-                  {infoText}
-                </div>:null}
-              {(showValue)?
-                <div className={`${"section-small-top"}`}>
-                  <Input id="input_value" type="text" className="full" 
-                    value={state.value} autoFocus={true}
-                    onChange={ 
-                      (value) => setState({ ...state, value: value }) 
-                    }
-                    onEnter={()=>onOK(state.value)} />
-                </div>:null}
-            </div>
-          </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_cancel" className={`${"full"} ${styles.closeIcon} `}
-                  autoFocus={(showValue)?false:!defaultOK}
-                  onClick={onCancel}
-                  value={<Label center value={labelCancel} leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />}
-                />
-              </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_ok" className={`${"full primary"}`}
-                  autoFocus={(showValue)?false:defaultOK}
-                  onClick={()=>onOK(state.value)}
-                  value={<Label center value={labelOK} leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />} 
-                />
-              </div>
-            </div>
-          </div> 
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-InputBox.propTypes = {
-  /**
-   * Message box title
-   */
-  title: PropTypes.string.isRequired,
-  /**
-   * Message text
-   */ 
-  message: PropTypes.string.isRequired,
-  /**
-   * Optional info text
-   */
-  infoText: PropTypes.string,
-  /**
-   * Default input value
-   */ 
-  value: PropTypes.string.isRequired,
-  /**
-   * Cancel button label
-   */
-  labelCancel: PropTypes.string.isRequired,
-  /**
-   * OK button label 
-   */ 
-  labelOK: PropTypes.string.isRequired,
-  /** 
-   * OK button focus
-  */
-  defaultOK: PropTypes.bool.isRequired,
-  /** 
-   * Show/hide input box
-  */
-  showValue: PropTypes.bool.isRequired,
-  className: PropTypes.string.isRequired,
-  /**
-   * OK button handle
-   */
-  onOK: PropTypes.func,
-  /**
-   * Cancel button handle
-   */
-  onCancel: PropTypes.func,
-}
-
-InputBox.defaultProps = {
-  title: "",
-  message: "",
-  infoText: undefined,
-  value: "",
-  labelCancel: "Cancel",
-  labelOK: "OK",
-  defaultOK: false,
-  showValue: false,
-  className: "",
-  onOK: undefined,
-  onCancel: undefined
-}
-
-export default InputBox;

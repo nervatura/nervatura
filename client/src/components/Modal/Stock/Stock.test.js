@@ -1,31 +1,39 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, DarkShipping } from './Stock.stories';
+import './modal-stock.js';
+import { Template, Default, DarkShipping } from  './Stock.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Total', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const stock = element.querySelector('#stock');
+    expect(stock).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_stock" onClose={onClose} />
-  );
-  expect(getById(container, 'test_stock')).toBeDefined();
+    const closeIcon = stock.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnOK = stock.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_ok = getById(container, 'btn_ok')
-  fireEvent.click(btn_ok)
-  expect(onClose).toHaveBeenCalledTimes(2);
+  })
 
-})
+  it('renders in the DarkShipping state', async () => {
+    const element = await fixture(Template({
+      ...DarkShipping.args
+    }));
+    const stock = element.querySelector('#stock');
+    expect(stock).to.exist;
+  })
 
-it('renders in the DarkShipping state', () => {
-  const { container } = render(
-    <DarkShipping {...DarkShipping.args} id="test_stock" />
-  );
-  expect(getById(container, 'test_stock')).toBeDefined();
 })

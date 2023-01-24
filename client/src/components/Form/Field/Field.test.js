@@ -1,625 +1,661 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import update from 'immutability-helper';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, StringMapExtend, StringMapLinkID, TextNull, NotesValue, Float, Button,
+import './form-field.js';
+import { Template, Default, StringMapExtend, StringMapLinkID, TextNull, NotesValue, Float, Button,
   Link, ValueList, Selector, Select, Empty, BoolFalse, BoolTrue, BoolTrueDisabled,
   DateDisabled, DateTime, Password, Color, Integer, FloatLinkValue, SelectOptions,
   SelectOptionsLabel, DateExtend, DateLink, Fieldvalue, StringMapLinkValue, DateLinkValue,
-  IntegerLinkID, SelectorExtend, SelectorLnkID, SelectorFieldvalue } from './Field.stories';
+  IntegerLinkID, SelectorExtend, SelectorLnkID, SelectorFieldvalue } from  './Field.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Field', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onEdit = jest.fn()
+  it('renders in the Default state', async () => {
+    const onEdit = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onEdit
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    const input = testField.shadowRoot.querySelector('#test_field');
+    input._onInput({ target: { value: "change" } })
+    expect(input.value).to.equal("change");
+    sinon.assert.calledOnce(onEdit);
+  })
 
-  const test_input = getById(container, 'test_input')
+  it('renders in the StringMapExtend state', async () => {
+    const element = await fixture(Template({
+      ...StringMapExtend.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-  fireEvent.change(test_input, {target: {value: "change"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
+  it('renders in the StringMapLinkID state', async () => {
+    const element = await fixture(Template({
+      ...StringMapLinkID.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-});
+  it('renders in the TextNull state', async () => {
+    const onEdit = sinon.spy()
+    let element = await fixture(Template({
+      ...TextNull.args, onEdit
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-it('renders in the StringMapExtend state', () => {
+    testField._onTextInput({ target: { value: "change" } })
+    sinon.assert.calledOnce(onEdit);
 
-  const { container } = render(
-    <StringMapExtend {...StringMapExtend.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the StringMapLinkID state', () => {
-
-  const { container } = render(
-    <StringMapLinkID {...StringMapLinkID.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  render(
-    <StringMapLinkID {...StringMapLinkID.args} field={
-      update(StringMapLinkID.args.field, {$merge: {
-        map: {
-          source: "groups",
-          value: "id",
-          text: "groupvalue",
-        }
-      }})
-    } />
-  );
-
-  render(
-    <StringMapLinkID {...StringMapLinkID.args} 
-      values={{
-        id: 14,
-        transtype: 61,
-        direction: 69,
-      }} />
-  );
-
-});
-
-it('renders in the StringMapLinkValue state', () => {
-
-  const { container } = render(
-    <StringMapLinkValue {...StringMapLinkValue.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the TextNull state', () => {
-  const onEdit = jest.fn()
-
-  const { container, rerender } = render(
-    <TextNull {...TextNull.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.change(test_input, {target: {value: "change"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  rerender(
-    <TextNull {...TextNull.args} 
-      field={{
+    element = await fixture(Template({
+      ...TextNull.args,
+      field: {
         rowtype: "field",
         name: "notes",
         label: "Comment",
         datatype: "text",
         default: "notes"
-      }} />
-  )
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+    
+  })
 
-});
+  it('renders in the NotesValue state', async () => {
+    const element = await fixture(Template({
+      ...NotesValue.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-it('renders in the NotesValue state', () => {
+  it('renders in the Float state', async () => {
+    const onEdit = sinon.spy()
+    const element = await fixture(Template({
+      ...Float.args, onEdit
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-  const { container } = render(
-    <NotesValue {...NotesValue.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    const input = testField.shadowRoot.querySelector('#test_field');
+    input._onBlur()
+    expect(input.value).to.equal(0);
+    sinon.assert.callCount(onEdit, 1);
 
-});
+    input._onInput({ target: { value: "100", valueAsNumber: 100 } })
+    expect(input.value).to.equal(100);
+    sinon.assert.callCount(onEdit, 2);
 
-it('renders in the Float state', () => {
-  const onEdit = jest.fn()
+    input._onBlur()
+    expect(input.value).to.equal(100);
+    sinon.assert.callCount(onEdit, 3);
+  })
 
-  const { container } = render(
-    <Float {...Float.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
- 
-  const test_input = getById(container, 'test_input')
+  it('renders in the Button state', async () => {
+    const onEdit = sinon.spy()
+    const element = await fixture(Template({
+      ...Button.args, onEdit
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-  fireEvent.blur(test_input, {target: {value: "100"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
+    const button = testField.shadowRoot.querySelector('#test_field');
+    button._onClick({
+      stopPropagation: sinon.spy()
+    })
+    sinon.assert.calledOnce(onEdit);
 
-  fireEvent.change(test_input, {target: {value: "12"}})
-  expect(onEdit).toHaveBeenCalledTimes(2);
-
-});
-
-it('renders in the FloatLinkValue state', () => {
-
-  const { container } = render(
-    <FloatLinkValue {...FloatLinkValue.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  render(
-    <FloatLinkValue {...FloatLinkValue.args} 
-      data={{
-      dataset: { 
-        fieldvalue: [
-          { deleted: 0, fieldname: "trans_wsdistance", id: 76, notes: "", ref_id: 8, value: "200.0" },
-        ]}, 
-      current: {}, 
-      audit: "all"}} />
-  );
-
-  render(
-    <FloatLinkValue {...FloatLinkValue.args} 
-      data={{
-      dataset: {}, 
-      current: {
-        fieldvalue: []
-      }, 
-      audit: "all"}} />
-  );
-
-});
-
-it('renders in the Integer state', () => {
-  const onEdit = jest.fn()
-
-  const { container, rerender } = render(
-    <Integer {...Integer.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
- 
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.change(test_input, {target: {value: "12"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  fireEvent.blur(test_input, {target: {value: "100"}})
-  expect(onEdit).toHaveBeenCalledTimes(2);
-
-  rerender(
-    <Integer {...Integer.args} id="test_input" onEdit={onEdit}
-      field={
-        update(Integer.args.field, {$merge: {
-          datatype: "percent",
-          map: {
-            source: "payment",
-            value: "trans_id",
-            extend: true,
-          }
-        }})}
-    />
-  )
-
-  fireEvent.change(test_input, {target: {value: "22"}})
-  expect(onEdit).toHaveBeenCalledTimes(3);
-
-});
-
-it('renders in the IntegerLinkID state', () => {
-
-  const { container } = render(
-    <IntegerLinkID {...IntegerLinkID.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the Button state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <Button {...Button.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
- 
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.click(test_input)
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  render(
-    <Button {...ValueList.args} 
-      field={update(Button.args.field, {$merge: {
+    const elementDisabled = await fixture(Template({
+      ...Button.args,
+      field: {
+        ...Button.args.field,
         disabled: true,
         focus: false,
         title: null,
         icon: null
-      }})}/>
-  );
+      }
+    }));
+    const testFieldDisabled = elementDisabled.querySelector('#test_field');
+    expect(testFieldDisabled).to.exist;
+  })
 
-});
+  it('renders in the Link state', async () => {
+    const onEvent = sinon.spy()
+    let element = await fixture(Template({
+      ...Link.args, onEvent
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-it('renders in the Link state', () => {
-  const onEvent = jest.fn()
+    const link = testField.shadowRoot.querySelector('#link_trans_id');
+    link.click()
+    sinon.assert.calledOnce(onEvent);
 
-  const { container } = render(
-    <Link {...Link.args} id="test_input" onEvent={onEvent} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
- 
-  const test_input = getById(container, 'link_trans_id')
+    element = await fixture(Template({
+      ...Link.args,
+      values: {
+        id: null,
+        transtype: 55,
+        direction: 68,
+        transnumber: "DMINV/00001",
+        ref_transnumber: "DMORD/00003",
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+    
 
-  fireEvent.click(test_input)
-  expect(onEvent).toHaveBeenCalledTimes(1);
+  })
 
-  render(
-    <Link {...Link.args} 
-      data={{
-        dataset: {
-          translink: []
-        }, 
-        current: {}, 
-        audit: "readonly",
-      }} />
-  )
+  it('renders in the ValueList state', async () => {
+    const onEdit = sinon.spy()
+    const element = await fixture(Template({
+      ...ValueList.args, onEdit
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-  render(
-    <Link {...Link.args} field={
-      update(Link.args.field, {$merge: {
-        map: {
-          source: "translink",
-          value: "ref_id_1",
-          text: "ref",
-          label_field: undefined,
-          lnktype: "trans",
-          transtype: "order",
-        }
-      }})
-    } />
-  )
+    const select = testField.shadowRoot.querySelector('#test_field')
+    select._onInput({ target: { value: "blue" } })
+    sinon.assert.calledOnce(onEdit);
+    expect(select.value).to.equal('blue');
+  })
 
-  render(
-    <Link {...Link.args} field={
-      update(Link.args.field, {$merge: {
-        map: {
-          source: "translink",
-          value: "ref_id_1",
-          text: "ref",
-          label_field: "",
-          lnktype: "trans",
-          transtype: "order",
-        }
-      }})
-    } />
-  )
+  it('renders in the Selector state', async () => {
+    const onEvent = sinon.spy()
+    const onEdit = sinon.spy()
+    const onSelector = (type, filter, setSelector) => {
+      setSelector({
+        custname: "Second Customer Name",
+        deleted: 0,
+        id: "trans/invoice/6",
+        label: "DMINV/00002",
+        transnumber: "DMINV/00002",
+        transtype: "invoice-out",
+        trans_id: 123
+      }, "DMINV/0000")
+    }
+    const element = await fixture(Template({
+      ...Selector.args, onEvent, onEdit, onSelector
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-  render(
-    <Link {...Link.args} values={{
-      id: null,
-      transtype: 55,
-      direction: 68,
-      transnumber: "DMINV/00001",
-      ref_transnumber: "DMORD/00003",
-    }} />
-  )
+    const selLink = testField.shadowRoot.querySelector('#sel_link_customer_id');
+    selLink.click()
+    sinon.assert.calledOnce(onEvent);
 
-});
+    const selDelete = testField.shadowRoot.querySelector('#sel_delete_customer_id');
+    selDelete.click()
+    sinon.assert.calledOnce(onEdit);
 
-it('renders in the ValueList state', () => {
-  const onEdit = jest.fn()
+    const selShow = testField.shadowRoot.querySelector('#sel_show_customer_id');
+    selShow.click()
 
-  const { container } = render(
-    <ValueList {...ValueList.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.change(test_input, {target: {value: "blue"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  render(
-    <ValueList {...ValueList.args} 
-      field={update(ValueList.args.field, {$merge: {
-          disabled: true
-      }})}/>
-  );
-
-});
-
-it('renders in the Selector state', () => {
-  const onEvent = jest.fn()
-  const onEdit = jest.fn()
-
-  const onSelector = (type, filter, setSelector) => {
-    setSelector({
-      custname: "Second Customer Name",
-      deleted: 0,
-      id: "trans/invoice/6",
-      label: "DMINV/00002",
-      transnumber: "DMINV/00002",
-      transtype: "invoice-out",
-      trans_id: 123
-    }, "DMINV/0000")
-  }
-
-  const { container } = render(
-    <Selector {...Selector.args} id="test_input" 
-      onEvent={onEvent} onSelector={onSelector} onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
- 
-  const test_input = getById(container, 'sel_link_customer_id')
-  fireEvent.click(test_input)
-  expect(onEvent).toHaveBeenCalledTimes(1);
-
-  const sel_delete = getById(container, 'sel_delete_customer_id')
-  fireEvent.click(sel_delete)
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  const sel_show = getById(container, 'sel_show_customer_id')
-  fireEvent.click(sel_show)
-
-  render(
-    <Selector {...Selector.args} field={
-      update(Selector.args.field, {$merge: {
-        disabled: true
-      }})
-    } />
-  )
-
-  render(
-    <Selector {...Selector.args} values={
-      update(Selector.args.values, {$merge: {
+    const elementDisabled = await fixture(Template({
+      ...Selector.args, onEvent,
+      field: {
+        ...Selector.args.field,
+        disabled: true,
+      },
+      values: {
+        ...Selector.args.values,
         custname: null
-      }})
-    } />
-  )
+      }
+    }));
+    const testFieldDisabled = elementDisabled.querySelector('#test_field');
+    expect(testFieldDisabled).to.exist;
 
-  render(
-    <Selector {...Selector.args} data={
-      update(Selector.args.data, {$merge: {
+    const selLinkDisabled = testField.shadowRoot.querySelector('#sel_link_customer_id');
+    selLinkDisabled.click()
+    sinon.assert.calledTwice(onEvent);
+
+    const elementReftable = await fixture(Template({
+      ...Selector.args, onEvent,
+      data: {
+        ...Selector.args.data,
         dataset: {
           trans: []
         }
-      }})
-    } />
-  )
+      },
+    }));
+    const testFieldReftable = elementReftable.querySelector('#test_field');
+    expect(testFieldReftable).to.exist;
 
-});
+  })
 
-it('renders in the SelectorExtend state', () => {
-  const onEdit = jest.fn()
-  const onSelector1 = (type, filter, setSelector) => {
-    setSelector({
-      id: "customer/6",
-      item: {
-        lslabel: ""
-      }
-    }, "DMINV/0000")
-  }
-  const onSelector2 = (type, filter, setSelector) => {
-    setSelector({
-      custname: "Second Customer Name",
-      deleted: 0,
-      id: "trans/invoice/6",
-      label: "DMINV/00002",
-      transnumber: "DMINV/00002",
-      transtype: "invoice-out",
-    }, "DMINV/0000")
-  }
-
-  const { container, rerender } = render(
-    <SelectorExtend {...SelectorExtend.args} id="test_input" 
-      onEdit={onEdit}  onSelector={onSelector1} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const sel_show = getById(container, 'sel_show_ref_id')
-  fireEvent.click(sel_show)
-
-  rerender(
-    <SelectorExtend {...SelectorExtend.args} 
-      onEdit={onEdit} onSelector={onSelector2}
-      field={{
-        name: "ref_id",
-        label: "Reference",
-        datatype: "selector",
-        empty: false,
-        map: {
-          seltype: "transitem",
-          table: "extend",
-          fieldname: "ref_id",
-          lnktype: "trans",
-          transtype: "invoice",
-          label_field: "refnumber",
-          extend: true,
-        },
-      }}
-      values={
-        update(SelectorExtend.args.values, {$merge: {
-          ref_id: 5
-        }})
-      }
-      data={
-        update(SelectorExtend.args.data, {$merge: {
-          current: {
-            extend: {
-              seltype: "transitem",
-              ref_id: 5,
-              refnumber: "DMINV/00001",
-              transtype: "invoice",
-            }
-          }
-        }})
-      } />
-  );
-  
-  fireEvent.click(sel_show)
-
-  render(
-    <SelectorExtend {...SelectorExtend.args} 
-      field={{
-        name: "ref_id",
-        label: "Reference",
-        datatype: "selector",
-        empty: false,
-        map: {
-          seltype: "transitem",
-          table: "extend",
-          fieldname: "ref_id",
-          lnktype: "trans",
-          transtype: "invoice",
-          label_field: "refnumber",
-          extend: true,
-        },
-      }}
-      values={
-        update(SelectorExtend.args.values, {$merge: {
-          ref_id: 5
-        }})
-      }
-      data={
-        update(SelectorExtend.args.data, {$merge: {
-          current: {
-            extend: {
-              seltype: "transitem",
-              ref_id: 5,
-              refnumber: "DMINV/00001",
-              transtype: "invoice",
-            }
-          }
-        }})
-      } />
-  );
-
-  render(
-    <SelectorExtend {...SelectorExtend.args} 
-      field={{
-        name: "ref_id",
-        label: "Reference",
-        datatype: "selector",
-        empty: false,
-        map: {
-          seltype: "transitem",
-          table: "extend",
-          fieldname: "ref_id",
-          lnktype: "trans",
-          transtype: "invoice",
-          label_field: "refnumber",
-          extend: true,
-        },
-      }}
-      data={
-        update(SelectorExtend.args.data, {$merge: {
-          current: {
-            extend: {
-              seltype: "transitem",
-              refnumber: "DMINV/00001",
-              transtype: "invoice",
-            }
-          }
-        }})
-      } />
-  );
-
-  render(
-    <SelectorExtend {...SelectorExtend.args} 
-      field={{
-        name: "ref_id",
-        label: "Reference",
-        datatype: "selector",
-        empty: false,
-        map: {
-          seltype: "transitem",
-          table: "extend",
-          fieldname: "ref_id",
-          lnktype: "trans",
-          transtype: "invoice",
-          label_field: "refnumber",
-          extend: true,
-        },
-      }}
-      data={
-        update(SelectorExtend.args.data, {$merge: {
-          current: {
-            extend: {
-              seltype: "transitem",
-              transtype: "invoice",
-            }
-          }
-        }})
-      } />
-  );
-
-});
-
-it('renders in the SelectorLnkID state', () => {
-
-  const { container } = render(
-    <SelectorLnkID {...SelectorLnkID.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the SelectorFieldvalue state', () => {
-  const { container } = render(
-    <SelectorFieldvalue {...SelectorFieldvalue.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  render(
-    <SelectorFieldvalue {...SelectorFieldvalue.args} id="test_input"
-      field={
-        update(SelectorFieldvalue.args.field, {$merge: {
-          value: null,
-          description: null
-        }})}
-      values={
-        update(SelectorFieldvalue.args.values, {$merge: {
-          value: null,
-          description: null
-        }})
-    } />
-  )
-
-});
-
-it('renders in the Select state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <Select {...Select.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.change(test_input, {target: {value: "69"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  fireEvent.change(test_input, {target: {value: "abc"}})
-  expect(onEdit).toHaveBeenCalledTimes(2);
-
-  render(
-    <Select {...Select.args} field={
-      update(Select.args.field, {$merge: {
-        map: {
-          source: "direction",
-          value: "id",
-          text: "groupvalue",
-          label: undefined,
+  it('renders in the SelectorExtend state', async () => {
+    const onSelector1 = (type, filter, setSelector) => {
+      setSelector({
+        id: "customer/6",
+        item: {
+          lslabel: ""
         }
-      }})
-    } />
-  )
+      }, "DMINV/0000")
+    }
+    const onSelector2 = (type, filter, setSelector) => {
+      setSelector({
+        custname: "Second Customer Name",
+        deleted: 0,
+        id: "trans/invoice/6",
+        label: "DMINV/00002",
+        transnumber: "DMINV/00002",
+        transtype: "invoice-out",
+      }, "DMINV/0000")
+    }
+    let element = await fixture(Template({
+      ...SelectorExtend.args, onSelector: onSelector1
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-});
+    const selShow = testField.shadowRoot.querySelector('#sel_show_ref_id');
+    selShow.click()
 
-it('renders in the SelectOptions state', () => {
-  const { container } = render(
-    <SelectOptions {...SelectOptions.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
 
-});
+    testField.onSelector = onSelector2
+    testField.field = {
+      name: "ref_id",
+      label: "Reference",
+      datatype: "selector",
+      empty: false,
+      map: {
+        seltype: "transitem",
+        table: "extend",
+        fieldname: "ref_id",
+        lnktype: "trans",
+        transtype: "invoice",
+        label_field: "refnumber",
+        extend: true,
+      },
+    }
+    testField.values = {
+      ...testField.values,
+      ref_id: 5
+    }
+    testField.data = {
+      ...testField.data,
+      current: {
+        extend: {
+          seltype: "transitem",
+          ref_id: 5,
+          refnumber: "DMINV/00001",
+          transtype: "invoice",
+        }
+      }
+    }
+    selShow.click()
 
-it('renders in the SelectOptionsLabel state', () => {
-  const { container } = render(
-    <SelectOptionsLabel {...SelectOptionsLabel.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    element = await fixture(Template({
+      ...SelectorExtend.args,
+      field: {
+        name: "ref_id",
+        label: "Reference",
+        datatype: "selector",
+        empty: false,
+        map: {
+          seltype: "transitem",
+          table: "extend",
+          fieldname: "ref_id",
+          lnktype: "trans",
+          transtype: "invoice",
+          label_field: "refnumber",
+          extend: true,
+        },
+      },
+      values: {
+        ...SelectorExtend.args.values,
+        ref_id: 5
+      },
+      data: {
+        ...SelectorExtend.args.data,
+        current: {
+          extend: {
+            seltype: "transitem",
+            ref_id: 5,
+            refnumber: "DMINV/00001",
+            transtype: "invoice",
+          }
+        }
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-  render(
-    <SelectOptionsLabel {...SelectOptionsLabel.args} 
-      data={{
+    element = await fixture(Template({
+      ...SelectorExtend.args,
+      field: {
+        name: "ref_id",
+        label: "Reference",
+        datatype: "selector",
+        empty: false,
+        map: {
+          seltype: "transitem",
+          table: "extend",
+          fieldname: "ref_id",
+          lnktype: "trans",
+          transtype: "invoice",
+          label_field: "refnumber",
+          extend: true,
+        },
+      },
+      data: {
+        ...SelectorExtend.args.data,
+        current: {
+          extend: {
+            seltype: "transitem",
+            refnumber: "DMINV/00001",
+            transtype: "invoice",
+          }
+        }
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    element = await fixture(Template({
+      ...SelectorExtend.args,
+      field: {
+        name: "ref_id",
+        label: "Reference",
+        datatype: "selector",
+        empty: false,
+        map: {
+          seltype: "transitem",
+          table: "extend",
+          fieldname: "ref_id",
+          lnktype: "trans",
+          transtype: "invoice",
+          label_field: "refnumber",
+          extend: true,
+        },
+      },
+      data: {
+        ...SelectorExtend.args.data,
+        current: {
+          extend: {
+            seltype: "transitem",
+            transtype: "invoice",
+          }
+        }
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+    
+  })
+
+  it('renders in the SelectorLnkID state', async () => {
+    const element = await fixture(Template({
+      ...SelectorLnkID.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the SelectorFieldvalue state', async () => {
+    let element = await fixture(Template({
+      ...SelectorFieldvalue.args
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    element = await fixture(Template({
+      ...SelectorFieldvalue.args,
+      field: {
+        ...SelectorFieldvalue.args.field,
+        value: null,
+        description: null
+      },
+      values: {
+        ...SelectorFieldvalue.args.values,
+        value: null,
+        description: null
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the Select state', async () => {
+    const onEdit = sinon.spy()
+    const element = await fixture(Template({
+      ...Select.args, onEdit
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    const selectField = testField.shadowRoot.querySelector('#test_field')
+    selectField._onInput({ target: { value: "69" } })
+    sinon.assert.calledOnce(onEdit);
+    expect(selectField.value).to.equal("69");
+
+    selectField._onInput({ target: { value: "abc" } })
+    sinon.assert.calledTwice(onEdit);
+    expect(selectField.value).to.equal('abc');
+  })
+
+  it('renders in the Empty state', async () => {
+    const element = await fixture(Template({
+      ...Empty.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the BoolFalse state', async () => {
+    const onEdit = sinon.spy()
+    let element = await fixture(Template({
+      ...BoolFalse.args, onEdit
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    let link = testField.shadowRoot.querySelector('#test_field');
+    link.click()
+    sinon.assert.calledOnce(onEdit);
+
+    element = await fixture(Template({
+      ...BoolFalse.args, onEdit,
+      values: {
+        ...BoolFalse.args.values,
+        value: "true"
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    link = testField.shadowRoot.querySelector('#test_field');
+    link.click()
+    sinon.assert.calledTwice(onEdit);
+  })
+
+  it('renders in the BoolTrue state', async () => {
+    const onEdit = sinon.spy()
+    let element = await fixture(Template({
+      ...BoolTrue.args, onEdit
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    let link = testField.shadowRoot.querySelector('#test_field');
+    link.click()
+    sinon.assert.calledOnce(onEdit);
+
+    element = await fixture(Template({
+      ...BoolTrue.args, onEdit,
+      values: {
+        ...BoolTrue.args.values,
+        paid: 0
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    link = testField.shadowRoot.querySelector('#test_field');
+    link.click()
+    sinon.assert.calledTwice(onEdit);
+  })
+
+  it('renders in the BoolTrueDisabled state', async () => {
+    const onEdit = sinon.spy()
+    const element = await fixture(Template({
+      ...BoolTrueDisabled.args, onEdit
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    const link = testField.shadowRoot.querySelector('#test_field');
+    link.click()
+    sinon.assert.callCount(onEdit, 0);
+
+    testField.values = {
+      ...BoolTrueDisabled.args.values,
+      paid: 0
+    }
+  })
+
+  it('renders in the DateDisabled state', async () => {
+    const element = await fixture(Template({
+      ...DateDisabled.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the DateTime state', async () => {
+    const onEdit = sinon.spy()
+    const element = await fixture(Template({
+      ...DateTime.args, onEdit
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    const input = testField.shadowRoot.querySelector('#test_field');
+    input._onInput({ target: { value: "2021-12-24T11:34" } })
+    expect(input.value).to.equal("2021-12-24T11:34:00");
+    sinon.assert.callCount(onEdit, 1);
+  })
+
+  it('renders in the Password state', async () => {
+    const onEdit = sinon.spy()
+    let element = await fixture(Template({
+      ...Password.args, onEdit
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    const input = testField.shadowRoot.querySelector('#test_field');
+    input._onInput({ target: { value: "123" } })
+    expect(input.value).to.equal("123");
+    sinon.assert.callCount(onEdit, 1);
+
+    element = await fixture(Template({
+      ...Password.args,
+      values: {
+        password_1: null,
+      },
+      data: {
+        dataset: {}, 
+        current: {}, 
+        audit: "readonly",
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the Color state', async () => {
+    const element = await fixture(Template({
+      ...Color.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the Integer state', async () => {
+    const element = await fixture(Template({
+      ...Integer.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    const input = testField.shadowRoot.querySelector('#test_field');
+    input._onInput({ target: { value: "12", valueAsNumber: 12 } })
+    expect(input.value).to.equal(12);
+
+    const elementPercent = await fixture(Template({
+      ...Integer.args,
+      field: {
+        ...Integer.args.field,
+        datatype: "percent",
+        map: {
+          source: "payment",
+          value: "trans_id",
+          extend: true,
+        }
+      }
+    }));
+    const testFieldPercent = elementPercent.querySelector('#test_field');
+    expect(testFieldPercent).to.exist;
+  })
+
+  it('renders in the FloatLinkValue state', async () => {
+    let element = await fixture(Template({
+      ...FloatLinkValue.args
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    const input = testField.shadowRoot.querySelector('#test_field');
+    input._onInput({ target: { value: "100", valueAsNumber: 100 } })
+    expect(input.value).to.equal(100);
+
+    input._onBlur()
+    expect(input.value).to.equal(100);
+
+    element = await fixture(Template({
+      ...FloatLinkValue.args,
+      data: {
+        dataset: { 
+          fieldvalue: [
+            { deleted: 0, fieldname: "trans_wsdistance", id: 76, notes: "", ref_id: 8, value: "200.0" },
+          ]}, 
+        current: {}, 
+        audit: "all"
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the SelectOptions state', async () => {
+    const element = await fixture(Template({
+      ...SelectOptions.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
+
+  it('renders in the SelectOptionsLabel state', async () => {
+    let element = await fixture(Template({
+      ...SelectOptionsLabel.args
+    }));
+    let testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+
+    element = await fixture(Template({
+      ...SelectOptionsLabel.args,
+      data: {
         dataset: {}, 
         current: {
           extend: {
@@ -629,190 +665,59 @@ it('renders in the SelectOptionsLabel state', () => {
           }
         }, 
         audit: "all",
-      }} />
-  );
+      }
+    }));
+    testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
 
-});
+  })
 
-it('renders in the Empty state', () => {
+  it('renders in the DateExtend state', async () => {
+    const element = await fixture(Template({
+      ...DateExtend.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-  const { container } = render(
-    <Empty {...Empty.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-});
+  it('renders in the DateLink state', async () => {
+    const element = await fixture(Template({
+      ...DateLink.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-it('renders in the BoolFalse state', () => {
-  const onEdit = jest.fn()
+  it('renders in the Fieldvalue state', async () => {
+    const element = await fixture(Template({
+      ...Fieldvalue.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-  const { container, rerender } = render(
-    <BoolFalse {...BoolFalse.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
- 
-  let test_input = getById(container, 'test_input')
+  it('renders in the StringMapLinkValue state', async () => {
+    const element = await fixture(Template({
+      ...StringMapLinkValue.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-  fireEvent.click(test_input)
-  expect(onEdit).toHaveBeenCalledTimes(1);
+  it('renders in the DateLinkValue state', async () => {
+    const element = await fixture(Template({
+      ...DateLinkValue.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-  rerender(
-    <BoolFalse {...BoolFalse.args} id="test_input" onEdit={onEdit} 
-      values={update(BoolFalse.args.field, {$merge: {
-        value: "true"
-      }})} />
-  );
-  fireEvent.click(test_input)
-  expect(onEdit).toHaveBeenCalledTimes(2);
+  it('renders in the IntegerLinkID state', async () => {
+    const element = await fixture(Template({
+      ...IntegerLinkID.args
+    }));
+    const testField = element.querySelector('#test_field');
+    expect(testField).to.exist;
+  })
 
-});
-
-it('renders in the BoolTrue state', () => {
-  const onEdit = jest.fn()
-
-  const { container, rerender } = render(
-    <BoolTrue {...BoolTrue.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
- 
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.click(test_input)
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  rerender(
-    <BoolTrue {...BoolTrue.args} id="test_input" onEdit={onEdit} 
-      values={update(BoolTrue.args.field, {$merge: {
-        paid: 0
-      }})} />
-  );
-  fireEvent.click(test_input)
-  expect(onEdit).toHaveBeenCalledTimes(2);
-
-});
-
-it('renders in the BoolTrueDisabled state', () => {
-  const { container, rerender } = render(
-    <BoolTrueDisabled {...BoolTrueDisabled.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  rerender(
-    <BoolTrueDisabled {...BoolTrueDisabled.args} id="test_input" 
-      values={update(BoolTrueDisabled.args.field, {$merge: {
-        paid: 0
-      }})} />
-  );
-
-});
-
-it('renders in the DateDisabled state', () => {
-  const { container } = render(
-    <DateDisabled {...DateDisabled.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the DateTime state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <DateTime {...DateTime.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const input = getById(container, 'test_input')
-  fireEvent.change(input, {target: {value: "2021-12-24"}})
-  fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  fireEvent.change(input, {target: {value: ""}})
-  fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onEdit).toHaveBeenCalledTimes(2);
-
-});
-
-it('renders in the DateExtend state', () => {
-  const { container } = render(
-    <DateExtend {...DateExtend.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
-
-it('renders in the DateLink state', () => {
-  const { container } = render(
-    <DateLink {...DateLink.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-  
-  render(
-    <DateLink {...DateLink.args} 
-      data={{
-        dataset: {},
-        current: {
-          trans: []
-        }, 
-        audit: "all",
-      }} />
-  )
-});
-
-it('renders in the DateLinkValue state', () => {
-  const { container } = render(
-    <DateLinkValue {...DateLinkValue.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-  
-});
-
-it('renders in the Password state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <Password {...Password.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.change(test_input, {target: {value: "123"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-  render(
-    <Password {...Password.args} 
-      values={{
-        password_1: null,
-      }}
-      data={{
-        dataset: {}, 
-        current: {}, 
-        audit: "readonly",
-      }} />
-  );
-
-});
-
-it('renders in the Color state', () => {
-  const onEdit = jest.fn()
-
-  const { container } = render(
-    <Color {...Color.args} id="test_input" onEdit={onEdit} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.change(test_input, {target: {value: "#ffffff"}})
-  expect(onEdit).toHaveBeenCalledTimes(1);
-
-});
-
-it('renders in the Fieldvalue state', () => {
-
-  const { container } = render(
-    <Fieldvalue {...Fieldvalue.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-});
+})

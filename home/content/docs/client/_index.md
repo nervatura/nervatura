@@ -9,7 +9,7 @@ bookToC: false
 
 # Nervatura Client
 
-Open Source Nervatura PWA Client. **Built-in Help** related to a certain function is easily accessible from all interfaces of the program. The program includes a built in **Report Editor** which provides the possibility to modify the existing Nervatura Report templates or based on these create new ones.
+Open Source Nervatura Client Web Component. **Built-in Help** related to a certain function is easily accessible from all interfaces of the program. The program includes a built in **Report Editor** which provides the possibility to modify the existing Nervatura Report templates or based on these create new ones.
 
 The Nervatura Client currently supports the following management tasks:
 - DOCUMENT: offer, order, worksheet, rental, invoice, receipt

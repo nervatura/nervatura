@@ -1,109 +1,81 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, NumberInput, IntegerInput, CommaSeparator, Disabled } from './Input.stories';
+import './form-input.js';
+import { Template, Default, Color, File, Password } from  './Input.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Input', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onChange = jest.fn()
-  const onBlur = jest.fn()
+  it('renders in the Default state', async () => {
+    const onChange = sinon.spy()
+    const onEnter = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onChange, onEnter
+    }));
+    const testInput = element.querySelector('#test_input');
+    expect(testInput).to.exist;
+    expect(testInput.value).to.equal("");
 
-  const { container } = render(
-    <Default {...Default.args} id="test_input"
-    onChange={onChange} onBlur={onBlur} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+    testInput._onInput({ target: { value: "value" } })
+    sinon.assert.calledOnce(onChange);
+    expect(testInput.value).to.equal("value");
 
-  const test_input = getById(container, 'test_input')
+    testInput._onKeyEvent({ 
+      stopPropagation: sinon.spy(), preventDefault: sinon.spy(),
+      type: "keydown", keyCode: 13 
+    })
+    sinon.assert.calledOnce(onEnter);
 
-  fireEvent.change(test_input, {target: {value: "change"}})
-  expect(onChange).toHaveBeenCalledTimes(1);
+    testInput._onKeyEvent({ 
+      stopPropagation: sinon.spy(), 
+      type: "keypress", keyCode: 13 
+    })
+    sinon.assert.calledTwice(onEnter);
 
-  fireEvent.blur(test_input, {target: {value: "blur"}})
-  expect(onBlur).toHaveBeenCalledTimes(1);
+    testInput._onKeyEvent({ 
+      stopPropagation: sinon.spy(), 
+      type: "keypress", keyCode: 20 
+    })
+    sinon.assert.calledTwice(onEnter);
 
-});
+    await expect(testInput).shadowDom.to.be.accessible();
+  })
 
-it('renders in the NumberInput state', () => {
-  const onChange = jest.fn()
-  const onBlur = jest.fn()
-  const onEnter = jest.fn()
+  it('renders in the Color state', async () => {
+    const element = await fixture(Template({...Color.args}));
+    const testInput = element.querySelector('#test_input');
+    expect(testInput).to.exist;
+  })
 
-  const { container } = render(
-    <NumberInput {...NumberInput.args} id="test_input"
-    onChange={onChange} onBlur={onBlur} onEnter={onEnter} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+  it('renders in the File state', async () => {
+    const onChange = sinon.spy()
+    const element = await fixture(Template({
+      ...File.args, onChange
+    }));
+    const testInput = element.querySelector('#test_input');
+    expect(testInput).to.exist;
 
-  const test_input = getById(container, 'test_input')
+    testInput._onInput({ target: { files: [] } })
+    sinon.assert.calledOnce(onChange);
+  })
 
-  fireEvent.change(test_input, {target: {value: "123.12"}})
-  expect(onChange).toHaveBeenCalledTimes(1);
+  it('renders in the Password state', async () => {
+    const element = await fixture(Template({...Password.args}));
+    const testInput = element.querySelector('#test_input');
+    expect(testInput).to.exist;
+  })
 
-  fireEvent.change(test_input, {target: {value: "123."}})
-  expect(onChange).toHaveBeenCalledTimes(2);
-
-  fireEvent.blur(test_input, {target: {value: "123.45"}})
-  expect(onBlur).toHaveBeenCalledTimes(1);
-  
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 13 })
-  expect(onEnter).toHaveBeenCalledTimes(1)
-
-  fireEvent.keyDown(test_input, { key: 'Enter', code: 'Enter', keyCode: 66 })
-  expect(onEnter).toHaveBeenCalledTimes(1)
-
-});
-
-it('renders in the IntegerInput state', () => {
-  const onChange = jest.fn()
-  const onBlur = jest.fn()
-
-  const { container } = render(
-    <IntegerInput {...IntegerInput.args} id="test_input" minValue={10} maxValue={100}
-    onChange={onChange} onBlur={onBlur} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const test_input = getById(container, 'test_input')
-
-  fireEvent.change(test_input, {target: {value: "123"}})
-  expect(onChange).toHaveBeenCalledTimes(1);
-
-  fireEvent.change(test_input, {target: {value: "123.55"}})
-  expect(onChange).toHaveBeenCalledTimes(2);
-
-  fireEvent.change(test_input, {target: {value: ""}})
-  expect(onChange).toHaveBeenCalledTimes(3);
-
-  fireEvent.blur(test_input, {target: {value: "125"}})
-  expect(onBlur).toHaveBeenCalledTimes(1);
-
-  fireEvent.blur(test_input, {target: {value: "5"}})
-  expect(onBlur).toHaveBeenCalledTimes(2);
-
-});
-
-it('renders in the CommaSeparator state', () => {
-  const onChange = jest.fn()
-
-  const { container } = render(
-    <CommaSeparator {...CommaSeparator.args} id="test_input"
-    onChange={onChange} />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
-
-  const test_input = getById(container, 'test_input')
-  fireEvent.blur(test_input, {target: {value: "5a"}})
-  expect(onChange).toHaveBeenCalledTimes(1);
-
-});
-
-it('renders in the Disabled state', () => {
-
-  const { container } = render(
-    <Disabled {...Disabled.args} id="test_input" />
-  );
-  expect(getById(container, 'test_input')).toBeDefined();
+  it('renders in the invalid type state', async () => {
+    const element = await fixture(Template({
+      ...Default.args,
+      type: "number"
+    }));
+    const testInput = element.querySelector('#test_input');
+    expect(testInput).to.exist;
+  })
 
 });

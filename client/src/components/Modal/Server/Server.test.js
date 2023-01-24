@@ -1,41 +1,48 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, DarkServer } from './Server.stories';
+import './modal-server.js';
+import { Template, Default, DarkServer } from  './Server.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Server', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onOK = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const server = element.querySelector('#server');
+    expect(server).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_shipping"
-      onOK={onOK} onClose={onClose} />
-  );
-  expect(getById(container, 'test_shipping')).toBeDefined();
+    const closeIcon = server.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnOK = server.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_cancel = getById(container, 'btn_cancel')
-  fireEvent.click(btn_cancel)
-  expect(onClose).toHaveBeenCalledTimes(2);
+    const btnCancel = server.shadowRoot.querySelector('#btn_cancel')
+    btnCancel.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const btn_ok = getById(container, 'btn_ok')
-  fireEvent.click(btn_ok)
-  expect(onOK).toHaveBeenCalledTimes(1);
+    const inputRow = server.shadowRoot.querySelector('#row_1')
+    const fieldStep = inputRow.shadowRoot.querySelector('#field_step').shadowRoot.querySelector('#field_step')
+    fieldStep.click()
+    expect(server.values.step).to.equal(1);
 
-  const field_step = getById(container, 'field_step')
-  fireEvent.click(field_step)
+  })
 
-})
-
-it('renders in the DarkServer state', () => {
-  const { container } = render(
-    <DarkServer {...DarkServer.args} id="test_shipping" />
-  );
-  expect(getById(container, 'test_shipping')).toBeDefined();
+  it('renders in the DarkServer state', async () => {
+    const element = await fixture(Template({
+      ...DarkServer.args
+    }));
+    const server = element.querySelector('#server');
+    expect(server).to.exist;
+  })
 
 })

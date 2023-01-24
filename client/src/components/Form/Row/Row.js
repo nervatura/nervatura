@@ -1,371 +1,413 @@
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
+import { styleMap } from 'lit/directives/style-map.js';
 
-import Icon from 'components/Form/Icon'
-import Label from 'components/Form/Label'
-import Field from 'components/Form/Field'
-import Input from 'components/Form/Input'
+import '../Input/form-input.js'
+import '../Label/form-label.js'
+import '../Icon/form-icon.js'
+import '../Field/form-field.js'
 
-import styles from './Row.module.css';
+import { styles } from './Row.styles.js'
+import { INPUT_TYPE } from '../../../config/enums.js'
 
-export const Row = ({ 
-  row, values, options, data,
-  className, getText, 
-  onEdit, onEvent, onSelector,
-  ...props 
-}) => {
-  const { id, rowtype, label, columns, name, disabled, notes, selected, empty, 
-    datatype, info } = row
-  const imgValue = () => {
-    let img_value = values[name] || ""
-    if (img_value!=="" && img_value!==null) {
-      if (img_value.toString().substr(0,10)!=="data:image") {
-        if (typeof data.dataset[img_value]!=="undefined") {
-          img_value = data.dataset[img_value]
+export class Row extends LitElement {
+  constructor() {
+    super();
+    this.id = Math.random().toString(36).slice(2);
+    this.row = {};
+    this.values = {};
+    this.options = {};
+    this.data = {
+      dataset: {}, 
+      current: {}, 
+      audit: "all",
+    };
+    this.style = {};
+    this.msg = (defValue) => defValue
+  }
+
+  static get properties() {
+    return {
+      id: { type: String },
+      row: { type: Object },
+      values: { type: Object },
+      options: { type: Object },
+      data: { type: Object },
+      style: { type: Object },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onEdit(props){
+    if(this.onEdit){
+      this.onEdit(props)
+    }
+    this.dispatchEvent(
+      new CustomEvent('edit', {
+        bubbles: true, composed: true,
+        detail: {
+          ...props
+        }
+      })
+    );
+  }
+
+  _onTextInput(e){
+    this._onEdit({
+      id: this.row.id, 
+      name: this.row.name, 
+      value: e.target.value
+    })
+  }
+
+  imgValue() {
+    let imgValue = this.values[this.row.name] || ""
+    if (imgValue!=="" && imgValue!==null) {
+      if (imgValue.toString().substr(0,10)!=="data:image") {
+        if (typeof this.data.dataset[imgValue]!=="undefined") {
+          imgValue = this.data.dataset[imgValue]
         }
       }
     }
-    return img_value
+    return imgValue
   }
-  switch (rowtype) {
 
-    case "label":
-      return (<div {...props} 
-          className={`${className} ${"row full padding-small section-small border-bottom"} ${styles.labelRow}`}
-        >
-        <div className="cell padding-small" >{values[name] || label}</div>
-      </div>)
+  flipItem(){
+    const { 
+      id, name, datatype, info 
+    } = this.row
+    const enabled = (typeof this.values[name] !== "undefined")
+    const checkbox = html`<div id="${`checkbox_${name}`}"
+      class="report-field ${(enabled) ? "toggle-on" : "toggle-off"}"
+      @click="${() => this._onEdit({
+        id,
+        selected: true,
+        datatype,
+        defvalue: this.row.default,
+        name, 
+        value: !enabled, 
+        extend: false
+      })}">
+      ${(enabled)?
+        html`<form-icon iconKey="ToggleOn" width=40 height=32.6 ></form-icon>`:
+        html`<form-icon iconKey="ToggleOff" width=40 height=32.6 ></form-icon>`}
+      <form-label value="${name}" class="bold padding-tiny ${(enabled) ? "toggle-on" : ""} " ></form-label>
+    </div>`
 
-    case "flip":
-      const enabled = (typeof values[name] !== "undefined")
-      const checkbox = <div id={"checkbox_"+name}
-        className={` ${styles.reportField}`}
-        onClick={(event) => onEdit({
-          id: id,
-          selected: true,
-          datatype: datatype,
-          defvalue: row.default,
-          name: name, 
-          value: !enabled, 
-          extend: false
-        })}>
-        {(enabled)?
-          <Icon iconKey="ToggleOn" className={`${styles.toggleOn}`} width={40} height={32.6} />:
-          <Icon iconKey="ToggleOff" className={`${styles.toggleOff}`} width={40} height={32.6} />}
-        <Label className={`${"bold padding-tiny"} ${(enabled)?styles.toggleOn:""}`} value={name} />
-      </div>
-
-      switch (datatype) {
-        case "text":
-          return(<div {...props} 
-              className={`${className} ${"row full padding-small section-small border-bottom"}`}
-            >
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                {checkbox}
-              </div>
+    switch (datatype) {
+      case "text":
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="container-row">
+          <div class="row full">
+            <div class="cell padding-small" >
+              ${checkbox}
             </div>
-            {(enabled)?<div className="row full"><div className={`${"cell padding-small"}`} >
-              <Field id={"field_"+name}
-                field={row} values={values} options={options} data={data}
-                getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-            </div></div>:null}
-            {(info)?<div className="row full padding-small">
-              <div className={`${"cell padding-small info"} ${styles.leftbar}`} >
-                {info}
+          </div>
+          ${(enabled) ? html`<div class="row full"><div class="cell padding-small" >
+            <form-field id="${`field_${name}`}"
+              .field=${this.row} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div></div>`:null}
+          ${(info) ? html`<div class="row full padding-small">
+            <div class="cell padding-small info leftbar" >
+              ${info}
+            </div>
+          </div>`:null}
+        </div>`)
+
+      case "image":
+        return(
+          html`<div id="${this.id}"
+            style="${styleMap(this.style)}" class="container-row">
+            <div class="row full">
+              <div class="cell padding-small" >
+                ${checkbox}
               </div>
-            </div>:null}
-          </div>)
-        
-        case "image":
-          return(
-            <div {...props} 
-              className={`${className} ${"row full padding-small section-small border-bottom"}`}
-            >
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                {checkbox}
-              </div>
-              {(enabled)?<div className={`${"cell padding-small"}`} >
-                <input id={"file_"+name} 
-                  className={`${"full small"} ${styles.inputStyle} `}
-                  type="file"
-                  onChange={(event) => onEdit({
-                    id: id,
+              ${(enabled) ? html`<div class="cell padding-small" >
+              <form-input 
+                id="${`file_${name}`}" 
+                type="${INPUT_TYPE.FILE}" ?full="${true}"
+                label="${this.labelAdd}"
+                .style="${{ "font-size": "12px"}}"
+                .onChange=${
+                  (event) => this._onEdit({id,
                     file: true,
-                    name: name, 
-                    value: event.target.files, 
+                    name, 
+                    value: event.value, 
                     extend: false
-                  })} />
-              </div>:null}
+                })}></form-input>
+              </div>`:null}
             </div>
-            {(enabled)?<div className="row full"><div className={`${"cell padding-small"}`} >
-              <textarea id={"input_"+name}
-                className={`${"full small"} ${styles.textareaStyle}`} 
-                value={imgValue()} rows={5}
-                onChange={(event) => onEdit({
-                  id: id, 
-                  name: name, 
-                  value: event.target.value
-                })} />
-              <div className="full padding-normal center" >
-                <img src={imgValue()} alt="" />
+            ${(enabled) ? html`<div class="row full"><div class="cell padding-small" >
+              <textarea id="${`input_${name}`}"
+                class=${`full`} rows=5 .value="${this.imgValue()}"
+                @input="${this._onTextInput}" ></textarea>
+              <div class="full padding-normal center" >
+                <img src="${this.imgValue()}" alt="" />
               </div>
-            </div></div>:null}
-            {(info)?<div className="row full padding-small">
-              <div className={`${"cell padding-small info"} ${styles.leftbar}`} >
-                {info}
+            </div></div>`:null}
+            ${(info) ? html`<div class="row full padding-small">
+              <div class="cell padding-small info leftbar" >
+                ${info}
               </div>
-            </div>:null}
-          </div>)
+            </div>`:null}
+          </div>`)
 
-        case "checklist":
-          let cb_value = values[name] || ""
-          let checklist = []
-          row.values.forEach((element, index) => {
-            let cvalue = element.split("|")
-            const value = (cb_value.indexOf(cvalue[0])>-1) ? true : false
-            checklist.push(<div id={"checklist_"+name+"_"+index}
-              key={index}
-              className={` ${"cell padding-small"} ${styles.reportField}`}
-              onClick={(event) => onEdit({
-                id: id,
-                checklist: true,
-                name: name,
-                checked: !value,
-                value: cvalue[0],
-                extend: false
-              })}>
-              <Label className={`${"bold"} ${(value)?styles.toggleOn:""}`} value={cvalue[1]} 
-                leftIcon={(value)
-                  ?<Icon iconKey="CheckSquare" className={`${styles.toggleOn}`}  />
-                  :<Icon iconKey="SquareEmpty" />} />
-            </div>)
-          });
-          return(
-            <div {...props} 
-              className={`${className} ${"row full padding-small section-small border-bottom"}`}
-            >
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                {checkbox}
-              </div>
+      case "checklist":
+        const cbValue = this.values[name] || ""
+        const checklist = []
+        this.row.values.forEach((element, index) => {
+          const cvalue = element.split("|")
+          const value = (cbValue.indexOf(cvalue[0])>-1)
+          checklist.push(html`<div id="${`checklist_${name}_${index}`}"
+            key={index}
+            class="cell padding-small report-field"
+            @click=${() => this._onEdit({
+              id,
+              checklist: true,
+              name,
+              checked: !value,
+              value: cvalue[0],
+              extend: false
+            })}>
+            <form-label 
+              value="${cvalue[1]}" class="bold ${(value) ? "toggle-on" : ""}"
+              leftIcon="${(value) ? "CheckSquare" : "SquareEmpty"}" ></form-label>
+          </div>`)
+        });
+        return(
+          html`<div id="${this.id}"
+            style="${styleMap(this.style)}" class="container-row">
+          <div class="row full">
+            <div class="cell padding-small" >
+              ${checkbox}
             </div>
-            {(enabled)?<div className="row full padding-small">
-              <div className={`${"cell padding-small toggle"} ${styles.toggle}`} >
-                {checklist}
-              </div>
-            </div>:null}
-            {(info)?<div className="row full padding-small">
-              <div className={`${"cell padding-small info"} ${styles.leftbar}`} >
-                {info}
-              </div>
-            </div>:null}
-          </div>)
-      
-        default:
-          return(<div {...props} 
-            className={`${className} ${"row full padding-small section-small border-bottom"}`}>
-            <div className="row full">
-              <div className={`${"cell padding-small half"}`} >
-                {checkbox}
-              </div>
-              {(enabled)?<div className={`${"cell padding-small half"}`} >
-                <Field id={"field_"+name}
-                  field={row} values={values} options={options} data={data}
-                  getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-              </div>:null}
+          </div>
+          ${(enabled) ? html`<div class="row full padding-small">
+            <div class="cell padding-small toggle" >
+              ${checklist}
             </div>
-            {(info)?<div className="row full padding-small">
-              <div className={`${"cell padding-small info"} ${styles.leftbar}`} >
-                {info}
-              </div>
-            </div>:null}
-          </div>)
+          </div>`:null}
+          ${(info) ? html`<div class="row full padding-small">
+            <div class="cell padding-small info leftbar" >
+              ${info}
+            </div>
+          </div>`:null}
+        </div>`)
+
+      default:
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="container-row">
+          <div class="row full">
+            <div class="cell padding-small half" >
+              ${checkbox}
+            </div>
+            ${(enabled)?html`<div class="cell padding-small half" >
+              <form-field id="${`field_${name}`}"
+                .field=${this.row} .values=${this.values} .options=${this.options} .data=${this.data}
+                .msg=${this.msg} .onEdit=${this.onEdit} 
+                .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+            </div>`:null}
+          </div>
+          ${(info)?html`<div class="row full padding-small">
+            <div class="cell padding-small info leftbar" >
+              ${info}
+            </div>
+          </div>`:null}
+        </div>`)
       }
+  }
 
-    case "field":
-      return(<div {...props} 
-        className={`${className} ${"row full padding-small section-small border-bottom"}`}>
-        <div className={`${"cell padding-small hide-small"} ${styles.fieldCell}`} >
-          <Label className="bold" value={label} />
-        </div>
-        <div className={`${"cell padding-small"}`} >
-          <div className={`${"hide-medium hide-large"}`} >
-            <Label className="bold" value={label} />
-          </div>
-          <Field id={"field_"+name}
-            field={row} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-      </div>)
-    
-    case "reportfield":
-      return(<div {...props} 
-        className={`${className} ${"cell padding-small s12 m6 l4"}`}>
-        <div id={"cb_"+name}
-          className={`${"padding-small"} ${(empty !== 'false')?styles.reportField:""}`} 
-          onClick={() => {if(empty !== 'false'){
-            onEdit({id: id, name: "selected", value: !selected, extend: false })} }}>
-          <Label className="bold" value={label} 
-            leftIcon={(selected)?<Icon iconKey="CheckSquare" />:<Icon iconKey="SquareEmpty" />} />
-        </div>
-        <Field id={"field_"+name}
-          field={row} values={values} options={options} data={data}
-          getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-      </div>)
+  render() {
+    const { 
+      id, rowtype, label, columns, name, disabled, notes, selected, empty, datatype, info 
+    } = this.row
 
-    case "fieldvalue":
-      return(<div {...props} 
-        className={`${className} ${"row full padding-small section-small border-bottom"}`}>
-        <div className="row full">
-          <div className="cell container-small">
-            <Label className="bold" value={label} />
-          </div>
-          <div className="cell align-right container-small" >
-            <span id={"delete_"+row.fieldname}
-              className={`${styles.fieldvalueDelete}`} 
-              onClick={ ()=>onEdit({ 
-                id: id, name: "fieldvalue_deleted"}) }><Icon iconKey="Times" /></span>
-          </div>
-        </div>
-        <div className="row full">
-          <div className={`${"cell padding-small s12 m6 l6"}`} >
-            <Field id={"field_"+row.fieldname}
-              field={row} values={values} options={options} data={data}
-              getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-          </div>
-          <div className={`${"cell padding-small s12 m6 l6"}`} >
-            <Input id={'notes_'+row.fieldname} name="fieldvalue_notes" type="text" 
-              value={notes} className="full" 
-              onChange={(value) => onEdit({
-                id: id, name: "fieldvalue_notes", value: value})}
-              disabled={(disabled || data.audit === 'readonly') ? 'disabled' : ''}/>
-          </div>
-        </div>
-      </div>)
-    
-    case "col2":
-      return(<div {...props} 
-        className={`${className} ${"row full padding-small section-small border-bottom"}`}>
-        <div className={`${"cell padding-small s12 m6 l6"}`} >
-          <div>
-            <Label className="bold" value={columns[0].label} />
-          </div>
-          <Field id={"field_"+columns[0].name}
-            field={columns[0]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-        <div className={`${"cell padding-small s12 m6 l6"}`} >
-          <div>
-            <Label className="bold" value={columns[1].label} />
-          </div>
-          <Field id={"field_"+columns[1].name}
-            field={columns[1]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-      </div>)
-    
-    case "col3":
-      return(<div {...props} 
-        className={`${className} ${"row full padding-small section-small border-bottom"}`}>
-        <div className={`${"cell padding-small s12 m4 l4"}`} >
-          <div>
-            <Label className="bold" value={columns[0].label} />
-          </div>
-          <Field id={"field_"+columns[0].name}
-            field={columns[0]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-        <div className={`${"cell padding-small s12 m4 l4"}`} >
-          <div>
-            <Label className="bold" value={columns[1].label} />
-          </div>
-          <Field id={"field_"+columns[1].name}
-            field={columns[1]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-        <div className={`${"cell padding-small s12 m4 l4"}`} >
-          <div>
-            <Label className="bold" value={columns[2].label} />
-          </div>
-          <Field id={"field_"+columns[2].name}
-            field={columns[2]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-      </div>)
+    switch (rowtype) {
 
-    case "col4":
-      return(<div {...props} 
-        className={`${className} ${"row full padding-small section-small border-bottom"}`}>
-        <div className={`${"cell padding-small s12 m3 l3"}`} >
-          <div>
-            <Label className="bold" value={columns[0].label} />
+      case "label":
+        return html`<div id="${this.id}" style="${styleMap(this.style)}" 
+          class="container-row label-row">
+          <div class="cell padding-small" >${this.values[name] || label}</div>
+        </div>`
+
+      case "flip":
+        return this.flipItem()
+
+      case "field":
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="container-row">
+          <div class="cell padding-small hide-small field-cell" >
+            <form-label value="${label}" class="bold" ></form-label>
           </div>
-          <Field id={"field_"+columns[0].name}
-            field={columns[0]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-        <div className={`${"cell padding-small s12 m3 l3"}`} >
-          <div>
-            <Label className="bold" value={columns[1].label} />
+          <div class="cell padding-small" >
+            <div class="hide-medium hide-large" >
+              <form-label value="${label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${name}`}"
+              .field=${this.row} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
           </div>
-          <Field id={"field_"+columns[1].name}
-            field={columns[1]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-        <div className={`${"cell padding-small s12 m3 l3"}`} >
-          <div>
-            <Label className="bold" value={columns[2].label} />
+        </div>`)
+
+      case "reportfield":
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="cell padding-small s12 m6 l4">
+          <div id="${`cb_${name}`}"
+            class=${`${"padding-small"} ${(empty !== 'false') ? "report-field" : ""}`} 
+            @click="${() => {if(empty !== 'false'){
+              this._onEdit({id, name: "selected", value: !selected, extend: false })} }}">
+            <form-label 
+              value="${label}" class="bold"
+              leftIcon="${(selected) ? "CheckSquare" : "SquareEmpty"}" ></form-label>
           </div>
-          <Field id={"field_"+columns[2].name}
-            field={columns[2]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-        <div className={`${"cell padding-small s12 m3 l3"}`} >
-          <div>
-            <Label className="bold" value={columns[3].label} />
+          <form-field id="${`field_${name}`}"
+            .field=${this.row} .values=${this.values} .options=${this.options} .data=${this.data}
+            .msg=${this.msg} .onEdit=${this.onEdit} 
+            .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+        </div>`)
+
+      case "fieldvalue":
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="container-row">
+          <div class="row full">
+            <div class="cell container-small">
+              <form-label value="${label}" class="bold" ></form-label>
+            </div>
+            <div class="cell align-right container-small" >
+              <span id=${`delete_${this.row.fieldname}`}
+                class="fieldvalue-delete" 
+                @click="${ ()=>this._onEdit({id, name: "fieldvalue_deleted"}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
           </div>
-          <Field id={"field_"+columns[3].name}
-            field={columns[3]} values={values} options={options} data={data}
-            getText={getText} onEdit={onEdit} onEvent={onEvent} onSelector={onSelector} />
-        </div>
-      </div>)
-    
-    default:
-      return null;
+          <div class="row full">
+            <div class="cell padding-small s12 m6 l6" >
+              <form-field id="${`field_${this.row.fieldname}`}"
+                .field=${this.row} .values=${this.values} .options=${this.options} .data=${this.data}
+                .msg=${this.msg} .onEdit=${this.onEdit} 
+                .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+            </div>
+            <div class="cell padding-small s12 m6 l6" >
+              <form-input 
+                id="${`notes_${this.row.fieldname}`}" type="${INPUT_TYPE.TEXT}"
+                label="${this.msg("", { id: "fnote_view" })}"
+                name="fieldvalue_notes" ?full="${true}" value="${notes}"
+                ?disabled=${(disabled || this.data.audit === 'readonly')}
+                .onChange=${
+                  (event) => this._onEdit({
+                    id, name: "fieldvalue_notes", value: event.value
+                })}></form-input>
+            </div>
+          </div>
+        </div>`)
+
+      case "col2":
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="container-row">
+          <div class="cell padding-small s12 m6 l6" >
+            <div>
+              <form-label value="${columns[0].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[0].name}`}"
+              .field=${columns[0]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+          <div class="cell padding-small s12 m6 l6" >
+            <div>
+              <form-label value="${columns[1].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[1].name}`}"
+              .field=${columns[1]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+        </div>`)
+
+      case "col3":
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="container-row">
+          <div class="cell padding-small s12 m4 l4" >
+            <div>
+              <form-label value="${columns[0].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[0].name}`}"
+              .field=${columns[0]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+          <div class="cell padding-small s12 m4 l4" >
+            <div>
+              <form-label value="${columns[1].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[1].name}`}"
+              .field=${columns[1]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+          <div class="cell padding-small s12 m4 l4" >
+            <div>
+              <form-label value="${columns[2].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[2].name}`}"
+              .field=${columns[2]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+        </div>`)
+
+      case "col4":
+        return(html`<div id="${this.id}"
+          style="${styleMap(this.style)}" class="container-row">
+          <div class="cell padding-small s12 m3 l3" >
+            <div>
+              <form-label value="${columns[0].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[0].name}`}"
+              .field=${columns[0]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+          <div class="cell padding-small s12 m3 l3" >
+            <div>
+              <form-label value="${columns[1].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[1].name}`}"
+              .field=${columns[1]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+          <div class="cell padding-small s12 m3 l3" >
+            <div>
+              <form-label value="${columns[2].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[2].name}`}"
+              .field=${columns[2]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+          <div class="cell padding-small s12 m3 l3" >
+            <div>
+              <form-label value="${columns[3].label}" class="bold" ></form-label>
+            </div>
+            <form-field id="${`field_${columns[3].name}`}"
+              .field=${columns[3]} .values=${this.values} .options=${this.options} .data=${this.data}
+              .msg=${this.msg} .onEdit=${this.onEdit} 
+              .onEvent=${this.onEvent} .onSelector=${this.onSelector} ></form-field>
+          </div>
+        </div>`)
+
+      default:
+        break;
+    }
+    return null
   }
 }
-
-Row.propTypes = {
-  row: PropTypes.object.isRequired,
-  values: PropTypes.object.isRequired,
-  options: PropTypes.object.isRequired,
-  data: PropTypes.shape({
-    dataset: PropTypes.object, 
-    current: PropTypes.object, 
-    audit: PropTypes.string.isRequired, 
-  }).isRequired,
-  className: PropTypes.string,
-  getText: PropTypes.func,
-  onEdit: PropTypes.func,
-  onEvent: PropTypes.func,
-  onSelector: PropTypes.func,
-}
-
-Row.defaultProps = {
-  row: {},
-  values: {},
-  options: {},
-  data: {
-    dataset: {}, 
-    current: {}, 
-    audit: "all",
-  },
-  className: "",
-  getText: undefined,
-  onEdit: undefined,
-  onEvent: undefined,
-  onSelector: undefined,
-}
-
-export default Row;

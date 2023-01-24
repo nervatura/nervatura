@@ -1,16 +1,101 @@
-import { ListView } from "./List";
-import Icon from 'components/Form/Icon'
+import { html } from 'lit';
+
+import '../../StoryContainer/story-container.js';
+import './form-list.js';
+
+import { PAGINATION_TYPE, APP_THEME } from '../../../config/enums.js'
 
 export default {
-  title: "Form/List",
-  component: ListView
-}
+  title: 'Form/List',
+  component: 'form-list',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    pagination: {
+      control: 'select',
+      options: Object.values(PAGINATION_TYPE),
+    },
+    onEdit: {
+      name: "onEdit",
+      description: "onEdit click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onEdit" 
+    },
+    onDelete: {
+      name: "onDelete",
+      description: "onDelete click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onDelete" 
+    },
+    onAddItem: {
+      name: "onAddItem",
+      description: "onAddItem click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onAddItem" 
+    },
+    onCurrentPage: {
+      name: "onCurrentPage",
+      description: "onCurrentPage click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onCurrentPage" 
+    },
+  }
+};
 
-const Template = (args) => <ListView {...args} />
+export function Template({ 
+  id, theme, name, rows,  
+  pagination, currentPage, pageSize, hidePaginatonSize, listFilter, filterPlaceholder, filterValue,
+  labelAdd, addIcon, editIcon, deleteIcon, style,
+  onEdit, onDelete, onAddItem, onCurrentPage
+}) {
+  const component = html`<form-list
+    id="${id}"
+    name="${name}"
+    .rows="${rows}"
+    pagination="${pagination}"
+    currentPage="${currentPage}"
+    pageSize="${pageSize}"
+    ?listFilter="${listFilter}"
+    ?hidePaginatonSize="${hidePaginatonSize}"
+    filterPlaceholder="${filterPlaceholder}"
+    filterValue="${filterValue}"
+    labelAdd="${labelAdd}"
+    addIcon="${addIcon}"
+    editIcon="${editIcon}"
+    deleteIcon="${deleteIcon}"
+    .style="${style}"
+    .onEdit=${onEdit}
+    .onDelete=${onDelete}
+    .onAddItem=${onAddItem}
+    .onCurrentPage=${onCurrentPage}
+  ></form-list>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
-  className: "light",
+  id: "test_list",
+  theme: APP_THEME.LIGHT,
+  name: undefined,
   rows: [
     { lslabel: "Label 1", lsvalue: "Value row 1"},
     { lslabel: "Label 2", lsvalue: "Value row 2", id: 123},
@@ -22,53 +107,55 @@ Default.args = {
     { lslabel: "Label 8", lsvalue: "Value row 8"},
     { lslabel: "Label 9", lsvalue: "Value row 9"}
   ],
+  pagination: PAGINATION_TYPE.NONE,
+  currentPage: 1,
+  pageSize: 5,
+  hidePaginatonSize: false,
   listFilter: false,
-  paginationPage: 10,
-  onEdit: undefined,
+  filterPlaceholder: undefined,
+  filterValue: "",
+  labelAdd: "",
+  addIcon: "Plus",
+  editIcon: "Edit",
+  deleteIcon: "Times",
+  style: {},
+  onEdit: null,
   onAddItem: null,
-  onDelete: null
+  onDelete: null,
 }
 
 export const TopPagination = Template.bind({});
 TopPagination.args = {
   ...Default.args,
-  className: "dark",
-  paginationPage: 5,
-  paginationTop: true,
-  paginatonScroll: true,
+  theme: APP_THEME.DARK,
+  pagination: PAGINATION_TYPE.TOP,
+  currentPage: 10,
   hidePaginatonSize: false,
   listFilter: false,
   labelAdd: "Add new",
-  onEdit: undefined,
-  onAddItem: undefined,
-  onDelete: undefined
 }
 
 export const BottomPagination = Template.bind({});
 BottomPagination.args = {
   ...Default.args,
-  paginationPage: 5,
+  pagination: PAGINATION_TYPE.BOTTOM,
   currentPage: 1,
-  paginationTop: false,
-  paginatonScroll: false,
   hidePaginatonSize: true,
   listFilter: true,
   filterPlaceholder: "Placeholder text",
-  onEdit: undefined,
-  onAddItem: undefined,
-  onDelete: undefined,
-  addIcon: <Icon iconKey="User" />,
-  editIcon: <Icon iconKey="Check" />,
-  deleteIcon: <Icon iconKey="Close" />,
+  addIcon: "User",
+  editIcon: "Check",
+  deleteIcon: "Close"
 }
 
 export const Filtered = Template.bind({});
 Filtered.args = {
   ...Default.args,
+  pagination: PAGINATION_TYPE.ALL,
   listFilter: true,
   filterValue: "6",
   labelAdd: "Add new",
   onEdit: undefined,
   onAddItem: undefined,
-  onDelete: undefined
+  onDelete: undefined,
 }

@@ -1,38 +1,45 @@
-import { render, queryByAttribute, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Sample, Dirty } from './Template.stories';
+import './sidebar-template.js';
+import { Template, Default, Sample, Dirty } from  './Template.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('SideBar-Search', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onEvent = jest.fn()
+  it('renders in the Default state', async () => {
+    const onSideEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onSideEvent
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_menu" onEvent={onEvent} />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+    const cmdBack = sideBar.shadowRoot.querySelector('#cmd_back')
+    cmdBack.click()
+    sinon.assert.callCount(onSideEvent, 1);
 
-  const cmd_back = getById(container, 'cmd_back')
-  fireEvent.click(cmd_back)
-  expect(onEvent).toHaveBeenCalledTimes(1);
+  })
 
-})
+  it('renders in the Sample state', async () => {
+    const element = await fixture(Template({
+      ...Sample.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
 
-it('renders in the Sample state', () => {
+  })
 
-  const { container } = render(
-    <Sample {...Sample.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+  it('renders in the Dirty state', async () => {
+    const element = await fixture(Template({
+      ...Dirty.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
 
-})
-
-it('renders in the Dirty state', () => {
-
-  const { container } = render(
-    <Dirty {...Dirty.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+  })
 
 })

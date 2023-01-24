@@ -1,53 +1,60 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Disabled } from './Menu.stories';
+import './modal-menu.js';
+import { Template, Default, Disabled } from  './Menu.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Audit', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onMenu = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const menu = element.querySelector('#menu');
+    expect(menu).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_settings"
-    onMenu={onMenu} onClose={onClose} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const closeIcon = menu.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnCancel = menu.shadowRoot.querySelector('#btn_cancel')
+    btnCancel.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_cancel = getById(container, 'btn_cancel')
-  fireEvent.click(btn_cancel)
-  expect(onClose).toHaveBeenCalledTimes(2);
+    const btnOK = menu.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const btn_ok = getById(container, 'btn_ok')
-  fireEvent.click(btn_ok)
-  expect(onMenu).toHaveBeenCalledTimes(1);
+    const fieldname = menu.shadowRoot.querySelector('#fieldname');
+    fieldname._onInput({ target: { value: "value" } })
+    expect(fieldname.value).to.equal("value");
 
-  const fieldname = getById(container, 'fieldname')
-  fireEvent.change(fieldname, {target: {value: "value"}})
-  expect(fieldname.value).toEqual("value");
+    const description = menu.shadowRoot.querySelector('#description');
+    description._onInput({ target: { value: "value" } })
+    expect(description.value).to.equal("value");
 
-  const description = getById(container, 'description')
-  fireEvent.change(description, {target: {value: "value"}})
-  expect(description.value).toEqual("value");
+    const fieldtype = menu.shadowRoot.querySelector('#fieldtype');
+    fieldtype._onInput({ target: { value: "37" } })
+    expect(fieldtype.value).to.equal("37");
 
-  const fieldtype = getById(container, 'fieldtype')
-  fireEvent.change(fieldtype, {target: {value: "37"}})
-  expect(fieldtype.value).toEqual("37");
+    const orderby = menu.shadowRoot.querySelector('#orderby')
+    orderby._onInput({ target: { valueAsNumber: 123 } })
+    expect(orderby.value).to.equal(123);
 
-  const orderby = getById(container, 'orderby')
-  fireEvent.change(orderby, {target: {value: "12"}})
-  expect(orderby.value).toEqual("12");
+  })
 
-})
+  it('renders in the Disabled state', async () => {
+    const element = await fixture(Template({
+      ...Disabled.args
+    }));
+    const menu = element.querySelector('#menu');
+    expect(menu).to.exist;
 
-it('renders in the Disabled state', () => {
-  const { container } = render(
-    <Disabled {...Disabled.args} id="test_settings" />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+  })
+
 })

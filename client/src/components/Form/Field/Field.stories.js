@@ -1,15 +1,73 @@
-import { Field } from "./Field";
-import { getText, store } from 'config/app';
+import { html } from 'lit';
+
+import '../../StoryContainer/story-container.js';
+import './form-field.js';
+
+import { APP_THEME } from '../../../config/enums.js'
 
 export default {
-  title: "Form/Field",
-  component: Field
-}
+  title: 'Form/Field',
+  component: 'form-field',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    onEdit: {
+      name: "onEdit",
+      description: "onEdit click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onEdit" 
+    },
+    onEvent: {
+      name: "onEvent",
+      description: "onEvent click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onEvent" 
+    },
+    onSelector: {
+      name: "onSelector",
+      description: "onSelector click handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onSelector" 
+    }
+  }
+};
 
-const Template = (args) => <Field {...args} />
+export function Template({ id, theme, 
+  field, values, options, data, style, 
+  onEdit, onEvent, onSelector }) {
+  const component = html`<form-field
+    id="${id}"
+    .field="${field}"
+    .values="${values}"
+    .options="${options}"
+    .data="${data}" 
+    .style="${style}"
+    .onEdit=${onEdit}
+    .onEvent=${onEvent}
+    .onSelector=${onSelector}
+  ></form-field>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "test_field",
+  theme: APP_THEME.LIGHT,
   field: {
     rowtype: "field",
     name: "custname",
@@ -29,17 +87,13 @@ Default.args = {
     current: {}, 
     audit: "all",
   },
-  className: "light",
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key }),
-  onEdit: undefined,
-  onEvent: undefined,
-  onSelector: undefined,
+  style: {}
 }
 
 export const StringMapExtend = Template.bind({});
 StringMapExtend.args = {
   ...Default.args,
-  className: "dark",
+  theme: APP_THEME.DARK,
   field: {
     name: "id",
     label: "Firstname",
@@ -347,12 +401,13 @@ IntegerLinkID.args = {
 export const Button = Template.bind({});
 Button.args = {
   ...Default.args,
+  theme: APP_THEME.DARK,
   field: {
     name: "log_search",
     title: "Search",
     label: "",
     focus: true,
-    class: "full",
+    full: true,
     icon: "Search",
     datatype: "button",
   },
@@ -361,101 +416,7 @@ Button.args = {
     dataset: {}, 
     current: {}, 
     audit: "all",
-  },
-  className: "dark",
-}
-
-export const Link = Template.bind({});
-Link.args = {
-  ...Default.args,
-  field: {
-    name: "id",
-    label: "Reference No.",
-    datatype: "link",
-    map: {
-      source: "translink",
-      value: "ref_id_1",
-      text: "ref_id_2",
-      label_field: "transnumber",
-      lnktype: "trans",
-      transtype: "order",
-    },
-  },
-  values: {
-    id: 5,
-    transtype: 55,
-    direction: 68,
-    transnumber: "DMINV/00001",
-    ref_transnumber: "DMORD/00003",
-  },
-  data: {
-    dataset: {
-      translink: [
-        {
-          deleted: 0,
-          id: 2,
-          nervatype_1: 31,
-          nervatype_2: 31,
-          ref_id_1: 5,
-          ref_id_2: 3,
-          transnumber: "DMORD/00003",
-          transtype: "order",
-        },
-      ]
-    }, 
-    current: {}, 
-    audit: "all",
-  },
-  className: "dark"
-}
-
-export const ValueList = Template.bind({});
-ValueList.args = {
-  ...Default.args,
-  field: {
-    rowtype: "fieldvalue",
-    id: 29,
-    name: "fieldvalue_value",
-    fieldname: "sample_customer_valuelist",
-    value: "yellow",
-    notes: "",
-    label: "Sample valuelist",
-    description: [
-      "blue",
-      "yellow",
-      "white",
-      "brown",
-      "red",
-    ],
-    disabled: false,
-    fieldtype: "valuelist",
-    datatype: "valuelist",
-  },
-  values: {
-    rowtype: "fieldvalue",
-    id: 29,
-    name: "fieldvalue_value",
-    fieldname: "sample_customer_valuelist",
-    value: "yellow",
-    notes: "",
-    label: "Sample valuelist",
-    description: [
-      "blue",
-      "yellow",
-      "white",
-      "brown",
-      "red",
-    ],
-    disabled: false,
-    fieldtype: "valuelist",
-    datatype: "valuelist",
-  },
-  data: {
-    dataset: {}, 
-    current: {}, 
-    audit: "all",
-  },
-  className: "dark"
+  }
 }
 
 export const Selector = Template.bind({});
@@ -636,6 +597,99 @@ SelectorFieldvalue.args = {
   },
 }
 
+export const Link = Template.bind({});
+Link.args = {
+  ...Default.args,
+  theme: APP_THEME.DARK,
+  field: {
+    name: "id",
+    label: "Reference No.",
+    datatype: "link",
+    map: {
+      source: "translink",
+      value: "ref_id_1",
+      text: "ref_id_2",
+      label_field: "transnumber",
+      lnktype: "trans",
+      transtype: "order",
+    },
+  },
+  values: {
+    id: 5,
+    transtype: 55,
+    direction: 68,
+    transnumber: "DMINV/00001",
+    ref_transnumber: "DMORD/00003",
+  },
+  data: {
+    dataset: {
+      translink: [
+        {
+          deleted: 0,
+          id: 2,
+          nervatype_1: 31,
+          nervatype_2: 31,
+          ref_id_1: 5,
+          ref_id_2: 3,
+          transnumber: "DMORD/00003",
+          transtype: "order",
+        },
+      ]
+    }, 
+    current: {}, 
+    audit: "all",
+  }
+}
+
+export const ValueList = Template.bind({});
+ValueList.args = {
+  ...Default.args,
+  theme: APP_THEME.DARK,
+  field: {
+    rowtype: "fieldvalue",
+    id: 29,
+    name: "fieldvalue_value",
+    fieldname: "sample_customer_valuelist",
+    value: "yellow",
+    notes: "",
+    label: "Sample valuelist",
+    description: [
+      "blue",
+      "yellow",
+      "white",
+      "brown",
+      "red",
+    ],
+    disabled: false,
+    fieldtype: "valuelist",
+    datatype: "valuelist",
+  },
+  values: {
+    rowtype: "fieldvalue",
+    id: 29,
+    name: "fieldvalue_value",
+    fieldname: "sample_customer_valuelist",
+    value: "yellow",
+    notes: "",
+    label: "Sample valuelist",
+    description: [
+      "blue",
+      "yellow",
+      "white",
+      "brown",
+      "red",
+    ],
+    disabled: false,
+    fieldtype: "valuelist",
+    datatype: "valuelist",
+  },
+  data: {
+    dataset: {}, 
+    current: {}, 
+    audit: "all",
+  }
+}
+
 export const Select = Template.bind({});
 Select.args = {
   ...Default.args,
@@ -695,7 +749,7 @@ SelectOptions.args = {
     options: [
       [ "", "" ],
       [ "department", "department" ],
-      [ "eventgroup", "eventgroup" ],
+      [ "eventgroup", "transpayment_place" ],
       [ "paidtype", "paidtype" ],
       [ "toolgroup", "toolgroup" ],
       [ "rategroup", "rategroup" ],
@@ -884,7 +938,7 @@ DateTime.args = {
   values: {
     id: 20,
     transtype: 64,
-    duedate: "2020-12-02T00:00:00",
+    duedate: "2020-12-02T18:00:00",
   },
   data: {
     dataset: {}, 

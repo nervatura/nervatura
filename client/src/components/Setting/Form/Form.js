@@ -1,139 +1,137 @@
-import { Fragment } from 'react';
-import PropTypes from 'prop-types';
-import update from 'immutability-helper';
+import { LitElement, html, nothing } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
-import Icon from 'components/Form/Icon'
-import Label from 'components/Form/Label'
-import Table from 'components/Form/Table';
-import Row from 'components/Form/Row';
+import '../../Form/Label/form-label.js'
+import '../../Form/Table/form-table.js'
+import '../../Form/Row/form-row.js'
+import '../../Form/Icon/form-icon.js'
 
-import styles from './Form.module.css';
-import { getSetting } from 'config/app'
+import { styles } from './Form.styles.js'
+import { SETTING_EVENT, PAGINATION_TYPE } from '../../../config/enums.js'
 
-export const Form = ({ 
-  data, className,
-  paginationPage, dateFormat, timeFormat,
-  getText, onEvent,
-  ...props 
-}) => {
-  const { caption, icon, current, audit, dataset, type, view } = data
-  let fields = {}
-  if((typeof current.template.view.items !== "undefined") && (current.form.id !== null)){
-    if(current.template.view.items.actions.edit){
-      fields = update(fields, {$merge: {
-        edit: { columnDef: { 
-          id: "edit",
-          Header: "",
-          headerStyle: {},
-          Cell: ({ row, value }) => {
-            const ecol = <div 
-              className={`${"cell"} ${styles.editCol}`} >
-              <Icon id={"edit_"+row.original["id"]}
-                iconKey="Edit" width={24} height={21.3} 
-                onClick={(event)=>{
-                  event.stopPropagation();
-                  onEvent("setViewActions", [current.template.view.items.actions.edit, row.original])
-                }}
-                className={styles.editCol} />
-            </div>
-            const dcol = (current.template.view.items.actions.delete)?<div 
-              className={`${"cell"} ${styles.deleteCol}`} >
-              <Icon id={"delete_"+row.original["id"]}
-                iconKey="Times" width={19} height={27.6} 
-                onClick={(event)=>{
-                  event.stopPropagation();
-                  onEvent("setViewActions", [current.template.view.items.actions.delete, row.original])
-                }}
-                className={styles.deleteCol} />
-            </div>:null
-            return <Fragment>{ecol}{dcol}</Fragment>
-          },
-          cellStyle: { width: 30, padding: "7px 3px 3px 8px" }
-        }}
-      }})
+export class Form extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.id = Math.random().toString(36).slice(2);
+    this.data = {
+      caption: "",
+      icon: "",
+      current: {},
+      audit: "", 
+      dataset: {},
+      type: "", 
+      view: {},
     }
-    fields = update(fields, {$merge: {...current.template.view.items.fields}})
+    this.paginationPage = 10
+    this.onEvent = {}
   }
-  const editItem = (options) => onEvent("editItem", [options])
-  return (
-    <div {...props} className={`${styles.width800} ${className}`}>
-      <div className={`${styles.panel}`} >
-        <div className={`${styles.panelTitle} ${"primary"}`}>
-          <Label value={caption} 
-            leftIcon={<Icon iconKey={icon} />} iconWidth="20px" />
-        </div>
-        <div className={`${"section"} ${styles.settingPanel}`} >
-          <div className="row full container section-small-bottom" >
-          <Fragment >
-            <div className={`${"border"} ${styles.formPanel}`} >
-              {current.template.rows.map((row, index) =>
-                <Row key={index} row={row} 
-                  values={current.fieldvalue || current.form}
-                  options={current.template.options}
-                  data={{
-                    audit: audit,
-                    current: current,
-                    dataset: dataset
-                  }} 
-                  getText={getText} onEdit={editItem}
-                />
-              )}
-            </div>
-            {(((typeof current.template.view.items !== "undefined") && (current.form.id !== null))
-              || (type === "log"))?
-              <Table rowKey="id"
-                onAddItem={(current.template.view.items && current.template.view.items.actions.new) 
-                  ? ()=>onEvent("setViewActions", [current.template.view.items.actions.new]) : null}
-                labelAdd={getText("label_new")}
-                fields={(type === "log") ? view.fields : fields} 
-                rows={(type === "log") ? view.result : dataset[current.template.view.items.data]} 
-                tableFilter={true}
-                filterPlaceholder={getText("placeholder_filter")}
-                labelYes={getText("label_yes")} labelNo={getText("label_no")}
-                dateFormat={dateFormat} timeFormat={timeFormat} 
-                paginationPage={paginationPage} paginationTop={true}/>:null}
-          </Fragment>
-          </div>
+
+  static get properties() {
+    return {
+      id: { type: String },
+      data: { type: Object },
+      paginationPage: { type: Number },
+      onEvent: { type: Object }
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onSettingEvent(key, data){
+    if(this.onEvent.onSettingEvent){
+      this.onEvent.onSettingEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('setting_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  render() {
+    const { caption, icon, current, audit, dataset, type, view } = this.data
+    let fields = {}
+    if((typeof current.template.view.items !== "undefined") && (current.form.id !== null)){
+      if(current.template.view.items.actions.edit){
+        fields = {...fields,
+          edit: { columnDef: { 
+            id: "edit",
+            Header: "",
+            headerStyle: {},
+            Cell: ({ row }) => {
+              const ecol = html`<form-icon id=${`edit_${row.id}`}
+                iconKey="Edit" width=24 height=21.3
+                .style=${{ cursor: "pointer", fill: "rgb(var(--functional-green))" }}
+                @click=${ (event)=>{
+                  event.stopPropagation();
+                  this._onSettingEvent(SETTING_EVENT.FORM_ACTION , { params: current.template.view.items.actions.edit, row, ref: this })
+                }}
+              ></form-icon>`
+              const dcol = (current.template.view.items.actions.delete) ? html`<form-icon id=${`delete_${row.id}`}
+                  iconKey="Times" width=19 height=27.6
+                  .style=${{ cursor: "pointer", fill: "rgb(var(--functional-red))", 
+                    "margin-left": "8px" }}
+                  @click=${ (event)=>{
+                    event.stopPropagation();
+                    this._onSettingEvent(SETTING_EVENT.FORM_ACTION , { params: current.template.view.items.actions.delete, row })
+                  }}
+                ></form-icon>` : undefined
+              return html`${ecol}${ifDefined(dcol)}`
+            },
+            cellStyle: { width: 30, padding: "4px 3px 3px 8px" }
+          }}
+        }
+      }
+      fields = { ...fields, ...current.template.view.items.fields }
+    }
+    return html`<div class="panel" >
+      <div class="panel-title">
+        <div class="cell">
+          <form-label class="title-cell"
+            value="${caption}" leftIcon="${icon}"
+          ></form-label>
         </div>
       </div>
-    </div>
-  )
+      <div class="section full">
+        <div class="section-row">
+          <div id="${this.id}" class="form-panel" >
+            ${current.template.rows.map((row, index) => html`<form-row
+              id=${`row_${index}`}
+              .row="${row}"
+              .values="${current.fieldvalue || current.form}"
+              .options="${current.template.options}"
+              .data="${{ audit, current, dataset }}"
+              .onEdit=${(data)=>this._onSettingEvent(SETTING_EVENT.EDIT_ITEM, data )}
+              .msg=${this.msg}
+            ></form-row>`)}
+          </div>
+          ${(((typeof current.template.view.items !== "undefined") && (current.form.id !== null))
+            || (type === "log")) ? html`<form-table 
+            id="form_view" rowKey="id"
+            .rows="${(type === "log") ? view.result : dataset[current.template.view.items.data]}"
+            .fields="${(type === "log") ? view.fields : fields}"
+            filterPlaceholder="${this.msg("Filter", { id: "placeholder_filter" })}"
+            labelYes="${this.msg("YES", { id: "label_yes" })}"
+            labelNo="${this.msg("NO", { id: "label_no" })}"
+            pagination="${PAGINATION_TYPE.TOP}"
+            pageSize="${this.paginationPage}"
+            ?tableFilter="${true}"
+            ?hidePaginatonSize="${false}"
+            .onAddItem=${(current.template.view.items && current.template.view.items.actions.new) 
+              ? () => this._onSettingEvent(SETTING_EVENT.FORM_ACTION , { params: current.template.view.items.actions.new } ) : undefined}
+            labelAdd=${this.msg("", { id: "label_new" })}
+          ></form-table>` : nothing }
+        </div>
+      </div>
+    </div>`
+  }
 }
-
-Form.propTypes = {
-  data: PropTypes.shape({
-    caption: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
-    current: PropTypes.object.isRequired,
-    audit: PropTypes.string.isRequired, 
-    dataset: PropTypes.object.isRequired,
-    type: PropTypes.string.isRequired, 
-    view: PropTypes.object.isRequired,
-  }).isRequired,
-  paginationPage: PropTypes.number.isRequired, 
-  dateFormat: PropTypes.string, 
-  timeFormat: PropTypes.string,
-  className: PropTypes.string,
-  onEvent: PropTypes.func,
-  getText: PropTypes.func,
-}
-
-Form.defaultProps = {
-  data: {
-    caption: "",
-    icon: "",
-    current: {},
-    audit: "", 
-    dataset: {},
-    type: "", 
-    view: {},
-  },
-  paginationPage: getSetting("paginationPage"),
-  dateFormat: getSetting("dateFormat"),
-  timeFormat: getSetting("timeFormat"),
-  className: "",
-  onEvent: undefined,
-  getText: undefined,
-}
-
-export default Form;

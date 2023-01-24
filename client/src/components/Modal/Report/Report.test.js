@@ -1,61 +1,66 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Disabled } from './Report.stories';
+import './modal-report.js';
+import { Template, Default, Disabled } from  './Report.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Report', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onOutput = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const report = element.querySelector('#report');
+    expect(report).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_settings"
-    onOutput={onOutput} onClose={onClose} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const closeIcon = report.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnPrint = report.shadowRoot.querySelector('#btn_print')
+    btnPrint.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_print = getById(container, 'btn_print')
-  fireEvent.click(btn_print)
-  expect(onOutput).toHaveBeenCalledTimes(1);
+    const btnPdf = report.shadowRoot.querySelector('#btn_pdf')
+    btnPdf.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const btn_pdf = getById(container, 'btn_pdf')
-  fireEvent.click(btn_pdf)
-  expect(onOutput).toHaveBeenCalledTimes(2);
+    const btnXml = report.shadowRoot.querySelector('#btn_xml')
+    btnXml.click()
+    sinon.assert.callCount(onModalEvent, 4);
 
-  const btn_xml = getById(container, 'btn_xml')
-  fireEvent.click(btn_xml)
-  expect(onOutput).toHaveBeenCalledTimes(3);
+    const btnPrintqueue = report.shadowRoot.querySelector('#btn_printqueue')
+    btnPrintqueue.click()
+    sinon.assert.callCount(onModalEvent, 5);
 
-  const btn_printqueue = getById(container, 'btn_printqueue')
-  fireEvent.click(btn_printqueue)
-  expect(onOutput).toHaveBeenCalledTimes(4);
+    const template = report.shadowRoot.querySelector('#template');
+    template._onInput({ target: { value: "ntr_invoice_fi" } })
+    expect(template.value).to.equal("ntr_invoice_fi");
 
-  const template = getById(container, 'template')
-  fireEvent.change(template, {target: {value: "ntr_invoice_fi"}})
-  expect(template.value).toEqual("ntr_invoice_fi");
+    const orient = report.shadowRoot.querySelector('#orient');
+    orient._onInput({ target: { value: "landscape" } })
+    expect(orient.value).to.equal("landscape");
 
-  const orient = getById(container, 'orient')
-  fireEvent.change(orient, {target: {value: "landscape"}})
-  expect(orient.value).toEqual("landscape");
+    const size = report.shadowRoot.querySelector('#size');
+    size._onInput({ target: { value: "a5" } })
+    expect(size.value).to.equal("a5");
 
-  const size = getById(container, 'size')
-  fireEvent.change(size, {target: {value: "a5"}})
-  expect(size.value).toEqual("a5");
+    const copy = report.shadowRoot.querySelector('#copy');
+    copy._onInput({ target: { valueAsNumber: 12 } })
+    expect(copy.value).to.equal(12);
+  })
 
-  const copy = getById(container, 'copy')
-  fireEvent.change(copy, {target: {value: "2"}})
-  expect(copy.value).toEqual("2");
+  it('renders in the Disabled state', async () => {
+    const element = await fixture(Template({
+      ...Disabled.args
+    }));
+    const report = element.querySelector('#report');
+    expect(report).to.exist;
+  })
 
-})
-
-it('renders in the Disabled state', () => {
-  const { container } = render(
-    <Disabled {...Disabled.args} id="test_settings" />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
 })

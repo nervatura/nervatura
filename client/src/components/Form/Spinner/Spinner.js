@@ -1,28 +1,30 @@
-import styles from './Spinner.module.css';
+import { LitElement, html } from 'lit';
 
-const Loading = () => (
-  <div className={styles.loading}>
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-    <div />
-  </div>
-);
+import { styles } from './Spinner.style.js'
 
-export const Spinner = ({
-  ...props 
-}) => {
-  return (
-    <div {...props} className={styles.modal} >
-      <div className={styles.middle} >
-        <Loading />
+export class Spinner extends LitElement {
+  render() {
+    return html`
+    <div class="modal" >
+      <div class="middle" >
+        <div class="loading">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
       </div>
-    </div>
-    )
+    </div>`;
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
 }
 
-export default Spinner;

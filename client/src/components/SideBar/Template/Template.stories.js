@@ -1,21 +1,57 @@
-import { Template as SideTemplate, SIDE_VISIBILITY } from "./Template";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './sidebar-template.js';
+
+import { SIDE_VISIBILITY, APP_THEME } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "SideBar/Template",
-  component: SideTemplate,
-}
+  title: 'Sidebar/Template',
+  component: 'sidebar-template',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    side: {
+      control: 'select',
+      options: Object.values(SIDE_VISIBILITY),
+    },
+    onSideEvent: {
+      name: "onSideEvent",
+      description: "onSideEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onSideEvent" 
+    },
+  }
+};
 
-const Template = (args) => <SideTemplate {...args} />
+export function Template({ id, side, templateKey, dirty, theme, onSideEvent, msg }) {
+  const component = html`<sidebar-template
+    id="${id}"
+    side="${side}"
+    templateKey="${templateKey}"
+    ?dirty="${dirty}"
+    .onEvent=${{ onSideEvent }}
+    .msg=${msg}
+  ></sidebar-template>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "side_bar",
+  theme: APP_THEME.LIGHT,
   side: SIDE_VISIBILITY.AUTO,
   templateKey: "template",
-  dirty: false, 
-  onEvent: undefined,
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key })
+  dirty: false,
+  msg: (defaultValue, props) => locales.en[props.id] || defaultValue
 }
 
 export const Sample = Template.bind({});

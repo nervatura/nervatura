@@ -1,16 +1,49 @@
-import { Server } from "./Server";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './modal-server.js';
+
+import { APP_THEME } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "Modal/Server",
-  component: Server
-}
+  title: 'Modal/Server',
+  component: 'modal-server',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    onModalEvent: {
+      name: "onModalEvent",
+      description: "onModalEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onModalEvent" 
+    },
+  }
+};
 
-const Template = (args) => <Server {...args} />
+export function Template({ id, cmd, fields, values, theme, onModalEvent, msg }) {
+  const component = html`<modal-server
+    id="${id}"
+    .cmd=${cmd}
+    .fields=${fields}
+    .values=${values}
+    .onEvent=${{ onModalEvent }}
+    .msg=${msg}
+  ></modal-server>`
+  return html`<story-container theme="${theme}" >${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "server",
+  theme: APP_THEME.LIGHT,
   cmd: {
     address: null,
     description: "Server function example",
@@ -46,16 +79,13 @@ Default.args = {
     numberkey: "",
     step: false,
   },
-  className: "light",
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key }),
-  onClose: undefined,
-  onOK: undefined,
+  msg: (defaultValue, props) => locales.en[props.id] || defaultValue
 }
 
 export const DarkServer = Template.bind({});
 DarkServer.args = {
   ...Default.args,
-  className: "dark",
+  theme: APP_THEME.DARK,
   cmd: {
     address: "https://www.google.com",
     description: "Internet URL example",
@@ -82,3 +112,5 @@ DarkServer.args = {
     q: "",
   }
 }
+
+

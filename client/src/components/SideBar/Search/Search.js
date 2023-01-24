@@ -1,143 +1,154 @@
-import PropTypes from 'prop-types';
+import { LitElement, html, nothing } from 'lit';
 
-import styles from './Search.module.css';
+import '../../Form/Button/form-button.js'
 
-import Icon from 'components/Form/Icon'
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
+import { styles } from './Search.styles.js'
+import { SIDE_VISIBILITY, SIDE_EVENT, BUTTON_TYPE, TEXT_ALIGN } from '../../../config/enums.js'
 
-export const SIDE_VISIBILITY = {
-  AUTO: "auto",
-  SHOW: "show",
-  HIDE: "hide"
-}
-
-export const Search = ({ 
-  side, groupKey, auditFilter, className,
-  getText, onEvent,
-  ...props 
-}) => {
-  const groupButton = (key) => {
-    if(key === groupKey){
-      return styles.selectButton
-    }
-    return styles.groupButton
+export class Search extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.side = SIDE_VISIBILITY.AUTO
+    this.groupKey = ""
+    this.auditFilter = {}
   }
-  const searchGroup = (key) => {
+
+  static get properties() {
+    return {
+      side: { type: String, reflect: true },
+      groupKey: { type: String },
+      auditFilter: { type: Object },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onSideEvent(key, data){
+    if(this.onEvent && this.onEvent.onSideEvent){
+      this.onEvent.onSideEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('side_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  getButtonStyle(stype, key) {
+    if(stype === "group"){
+      return { 
+        "text-align": "left", "border-radius": "0", 
+         "color": (key === this.groupKey) ? "rgb(var(--functional-yellow))" : "",
+         "fill": (key === this.groupKey) ? "rgb(var(--functional-yellow))" : "",
+         "border-color": "rgba(var(--accent-1c), 0.2)"
+      }
+    }
+    return { 
+      "text-align": "left", "border-radius": "0",
+      "color": "rgb(var(--functional-blue))",
+      "fill": "rgb(var(--functional-blue))",
+      "border-color": "rgba(var(--accent-1c), 0.2)"
+    }
+  }
+
+  searchGroup(key) {
     return(
-      <div key={key} className="row full">
-        <Button id={"btn_group_"+key}
-          className={`${"full medium"} ${groupButton(key)}`} 
-          onClick={()=>onEvent("changeData", ["group_key", key])}
-          value={<Label value={getText("search_"+key)} 
-            leftIcon={<Icon iconKey="FileText" />} iconWidth="20px" />}
-        />
-        {(groupKey === key)?<div className={`${"row full"} ${styles.panelGroup}`} >
-          <Button id={"btn_view_"+key}
-            className={`${"full medium"} ${styles.panelButton}`} 
-            onClick={()=>onEvent("quickView", [key])}
-            value={<Label value={getText("quick_search")} 
-              leftIcon={<Icon iconKey="Bolt" />} iconWidth="20px" />}
-          />
-          <Button id={"btn_browser_"+key}
-            className={`${"full medium"} ${styles.panelButton}`} 
-            onClick={()=>onEvent("showBrowser", [key])} 
-            value={<Label value={getText("browser_"+key)} 
-              leftIcon={<Icon iconKey="Search" />} iconWidth="20px" />}
-          />
-        </div>:null}
-      </div>
+      html`<div class="row full">
+        <form-button id="${`btn_group_${key}`}" 
+          label="${this.msg(``, { id: `search_${key}` })}"
+          ?full="${true}" align=${TEXT_ALIGN.LEFT}
+          .style="${this.getButtonStyle("group", key)}"
+          icon="FileText" type="${BUTTON_TYPE.PRIMARY}"
+          @click=${()=>this._onSideEvent( SIDE_EVENT.CHANGE, { fieldname: "group_key", value: key } )} 
+        >${this.msg(``, { id: `search_${key}` })}</form-button>
+        ${(this.groupKey === key) ? html`<div class="row full panel-group" >
+          <form-button id="${`btn_view_${key}`}" 
+            label="${this.msg("", { id: "quick_search" })}"
+            ?full="${true}" align=${TEXT_ALIGN.LEFT}
+            .style="${this.getButtonStyle("panel")}"
+            icon="Bolt" type="${BUTTON_TYPE.PRIMARY}"
+            @click=${()=>this._onSideEvent( SIDE_EVENT.QUICK, { value: key } )} 
+          >${this.msg("Quick Search", { id: "quick_search" })}</form-button>
+          <form-button id="${`btn_browser_${key}`}" 
+            label="${this.msg(``, { id: `browser_${key}` })}"
+            ?full="${true}" align=${TEXT_ALIGN.LEFT}
+            .style="${this.getButtonStyle("panel")}"
+            icon="Search" type="${BUTTON_TYPE.PRIMARY}"
+            @click=${()=>this._onSideEvent( SIDE_EVENT.BROWSER, { value: key } )} 
+          >${this.msg(``, { id: `browser_${key}` })}</form-button>
+        </div>` : nothing}
+      </div>`
     )
   }
-  return (
-    <div {...props} 
-      className={`${styles.sidebar} ${((side !== "auto")? side : "")} ${className}`} >
-      {searchGroup("transitem")}
-      {((auditFilter.trans.bank[0]!=="disabled") || (auditFilter.trans.cash[0]!=="disabled"))?
-        searchGroup("transpayment"):null}
-      {((auditFilter.trans.delivery[0]!=="disabled") || (auditFilter.trans.inventory[0]!=="disabled") 
-        || (auditFilter.trans.waybill[0]!=="disabled") || (auditFilter.trans.production[0]!=="disabled")
-        || (auditFilter.trans.formula[0]!=="disabled"))?
-        searchGroup("transmovement"):null}
+
+  render() {
+    return html`<div class="sidebar ${(this.side !== "auto") ? this.side : ""}" >
+      ${this.searchGroup("transitem")}
+      ${((this.auditFilter.trans.bank[0] !== "disabled") || (this.auditFilter.trans.cash[0] !== "disabled"))?
+        this.searchGroup("transpayment") : nothing}
+      ${((this.auditFilter.trans.delivery[0] !== "disabled") || (this.auditFilter.trans.inventory[0] !== "disabled") 
+        || (this.auditFilter.trans.waybill[0] !== "disabled") || (this.auditFilter.trans.production[0] !== "disabled")
+        || (this.auditFilter.trans.formula[0] !== "disabled"))?
+        this.searchGroup("transmovement") : nothing}
       
-      <div className={styles.separator} />
-      {["customer","product","employee","tool","project"].map(key => {
-        if(auditFilter[key][0] !== "disabled") {
-          return searchGroup(key)}
-        return null
+      <hr class="separator" />
+      ${["customer","product","employee","tool","project"].map(key => {
+        if(this.auditFilter[key][0] !== "disabled") {
+          return this.searchGroup(key)}
+        return nothing
       })}
 
-      <div className={styles.separator} />
-      <Button id="btn_report"
-        className={`${"full medium"} ${groupButton("report")}`} 
-        onClick={()=>{
-          onEvent("changeData", ["group_key", "report"]); 
-          onEvent("quickView",["report"])
-        }}
-        value={<Label value={getText("search_report")} 
-          leftIcon={<Icon iconKey="ChartBar" />} iconWidth="20px"  />}
-      />
-      <Button id="btn_office"
-        className={`${"full medium"} ${groupButton("office")}`} 
-        onClick={()=>onEvent("changeData", ["group_key", "office"])} 
-        value={<Label value={getText("search_office")} 
-          leftIcon={<Icon iconKey="Inbox" />} iconWidth="20px"  />}
-      />
-      {(groupKey === "office")?<div className={`${"row full"} ${styles.panelGroup}`} >
-        <Button id="btn_printqueue"
-          className={`${"full medium primary"} ${styles.panelButton}`} 
-          onClick={()=>onEvent("checkEditor", [{ ntype: "printqueue", ttype: null, id: null}])} 
-          value={<Label value={getText("title_printqueue")} 
-            leftIcon={<Icon iconKey="Print" />} iconWidth="20px"  />}
-        />
-        <Button id="btn_rate"
-          className={`${"full medium primary"} ${styles.panelButton}`} 
-          onClick={()=>onEvent("showBrowser",["rate"])} 
-          value={<Label value={getText("title_rate")} 
-            leftIcon={<Icon iconKey="Globe" />} iconWidth="20px"  />}
-        />
-        <Button id="btn_servercmd"
-          className={`${"full medium primary"} ${styles.panelButton}`} 
-          onClick={()=>onEvent("quickView",["servercmd"])} 
-          value={<Label value={getText("title_servercmd")} 
-            leftIcon={<Icon iconKey="Share" />} iconWidth="20px"  />}
-        />
-      </div>:null}
-    </div>
-  )
-}
+      <hr class="separator" />
+      <form-button id="btn_report" 
+        label="${this.msg(``, { id: `search_report` })}"
+        ?full="${true}" align=${TEXT_ALIGN.LEFT}
+        .style="${this.getButtonStyle("group", "report")}"
+        icon="ChartBar" type="${BUTTON_TYPE.PRIMARY}"
+        @click=${()=>{
+          this._onSideEvent( SIDE_EVENT.CHANGE, { fieldname: "group_key", value: "report" } )
+          this._onSideEvent( SIDE_EVENT.QUICK, { value: "report" } )
+        }} 
+      >${this.msg(``, { id: `search_report` })}</form-button>
+      <form-button id="btn_office" 
+        label="${this.msg(``, { id: `search_office` })}"
+        ?full="${true}" align=${TEXT_ALIGN.LEFT}
+        .style="${this.getButtonStyle("group", "office")}"
+        icon="Inbox" type="${BUTTON_TYPE.PRIMARY}"
+        @click=${()=>this._onSideEvent( SIDE_EVENT.CHANGE, { fieldname: "group_key", value: "office" } )} 
+      >${this.msg(``, { id: `search_office` })}</form-button>
+      ${(this.groupKey === "office") ? html`<div class="row full panel-group" >
+        <form-button id="btn_printqueue" 
+          label="${this.msg("", { id: "title_printqueue" })}"
+          ?full="${true}" align=${TEXT_ALIGN.LEFT}
+          .style="${this.getButtonStyle("panel")}"
+          icon="Print" type="${BUTTON_TYPE.PRIMARY}"
+          @click=${()=>this._onSideEvent( SIDE_EVENT.CHECK, { ntype: "printqueue", ttype: null, id: null } )} 
+        >${this.msg("", { id: "title_printqueue" })}</form-button>
+        <form-button id="btn_rate" 
+          label="${this.msg("", { id: "title_rate" })}"
+          ?full="${true}" align=${TEXT_ALIGN.LEFT}
+          .style="${this.getButtonStyle("panel")}"
+          icon="Globe" type="${BUTTON_TYPE.PRIMARY}"
+          @click=${()=>this._onSideEvent( SIDE_EVENT.BROWSER, { value: "rate" } )} 
+        >${this.msg("", { id: "title_rate" })}</form-button>
+        <form-button id="btn_servercmd" 
+          label="${this.msg("", { id: "title_servercmd" })}"
+          ?full="${true}" align=${TEXT_ALIGN.LEFT}
+          .style="${this.getButtonStyle("panel")}"
+          icon="Share" type="${BUTTON_TYPE.PRIMARY}"
+          @click=${()=>this._onSideEvent( SIDE_EVENT.QUICK, { value: "servercmd" } )} 
+        >${this.msg("", { id: "title_servercmd" })}</form-button>
+      </div>` : nothing}
+    </div>`
+  }
 
-Search.propTypes = {
-  /**
-   * SideBar visibility
-   */
-  side: PropTypes.oneOf(Object.values(SIDE_VISIBILITY)).isRequired,
-  /**
-   * Selected menu group
-   */
-  groupKey: PropTypes.string,
-  /**
-   * menu rules 
-   */ 
-  auditFilter: PropTypes.object.isRequired, 
-  className: PropTypes.string, 
-  /**
-   * Menu selection handle
-   */
-  onEvent: PropTypes.func,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
 }
-
-Search.defaultProps = {
-  side: SIDE_VISIBILITY.AUTO,
-  groupKey: "", 
-  auditFilter: {}, 
-  className: "",  
-  onEvent: undefined,
-  getText: undefined,
-}
-
-export default Search;

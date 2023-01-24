@@ -1,115 +1,112 @@
-import { render, queryByAttribute, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, NewItem, NewPayment, NewMovement, NewResource, Document, 
-  DocumentDeleted, DocumentCancellation, DocumentClosed, DocumentReadonly, DocumentNoOptions } from './Edit.stories';
+import './sidebar-edit.js';
+import { Template, Default, NewItem, NewPayment, NewMovement, NewResource, Document, 
+  DocumentDeleted, DocumentCancellation, DocumentClosed, DocumentReadonly, DocumentNoOptions } from  './Edit.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('SideBar-Search', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onEvent = jest.fn()
+  it('renders in the Default state', async () => {
+    const onSideEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onSideEvent
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_menu" onEvent={onEvent} />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+    const stateEdit = sideBar.shadowRoot.querySelector('#state_edit')
+    stateEdit.click()
+    sinon.assert.callCount(onSideEvent, 1);
 
-  const btn_view = getById(container, 'state_edit')
-  fireEvent.click(btn_view)
-  expect(onEvent).toHaveBeenCalledTimes(1);
+    const group = sideBar.shadowRoot.querySelector('#new_transitem_group')
+    group.click()
+    sinon.assert.callCount(onSideEvent, 2);
 
-  const btn_group = getById(container, 'new_transitem_group')
-  fireEvent.click(btn_group)
-  expect(onEvent).toHaveBeenCalledTimes(2);
+  })
 
-})
+  it('renders in the NewItem state', async () => {
+    const element = await fixture(Template({
+      ...NewItem.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-it('renders in the NewItem state', () => {
+  it('renders in the NewPayment state', async () => {
+    const element = await fixture(Template({
+      ...NewPayment.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-  const { container } = render(
-    <NewItem {...NewItem.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+  it('renders in the NewMovement state', async () => {
+    const element = await fixture(Template({
+      ...NewMovement.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-})
+  it('renders in the NewResource state', async () => {
+    const element = await fixture(Template({
+      ...NewResource.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-it('renders in the NewPayment state', () => {
+  it('renders in the Document state', async () => {
+    const element = await fixture(Template({
+      ...Document.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-  const { container } = render(
-    <NewPayment {...NewPayment.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+  it('renders in the DocumentDeleted state', async () => {
+    const element = await fixture(Template({
+      ...DocumentDeleted.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-})
+  it('renders in the DocumentCancellation state', async () => {
+    const element = await fixture(Template({
+      ...DocumentCancellation.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-it('renders in the NewMovement state', () => {
+  it('renders in the DocumentClosed state', async () => {
+    const element = await fixture(Template({
+      ...DocumentClosed.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-  const { container } = render(
-    <NewMovement {...NewMovement.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+  it('renders in the DocumentReadonly state', async () => {
+    const element = await fixture(Template({
+      ...DocumentReadonly.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
-})
-
-it('renders in the NewResource state', () => {
-
-  const { container } = render(
-    <NewResource {...NewResource.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
-
-})
-
-it('renders in the Document state', () => {
-
-  const { container } = render(
-    <Document {...Document.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
-
-})
-
-it('renders in the DocumentDeleted state', () => {
-
-  const { container } = render(
-    <DocumentDeleted {...DocumentDeleted.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
-
-})
-
-it('renders in the DocumentCancellation state', () => {
-
-  const { container } = render(
-    <DocumentCancellation {...DocumentCancellation.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
-
-})
-
-it('renders in the DocumentClosed state', () => {
-
-  const { container } = render(
-    <DocumentClosed {...DocumentClosed.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
-
-})
-
-it('renders in the DocumentReadonly state', () => {
-
-  const { container } = render(
-    <DocumentReadonly {...DocumentReadonly.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
-
-})
-
-it('renders in the DocumentNoOptions state', () => {
-
-  const { container } = render(
-    <DocumentNoOptions {...DocumentNoOptions.args} id="test_menu" />
-  );
-  expect(getById(container, "test_menu")).toBeDefined();
+  it('renders in the DocumentNoOptions state', async () => {
+    const element = await fixture(Template({
+      ...DocumentNoOptions.args
+    }));
+    const sideBar = element.querySelector('#side_bar');
+    expect(sideBar).to.exist;
+  })
 
 })

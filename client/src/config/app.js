@@ -1,55 +1,35 @@
-import update from 'immutability-helper';
+/* c8 ignore start */
+import * as locales from './locales.js';
 
-import packageData from '../../package.json';
-import * as locales from './locales';
+import { APP_MODULE, SIDE_VISIBILITY, APP_THEME } from './enums.js'
 
 const publicHost = "nervatura.github.io"
 const basePath = "/api"
 
-const calendarLocales = [
-  ["de", "German"], ["en", "en"], ["es", "Spanish"], 
-  ["fr", "French"], ["it", "Italian"], ["pt", "Portuguese"], 
-]
-
-export const DECIMAL_SEPARATOR = {
-  POINT: ".",
-  COMMA: ","
-}
+const version = "__VERSION__"
+const serverURL = "__SERVER__"
+// const locales = await import('./locales.js');
 
 // Default read and write application context data
-/* istanbul ignore next */
 export const store = {
   session: {
-    version: packageData.version,
-    locales: locales,
-    serverURL: process.env.REACT_APP_CONFIG,
-    proxy: process.env.REACT_APP_PROXY||"",
+    version,
+    locales,
+    serverURL,
+    proxy: "http://localhost:5000",
     apiPath: "/api",
     engines: ["sqlite", "sqlite3", "mysql", "postgres", "mssql"],
-    service: ["dev", "5.0.6", "5.0.7", "5.0.8", "5.0.9"],
+    service: ["dev", "5.0.9", "5.1.0"],
     helpPage: "https://nervatura.github.io/nervatura/docs/client/"
   },
   ui: {
-    toastTime: 7000,
+    toastTimeout: 4, // sec
     paginationPage: 10,
     selectorPage: 5,
     history: 5,
-    calendar: "en",
-    calendarLocales: calendarLocales,
-    dateFormat: "yyyy-MM-dd",
-    dateStyle: [
-      ["yyyy-MM-dd","yyyy-MM-dd"], 
-      ["dd-MM-yyyy","dd-MM-yyyy"], 
-      ["MM-dd-yyyy","MM-dd-yyyy"]
-    ],
-    timeFormat: "HH:mm",
     timeIntervals: 15,
-    searchSubtract: 3, //months
-    filter_opt_1: [["===","EQUAL"],["==N","IS NULL"],["!==","NOT EQUAL"]],
-    filter_opt_2: [["===","EQUAL"],["==N","IS NULL"],["!==","NOT EQUAL"],[">==",">="],["<==","<="]],
+    searchSubtract: 3, // months
     export_sep: ";",
-    decimal_sep: DECIMAL_SEPARATOR.POINT,
-    separators: Object.keys(DECIMAL_SEPARATOR).map(sep => { return [DECIMAL_SEPARATOR[sep], sep] }),
     page_size: "a4",
     page_orient: "portrait",
     printqueue_mode: [
@@ -88,10 +68,9 @@ export const store = {
     ]
   },
   current: { 
-    home: "search", module: "login", side: "auto",
-    clientWidth: 0,
+    home: APP_MODULE.SEARCH, module: APP_MODULE.LOGIN, side: SIDE_VISIBILITY.AUTO,
     lang: (localStorage.getItem("lang") && locales[localStorage.getItem("lang")]) ? localStorage.getItem("lang") : "en",
-    theme: localStorage.getItem("theme") || "light"
+    theme: localStorage.getItem("theme") || APP_THEME.LIGHT
   },
   login: { 
     username: localStorage.getItem("username") || "",
@@ -107,36 +86,4 @@ export const store = {
   setting: { dirty: false, result: [] },
   template: { dirty: false }, 
   bookmark: { history: null, bookmark: [] }
-}
-
-export const getText = ({locales, lang, key, defaultValue}) => {
-  let value = (defaultValue) ? defaultValue : key
-  if(locales[lang] && locales[lang][key]){
-    value = locales[lang][key]
-  } else if(("en" !== lang) && locales["en"][key]) {
-    value = locales["en"][key]
-  }
-  return value
-}
-
-export const getSetting = (key) => {
-  switch (key) {    
-    case "ui":
-      let values = update({}, {$set: store.ui})
-      for (const ikey in values) {
-        if(localStorage.getItem(ikey)){
-          values[ikey] = localStorage.getItem(ikey)
-        }
-      }
-      return values
-
-    default:
-      return localStorage.getItem(key) || store.ui[key] || "";
-  }
-}
-
-export const formatNumber = (number, digit) => {
-  digit = digit || 2
-  const value = (!isNaN(parseFloat(number))) ? parseFloat(number) : 0
-  return value.toFixed(digit).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }

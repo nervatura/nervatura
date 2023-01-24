@@ -1,7 +1,7 @@
 {
   "name": "nervatura-client",
   "description": "Business Management Application",
-  "version": "5.0.9",
+  "version": "5.1.0",
   "keywords": [
     "business management",
     "open-data",
@@ -28,84 +28,72 @@
   "bugs": {
     "url": "https://github.com/nervatura/nervatura/issues"
   },
+  "files": [
+    "dist"
+  ],
   "homepage": ".",
   "scripts": {
-    "analyze": "source-map-explorer './build/static/js/*.js'",
-    "start": "react-scripts start",
-    "build": "REACT_APP_CONFIG=SERVER BUILD_PATH=../service/pkg/utils/static/client react-scripts build",
-    "build:map": "GENERATE_SOURCEMAP=true REACT_APP_CONFIG=DEV react-scripts build",
-    "build:dev": "REACT_APP_CONFIG=DEV BUILD_PATH=../../nervatura-client/docs react-scripts build",
-    "test": "react-scripts test",
-    "test:coverage": "react-scripts test --coverage --watchAll",
-    "prebuild": "npm run generate-build-meta",
-    "generate-build-meta": "./node_modules/react-clear-cache/bin/cli.js",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "test": "web-test-runner --coverage",
+    "test:watch": "web-test-runner --watch",
+    "storybook": "npm run analyze -- --exclude dist && web-dev-server -c .storybook/server.mjs",
+    "storybook:build": "npm run analyze -- --exclude dist && build-storybook",
+    "build": "rimraf dist && rollup -c rollup.config.mjs --environment APP_CONFIG:SERVER && npm run analyze -- --exclude dist",
+    "build:dev": "rimraf dist && rollup -c rollup.config.mjs --environment APP_CONFIG:DEV && npm run analyze -- --exclude dist",
+    "start:build": "web-dev-server --root-dir dist --app-index index.html --open",
+    "analyze": "cem analyze --litelement",
+    "start": "web-dev-server",
+    "coverage": "web-dev-server --root-dir coverage/lcov-report --port 1234 --open"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
-      }
-    ]
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/{!(service-worker),}.js"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "lit": "^2.6.1"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.5.14",
-    "@storybook/addon-essentials": "^6.5.14",
-    "@storybook/addon-links": "^6.5.14",
-    "@storybook/builder-webpack5": "^6.5.14",
-    "@storybook/manager-webpack5": "^6.5.14",
-    "@storybook/node-logger": "^6.5.14",
-    "@storybook/preset-create-react-app": "^4.1.2",
-    "@storybook/react": "^6.5.14",
-    "@testing-library/jest-dom": "^5.16.5ya",
-    "@testing-library/react": "^12.1.4",
-    "@testing-library/user-event": "^13.5.0",
-    "date-fns": "^2.29.3",
-    "immutability-helper": "^3.1.1",
-    "pell": "^1.0.6",
-    "print-js": "^1.6.0",
-    "react": "^17.0.2",
-    "react-clear-cache": "^1.4.12",
-    "react-dom": "^17.0.2",
-    "react-flatpickr": "^3.10.13",
-    "react-scripts": "5.0.1",
-    "react-table": "^7.8.0",
-    "react-test-renderer": "^17.0.2",
-    "react-toastify": "^9.1.1",
-    "remotedev-react-state": "^0.1.0",
-    "sanitize.css": "^13.0.0",
-    "source-map-explorer": "^2.5.3",
-    "whatwg-fetch": "^3.6.2"
+    "@custom-elements-manifest/analyzer": "^0.6.8",
+    "@open-wc/building-rollup": "^2.2.1",
+    "@open-wc/eslint-config": "^9.2.2",
+    "@open-wc/testing": "^3.1.7",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@web/dev-server": "^0.1.35",
+    "@web/dev-server-storybook": "^0.5.4",
+    "@web/test-runner": "^0.15.0",
+    "deepmerge": "^4.2.2",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-chai-friendly": "^0.7.2",
+    "prettier": "^2.8.3",
+    "rimraf": "^4.1.1",
+    "rollup": "^3.10.1",
+    "rollup-plugin-copy": "^3.4.0",
+    "sinon": "^15.0.1"
   },
-  "files": [
-    "build"
-  ],
-  "dependencies": {}
+  "eslintConfig": {
+    "rules": {
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": true,
+          "packageDir": "./"
+        }
+      ],
+      "no-nested-ternary": "off",
+      "no-case-declarations": "off",
+      "prefer-destructuring": "off",
+      "camelcase": "off",
+      "lit-a11y/click-events-have-key-events": "off",
+      "lit/no-native-attributes": "off"
+    },
+    "plugins": [
+      "chai-friendly"
+    ],
+    "extends": [
+      "@open-wc",
+      "prettier",
+      "plugin:chai-friendly/recommended"
+    ]
+  },
+  "prettier": {
+    "singleQuote": false,
+    "arrowParens": "avoid"
+  },
+  "customElements": "custom-elements.json"
 }

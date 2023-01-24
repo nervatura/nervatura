@@ -1,20 +1,58 @@
-import { Bookmark } from "./Bookmark";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './modal-bookmark.js';
+
+import { APP_THEME, BOOKMARK_VIEW } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "Modal/Bookmark",
-  component: Bookmark
-}
+  title: 'Modal/Bookmark',
+  component: 'modal-bookmark',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    tabView: {
+      control: 'select',
+      options: Object.values(BOOKMARK_VIEW),
+    },
+    onModalEvent: {
+      name: "onModalEvent",
+      description: "onModalEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onModalEvent" 
+    },
+  }
+};
 
-const Template = (args) => <Bookmark {...args} />
+const msg = (defaultValue, props) => locales.en[props.id] || defaultValue
+
+export function Template({ id, bookmark, tabView, theme, onModalEvent }) {
+  const component = html`<modal-bookmark
+    id="${id}"
+    .bookmark="${bookmark}"
+    tabView="${tabView}"
+    .onEvent=${{ 
+      onModalEvent
+    }}
+    .msg=${msg}
+  ></modal-bookmark>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
-  className: "light",
+  id: "bookmark",
+  theme: APP_THEME.LIGHT,
   bookmark: { history: null, bookmark: [] },
-  tabView: "bookmark",
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key }),
+  tabView: BOOKMARK_VIEW.BOOKMARK
 }
 
 export const BookmarkData = Template.bind({});
@@ -74,5 +112,5 @@ BookmarkData.args = {
 export const DarkTheme = Template.bind({});
 DarkTheme.args = {
   ...BookmarkData.args,
-  className: "dark",
+  theme: APP_THEME.DARK,
 }

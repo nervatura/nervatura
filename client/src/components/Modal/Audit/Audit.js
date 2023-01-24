@@ -1,182 +1,168 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html, nothing } from 'lit';
 
-import 'styles/style.css';
-import styles from './Audit.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Select/form-select.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Select from 'components/Form/Select'
-import Icon from 'components/Form/Icon'
+import { styles } from './Audit.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE } from '../../../config/enums.js'
 
-export const Audit = ({
-  idKey, usergroup, nervatype, subtype, inputfilter, supervisor,
-  typeOptions, subtypeOptions, inputfilterOptions, className,
-  getText, onClose, onAudit,
-  ...props 
-}) => {
-  const getSubtype = (ntype, ivalue) => {
-    if(ivalue){
-      return String(ivalue)
-    }
-    const typeName = typeOptions.filter(item => (item.value === ntype))[0].text
-    if(["trans", "report","menu"].includes(typeName)){
-      const stype = subtypeOptions.filter(item => (item.type === typeName))[0]
-      if(stype){
-        return stype.value
-      }
-    }
-    return undefined
+export class Audit extends LitElement {
+  constructor() {
+    super();
+    /* c8 ignore next 1 */
+    this.msg = (defValue) => defValue
+    this.idKey = null
+    this.usergroup = 0
+    this.nervatype = undefined
+    this.subtype = null
+    this.inputfilter = undefined
+    this.supervisor = 0
+    this.typeOptions = []
+    this.subtypeOptions = []
+    this.inputfilterOptions = []
   }
-  const [ state, setState ] = useState({
-    nervatype: String(nervatype),
-    subtype: getSubtype(String(nervatype), subtype),
-    inputfilter: String(inputfilter),
-    supervisor: supervisor
-  })
-  const nervatypeName = typeOptions.filter(item => (item.value === state.nervatype))[0].text
-  const isSubtype = ["trans", "report","menu"].includes(typeOptions.filter(item => (item.value === state.nervatype))[0].text)
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={getText("title_usergroup")} 
-                  leftIcon={<Icon iconKey="Key" />} iconWidth="20px" />
+
+  static get properties() {
+    return {
+      idKey: { type: Object },
+      usergroup: { type: Number },
+      nervatype: { type: Number },
+      subtype: { type: Object },
+      inputfilter: { type: Number },
+      supervisor: { type: Number },
+      typeOptions: { type: Array },
+      subtypeOptions: { type: Array },
+      inputfilterOptions: { type: Array },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  _onValueChange(key, value){
+    this[key] = value
+  }
+  
+  render() {
+    const { 
+      idKey, usergroup, nervatype, subtype, inputfilter, supervisor,
+      typeOptions, subtypeOptions, inputfilterOptions 
+    } = this
+    const nervatypeName = typeOptions.filter(item => (item.value === String(nervatype)))[0].text
+    const isSubtype = ["trans", "report","menu"].includes(typeOptions.filter(item => (item.value === String(nervatype)))[0].text)
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="Key"
+                value="${this.msg("", { id: "title_usergroup" })}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "audit_nervatype" })}" 
+                    ></form-label>
+                  </div>
+                  <form-select id="nervatype" 
+                    label="${this.msg("", {id: "audit_nervatype"})}"
+                    ?disabled="${(idKey)}" ?full="${true}"
+                    .onChange=${(value) => this._onValueChange("nervatype", parseInt(value.value,10)) }
+                    .options=${typeOptions} .isnull="${false}" value="${String(nervatype)}" 
+                  ></form-select>
+                </div>
               </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
+              ${(isSubtype) ? html`<div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "audit_subtype" })}" 
+                    ></form-label>
+                  </div>
+                  <form-select id="subtype" 
+                    label="${this.msg("", {id: "audit_subtype"})}"
+                    .onChange=${(value) => this._onValueChange("subtype", parseInt(value.value,10)) }
+                    .options=${subtypeOptions.filter(item => (item.type === nervatypeName))} 
+                    .isnull="${false}" value="${String(subtype)}" ?full="${true}"
+                  ></form-select>
+                </div>
+              </div>` : nothing}
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "audit_inputfilter" })}" 
+                    ></form-label>
+                  </div>
+                  <form-select id="inputfilter" 
+                    label="${this.msg("", {id: "audit_inputfilter"})}" ?full="${true}"
+                    .onChange=${(value) => this._onValueChange("inputfilter", parseInt(value.value,10)) }
+                    .options=${inputfilterOptions} .isnull="${false}" value="${String(inputfilter)}" 
+                  ></form-select>
+                </div>
+              </div>
+              <div class="section-row" >
+                <div class="cell padding-small" >
+                  <form-label id="supervisor"
+                    value="${this.msg("", { id: "audit_supervisor" })}"
+                    leftIcon="${(supervisor === 1) ? "CheckSquare" : "SquareEmpty"}"
+                    .style=${{ cursor: "pointer" }} .iconStyle=${{ cursor: "pointer" }}
+                    @click=${() => this._onValueChange("supervisor", (supervisor === 1) ? 0 : 1)}
+                  ></form-label>
+                </div>
               </div>
             </div>
           </div>
-          <div className="section-small">
-            <div className="row full container-small section-small">
-              <div className="row full">
-                <div className={`${"cell padding-small"}`} >
-                  <div>
-                    <Label className="bold" value={getText("audit_nervatype")} />
-                  </div>
-                  <Select id="nervatype"
-                    className="full" value={state.nervatype}
-                    disabled={(idKey)?"disabled":""}
-                    onChange={(value)=>setState({ ...state, 
-                      nervatype: value, 
-                      subtype: getSubtype(value,null) 
-                    })}
-                    options={typeOptions} />
-                </div>
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_cancel" icon="Times"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL, {})} 
+                  ?full="${true}" label="${this.msg("", { id: "msg_cancel" })}"
+                >${this.msg("", { id: "msg_cancel" })}</form-button>
               </div>
-            </div>
-            {(isSubtype)?<div className="row full container-small">
-              <div className="row full">
-                <div className={`${"cell padding-small"}`} >
-                  <div>
-                    <Label className="bold" value={getText("audit_subtype")} />
-                  </div>
-                  <Select id="subtype"
-                    className="full" value={state.subtype}
-                    onChange={ (value)=>setState({ ...state, subtype: value }) }
-                    options={subtypeOptions.filter(item => (item.type === nervatypeName))} />
-                </div>
-              </div>
-            </div>:null}
-            <div className="row full container-small">
-              <div className="row full">
-                <div className={`${"cell padding-small"}`} >
-                  <div>
-                    <Label className="bold" value={getText("audit_inputfilter")} />
-                  </div>
-                  <Select id="inputfilter"
-                    className="full" value={state.inputfilter}
-                    onChange={ (value)=>setState({ ...state, inputfilter: value }) }
-                    options={inputfilterOptions} />
-                </div>
-              </div>
-            </div>
-            <div className="row full container-small">
-              <div className="row">
-                <div className={`${"cell padding-small"}`} >
-                  <div id="supervisor"
-                    className={`${"padding-small"} ${styles.reportField}`} 
-                    onClick={ ()=>setState({ ...state, supervisor: (state.supervisor===1)?0:1 })}>
-                    <Label className="bold" value={getText("audit_supervisor")} 
-                      leftIcon={<Icon id={"check_"+state.supervisor} iconKey={(state.supervisor===1)?"CheckSquare":"SquareEmpty"} />} />
-                  </div>
-                </div>
+              <div class="cell padding-small half" >
+                <form-button id="btn_ok" icon="Check"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, { 
+                    value: { id: idKey, usergroup, nervatype, subtype, inputfilter, supervisor } })} 
+                  ?disabled="${(isSubtype && !subtype)}"
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_ok" })}"
+                >${this.msg("", { id: "msg_ok" })}</form-button>
               </div>
             </div>
           </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_cancel"
-                  className={`${"full"} ${styles.closeIcon} `}
-                  onClick={onClose}
-                  value={<Label center value={getText("msg_cancel")} 
-                    leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />}
-                />
-              </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_ok"
-                  className={`${"full primary"}`}
-                  disabled={(isSubtype && !state.subtype)?"disabled":""}
-                  onClick={()=>onAudit({
-                    id: idKey, usergroup: usergroup,
-                    nervatype: parseInt(state.nervatype,10),
-                    subtype: (state.subtype)?parseInt(state.subtype,10):null,
-                    inputfilter: parseInt(state.inputfilter,10),
-                    supervisor: state.supervisor
-                  })}
-                  value={<Label center value={getText("msg_ok")} 
-                    leftIcon={<Icon iconKey="Check" />} iconWidth="20px"  />}
-                />
-              </div>
-            </div>
-          </div> 
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Audit.propTypes = {
-  idKey: PropTypes.number,
-  usergroup: PropTypes.number.isRequired,
-  nervatype: PropTypes.number.isRequired,
-  subtype: PropTypes.number,
-  inputfilter: PropTypes.number.isRequired,
-  supervisor: PropTypes.number.isRequired,
-  typeOptions: PropTypes.array.isRequired, 
-  subtypeOptions: PropTypes.array.isRequired, 
-  inputfilterOptions: PropTypes.array.isRequired,
-  className: PropTypes.string.isRequired,
-  /**
-   * Localization
-   */
-  getText: PropTypes.func,
-  /**
-   * Close form handle (modal style)
-   */ 
-  onClose: PropTypes.func,
-  onAudit: PropTypes.func
-}
-
-Audit.defaultProps = {
-  idKey: null,
-  usergroup: 0,
-  nervatype: undefined,
-  subtype: null,
-  inputfilter: undefined,
-  supervisor: 0,
-  typeOptions: [],
-  subtypeOptions: [],
-  inputfilterOptions: [],
-  className: "",
-  getText: undefined,
-  onClose: undefined,
-  onAudit: undefined
-}
-
-export default Audit;

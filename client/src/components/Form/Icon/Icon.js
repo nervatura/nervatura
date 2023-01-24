@@ -1,37 +1,61 @@
-import PropTypes from 'prop-types';
+import { LitElement, html, css } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
-import Icons from './IconData.json'
+import { IconData } from './IconData.js'
 
-export const ICON_KEY = Object.keys(Icons).sort()
+export class Icon extends LitElement {
+  constructor() {
+    super();
+    this.id = undefined
+    this.iconKey = "ExclamationTriangle"
+    this.width = undefined
+    this.height = undefined
+    this.color = undefined
+    this.style = ""
+  }
 
-export const Icon = ({
-  iconKey, width, height, color,
-  ...props 
-}) => {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox={Icons[iconKey].viewBox}
-      {...props}
-      width={width||Icons[iconKey].width} height={height||Icons[iconKey].height}>
-      <g fill={color}>
-        <path d={Icons[iconKey].path}/>
-      </g>
-    </svg>
-  )
+  static get properties() {
+    return {
+      id: { type: String },
+      iconKey: { 
+        type: String,
+        converter: (value) => {
+          if(!Object.keys(IconData).includes(value)){
+            return Object.keys(IconData)[0]
+          }
+          return value
+        }
+      },
+      width: { type: Number },
+      height: { type: Number },
+      color: { type: String },
+      style: { type: Object },
+    };
+  }
+
+  render() {
+    const style = (typeof(this.style) === "object") 
+      ? styleMap(this.style) : this.style || ""
+    return html`<svg xmlns="http://www.w3.org/2000/svg" 
+      viewBox=${IconData[this.iconKey].viewBox}
+      id="${ifDefined(this.id)}"
+      width=${this.width || IconData[this.iconKey].width} 
+      height=${this.height || IconData[this.iconKey].height}
+      style="${style}">
+    <g fill="${ifDefined(this.color)}">
+      <path d=${IconData[this.iconKey].path}></path>
+    </g>
+  </svg>`;
+  }
+
+  static get styles () {
+    return [
+      css`
+        svg {
+          vertical-align: middle;
+        }
+      `
+    ]
+  }
 }
-
-
-Icon.propTypes = {
-  iconKey: PropTypes.oneOf(ICON_KEY).isRequired,
-  width: PropTypes.number, 
-  height: PropTypes.number, 
-  color: PropTypes.string,
-}
-
-Icon.defaultProps = {
-  iconKey: "ExclamationTriangle",
-  width: undefined, 
-  height: undefined, 
-  color: undefined,
-}
-
-export default Icon;

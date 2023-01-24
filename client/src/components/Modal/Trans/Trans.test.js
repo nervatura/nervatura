@@ -1,85 +1,85 @@
-import { render, fireEvent, queryByAttribute } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon'
 
-import { Default, Order, Worksheet } from './Trans.stories';
+import './modal-trans.js';
+import { Template, Default, Order, Worksheet } from  './Trans.stories.js';
 
-const getById = queryByAttribute.bind(null, 'id');
+describe('Bookmark', () => {
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore();
+  });
 
-it('renders in the Default state', () => {
-  const onCreate = jest.fn()
-  const onClose = jest.fn()
+  it('renders in the Default state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Default.args, onModalEvent
+    }));
+    const trans = element.querySelector('#trans');
+    expect(trans).to.exist;
 
-  const { container } = render(
-    <Default {...Default.args} id="test_settings"
-      onCreate={onCreate} onClose={onClose} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const closeIcon = trans.shadowRoot.querySelector('#closeIcon')
+    closeIcon.click()
+    sinon.assert.callCount(onModalEvent, 1);
 
-  const closeIcon = getById(container, 'closeIcon')
-  fireEvent.click(closeIcon)
-  expect(onClose).toHaveBeenCalledTimes(1);
+    const btnCancel = trans.shadowRoot.querySelector('#btn_cancel')
+    btnCancel.click()
+    sinon.assert.callCount(onModalEvent, 2);
 
-  const btn_cancel = getById(container, 'btn_cancel')
-  fireEvent.click(btn_cancel)
-  expect(onClose).toHaveBeenCalledTimes(2);
+    const btnOK = trans.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 3);
 
-  const btn_create = getById(container, 'btn_create')
-  fireEvent.click(btn_create)
-  expect(onCreate).toHaveBeenCalledTimes(1);
+    const transtype = trans.shadowRoot.querySelector('#transtype');
+    transtype._onInput({ target: { value: "worksheet" } })
+    expect(transtype.value).to.equal("worksheet");
 
-  const transtype = getById(container, 'transtype')
-  fireEvent.change(transtype, {target: {value: "worksheet"}})
-  expect(transtype.value).toEqual("worksheet");
+    const direction = trans.shadowRoot.querySelector('#direction');
+    direction._onInput({ target: { value: "in" } })
+    expect(direction.value).to.equal("in");
+  })
 
-  const direction = getById(container, 'direction')
-  fireEvent.change(direction, {target: {value: "in"}})
-  expect(direction.value).toEqual("in");
+  it('renders in the Order state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Order.args, onModalEvent
+    }));
+    const trans = element.querySelector('#trans');
+    expect(trans).to.exist;
 
-})
+    const transtype = trans.shadowRoot.querySelector('#transtype');
+    transtype._onInput({ target: { value: "receipt" } })
+    expect(transtype.value).to.equal("receipt");
 
-it('renders in the Order state', () => {
-  const onCreate = jest.fn()
+    const refno = trans.shadowRoot.querySelector('#refno')
+    refno.click()
 
-  const { container } = render(
-    <Order {...Order.args} id="test_settings"
-    onCreate={onCreate} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
+    const netto = trans.shadowRoot.querySelector('#netto')
+    netto.click()
+    
+    const from = trans.shadowRoot.querySelector('#from')
+    from.click()
+    
+    const btnOK = trans.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 1);
+  })
 
-  const transtype = getById(container, 'transtype')
-  fireEvent.change(transtype, {target: {value: "receipt"}})
-  expect(transtype.value).toEqual("receipt");
+  it('renders in the Worksheet state', async () => {
+    const onModalEvent = sinon.spy()
+    const element = await fixture(Template({
+      ...Worksheet.args, onModalEvent
+    }));
+    const trans = element.querySelector('#trans');
+    expect(trans).to.exist;
 
-  const refno = getById(container, 'refno')
-  fireEvent.click(refno)
+    const transtype = trans.shadowRoot.querySelector('#transtype');
+    transtype._onInput({ target: { value: "receipt" } })
+    expect(transtype.value).to.equal("receipt");
 
-  const netto = getById(container, 'netto')
-  fireEvent.click(netto)
-
-  const from = getById(container, 'from')
-  fireEvent.click(from)
-
-  const btn_create = getById(container, 'btn_create')
-  fireEvent.click(btn_create)
-  expect(onCreate).toHaveBeenCalledTimes(1);
-
-})
-
-it('renders in the Worksheet state', () => {
-  const onCreate = jest.fn()
-
-  const { container } = render(
-    <Worksheet {...Worksheet.args} id="test_settings"
-    onCreate={onCreate} />
-  );
-  expect(getById(container, 'test_settings')).toBeDefined();
-
-  const transtype = getById(container, 'transtype')
-  fireEvent.change(transtype, {target: {value: "receipt"}})
-  expect(transtype.value).toEqual("receipt");
-
-  const btn_create = getById(container, 'btn_create')
-  fireEvent.click(btn_create)
-  expect(onCreate).toHaveBeenCalledTimes(1);
+    const btnOK = trans.shadowRoot.querySelector('#btn_ok')
+    btnOK.click()
+    sinon.assert.callCount(onModalEvent, 1);
+  })
 
 })

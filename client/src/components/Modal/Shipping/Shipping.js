@@ -1,156 +1,167 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { LitElement, html } from 'lit';
 
-import 'styles/style.css';
-import styles from './Shipping.module.css';
+import '../../Form/Label/form-label.js'
+import '../../Form/Button/form-button.js'
+import '../../Form/Input/form-input.js'
+import '../../Form/NumberInput/form-number.js'
 
-import Label from 'components/Form/Label'
-import Button from 'components/Form/Button'
-import Input from 'components/Form/Input'
-import Icon from 'components/Form/Icon'
+import { styles } from './Shipping.styles.js'
+import { MODAL_EVENT, BUTTON_TYPE, INPUT_TYPE } from '../../../config/enums.js'
 
-export const Shipping = ({
-  partnumber, description, unit, batch_no, qty, className,
-  getText, onClose, onShipping,
-  ...props 
-}) => {
-  const [ state, setState ] = useState({
-    batch_no: batch_no,
-    qty: qty
-  })
-  return(
-    <div className={`${"modal"} ${styles.modal}`} >
-      <div className={`${"dialog"} ${styles.dialog}`} {...props} >
-        <div className={`${styles.panel} ${className}`} >
-          <div className={`${styles.panelTitle} ${"primary"}`}>
-            <div className="row full">
-              <div className="cell">
-                <Label value={getText("shipping_movement_product")} 
-                  leftIcon={<Icon iconKey="Truck" />} iconWidth="20px" />
+export class Shipping extends LitElement {
+  constructor() {
+    super();
+    this.partnumber = ""
+    this.description = ""
+    this.unit = ""
+    this.batch_no = ""
+    this.qty = 0
+  }
+
+  static get properties() {
+    return {
+      partnumber: { type: String },
+      description: { type: String },
+      unit: { type: String },
+      batch_no: { type: String },
+      qty: { type: Number },
+    };
+  }
+
+  static get styles () {
+    return [
+      styles
+    ]
+  }
+
+  _onModalEvent(key, data){
+    if(this.onEvent && this.onEvent.onModalEvent){
+      this.onEvent.onModalEvent({ key, data })
+    }
+    this.dispatchEvent(
+      new CustomEvent('modal_event', {
+        bubbles: true, composed: true,
+        detail: {
+          key, data
+        }
+      })
+    );
+  }
+
+  _onValueChange(key, value){
+    this[key] = value
+  }
+  
+  render() {
+    const { partnumber, description, unit, batch_no, qty } = this
+    return html`<div class="modal">
+      <div class="dialog">
+        <div class="panel">
+          <div class="panel-title">
+            <div class="cell" >
+              <form-label leftIcon="Truck"
+                value="${this.msg("", { id: "shipping_movement_product" })}" 
+                class="title-cell" ></form-label>
+            </div>
+            <div class="cell align-right" >
+              <span id=${`closeIcon`} class="close-icon" 
+                @click="${ ()=>this._onModalEvent(MODAL_EVENT.CANCEL, {}) }">
+                <form-icon iconKey="Times" ></form-icon>
+              </span>
+            </div>
+          </div>
+          <div class="section" >
+            <div class="section-row" >
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "product_partnumber" })}" 
+                    ></form-label>
+                  </div>
+                  <form-input type="${INPUT_TYPE.TEXT}"
+                    label="${this.msg("", { id: "product_partnumber" })}" 
+                    .style=${{ "font-weight": "bold" }}
+                    value="${partnumber}" ?disabled=${true} ?full=${true}
+                  ></form-input>
+                </div>
               </div>
-              <div className={`${"cell align-right"} ${styles.closeIcon}`}>
-                <Icon id="closeIcon" iconKey="Times" onClick={onClose} />
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "product_description" })}" 
+                    ></form-label>
+                  </div>
+                  <form-input type="${INPUT_TYPE.TEXT}"
+                    label="${this.msg("", { id: "product_description" })}" 
+                    value="${description}" ?disabled=${true} ?full=${true}
+                  ></form-input>
+                </div>
+              </div>
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "product_unit" })}" 
+                    ></form-label>
+                  </div>
+                  <form-input type="${INPUT_TYPE.TEXT}"
+                    label="${this.msg("", { id: "product_unit" })}" 
+                    value="${unit}" ?disabled=${true} ?full=${true}
+                  ></form-input>
+                </div>
+              </div>
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "movement_batchnumber" })}" 
+                    ></form-label>
+                  </div>
+                  <form-input id="batch_no" type="${INPUT_TYPE.TEXT}"
+                    label="${this.msg("", { id: "movement_batchnumber" })}"
+                    value="${batch_no}" ?autofocus=${true}
+                    .onChange=${(event) => this._onValueChange("batch_no", event.value)}
+                    ?full=${true}
+                  ></form-input>
+                </div>
+              </div>
+              <div class="row full">
+                <div class="cell padding-small" >
+                  <div>
+                    <form-label
+                      value="${this.msg("", { id: "movement_qty" })}" 
+                    ></form-label>
+                  </div>
+                  <form-number id="qty" 
+                    label="${this.msg("", { id: "movement_qty" })}"
+                    ?integer="${false}" value="${qty}"
+                    .onChange=${(event) => this._onValueChange("qty", event.value)}
+                  ></form-number>
+                </div>
               </div>
             </div>
           </div>
-          <div className="row full container-small section-small">
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" value={getText("product_partnumber")} />
-                </div>
-                <Input className="full" value={partnumber}
-                  disabled="disabled" />
+          <div class="section buttons" >
+            <div class="section-row" >
+              <div class="cell padding-small half" >
+                <form-button id="btn_cancel" icon="Times"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.CANCEL, {})} 
+                  ?full="${true}" label="${this.msg("", { id: "msg_cancel" })}"
+                >${this.msg("", { id: "msg_cancel" })}</form-button>
               </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" value={getText("product_description")} />
-                </div>
-                <Input className="full" value={description}
-                  disabled="disabled" />
-              </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" value={getText("product_unit")} />
-                </div>
-                <Input className="full" value={unit}
-                  disabled="disabled" />
-              </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" value={getText("movement_batchnumber")} />
-                </div>
-                <Input id="batch_no"
-                  className="full" value={state.batch_no} autoFocus={true}
-                  onChange={ (value)=>setState({ ...state, batch_no: value }) } />
-              </div>
-            </div>
-            <div className="row full">
-              <div className={`${"cell padding-small"}`} >
-                <div>
-                  <Label className="bold" value={getText("movement_qty")} />
-                </div>
-                <Input id="qty" className="full align-right" 
-                  value={state.qty} type="number"
-                  onChange={ (value)=>setState({ ...state, qty: value }) } />
+              <div class="cell padding-small half" >
+                <form-button id="btn_ok" icon="Check"
+                  @click=${()=>this._onModalEvent(MODAL_EVENT.OK, { batch_no, qty })} 
+                  type="${BUTTON_TYPE.PRIMARY}" ?full="${true}" 
+                  label="${this.msg("", { id: "msg_ok" })}"
+                >${this.msg("", { id: "msg_ok" })}</form-button>
               </div>
             </div>
           </div>
-          <div className={`${"row full section container-small secondary-title"}`}>
-            <div className={`${"row full"}`}>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_cancel" 
-                  className={`${"full"} ${styles.closeIcon} `}
-                  onClick={ ()=>onClose() } 
-                  value={<Label center value={getText("msg_cancel")} 
-                    leftIcon={<Icon iconKey="Times" />} iconWidth="20px"  />}
-                />
-              </div>
-              <div className={`${"cell padding-small half"}`} >
-                <Button id="btn_ok"
-                  className={`${"full primary"}`}
-                  onClick={ ()=>onShipping(state.batch_no, parseFloat(state.qty)) }
-                  value={<Label center value={getText("msg_ok")} 
-                    leftIcon={<Icon iconKey="Check" />} iconWidth="20px" />}
-                />
-              </div>
-            </div>
-          </div> 
         </div>
       </div>
-    </div>
-  )
+    </div>`
+  }
 }
-
-Shipping.propTypes = {
-  /**
-   * Product public key
-   */
-  partnumber: PropTypes.string.isRequired,
-   /**
-    * Product description
-    */
-  description: PropTypes.string.isRequired,
-  /**
-   * Production unit
-   */
-  unit: PropTypes.string.isRequired,
-  batch_no: PropTypes.string.isRequired,
-  /**
-   * Shipping quantity 
-   */ 
-  qty: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
-   /**
-    * Localization
-    */
-  getText: PropTypes.func,
-   /**
-     * Close form handle (modal style)
-     */ 
-  onClose: PropTypes.func,
-   /**
-    * Shipping handle
-    */
-  onShipping: PropTypes.func
-}
-
-Shipping.defaultProps = {
-  partnumber: "",
-  description: "", 
-  unit: "",
-  batch_no: "", 
-  qty: 0,
-  className: "",
-  getText: undefined,
-  onClose: undefined,
-  onShipping: undefined
-}
-
-export default Shipping;

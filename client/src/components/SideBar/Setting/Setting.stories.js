@@ -1,50 +1,74 @@
-import { Setting, SIDE_VISIBILITY } from "./Setting";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './sidebar-setting.js';
+
+import { SIDE_VISIBILITY, APP_THEME } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "SideBar/Setting",
-  component: Setting,
-}
+  title: 'Sidebar/Setting',
+  component: 'sidebar-setting',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    side: {
+      control: 'select',
+      options: Object.values(SIDE_VISIBILITY),
+    },
+    onSideEvent: {
+      name: "onSideEvent",
+      description: "onSideEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onSideEvent" 
+    },
+  }
+};
 
-const Template = (args) => <Setting {...args} />
+export function Template({ id, side, username, auditFilter, module, theme, onSideEvent, msg }) {
+  const component = html`<sidebar-setting
+    id="${id}"
+    side="${side}"
+    username="${username}"
+    .auditFilter="${auditFilter}"
+    .module="${module}"
+    .onEvent=${{ onSideEvent }}
+    .msg=${msg}
+  ></sidebar-setting>`
+  return html`<story-container theme="${theme}">${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "side_bar",
+  theme: APP_THEME.LIGHT,
   side: SIDE_VISIBILITY.AUTO,
   module: { 
     dirty: false, 
     group_key: "group_admin"
   }, 
   auditFilter: {
-    trans: {
-      offer: ["all", 1],
-      order: ["all", 1],
-      worksheet: ["all", 1],
-      rent: ["all", 1],
-      invoice: ["all", 1],
-      receipt: ["all", 1],
-      bank: ["all", 1],
-      cash: ["all", 1],
-      delivery: ["all", 1],
-      inventory: ["all", 1],
-      waybill: ["all", 1],
-      production: ["all", 1],
-      formula: ["all", 1]
-    },
-    menu: {},
-    report: {},
-    customer: ["all", 1],
-    product: ["all", 1],
-    employee: ["all", 1],
-    tool: ["all", 1],
-    project: ["all", 1],
     setting: ["all", 1],
     audit: ["all", 1]
   },
   username: "admin",
-  onEvent: undefined,
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key })
+  msg: (defaultValue, props) => locales.en[props.id] || defaultValue
+}
+
+export const AdminGroup = Template.bind({});
+AdminGroup.args = {
+  ...Default.args,
+  auditFilter: {
+    setting: ["all", 1],
+    audit: ["disabled", 1]
+  }
 }
 
 export const DatabaseGroup = Template.bind({});

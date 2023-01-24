@@ -1,16 +1,52 @@
-import { View } from "./View";
+import { html } from 'lit';
 
-import { getText, store } from 'config/app';
+import '../../StoryContainer/story-container.js';
+import './setting-view.js';
+
+import { APP_THEME } from '../../../config/enums.js'
+import * as locales from '../../../config/locales.js';
 
 export default {
-  title: "Setting/View",
-  component: View,
-}
+  title: 'Setting/View',
+  component: 'setting-view',
+  excludeStories: ['Template'],
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: Object.values(APP_THEME),
+    },
+    onSettingEvent: {
+      name: "onSettingEvent",
+      description: "onSettingEvent handler",
+      table: {
+        type: { 
+          summary: "func", 
+        },
+      },
+      action: "onSettingEvent" 
+    }
+  }
+};
 
-const Template = (args) => <View {...args} />
+const msg = (defaultValue, props) => locales.en[props.id] || defaultValue
+
+export function Template({ 
+  id, data, paginationPage, theme, onSettingEvent
+}) {
+  const component = html`<setting-view
+    id="${id}"
+    .data="${data}"
+    paginationPage="${paginationPage}"
+    .onEvent=${{ onSettingEvent }}
+    .msg=${msg}
+  ></setting-view>`
+  return html`<story-container theme="${theme}" >${component}</story-container>`;
+}
 
 export const Default = Template.bind({});
 Default.args = {
+  id: "setting_view",
+  theme: APP_THEME.LIGHT,
   data: {
     caption: "DEFAULT SETTINGS",
     icon: "Cog",
@@ -35,10 +71,7 @@ Default.args = {
     },
     page: 0
   },
-  paginationPage: 3,
-  className: "light",
-  onEvent: undefined,
-  getText: (key)=>getText({ locales: store.session.locales, lang: "en", key: key })
+  paginationPage: 3
 }
 
 export const Table = Template.bind({});
@@ -85,5 +118,6 @@ ReadOnlyTable.args = {
   data: {
     ...Table.args.data,
     actions: {}
-  }
+  },
+  paginationPage: 1
 }
