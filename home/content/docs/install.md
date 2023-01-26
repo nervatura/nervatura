@@ -50,13 +50,33 @@ $ winget install --id Nervatura.Nervatura --source winget
 
 [Linux and Windows](https://github.com/nervatura/nervatura/releases)
 
-### Other platforms
+### Other platforms and custom build
 ```
 $ git clone https://github.com/nervatura/nervatura.git
 $ cd nervatura/service
-$ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
-  go build -tags "$(TAGS)" -ldflags="-w -s -X main.Version=$(VERSION)" \
-  -o $(APP_NAME) main.go
+```
+
+Build command:
+
+`
+CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) go build -tags "$(TAGS)" -ldflags="-w -s -X main.Version=$(VERSION)" -o nervatura main.go
+`
+
+- `$(OS_NAME)` and `$(ARCH_NAME)`
+
+You can see the list of supported platform by running:
+```
+$ go tool dist list
+```
+- `$(TAGS)` optional modul list: ***all, http, grpc, postgres, mysql, sqlite***
+- `$(VERSION)` application version
+
+Example:
+
+```
+$ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+  go build -tags "http postgres" -ldflags="-w -s -X main.Version=5.1.0" \
+  -o nervatura main.go
 ```
 See more: [Building Applications in GoLang](https://golangdocs.com/building-applications-in-golang)
 

@@ -19,9 +19,3 @@ The file’s field (column) separator when the data is exported. The first line 
 
 ### Default paper size
 [**DATA EXPORT**](/docs/client/program/export) REPORT PREVIEW, PDF EXPORT and [**REPORT QUEUE**](/docs/client/program/printqueue) SERVER PRINT. Default value: A4
-
-### Date representation
-Defaut value: yyyy-MM-dd (ISO date format)
-
-### Calendar location
-Default value: English

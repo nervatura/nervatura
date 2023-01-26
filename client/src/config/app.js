@@ -19,7 +19,7 @@ export const store = {
     proxy: "http://localhost:5000",
     apiPath: "/api",
     engines: ["sqlite", "sqlite3", "mysql", "postgres", "mssql"],
-    service: ["dev", "5.0.9", "5.1.0"],
+    service: ["dev", "5.0.9", "5.1.0", "5.1.1"],
     helpPage: "https://nervatura.github.io/nervatura/docs/client/"
   },
   ui: {

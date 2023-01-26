@@ -23,25 +23,16 @@ require (
 	google.golang.org/genproto v0.0.0-20230123190316-2c411cf9d197 // indirect
 	google.golang.org/grpc v1.52.0
 	google.golang.org/protobuf v1.28.1
-	modernc.org/cc/v3 v3.40.0 // indirect
-	modernc.org/ccgo/v3 v3.16.13 // indirect
 	modernc.org/libc v1.22.2 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
 	modernc.org/memory v1.5.0 // indirect
-	modernc.org/sqlite v1.20.3
-	modernc.org/strutil v1.1.3 // indirect
+	modernc.org/sqlite v1.20.3 // indirect
 )
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20220927061507-ef77025ab5aa // indirect
-	golang.org/x/mod v0.7.0 // indirect
-	golang.org/x/tools v0.5.0 // indirect
-	lukechampine.com/uint128 v1.2.0 // indirect
-	modernc.org/opt v0.1.3 // indirect
-	modernc.org/token v1.1.0 // indirect
 )
 
 require (
@@ -49,4 +40,7 @@ require (
 	github.com/mcuadros/go-version v0.0.0-20190830083331-035f6764e8d2
 )
 
-require github.com/dustin/go-humanize v1.0.1 // indirect
+require (
+	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/glebarez/go-sqlite v1.20.0
+)

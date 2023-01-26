@@ -808,7 +808,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#nodejs-npm">Node.js <strong>NPM</strong></a></li>
             <li><a href="#winget-windows-package-manager"><strong>Winget</strong> (Windows Package Manager)</a></li>
             <li><a href="#prebuild-binaries">Prebuild binaries</a></li>
-            <li><a href="#other-platforms">Other platforms</a></li>
+            <li><a href="#other-platforms-and-custom-build">Other platforms and custom build</a></li>
           </ul>
         </li>
         <li><a href="#configuration-options">Configuration Options</a></li>
@@ -863,15 +863,27 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <p>
   <a href="https://github.com/nervatura/nervatura/releases">Linux and Windows</a></p>
-<h3 id="other-platforms">
-  Other platforms
-  <a class="anchor" href="#other-platforms">#</a>
+<h3 id="other-platforms-and-custom-build">
+  Other platforms and custom build
+  <a class="anchor" href="#other-platforms-and-custom-build">#</a>
 </h3>
 <pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura.git
 $ cd nervatura/service
-$ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
-  go build -tags &quot;$(TAGS)&quot; -ldflags=&quot;-w -s -X main.Version=$(VERSION)&quot; \
-  -o $(APP_NAME) main.go
+</code></pre><p>Build command:</p>
+<p><code>CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) go build -tags &quot;$(TAGS)&quot; -ldflags=&quot;-w -s -X main.Version=$(VERSION)&quot; -o nervatura main.go</code></p>
+<ul>
+<li><code>$(OS_NAME)</code> and <code>$(ARCH_NAME)</code></li>
+</ul>
+<p>You can see the list of supported platform by running:</p>
+<pre tabindex="0"><code>$ go tool dist list
+</code></pre><ul>
+<li><code>$(TAGS)</code> optional modul list: <em><strong>all, http, grpc, postgres, mysql, sqlite</strong></em></li>
+<li><code>$(VERSION)</code> application version</li>
+</ul>
+<p>Example:</p>
+<pre tabindex="0"><code>$ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+  go build -tags &quot;http postgres&quot; -ldflags=&quot;-w -s -X main.Version=5.1.0&quot; \
+  -o nervatura main.go
 </code></pre><p>See more: 
   <a href="https://golangdocs.com/building-applications-in-golang">Building Applications in GoLang</a></p>
 <h2 id="configuration-options">
@@ -930,7 +942,7 @@ $ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \
             <li><a href="#nodejs-npm">Node.js <strong>NPM</strong></a></li>
             <li><a href="#winget-windows-package-manager"><strong>Winget</strong> (Windows Package Manager)</a></li>
             <li><a href="#prebuild-binaries">Prebuild binaries</a></li>
-            <li><a href="#other-platforms">Other platforms</a></li>
+            <li><a href="#other-platforms-and-custom-build">Other platforms and custom build</a></li>
           </ul>
         </li>
         <li><a href="#configuration-options">Configuration Options</a></li>
