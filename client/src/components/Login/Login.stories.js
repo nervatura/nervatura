@@ -58,7 +58,7 @@ Default.args = {
   data: {
     username: "admin",
     database: "demo",
-    server: "http://localhost:5000"
+    server: "http://localhost:5001"
   },
   locales: {
     en:{en: "English"}, jp:{"jp": "日本語"} , au:{}
@@ -73,6 +73,6 @@ DarkServer.args = {
   data: {
     username: "admin",
     database: "",
-    server: "http://localhost:5000"
+    server: "http://localhost:5001"
   },
 }

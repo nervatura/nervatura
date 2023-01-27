@@ -629,7 +629,7 @@ export class SearchController {
                 /* c8 ignore start */
                 if((server === "") && options.cmd.funcname && (options.cmd.funcname !== "")){
                   server = (session.serverURL === "SERVER")?
-                    `${session.proxy+session.apiPath}/${options.cmd.funcname}` : 
+                    `${session.apiPath}/${options.cmd.funcname}` : 
                     `${login.server}/${options.cmd.funcname}`
                 }
                 if (server!=="") {

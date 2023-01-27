@@ -1,6 +1,8 @@
 ## 5.1.1
+- client: proxy url bug fixes
 - docs: upgrade to 5.1
 - service: sqlite driver change
+- example: node.js, golang upgrade
 
 ## 5.1.0
 - client-component: replace react client with web components. It is 40% smaller, faster and contains no external dependencies

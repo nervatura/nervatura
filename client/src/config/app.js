@@ -16,7 +16,6 @@ export const store = {
     version,
     locales,
     serverURL,
-    proxy: "http://localhost:5000",
     apiPath: "/api",
     engines: ["sqlite", "sqlite3", "mysql", "postgres", "mssql"],
     service: ["dev", "5.0.9", "5.1.0", "5.1.1"],

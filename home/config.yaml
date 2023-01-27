@@ -53,6 +53,12 @@ menu:
 
 params:
   DonateId: SULBGMAACJWLU
+  VideoS1: https://youtu.be/RX7aWudeZ0Q
+  VideoP1: https://youtu.be/mhofR2M1J3s
+  VideoP2: https://youtu.be/-z37tGzE9FE
+  VideoP2E1: https://youtu.be/G3iEqjlYKdQ
+  VideoP2E2: https://youtu.be/B6ICw5hk5-s
+  VideoP2E3: https://youtu.be/9JtacaZPX0U
 
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences

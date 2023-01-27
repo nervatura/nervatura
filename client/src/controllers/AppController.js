@@ -405,7 +405,7 @@ export class AppController {
         })
       }
       let url = (data.session.serverURL === "SERVER")?
-        data.session.proxy+data.session.apiPath+path : data.login.server+path
+        data.session.apiPath+path : data.login.server+path
       const token = (data.login.data) ? data.login.data.token : options.token || ""
       if (!options.headers)
         options = {

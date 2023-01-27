@@ -6,9 +6,8 @@ bookSideMenu: true
 bookToC: false
 ---
 <div class="row" style="paddin-top:32px;padding-bottom:16px;">
-  <a href="https://youtu.be/RX7aWudeZ0Q" target="_blank" rel="noopener noreferrer"
-     title="Nervatura video" >
-    <img alt="Nervatura video" src="/images/video_s1.jpg"
+  <a href="{{< param VideoS1 >}}" target="_blank" rel="noopener noreferrer">
+    <img alt="Move on to Open-data by Nervatura!" src="/images/video_s1.jpg"
       style="display:block;margin-left:auto;margin-right:auto;" />
   </a>
 </div>
