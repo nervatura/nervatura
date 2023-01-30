@@ -1,4 +1,4 @@
-import{i as t,s as e,y as i,b as o}from"./4e7ea0c6.js";import{l,a as s}from"./81d721ef.js";import{T as n,I as a}from"./c1c25c6b.js";const r=t`
+import{i as t,s as e,y as i,b as o}from"./4e7ea0c6.js";import{l,a as s}from"./81d721ef.js";import{T as n,I as a}from"./52a11ade.js";const r=t`
 button {
   font-family: var(--font-family);
   font-size: var(--font-size);

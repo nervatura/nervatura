@@ -29,8 +29,7 @@ var testData = struct {
 	tokenKey:     "TEST_TOKEN_KEY",
 	apiKey:       "TEST_API_KEY",
 	testDatabase: "sqlite://file::memory:?cache=shared",
-	//testDatabase: "postgres://postgres:admin@172.19.0.1:5432/nervatura?sslmode=disable",
-	//testDatabase: "mysql://root:admin@tcp(localhost:3306)/nervatura",
+	//testDatabase: "postgres://postgres:admin@172.25.0.1:5432/nervatura?sslmode=disable",
 	encodeData: func(data interface{}) string {
 		jdata, _ := json.Marshal(data)
 		return string(jdata)

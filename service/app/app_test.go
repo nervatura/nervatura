@@ -13,8 +13,7 @@ import (
 
 const testDatabase = "sqlite://file::memory:?cache=shared"
 
-//const testDatabase = "postgres://postgres:admin@172.19.0.1:5432/nervatura?sslmode=disable"
-//const testDatabase = "mysql://root:admin@tcp(localhost:3306)/nervatura"
+// const testDatabase = "postgres://postgres:admin@172.25.0.1:5432/nervatura?sslmode=disable"
 
 type testServer struct {
 	app    *App

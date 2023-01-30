@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/alexedwards/argon2id"
-	ver "github.com/mcuadros/go-version"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
@@ -111,14 +110,16 @@ func (api *API) checkVersion() (err error) {
 				}})
 				return err
 			},
-			"5.0.5": func() error {
-				_, err = api.NStore.ds.QuerySQL(`delete from fieldvalue where id not in(
-					select min(id) from fieldvalue group by fieldname, ref_id) and fieldname 
-					in('trans_transcast','trans_custinvoice_compname','trans_custinvoice_comptax',
-					'trans_custinvoice_compaddress','trans_custinvoice_custname','trans_custinvoice_custtax',
-					'trans_custinvoice_custaddress')`, []interface{}{}, nil)
-				return err
-			},
+			/*
+				"5.0.5": func() error {
+					_, err = api.NStore.ds.QuerySQL(`delete from fieldvalue where id not in(
+						select min(id) from fieldvalue group by fieldname, ref_id) and fieldname
+						in('trans_transcast','trans_custinvoice_compname','trans_custinvoice_comptax',
+						'trans_custinvoice_compaddress','trans_custinvoice_custname','trans_custinvoice_custtax',
+						'trans_custinvoice_custaddress')`, []interface{}{}, nil)
+					return err
+				},
+			*/
 		}
 		return verUpdate[dbVersion]()
 	}
@@ -135,12 +136,14 @@ func (api *API) checkVersion() (err error) {
 	if len(result) == 0 {
 		return dbsUpdate("")
 	}
-	if ut.ToString(result[0]["value"], "") == "dev" {
+	if ut.ToString(result[0]["value"], "") == "dev" || ut.ToString(result[0]["value"], "") == "test" {
 		return nil
 	}
-	if ver.Compare(ut.ToString(result[0]["value"], ""), "5.0.5", "<") {
-		return dbsUpdate("5.0.5")
-	}
+	/*
+		if ver.Compare(ut.ToString(result[0]["value"], ""), "5.0.5", "<") {
+			return dbsUpdate("5.0.5")
+		}
+	*/
 	return nil
 }
 

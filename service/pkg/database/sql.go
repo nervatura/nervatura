@@ -26,19 +26,19 @@ func registerDriver(name string) {
 	}
 }
 
-//IM is a map[string]interface{} type short alias
+// IM is a map[string]interface{} type short alias
 type IM = map[string]interface{}
 
-//IL is a []interface{} type short alias
+// IL is a []interface{} type short alias
 type IL = []interface{}
 
-//SM is a map[string]string type short alias
+// SM is a map[string]string type short alias
 type SM = map[string]string
 
-//SL is a []string type short alias
+// SL is a []string type short alias
 type SL = []string
 
-//SQLDriver a go database/sql DataDriver
+// SQLDriver a go database/sql DataDriver
 type SQLDriver struct {
 	alias   string
 	connStr string
@@ -220,12 +220,12 @@ func getRefID(refID IM, value interface{}) interface{} {
 
 }
 
-//Properties - DataDriver features
+// Properties - DataDriver features
 func (ds *SQLDriver) Properties() struct{ SQL, Transaction bool } {
 	return struct{ SQL, Transaction bool }{SQL: true, Transaction: true}
 }
 
-//Connection - returns the database connection
+// Connection - returns the database connection
 func (ds *SQLDriver) Connection() struct {
 	Alias     string
 	Connected bool
@@ -242,7 +242,7 @@ func (ds *SQLDriver) Connection() struct {
 	}
 }
 
-//CreateConnection create a new database connection
+// CreateConnection create a new database connection
 func (ds *SQLDriver) CreateConnection(alias, connStr string) error {
 	if ds.db != nil {
 		if err := ds.db.Close(); err != nil {
@@ -255,6 +255,9 @@ func (ds *SQLDriver) CreateConnection(alias, connStr string) error {
 	}
 	if engine == "mysql" {
 		connStr = strings.TrimPrefix(connStr, engine+"://")
+	}
+	if engine == "mssql" {
+		connStr = strings.ReplaceAll(connStr, "mssql", "sqlserver")
 	}
 	db, err := sql.Open(engine, connStr)
 	if err != nil {
@@ -342,7 +345,7 @@ func (ds *SQLDriver) tableName(name string) string {
 	return name
 }
 
-//dropData - drop all tables if exist
+// dropData - drop all tables if exist
 func (ds *SQLDriver) dropData(logData []SM) ([]SM, error) {
 
 	trans, err := ds.db.Begin()
@@ -362,12 +365,7 @@ func (ds *SQLDriver) dropData(logData []SM) ([]SM, error) {
 
 	dropList = append(dropList, ut.ToString(os.Getenv("NT_HASHTABLE"), "ref17890714"))
 	for index := 0; index < len(dropList); index++ {
-		sqlString := ""
-		if ds.engine == "mssql" {
-			sqlString = "DROP TABLE " + dropList[index] + ";"
-		} else {
-			sqlString = "DROP TABLE IF EXISTS " + ds.tableName(dropList[index]) + ";"
-		}
+		sqlString := "DROP TABLE IF EXISTS " + ds.tableName(dropList[index]) + ";"
 		if _, err := trans.Exec(sqlString); err != nil {
 			logData = append(logData, SM{
 				"stamp":   time.Now().Format(nt.TimeLayout),
@@ -416,7 +414,7 @@ func (ds *SQLDriver) createTableFields(sqlString, fieldname, indexName string, f
 	return sqlString
 }
 
-//createTable - create all tables
+// createTable - create all tables
 func (ds *SQLDriver) createTable(logData []SM, trans *sql.Tx) ([]SM, error) {
 
 	logData = append(logData, SM{
@@ -704,7 +702,7 @@ func (ds *SQLDriver) decodeSQL(queries []nt.Query) (string, []interface{}) {
 	return strings.Trim(sqlString, " "), params
 }
 
-//Query is a basic nosql friendly queries the database
+// Query is a basic nosql friendly queries the database
 func (ds *SQLDriver) Query(queries []nt.Query, trans interface{}) ([]IM, error) {
 	sqlString, params := ds.decodeSQL(queries)
 	return ds.QuerySQL(sqlString, params, trans)
@@ -778,7 +776,7 @@ func getQueryRowValue(value interface{}, dbtype string) interface{} {
 	return value
 }
 
-//QuerySQL executes a SQL query
+// QuerySQL executes a SQL query
 func (ds *SQLDriver) QuerySQL(sqlString string, params []interface{}, trans interface{}) ([]IM, error) {
 	result := make([]IM, 0)
 	var rows *sql.Rows
@@ -846,7 +844,7 @@ func (ds *SQLDriver) lastInsertID(model string, result sql.Result, trans interfa
 	return resid, nil
 }
 
-//Update is a basic nosql friendly update/insert/delete and returns the update/insert id
+// Update is a basic nosql friendly update/insert/delete and returns the update/insert id
 func (ds *SQLDriver) Update(options nt.Update) (int64, error) {
 	sqlString := ""
 	id := options.IDKey
@@ -897,12 +895,12 @@ func (ds *SQLDriver) Update(options nt.Update) (int64, error) {
 	return id, nil
 }
 
-//BeginTransaction begins a transaction and returns an *sql.Tx
+// BeginTransaction begins a transaction and returns an *sql.Tx
 func (ds *SQLDriver) BeginTransaction() (interface{}, error) {
 	return ds.db.Begin()
 }
 
-//CommitTransaction commit a *sql.Tx transaction
+// CommitTransaction commit a *sql.Tx transaction
 func (ds *SQLDriver) CommitTransaction(trans interface{}) error {
 	switch trans.(type) {
 	case *sql.Tx:
@@ -912,7 +910,7 @@ func (ds *SQLDriver) CommitTransaction(trans interface{}) error {
 	return trans.(*sql.Tx).Commit()
 }
 
-//RollbackTransaction rollback a *sql.Tx transaction
+// RollbackTransaction rollback a *sql.Tx transaction
 func (ds *SQLDriver) RollbackTransaction(trans interface{}) error {
 	switch trans.(type) {
 	case *sql.Tx:
@@ -1754,7 +1752,7 @@ func (ds *SQLDriver) getIntegrity(options IM) (string, IL, error) {
 	return sqlString, params, errors.New(ut.GetMessage("integrity_error"))
 }
 
-//QueryKey - complex data queries
+// QueryKey - complex data queries
 func (ds *SQLDriver) QueryKey(options IM, trans interface{}) (result []IM, err error) {
 	result = []IM{}
 	sqlString := ""

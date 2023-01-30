@@ -11,10 +11,10 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/database/</guid>
-      <description>Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database
-Supported database adapters: sqlite3, postgres, mysql
+      <description>Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database
+Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
- NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:admin@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:admin@localhost:3306/nervatura  Create a new database:
+ NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura  Create a new database:
 $ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;quot;{\&amp;quot;database\&amp;quot;:\&amp;quot;[your_lowercase_alias_name]\&amp;quot;,\&amp;quot;demo\&amp;quot;:false}&amp;quot; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name

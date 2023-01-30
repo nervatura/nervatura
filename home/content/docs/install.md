@@ -68,7 +68,7 @@ You can see the list of supported platform by running:
 ```
 $ go tool dist list
 ```
-- `$(TAGS)` optional modul list: ***all, http, grpc, postgres, mysql, sqlite***
+- `$(TAGS)` optional modul list: ***all, http, grpc, postgres, mysql, mssql, sqlite***
 - `$(VERSION)` application version
 
 Example:

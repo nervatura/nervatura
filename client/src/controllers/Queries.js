@@ -49,8 +49,8 @@ export const Queries = (app) => {
           select:["{CCS}'customer'{SEP}'//'{SEP} {CAS_TEXT}c.id {CAE_TEXT}{CCE} as id","c.id as row_id",
             "c.custnumber","c.custname","case when mst.msg is null then tg.groupvalue else mst.msg end as custtype",
             "c.taxnumber","c.account","c.notax",
-            "{FMS_FLOAT}c.terms{FME_FLOAT} as terms","c.terms as export_terms",
-            "{FMS_FLOAT}c.creditlimit{FME_FLOAT} as creditlimit","c.creditlimit as export_creditlimit",
+            "c.terms as terms","c.terms as export_terms",
+            "c.creditlimit as creditlimit","c.creditlimit as export_creditlimit",
             "c.discount","c.notes","c.inactive",
             "{CCS}case when addr.city is null then '' else addr.city end {SEP} ' ' {SEP} case when addr.street is null then '' else addr.street end{CCE} as address"],
           from:"customer c",
@@ -83,7 +83,7 @@ export const Queries = (app) => {
             "fv.fieldname", "c.custnumber", "c.custname", "df.description as fielddef", "'fieldvalue' as form", "fg.groupvalue as fieldtype",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -341,7 +341,7 @@ export const Queries = (app) => {
             "e.empnumber", "c.firstname", "c.surname", "e.username", "df.description as fielddef", "'fieldvalue' as form", "fg.groupvalue as fieldtype",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -507,7 +507,7 @@ export const Queries = (app) => {
             "p.partnumber","p.description","df.description as fielddef","'fieldvalue' as form", "fg.groupvalue as fieldtype",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -575,7 +575,7 @@ export const Queries = (app) => {
           select:["{CCS}'product'{SEP}'//'{SEP} {CAS_TEXT}p.id {CAE_TEXT}{CCE} as id","b.id as row_id",
             "p.partnumber","p.description as partname","p.unit","b.code as barcode",
             "b.description","g.description as barcodetype",
-            "{FMS_FLOAT}b.qty{FME_FLOAT} as qty","b.qty as export_qty",
+            "b.qty as qty","b.qty as export_qty",
             "b.defcode as defcode",
             "'barcode' as form","b.id as form_id"],
           from:"barcode b", 
@@ -613,7 +613,7 @@ export const Queries = (app) => {
             "p.partnumber","p.description","p.unit","pr.vendorprice as vendor","c.custname",
             "{FMS_DATE}pr.validfrom {FME_DATE} as validfrom","{FMS_DATE}pr.validto {FME_DATE} as validto",
             "pr.curr",
-            "{FMS_FLOAT}pr.qty{FME_FLOAT} as qty","pr.qty as export_qty",
+            "pr.qty as qty","pr.qty as export_qty",
             "pr.pricevalue","'price' as form","pr.id as form_id"],
           from:"price pr",
           inner_join:["product p","on",["pr.product_id","=","p.id"]],
@@ -659,7 +659,7 @@ export const Queries = (app) => {
             {FMS_DATE}pr.validfrom {FME_DATE} as validfrom, {FMS_DATE}pr.validto {FME_DATE} as validto, \
             pr.curr, 'discount' as form, pr.id as form_id, \
             case when ms.msg is null then g.description else ms.msg end as calcmode, \
-            "{FMS_FLOAT}pr.qty{FME_FLOAT} as qty","pr.qty as export_qty",
+            "pr.qty as qty","pr.qty as export_qty",
             pr.pricevalue, pr.discount, \
             case when pr.vendorprice = 1 then \
               '<div align=\"center\" width=\"100&#37;\"><a class=\"ui-btn ui-btn-icon-notext ui-icon-check ui-state-disabled ui-btn-b\" style=\"background-color:#838B83;border-style:none;\">YES</a></div>' \
@@ -785,7 +785,7 @@ export const Queries = (app) => {
             "p.pronumber","p.description","fv.fieldname","df.description as fielddef","'fieldvalue' as form", "fg.groupvalue as fieldtype",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -974,7 +974,7 @@ export const Queries = (app) => {
             "case when mst.msg is null then tg.groupvalue else mst.msg end as transtype",
             "case when msd.msg is null then dg.groupvalue else msd.msg end as direction",
             "t.transnumber as export_transnumber","t.transdate","t.curr",
-            "{FMS_FLOAT}sum(i.amount){FME_FLOAT} as amount","sum(i.amount) as export_amount",
+            "sum(i.amount) as amount","sum(i.amount) as export_amount",
             "c.custname",
             "{CCS}'trans/'{SEP}tg.groupvalue{SEP}'/'{SEP} {CAS_TEXT}t.id {CAE_TEXT}{CCE} as transnumber"],
           from:"project p", 
@@ -1028,7 +1028,7 @@ export const Queries = (app) => {
         sql:{
           select:["{CCS}'rate'{SEP}'//'{SEP} {CAS_TEXT}r.id {CAE_TEXT}{CCE} as id","r.id as row_id",
             "rtype.groupvalue as ratetype","{FMS_DATE}r.ratedate {FME_DATE} as ratedate","r.curr",
-            "{FMS_FLOAT}r.ratevalue{FME_FLOAT} as ratevalue","r.ratevalue as export_ratevalue",
+            "r.ratevalue as ratevalue","r.ratevalue as export_ratevalue",
             "rgroup.groupvalue as rategroup","p.planumber as export_planumber",
             "{CCS}'place//'{SEP} {CAS_TEXT}p.id {CAE_TEXT}{CCE} as planumber"],
             from:"rate r",
@@ -1138,7 +1138,7 @@ export const Queries = (app) => {
             "fv.fieldname","t.serial","t.description","df.description as fielddef","'fieldvalue' as form", "fg.groupvalue as fieldtype",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -1317,11 +1317,11 @@ export const Queries = (app) => {
             "deg.groupvalue as department",
             "{CCS}'project//'{SEP} {CAS_TEXT}p.id {CAE_TEXT}{CCE} as pronumber", "p.pronumber as export_pronumber",
             "case when msp.msg is null then ptg.groupvalue else msp.msg end as paidtype","t.curr",
-            "case when irow.netamount is null then '0' else {FMS_FLOAT}irow.netamount{FME_FLOAT} end as netamount",
+            "case when irow.netamount is null then '0' else irow.netamount end as netamount",
             "case when irow.netamount is null then 0 else irow.netamount end as export_netamount",
-            "case when irow.vatamount is null then '0' else {FMS_FLOAT}irow.vatamount{FME_FLOAT} end as vatamount",
+            "case when irow.vatamount is null then '0' else irow.vatamount end as vatamount",
             "case when irow.vatamount is null then 0 else irow.vatamount end as export_vatamount",
-            "case when irow.amount is null then '0' else {FMS_FLOAT}irow.amount{FME_FLOAT} end as amount",
+            "case when irow.amount is null then '0' else irow.amount end as amount",
             "case when irow.amount is null then 0 else irow.amount end as export_amount",
             "t.paid","t.acrate","t.notes","t.intnotes",
             "case when mss.msg is null then sg.groupvalue else mss.msg end as transtate",
@@ -1382,7 +1382,7 @@ export const Queries = (app) => {
             "df.description as fielddef",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -1488,14 +1488,14 @@ export const Queries = (app) => {
             "{FMS_DATE}t.transdate {FME_DATE} as transdate", "t.curr",
             "{CCS}'product//'{SEP} {CAS_TEXT}p.id {CAE_TEXT}{CCE} as partnumber", "p.partnumber as export_partnumber",
             "i.description","i.unit",
-            "{FMS_FLOAT}i.qty{FME_FLOAT} as qty","i.qty as export_qty",
-            "{FMS_FLOAT}i.fxprice{FME_FLOAT} as fxprice","i.fxprice as export_fxprice",
-            "{FMS_FLOAT}i.netamount{FME_FLOAT} as netamount","i.netamount as export_netamount",
+            "i.qty as qty","i.qty as export_qty",
+            "i.fxprice as fxprice","i.fxprice as export_fxprice",
+            "i.netamount as netamount","i.netamount as export_netamount",
             "i.discount as discount","tax.taxcode",
-            "{FMS_FLOAT}i.vatamount{FME_FLOAT} as vatamount","i.vatamount as export_vatamount",
-            "{FMS_FLOAT}i.amount{FME_FLOAT} as amount","i.amount as export_amount",
+            "i.vatamount as vatamount","i.vatamount as export_vatamount",
+            "i.amount as amount","i.amount as export_amount",
             "i.deposit","i.actionprice",
-            "{FMS_FLOAT}i.ownstock{FME_FLOAT} as ownstock","i.ownstock as export_ownstock"],
+            "i.ownstock as ownstock","i.ownstock as export_ownstock"],
           from:"item i", 
           inner_join:[
             ["trans t","on",["i.trans_id","=","t.id"]],
@@ -1545,7 +1545,7 @@ export const Queries = (app) => {
             "pl.description as warehouse","p.partnumber as export_partnumber",
             "{CCS}'product//'{SEP} {CAS_TEXT}p.id {CAE_TEXT}{CCE} as partnumber",
             "p.description","p.unit","mv.notes as pgroup",
-            "{FMS_FLOAT}sum(mv.qty){FME_FLOAT} as sqty","sum(mv.qty) as export_sqty",
+            "sum(mv.qty) as sqty","sum(mv.qty) as export_sqty",
             "{FMS_DATE}max(mv.shippingdate) {FME_DATE} as posdate"],
           from:"movement mv", 
           inner_join:[
@@ -1605,7 +1605,7 @@ export const Queries = (app) => {
             "pt.description as warehouse",
             "{CCS}'product//'{SEP} {CAS_TEXT}p.id {CAE_TEXT}{CCE} as partnumber",
             "p.partnumber as export_partnumber","p.description","p.unit","mt.notes as pgroup","mt.qty",
-            "{FMS_FLOAT}mt.qty{FME_FLOAT} as qty","mt.qty as export_qty",
+            "mt.qty as qty","mt.qty as export_qty",
             "case when it.transnumber is null then "+
               "case when vt1.transnumber is null then "+
                 "case when vt2.transnumber is null then tl.transnumber end "+
@@ -1758,7 +1758,7 @@ export const Queries = (app) => {
             "case when mt.groupvalue = 'head' then 'in' else 'out' end as type",
             "{CCS}'product//'{SEP} {CAS_TEXT}p.id {CAE_TEXT}{CCE} as partnumber", 
             "p.partnumber as export_partnumber","p.description","p.unit",
-            "{FMS_FLOAT}mv.qty{FME_FLOAT} as qty","mv.qty as export_qty",
+            "mv.qty as qty","mv.qty as export_qty",
             "mv.notes as batch_no","pl.planumber","mv.shared"],
           from:"trans t",
           inner_join:[
@@ -1799,7 +1799,7 @@ export const Queries = (app) => {
             "df.description as fielddef",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -1923,7 +1923,7 @@ export const Queries = (app) => {
             "t.transnumber","t.ref_transnumber","{FMS_DATE}t.crdate {FME_DATE} as crdate",
             "{FMS_DATE}pm.paiddate {FME_DATE} as paiddate",
             "{CCS}'place//'{SEP} {CAS_TEXT}pc.id {CAE_TEXT}{CCE} as place, pc.description as export_place","pc.curr",
-            "{FMS_FLOAT}case when dg.groupvalue='out' then -pm.amount else pm.amount end{FME_FLOAT} as amount",
+            "case when dg.groupvalue='out' then -pm.amount else pm.amount end as amount",
             "case when dg.groupvalue='out' then -pm.amount else pm.amount end as export_amount",
             "pm.notes as description",
             "{CCS}'employee//'{SEP} {CAS_TEXT}e.id {CAE_TEXT}{CCE} as empnumber", "e.empnumber as export_empnumber",
@@ -1979,7 +1979,7 @@ export const Queries = (app) => {
             "df.description as fielddef",
             "case when fg.groupvalue in ('bool') then fv.value "+
             "when fg.groupvalue in ('integer') then {CCS}{FMS_INT}fv.value{FME_INT}{CCE} "+
-            "when fg.groupvalue in ('float') then {CCS}{FMS_FLOAT}fv.value{FME_FLOAT}{CCE} "+
+            "when fg.groupvalue in ('float') then {CCS}fv.value{CCE} "+
             "when fg.groupvalue in ('customer') then {CCS}'customer//'{SEP} {CAS_TEXT}rf_customer.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('tool') then {CCS}'tool//'{SEP} {CAS_TEXT}rf_tool.id {CAE_TEXT}{CCE} "+
             "when fg.groupvalue in ('product') then {CCS}'product//'{SEP} {CAS_TEXT}rf_product.id {CAE_TEXT}{CCE} "+
@@ -2070,13 +2070,13 @@ export const Queries = (app) => {
               "case when msd.msg is null then dg.groupvalue else msd.msg end end as direction",
             "{FMS_DATE}p.paiddate {FME_DATE} as paiddate","pa.description as place",
             "t.transnumber as paidnumber","pa.curr as pcurr",
-            "{FMS_FLOAT}{CAS_FLOAT}af.value {CAE_FLOAT}{FME_FLOAT} as paidamount",
+            "{CAS_FLOAT}af.value {CAE_FLOAT} as paidamount",
             "{CAS_FLOAT}af.value {CAE_FLOAT} as export_paidamount",
-            "{FMS_FLOAT}{CAS_FLOAT}rf.value {CAE_FLOAT}{FME_FLOAT} as prate",
+            "{CAS_FLOAT}rf.value {CAE_FLOAT} as prate",
             "{CAS_FLOAT}rf.value {CAE_FLOAT} as export_prate",
             "{CCS}'trans/'{SEP}itg.groupvalue{SEP}'/'{SEP} {CAS_TEXT}inv.id {CAE_TEXT}{CCE} as invnumber",
             "inv.transnumber as export_invnumber","inv.curr as icurr",
-            "{FMS_FLOAT}irow.amount{FME_FLOAT} as invamount","irow.amount as export_invamount",
+            "irow.amount as invamount","irow.amount as export_invamount",
             "p.notes as pnotes"],
           from:"link ln",
           inner_join:[

@@ -820,20 +820,6 @@ func TestSQLDriver_dropData(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "mssql",
-			fields: fields{
-				engine: "mssql",
-				db: func() *sql.DB {
-					db, _ := sql.Open("sqlite", "file::memory:")
-					return db
-				}(),
-			},
-			args: args{
-				logData: []SM{},
-			},
-			wantErr: true,
-		},
-		{
 			name: "Begin_error",
 			fields: fields{
 				engine: "sqlite",

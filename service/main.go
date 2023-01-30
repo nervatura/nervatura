@@ -23,7 +23,7 @@ The framework includes:
 
 • JWT generation, external token validation, SSL/TLS support and other HTTP security settings (https://github.com/nervatura/nervatura-service/blob/master/.env.example)
 
-• built-in database drivers for postgres, mysql, sqlite databases
+• built-in database drivers for postgres, mysql, mssql, sqlite databases
 
 • a basic report generation library for creating simple PDF documents (eg. order, invoice, etc.)
 or CSV data files

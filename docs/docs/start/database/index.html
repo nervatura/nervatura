@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database
-Supported database adapters: sqlite3, postgres, mysql
+<meta name="description" content="Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database
+Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
- NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:admin@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:admin@localhost:3306/nervatura  Create a new database:
+ NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura  Create a new database:
 $ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &quot;{\&quot;database\&quot;:\&quot;[your_lowercase_alias_name]\&quot;,\&quot;demo\&quot;:false}&quot; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
@@ -14,10 +14,10 @@ Demo database: false
 The SQLite databases are created automatically. Other types of databases must be created manually before.">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Create a new database" />
-<meta property="og:description" content="Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database
-Supported database adapters: sqlite3, postgres, mysql
+<meta property="og:description" content="Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database
+Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
- NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:admin@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:admin@localhost:3306/nervatura  Create a new database:
+ NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura  Create a new database:
 $ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &quot;{\&quot;database\&quot;:\&quot;[your_lowercase_alias_name]\&quot;,\&quot;demo\&quot;:false}&quot; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
@@ -821,13 +821,14 @@ https://github.com/alex-shpak/hugo-book
       
   <article class="markdown"><p>Configure your API-KEY and database connection in your environment variables:
 <code>NT_API_KEY</code> and <code>NT_ALIAS_[ALIASNAME]</code> <br />
-Connection string form: <em>adapter://user:password@host/database</em><br />
-Supported database adapters: <em>sqlite3, postgres, mysql</em></p>
+Connection string form: <em>adapter://user:password@host/database</em> or <em>adapter://user:password@host?database=database</em><br />
+Supported database adapters: <em>sqlite3, postgres, mysql, mssql</em></p>
 <p>For examples:</p>
 <ul>
 <li><em>NT_ALIAS_DEMO=sqlite3://data/database/demo.db</em></li>
-<li><em>NT_ALIAS_PGDEMO=postgres://postgres:admin@localhost:5432/nervatura</em></li>
-<li><em>NT_ALIAS_MYDEMO=mysql://root:admin@localhost:3306/nervatura</em></li>
+<li><em>NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura</em></li>
+<li><em>NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura</em></li>
+<li><em>NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura</em></li>
 </ul>
 <p>Create a new database:</p>
 <pre tabindex="0"><code>$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \

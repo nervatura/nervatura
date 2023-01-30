@@ -45,7 +45,7 @@ The framework includes:
 - standard HTTP [**RESTful API**](/docs/service/api) for client communication
 - HTTP/2-based [**gRPC API**](/docs/service/grpc) for server-side communication
 - JWT generation, external token validation, SSL/TLS support and other HTTP security [settings](/docs/install#configuration-options)
-- built-in database drivers for postgres, mysql, sqlite databases
+- built-in database drivers for postgres, mysql, mssql, sqlite databases
 - a basic report generation library for creating simple PDF documents (eg. order, invoice, etc.) 
 or CSV data files
 - sample report templates and [**REPORT EDITOR**](/docs/client/program/editor) GUI

@@ -21,8 +21,6 @@ export const getSql = (engine, _sql) => {
         sql = sql.replace(/{FMSF_NUMBER}/g, "");
         sql = sql.replace(/{FMSF_DATE}/g, "");
         sql = sql.replace(/{FMEF_CONVERT}/g, "");
-        sql = sql.replace(/{FMS_FLOAT}/g, "");
-        sql = sql.replace(/{FME_FLOAT}/g, "");
         sql = sql.replace(/{FMS_INT}/g, "");
         sql = sql.replace(/{FME_INT}/g, "");
         sql = sql.replace(/{FMS_DATE}/g, "substr("); // format to iso date - start
@@ -51,8 +49,6 @@ export const getSql = (engine, _sql) => {
         sql = sql.replace(/{FMSF_NUMBER}/g, "");
         sql = sql.replace(/{FMSF_DATE}/g, "");
         sql = sql.replace(/{FMEF_CONVERT}/g, "");
-        sql = sql.replace(/{FMS_FLOAT}/g, "replace(format(cast(");
-        sql = sql.replace(/{FME_FLOAT}/g, " as decimal(10,2)),2),'.00','')");
         sql = sql.replace(/{FMS_INT}/g, "format(cast(");
         sql = sql.replace(/{FME_INT}/g, " as signed), 0)");
         sql = sql.replace(/{FMS_DATE}/g, "date_format(");
@@ -87,11 +83,6 @@ export const getSql = (engine, _sql) => {
           "case when rf_date.fieldname is null then current_date else "
         );
         sql = sql.replace(/{FMEF_CONVERT}/g, " end ");
-        sql = sql.replace(/{FMS_FLOAT}/g, "replace(to_char(cast(");
-        sql = sql.replace(
-          /{FME_FLOAT}/g,
-          " as float),'999,999,990.00'),'.00','')"
-        );
         sql = sql.replace(/{FMS_INT}/g, "to_char(cast(");
         sql = sql.replace(/{FME_INT}/g, " as integer), '999,999,999')");
         sql = sql.replace(/{FMS_DATE}/g, "to_char(");
@@ -120,8 +111,6 @@ export const getSql = (engine, _sql) => {
         sql = sql.replace(/{FMSF_NUMBER}/g, "");
         sql = sql.replace(/{FMSF_DATE}/g, "");
         sql = sql.replace(/{FMEF_CONVERT}/g, "");
-        sql = sql.replace(/{FMS_FLOAT}/g, "replace(convert(varchar,cast("); // mssql 2012+ format(???,'N2')
-        sql = sql.replace(/{FME_FLOAT}/g, " as money),1),'.00','')");
         sql = sql.replace(/{FMS_INT}/g, "replace(convert(varchar,cast(");
         sql = sql.replace(/{FME_INT}/g, " as money),1), '.00','')");
         sql = sql.replace(/{FMS_DATE}/g, "convert(varchar(10),");

@@ -1,3 +1,9 @@
+## 5.1.2
+- service: mssql server driver support
+- client: browser float number bug fixes
+- docs: mssql support
+- upgrade service dependencies
+
 ## 5.1.1
 - client: proxy url bug fixes
 - docs: upgrade to 5.1

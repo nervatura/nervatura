@@ -7,13 +7,14 @@ bookToC: false
 
 Configure your API-KEY and database connection in your environment variables: 
 ```NT_API_KEY``` and ```NT_ALIAS_[ALIASNAME]``` <br />
-Connection string form: *adapter://user:password@host/database*<br />
-Supported database adapters: *sqlite3, postgres, mysql*
+Connection string form: *adapter://user:password@host/database* or *adapter://user:password@host?database=database*<br />
+Supported database adapters: *sqlite3, postgres, mysql, mssql*
 
 For examples:
 - *NT_ALIAS_DEMO=sqlite3://data/database/demo.db*
-- *NT_ALIAS_PGDEMO=postgres://postgres:admin@localhost:5432/nervatura*
-- *NT_ALIAS_MYDEMO=mysql://root:admin@localhost:3306/nervatura*
+- *NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura*
+- *NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura*
+- *NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura*
 
 Create a new database:
 ```
