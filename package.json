@@ -45,8 +45,8 @@
     "url": "https://github.com/nervatura/nervatura/releases/download/v{{version}}/nervatura_{{version}}_{{platform}}_{{arch}}.tar.gz"
   },
   "dependencies": {
-    "mkdirp": "^1.0.4",
+    "mkdirp": "^2.1.3",
     "request": "^2.88.2",
-    "tar": "^6.1.12"
+    "tar": "^6.1.13"
   }
 }
