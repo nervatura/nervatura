@@ -27,7 +27,7 @@ const baseConfig = createSpaConfig({
     // extractAssets: false,
     minify: true,
     // /nervatura-client/
-    publicPath: (process.env.APP_CONFIG === "SERVER") ? "/client/" : "/nervatura-client/",
+    publicPath: (process.env.APP_CONFIG === "SERVER") ? "/client/" : "./",
   }
 });
 

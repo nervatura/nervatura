@@ -289,6 +289,27 @@ Method #  When set GET, the program opens your default browser and hands over to
     </item>
     
     <item>
+      <title>Screenshots</title>
+      <link>https://nervatura.github.io/nervatura/docs/start/screenshot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervatura.github.io/nervatura/docs/start/screenshot/</guid>
+      <description>Screenshots #  Service Admin GUI #  Create a database
+ Report install
+  Web Client #  Quick Search
+ Advanced search
+  Customer data
+ Order (dark theme)
+  PDF output
+ PDF Invoice example
+  PDF and CSV report examples (dark theme)
+ Report Template Editor
+  Default Settings
+ Edit Metadata setting (dark theme)
+ </description>
+    </item>
+    
+    <item>
       <title>Tool</title>
       <link>https://nervatura.github.io/nervatura/docs/client/resources/tool/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -306,15 +327,6 @@ A typical example could be the management of company cars, which requires record
       <guid>https://nervatura.github.io/nervatura/docs/client/stock/waybill/</guid>
       <description>Overview #  The movement of products in warehouses can be tracked with INVENTORY and DELIVERY document types. To track the moves of tools the WAYBILL type should be used. It helps to connect the tool for a certain period to a customer, employee or document (orders, worksheets, rental, invoice).
 The forms to provide easy handling are designed to enable connecting multiple tools to a customer, employee or document with one data sheet.</description>
-    </item>
-    
-    <item>
-      <title>Video</title>
-      <link>https://nervatura.github.io/nervatura/docs/start/video/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://nervatura.github.io/nervatura/docs/start/video/</guid>
-      <description>Video #  Explainer videos #         Short episodes #        </description>
     </item>
     
     <item>
@@ -356,6 +368,15 @@ Start Date, End Date #  Optional.</description>
       <guid>https://nervatura.github.io/nervatura/docs/client/program/printqueue/</guid>
       <description>Overview #  Items to the list can be added by REPORT command of the forms specified in Report Type, then by the Report Queue command.
 Input fields #  DATA FILTER #   Report Type: CUSTOMER, PRODUCT, EMPLOYEE, TOOL, PROJECT, ORDER, OFFER, INVOICE, RECEIPT, RENTAL, WORKSHEET, DELIVERY, CORRECTION, TOOL MOVEMENT, PRODUCTION, FORMULA, BANK STATEMENT, PETTY CASH Start Date / End Date: The date when added to the REPORT QUEUE list Document No.</description>
+    </item>
+    
+    <item>
+      <title>Video</title>
+      <link>https://nervatura.github.io/nervatura/docs/start/video/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervatura.github.io/nervatura/docs/start/video/</guid>
+      <description>Video #  Explainer videos #         Short episodes #        </description>
     </item>
     
     <item>

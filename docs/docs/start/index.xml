@@ -46,6 +46,27 @@ Python and Snap or Windows Package Manager #  Recommended API:</description>
     </item>
     
     <item>
+      <title>Screenshots</title>
+      <link>https://nervatura.github.io/nervatura/docs/start/screenshot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://nervatura.github.io/nervatura/docs/start/screenshot/</guid>
+      <description>Screenshots #  Service Admin GUI #  Create a database
+ Report install
+  Web Client #  Quick Search
+ Advanced search
+  Customer data
+ Order (dark theme)
+  PDF output
+ PDF Invoice example
+  PDF and CSV report examples (dark theme)
+ Report Template Editor
+  Default Settings
+ Edit Metadata setting (dark theme)
+ </description>
+    </item>
+    
+    <item>
       <title>Video</title>
       <link>https://nervatura.github.io/nervatura/docs/start/video/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

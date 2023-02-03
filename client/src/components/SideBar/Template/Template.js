@@ -69,7 +69,7 @@ export class Template extends LitElement {
       this.itemMenu({
         id: "cmd_back",
         selected: true, 
-        eventValue: [SIDE_EVENT.CHECK, { value: "LOAD_SETTING" }],
+        eventValue: [SIDE_EVENT.CHECK, { value: SIDE_EVENT.LOAD_SETTING }],
         label: this.msg("", { id: "label_back" }), 
         iconKey: "Reply", full: false, 
       })
