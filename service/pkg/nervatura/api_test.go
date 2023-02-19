@@ -2403,7 +2403,7 @@ func TestAPI_ReportInstall(t *testing.T) {
 			},
 			args: args{
 				options: IM{
-					"reportkey":  "client_config",
+					"reportkey":  "test_client_config",
 					"report_dir": "../../data",
 				},
 			},

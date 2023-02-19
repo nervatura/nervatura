@@ -57,6 +57,11 @@
   color: var(--danger);
 }
 
+.error-range {
+  color: var(--danger);
+  background-color: rgba(var(--warning-rgb),0.25);
+}
+
 .success-color{
   color: var(--success);
 }

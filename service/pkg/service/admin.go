@@ -1,3 +1,6 @@
+//go:build http || all
+// +build http all
+
 package service
 
 import (
@@ -44,7 +47,7 @@ func (adm *AdminService) parseData(r *http.Request) nt.IM {
 		"username": r.PostFormValue("username"), "password": r.PostFormValue("password"),
 		"confirm": r.PostFormValue("confirm"), "reportkey": r.PostFormValue("reportkey"),
 		"errors": nt.SM{}, "result": []nt.SM{},
-		"view_admin":    ut.GetMessage("view_admin"),
+		"view_admin": ut.GetMessage("view_admin"), "view_locales": ut.GetMessage("view_locales"),
 		"view_database": ut.GetMessage("view_database"), "view_client": ut.GetMessage("view_client"),
 		"view_docs": ut.GetMessage("view_docs"), "view_theme": ut.GetMessage("view_theme"),
 		"view_login": ut.GetMessage("view_login"), "view_submit": ut.GetMessage("view_submit"),

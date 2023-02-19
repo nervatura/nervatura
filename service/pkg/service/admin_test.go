@@ -1,3 +1,6 @@
+//go:build http || all
+// +build http all
+
 package service
 
 import (

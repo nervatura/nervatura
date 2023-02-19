@@ -105,3 +105,4 @@ private.key
 public.key
 service/CHANGELOG
 service/LICENSE
+client_config_loc.json

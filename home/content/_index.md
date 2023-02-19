@@ -55,7 +55,7 @@ The framework includes:
 - a basic report generation library for creating simple PDF documents (eg. order, invoice, etc.) 
 or CSV data files
 - sample report templates and [**REPORT EDITOR**](/docs/client/program/editor) GUI
-- [**CLIENT**](/docs/client) Web Component application and a basic ADMIN interface
+- [**CLIENT**](/docs/client) Web Component application and a basic [**ADMIN**](/docs/start/screenshot/#service-admin-gui) interface
 
 The Nervatura [**Service**](/docs/service) is a simple interface layer that provides multiple, well-documented data access protocols for handling data. With their help, we can use the best data access for every development language and environment. Using the functions of the interfaces, we can be sure that the data is always read or written from the databases correctly and simply. The data can be stored in several types of databases, but they can be handled in the same format, and the database types can be easily changed.
 

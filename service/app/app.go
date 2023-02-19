@@ -144,7 +144,7 @@ func (app *App) setConfig() {
 	app.config["NT_GRPC_PORT"] = ut.ToInteger(os.Getenv("NT_GRPC_PORT"), 9200)
 	app.config["NT_GRPC_TLS_ENABLED"] = ut.ToBoolean(os.Getenv("NT_GRPC_TLS_ENABLED"), false)
 
-	app.config["NT_CLIENT_CONFIG"] = ut.ToString(os.Getenv("NT_CLIENT_CONFIG"), "")
+	app.config["NT_CLIENT_CONFIG"] = ut.ToString(os.Getenv("NT_CLIENT_CONFIG"), "data/client_config.json")
 
 	app.config["NT_FONT_FAMILY"] = ut.ToString(os.Getenv("NT_FONT_FAMILY"), "")
 	app.config["NT_FONT_DIR"] = ut.ToString(os.Getenv("NT_FONT_DIR"), "")

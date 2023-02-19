@@ -8,8 +8,10 @@ bookToC: true
 ## Customize the appearance
 
 1. Nervatura Client language translation
-- Create a file based on the [client_config.json](https://github.com/nervatura/nervatura/tree/master/dist) file. All subtitles [can be found here](https://raw.githubusercontent.com/nervatura/nervatura-client/master/src/config/locales.js).
-- Set ```NT_CLIENT_CONFIG``` environment variable value to *YOUR_CLIENT_CONFIG_FILE_PATH*
+- Create a file based on the [client_config.json](https://raw.githubusercontent.com/nervatura/nervatura/master/service/data/client_config.json) file. All subtitles [can be found here](https://raw.githubusercontent.com/nervatura/nervatura/master/client/src/config/locales.js).
+- The **recommended and easy** way to create and edit the language file is the ADMIN GUI [**Translation Helper Tool**](/docs/start/screenshot/#service-admin-gui).
+- For more help on setting up and using the language file, see the [**Examples**](/docs/start/examples/#nervatura-client-language-translation) section
+- Set ```NT_CLIENT_CONFIG``` environment variable value to *YOUR_CLIENT_CONFIG_FILE.JSON*
 - Docker container: mount local folder to the container
 
 2. Nervatura Client custom remote functions: [**MENU SHORTCUTS**](/docs/client/settings/uimenu)

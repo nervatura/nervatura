@@ -252,6 +252,7 @@ func TestApp_startServer(t *testing.T) {
 					"NT_HTTP_HOME":            "/admin",
 					"NT_TLS_CERT_FILE":        "",
 					"NT_TLS_KEY_FILE":         "",
+					"NT_CLIENT_CONFIG":        "../data/test_client_config.json",
 				},
 				services: map[string]srv.APIService{
 					"http": &testServer{},

@@ -1,0 +1,237 @@
+{{ define "locales" }}
+{{ template "header" . }}
+<div class="page {{if not .theme }} light {{else}} {{ .theme }} {{end}} ">
+  <div class="row full primary bold" >
+    <div class="cell padding-normal" >
+      <span>{{ .labels.title }}</span>
+    </div>
+    <div class="cell padding-normal align-right" >
+      <span>{{ .labels.version }}: {{ .version }}</span>
+    </div>
+  </div>
+  <div class="row full section-small container-small info">
+    <div class="row full" >
+      <div class="cell mobile" >
+        <div class="cell mobile">
+          <div class="cell padding-small" >
+            <select onchange="var filter='{{ .filter }}';setLocation(this.value,'',filter)" >
+              {{range .langs}}
+              <option value="{{ . }}" {{if eq . $.lang }} selected {{end}} >{{ . }}</option>
+              {{end}}
+            </select>
+          </div>
+          <div class="cell padding-small" >
+            <select onchange="var lang='{{ .lang }}';var filter='{{ .filter }}';setLocation(lang,this.value,filter)" >
+              {{range .tags}}
+              <option value="{{ . }}" {{if eq . $.tag }} selected {{end}} >{{ . }}</option>
+              {{end}}
+            </select>
+          </div>
+          {{if eq  $.lang "client" }}{{else}}
+          <div class="cell padding-small" >
+            <button class="padding-small" title="{{ .labels.title_missing }}"
+              onclick="var lang='{{ .lang }}';var filter='{{ .filter }}';setLocation(lang,'missing',filter)" >
+              <span >&#10067;</span>
+            </button>
+          </div>
+          {{end}}
+        </div>
+        <div class="cell padding-small mobile">
+          <input id="filter" class="full" name="{{ .key }}" type="text" style="min-width: 150px;"
+            placeholder="{{ .labels.placeholder_filter }}"
+            onfocus="this.changeValue=false" onchange="this.changeValue=true" value="{{ .filter }}"
+            onblur="if(this.changeValue){filterRows(this.value)}" />
+        </div>
+      </div>
+      <div class="cell mobile" >
+        <div class="right">
+          {{if eq  $.dirty "true" }}
+          <div class="cell padding-small">
+            <button class="padding-small" title="{{ .labels.title_update }}"
+              onclick="createFiles()" >
+              <span class="large padding-tiny success-color" >&#10004;</span>
+            </button>
+          </div>
+          <div class="cell padding-small">
+            <button class="padding-small" title="{{ .labels.title_undo }}"
+              onclick="undoAll()" >
+              <span class="large padding-tiny error" >&#10007;</span>
+            </button>
+          </div>
+          {{end}}
+          <div class="cell padding-small">
+            <button class="padding-small" title="{{ .labels.title_add }}"
+              onclick="document.getElementById('add_range').style.display='block';this.style.display='none';" >
+              <span class="large padding-tiny success-color" >+</span>
+            </button>
+          </div>
+          <div class="cell padding-small">
+            <button class="padding-small" title="{{ .labels.title_theme }}"
+              onclick="setTheme()" >
+              <span class="large padding-tiny" >{{if eq .theme "dark" }}&#9788;{{else}}&#9790;{{end}}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="add_range" class="row full" style="display: none;">
+      <div class="cell mobile padding-small" >
+        <input id="lang_key" type="text" pattern="[a-z]+" placeholder="{{ .labels.placeholder_lcode }}"
+          maxlength="5" style="text-transform: lowercase" />
+      </div>
+      <div class="cell mobile padding-small" >
+        <input id="lang_name" type="text" placeholder="{{ .labels.placeholder_lname }}"/>
+      </div>
+      <div class="cell padding-small">
+        <button class="padding-small" title="{{ .labels.title_add }}"
+          onclick="addLang()" >
+          <span class="large padding-tiny success-color" >+</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="error_range" class="row full section-small container-small error-range" style="display: none;">
+    <div class="cell bold padding-small">
+      <span>&#9785;</span>
+      <span id="error_msg" ></span>
+    </div>
+  </div>
+  {{range $di, $row := .data}}
+  <div class="row full padding-small border-bottom" >
+    <div class="row container-small full" >
+      <div class="cell" >
+        <span class="bold" >{{ .key }}</span>
+      </div>
+      <div class="cell align-right" >
+        <span class="tag" onclick="var lang='{{ $.lang }}';var filter='{{ $.filter }}';var tag='{{ .tag }}';setLocation(lang,tag,filter)" >{{ .tag }}</span>
+      </div>
+    </div>
+    <div class="row full" >
+      {{range $i, $en := .client}}
+        {{if eq  $.lang "client" }}
+        <div class="row full padding-small" >
+          <span>{{ .value }}</span>
+        </div>
+        {{else}}
+        <div class="row full padding-small" >
+          <span>{{ .value }}</span>
+          {{range $li, $lang := $row.lang_values}}
+            {{if eq  $li $i }}
+            <input type="text" class="full" name="{{ .key }}"
+              onfocus="this.changeValue=false" onchange="this.changeValue=true"
+              value="{{ $lang.value }}"
+              onblur="var index='{{.index}}'; if(this.changeValue){updateRow(this.name,index,this.value)}" />
+            {{end}}  
+          {{end}}
+        </div>
+        {{end}}
+      {{end}}
+    </div>
+  </div>
+  {{end}}
+  <script>
+    function filterRows(value){
+      var lang='{{ $.lang }}';
+      postData("/locales/filter", { filter_value:value }, function(err, result){
+        document.location.reload()
+      })
+    }
+
+    function postData(path, data, callback){
+      if(data.loader !== "false"){
+        showLoader(true);
+      }
+      fetch(path, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(result => {
+        showLoader(false)
+        if(result.code === 400){
+          return setError(result.message)
+        }
+        if(callback){
+          callback(null, result)
+        }
+      })
+      .catch((error) => {
+        showLoader(false)
+        setError(error.message)
+      });
+    }
+
+    function showLoader(value){
+      if(document.getElementById("loader_modal")){
+        document.getElementById("loader_modal").style.display = (value) ? "block" : "none";
+      }
+    }
+
+    function setTheme(){
+      postData("/locales/theme", {}, function(){
+        document.location.reload()
+      })
+    }
+
+    function createFiles(){
+      postData("/locales/create", {}, function(){
+        document.location.reload()
+      })
+    }
+
+    function undoAll(){
+      postData("/locales/undo", {}, function(){
+        document.location.reload()
+      })
+    }
+
+    function addLang(){
+      var lang_key = document.getElementById("lang_key").value
+      var lang_name = document.getElementById("lang_name").value
+      if((lang_key === "") || (lang_name === "")){
+        return setError("{{ .labels.title_missing }}")
+      }
+      postData("/locales/add", { lang_key, lang_name }, function(){
+        document.location.href='/locales/'+lang_key
+      })
+    }
+
+    function setLocation(lang, tag, filter){
+      if(filter !== ""){
+        postData("/locales/filter", { filter_value:"" }, function(){
+          document.location.href='/locales/'+lang+'/'+tag
+        })
+      } else {
+        document.location.href='/locales/'+lang+'/'+tag
+      }
+    }
+
+    function setError(message){
+      document.getElementById("error_msg").innerHTML = message;
+      document.getElementById("error_range").style.display =  "block";
+      window.scrollTo(0,0);
+    }
+
+    function updateRow(key, index, value){
+      var lang='{{ $.lang }}';
+      var dirty='{{ $.dirty }}';
+      postData("/locales/update", { lang:lang, key:key, index:index, value:value, loader:"false" }, function(err, result){
+        if(dirty === "false"){
+          document.location.reload()
+        }
+      })
+    }
+
+    document.getElementById("filter").addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        filterRows(this.value);
+      }
+    });
+  </script>
+</div>
+{{ template "footer" . }}
+{{ end }}

@@ -17,7 +17,9 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-//go:embed static/views static/message.json
+const AdminMsg = "static/locales/admin.json"
+
+//go:embed static/views static/locales
 var Static embed.FS
 
 //go:embed static/templates static/fonts
@@ -32,7 +34,7 @@ func GetHash(text string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-//ToString - safe string conversion
+// ToString - safe string conversion
 func ToString(value interface{}, defValue string) string {
 	if stringValue, valid := value.(string); valid {
 		if stringValue == "" {
@@ -64,7 +66,7 @@ func ToString(value interface{}, defValue string) string {
 	return defValue
 }
 
-//ToFloat - safe float64 conversion
+// ToFloat - safe float64 conversion
 func ToFloat(value interface{}, defValue float64) float64 {
 	if floatValue, valid := value.(float64); valid {
 		if floatValue == 0 {
@@ -98,7 +100,7 @@ func ToFloat(value interface{}, defValue float64) float64 {
 	return defValue
 }
 
-//ToRGBA - safe RGBA conversion
+// ToRGBA - safe RGBA conversion
 func ToRGBA(value interface{}, defValue color.RGBA) color.RGBA {
 	parseHexColor := func(v string) (out color.RGBA, err error) {
 		if len(v) != 7 {
@@ -166,7 +168,7 @@ func ToRGBA(value interface{}, defValue color.RGBA) color.RGBA {
 	return defValue
 }
 
-//ToInteger - safe int64 conversion
+// ToInteger - safe int64 conversion
 func ToInteger(value interface{}, defValue int64) int64 {
 	if intValue, valid := value.(int64); valid {
 		if intValue == 0 {
@@ -200,7 +202,7 @@ func ToInteger(value interface{}, defValue int64) int64 {
 	return defValue
 }
 
-//ToIntPointer - safe *int64 conversion
+// ToIntPointer - safe *int64 conversion
 func ToIntPointer(value interface{}, defValue int64) *int64 {
 	if value == nil {
 		return nil
@@ -209,7 +211,7 @@ func ToIntPointer(value interface{}, defValue int64) *int64 {
 	return &v
 }
 
-//ToStringPointer - safe *string conversion
+// ToStringPointer - safe *string conversion
 func ToStringPointer(value interface{}, defValue string) *string {
 	if value == nil {
 		return nil
@@ -218,7 +220,7 @@ func ToStringPointer(value interface{}, defValue string) *string {
 	return &v
 }
 
-//ToBoolean - safe bool conversion
+// ToBoolean - safe bool conversion
 func ToBoolean(value interface{}, defValue bool) bool {
 	if boolValue, valid := value.(bool); valid {
 		return boolValue
@@ -257,7 +259,7 @@ func ToBoolean(value interface{}, defValue bool) bool {
 	return defValue
 }
 
-//StringToDateTime - parse string to datetime
+// StringToDateTime - parse string to datetime
 func StringToDateTime(value string) (time.Time, error) {
 	tm, err := time.Parse("2006-01-02T15:04:05-07:00", value)
 	if err != nil {
@@ -316,10 +318,17 @@ func ConvertFromReader(data io.Reader, result interface{}) error {
 	return json.NewDecoder(data).Decode(&result)
 }
 
-//GetMessage - error messages
+func ConvertToWriter(out io.Writer, data interface{}) error {
+	e := json.NewEncoder(out)
+	e.SetIndent("", "  ")
+	e.SetEscapeHTML(false)
+	return e.Encode(data)
+}
+
+// GetMessage - error messages
 func GetMessage(key string) string {
 	var messages map[string]string
-	var jsonMessages, _ = Static.ReadFile("static/message.json")
+	var jsonMessages, _ = Static.ReadFile(AdminMsg)
 	if err := ConvertFromByte(jsonMessages, &messages); err != nil {
 		return ""
 	}

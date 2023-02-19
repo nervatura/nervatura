@@ -22,6 +22,19 @@ bookToC: false
   </div>
 </div>
 
+<div class="row">
+  <div class="cell mobile">
+    <p>Client translation helper tool - add a new language</p>
+    <img alt="Create a database" src="/screenshot/admin_locales_new.jpg"
+      style="width:95%;" />
+  </div>
+  <div class="cell mobile">
+    <p>Change language translation (dark theme)</p>
+    <img alt="Report install" src="/screenshot/admin_locales_de.jpg"
+      style="width:95%;" />
+  </div>
+</div>
+
 ### **Web Client**
 
 <div class="row">

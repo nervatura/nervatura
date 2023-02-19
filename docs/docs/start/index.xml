@@ -28,9 +28,7 @@ The SQLite databases are created automatically. Other types of databases must be
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/customization/</guid>
-      <description>Customize the appearance #   Nervatura Client language translation   Create a file based on the client_config.json file. All subtitles can be found here. Set NT_CLIENT_CONFIG environment variable value to YOUR_CLIENT_CONFIG_FILE_PATH Docker container: mount local folder to the container   Nervatura Client custom remote functions: MENU SHORTCUTS
-  Custom PDF Report font
-   Set NT_FONT_FAMILY environment variable value to YOUR_FONT_FAMILY_NAME Set NT_FONT_DIR environment variable value to YOUR_FONTS_PATH Valid font type and filename form: FAMILY_NAME-Regular.</description>
+      <description>Customize the appearance #   Nervatura Client language translation   Create a file based on the client_config.json file. All subtitles can be found here. The recommended and easy way to create and edit the language file is the ADMIN GUI Translation Helper Tool. For more help on setting up and using the language file, see the Examples section Set NT_CLIENT_CONFIG environment variable value to YOUR_CLIENT_CONFIG_FILE.JSON Docker container: mount local folder to the container   Nervatura Client custom remote functions: MENU SHORTCUTS</description>
     </item>
     
     <item>
@@ -53,6 +51,8 @@ Python and Snap or Windows Package Manager #  Recommended API:</description>
       <guid>https://nervatura.github.io/nervatura/docs/start/screenshot/</guid>
       <description>Screenshots #  Service Admin GUI #  Create a database
  Report install
+  Client translation helper tool - add a new language
+ Change language translation (dark theme)
   Web Client #  Quick Search
  Advanced search
   Customer data
@@ -60,10 +60,7 @@ Python and Snap or Windows Package Manager #  Recommended API:</description>
   PDF output
  PDF Invoice example
   PDF and CSV report examples (dark theme)
- Report Template Editor
-  Default Settings
- Edit Metadata setting (dark theme)
- </description>
+ Report Template Editor</description>
     </item>
     
     <item>

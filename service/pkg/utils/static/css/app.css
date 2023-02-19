@@ -86,6 +86,17 @@ input {
   white-space:nowrap;
 }
 
+.tag {
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: bold;
+  color: var(--info);
+}
+
+.tag:hover {
+  color: var(--warning);
+}
+
 input[type=color]{
   height: 34px;
   border: none;

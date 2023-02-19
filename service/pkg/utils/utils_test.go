@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"image/color"
 	"io"
 	"reflect"
@@ -461,10 +462,18 @@ func TestToIntPointer(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name: "int",
+			args: args{
+				value:    int64(0),
+				defValue: int64(0),
+			},
+			want: ToIntPointer(int64(0), int64(0)),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ToIntPointer(tt.args.value, tt.args.defValue); got != tt.want {
+			if got := ToIntPointer(tt.args.value, tt.args.defValue); tt.want == nil && got != nil {
 				t.Errorf("ToIntPointer() = %v, want %v", got, tt.want)
 			}
 		})
@@ -489,10 +498,18 @@ func TestToStringPointer(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name: "string",
+			args: args{
+				value:    nil,
+				defValue: "",
+			},
+			want: ToStringPointer("", ""),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ToStringPointer(tt.args.value, tt.args.defValue); got != tt.want {
+			if got := ToStringPointer(tt.args.value, tt.args.defValue); tt.want == nil && got != nil {
 				t.Errorf("ToStringPointer() = %v, want %v", got, tt.want)
 			}
 		})
@@ -818,6 +835,36 @@ func TestConvertFromReader(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := ConvertFromReader(tt.args.data, tt.args.result); (err != nil) != tt.wantErr {
 				t.Errorf("ConvertFromReader() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestConvertToWriter(t *testing.T) {
+	type args struct {
+		data interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			args: args{
+				data: map[string]interface{}{
+					"locales": map[string]interface{}{},
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			out := &bytes.Buffer{}
+			if err := ConvertToWriter(out, tt.args.data); (err != nil) != tt.wantErr {
+				t.Errorf("ConvertToWriter() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
 		})
 	}

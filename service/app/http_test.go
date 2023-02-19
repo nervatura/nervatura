@@ -48,6 +48,7 @@ func Test_httpServer_StartService(t *testing.T) {
 						"NT_TLS_CERT_FILE":        "../data/x509/server_cert.pem",
 						"NT_TLS_KEY_FILE":         "../data/x509/server_key.pem",
 						"NT_TOKEN_PUBLIC_KEY_URL": "https://www.googleapis.com/oauth2/v1/certs",
+						"NT_CLIENT_CONFIG":        "../data/test_client_config.json",
 
 						"NT_CORS_ENABLED":           true,
 						"NT_CORS_ALLOW_ORIGINS":     strings.Split("*", ","),
@@ -601,6 +602,19 @@ func Test_httpServer_adminRoute(t *testing.T) {
 				r: formReq(url.Values{
 					"formID": []string{"menu"},
 					"menu":   []string{"client"},
+				}),
+			},
+		},
+		{
+			name: "locales",
+			fields: fields{
+				admin: as,
+			},
+			args: args{
+				w: httptest.NewRecorder(),
+				r: formReq(url.Values{
+					"formID": []string{"menu"},
+					"menu":   []string{"locales"},
 				}),
 			},
 		},

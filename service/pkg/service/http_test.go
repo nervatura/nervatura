@@ -49,7 +49,7 @@ func TestHTTPService_ClientConfig(t *testing.T) {
 			fields: fields{
 				Config: nt.IM{
 					"version":          testData.version,
-					"NT_CLIENT_CONFIG": "../../data/client_config.json",
+					"NT_CLIENT_CONFIG": "../../data/test_client_config.json",
 				},
 			},
 			args: args{
