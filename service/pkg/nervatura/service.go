@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"net"
 	"net/smtp"
 	"strconv"
 	"strings"
@@ -305,7 +306,15 @@ func (nstore *NervaStore) sendEmail(options IM) (results IM, err error) {
 	if tlsMin > 0 {
 		tlsConfig.MinVersion = tlsMin
 	}
-	conn, connErr := tls.Dial("tcp", fmt.Sprintf("%s:%d", host, port), &tlsConfig)
+	getConn := map[string]func() (net.Conn, error){
+		"net": func() (net.Conn, error) {
+			return net.DialTimeout("tcp", fmt.Sprintf("%s:%d", host, port), time.Duration(2)*time.Second)
+		},
+		"tls": func() (net.Conn, error) {
+			return tls.Dial("tcp", fmt.Sprintf("%s:%d", host, port), &tlsConfig)
+		},
+	}
+	conn, connErr := getConn[ut.ToString(nstore.config["NT_SMTP_CONN"], "tls")]()
 	if connErr != nil {
 		return results, connErr
 	}
@@ -317,8 +326,16 @@ func (nstore *NervaStore) sendEmail(options IM) (results IM, err error) {
 	}
 	defer client.Close()
 
+	getAuth := map[string]func(auth smtp.Auth) error{
+		"auth": func(auth smtp.Auth) error {
+			return client.Auth(auth)
+		},
+		"none": func(auth smtp.Auth) error {
+			return nil
+		},
+	}
 	auth := smtp.PlainAuth("", username, password, host)
-	if err := client.Auth(auth); err != nil {
+	if err := getAuth[ut.ToString(nstore.config["NT_SMTP_AUTH"], "auth")](auth); err != nil {
 		return results, err
 	}
 

@@ -5,6 +5,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"reflect"
@@ -204,6 +205,7 @@ func Test_rpcServer_tokenAuth(t *testing.T) {
 		result     string
 		server     *grpc.Server
 		tlsEnabled bool
+		auth       func(authorization []string, parent context.Context) (ctx context.Context, err error)
 	}
 	type args struct {
 		ctx     context.Context
@@ -279,7 +281,31 @@ func Test_rpcServer_tokenAuth(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "token_valid",
+			fields: fields{
+				auth: func(authorization []string, parent context.Context) (ctx context.Context, err error) {
+					return context.Background(), nil
+				},
+			},
+			args: args{
+				ctx: metadata.NewIncomingContext(context.Background(), metadata.Pairs("Authorization", "TEST_TOKEN")),
+				info: &grpc.UnaryServerInfo{
+					FullMethod: "/nervatura.API/TokenRefresh",
+				},
+				handler: func(ctx context.Context, req interface{}) (interface{}, error) {
+					return "OK", nil
+				},
+			},
+			want:    "OK",
+			wantErr: false,
+		},
+		{
 			name: "token_invalid",
+			fields: fields{
+				auth: func(authorization []string, parent context.Context) (ctx context.Context, err error) {
+					return nil, errors.New("error")
+				},
+			},
 			args: args{
 				ctx: metadata.NewIncomingContext(context.Background(), metadata.Pairs("Authorization", "TEST_TOKEN")),
 				info: &grpc.UnaryServerInfo{
@@ -298,6 +324,7 @@ func Test_rpcServer_tokenAuth(t *testing.T) {
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
+				auth:       tt.fields.auth,
 			}
 			got, err := s.tokenAuth(tt.args.ctx, tt.args.req, tt.args.info, tt.args.handler)
 			if (err != nil) != tt.wantErr {

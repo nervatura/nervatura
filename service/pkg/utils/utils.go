@@ -25,6 +25,14 @@ var Static embed.FS
 //go:embed static/templates static/fonts
 var Report embed.FS
 
+var tokenAlg = map[string]string{
+	"RS256": "RSA", "RS384": "RSA", "RS512": "RSA",
+	"ES256": "ECDSA", "ES384": "ECDSA", "ES512": "ECDSA",
+	"EdDSA": "EdDSA",
+	"PS256": "PSS", "PS384": "PSS", "PS512": "PSS",
+	"HS256": "HMAC", "HS384": "HMAC", "HS512": "HMAC",
+}
+
 func GetHash(text string) string {
 	hasher := sha256.New()
 	_, err := hasher.Write([]byte(text))
@@ -329,9 +337,7 @@ func ConvertToWriter(out io.Writer, data interface{}) error {
 func GetMessage(key string) string {
 	var messages map[string]string
 	var jsonMessages, _ = Static.ReadFile(AdminMsg)
-	if err := ConvertFromByte(jsonMessages, &messages); err != nil {
-		return ""
-	}
+	_ = ConvertFromByte(jsonMessages, &messages)
 	if value, found := messages[key]; found {
 		return value
 	}
@@ -362,15 +368,7 @@ func CreateToken(username, database string, config map[string]interface{}) (resu
 	token := jwt.NewWithClaims(jwt.GetSigningMethod(alg), claims)
 	token.Header["kid"] = ToString(config["NT_TOKEN_PRIVATE_KID"], GetHash("nervatura"))
 	var key interface{} = []byte(ToString(config["NT_TOKEN_PRIVATE_KEY"], GetHash(time.Now().Format("20060102"))))
-	if strings.HasPrefix(alg, "RS") {
-		key, err = parsePEM("RSA", "private", key.([]byte))
-	}
-	if strings.HasPrefix(alg, "ES") {
-		key, err = parsePEM("ECDSA", "private", key.([]byte))
-	}
-	if strings.HasPrefix(alg, "EdDSA") {
-		key, err = parsePEM("EdDSA", "private", key.([]byte))
-	}
+	key, err = parsePEM(tokenAlg[alg], "private", key.([]byte))
 	if err != nil {
 		return "", err
 	}
@@ -417,27 +415,8 @@ func ParseToken(tokenString string, keyMap map[string]map[string]string, config 
 	data := make(map[string]interface{})
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		algType := ""
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); ok {
-			// RS256, RS384, RS512
-			algType = "RSA"
-		}
-		if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
-			// ES256, ES384, ES512
-			algType = "ECDSA"
-		}
-		if _, ok := token.Method.(*jwt.SigningMethodEd25519); ok {
-			// EdDSA
-			algType = "EdDSA"
-		}
-		if _, ok := token.Method.(*jwt.SigningMethodRSAPSS); ok {
-			// PS256, PS384, PS512
-			algType = "PSS"
-		}
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
-			// HS256, HS384, HS512
-			algType = "HMAC"
-		}
-		if algType == "" {
+		algType, valid := tokenAlg[token.Method.Alg()]
+		if !valid {
 			return nil, errors.New("Unexpected signing method: " + token.Header["alg"].(string))
 		}
 		kid := ToString(token.Header["kid"], ToString(config["NT_TOKEN_PRIVATE_KID"], GetHash("nervatura")))
@@ -459,28 +438,24 @@ func ParseToken(tokenString string, keyMap map[string]map[string]string, config 
 		return data, err
 	}
 
-	data["database"] = claims["database"]
-	if _, found := claims["database"]; !found {
-		if ToString(config["NT_ALIAS_DEFAULT"], "") == "" {
-			return data, errors.New(GetMessage("missing_database"))
-		}
-		data["database"] = ToString(config["NT_ALIAS_DEFAULT"], "")
+	data["database"] = ToString(claims["database"], ToString(config["NT_ALIAS_DEFAULT"], ""))
+	if data["database"] == "" {
+		return data, errors.New(GetMessage("missing_database"))
 	}
 	data["username"] = ""
-	if _, found := claims["username"]; found {
-		data["username"] = claims["username"]
-	} else if _, found := claims["user_id"]; found {
-		data["username"] = claims["user_id"]
-	} else if _, found := claims["sub"]; found {
-		data["username"] = claims["sub"]
-	} else if _, found := claims["email"]; found {
-		data["username"] = claims["email"]
+	claimUser := func() (err error) {
+		err = errors.New(GetMessage("missing_user"))
+		fields := []string{"username", "user_id", "sub", "email"}
+		for _, field := range fields {
+			if cfield, found := claims[field]; found {
+				data["username"] = cfield
+				err = nil
+				break
+			}
+		}
+		return err
 	}
-	if data["username"] == "" {
-		return data, errors.New(GetMessage("missing_user"))
-	}
-	return data, nil
-
+	return data, claimUser()
 }
 
 func RandString(length int) string {
@@ -489,10 +464,8 @@ func RandString(length int) string {
 		"0123456789")
 	var b strings.Builder
 	for i := 0; i < length; i++ {
-		n, err := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
-		if err != nil {
-			n = big.NewInt(int64(i))
-		}
+		var n = big.NewInt(int64(i))
+		n, _ = rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
 		b.WriteRune(chars[n.Int64()])
 	}
 	return b.String()

@@ -1,8 +1,10 @@
 package app
 
 import (
+	"errors"
 	"log"
 	"os"
+	"reflect"
 	"testing"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -101,6 +103,53 @@ func TestNew(t *testing.T) {
 	}
 }
 
+func TestApp_setConfig(t *testing.T) {
+	type fields struct {
+		services  map[string]srv.APIService
+		defConn   nt.DataDriver
+		infoLog   *log.Logger
+		errorLog  *log.Logger
+		httpLog   *log.Logger
+		args      nt.SM
+		tokenKeys map[string]nt.SM
+		config    map[string]interface{}
+		readFile  func(name string) ([]byte, error)
+		getEnv    func(key string) string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				config:  nt.IM{},
+				infoLog: log.New(os.Stdout, "INFO: ", log.LstdFlags),
+				getEnv: func(key string) string {
+					return ""
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := &App{
+				services:  tt.fields.services,
+				defConn:   tt.fields.defConn,
+				infoLog:   tt.fields.infoLog,
+				errorLog:  tt.fields.errorLog,
+				httpLog:   tt.fields.httpLog,
+				args:      tt.fields.args,
+				tokenKeys: tt.fields.tokenKeys,
+				config:    tt.fields.config,
+				readFile:  tt.fields.readFile,
+				getEnv:    tt.fields.getEnv,
+			}
+			app.setConfig()
+		})
+	}
+}
+
 func TestApp_setTokenKey(t *testing.T) {
 	type fields struct {
 		services  map[string]srv.APIService
@@ -111,6 +160,7 @@ func TestApp_setTokenKey(t *testing.T) {
 		args      map[string]string
 		tokenKeys map[string]map[string]string
 		config    map[string]interface{}
+		readFile  func(name string) ([]byte, error)
 	}
 	type args struct {
 		keyType string
@@ -129,11 +179,32 @@ func TestApp_setTokenKey(t *testing.T) {
 					"NT_TOKEN_PRIVATE_KEY": "../data/x509/server_key.pem",
 					"NT_TOKEN_PRIVATE_KID": "",
 				},
+				readFile: func(name string) ([]byte, error) {
+					return []byte("ok"), nil
+				},
 			},
 			args: args{
 				keyType: "private",
 			},
 			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				tokenKeys: map[string]map[string]string{},
+				config: nt.IM{
+					"NT_TOKEN_PRIVATE_KEY": "../data/x509/server_key.pem",
+					"NT_TOKEN_PRIVATE_KID": "",
+				},
+				readFile: func(name string) ([]byte, error) {
+					return nil, errors.New("error")
+				},
+				errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+			},
+			args: args{
+				keyType: "private",
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -147,6 +218,7 @@ func TestApp_setTokenKey(t *testing.T) {
 				args:      tt.fields.args,
 				tokenKeys: tt.fields.tokenKeys,
 				config:    tt.fields.config,
+				readFile:  tt.fields.readFile,
 			}
 			if err := app.setTokenKey(tt.args.keyType); (err != nil) != tt.wantErr {
 				t.Errorf("App.setTokenKey() error = %v, wantErr %v", err, tt.wantErr)
@@ -154,55 +226,6 @@ func TestApp_setTokenKey(t *testing.T) {
 		})
 	}
 }
-
-/*
-func TestApp_setTokenKey(t *testing.T) {
-	type fields struct {
-		services  map[string]srv.APIService
-		defConn   nt.DataDriver
-		infoLog   *log.Logger
-		errorLog  *log.Logger
-		httpLog   *log.Logger
-		args      map[string]string
-		tokenKeys map[string]map[string]string
-		config    map[string]interface{}
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		{
-			name: "private_key_file",
-			fields: fields{
-				tokenKeys: map[string]map[string]string{},
-				config: nt.IM{
-					"NT_TOKEN_PRIVATE_KEY": "../data/x509/server_key.pem",
-					"NT_TOKEN_PRIVATE_KID": "",
-				},
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			app := &App{
-				services:  tt.fields.services,
-				defConn:   tt.fields.defConn,
-				infoLog:   tt.fields.infoLog,
-				errorLog:  tt.fields.errorLog,
-				httpLog:   tt.fields.httpLog,
-				args:      tt.fields.args,
-				tokenKeys: tt.fields.tokenKeys,
-				config:    tt.fields.config,
-			}
-			if err := app.setTokenKey(); (err != nil) != tt.wantErr {
-				t.Errorf("App.setTokenKey() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-*/
 
 func TestApp_startServer(t *testing.T) {
 	type fields struct {
@@ -294,6 +317,8 @@ func TestApp_checkDefaultConn(t *testing.T) {
 		args      map[string]string
 		tokenKeys map[string]map[string]string
 		config    map[string]interface{}
+		readFile  func(name string) ([]byte, error)
+		getEnv    func(key string) string
 	}
 	os.Setenv("NT_ALIAS_TEST", testDatabase)
 	tests := []struct {
@@ -305,10 +330,39 @@ func TestApp_checkDefaultConn(t *testing.T) {
 			name: "test_db",
 			fields: fields{
 				config: nt.IM{
-					"NT_ALIAS_DEFAULT": "TEST",
+					"NT_ALIAS_DEFAULT":     "TEST",
+					"NT_TOKEN_PRIVATE_KEY": "../data/x509/server_key.pem",
+					"NT_TOKEN_PRIVATE_KID": "",
+					"NT_TOKEN_PUBLIC_KID":  "public",
+					"NT_TOKEN_PUBLIC_KEY":  "",
+				},
+				tokenKeys: map[string]map[string]string{},
+				readFile: func(name string) ([]byte, error) {
+					return []byte("ok"), nil
+				},
+				getEnv: func(key string) string {
+					return ""
 				},
 			},
 			wantErr: false,
+		},
+		{
+			name: "token_error",
+			fields: fields{
+				config: nt.IM{
+					"NT_ALIAS_DEFAULT":     "TEST",
+					"NT_TOKEN_PRIVATE_KEY": "../data/x509/server_key.pem",
+					"NT_TOKEN_PRIVATE_KID": "",
+					"NT_TOKEN_PUBLIC_KID":  "public",
+					"NT_TOKEN_PUBLIC_KEY":  "",
+				},
+				tokenKeys: map[string]map[string]string{},
+				readFile: func(name string) ([]byte, error) {
+					return nil, errors.New("error")
+				},
+				errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -322,6 +376,8 @@ func TestApp_checkDefaultConn(t *testing.T) {
 				args:      tt.fields.args,
 				tokenKeys: tt.fields.tokenKeys,
 				config:    tt.fields.config,
+				readFile:  tt.fields.readFile,
+				getEnv:    tt.fields.getEnv,
 			}
 			if err := app.checkDefaultConn(); (err != nil) != tt.wantErr {
 				t.Errorf("App.checkDefaultConn() error = %v, wantErr %v", err, tt.wantErr)
@@ -470,6 +526,49 @@ func TestApp_setEnv(t *testing.T) {
 				os.Args = append(os.Args, "-env", ".env.example")
 			}
 			app.setEnv()
+		})
+	}
+}
+
+func TestApp_GetTokenKeys(t *testing.T) {
+	type fields struct {
+		services  map[string]srv.APIService
+		defConn   nt.DataDriver
+		infoLog   *log.Logger
+		errorLog  *log.Logger
+		httpLog   *log.Logger
+		args      map[string]string
+		tokenKeys map[string]map[string]string
+		config    map[string]interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   map[string]nt.SM
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				tokenKeys: map[string]map[string]string{},
+			},
+			want: map[string]map[string]string{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := &App{
+				services:  tt.fields.services,
+				defConn:   tt.fields.defConn,
+				infoLog:   tt.fields.infoLog,
+				errorLog:  tt.fields.errorLog,
+				httpLog:   tt.fields.httpLog,
+				args:      tt.fields.args,
+				tokenKeys: tt.fields.tokenKeys,
+				config:    tt.fields.config,
+			}
+			if got := app.GetTokenKeys(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("App.GetTokenKeys() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

@@ -3,7 +3,7 @@ module github.com/nervatura/nervatura/service
 go 1.20
 
 require (
-	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
+	github.com/alexedwards/argon2id v0.0.0-20230305115115-4b3c3280a736
 	github.com/boombuler/barcode v1.0.1
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/cors v1.2.1
@@ -15,23 +15,23 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/signintech/gopdf v0.16.1
 	github.com/unrolled/secure v1.13.0
-	golang.org/x/crypto v0.6.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
-	google.golang.org/genproto v0.0.0-20230216225411-c8e22ba71e44 // indirect
+	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/text v0.8.0 // indirect
+	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
 	google.golang.org/grpc v1.53.0
-	google.golang.org/protobuf v1.28.1
-	modernc.org/libc v1.22.2 // indirect
+	google.golang.org/protobuf v1.29.0
+	modernc.org/libc v1.22.3 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
 	modernc.org/memory v1.5.0 // indirect
-	modernc.org/sqlite v1.20.4 // indirect
+	modernc.org/sqlite v1.21.0 // indirect
 )
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
-	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 )
 
@@ -44,5 +44,6 @@ require (
 require (
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/glebarez/go-sqlite v1.20.3
+	github.com/glebarez/go-sqlite v1.21.0
+	github.com/mocktools/go-smtp-mock/v2 v2.0.5
 )

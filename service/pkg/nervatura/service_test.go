@@ -3,6 +3,8 @@ package nervatura
 import (
 	"errors"
 	"testing"
+
+	smtpmock "github.com/mocktools/go-smtp-mock/v2"
 )
 
 func TestNervaStore_GetService(t *testing.T) {
@@ -623,4 +625,151 @@ func TestNervaStore_createEmail(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNervaStore_sendEmail(t *testing.T) {
+	type fields struct {
+		ds       DataDriver
+		User     *User
+		Customer IM
+		models   IM
+		config   IM
+	}
+	type args struct {
+		options IM
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "send_ok",
+			fields: fields{
+				ds: &testDriver{Config: IM{}},
+				config: IM{
+					"NT_SMTP_HOST":            "localhost",
+					"NT_SMTP_PORT":            2525,
+					"NT_SMTP_CONN":            "net",
+					"NT_SMTP_AUTH":            "none",
+					"NT_SMTP_TLS_MIN_VERSION": 769,
+				},
+			},
+			args: args{
+				options: IM{
+					"provider": "smtp",
+					"email": map[string]interface{}{
+						"from": "info@nervatura.com", "name": "Nervatura",
+						"recipients": []interface{}{
+							map[string]interface{}{"email": "sample@company.com"}},
+						"subject":     "Demo Invoice",
+						"text":        "Email sending with attached invoice",
+						"attachments": []interface{}{},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "missing_email",
+			args: args{
+				options: IM{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid_provider",
+			args: args{
+				options: IM{
+					"provider": "xxxx",
+					"email": map[string]interface{}{
+						"from": "info@nervatura.com", "name": "Nervatura",
+						"recipients": []interface{}{
+							map[string]interface{}{"email": "sample@company.com"}},
+						"subject":     "Demo Invoice",
+						"text":        "Email sending with attached invoice",
+						"attachments": []interface{}{},
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "auth_err",
+			fields: fields{
+				ds: &testDriver{Config: IM{}},
+				config: IM{
+					"NT_SMTP_HOST":            "localhost",
+					"NT_SMTP_PORT":            2525,
+					"NT_SMTP_CONN":            "net",
+					"NT_SMTP_AUTH":            "auth",
+					"NT_SMTP_TLS_MIN_VERSION": 769,
+				},
+			},
+			args: args{
+				options: IM{
+					"provider": "smtp",
+					"email": map[string]interface{}{
+						"from": "info@nervatura.com", "name": "Nervatura",
+						"recipients": []interface{}{
+							map[string]interface{}{"email": "sample@company.com"}},
+						"subject":     "Demo Invoice",
+						"text":        "Email sending with attached invoice",
+						"attachments": []interface{}{},
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "missing_recipients",
+			fields: fields{
+				ds: &testDriver{Config: IM{}},
+				config: IM{
+					"NT_SMTP_HOST":            "localhost",
+					"NT_SMTP_PORT":            2525,
+					"NT_SMTP_CONN":            "net",
+					"NT_SMTP_AUTH":            "none",
+					"NT_SMTP_TLS_MIN_VERSION": 769,
+				},
+			},
+			args: args{
+				options: IM{
+					"provider": "smtp",
+					"email": map[string]interface{}{
+						"from": "info@nervatura.com", "name": "Nervatura",
+						"subject":     "Demo Invoice",
+						"text":        "Email sending with attached invoice",
+						"attachments": []interface{}{},
+					},
+				},
+			},
+			wantErr: true,
+		},
+	}
+	server := smtpmock.New(smtpmock.ConfigurationAttr{
+		HostAddress:       "localhost",
+		PortNumber:        2525,
+		LogToStdout:       false,
+		LogServerActivity: false,
+	})
+	server.Start()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			nstore := &NervaStore{
+				ds:       tt.fields.ds,
+				User:     tt.fields.User,
+				Customer: tt.fields.Customer,
+				models:   tt.fields.models,
+				config:   tt.fields.config,
+			}
+			_, err := nstore.sendEmail(tt.args.options)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("NervaStore.sendEmail() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+	server.Stop()
 }

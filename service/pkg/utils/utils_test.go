@@ -1064,6 +1064,7 @@ func TestParseToken(t *testing.T) {
 		config      map[string]interface{}
 	}
 	token, _ := CreateToken("admin", "demo", make(map[string]interface{}))
+	token_nodb, _ := CreateToken("admin", "", make(map[string]interface{}))
 	tests := []struct {
 		name    string
 		args    args
@@ -1077,6 +1078,15 @@ func TestParseToken(t *testing.T) {
 				config:      make(map[string]interface{}),
 			},
 			wantErr: false,
+		},
+		{
+			name: "token_missing_db",
+			args: args{
+				tokenString: token_nodb,
+				keyMap:      make(map[string]map[string]string),
+				config:      make(map[string]interface{}),
+			},
+			wantErr: true,
 		},
 		{
 			name: "invalid_token",

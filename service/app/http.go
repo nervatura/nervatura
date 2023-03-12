@@ -6,8 +6,8 @@ package app
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/http"
 	"runtime"
 	"strings"
@@ -31,11 +31,16 @@ type httpServer struct {
 	locales    srv.LocalesService
 	result     string
 	server     *http.Server
+	root       http.FileSystem
 	tlsEnabled bool
+	readAll    func(r io.Reader) ([]byte, error)
+	tokenLogin func(r *http.Request) (ctx context.Context, err error)
 }
 
 func init() {
-	registerService("http", &httpServer{})
+	registerService("http", &httpServer{
+		readAll: io.ReadAll,
+	})
 }
 
 func (s *httpServer) StartService() error {
@@ -44,17 +49,14 @@ func (s *httpServer) StartService() error {
 		Config:        s.app.config,
 		GetNervaStore: s.app.GetNervaStore,
 		GetParam:      chi.URLParam,
-		GetTokenKeys: func() map[string]map[string]string {
-			return s.app.tokenKeys
-		},
+		GetTokenKeys:  s.app.GetTokenKeys,
 	}
+	s.tokenLogin = s.service.TokenLogin
 
 	s.admin = srv.AdminService{
 		Config:        s.app.config,
 		GetNervaStore: s.app.GetNervaStore,
-		GetTokenKeys: func() map[string]map[string]string {
-			return s.app.tokenKeys
-		},
+		GetTokenKeys:  s.app.GetTokenKeys,
 	}
 	s.admin.LoadTemplates()
 
@@ -93,7 +95,7 @@ func (s *httpServer) setPublicKeys() {
 			return
 		}
 		defer res.Body.Close()
-		data, err := ioutil.ReadAll(res.Body)
+		data, err := s.readAll(res.Body)
 		if err != nil {
 			s.app.errorLog.Printf(ut.GetMessage("error_external_token"), err)
 			return
@@ -124,16 +126,9 @@ func (s *httpServer) startServer() error {
 
 	s.app.infoLog.Printf(ut.GetMessage("http_serving"), s.app.config["NT_HTTP_PORT"].(int64), s.tlsEnabled)
 	if s.tlsEnabled {
-		if err := s.server.ListenAndServeTLS(s.app.config["NT_TLS_CERT_FILE"].(string), s.app.config["NT_TLS_KEY_FILE"].(string)); err != http.ErrServerClosed {
-			return err
-		}
-	} else {
-		if err := s.server.ListenAndServe(); err != http.ErrServerClosed {
-			return err
-		}
+		return s.server.ListenAndServeTLS(s.app.config["NT_TLS_CERT_FILE"].(string), s.app.config["NT_TLS_KEY_FILE"].(string))
 	}
-
-	return nil
+	return s.server.ListenAndServe()
 }
 
 func (s *httpServer) StopService(ctx interface{}) error {
@@ -153,10 +148,7 @@ func (s *httpServer) ConnectApp(app interface{}) {
 }
 
 func (s *httpServer) Logger(next http.Handler) http.Handler {
-	color := true
-	if runtime.GOOS == "windows" {
-		color = false
-	}
+	color := !(runtime.GOOS == "windows")
 	DefaultLogger := middleware.RequestLogger(
 		&middleware.DefaultLogFormatter{Logger: s.app.httpLog, NoColor: !color})
 	return DefaultLogger(next)
@@ -213,7 +205,7 @@ func (s *httpServer) setMiddleware() {
 
 func (s *httpServer) tokenAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, err := s.service.TokenLogin(r)
+		ctx, err := s.tokenLogin(r)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return
@@ -244,7 +236,7 @@ func (s *httpServer) adminRoute(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if r.PostFormValue("menu") == "docs" {
-			http.Redirect(w, r, "https://nervatura.github.io/nervatura/", http.StatusSeeOther)
+			http.Redirect(w, r, s.app.config["NT_DOCS_URL"].(string), http.StatusSeeOther)
 			return
 		}
 		s.admin.Menu(w, r)
@@ -259,7 +251,8 @@ func (s *httpServer) adminRoute(w http.ResponseWriter, r *http.Request) {
 func (s *httpServer) setRoutes() {
 	// Register static dirs.
 	var publicFS, _ = fs.Sub(ut.Public, "static")
-	s.fileServer("/", http.FS(publicFS))
+	s.root = http.FS(publicFS)
+	s.fileServer("/")
 
 	s.mux.Get("/", s.homeRoute)
 
@@ -322,9 +315,16 @@ func (s *httpServer) setRoutes() {
 
 }
 
+func (s *httpServer) serveFile(w http.ResponseWriter, r *http.Request) {
+	rctx := chi.RouteContext(r.Context())
+	pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+	fs := http.StripPrefix(pathPrefix, http.FileServer(s.root))
+	fs.ServeHTTP(w, r)
+}
+
 // FileServer conveniently sets up a http.FileServer handler to serve
 // static files from a http.FileSystem.
-func (s *httpServer) fileServer(path string, root http.FileSystem) {
+func (s *httpServer) fileServer(path string) {
 
 	if strings.ContainsAny(path, "{}*") {
 		s.app.errorLog.Println(ut.GetMessage("error_fileserver"))
@@ -337,10 +337,5 @@ func (s *httpServer) fileServer(path string, root http.FileSystem) {
 	}
 	path += "*"
 
-	s.mux.Get(path, func(w http.ResponseWriter, r *http.Request) {
-		rctx := chi.RouteContext(r.Context())
-		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
-		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
-		fs.ServeHTTP(w, r)
-	})
+	s.mux.Get(path, s.serveFile)
 }

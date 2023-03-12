@@ -1,3 +1,8 @@
+## 5.1.4
+- service: u. tests and code quality fixes
+- admin: translation helper tool snap bug fixes
+- service: golang (1.20.2) and dependencies upgrade
+
 ## 5.1.3
 - client: report editor side menu (back to setting) bug fixes
 - admin: favicon bug fixes
@@ -202,17 +207,17 @@
 - new env. value: NT_HTTP_LOG_FILE
 
 ## 4.0.7
-  - API AuthUserLogin and ApiView bug fixes
+- API AuthUserLogin and ApiView bug fixes
 
 ## 4.0.5
-  - API AuthUserLogin: added engine (database type) result
+- API AuthUserLogin: added engine (database type) result
 
 ## 4.0.4
-  - nervastore init bug fixes
+- nervastore init bug fixes
 
 ## 4.0.3
-  - demo.js bug fixes
-  - service/get_report bug fixes
+- demo.js bug fixes
+- service/get_report bug fixes
 
 ## 4.0.2
 - set JWT Token kid value: external JWT X509 public keys supports
@@ -317,8 +322,8 @@
 
 ## 2.5.0
 - remove all GUI jquery dependencies:
-  bootstrap -> w3.css, bootstrap-datetimepicker -> flatpickr
-  glyphicons -> font-awesome
+  - bootstrap -> w3.css, bootstrap-datetimepicker -> flatpickr
+  - glyphicons -> font-awesome
 - NDI Wizard bug fixes
 - Nervatura Report bug fixes
 - set npm packages: 

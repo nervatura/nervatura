@@ -5,18 +5,21 @@ package app
 
 import (
 	"context"
+	"errors"
+	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/go-chi/chi/v5"
 	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 	srv "github.com/nervatura/nervatura/service/pkg/service"
+	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
 func Test_httpServer_StartService(t *testing.T) {
@@ -29,6 +32,7 @@ func Test_httpServer_StartService(t *testing.T) {
 		result     string
 		server     *http.Server
 		tlsEnabled bool
+		readAll    func(r io.Reader) ([]byte, error)
 	}
 	tests := []struct {
 		name    string
@@ -87,6 +91,7 @@ func Test_httpServer_StartService(t *testing.T) {
 					errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),
 					tokenKeys: make(map[string]map[string]string),
 				},
+				readAll: io.ReadAll,
 			},
 			wantErr: true,
 		},
@@ -102,6 +107,7 @@ func Test_httpServer_StartService(t *testing.T) {
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
+				readAll:    tt.fields.readAll,
 			}
 			if err := s.StartService(); (err != nil) != tt.wantErr {
 				t.Errorf("httpServer.StartService() error = %v, wantErr %v", err, tt.wantErr)
@@ -120,6 +126,7 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 		result     string
 		server     *http.Server
 		tlsEnabled bool
+		readAll    func(r io.Reader) ([]byte, error)
 	}
 	tests := []struct {
 		name   string
@@ -137,6 +144,7 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 					errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),
 					tokenKeys: make(map[string]map[string]string),
 				},
+				readAll: io.ReadAll,
 			},
 		},
 		{
@@ -151,6 +159,24 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 					errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),
 					tokenKeys: make(map[string]map[string]string),
 				},
+				readAll: func(r io.Reader) ([]byte, error) {
+					return nil, errors.New("error")
+				},
+			},
+		},
+		{
+			name: "body_ok",
+			fields: fields{
+				app: &App{
+					config: nt.IM{
+						"version":                 "test",
+						"NT_TOKEN_PUBLIC_KEY_URL": "https://www.google.com",
+					},
+					infoLog:   log.New(os.Stdout, "INFO: ", log.LstdFlags),
+					errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+					tokenKeys: make(map[string]map[string]string),
+				},
+				readAll: io.ReadAll,
 			},
 		},
 	}
@@ -165,6 +191,7 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
+				readAll:    tt.fields.readAll,
 			}
 			s.setPublicKeys()
 		})
@@ -378,6 +405,7 @@ func Test_httpServer_tokenAuth(t *testing.T) {
 		result     string
 		server     *http.Server
 		tlsEnabled bool
+		tokenLogin func(r *http.Request) (ctx context.Context, err error)
 	}
 	type args struct {
 		next http.Handler
@@ -388,7 +416,30 @@ func Test_httpServer_tokenAuth(t *testing.T) {
 		args   args
 		want   http.Handler
 	}{
-		// TODO: Add test cases.
+		{
+			name: "ok",
+			fields: fields{
+				service: srv.HTTPService{},
+				tokenLogin: func(r *http.Request) (ctx context.Context, err error) {
+					return context.Background(), nil
+				},
+			},
+			args: args{
+				next: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}),
+			},
+		},
+		{
+			name: "error",
+			fields: fields{
+				service: srv.HTTPService{},
+				tokenLogin: func(r *http.Request) (ctx context.Context, err error) {
+					return nil, errors.New("error")
+				},
+			},
+			args: args{
+				next: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -401,10 +452,9 @@ func Test_httpServer_tokenAuth(t *testing.T) {
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
+				tokenLogin: tt.fields.tokenLogin,
 			}
-			if got := s.tokenAuth(tt.args.next); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("httpServer.tokenAuth() = %v, want %v", got, tt.want)
-			}
+			s.tokenAuth(tt.args.next).ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("POST", "/", nil))
 		})
 	}
 }
@@ -462,7 +512,7 @@ func Test_httpServer_fileServer(t *testing.T) {
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
 			}
-			s.fileServer(tt.args.path, tt.args.root)
+			s.fileServer(tt.args.path)
 		})
 	}
 }
@@ -622,6 +672,11 @@ func Test_httpServer_adminRoute(t *testing.T) {
 			name: "docs",
 			fields: fields{
 				admin: as,
+				app: &App{
+					config: nt.IM{
+						"NT_DOCS_URL": "/",
+					},
+				},
 			},
 			args: args{
 				w: httptest.NewRecorder(),
@@ -657,6 +712,60 @@ func Test_httpServer_adminRoute(t *testing.T) {
 				tlsEnabled: tt.fields.tlsEnabled,
 			}
 			s.adminRoute(tt.args.w, tt.args.r)
+		})
+	}
+}
+
+func Test_httpServer_serveFile(t *testing.T) {
+	type fields struct {
+		app        *App
+		mux        *chi.Mux
+		service    srv.HTTPService
+		admin      srv.AdminService
+		client     srv.ClientService
+		locales    srv.LocalesService
+		result     string
+		server     *http.Server
+		root       http.FileSystem
+		tlsEnabled bool
+	}
+	type args struct {
+		w http.ResponseWriter
+		r *http.Request
+	}
+	var publicFS, _ = fs.Sub(ut.Public, "static")
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{
+			name: "serve",
+			fields: fields{
+				root: http.FS(publicFS),
+			},
+			args: args{
+				w: httptest.NewRecorder(),
+				r: httptest.NewRequest("GET", "/", nil).WithContext(
+					context.WithValue(context.Background(), chi.RouteCtxKey, chi.NewRouteContext())),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &httpServer{
+				app:        tt.fields.app,
+				mux:        tt.fields.mux,
+				service:    tt.fields.service,
+				admin:      tt.fields.admin,
+				client:     tt.fields.client,
+				locales:    tt.fields.locales,
+				result:     tt.fields.result,
+				server:     tt.fields.server,
+				root:       tt.fields.root,
+				tlsEnabled: tt.fields.tlsEnabled,
+			}
+			s.serveFile(tt.args.w, tt.args.r)
 		})
 	}
 }

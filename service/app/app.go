@@ -26,10 +26,14 @@ type App struct {
 	infoLog   *log.Logger
 	errorLog  *log.Logger
 	httpLog   *log.Logger
-	args      map[string]string
-	tokenKeys map[string]map[string]string
+	args      nt.SM
+	tokenKeys map[string]nt.SM
 	config    map[string]interface{}
+	readFile  func(name string) ([]byte, error)
+	getEnv    func(key string) string
 }
+
+const docsURL = "https://nervatura.github.io/nervatura/"
 
 var services = make(map[string]srv.APIService)
 
@@ -40,11 +44,14 @@ func registerService(name string, server srv.APIService) {
 func New(version string, args nt.SM) (app *App, err error) {
 	app = &App{
 		config: nt.IM{
-			"version": version,
+			"version":     version,
+			"NT_DOCS_URL": docsURL,
 		},
 		args:      args,
 		services:  services,
-		tokenKeys: make(map[string]map[string]string),
+		tokenKeys: make(map[string]nt.SM),
+		readFile:  os.ReadFile,
+		getEnv:    os.Getenv,
 	}
 
 	app.infoLog = log.New(os.Stdout, "INFO: ", log.LstdFlags)
@@ -52,7 +59,7 @@ func New(version string, args nt.SM) (app *App, err error) {
 	app.httpLog = log.New(os.Stdout, "", log.LstdFlags)
 	app.setEnv()
 
-	app.config["NT_APP_LOG_FILE"] = ut.ToString(args["NT_APP_LOG_FILE"], os.Getenv("NT_APP_LOG_FILE"))
+	app.config["NT_APP_LOG_FILE"] = ut.ToString(args["NT_APP_LOG_FILE"], app.getEnv("NT_APP_LOG_FILE"))
 	if app.config["NT_APP_LOG_FILE"] != "" {
 		f, err := os.OpenFile(app.config["NT_APP_LOG_FILE"].(string), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
 		if err != nil {
@@ -88,18 +95,6 @@ func New(version string, args nt.SM) (app *App, err error) {
 		return nil, err
 	}
 
-	err = app.setTokenKey("private")
-	if err != nil {
-		app.errorLog.Printf(ut.GetMessage("error_private_key"), err)
-		return nil, err
-	}
-
-	err = app.setTokenKey("public")
-	if err != nil {
-		app.errorLog.Printf(ut.GetMessage("error_public_key"), err)
-		return nil, err
-	}
-
 	err = app.startService("cli")
 	if err != nil {
 		app.errorLog.Printf(ut.GetMessage("error_starting_cli"), err)
@@ -126,119 +121,125 @@ func (app *App) setEnv() {
 }
 
 func (app *App) setConfig() {
-	app.config["NT_TLS_CERT_FILE"] = ut.ToString(os.Getenv("NT_TLS_CERT_FILE"), "")
-	app.config["NT_TLS_KEY_FILE"] = ut.ToString(os.Getenv("NT_TLS_KEY_FILE"), "")
-
-	app.config["NT_HTTP_ENABLED"] = ut.ToBoolean(app.args["NT_HTTP_ENABLED"], ut.ToBoolean(os.Getenv("NT_HTTP_ENABLED"), true))
-	app.config["NT_HTTP_PORT"] = ut.ToInteger(os.Getenv("NT_HTTP_PORT"), 5000)
-	app.config["NT_HTTP_TLS_ENABLED"] = ut.ToBoolean(os.Getenv("NT_HTTP_TLS_ENABLED"), false)
-	app.config["NT_HTTP_READ_TIMEOUT"] = ut.ToFloat(os.Getenv("NT_HTTP_READ_TIMEOUT"), 30)
-	app.config["NT_HTTP_WRITE_TIMEOUT"] = ut.ToFloat(os.Getenv("NT_HTTP_WRITE_TIMEOUT"), 30)
-	app.config["NT_HTTP_HOME"] = ut.ToString(os.Getenv("NT_HTTP_HOME"), "/admin")
-	app.config["NT_HTTP_LOG_FILE"] = ut.ToString(app.args["NT_APP_LOG_FILE"], os.Getenv("NT_HTTP_LOG_FILE"))
-	if app.config["NT_HTTP_LOG_FILE"] == "" && os.Getenv("SNAP_COMMON") != "" && strings.Contains(os.Getenv("SNAP_COMMON"), "nervatura") {
-		app.config["NT_HTTP_LOG_FILE"] = os.Getenv("SNAP_COMMON") + "/http.log"
+	isSnap := func() bool {
+		return app.getEnv("SNAP_COMMON") != "" && strings.Contains(app.getEnv("SNAP_COMMON"), "nervatura")
 	}
 
-	app.config["NT_GRPC_ENABLED"] = ut.ToBoolean(app.args["NT_GRPC_ENABLED"], ut.ToBoolean(os.Getenv("NT_GRPC_ENABLED"), true))
-	app.config["NT_GRPC_PORT"] = ut.ToInteger(os.Getenv("NT_GRPC_PORT"), 9200)
-	app.config["NT_GRPC_TLS_ENABLED"] = ut.ToBoolean(os.Getenv("NT_GRPC_TLS_ENABLED"), false)
+	app.config["NT_TLS_CERT_FILE"] = ut.ToString(app.getEnv("NT_TLS_CERT_FILE"), "")
+	app.config["NT_TLS_KEY_FILE"] = ut.ToString(app.getEnv("NT_TLS_KEY_FILE"), "")
 
-	app.config["NT_CLIENT_CONFIG"] = ut.ToString(os.Getenv("NT_CLIENT_CONFIG"), "data/client_config.json")
+	app.config["NT_HTTP_ENABLED"] = ut.ToBoolean(app.args["NT_HTTP_ENABLED"], ut.ToBoolean(app.getEnv("NT_HTTP_ENABLED"), true))
+	app.config["NT_HTTP_PORT"] = ut.ToInteger(app.getEnv("NT_HTTP_PORT"), 5000)
+	app.config["NT_HTTP_TLS_ENABLED"] = ut.ToBoolean(app.getEnv("NT_HTTP_TLS_ENABLED"), false)
+	app.config["NT_HTTP_READ_TIMEOUT"] = ut.ToFloat(app.getEnv("NT_HTTP_READ_TIMEOUT"), 30)
+	app.config["NT_HTTP_WRITE_TIMEOUT"] = ut.ToFloat(app.getEnv("NT_HTTP_WRITE_TIMEOUT"), 30)
+	app.config["NT_HTTP_HOME"] = ut.ToString(app.getEnv("NT_HTTP_HOME"), "/admin")
+	app.config["NT_HTTP_LOG_FILE"] = ut.ToString(app.args["NT_APP_LOG_FILE"], app.getEnv("NT_HTTP_LOG_FILE"))
 
-	app.config["NT_FONT_FAMILY"] = ut.ToString(os.Getenv("NT_FONT_FAMILY"), "")
-	app.config["NT_FONT_DIR"] = ut.ToString(os.Getenv("NT_FONT_DIR"), "")
-	app.config["NT_REPORT_DIR"] = ut.ToString(os.Getenv("NT_REPORT_DIR"), "")
+	dataDir := "data"
+	if isSnap() {
+		dataDir = app.getEnv("SNAP_COMMON")
+		if app.config["NT_HTTP_LOG_FILE"] == "" {
+			app.config["NT_HTTP_LOG_FILE"] = dataDir + "/http.log"
+		}
+	}
 
-	if os.Getenv("NT_API_KEY") == "" && (app.config["version"] == "test" || app.config["version"] == "debug") {
+	app.config["NT_GRPC_ENABLED"] = ut.ToBoolean(app.args["NT_GRPC_ENABLED"], ut.ToBoolean(app.getEnv("NT_GRPC_ENABLED"), true))
+	app.config["NT_GRPC_PORT"] = ut.ToInteger(app.getEnv("NT_GRPC_PORT"), 9200)
+	app.config["NT_GRPC_TLS_ENABLED"] = ut.ToBoolean(app.getEnv("NT_GRPC_TLS_ENABLED"), false)
+
+	app.config["NT_CLIENT_CONFIG"] = ut.ToString(app.getEnv("NT_CLIENT_CONFIG"), "")
+	if app.config["NT_CLIENT_CONFIG"] == "" {
+		app.config["NT_CLIENT_CONFIG"] = dataDir + "/client_config.json"
+	}
+
+	app.config["NT_FONT_FAMILY"] = ut.ToString(app.getEnv("NT_FONT_FAMILY"), "")
+	app.config["NT_FONT_DIR"] = ut.ToString(app.getEnv("NT_FONT_DIR"), "")
+	app.config["NT_REPORT_DIR"] = ut.ToString(app.getEnv("NT_REPORT_DIR"), "")
+
+	if app.getEnv("NT_API_KEY") == "" && (app.config["version"] == "test" || app.config["version"] == "debug") {
 		app.config["NT_API_KEY"] = "TEST_API_KEY"
 	} else {
-		app.config["NT_API_KEY"] = ut.ToString(os.Getenv("NT_API_KEY"), ut.RandString(32))
+		app.config["NT_API_KEY"] = ut.ToString(app.getEnv("NT_API_KEY"), ut.RandString(32))
 	}
-	app.config["NT_PASSWORD_LOGIN"] = ut.ToBoolean(os.Getenv("NT_PASSWORD_LOGIN"), true)
+	app.config["NT_PASSWORD_LOGIN"] = ut.ToBoolean(app.getEnv("NT_PASSWORD_LOGIN"), true)
 
-	app.config["NT_TOKEN_ISS"] = ut.ToString(os.Getenv("NT_TOKEN_ISS"), "nervatura")
-	app.config["NT_TOKEN_PRIVATE_KID"] = ut.ToString(os.Getenv("NT_TOKEN_PRIVATE_KID"), ut.GetHash("nervatura"))
+	app.config["NT_TOKEN_ISS"] = ut.ToString(app.getEnv("NT_TOKEN_ISS"), "nervatura")
+	app.config["NT_TOKEN_PRIVATE_KID"] = ut.ToString(app.getEnv("NT_TOKEN_PRIVATE_KID"), ut.GetHash("nervatura"))
 	isServer := func() bool {
-		if ut.Contains(os.Args, "-c") && !ut.Contains(os.Args, "server") {
-			return true
-		}
 		if _, found := app.args["cmd"]; found {
 			if app.args["cmd"] != "server" {
 				return true
 			}
 		}
-		return false
+		return (ut.Contains(os.Args, "-c") && !ut.Contains(os.Args, "server"))
 	}
 	if isServer() {
-		app.config["NT_TOKEN_PRIVATE_KEY"] = ut.ToString(os.Getenv("NT_TOKEN_PRIVATE_KEY"), ut.GetHash(time.Now().Format("20060102")))
+		app.config["NT_TOKEN_PRIVATE_KEY"] = ut.ToString(app.getEnv("NT_TOKEN_PRIVATE_KEY"), ut.GetHash(time.Now().Format("20060102")))
 	} else {
-		app.config["NT_TOKEN_PRIVATE_KEY"] = ut.ToString(os.Getenv("NT_TOKEN_PRIVATE_KEY"), ut.RandString(32))
+		app.config["NT_TOKEN_PRIVATE_KEY"] = ut.ToString(app.getEnv("NT_TOKEN_PRIVATE_KEY"), ut.RandString(32))
 	}
-	app.config["NT_TOKEN_EXP"] = ut.ToFloat(os.Getenv("NT_TOKEN_EXP"), 6)
+	app.config["NT_TOKEN_EXP"] = ut.ToFloat(app.getEnv("NT_TOKEN_EXP"), 6)
 
-	app.config["NT_TOKEN_PUBLIC_KID"] = ut.ToString(os.Getenv("NT_TOKEN_PUBLIC_KID"), "public")
-	app.config["NT_TOKEN_PUBLIC_KEY"] = ut.ToString(os.Getenv("NT_TOKEN_PUBLIC_KEY"), "")
-	app.config["NT_TOKEN_PUBLIC_KEY_URL"] = ut.ToString(os.Getenv("NT_TOKEN_PUBLIC_KEY_URL"), "")
+	app.config["NT_TOKEN_PUBLIC_KID"] = ut.ToString(app.getEnv("NT_TOKEN_PUBLIC_KID"), "public")
+	app.config["NT_TOKEN_PUBLIC_KEY"] = ut.ToString(app.getEnv("NT_TOKEN_PUBLIC_KEY"), "")
+	app.config["NT_TOKEN_PUBLIC_KEY_URL"] = ut.ToString(app.getEnv("NT_TOKEN_PUBLIC_KEY_URL"), "")
 
-	app.config["NT_HASHTABLE"] = ut.ToString(os.Getenv("NT_HASHTABLE"), "ref17890714")
+	app.config["NT_HASHTABLE"] = ut.ToString(app.getEnv("NT_HASHTABLE"), "ref17890714")
 
-	app.config["NT_SMTP_HOST"] = ut.ToString(os.Getenv("NT_SMTP_HOST"), "")
-	app.config["NT_SMTP_PORT"] = ut.ToInteger(os.Getenv("NT_SMTP_PORT"), 465)
-	app.config["NT_SMTP_TLS_MIN_VERSION"] = ut.ToInteger(os.Getenv("NT_SMTP_TLS_MIN_VERSION"), 0)
-	app.config["NT_SMTP_USER"] = ut.ToString(os.Getenv("NT_SMTP_USER"), "")
-	app.config["NT_SMTP_PASSWORD"] = ut.ToString(os.Getenv("NT_SMTP_PASSWORD"), "")
+	app.config["NT_SMTP_HOST"] = ut.ToString(app.getEnv("NT_SMTP_HOST"), "")
+	app.config["NT_SMTP_PORT"] = ut.ToInteger(app.getEnv("NT_SMTP_PORT"), 465)
+	app.config["NT_SMTP_TLS_MIN_VERSION"] = ut.ToInteger(app.getEnv("NT_SMTP_TLS_MIN_VERSION"), 0)
+	app.config["NT_SMTP_USER"] = ut.ToString(app.getEnv("NT_SMTP_USER"), "")
+	app.config["NT_SMTP_PASSWORD"] = ut.ToString(app.getEnv("NT_SMTP_PASSWORD"), "")
 
-	app.config["SQL_MAX_OPEN_CONNS"] = ut.ToInteger(os.Getenv("SQL_MAX_OPEN_CONNS"), 10)
-	app.config["SQL_MAX_IDLE_CONNS"] = ut.ToInteger(os.Getenv("SQL_MAX_IDLE_CONNS"), 3)
-	app.config["SQL_CONN_MAX_LIFETIME"] = ut.ToInteger(os.Getenv("SQL_CONN_MAX_LIFETIME"), 15)
+	app.config["SQL_MAX_OPEN_CONNS"] = ut.ToInteger(app.getEnv("SQL_MAX_OPEN_CONNS"), 10)
+	app.config["SQL_MAX_IDLE_CONNS"] = ut.ToInteger(app.getEnv("SQL_MAX_IDLE_CONNS"), 3)
+	app.config["SQL_CONN_MAX_LIFETIME"] = ut.ToInteger(app.getEnv("SQL_CONN_MAX_LIFETIME"), 15)
 
-	app.config["NT_ALIAS_DEFAULT"] = ut.ToString(app.args["NT_ALIAS_DEFAULT"], os.Getenv("NT_ALIAS_DEFAULT"))
+	app.config["NT_ALIAS_DEFAULT"] = ut.ToString(app.args["NT_ALIAS_DEFAULT"], app.getEnv("NT_ALIAS_DEFAULT"))
 
-	app.config["NT_CORS_ENABLED"] = ut.ToBoolean(os.Getenv("NT_CORS_ENABLED"), true)
-	app.config["NT_CORS_ALLOW_ORIGINS"] = strings.Split(ut.ToString(os.Getenv("NT_CORS_ALLOW_ORIGINS"), "*"), ",")
-	app.config["NT_CORS_ALLOW_METHODS"] = strings.Split(ut.ToString(os.Getenv("NT_CORS_ALLOW_METHODS"), "GET,POST,DELETE,OPTIONS"), ",")
-	app.config["NT_CORS_ALLOW_HEADERS"] = strings.Split(ut.ToString(os.Getenv("NT_CORS_ALLOW_HEADERS"), "Accept,Authorization,Content-Type,X-CSRF-Token,X-Api-Key"), ",")
-	app.config["NT_CORS_EXPOSE_HEADERS"] = strings.Split(ut.ToString(os.Getenv("NT_CORS_EXPOSE_HEADERS"), ""), ",")
-	app.config["NT_CORS_ALLOW_CREDENTIALS"] = ut.ToBoolean(os.Getenv("NT_CORS_ALLOW_CREDENTIALS"), false)
-	app.config["NT_CORS_MAX_AGE"] = ut.ToInteger(os.Getenv("NT_CORS_MAX_AGE"), 0)
+	app.config["NT_CORS_ENABLED"] = ut.ToBoolean(app.getEnv("NT_CORS_ENABLED"), true)
+	app.config["NT_CORS_ALLOW_ORIGINS"] = strings.Split(ut.ToString(app.getEnv("NT_CORS_ALLOW_ORIGINS"), "*"), ",")
+	app.config["NT_CORS_ALLOW_METHODS"] = strings.Split(ut.ToString(app.getEnv("NT_CORS_ALLOW_METHODS"), "GET,POST,DELETE,OPTIONS"), ",")
+	app.config["NT_CORS_ALLOW_HEADERS"] = strings.Split(ut.ToString(app.getEnv("NT_CORS_ALLOW_HEADERS"), "Accept,Authorization,Content-Type,X-CSRF-Token,X-Api-Key"), ",")
+	app.config["NT_CORS_EXPOSE_HEADERS"] = strings.Split(ut.ToString(app.getEnv("NT_CORS_EXPOSE_HEADERS"), ""), ",")
+	app.config["NT_CORS_ALLOW_CREDENTIALS"] = ut.ToBoolean(app.getEnv("NT_CORS_ALLOW_CREDENTIALS"), false)
+	app.config["NT_CORS_MAX_AGE"] = ut.ToInteger(app.getEnv("NT_CORS_MAX_AGE"), 0)
 
-	app.config["NT_SECURITY_ENABLED"] = ut.ToBoolean(os.Getenv("NT_SECURITY_ENABLED"), false)
-	app.config["NT_SECURITY_ALLOWED_HOSTS"] = strings.Split(ut.ToString(os.Getenv("NT_SECURITY_ALLOWED_HOSTS"), ""), ",")
-	app.config["NT_SECURITY_HOSTS_PROXY_HEADERS"] = strings.Split(ut.ToString(os.Getenv("NT_SECURITY_HOSTS_PROXY_HEADERS"), ""), ",")
-	app.config["NT_SECURITY_ALLOWED_HOSTS_ARE_REGEX"] = ut.ToBoolean(os.Getenv("NT_SECURITY_ALLOWED_HOSTS_ARE_REGEX"), false)
-	app.config["NT_SECURITY_SSL_REDIRECT"] = ut.ToBoolean(os.Getenv("NT_SECURITY_SSL_REDIRECT"), false)
-	app.config["NT_SECURITY_SSL_TEMPORARY_REDIRECT"] = ut.ToBoolean(os.Getenv("NT_SECURITY_SSL_TEMPORARY_REDIRECT"), false)
-	app.config["NT_SECURITY_SSL_HOST"] = ut.ToString(os.Getenv("NT_SECURITY_SSL_HOST"), "")
-	app.config["NT_SECURITY_PROXY_HEADERS"] = strings.Split(ut.ToString(os.Getenv("NT_SECURITY_PROXY_HEADERS"), ""), ",")
-	app.config["NT_SECURITY_STS_SECONDS"] = ut.ToInteger(os.Getenv("NT_SECURITY_STS_SECONDS"), 0)
-	app.config["NT_SECURITY_STS_INCLUDE_SUBDOMAINS"] = ut.ToBoolean(os.Getenv("NT_SECURITY_STS_INCLUDE_SUBDOMAINS"), false)
-	app.config["NT_SECURITY_STS_PRELOAD"] = ut.ToBoolean(os.Getenv("NT_SECURITY_STS_PRELOAD"), false)
-	app.config["NT_SECURITY_FORCE_STS_HEADER"] = ut.ToBoolean(os.Getenv("NT_SECURITY_FORCE_STS_HEADER"), false)
-	app.config["NT_SECURITY_FRAME_DENY"] = ut.ToBoolean(os.Getenv("NT_SECURITY_FRAME_DENY"), false)
-	app.config["NT_SECURITY_CUSTOM_FRAME_OPTIONS_VALUE"] = ut.ToString(os.Getenv("NT_SECURITY_CUSTOM_FRAME_OPTIONS_VALUE"), "")
-	app.config["NT_SECURITY_CONTENT_TYPE_NOSNIFF"] = ut.ToBoolean(os.Getenv("NT_SECURITY_CONTENT_TYPE_NOSNIFF"), false)
-	app.config["NT_SECURITY_BROWSER_XSS_FILTER"] = ut.ToBoolean(os.Getenv("NT_SECURITY_BROWSER_XSS_FILTER"), false)
-	app.config["NT_SECURITY_CONTENT_SECURITY_POLICY"] = ut.ToString(os.Getenv("NT_SECURITY_CONTENT_SECURITY_POLICY"), "")
-	app.config["NT_SECURITY_PUBLIC_KEY"] = ut.ToString(os.Getenv("NT_SECURITY_PUBLIC_KEY"), "")
-	app.config["NT_SECURITY_REFERRER_POLICY"] = ut.ToString(os.Getenv("NT_SECURITY_REFERRER_POLICY"), "")
-	app.config["NT_SECURITY_FEATURE_POLICY"] = ut.ToString(os.Getenv("NT_SECURITY_FEATURE_POLICY"), "")
-	app.config["NT_SECURITY_EXPECT_CT_HEADER"] = ut.ToString(os.Getenv("NT_SECURITY_EXPECT_CT_HEADER"), "")
-	app.config["NT_SECURITY_DEVELOPMENT"] = ut.ToBoolean(os.Getenv("NT_SECURITY_DEVELOPMENT"), false)
+	app.config["NT_SECURITY_ENABLED"] = ut.ToBoolean(app.getEnv("NT_SECURITY_ENABLED"), false)
+	app.config["NT_SECURITY_ALLOWED_HOSTS"] = strings.Split(ut.ToString(app.getEnv("NT_SECURITY_ALLOWED_HOSTS"), ""), ",")
+	app.config["NT_SECURITY_HOSTS_PROXY_HEADERS"] = strings.Split(ut.ToString(app.getEnv("NT_SECURITY_HOSTS_PROXY_HEADERS"), ""), ",")
+	app.config["NT_SECURITY_ALLOWED_HOSTS_ARE_REGEX"] = ut.ToBoolean(app.getEnv("NT_SECURITY_ALLOWED_HOSTS_ARE_REGEX"), false)
+	app.config["NT_SECURITY_SSL_REDIRECT"] = ut.ToBoolean(app.getEnv("NT_SECURITY_SSL_REDIRECT"), false)
+	app.config["NT_SECURITY_SSL_TEMPORARY_REDIRECT"] = ut.ToBoolean(app.getEnv("NT_SECURITY_SSL_TEMPORARY_REDIRECT"), false)
+	app.config["NT_SECURITY_SSL_HOST"] = ut.ToString(app.getEnv("NT_SECURITY_SSL_HOST"), "")
+	app.config["NT_SECURITY_PROXY_HEADERS"] = strings.Split(ut.ToString(app.getEnv("NT_SECURITY_PROXY_HEADERS"), ""), ",")
+	app.config["NT_SECURITY_STS_SECONDS"] = ut.ToInteger(app.getEnv("NT_SECURITY_STS_SECONDS"), 0)
+	app.config["NT_SECURITY_STS_INCLUDE_SUBDOMAINS"] = ut.ToBoolean(app.getEnv("NT_SECURITY_STS_INCLUDE_SUBDOMAINS"), false)
+	app.config["NT_SECURITY_STS_PRELOAD"] = ut.ToBoolean(app.getEnv("NT_SECURITY_STS_PRELOAD"), false)
+	app.config["NT_SECURITY_FORCE_STS_HEADER"] = ut.ToBoolean(app.getEnv("NT_SECURITY_FORCE_STS_HEADER"), false)
+	app.config["NT_SECURITY_FRAME_DENY"] = ut.ToBoolean(app.getEnv("NT_SECURITY_FRAME_DENY"), false)
+	app.config["NT_SECURITY_CUSTOM_FRAME_OPTIONS_VALUE"] = ut.ToString(app.getEnv("NT_SECURITY_CUSTOM_FRAME_OPTIONS_VALUE"), "")
+	app.config["NT_SECURITY_CONTENT_TYPE_NOSNIFF"] = ut.ToBoolean(app.getEnv("NT_SECURITY_CONTENT_TYPE_NOSNIFF"), false)
+	app.config["NT_SECURITY_BROWSER_XSS_FILTER"] = ut.ToBoolean(app.getEnv("NT_SECURITY_BROWSER_XSS_FILTER"), false)
+	app.config["NT_SECURITY_CONTENT_SECURITY_POLICY"] = ut.ToString(app.getEnv("NT_SECURITY_CONTENT_SECURITY_POLICY"), "")
+	app.config["NT_SECURITY_PUBLIC_KEY"] = ut.ToString(app.getEnv("NT_SECURITY_PUBLIC_KEY"), "")
+	app.config["NT_SECURITY_REFERRER_POLICY"] = ut.ToString(app.getEnv("NT_SECURITY_REFERRER_POLICY"), "")
+	app.config["NT_SECURITY_FEATURE_POLICY"] = ut.ToString(app.getEnv("NT_SECURITY_FEATURE_POLICY"), "")
+	app.config["NT_SECURITY_EXPECT_CT_HEADER"] = ut.ToString(app.getEnv("NT_SECURITY_EXPECT_CT_HEADER"), "")
+	app.config["NT_SECURITY_DEVELOPMENT"] = ut.ToBoolean(app.getEnv("NT_SECURITY_DEVELOPMENT"), false)
 
-	app.config["NT_ALIAS_DEMO"] = ut.ToString(os.Getenv("NT_ALIAS_DEMO"), "")
+	app.config["NT_ALIAS_DEMO"] = ut.ToString(app.getEnv("NT_ALIAS_DEMO"), "")
 	if app.config["NT_ALIAS_DEMO"] == "" && ut.Contains(db.Drivers, "sqlite") {
-		if _, err := os.Stat("data"); err == nil {
-			app.config["NT_ALIAS_DEMO"] = "sqlite://file:data/demo.db?cache=shared&mode=rwc"
-		}
-		if os.Getenv("SNAP_COMMON") != "" && strings.Contains(os.Getenv("SNAP_COMMON"), "nervatura") {
-			app.config["NT_ALIAS_DEMO"] = "sqlite://file:" + os.Getenv("SNAP_COMMON") + "/demo.db?cache=shared&mode=rwc"
+		if _, err := os.Stat("data"); err == nil || isSnap() {
+			app.config["NT_ALIAS_DEMO"] = "sqlite://file:" + dataDir + "/demo.db?cache=shared&mode=rwc"
 		}
 	}
 
 	info := []string{"NT_API_KEY", "NT_TOKEN_PRIVATE_KID", "NT_TOKEN_PRIVATE_KEY"}
 	for i := 0; i < len(info); i++ {
-		if os.Getenv(info[i]) == "" && app.args == nil {
+		if app.getEnv(info[i]) == "" && app.args == nil {
 			app.infoLog.Println(info[i] + ": " + app.config[info[i]].(string))
 		}
 	}
@@ -250,8 +251,9 @@ func (app *App) setTokenKey(keyType string) error {
 	if pkey != "" {
 		//file or key?
 		if _, err := os.Stat(pkey); err == nil {
-			content, err := os.ReadFile(filepath.Clean(pkey))
+			content, err := app.readFile(filepath.Clean(pkey))
 			if err != nil {
+				app.errorLog.Printf(ut.GetMessage("error_"+keyType+"_key"), err)
 				return err
 			}
 			pkey = string(content)
@@ -337,10 +339,16 @@ func (app *App) startService(name string) error {
 }
 
 func (app *App) checkDefaultConn() (err error) {
+	for _, tv := range []string{"private", "public"} {
+		if err = app.setTokenKey(tv); err != nil {
+			return err
+		}
+	}
+
 	connStr := ""
 	alias := ""
 	if app.config["NT_ALIAS_DEFAULT"] != "" {
-		connStr = os.Getenv("NT_ALIAS_" + strings.ToUpper(app.config["NT_ALIAS_DEFAULT"].(string)))
+		connStr = app.getEnv("NT_ALIAS_" + strings.ToUpper(app.config["NT_ALIAS_DEFAULT"].(string)))
 		alias = strings.ToLower(app.config["NT_ALIAS_DEFAULT"].(string))
 	}
 	if connStr != "" {
@@ -361,4 +369,8 @@ func (app *App) GetNervaStore(database string) (nstore *nt.NervaStore) {
 
 func (app *App) GetResults() string {
 	return app.services["cli"].Results()
+}
+
+func (app *App) GetTokenKeys() map[string]nt.SM {
+	return app.tokenKeys
 }

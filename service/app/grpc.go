@@ -27,6 +27,7 @@ type rpcServer struct {
 	result     string
 	server     *grpc.Server
 	tlsEnabled bool
+	auth       func(authorization []string, parent context.Context) (ctx context.Context, err error)
 }
 
 func init() {
@@ -38,10 +39,9 @@ func (s *rpcServer) StartService() error {
 	s.service = srv.RPCService{
 		Config:        s.app.config,
 		GetNervaStore: s.app.GetNervaStore,
-		GetTokenKeys: func() map[string]map[string]string {
-			return s.app.tokenKeys
-		},
+		GetTokenKeys:  s.app.GetTokenKeys,
 	}
+	s.auth = s.service.TokenAuth
 
 	var cred credentials.TransportCredentials
 	if s.app.config["NT_GRPC_TLS_ENABLED"].(bool) {
@@ -112,7 +112,7 @@ func (s *rpcServer) tokenAuth(ctx context.Context, req interface{}, info *grpc.U
 			return handler(ictx, req)
 		}
 
-		ictx, err := s.service.TokenAuth(md["authorization"], ctx)
+		ictx, err := s.auth(md["authorization"], ctx)
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, "invalid token")
 		}

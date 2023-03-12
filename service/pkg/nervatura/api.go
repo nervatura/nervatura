@@ -1312,17 +1312,10 @@ func (api *API) ReportInstall(options IM) (result int64, err error) {
 
 	report["repname"] = ut.ToString(meta["repname"], "")
 	report["description"] = ut.ToString(meta["description"], "")
-	if _, found := groups["nervatype"].(IM)[ut.ToString(meta["nervatype"], "")]; found {
-		report["nervatype"] = ut.ToFloat(groups["nervatype"].(IM)[ut.ToString(meta["nervatype"], "")], 0)
-	}
-	if _, found := groups["filetype"].(IM)[ut.ToString(meta["filetype"], "")]; found {
-		report["filetype"] = ut.ToFloat(groups["filetype"].(IM)[ut.ToString(meta["filetype"], "")], 0)
-	}
-	if _, found := groups["transtype"].(IM)[ut.ToString(meta["transtype"], "")]; found {
-		report["transtype"] = ut.ToFloat(groups["transtype"].(IM)[ut.ToString(meta["transtype"], "")], 0)
-	}
-	if _, found := groups["direction"].(IM)[ut.ToString(meta["direction"], "")]; found {
-		report["direction"] = ut.ToFloat(groups["direction"].(IM)[ut.ToString(meta["direction"], "")], 0)
+	for _, field := range []string{"nervatype", "filetype", "transtype", "direction"} {
+		if _, found := groups[field].(IM)[ut.ToString(meta[field], "")]; found {
+			report[field] = ut.ToFloat(groups[field].(IM)[ut.ToString(meta[field], "")], 0)
+		}
 	}
 	report["label"] = ut.ToString(meta["label"], "")
 	report["report"] = string(file)
