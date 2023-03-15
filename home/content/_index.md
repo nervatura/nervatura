@@ -59,6 +59,9 @@ or CSV data files
 
 The Nervatura [**Service**](/docs/service) is a simple interface layer that provides multiple, well-documented data access protocols for handling data. With their help, we can use the best data access for every development language and environment. Using the functions of the interfaces, we can be sure that the data is always read or written from the databases correctly and simply. The data can be stored in several types of databases, but they can be handled in the same format, and the database types can be easily changed.
 
+<img alt="Nervatura Service" src="/images/service.svg"
+      style="display:block;width:400px;margin-left:auto;margin-right:auto;" />
+
 The Nervatura Service has a modular structure, where most modules are optional. The default service includes all modules, but you [can build a customized service from them](/docs/install/#other-platforms-and-custom-build).
 
 The Nervatura [**Client**](/docs/client) is a standard HTML5/ES6 [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components) application that contains no other external dependencies apart from the [lit helper functions](https://lit.dev). The standard HTML5 Web Components can be easily integrated or called from other javascript frameworks. It was created so that all the business data of the framework can be managed immediately after installation through a graphical interface. The client and report interface supports [multilingualism](/docs/start/customization#customize-the-appearance).
