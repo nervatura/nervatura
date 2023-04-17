@@ -9,24 +9,24 @@ require (
 	github.com/go-chi/cors v1.2.1
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/joho/godotenv v1.5.1
-	github.com/lib/pq v1.10.7
-	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/lib/pq v1.10.8
+	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/signintech/gopdf v0.16.1
 	github.com/unrolled/secure v1.13.0
-	golang.org/x/crypto v0.7.0 // indirect
-	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/crypto v0.8.0 // indirect
+	golang.org/x/net v0.9.0 // indirect
 	golang.org/x/sync v0.1.0
-	golang.org/x/sys v0.6.0 // indirect
-	golang.org/x/text v0.8.0 // indirect
-	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
-	google.golang.org/grpc v1.53.0
-	google.golang.org/protobuf v1.29.0
-	modernc.org/libc v1.22.3 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
+	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
+	google.golang.org/grpc v1.54.0
+	google.golang.org/protobuf v1.30.0
+	modernc.org/libc v1.22.4 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
 	modernc.org/memory v1.5.0 // indirect
-	modernc.org/sqlite v1.21.0 // indirect
+	modernc.org/sqlite v1.21.1 // indirect
 )
 
 require (
@@ -44,6 +44,6 @@ require (
 require (
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/glebarez/go-sqlite v1.21.0
+	github.com/glebarez/go-sqlite v1.21.1
 	github.com/mocktools/go-smtp-mock/v2 v2.0.5
 )

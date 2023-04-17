@@ -247,7 +247,10 @@ export class LoginController {
     const { request } = this.host.app
     if(params.callback){
       const options = {
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json", 
+          "Accept": "application/json" 
+        },
         method: "POST",
         body: JSON.stringify({
           code: params.code
@@ -261,7 +264,7 @@ export class LoginController {
         if(result.access_token){
           return this.tokenValidation({ access_token: result.access_token, callback: result.callback })
         }
-        return this.tokenError(result, params.error)
+        return this.tokenError(result.error, params.error)
       } catch (err) {
         return this.tokenError(err, params.error)
       }

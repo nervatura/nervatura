@@ -66,6 +66,9 @@ The Nervatura Service has a modular structure, where most modules are optional. 
 
 The Nervatura [**Client**](/docs/client) is a standard HTML5/ES6 [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components) application that contains no other external dependencies apart from the [lit helper functions](https://lit.dev). The standard HTML5 Web Components can be easily integrated or called from other javascript frameworks. It was created so that all the business data of the framework can be managed immediately after installation through a graphical interface. The client and report interface supports [multilingualism](/docs/start/customization#customize-the-appearance).
 
+<img alt="Nervatura Service" src="/images/nervatura.svg"
+      style="display:block;width:400px;margin-left:auto;margin-right:auto;" />
+
 The Nervatura Framework **can be used independently**, but it is basically designed to provide a stable and secure foundation for self-developed, customized enterprise business systems. The framework **can be easily extended** with additional user interfaces or data management functions in **any programming language** or technology. Using the data from the framework, you can easily create your own web stores, user input interfaces or data interfaces for other systems. 
 
 Nervatura Client supports the business processes that most companies may need. During your own developments, you can only focus on those that really require unique solutions, and you can use the technology that best suits the purpose. This type of development means greater **technological independence and security**, since your self-developed applications are only connected to other systems through well-documented interfaces, so unnecessary external technological dependencies cannot develop.

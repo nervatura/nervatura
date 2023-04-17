@@ -830,6 +830,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#nodejs-and-npm"><strong>Node.js</strong> and <strong>NPM</strong></a></li>
             <li><a href="#python-and-snap-or-windows-package-manager"><strong>Python</strong> and <strong>Snap</strong> or <strong>Windows Package Manager</strong></a></li>
             <li><a href="#go-and-docker"><strong>Go</strong> and <strong>Docker</strong></a></li>
+            <li><a href="#php-and-docker"><strong>PHP</strong> and <strong>Docker</strong></a></li>
           </ul>
         </li>
         <li><a href="#examples"><strong>Examples</strong></a>
@@ -843,6 +844,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#create-an-invoice">Create an invoice</a></li>
             <li><a href="#nervatura-client-menu-shortcuts">Nervatura Client menu shortcuts</a></li>
             <li><a href="#nervatura-csv-report-example">Nervatura CSV Report Example</a></li>
+            <li><a href="#an-example-of-all-available-functions-in-all-apis">An example of all available functions in all APIs</a></li>
           </ul>
         </li>
       </ul>
@@ -951,6 +953,40 @@ $ go run ./main.go
 </li>
 <li>
 <p>Nervatura backend (<code>nervatura-examples/go</code> directory)</p>
+<pre tabindex="0"><code>$ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+</code></pre></li>
+</ol>
+<h3 id="php-and-docker">
+  <strong>PHP</strong> and <strong>Docker</strong>
+  <a class="anchor" href="#php-and-docker">#</a>
+</h3>
+<p>Recommended API:</p>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a></li>
+</ul>
+<ol>
+<li>
+<p>Download and install the PHP examples (linux)</p>
+<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
+$ cd nervatura-examples/php
+$ composer install
+$ cd public
+$ php -S localhost:8000
+</code></pre><p>Open your browser to http://localhost:8000</p>
+</li>
+<li>
+<p>gRPC install (linux, optional)</p>
+<pre tabindex="0"><code>$ sudo pecl install grpc
+$ sudo pecl install protobuf
+$ php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
+</code></pre><p>More details or Windows installation: 
+  <a href="https://cloud.google.com/php/grpc">Install gRPC for PHP</a></p>
+</li>
+<li>
+<p>Nervatura backend (<code>nervatura-examples/php</code> directory)</p>
 <pre tabindex="0"><code>$ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
 </ol>
@@ -1072,6 +1108,18 @@ $ go run ./main.go
 <li>simple customer contact list example</li>
 <li>input parameters</li>
 </ul>
+<h3 id="an-example-of-all-available-functions-in-all-apis">
+  An example of all available functions in all APIs
+  <a class="anchor" href="#an-example-of-all-available-functions-in-all-apis">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a>, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>
+, 
+  <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a></li>
+</ul>
 </article>
  
       
@@ -1118,6 +1166,7 @@ $ go run ./main.go
             <li><a href="#nodejs-and-npm"><strong>Node.js</strong> and <strong>NPM</strong></a></li>
             <li><a href="#python-and-snap-or-windows-package-manager"><strong>Python</strong> and <strong>Snap</strong> or <strong>Windows Package Manager</strong></a></li>
             <li><a href="#go-and-docker"><strong>Go</strong> and <strong>Docker</strong></a></li>
+            <li><a href="#php-and-docker"><strong>PHP</strong> and <strong>Docker</strong></a></li>
           </ul>
         </li>
         <li><a href="#examples"><strong>Examples</strong></a>
@@ -1131,6 +1180,7 @@ $ go run ./main.go
             <li><a href="#create-an-invoice">Create an invoice</a></li>
             <li><a href="#nervatura-client-menu-shortcuts">Nervatura Client menu shortcuts</a></li>
             <li><a href="#nervatura-csv-report-example">Nervatura CSV Report Example</a></li>
+            <li><a href="#an-example-of-all-available-functions-in-all-apis">An example of all available functions in all APIs</a></li>
           </ul>
         </li>
       </ul>

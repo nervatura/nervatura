@@ -81,6 +81,36 @@ Recommended API:
     ```
     $ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
     ```
+### **PHP** and **Docker**
+
+Recommended API:
+- [gRPC](/docs/service/grpc)
+- [HTTP](/docs/service/api)
+
+1. Download and install the PHP examples (linux)
+
+    ```
+    $ git clone https://github.com/nervatura/nervatura-examples.git
+    $ cd nervatura-examples/php
+    $ composer install
+    $ cd public
+    $ php -S localhost:8000
+    ```
+    Open your browser to http://localhost:8000
+
+2. gRPC install (linux, optional)
+
+    ```
+    $ sudo pecl install grpc
+    $ sudo pecl install protobuf
+    $ php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
+    ```
+    More details or Windows installation: [Install gRPC for PHP](https://cloud.google.com/php/grpc)
+
+2. Nervatura backend (`nervatura-examples/php` directory)
+    ```
+    $ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+    ```
 
 ## **Examples**
 
@@ -139,3 +169,9 @@ Recommended API:
   , [gRPC](/docs/service/grpc)
   - simple customer contact list example
   - input parameters
+
+### An example of all available functions in all APIs
+
+  - [HTTP](/docs/service/api), [CLI](/docs/service/cli#cli-api), [CGO](/docs/service/cli#cgo-api)
+  , [gRPC](/docs/service/grpc)
+

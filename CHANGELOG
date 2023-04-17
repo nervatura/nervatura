@@ -1,3 +1,11 @@
+## 5.1.5
+- example: new php examples
+- example: go examples rewrite
+- example: adding examples for all functions in all APIs (node, python, go, php)
+- docs: php examples
+- client: lit (2.7.2) upgrade
+- service: golang (1.20.3) and dependencies upgrade
+
 ## 5.1.4
 - service: u. tests and code quality fixes
 - admin: translation helper tool snap bug fixes
