@@ -62,7 +62,7 @@ See [Node.js Examples](/docs/start/examples)
 
 ### Admin GUI
 
-You can use the [**ADMIN GUI**](http://localhost:5000/admin/) Database section:
+You can use the [**ADMIN GUI**](/docs/start/screenshot#service-admin-gui) Database section:
 
 API-KEY: **DEMO_API_KEY**<br />
 Alias name: **demo**<br />
@@ -70,7 +70,7 @@ Demo database: **true**
 
 ## 2. Login to the database: 
 
-[**Nervatura Client**](http://localhost:5000/client/)
+[**Nervatura Client**](/docs/start/screenshot#web-client)
 
 Username: **admin**<br />
 Password: **Empty password: Please change after the first login!**<br />

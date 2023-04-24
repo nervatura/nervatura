@@ -21,7 +21,7 @@ Create a new database:
 $ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \
   -o "{\"database\":\"[your_lowercase_alias_name]\",\"demo\":false}"
 ```
-You can use the [**ADMIN GUI**](http://localhost:5000/admin/) Database section:
+You can use the [**ADMIN GUI**](/docs/start/screenshot#service-admin-gui) Database section:
 
 API-KEY: **YOUR_API_KEY**<br />
 Alias name: **your_lowercase_alias_name**<br />
@@ -30,7 +30,7 @@ Demo database: **false**
 The SQLite databases are created automatically. Other types of databases must be created manually before. For testing you can fill in the database with some dummy data (demo=true). If you don't need those later, then you can create a blank database again. **All data in the database will be destroyed!**
 
 Optional: Install Nervatura Report templates to the database
-- Login to the database: [**ADMIN GUI**](http://localhost:5000/admin/) <br />
+- Login to the database: [**ADMIN GUI**](/docs/start/screenshot#service-admin-gui) <br />
 Username: **admin**<br />
 Password: **Empty password: Please change after the first login!**<br />
 Database: **your_lowercase_alias_name**
