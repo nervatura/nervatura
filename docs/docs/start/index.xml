@@ -14,8 +14,8 @@
       <description>Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database
 Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
- NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura  Create a new database:
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;quot;{\&amp;quot;database\&amp;quot;:\&amp;quot;[your_lowercase_alias_name]\&amp;quot;,\&amp;quot;demo\&amp;quot;:false}&amp;quot; You can use the ADMIN GUI Database section:
+NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
+$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
 Demo database: false
@@ -28,7 +28,7 @@ The SQLite databases are created automatically. Other types of databases must be
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/customization/</guid>
-      <description>Customize the appearance #   Nervatura Client language translation   Create a file based on the client_config.json file. All subtitles can be found here. The recommended and easy way to create and edit the language file is the ADMIN GUI Translation Helper Tool. For more help on setting up and using the language file, see the Examples section Set NT_CLIENT_CONFIG environment variable value to YOUR_CLIENT_CONFIG_FILE.JSON Docker container: mount local folder to the container   Nervatura Client custom remote functions: MENU SHORTCUTS</description>
+      <description>Customize the appearance # Nervatura Client language translation Create a file based on the client_config.json file. All subtitles can be found here. The recommended and easy way to create and edit the language file is the ADMIN GUI Translation Helper Tool. For more help on setting up and using the language file, see the Examples section Set NT_CLIENT_CONFIG environment variable value to YOUR_CLIENT_CONFIG_FILE.JSON Docker container: mount local folder to the container Nervatura Client custom remote functions: MENU SHORTCUTS</description>
     </item>
     
     <item>
@@ -37,10 +37,10 @@ The SQLite databases are created automatically. Other types of databases must be
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/examples/</guid>
-      <description>Quick Start #  Node.js and NPM #  Recommended API:
-  gRPC  CGO (Linux and Windows x64)  $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
+      <description>Quick Start # Node.js and NPM # Recommended API:
+gRPC CGO (Linux and Windows x64, without Admin and Client GUI) $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or Windows Package Manager #  Recommended API:</description>
+Python and Snap or Windows Package Manager # Recommended API:</description>
     </item>
     
     <item>
@@ -49,18 +49,20 @@ Python and Snap or Windows Package Manager #  Recommended API:</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/screenshot/</guid>
-      <description>Screenshots #  Service Admin GUI #  Create a database
- Report install
-  Client translation helper tool - add a new language
- Change language translation (dark theme)
-  Web Client #  Quick Search
- Advanced search
-  Customer data
- Order (dark theme)
-  PDF output
- PDF Invoice example
-  PDF and CSV report examples (dark theme)
- Report Template Editor</description>
+      <description>Screenshots # Service Admin GUI # Create a database
+Report install
+Client translation helper tool - add a new language
+Change language translation (dark theme)
+Web Client # Quick Search
+Advanced search
+Customer data
+Order (dark theme)
+PDF output
+PDF Invoice example
+PDF and CSV report examples (dark theme)
+Report Template Editor
+Default Settings
+Edit Metadata setting (dark theme)</description>
     </item>
     
     <item>
@@ -69,7 +71,7 @@ Python and Snap or Windows Package Manager #  Recommended API:</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/video/</guid>
-      <description>Video #  Explainer videos #         Short episodes #        </description>
+      <description> Video # Explainer videos # Short episodes # </description>
     </item>
     
   </channel>

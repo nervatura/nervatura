@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install nervatura Checking service status and last logs:
+<meta name="description" content="Installation # Docker image # $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) # $ sudo snap install nervatura Checking service status and last logs:
 $ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
-Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
+Node.js NPM # $ npm install --save nervatura Add a run script to your package.json file like this:
 &quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
-$ npm run nervatura Winget (Windows Package Manager) #  $ winget install --id Nervatura.">
+$ npm run nervatura Winget (Windows Package Manager) # $ winget install --id Nervatura.">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Installation" />
-<meta property="og:description" content="Installation #  Docker image #  $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) #  $ sudo snap install nervatura Checking service status and last logs:
+<meta property="og:description" content="Installation # Docker image # $ docker pull nervatura/nervatura:latest Snap package (Linux daemon) # $ sudo snap install nervatura Checking service status and last logs:
 $ systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
-Node.js NPM #  $ npm install --save nervatura Add a run script to your package.json file like this:
+Node.js NPM # $ npm install --save nervatura Add a run script to your package.json file like this:
 &quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
-$ npm run nervatura Winget (Windows Package Manager) #  $ winget install --id Nervatura." />
+$ npm run nervatura Winget (Windows Package Manager) # $ winget install --id Nervatura." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/install/" /><meta property="article:section" content="docs" />
-
 
 
 <title>Installation | Nervatura</title>
@@ -791,7 +790,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -908,7 +907,7 @@ $ cd nervatura/service
 </ul>
 <p>Example:</p>
 <pre tabindex="0"><code>$ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-  go build -tags &quot;http postgres&quot; -ldflags=&quot;-w -s -X main.Version=5.1.0&quot; \
+  go build -tags &#34;http postgres&#34; -ldflags=&#34;-w -s -X main.Version=5.1.0&#34; \
   -o nervatura main.go
 </code></pre><p>See more: 
   <a href="https://golangdocs.com/building-applications-in-golang">Building Applications in GoLang</a></p>
@@ -936,7 +935,7 @@ $ cd nervatura/service
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
 
 
  

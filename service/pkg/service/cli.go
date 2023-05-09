@@ -67,7 +67,7 @@ func (srv *CLIService) UserPassword(api *nt.API, options nt.IM) string {
 	username := ut.ToString(options["username"], "")
 	custnumber := ut.ToString(options["custnumber"], "")
 
-	if err := srv.checkUser(api, ((username != "" && username != api.NStore.User.Username) || custnumber != "")); err != nil {
+	if err := srv.checkUser(api, ((username != "" && api.NStore.User != nil && username != api.NStore.User.Username) || custnumber != "")); err != nil {
 		return respondData(0, nil, 401, err)
 	}
 	if username == "" && custnumber == "" {
@@ -159,8 +159,8 @@ func (srv *CLIService) ReportDelete(api *nt.API, options nt.IM) string {
 }
 
 func (srv *CLIService) Report(api *nt.API, options nt.IM) string {
-	if api == nil {
-		return respondData(0, nil, 401, errors.New(ut.GetMessage("error_unauthorized")))
+	if err := srv.checkUser(api, false); err != nil {
+		return respondData(0, nil, 401, err)
 	}
 	if _, found := options["output"]; !found || (options["output"] != "xml") {
 		options["output"] = "base64"

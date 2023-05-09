@@ -6,8 +6,8 @@
 <meta name="description" content="Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database
 Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
- NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura  Create a new database:
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &quot;{\&quot;database\&quot;:\&quot;[your_lowercase_alias_name]\&quot;,\&quot;demo\&quot;:false}&quot; You can use the ADMIN GUI Database section:
+NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
+$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
 Demo database: false
@@ -17,15 +17,14 @@ The SQLite databases are created automatically. Other types of databases must be
 <meta property="og:description" content="Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database
 Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
- NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura  Create a new database:
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &quot;{\&quot;database\&quot;:\&quot;[your_lowercase_alias_name]\&quot;,\&quot;demo\&quot;:false}&quot; You can use the ADMIN GUI Database section:
+NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
+$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
 Demo database: false
 The SQLite databases are created automatically. Other types of databases must be created manually before." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/start/database/" /><meta property="article:section" content="docs" />
-
 
 
 <title>Create a new database | Nervatura</title>
@@ -799,7 +798,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -845,7 +844,7 @@ Supported database adapters: <em>sqlite3, postgres, mysql, mssql</em></p>
 </ul>
 <p>Create a new database:</p>
 <pre tabindex="0"><code>$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \
-  -o &quot;{\&quot;database\&quot;:\&quot;[your_lowercase_alias_name]\&quot;,\&quot;demo\&quot;:false}&quot;
+  -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34;
 </code></pre><p>You can use the 
   <a href="https://nervatura.github.io/nervatura/docs/start/screenshot/#service-admin-gui"><strong>ADMIN GUI</strong></a> Database section:</p>
 <p>API-KEY: <strong>YOUR_API_KEY</strong><br />
@@ -878,7 +877,7 @@ Database: <strong>your_lowercase_alias_name</strong></li>
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
 
 
  

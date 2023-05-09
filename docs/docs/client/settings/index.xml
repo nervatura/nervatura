@@ -11,9 +11,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/setting/</guid>
-      <description>Overview #  The database settings are not necessarily related to Nervatura Touch program. Could affect the server&amp;rsquo;s settings, the method of data storage or even operation of other programs!
+      <description>Overview # The database settings are not necessarily related to Nervatura Touch program. Could affect the server&amp;rsquo;s settings, the method of data storage or even operation of other programs!
 For example, the default values set here will be used by the Nervatura HTTP API functions as well.
-Some important settings #  business year #  Set the current fiscal year. This as used by DOCUMENT NUMBERING as the value of the Year</description>
+Some important settings # business year # Set the current fiscal year. This as used by DOCUMENT NUMBERING as the value of the Year</description>
     </item>
     
     <item>
@@ -22,9 +22,9 @@ Some important settings #  business year #  Set the current fiscal year. This as
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/numberdef/</guid>
-      <description>Overview #  Format settings of unique identifiers of documents (eg. orders, invoices, cash receipts, delivery notes etc.) and other resources (eg. customers, products, employees, etc.). If a new item is created the identifiers will follow the rule which was set here.
-Input fields #  Code #  A unique identifier for a certain set of rules. Its value can not be changed.
-Prefix #  The text prefix of the identifier.</description>
+      <description>Overview # Format settings of unique identifiers of documents (eg. orders, invoices, cash receipts, delivery notes etc.) and other resources (eg. customers, products, employees, etc.). If a new item is created the identifiers will follow the rule which was set here.
+Input fields # Code # A unique identifier for a certain set of rules. Its value can not be changed.
+Prefix # The text prefix of the identifier. It can be any length, but usage of special characters, spaces in the text is not recommended.</description>
     </item>
     
     <item>
@@ -33,7 +33,7 @@ Prefix #  The text prefix of the identifier.</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/usergroup/</guid>
-      <description>Overview #  The user access rights in Nervatura are managed through user groups. The access rules are assigned to these groups and are applicable to group members. When the rule is changed, the new settings will automatically be valid for all members.
+      <description>Overview # The user access rights in Nervatura are managed through user groups. The access rules are assigned to these groups and are applicable to group members. When the rule is changed, the new settings will automatically be valid for all members.
 Each user must be a member of an access rights group, but can only be part of one of these groups. This can be set in EMPLOYEE usergroup field.</description>
     </item>
     
@@ -43,10 +43,10 @@ Each user must be a member of an access rights group, but can only be part of on
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/uimenu/</guid>
-      <description>Overview #  It is possible to create shortcuts in the program, which can call remote functions. Input parameters can also be set and the user will be informed about the result by a message box.
-Input fields #  Menukey #  The shortcut ID. A unique value, can not be repeated.
-Description #  The name set here will be displayed on the user interface.
-Method #  When set GET, the program opens your default browser and hands over to it the given Address and also the input parameters if there were any.</description>
+      <description>Overview # It is possible to create shortcuts in the program, which can call remote functions. Input parameters can also be set and the user will be informed about the result by a message box.
+Input fields # Menukey # The shortcut ID. A unique value, can not be repeated.
+Description # The name set here will be displayed on the user interface.
+Method # When set GET, the program opens your default browser and hands over to it the given Address and also the input parameters if there were any.</description>
     </item>
     
     <item>
@@ -55,8 +55,8 @@ Method #  When set GET, the program opens your default browser and hands over to
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/metadata/</guid>
-      <description>Overview #  With Nervatura it is easy to store a variety of data. If some new information is needed for which there have not been any data collected yet, the case is simple. Just create a new attribute, specify its type and connect it to the data you would like to use it with.
-Input fields #  Data GUID #  Automatically generated internal ID. A unique value, can not be changed.</description>
+      <description>Overview # With Nervatura it is easy to store a variety of data. If some new information is needed for which there have not been any data collected yet, the case is simple. Just create a new attribute, specify its type and connect it to the data you would like to use it with.
+Input fields # Data GUID # Automatically generated internal ID. A unique value, can not be changed.</description>
     </item>
     
     <item>
@@ -65,8 +65,8 @@ Input fields #  Data GUID #  Automatically generated internal ID. A unique value
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/groups/</guid>
-      <description>Overview #  Special pre-created groups, which can be extended with additional elements.
-Input fields #  Group Type #   department: OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT eventgroup: EVENT paidtype: OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT toolgroup: TOOL rategroup: INTEREST AND RATE  Group #  The item&amp;rsquo;s name. Must be unique at group level!</description>
+      <description>Overview # Special pre-created groups, which can be extended with additional elements.
+Input fields # Group Type # department: OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT eventgroup: EVENT paidtype: OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT toolgroup: TOOL rategroup: INTEREST AND RATE Group # The item&amp;rsquo;s name. Must be unique at group level!</description>
     </item>
     
     <item>
@@ -75,8 +75,8 @@ Input fields #  Group Type #   department: OFFER, ORDER, WORKSHEET, RENTAL, INVO
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/place/</guid>
-      <description>Overview #  In Nervatura those logistic points where our own or someone else’s assets and resources are recorded or physically stored, belong to a special group called PLACE. These are the warehouses, but also the petty cash, where cash is stored and even a virtual place like the bank account belong to this group.
-Input fields #  Place No. #  Unique ID, generated at the first data save.</description>
+      <description>Overview # In Nervatura those logistic points where our own or someone else’s assets and resources are recorded or physically stored, belong to a special group called PLACE. These are the warehouses, but also the petty cash, where cash is stored and even a virtual place like the bank account belong to this group.
+Input fields # Place No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = planumber) data series.</description>
     </item>
     
     <item>
@@ -85,11 +85,11 @@ Input fields #  Place No. #  Unique ID, generated at the first data save.</descr
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/currency/</guid>
-      <description>Input fields #  Currency #  The ISO 4217 code of the currency.
-Description #  The name of the currency.
-Digit #  The number of decimal places used for recording and rounding by the program. Default value: 2
-Default Rate #  You can specify an exchange rate vs. the default currency, which will be used by the reports.
-Round #  Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1.</description>
+      <description>Input fields # Currency # The ISO 4217 code of the currency.
+Description # The name of the currency.
+Digit # The number of decimal places used for recording and rounding by the program. Default value: 2
+Default Rate # You can specify an exchange rate vs. the default currency, which will be used by the reports.
+Round # Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1.</description>
     </item>
     
     <item>
@@ -98,12 +98,12 @@ Round #  Rounding value for cash. Could be used in case the smallest banknote in
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/client/settings/rate/</guid>
-      <description>Input fields #  Type #  rate, buy(interest), average(interest), sell(interest)
-Date #  Starting date.
-Currency #  The elements of CURRENCY. Its default value is taken from DEFAULT SETTINGS default currency.
-Value #  rate or interest value
-Group #  A valid item of the group should be defined.
-Account No. #  In the search field a bank account can be chosen from bank type items of PLACE.</description>
+      <description>Input fields # Type # rate, buy(interest), average(interest), sell(interest)
+Date # Starting date.
+Currency # The elements of CURRENCY. Its default value is taken from DEFAULT SETTINGS default currency.
+Value # rate or interest value
+Group # A valid item of the group should be defined.
+Account No. # In the search field a bank account can be chosen from bank type items of PLACE.</description>
     </item>
     
   </channel>

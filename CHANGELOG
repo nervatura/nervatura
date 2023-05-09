@@ -1,3 +1,11 @@
+## 5.1.6
+- example: new flutter/dart examples
+- docs: flutter/dart examples
+- client: lit (2.7.4) upgrade
+- client: token validation fixes
+- service: cgo/cli UserPassword and Report bug fixes
+- service: golang (1.20.4) and dependencies upgrade
+
 ## 5.1.5
 - example: new php examples
 - example: go examples rewrite

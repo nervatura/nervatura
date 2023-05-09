@@ -284,6 +284,28 @@ describe('LoginController', () => {
 
     testApp = {
       ...app,
+      request: ()=>('{"access_token": "access_token"}'),
+      requestData: () => ({ error: {} }),
+      resultError: sinon.spy(),
+      loadBookmark: sinon.spy()
+    }
+    login = new LoginController({...host, app: testApp})
+    await login.setCodeToken({ code: "code", callback: "/callback" })
+    sinon.assert.callCount(testApp.resultError, 1);
+
+    testApp = {
+      ...app,
+      request: ()=>('{"acce "access_token"}'),
+      requestData: () => ({ error: {} }),
+      resultError: sinon.spy(),
+      loadBookmark: sinon.spy()
+    }
+    login = new LoginController({...host, app: testApp})
+    await login.setCodeToken({ code: "code", callback: "/callback" })
+    sinon.assert.callCount(testApp.resultError, 1);
+
+    testApp = {
+      ...app,
       request: ()=>({}),
       requestData: () => ({ error: {} }),
       resultError: sinon.spy(),

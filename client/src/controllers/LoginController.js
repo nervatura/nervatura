@@ -264,6 +264,16 @@ export class LoginController {
         if(result.access_token){
           return this.tokenValidation({ access_token: result.access_token, callback: result.callback })
         }
+        if(typeof(result) === "string"){
+          try {
+            const result_ = JSON.parse(result)
+            if(result_.access_token){
+              return this.tokenValidation({ access_token: result_.access_token, callback: result_.callback })
+            }
+          } catch (err) {
+            return this.tokenError(err, params.error)
+          }
+        }
         return this.tokenError(result.error, params.error)
       } catch (err) {
         return this.tokenError(err, params.error)

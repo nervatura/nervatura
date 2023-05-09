@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="1. Create a new demo database #  Docker #  Create a Docker container and set some options
-$ mkdir data $ docker run -i -t --rm --name nervatura \ -e NT_API_KEY=DEMO_API_KEY \ -p 5000:5000 -v &quot;$(pwd)&quot;/data:/data nervatura/nervatura:latest In a new command window:
-$ docker exec -i nervatura /nervatura \ -c DatabaseCreate -k DEMO_API_KEY \ -o &quot;{\&quot;database\&quot;:\&quot;demo\&quot;,\&quot;demo\&quot;:true}&quot; Snap #  $ sudo NT_API_KEY=DEMO_API_KEY \ NT_ALIAS_DEMO=&quot;sqlite://file:/var/snap/nervatura/common/demo.db?cache=shared&amp;mode=rwc&quot; \ /snap/nervatura/current/nervatura -c DatabaseCreate \ -k DEMO_API_KEY -o &quot;{\&quot;database\&quot;:\&quot;demo\&quot;,\&quot;demo\&quot;:true}&quot; Windows #  Open a PowerShell and set the (temporary) variables:">
+<meta name="description" content="1. Create a new demo database # Docker # Create a Docker container and set some options
+$ mkdir data $ docker run -i -t --rm --name nervatura \ -e NT_API_KEY=DEMO_API_KEY \ -p 5000:5000 -v &#34;$(pwd)&#34;/data:/data nervatura/nervatura:latest In a new command window:
+$ docker exec -i nervatura /nervatura \ -c DatabaseCreate -k DEMO_API_KEY \ -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Snap # $ sudo NT_API_KEY=DEMO_API_KEY \ NT_ALIAS_DEMO=&#34;sqlite://file:/var/snap/nervatura/common/demo.db?cache=shared&amp;mode=rwc&#34; \ /snap/nervatura/current/nervatura -c DatabaseCreate \ -k DEMO_API_KEY -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Windows # Open a PowerShell and set the (temporary) variables:">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Getting Started" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/start/" />
-
 <title>Getting Started | Nervatura</title>
 <link rel="manifest" href="https://nervatura.github.io/nervatura/manifest.json">
 <link rel="icon" href="https://nervatura.github.io/nervatura/favicon.png" type="image/x-icon">
@@ -784,7 +783,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -857,34 +856,34 @@ https://github.com/alex-shpak/hugo-book
 <pre tabindex="0"><code>$ mkdir data
 $ docker run -i -t --rm --name nervatura \
   -e NT_API_KEY=DEMO_API_KEY \
-  -p 5000:5000 -v &quot;$(pwd)&quot;/data:/data nervatura/nervatura:latest
+  -p 5000:5000 -v &#34;$(pwd)&#34;/data:/data nervatura/nervatura:latest
 </code></pre><p>In a new command window:</p>
 <pre tabindex="0"><code>$ docker exec -i nervatura /nervatura \
   -c DatabaseCreate -k DEMO_API_KEY \
-  -o &quot;{\&quot;database\&quot;:\&quot;demo\&quot;,\&quot;demo\&quot;:true}&quot;
+  -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34;
 </code></pre><h3 id="snap">
   Snap
   <a class="anchor" href="#snap">#</a>
 </h3>
 <pre tabindex="0"><code>$ sudo NT_API_KEY=DEMO_API_KEY \
-  NT_ALIAS_DEMO=&quot;sqlite://file:/var/snap/nervatura/common/demo.db?cache=shared&amp;mode=rwc&quot; \
+  NT_ALIAS_DEMO=&#34;sqlite://file:/var/snap/nervatura/common/demo.db?cache=shared&amp;mode=rwc&#34; \
   /snap/nervatura/current/nervatura -c DatabaseCreate \
-  -k DEMO_API_KEY -o &quot;{\&quot;database\&quot;:\&quot;demo\&quot;,\&quot;demo\&quot;:true}&quot;
+  -k DEMO_API_KEY -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34;
 </code></pre><h3 id="windows">
   Windows
   <a class="anchor" href="#windows">#</a>
 </h3>
 <p>Open a PowerShell and set the (temporary) variables:</p>
-<pre tabindex="0"><code>$env:NT_API_KEY=&quot;DEMO_API_KEY&quot;
-$env:NT_ALIAS_DEMO=&quot;sqlite://file:///C:/ProgramData/Nervatura/data/demo.db?cache=shared&amp;mode=rwc&quot;
+<pre tabindex="0"><code>$env:NT_API_KEY=&#34;DEMO_API_KEY&#34;
+$env:NT_ALIAS_DEMO=&#34;sqlite://file:///C:/ProgramData/Nervatura/data/demo.db?cache=shared&amp;mode=rwc&#34;
 </code></pre><p>Launch nervatura CLI (in the same command window!), and create a database:</p>
-<pre tabindex="0"><code>&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot; -c DatabaseCreate -k DEMO_API_KEY -o '{\&quot;database\&quot;:\&quot;demo\&quot;,\&quot;demo\&quot;:true}'
+<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -c DatabaseCreate -k DEMO_API_KEY -o &#39;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#39;
 </code></pre><p>Default Nervatura data directory: <code>C:/ProgramData/Nervatura</code></p>
 <p>Launch nervatura server (in the same command window or Start menu):</p>
-<pre tabindex="0"><code>&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot;
+<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34;
 </code></pre><p>Of course, the environment variables can also be set permanently (see more SystemPropertiesAdvanced.exe). In this case, the server can be started from anywhere.</p>
 <p>Alternatively, the settings can be specified in the parameter:</p>
-<pre tabindex="0"><code>&amp; &quot;C:\Program Files\Nervatura\nervatura.exe&quot; -env C:\ProgramData\Nervatura\.env.example
+<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -env C:\ProgramData\Nervatura\.env.example
 </code></pre><h3 id="npm">
   NPM
   <a class="anchor" href="#npm">#</a>
@@ -925,7 +924,7 @@ Database: <strong>demo</strong></p>
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
 
 
  

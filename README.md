@@ -45,6 +45,7 @@ You can find more information about the use of different programming languages a
 - [Python and Snap or Windows Package Manager](https://nervatura.github.io/nervatura/docs/start/examples/#python-and-snap-or-windows-package-manager)
 - [Go and Docker](https://nervatura.github.io/nervatura/docs/start/examples/#go-and-docker)
 - [PHP and Docker](https://nervatura.github.io/nervatura/docs/start/examples/#php-and-docker)
+- [Flutter and Dart](https://nervatura.github.io/nervatura/docs/start/examples/#flutter-client-and-dart-backend)
 
 [**Installation**](https://nervatura.github.io/nervatura/docs/install) and [**Quick Start**](https://nervatura.github.io/nervatura/docs/start)
 

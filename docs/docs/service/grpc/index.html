@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Overview #  Nervatura gRPC specification. For more examples, see Nervatura example application
-   Method Name Request Type Response Type Description     UserLogin  RequestUserLogin  ResponseUserLogin Logs in user by username and password   UserPassword  RequestUserPassword  ResponseEmpty User (employee or customer) password change.   TokenLogin  RequestEmpty  ResponseTokenLogin JWT token auth.   TokenRefresh  RequestEmpty  ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists.">
+<meta name="description" content="Overview # Nervatura gRPC specification. For more examples, see Nervatura example application
+Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn&rsquo;t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report.">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="gRPC API" />
-<meta property="og:description" content="Overview #  Nervatura gRPC specification. For more examples, see Nervatura example application
-   Method Name Request Type Response Type Description     UserLogin  RequestUserLogin  ResponseUserLogin Logs in user by username and password   UserPassword  RequestUserPassword  ResponseEmpty User (employee or customer) password change.   TokenLogin  RequestEmpty  ResponseTokenLogin JWT token auth.   TokenRefresh  RequestEmpty  ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists." />
+<meta property="og:description" content="Overview # Nervatura gRPC specification. For more examples, see Nervatura example application
+Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn&rsquo;t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/service/grpc/" /><meta property="article:section" content="docs" />
-
 
 
 <title>gRPC API | Nervatura</title>
@@ -785,7 +784,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -1282,7 +1281,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>ref_id</td>
@@ -1451,7 +1450,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype&rsquo;)</td>
 </tr>
 <tr>
 <td>ref_id</td>
@@ -1735,7 +1734,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>
@@ -1743,7 +1742,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64">optional int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (where groupname in (&lsquo;custtype&rsquo;,&lsquo;placetype&rsquo;,'  protype',&lsquo;toolgroup&rsquo;,&lsquo;transtype&rsquo;))</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (where groupname in (&lsquo;custtype&rsquo;,&lsquo;placetype&rsquo;,&rsquo;  protype&rsquo;,&rsquo;toolgroup&rsquo;,&rsquo;transtype&rsquo;))</td>
 </tr>
 <tr>
 <td>fieldtype</td>
@@ -1924,7 +1923,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype&rsquo;)</td>
 </tr>
 <tr>
 <td>ref_id</td>
@@ -1951,7 +1950,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64">optional int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;eventgroup&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;eventgroup&rsquo;)</td>
 </tr>
 <tr>
 <td>fromdate</td>
@@ -2270,7 +2269,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>ref_id_1</td>
@@ -2283,7 +2282,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>ref_id_2</td>
@@ -2356,7 +2355,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64">optional int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>
@@ -2370,7 +2369,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;logstate&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;logstate')</td>
 </tr>
 <tr>
 <td>metadata</td>
@@ -2660,7 +2659,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;transtype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;transtype')</td>
 </tr>
 <tr>
 <td>notes</td>
@@ -4597,7 +4596,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64">optional int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;toolgroup&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;toolgroup')</td>
 </tr>
 <tr>
 <td>notes</td>
@@ -4683,7 +4682,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;transtype&rsquo;)
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;transtype&rsquo;)
   <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id</td>
 </tr>
 <tr>
@@ -4815,7 +4814,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;transtate&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;transtate')</td>
 </tr>
 <tr>
 <td>closed</td>
@@ -4881,7 +4880,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>
@@ -5114,7 +5113,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64">optional int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>ref_id</td>
@@ -5200,7 +5199,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64"> int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;nervatype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;nervatype')</td>
 </tr>
 <tr>
 <td>
@@ -5208,7 +5207,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 <td>
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/#int64">optional int64</a></td>
 <td>Reference to 
-  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &lsquo;transtype&rsquo;)</td>
+  <a href="https://nervatura.github.io/nervatura/#groups">Groups</a>.id (only where groupname = &rsquo;transtype')</td>
 </tr>
 <tr>
 <td>
@@ -5806,7 +5805,7 @@ project/{pronumber}, tool/{serial}, trans/{transnumber}</em></p>
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
 
 
  
