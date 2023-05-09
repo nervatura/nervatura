@@ -171,13 +171,13 @@ Recommended API:
   - Run without [CGO](/docs/service/cli#cgo-api) settings:
 
     ```
-    $ dart run server/bin/server.dart
+    $ dart run server/lib/server.dart
     ```
 
   - Run with [CGO](/docs/service/cli#cgo-api) (linux example):
 
     ```
-    $ NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=data/public.key dart run server/bin/server.dart
+    $ NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=data/public.key dart run server/lib/server.dart
     ```
 
 4. ***Flutter client***
