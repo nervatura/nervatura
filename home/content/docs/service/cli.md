@@ -9,7 +9,7 @@ bookToC: true
 
 Full command line API. Program usage:
 ```
-$ docker exec -i nervatura /nervatura -h
+docker exec -i nervatura /nervatura -h
 ```
 Windows (PowerShell):
 ```
@@ -17,15 +17,15 @@ Windows (PowerShell):
 ```
 Linux Snap:
 ```
-$ /snap/nervatura/current/nervatura -h
+/snap/nervatura/current/nervatura -h
 ```
 NPM:
 ```
-$ ./node_modules/nervatura/bin/nervatura -h
+./node_modules/nervatura/bin/nervatura -h
 ```
 Example:
 ```
-$ docker exec -i nervatura /nervatura \
+docker exec -i nervatura /nervatura \
   -c UserLogin -o "{\"username\":\"admin\",\"database\":\"demo\"}"
 ```
 

@@ -12,11 +12,11 @@
       
       <guid>https://nervatura.github.io/nervatura/docs/service/cli/</guid>
       <description>CLI API # Full command line API. Program usage:
-$ docker exec -i nervatura /nervatura -h Windows (PowerShell):
+docker exec -i nervatura /nervatura -h Windows (PowerShell):
 &amp;amp; &amp;#34;C:\Program Files\Nervatura\nervatura.exe&amp;#34; -h Linux Snap:
-$ /snap/nervatura/current/nervatura -h NPM:
-$ ./node_modules/nervatura/bin/nervatura -h Example:
-$ docker exec -i nervatura /nervatura \ -c UserLogin -o &amp;#34;{\&amp;#34;username\&amp;#34;:\&amp;#34;admin\&amp;#34;,\&amp;#34;database\&amp;#34;:\&amp;#34;demo\&amp;#34;}&amp;#34; Golang docs:
+/snap/nervatura/current/nervatura -h NPM:
+./node_modules/nervatura/bin/nervatura -h Example:
+docker exec -i nervatura /nervatura \ -c UserLogin -o &amp;#34;{\&amp;#34;username\&amp;#34;:\&amp;#34;admin\&amp;#34;,\&amp;#34;database\&amp;#34;:\&amp;#34;demo\&amp;#34;}&amp;#34; Golang docs:
 CGO API # The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Go, Python, Ruby, Node, and Java.</description>
     </item>
     

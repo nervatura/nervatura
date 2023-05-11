@@ -14,10 +14,10 @@ Recommended API:
 - [CGO](/docs/service/cli#cgo-api) (Linux and Windows x64, without Admin and Client GUI)
 
 ```
-$ git clone https://github.com/nervatura/nervatura-examples.git
-$ cd nervatura-examples/node
-$ npm install
-$ npm start
+git clone https://github.com/nervatura/nervatura-examples.git
+cd nervatura-examples/node
+npm install
+npm start
 ```
 Open your browser to http://localhost:8080
 
@@ -32,10 +32,10 @@ Recommended API:
 1. ***Download the Python examples***
 
     ```
-    $ git clone https://github.com/nervatura/nervatura-examples.git
-    $ cd nervatura-examples/python
-    $ pip install -r requirements.txt
-    $ python main.py
+    git clone https://github.com/nervatura/nervatura-examples.git
+    cd nervatura-examples/python
+    pip install -r requirements.txt
+    python main.py
     ```
     Open your browser to http://localhost:8000
 
@@ -43,12 +43,12 @@ Recommended API:
 
   - Linux
     ```
-    $ sudo snap install nervatura
-    $ sudo systemctl stop snap.nervatura.nervatura.service
+    sudo snap install nervatura
+    sudo systemctl stop snap.nervatura.nervatura.service
     ```
     The [CLI](/docs/service/cli#cli-api) and [CGO](/docs/service/cli#cgo-api) is ready to use. To use the [gRPC](/docs/service/grpc) and [HTTP](/docs/service/api), start Nervatura service with the .env.example settings (`nervatura-examples/python` directory):
     ```
-    $ /snap/nervatura/current/nervatura -env $(pwd)/.env.example
+    /snap/nervatura/current/nervatura -env $(pwd)/.env.example
     ```
 
   - Windows:
@@ -71,16 +71,16 @@ Recommended API:
 1. ***Download the Go examples***
 
     ```
-    $ git clone https://github.com/nervatura/nervatura-examples.git
-    $ cd nervatura-examples/go
-    $ go mod vendor
-    $ go run ./main.go
+    git clone https://github.com/nervatura/nervatura-examples.git
+    cd nervatura-examples/go
+    go mod vendor
+    go run ./main.go
     ```
     Open your browser to http://localhost:7000
 
 2. ***Nervatura backend*** (`nervatura-examples/go` directory)
     ```
-    $ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+    docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
     ```
 ### **PHP** and **Docker**
 
@@ -91,26 +91,26 @@ Recommended API:
 1. ***Download and install the PHP examples*** (linux)
 
     ```
-    $ git clone https://github.com/nervatura/nervatura-examples.git
-    $ cd nervatura-examples/php
-    $ composer install
-    $ cd public
-    $ php -S localhost:8000
+    git clone https://github.com/nervatura/nervatura-examples.git
+    cd nervatura-examples/php
+    composer install
+    cd public
+    php -S localhost:8000
     ```
     Open your browser to http://localhost:8000
 
 2. ***gRPC install*** (linux, optional)
 
     ```
-    $ sudo pecl install grpc
-    $ sudo pecl install protobuf
-    $ php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
+    sudo pecl install grpc
+    sudo pecl install protobuf
+    php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
     ```
     More details or Windows installation: [Install gRPC for PHP](https://cloud.google.com/php/grpc)
 
 2. ***Nervatura backend*** (`nervatura-examples/php` directory)
     ```
-    $ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+    docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
     ```
 
 ### **Flutter** client and **Dart** backend
@@ -122,19 +122,19 @@ Recommended API:
 1. ***Download the Flutter/Dart examples***
 
     ```
-    $ git clone https://github.com/nervatura/nervatura-examples.git
-    $ cd nervatura-examples/flutter
+    git clone https://github.com/nervatura/nervatura-examples.git
+    cd nervatura-examples/flutter
     ```
 2. ***Nervatura backend***
 
   - Linux
     ```
-    $ sudo snap install nervatura
-    $ sudo systemctl stop snap.nervatura.nervatura.service
+    sudo snap install nervatura
+    sudo systemctl stop snap.nervatura.nervatura.service
     ```
     The [CLI](/docs/service/cli#cli-api) and [CGO](/docs/service/cli#cgo-api) is ready to use. To use the [gRPC](/docs/service/grpc) and [HTTP](/docs/service/api), start Nervatura service with the .env.example settings (`nervatura-examples/flutter` directory):
     ```
-    $ /snap/nervatura/current/nervatura -env $(pwd)/.env.example
+    /snap/nervatura/current/nervatura -env $(pwd)/.env.example
     ```
   
   - Windows:
@@ -157,7 +157,7 @@ Recommended API:
     Start the Nervatura backend server with the .env.example settings (`nervatura-examples/flutter` directory):
 
     ```
-    $ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+    docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
     ```
 
 3. ***Dart backend***
@@ -165,19 +165,19 @@ Recommended API:
     Install the dependencies and start the Dart backend server with the .env.example settings (`nervatura-examples/flutter` directory):
 
     ```
-    $ dart pub get -C server
+    dart pub get -C server
     ```
 
   - Run without [CGO](/docs/service/cli#cgo-api) settings:
 
     ```
-    $ dart run server/lib/server.dart
+    dart run server/lib/server.dart
     ```
 
   - Run with [CGO](/docs/service/cli#cgo-api) (linux example):
 
     ```
-    $ NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=data/public.key dart run server/lib/server.dart
+    NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=data/public.key dart run server/lib/server.dart
     ```
 
 4. ***Flutter client***
@@ -185,7 +185,7 @@ Recommended API:
   - Install the all dependencies (`nervatura-examples/flutter/client` directory):
 
     ```
-    $ flutter pub get
+    flutter pub get
     ```
 
   - Windows or Linux desktop:
@@ -193,19 +193,19 @@ Recommended API:
     Run without [CGO](/docs/service/cli#cgo-api) settings (linux example):
 
     ```
-    $ flutter run -d linux --dart-define-from-file=env-example.json
+    flutter run -d linux --dart-define-from-file=env-example.json
     ```
 
     Run with [CGO](/docs/service/cli#cgo-api) (linux example):
 
     ```
-    $ NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY="../data/public.key" NT_ALIAS_DEMO="sqlite://file:../data/demo.db?cache=shared&mode=rwc" flutter run -d linux --dart-define-from-file=env-example.json
+    NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY="../data/public.key" NT_ALIAS_DEMO="sqlite://file:../data/demo.db?cache=shared&mode=rwc" flutter run -d linux --dart-define-from-file=env-example.json
     ```
 
   - Web or other platform:
 
     ```
-    $ flutter run -d chrome --dart-define-from-file=env-example.json
+    flutter run -d chrome --dart-define-from-file=env-example.json
     ```
 
 

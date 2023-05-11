@@ -10,26 +10,26 @@ bookToC: true
 
 ### **Docker** image
 ```
-$ docker pull nervatura/nervatura:latest
+docker pull nervatura/nervatura:latest
 ```
 
 ### **Snap** package (Linux daemon)
 
 ```
-$ sudo snap install nervatura
+sudo snap install nervatura
 ```
 
 Checking service status and last logs:
 
 ```
-$ systemctl status -l snap.nervatura.nervatura.service
+systemctl status -l snap.nervatura.nervatura.service
 ```
 
 Default snap data and http.log path:  `/var/snap/nervatura/common`
 
 ### Node.js **NPM**
 ```
-$ npm install --save nervatura
+npm install --save nervatura
 ```
 Add a run script to your `package.json` file like this:
 
@@ -37,13 +37,13 @@ Add a run script to your `package.json` file like this:
   "nervatura": "./node_modules/nervatura/bin/nervatura"
 }`
 ```
-$ npm run nervatura
+npm run nervatura
 ```
 
 ### **Winget** (Windows Package Manager)
 
 ```
-$ winget install --id Nervatura.Nervatura --source winget
+winget install --id Nervatura.Nervatura --source winget
 ```
 
 ### Prebuild binaries
@@ -52,8 +52,8 @@ $ winget install --id Nervatura.Nervatura --source winget
 
 ### Other platforms and custom build
 ```
-$ git clone https://github.com/nervatura/nervatura.git
-$ cd nervatura/service
+git clone https://github.com/nervatura/nervatura.git
+cd nervatura/service
 ```
 
 Build command:
@@ -66,7 +66,7 @@ CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) go build -tags "$(TAGS)" -ldfl
 
 You can see the list of supported platform by running:
 ```
-$ go tool dist list
+go tool dist list
 ```
 - `$(TAGS)` optional modul list: ***all, http, grpc, postgres, mysql, mssql, sqlite***
 - `$(VERSION)` application version
@@ -74,7 +74,7 @@ $ go tool dist list
 Example:
 
 ```
-$ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
   go build -tags "http postgres" -ldflags="-w -s -X main.Version=5.1.0" \
   -o nervatura main.go
 ```
@@ -86,5 +86,5 @@ The application uses environment variables to set configuration options. It will
 
 The `.env` file can be created in the current working directory, where the command is executed (in development mode). The name and location of the configuration file can also be specified in the command line parameters:
 ```
-$ nervatura -env /path/.env.example
+nervatura -env /path/.env.example
 ```

@@ -13,20 +13,20 @@ bookToC: true
 
 Create a Docker container and set some options
 ```
-$ mkdir data
-$ docker run -i -t --rm --name nervatura \
+mkdir data
+docker run -i -t --rm --name nervatura \
   -e NT_API_KEY=DEMO_API_KEY \
   -p 5000:5000 -v "$(pwd)"/data:/data nervatura/nervatura:latest
 ```
 In a new command window:
 ```
-$ docker exec -i nervatura /nervatura \
+docker exec -i nervatura /nervatura \
   -c DatabaseCreate -k DEMO_API_KEY \
   -o "{\"database\":\"demo\",\"demo\":true}"
 ```
 ### Snap
 ```
-$ sudo NT_API_KEY=DEMO_API_KEY \
+sudo NT_API_KEY=DEMO_API_KEY \
   NT_ALIAS_DEMO="sqlite://file:/var/snap/nervatura/common/demo.db?cache=shared&mode=rwc" \
   /snap/nervatura/current/nervatura -c DatabaseCreate \
   -k DEMO_API_KEY -o "{\"database\":\"demo\",\"demo\":true}"

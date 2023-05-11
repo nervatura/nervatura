@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Quick Start # Node.js and NPM # Recommended API:
-gRPC CGO (Linux and Windows x64, without Admin and Client GUI) $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
+gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
 Python and Snap or Windows Package Manager # Recommended API:">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Examples" />
 <meta property="og:description" content="Quick Start # Node.js and NPM # Recommended API:
-gRPC CGO (Linux and Windows x64, without Admin and Client GUI) $ git clone https://github.com/nervatura/nervatura-examples.git $ cd nervatura-examples/node $ npm install $ npm start Open your browser to http://localhost:8080
+gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
 Python and Snap or Windows Package Manager # Recommended API:" />
 <meta property="og:type" content="article" />
@@ -877,10 +877,10 @@ https://github.com/alex-shpak/hugo-book
 <li>
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> (Linux and Windows x64, without Admin and Client GUI)</li>
 </ul>
-<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
-$ cd nervatura-examples/node
-$ npm install
-$ npm start
+<pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
+cd nervatura-examples/node
+npm install
+npm start
 </code></pre><p>Open your browser to http://localhost:8080</p>
 <p>You do not need a Nervatura backend server to use the 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
@@ -899,10 +899,10 @@ $ npm start
 <ol>
 <li>
 <p><em><strong>Download the Python examples</strong></em></p>
-<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
-$ cd nervatura-examples/python
-$ pip install -r requirements.txt
-$ python main.py
+<pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
+cd nervatura-examples/python
+pip install -r requirements.txt
+python main.py
 </code></pre><p>Open your browser to http://localhost:8000</p>
 </li>
 <li>
@@ -912,14 +912,14 @@ $ python main.py
 <ul>
 <li>
 <p>Linux</p>
-<pre tabindex="0"><code>$ sudo snap install nervatura
-$ sudo systemctl stop snap.nervatura.nervatura.service
+<pre tabindex="0"><code>sudo snap install nervatura
+sudo systemctl stop snap.nervatura.nervatura.service
 </code></pre><p>The 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> is ready to use. To use the 
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, start Nervatura service with the .env.example settings (<code>nervatura-examples/python</code> directory):</p>
-<pre tabindex="0"><code>$ /snap/nervatura/current/nervatura -env $(pwd)/.env.example
+<pre tabindex="0"><code>/snap/nervatura/current/nervatura -env $(pwd)/.env.example
 </code></pre></li>
 <li>
 <p>Windows:</p>
@@ -946,15 +946,15 @@ $ sudo systemctl stop snap.nervatura.nervatura.service
 <ol>
 <li>
 <p><em><strong>Download the Go examples</strong></em></p>
-<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
-$ cd nervatura-examples/go
-$ go mod vendor
-$ go run ./main.go
+<pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
+cd nervatura-examples/go
+go mod vendor
+go run ./main.go
 </code></pre><p>Open your browser to http://localhost:7000</p>
 </li>
 <li>
 <p><em><strong>Nervatura backend</strong></em> (<code>nervatura-examples/go</code> directory)</p>
-<pre tabindex="0"><code>$ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+<pre tabindex="0"><code>docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
 </ol>
 <h3 id="php-and-docker">
@@ -971,24 +971,24 @@ $ go run ./main.go
 <ol>
 <li>
 <p><em><strong>Download and install the PHP examples</strong></em> (linux)</p>
-<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
-$ cd nervatura-examples/php
-$ composer install
-$ cd public
-$ php -S localhost:8000
+<pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
+cd nervatura-examples/php
+composer install
+cd public
+php -S localhost:8000
 </code></pre><p>Open your browser to http://localhost:8000</p>
 </li>
 <li>
 <p><em><strong>gRPC install</strong></em> (linux, optional)</p>
-<pre tabindex="0"><code>$ sudo pecl install grpc
-$ sudo pecl install protobuf
-$ php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
+<pre tabindex="0"><code>sudo pecl install grpc
+sudo pecl install protobuf
+php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
 </code></pre><p>More details or Windows installation: 
   <a href="https://cloud.google.com/php/grpc">Install gRPC for PHP</a></p>
 </li>
 <li>
 <p><em><strong>Nervatura backend</strong></em> (<code>nervatura-examples/php</code> directory)</p>
-<pre tabindex="0"><code>$ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+<pre tabindex="0"><code>docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
 </ol>
 <h3 id="flutter-client-and-dart-backend">
@@ -1005,8 +1005,8 @@ $ php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
 <ol>
 <li>
 <p><em><strong>Download the Flutter/Dart examples</strong></em></p>
-<pre tabindex="0"><code>$ git clone https://github.com/nervatura/nervatura-examples.git
-$ cd nervatura-examples/flutter
+<pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
+cd nervatura-examples/flutter
 </code></pre></li>
 <li>
 <p><em><strong>Nervatura backend</strong></em></p>
@@ -1015,14 +1015,14 @@ $ cd nervatura-examples/flutter
 <ul>
 <li>
 <p>Linux</p>
-<pre tabindex="0"><code>$ sudo snap install nervatura
-$ sudo systemctl stop snap.nervatura.nervatura.service
+<pre tabindex="0"><code>sudo snap install nervatura
+sudo systemctl stop snap.nervatura.nervatura.service
 </code></pre><p>The 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> is ready to use. To use the 
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, start Nervatura service with the .env.example settings (<code>nervatura-examples/flutter</code> directory):</p>
-<pre tabindex="0"><code>$ /snap/nervatura/current/nervatura -env $(pwd)/.env.example
+<pre tabindex="0"><code>/snap/nervatura/current/nervatura -env $(pwd)/.env.example
 </code></pre></li>
 <li>
 <p>Windows:</p>
@@ -1041,26 +1041,26 @@ $ sudo systemctl stop snap.nervatura.nervatura.service
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>)</p>
 <p>Change the value of the <code>NT_EXAMPLE_SERVICE_PATH</code> (<code>nervatura-examples/flutter/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura&rdquo; -&gt; <em>&ldquo;docker&rdquo;</em></p>
 <p>Start the Nervatura backend server with the .env.example settings (<code>nervatura-examples/flutter</code> directory):</p>
-<pre tabindex="0"><code>$ docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+<pre tabindex="0"><code>docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
 </ul>
 <ol start="3">
 <li>
 <p><em><strong>Dart backend</strong></em></p>
 <p>Install the dependencies and start the Dart backend server with the .env.example settings (<code>nervatura-examples/flutter</code> directory):</p>
-<pre tabindex="0"><code>$ dart pub get -C server
+<pre tabindex="0"><code>dart pub get -C server
 </code></pre></li>
 </ol>
 <ul>
 <li>
 <p>Run without 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> settings:</p>
-<pre tabindex="0"><code>$ dart run server/lib/server.dart
+<pre tabindex="0"><code>dart run server/lib/server.dart
 </code></pre></li>
 <li>
 <p>Run with 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> (linux example):</p>
-<pre tabindex="0"><code>$ NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=data/public.key dart run server/lib/server.dart
+<pre tabindex="0"><code>NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=data/public.key dart run server/lib/server.dart
 </code></pre></li>
 </ul>
 <ol start="4">
@@ -1069,20 +1069,20 @@ $ sudo systemctl stop snap.nervatura.nervatura.service
 <ul>
 <li>
 <p>Install the all dependencies (<code>nervatura-examples/flutter/client</code> directory):</p>
-<pre tabindex="0"><code>$ flutter pub get
+<pre tabindex="0"><code>flutter pub get
 </code></pre></li>
 <li>
 <p>Windows or Linux desktop:</p>
 <p>Run without 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> settings (linux example):</p>
-<pre tabindex="0"><code>$ flutter run -d linux --dart-define-from-file=env-example.json
+<pre tabindex="0"><code>flutter run -d linux --dart-define-from-file=env-example.json
 </code></pre><p>Run with 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> (linux example):</p>
-<pre tabindex="0"><code>$ NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=&#34;../data/public.key&#34; NT_ALIAS_DEMO=&#34;sqlite://file:../data/demo.db?cache=shared&amp;mode=rwc&#34; flutter run -d linux --dart-define-from-file=env-example.json
+<pre tabindex="0"><code>NT_API_KEY=EXAMPLE_API_KEY NT_TOKEN_PUBLIC_KID=PUBLIC_KID NT_TOKEN_PUBLIC_KEY=&#34;../data/public.key&#34; NT_ALIAS_DEMO=&#34;sqlite://file:../data/demo.db?cache=shared&amp;mode=rwc&#34; flutter run -d linux --dart-define-from-file=env-example.json
 </code></pre></li>
 <li>
 <p>Web or other platform:</p>
-<pre tabindex="0"><code>$ flutter run -d chrome --dart-define-from-file=env-example.json
+<pre tabindex="0"><code>flutter run -d chrome --dart-define-from-file=env-example.json
 </code></pre></li>
 </ul>
 <h2 id="examples">
