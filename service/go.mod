@@ -13,9 +13,9 @@ require (
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/signintech/gopdf v0.16.1
+	github.com/signintech/gopdf v0.17.0
 	github.com/unrolled/secure v1.13.0
-	golang.org/x/crypto v0.8.0 // indirect
+	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sync v0.2.0
 	golang.org/x/sys v0.8.0 // indirect
@@ -23,7 +23,7 @@ require (
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
-	modernc.org/libc v1.22.5 // indirect
+	modernc.org/libc v1.22.6 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
 	modernc.org/memory v1.5.0 // indirect
 	modernc.org/sqlite v1.22.1 // indirect
