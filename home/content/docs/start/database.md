@@ -18,7 +18,7 @@ For examples:
 
 Create a new database:
 ```
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \
+./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \
   -o "{\"database\":\"[your_lowercase_alias_name]\",\"demo\":false}"
 ```
 You can use the [**ADMIN GUI**](/docs/start/screenshot#service-admin-gui) Database section:

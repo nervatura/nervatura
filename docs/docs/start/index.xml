@@ -4,7 +4,8 @@
     <title>Getting Started on Nervatura</title>
     <link>https://nervatura.github.io/nervatura/docs/start/</link>
     <description>Recent content in Getting Started on Nervatura</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://nervatura.github.io/nervatura/docs/start/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language><atom:link href="https://nervatura.github.io/nervatura/docs/start/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Create a new database</title>
       <link>https://nervatura.github.io/nervatura/docs/start/database/</link>
@@ -15,7 +16,7 @@
 Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
 NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:
+./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
 Demo database: false
@@ -37,10 +38,11 @@ The SQLite databases are created automatically. Other types of databases must be
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/examples/</guid>
-      <description>Quick Start # Node.js and NPM # Recommended API:
+      <description>Quick Start # Node.js # Recommended API:
 gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or Windows Package Manager # Recommended API:</description>
+Python # Recommended API:
+gRPC CGO (Linux and Windows x64, without Admin and Client GUI) Download the Python examples</description>
     </item>
     
     <item>

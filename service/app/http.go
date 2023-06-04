@@ -56,7 +56,9 @@ func (s *httpServer) StartService() error {
 	s.admin = srv.AdminService{
 		Config:        s.app.config,
 		GetNervaStore: s.app.GetNervaStore,
+		GetParam:      chi.URLParam,
 		GetTokenKeys:  s.app.GetTokenKeys,
+		GetTaskSecKey: s.app.GetTaskSecKey,
 	}
 	s.admin.LoadTemplates()
 
@@ -261,6 +263,7 @@ func (s *httpServer) setRoutes() {
 	s.mux.Route("/admin", func(r chi.Router) {
 		r.Get("/", s.admin.Home)
 		r.Post("/", s.adminRoute)
+		r.Get("/task/{taskName}/{secKey}", s.admin.Task)
 	})
 	s.mux.Route("/locales", func(r chi.Router) {
 		r.Get("/", s.locales.Render)

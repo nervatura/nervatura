@@ -1,0 +1,26 @@
+{{ define "task" }}
+{{ template "header" . }}
+<div class="page {{if not .theme }} light {{else}} {{ .theme }} {{end}}">
+  {{if .env_result}}
+  <div class="task container section" >
+    {{range .env_result}}
+    <div class="row full" >
+      <div class="cell mobile small">
+        <div class="cell padding-normal nowrap bold" >
+          {{ .envkey }}
+        </div>
+        <div class="cell mobile padding-normal" >
+          {{if .envvalue}}
+            <span class="success-color">{{ .envvalue }}</span>
+          {{else}}
+            <span class="error">X</span>
+          {{end}}
+        </div>
+      </div>
+    </div>
+    {{end}}
+  </div>
+  {{end}}
+</div>
+{{ template "footer" . }}
+{{ end }}

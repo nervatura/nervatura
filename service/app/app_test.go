@@ -105,23 +105,45 @@ func TestNew(t *testing.T) {
 
 func TestApp_setConfig(t *testing.T) {
 	type fields struct {
-		services  map[string]srv.APIService
-		defConn   nt.DataDriver
-		infoLog   *log.Logger
-		errorLog  *log.Logger
-		httpLog   *log.Logger
-		args      nt.SM
-		tokenKeys map[string]nt.SM
-		config    map[string]interface{}
-		readFile  func(name string) ([]byte, error)
-		getEnv    func(key string) string
+		services   map[string]srv.APIService
+		defConn    nt.DataDriver
+		infoLog    *log.Logger
+		errorLog   *log.Logger
+		httpLog    *log.Logger
+		args       nt.SM
+		tokenKeys  map[string]nt.SM
+		config     map[string]interface{}
+		readFile   func(name string) ([]byte, error)
+		getEnv     func(key string) string
+		tray       bool
+		taskSecKey string
+	}
+	type args struct {
+		isSnap bool
 	}
 	tests := []struct {
 		name   string
 		fields fields
+		args   args
 	}{
 		{
 			name: "ok",
+			args: args{
+				isSnap: false,
+			},
+			fields: fields{
+				config:  nt.IM{},
+				infoLog: log.New(os.Stdout, "INFO: ", log.LstdFlags),
+				getEnv: func(key string) string {
+					return ""
+				},
+			},
+		},
+		{
+			name: "snap",
+			args: args{
+				isSnap: true,
+			},
 			fields: fields{
 				config:  nt.IM{},
 				infoLog: log.New(os.Stdout, "INFO: ", log.LstdFlags),
@@ -134,18 +156,20 @@ func TestApp_setConfig(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			app := &App{
-				services:  tt.fields.services,
-				defConn:   tt.fields.defConn,
-				infoLog:   tt.fields.infoLog,
-				errorLog:  tt.fields.errorLog,
-				httpLog:   tt.fields.httpLog,
-				args:      tt.fields.args,
-				tokenKeys: tt.fields.tokenKeys,
-				config:    tt.fields.config,
-				readFile:  tt.fields.readFile,
-				getEnv:    tt.fields.getEnv,
+				services:   tt.fields.services,
+				defConn:    tt.fields.defConn,
+				infoLog:    tt.fields.infoLog,
+				errorLog:   tt.fields.errorLog,
+				httpLog:    tt.fields.httpLog,
+				args:       tt.fields.args,
+				tokenKeys:  tt.fields.tokenKeys,
+				config:     tt.fields.config,
+				readFile:   tt.fields.readFile,
+				getEnv:     tt.fields.getEnv,
+				tray:       tt.fields.tray,
+				taskSecKey: tt.fields.taskSecKey,
 			}
-			app.setConfig()
+			app.setConfig(tt.args.isSnap)
 		})
 	}
 }
@@ -229,14 +253,16 @@ func TestApp_setTokenKey(t *testing.T) {
 
 func TestApp_startServer(t *testing.T) {
 	type fields struct {
-		services  map[string]srv.APIService
-		defConn   nt.DataDriver
-		infoLog   *log.Logger
-		errorLog  *log.Logger
-		httpLog   *log.Logger
-		args      map[string]string
-		tokenKeys map[string]map[string]string
-		config    map[string]interface{}
+		services   map[string]srv.APIService
+		defConn    nt.DataDriver
+		infoLog    *log.Logger
+		errorLog   *log.Logger
+		httpLog    *log.Logger
+		args       map[string]string
+		tokenKeys  map[string]map[string]string
+		config     map[string]interface{}
+		tray       bool
+		taskSecKey string
 	}
 	tests := []struct {
 		name    string
@@ -284,21 +310,56 @@ func TestApp_startServer(t *testing.T) {
 				infoLog:   log.New(os.Stdout, "INFO: ", log.LstdFlags),
 				errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),
 				tokenKeys: make(map[string]map[string]string),
+				tray:      false,
 			},
-			wantErr: true,
+			wantErr: false,
+		},
+		{
+			name: "tray icon",
+			fields: fields{
+				config: nt.IM{
+					"version":                 "test",
+					"NT_GRPC_ENABLED":         true,
+					"NT_GRPC_TLS_ENABLED":     false,
+					"NT_GRPC_PORT":            int64(-1),
+					"NT_HTTP_ENABLED":         true,
+					"NT_HTTP_TLS_ENABLED":     false,
+					"NT_HTTP_PORT":            int64(-1),
+					"NT_HTTP_READ_TIMEOUT":    float64(30),
+					"NT_HTTP_WRITE_TIMEOUT":   float64(30),
+					"NT_TOKEN_PUBLIC_KEY_URL": "https://www.googleapis.com/oauth2/v1/certs",
+					"NT_CORS_ENABLED":         false,
+					"NT_SECURITY_ENABLED":     false,
+					"NT_HTTP_HOME":            "/admin",
+					"NT_TLS_CERT_FILE":        "",
+					"NT_TLS_KEY_FILE":         "",
+					"NT_CLIENT_CONFIG":        "../data/test_client_config.json",
+				},
+				services: map[string]srv.APIService{
+					"http": &testServer{},
+					"grpc": &testServer{},
+				},
+				infoLog:   log.New(os.Stdout, "INFO: ", log.LstdFlags),
+				errorLog:  log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+				tokenKeys: make(map[string]map[string]string),
+				tray:      true,
+			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			app := &App{
-				services:  tt.fields.services,
-				defConn:   tt.fields.defConn,
-				infoLog:   tt.fields.infoLog,
-				errorLog:  tt.fields.errorLog,
-				httpLog:   tt.fields.httpLog,
-				args:      tt.fields.args,
-				tokenKeys: tt.fields.tokenKeys,
-				config:    tt.fields.config,
+				services:   tt.fields.services,
+				defConn:    tt.fields.defConn,
+				infoLog:    tt.fields.infoLog,
+				errorLog:   tt.fields.errorLog,
+				httpLog:    tt.fields.httpLog,
+				args:       tt.fields.args,
+				tokenKeys:  tt.fields.tokenKeys,
+				config:     tt.fields.config,
+				tray:       tt.fields.tray,
+				taskSecKey: tt.fields.taskSecKey,
 			}
 			if err := app.startServer(); (err != nil) != tt.wantErr {
 				t.Errorf("App.startServer() error = %v, wantErr %v", err, tt.wantErr)
@@ -568,6 +629,253 @@ func TestApp_GetTokenKeys(t *testing.T) {
 			}
 			if got := app.GetTokenKeys(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("App.GetTokenKeys() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestApp_trayIcon(t *testing.T) {
+	type fields struct {
+		services   map[string]srv.APIService
+		defConn    nt.DataDriver
+		infoLog    *log.Logger
+		errorLog   *log.Logger
+		httpLog    *log.Logger
+		args       nt.SM
+		tokenKeys  map[string]nt.SM
+		config     map[string]interface{}
+		readFile   func(name string) ([]byte, error)
+		getEnv     func(key string) string
+		tray       bool
+		taskSecKey string
+	}
+	type args struct {
+		httpDisabled bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{
+			name: "disabled_menu",
+			args: args{
+				httpDisabled: true,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := &App{
+				services:   tt.fields.services,
+				defConn:    tt.fields.defConn,
+				infoLog:    tt.fields.infoLog,
+				errorLog:   tt.fields.errorLog,
+				httpLog:    tt.fields.httpLog,
+				args:       tt.fields.args,
+				tokenKeys:  tt.fields.tokenKeys,
+				config:     tt.fields.config,
+				readFile:   tt.fields.readFile,
+				getEnv:     tt.fields.getEnv,
+				tray:       tt.fields.tray,
+				taskSecKey: tt.fields.taskSecKey,
+			}
+			app.trayIcon(tt.args.httpDisabled)
+		})
+	}
+}
+
+func TestApp_onTrayMenu(t *testing.T) {
+	type fields struct {
+		services   map[string]srv.APIService
+		defConn    nt.DataDriver
+		infoLog    *log.Logger
+		errorLog   *log.Logger
+		httpLog    *log.Logger
+		args       nt.SM
+		tokenKeys  map[string]nt.SM
+		config     map[string]interface{}
+		readFile   func(name string) ([]byte, error)
+		getEnv     func(key string) string
+		tray       bool
+		taskSecKey string
+	}
+	type args struct {
+		mKey string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{
+			name: "config",
+			args: args{
+				mKey: "config",
+			},
+			fields: fields{
+				errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+			},
+		},
+		{
+			name: "admin",
+			args: args{
+				mKey: "admin",
+			},
+			fields: fields{
+				errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+			},
+		},
+		{
+			name: "default",
+			args: args{
+				mKey: "default",
+			},
+			fields: fields{
+				errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := &App{
+				services:   tt.fields.services,
+				defConn:    tt.fields.defConn,
+				infoLog:    tt.fields.infoLog,
+				errorLog:   tt.fields.errorLog,
+				httpLog:    tt.fields.httpLog,
+				args:       tt.fields.args,
+				tokenKeys:  tt.fields.tokenKeys,
+				config:     tt.fields.config,
+				readFile:   tt.fields.readFile,
+				getEnv:     tt.fields.getEnv,
+				tray:       tt.fields.tray,
+				taskSecKey: tt.fields.taskSecKey,
+			}
+			app.onTrayMenu(tt.args.mKey)
+		})
+	}
+}
+
+func TestApp_openURL(t *testing.T) {
+	type fields struct {
+		services   map[string]srv.APIService
+		defConn    nt.DataDriver
+		infoLog    *log.Logger
+		errorLog   *log.Logger
+		httpLog    *log.Logger
+		args       nt.SM
+		tokenKeys  map[string]nt.SM
+		config     map[string]interface{}
+		readFile   func(name string) ([]byte, error)
+		getEnv     func(key string) string
+		tray       bool
+		taskSecKey string
+	}
+	type args struct {
+		goOS   string
+		urlStr string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "darwin",
+			args: args{
+				goOS:   "darwin",
+				urlStr: "",
+			},
+			wantErr: true,
+		},
+		{
+			name: "windows",
+			args: args{
+				goOS:   "windows",
+				urlStr: "",
+			},
+			wantErr: true,
+		},
+		{
+			name: "linux",
+			args: args{
+				goOS:   "linux",
+				urlStr: "",
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := &App{
+				services:   tt.fields.services,
+				defConn:    tt.fields.defConn,
+				infoLog:    tt.fields.infoLog,
+				errorLog:   tt.fields.errorLog,
+				httpLog:    tt.fields.httpLog,
+				args:       tt.fields.args,
+				tokenKeys:  tt.fields.tokenKeys,
+				config:     tt.fields.config,
+				readFile:   tt.fields.readFile,
+				getEnv:     tt.fields.getEnv,
+				tray:       tt.fields.tray,
+				taskSecKey: tt.fields.taskSecKey,
+			}
+			if err := app.openURL(tt.args.goOS, tt.args.urlStr); (err != nil) != tt.wantErr {
+				t.Errorf("App.openURL() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestApp_GetTaskSecKey(t *testing.T) {
+	type fields struct {
+		services   map[string]srv.APIService
+		defConn    nt.DataDriver
+		infoLog    *log.Logger
+		errorLog   *log.Logger
+		httpLog    *log.Logger
+		args       nt.SM
+		tokenKeys  map[string]nt.SM
+		config     map[string]interface{}
+		readFile   func(name string) ([]byte, error)
+		getEnv     func(key string) string
+		tray       bool
+		taskSecKey string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				taskSecKey: "SEC01234",
+			},
+			want: "SEC01234",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := &App{
+				services:   tt.fields.services,
+				defConn:    tt.fields.defConn,
+				infoLog:    tt.fields.infoLog,
+				errorLog:   tt.fields.errorLog,
+				httpLog:    tt.fields.httpLog,
+				args:       tt.fields.args,
+				tokenKeys:  tt.fields.tokenKeys,
+				config:     tt.fields.config,
+				readFile:   tt.fields.readFile,
+				getEnv:     tt.fields.getEnv,
+				tray:       tt.fields.tray,
+				taskSecKey: tt.fields.taskSecKey,
+			}
+			if got := app.GetTaskSecKey(); got != tt.want {
+				t.Errorf("App.GetTaskSecKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

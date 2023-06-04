@@ -1,4 +1,5 @@
-// import { playwrightLauncher } from '@web/test-runner-playwright';
+import { playwrightLauncher } from '@web/test-runner-playwright';
+// import { chromeLauncher } from '@web/test-runner-chrome';
 
 const filteredLogs = ['Running in dev mode', 'lit-html is in dev mode'];
 
@@ -31,11 +32,29 @@ export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
   // concurrency: 1,
 
   /** Browsers to run tests on */
-  // browsers: [
-  //   playwrightLauncher({ product: 'chromium' }),
+  browsers: [
+    /*
+    chromeLauncher({
+      // concurrency: 1,
+      launchOptions: {
+        // executablePath: '/path/to/executable',
+        headless: true,
+        // devtools: true,
+        // args: ['--some-flag'],
+      },
+    })
+    */
+     playwrightLauncher({
+      launchOptions: {
+        headless: true,
+        // devtools: true,
+        // args: ['--some-flag'],
+      }, 
+      product: 'firefox' 
+    }),
   //   playwrightLauncher({ product: 'firefox' }),
   //   playwrightLauncher({ product: 'webkit' }),
-  // ],
+  ],
 
   // See documentation for all available options
 });

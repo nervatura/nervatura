@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Quick Start # Node.js and NPM # Recommended API:
+<meta name="description" content="Quick Start # Node.js # Recommended API:
 gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or Windows Package Manager # Recommended API:">
+Python # Recommended API:
+gRPC CGO (Linux and Windows x64, without Admin and Client GUI) Download the Python examples">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Examples" />
-<meta property="og:description" content="Quick Start # Node.js and NPM # Recommended API:
+<meta property="og:description" content="Quick Start # Node.js # Recommended API:
 gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or Windows Package Manager # Recommended API:" />
+Python # Recommended API:
+gRPC CGO (Linux and Windows x64, without Admin and Client GUI) Download the Python examples" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/start/examples/" /><meta property="article:section" content="docs" />
 
@@ -826,11 +828,11 @@ https://github.com/alex-shpak/hugo-book
       <ul>
         <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
-            <li><a href="#nodejs-and-npm"><strong>Node.js</strong> and <strong>NPM</strong></a></li>
-            <li><a href="#python-and-snap-or-windows-package-manager"><strong>Python</strong> and <strong>Snap</strong> or <strong>Windows Package Manager</strong></a></li>
-            <li><a href="#go-and-docker"><strong>Go</strong> and <strong>Docker</strong></a></li>
-            <li><a href="#php-and-docker"><strong>PHP</strong> and <strong>Docker</strong></a></li>
-            <li><a href="#flutter-client-and-dart-backend"><strong>Flutter</strong> client and <strong>Dart</strong> backend</a></li>
+            <li><a href="#nodejs"><strong>Node.js</strong></a></li>
+            <li><a href="#python"><strong>Python</strong></a></li>
+            <li><a href="#go"><strong>Go</strong></a></li>
+            <li><a href="#php"><strong>PHP</strong></a></li>
+            <li><a href="#flutter-and-dart"><strong>Flutter</strong> and <strong>Dart</strong></a></li>
           </ul>
         </li>
         <li><a href="#examples"><strong>Examples</strong></a>
@@ -866,9 +868,9 @@ https://github.com/alex-shpak/hugo-book
   <strong>Quick Start</strong>
   <a class="anchor" href="#quick-start">#</a>
 </h2>
-<h3 id="nodejs-and-npm">
-  <strong>Node.js</strong> and <strong>NPM</strong>
-  <a class="anchor" href="#nodejs-and-npm">#</a>
+<h3 id="nodejs">
+  <strong>Node.js</strong>
+  <a class="anchor" href="#nodejs">#</a>
 </h3>
 <p>Recommended API:</p>
 <ul>
@@ -878,16 +880,16 @@ https://github.com/alex-shpak/hugo-book
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> (Linux and Windows x64, without Admin and Client GUI)</li>
 </ul>
 <pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
-cd nervatura-examples/node
-npm install
-npm start
+</code></pre><pre tabindex="0"><code>cd nervatura-examples/node
+</code></pre><pre tabindex="0"><code>npm install
+</code></pre><pre tabindex="0"><code>npm start
 </code></pre><p>Open your browser to http://localhost:8080</p>
 <p>You do not need a Nervatura backend server to use the 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>. Automatic server start can be turned off with <code>NT_EXAMPLE_SERVICE_DISABLED=true</code>  (see in the <code>nervatura-examples/node/.env</code> file).</p>
-<h3 id="python-and-snap-or-windows-package-manager">
-  <strong>Python</strong> and <strong>Snap</strong> or <strong>Windows Package Manager</strong>
-  <a class="anchor" href="#python-and-snap-or-windows-package-manager">#</a>
+<h3 id="python">
+  <strong>Python</strong>
+  <a class="anchor" href="#python">#</a>
 </h3>
 <p>Recommended API:</p>
 <ul>
@@ -900,9 +902,9 @@ npm start
 <li>
 <p><em><strong>Download the Python examples</strong></em></p>
 <pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
-cd nervatura-examples/python
-pip install -r requirements.txt
-python main.py
+</code></pre><pre tabindex="0"><code>cd nervatura-examples/python
+</code></pre><pre tabindex="0"><code>pip install -r requirements.txt
+</code></pre><pre tabindex="0"><code>python main.py
 </code></pre><p>Open your browser to http://localhost:8000</p>
 </li>
 <li>
@@ -913,13 +915,13 @@ python main.py
 <li>
 <p>Linux</p>
 <pre tabindex="0"><code>sudo snap install nervatura
-sudo systemctl stop snap.nervatura.nervatura.service
+</code></pre><pre tabindex="0"><code>sudo systemctl stop snap.nervatura.nervatura.service
 </code></pre><p>The 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> is ready to use. To use the 
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a>, start Nervatura service with the .env.example settings (<code>nervatura-examples/python</code> directory):</p>
-<pre tabindex="0"><code>/snap/nervatura/current/nervatura -env $(pwd)/.env.example
+<pre tabindex="0"><code>/snap/nervatura/current/nervatura -tray -env $(pwd)/.env.example
 </code></pre></li>
 <li>
 <p>Windows:</p>
@@ -931,12 +933,19 @@ sudo systemctl stop snap.nervatura.nervatura.service
 <p>Start the Nervatura backend server (
   <a href="https://nervatura.github.io/nervatura/docs/service/grpc/">gRPC</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/api/">HTTP</a> examples) with the .env.example settings (<code>nervatura-examples/python</code> directory):</p>
-<pre tabindex="0"><code>  &amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -env .env.example
+<pre tabindex="0"><code>  &amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -tray -env .env.example
+</code></pre></li>
+<li>
+<p>Docker (without 
+  <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a>)</p>
+<p>Change the value of the <code>NT_EXAMPLE_SERVICE_PATH</code> (<code>nervatura-examples/python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura&rdquo; -&gt; <em>&ldquo;docker&rdquo;</em></p>
+<p>Start the Nervatura backend server with the .env.example settings (<code>nervatura-examples/python</code> directory):</p>
+<pre tabindex="0"><code>docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
 </ul>
-<h3 id="go-and-docker">
-  <strong>Go</strong> and <strong>Docker</strong>
-  <a class="anchor" href="#go-and-docker">#</a>
+<h3 id="go">
+  <strong>Go</strong>
+  <a class="anchor" href="#go">#</a>
 </h3>
 <p>Recommended API:</p>
 <ul>
@@ -947,19 +956,29 @@ sudo systemctl stop snap.nervatura.nervatura.service
 <li>
 <p><em><strong>Download the Go examples</strong></em></p>
 <pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
-cd nervatura-examples/go
-go mod vendor
-go run ./main.go
+</code></pre><pre tabindex="0"><code>cd nervatura-examples/go
+</code></pre><pre tabindex="0"><code>go mod vendor
+</code></pre><pre tabindex="0"><code>go run ./main.go
 </code></pre><p>Open your browser to http://localhost:7000</p>
 </li>
 <li>
 <p><em><strong>Nervatura backend</strong></em> (<code>nervatura-examples/go</code> directory)</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>Docker</p>
 <pre tabindex="0"><code>docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
-</ol>
-<h3 id="php-and-docker">
-  <strong>PHP</strong> and <strong>Docker</strong>
-  <a class="anchor" href="#php-and-docker">#</a>
+<li>
+<p>Linux and Windows</p>
+<p>Follow the instructions in the 
+  <a href="https://nervatura.github.io/nervatura/docs/start/examples/#python">python example</a></p>
+</li>
+</ul>
+<h3 id="php">
+  <strong>PHP</strong>
+  <a class="anchor" href="#php">#</a>
 </h3>
 <p>Recommended API:</p>
 <ul>
@@ -972,28 +991,38 @@ go run ./main.go
 <li>
 <p><em><strong>Download and install the PHP examples</strong></em> (linux)</p>
 <pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
-cd nervatura-examples/php
-composer install
-cd public
-php -S localhost:8000
+</code></pre><pre tabindex="0"><code>cd nervatura-examples/php
+</code></pre><pre tabindex="0"><code>composer install
+</code></pre><pre tabindex="0"><code>cd public
+</code></pre><pre tabindex="0"><code>php -S localhost:8000
 </code></pre><p>Open your browser to http://localhost:8000</p>
 </li>
 <li>
 <p><em><strong>gRPC install</strong></em> (linux, optional)</p>
 <pre tabindex="0"><code>sudo pecl install grpc
-sudo pecl install protobuf
-php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
+</code></pre><pre tabindex="0"><code>sudo pecl install protobuf
+</code></pre><pre tabindex="0"><code>php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
 </code></pre><p>More details or Windows installation: 
   <a href="https://cloud.google.com/php/grpc">Install gRPC for PHP</a></p>
 </li>
 <li>
 <p><em><strong>Nervatura backend</strong></em> (<code>nervatura-examples/php</code> directory)</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>Docker</p>
 <pre tabindex="0"><code>docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
 </code></pre></li>
-</ol>
-<h3 id="flutter-client-and-dart-backend">
-  <strong>Flutter</strong> client and <strong>Dart</strong> backend
-  <a class="anchor" href="#flutter-client-and-dart-backend">#</a>
+<li>
+<p>Linux and Windows</p>
+<p>Follow the instructions in the 
+  <a href="https://nervatura.github.io/nervatura/docs/start/examples/#python">python example</a></p>
+</li>
+</ul>
+<h3 id="flutter-and-dart">
+  <strong>Flutter</strong> and <strong>Dart</strong>
+  <a class="anchor" href="#flutter-and-dart">#</a>
 </h3>
 <p>Recommended API:</p>
 <ul>
@@ -1006,7 +1035,7 @@ php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
 <li>
 <p><em><strong>Download the Flutter/Dart examples</strong></em></p>
 <pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura-examples.git
-cd nervatura-examples/flutter
+</code></pre><pre tabindex="0"><code>cd nervatura-examples/flutter
 </code></pre></li>
 <li>
 <p><em><strong>Nervatura backend</strong></em></p>
@@ -1016,7 +1045,7 @@ cd nervatura-examples/flutter
 <li>
 <p>Linux</p>
 <pre tabindex="0"><code>sudo snap install nervatura
-sudo systemctl stop snap.nervatura.nervatura.service
+</code></pre><pre tabindex="0"><code>sudo systemctl stop snap.nervatura.nervatura.service
 </code></pre><p>The 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cli-api">CLI</a> and 
   <a href="https://nervatura.github.io/nervatura/docs/service/cli/#cgo-api">CGO</a> is ready to use. To use the 
@@ -1258,11 +1287,11 @@ sudo systemctl stop snap.nervatura.nervatura.service
       <ul>
         <li><a href="#quick-start"><strong>Quick Start</strong></a>
           <ul>
-            <li><a href="#nodejs-and-npm"><strong>Node.js</strong> and <strong>NPM</strong></a></li>
-            <li><a href="#python-and-snap-or-windows-package-manager"><strong>Python</strong> and <strong>Snap</strong> or <strong>Windows Package Manager</strong></a></li>
-            <li><a href="#go-and-docker"><strong>Go</strong> and <strong>Docker</strong></a></li>
-            <li><a href="#php-and-docker"><strong>PHP</strong> and <strong>Docker</strong></a></li>
-            <li><a href="#flutter-client-and-dart-backend"><strong>Flutter</strong> client and <strong>Dart</strong> backend</a></li>
+            <li><a href="#nodejs"><strong>Node.js</strong></a></li>
+            <li><a href="#python"><strong>Python</strong></a></li>
+            <li><a href="#go"><strong>Go</strong></a></li>
+            <li><a href="#php"><strong>PHP</strong></a></li>
+            <li><a href="#flutter-and-dart"><strong>Flutter</strong> and <strong>Dart</strong></a></li>
           </ul>
         </li>
         <li><a href="#examples"><strong>Examples</strong></a>

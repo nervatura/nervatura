@@ -7,7 +7,7 @@
 Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
 NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34; You can use the ADMIN GUI Database section:
+./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
 Demo database: false
@@ -18,7 +18,7 @@ The SQLite databases are created automatically. Other types of databases must be
 Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
 NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34; You can use the ADMIN GUI Database section:
+./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
 Demo database: false
@@ -843,7 +843,7 @@ Supported database adapters: <em>sqlite3, postgres, mysql, mssql</em></p>
 <li><em>NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura</em></li>
 </ul>
 <p>Create a new database:</p>
-<pre tabindex="0"><code>$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \
+<pre tabindex="0"><code>./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \
   -o &#34;{\&#34;database\&#34;:\&#34;[your_lowercase_alias_name]\&#34;,\&#34;demo\&#34;:false}&#34;
 </code></pre><p>You can use the 
   <a href="https://nervatura.github.io/nervatura/docs/start/screenshot/#service-admin-gui"><strong>ADMIN GUI</strong></a> Database section:</p>

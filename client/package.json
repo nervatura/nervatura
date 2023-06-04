@@ -1,7 +1,7 @@
 {
   "name": "nervatura-client",
   "description": "Business Management Application",
-  "version": "5.1.6",
+  "version": "5.1.7",
   "keywords": [
     "business management",
     "open-data",
@@ -33,7 +33,7 @@
   ],
   "homepage": ".",
   "scripts": {
-    "test": "web-test-runner --coverage",
+    "test": "web-test-runner --node-resolve --coverage",
     "test:watch": "web-test-runner --watch",
     "storybook": "npm run analyze -- --exclude dist && web-dev-server -c .storybook/server.mjs",
     "storybook:build": "npm run analyze -- --exclude dist && build-storybook",
@@ -45,10 +45,10 @@
     "coverage": "web-dev-server --root-dir coverage/lcov-report --port 1234 --open"
   },
   "dependencies": {
-    "lit": "^2.7.4"
+    "lit": "^2.7.5"
   },
   "devDependencies": {
-    "@custom-elements-manifest/analyzer": "^0.8.1",
+    "@custom-elements-manifest/analyzer": "0.8.3",
     "@open-wc/building-rollup": "^2.2.3",
     "@open-wc/eslint-config": "^10.0.0",
     "@open-wc/testing": "^3.1.8",
@@ -56,15 +56,16 @@
     "@web/dev-server": "^0.2.1",
     "@web/dev-server-storybook": "^0.7.1",
     "@web/test-runner": "^0.16.1",
+    "@web/test-runner-playwright": "^0.10.0",
     "deepmerge": "^4.3.1",
-    "eslint": "^8.40.0",
+    "eslint": "8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
     "prettier": "^2.8.8",
-    "rimraf": "^5.0.0",
-    "rollup": "^3.21.5",
+    "rimraf": "5.0.1",
+    "rollup": "3.23.0",
     "rollup-plugin-copy": "^3.4.0",
-    "sinon": "^15.0.4"
+    "sinon": "15.1.0"
   },
   "eslintConfig": {
     "rules": {

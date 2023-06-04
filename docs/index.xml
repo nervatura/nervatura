@@ -4,7 +4,8 @@
     <title>About on Nervatura</title>
     <link>https://nervatura.github.io/nervatura/</link>
     <description>Recent content in About on Nervatura</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://nervatura.github.io/nervatura/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language><atom:link href="https://nervatura.github.io/nervatura/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CLI AND CGO API</title>
       <link>https://nervatura.github.io/nervatura/docs/service/cli/</link>
@@ -17,7 +18,7 @@ docker exec -i nervatura /nervatura -h Windows (PowerShell):
 /snap/nervatura/current/nervatura -h NPM:
 ./node_modules/nervatura/bin/nervatura -h Example:
 docker exec -i nervatura /nervatura \ -c UserLogin -o &amp;#34;{\&amp;#34;username\&amp;#34;:\&amp;#34;admin\&amp;#34;,\&amp;#34;database\&amp;#34;:\&amp;#34;demo\&amp;#34;}&amp;#34; Golang docs:
-CGO API # The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Go, Python, Ruby, Node, and Java.</description>
+CGO API # The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Python, Ruby, Node, Java, Lua, Dart, C#.</description>
     </item>
     
     <item>
@@ -30,7 +31,7 @@ CGO API # The CGO API a standard shared object binary file (.so or .dll) exposin
 Supported database adapters: sqlite3, postgres, mysql, mssql
 For examples:
 NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
-$ ./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:
+./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:
 API-KEY: YOUR_API_KEY
 Alias name: your_lowercase_alias_name
 Demo database: false
@@ -204,10 +205,11 @@ Department # An item of the department group should be set in this field.</descr
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/start/examples/</guid>
-      <description>Quick Start # Node.js and NPM # Recommended API:
+      <description>Quick Start # Node.js # Recommended API:
 gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
 You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python and Snap or Windows Package Manager # Recommended API:</description>
+Python # Recommended API:
+gRPC CGO (Linux and Windows x64, without Admin and Client GUI) Download the Python examples</description>
     </item>
     
     <item>
@@ -226,11 +228,11 @@ Method Name Request Type Response Type Description UserLogin RequestUserLogin Re
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/install/</guid>
-      <description>Installation # Docker image # docker pull nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
-systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
-Node.js NPM # npm install --save nervatura Add a run script to your package.json file like this:
-&amp;quot;scripts&amp;quot;: { &amp;quot;nervatura&amp;quot;: &amp;quot;./node_modules/nervatura/bin/nervatura&amp;quot; }
-npm run nervatura Winget (Windows Package Manager) # winget install --id Nervatura.Nervatura --source winget Prebuild binaries # Linux and Windows</description>
+      <description>Installation # Docker image # docker pull nervatura/nervatura:latest Example:
+docker run -i -t --rm --name nervatura --env-file YOUR_ENV_FILE_PATH/.env -p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
+systemctl status -l snap.nervatura.nervatura.service Default snap data and http log path: /var/snap/nervatura/common
+The nervatura service starts by default. More examples:
+sudo systemctl stop or start or restart snap.nervatura.nervatura.service sudo systemctl disable or enable snap.</description>
     </item>
     
     <item>

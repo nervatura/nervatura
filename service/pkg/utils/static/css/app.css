@@ -198,6 +198,20 @@ option:disabled {
   overflow: auto;
 }
 
+.task {
+  max-height: 95%;
+  display: block;
+  overflow: auto;
+}
+
+.task, .row {
+  border-bottom: 1px solid rgba(var(--dark-rgb),0.2);
+}
+
+.task, .cell {
+  vertical-align: top;
+}
+
 .nowrap{
   white-space: nowrap;
 }

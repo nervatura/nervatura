@@ -7,7 +7,7 @@ bookToC: true
 
 ## **Quick Start**
 
-### **Node.js** and **NPM**
+### **Node.js**
 
 Recommended API: 
 - [gRPC](/docs/service/grpc) 
@@ -15,15 +15,21 @@ Recommended API:
 
 ```
 git clone https://github.com/nervatura/nervatura-examples.git
+```
+```
 cd nervatura-examples/node
+```
+```
 npm install
+```
+```
 npm start
 ```
 Open your browser to http://localhost:8080
 
 You do not need a Nervatura backend server to use the [CLI](/docs/service/cli#cli-api) and [CGO](/docs/service/cli#cgo-api). Automatic server start can be turned off with `NT_EXAMPLE_SERVICE_DISABLED=true`  (see in the `nervatura-examples/node/.env` file).
 
-### **Python** and **Snap** or **Windows Package Manager**
+### **Python**
 
 Recommended API:
 - [gRPC](/docs/service/grpc)
@@ -33,8 +39,14 @@ Recommended API:
 
     ```
     git clone https://github.com/nervatura/nervatura-examples.git
+    ```
+    ```
     cd nervatura-examples/python
+    ```
+    ```
     pip install -r requirements.txt
+    ```
+    ```
     python main.py
     ```
     Open your browser to http://localhost:8000
@@ -44,11 +56,13 @@ Recommended API:
   - Linux
     ```
     sudo snap install nervatura
+    ```
+    ```
     sudo systemctl stop snap.nervatura.nervatura.service
     ```
     The [CLI](/docs/service/cli#cli-api) and [CGO](/docs/service/cli#cgo-api) is ready to use. To use the [gRPC](/docs/service/grpc) and [HTTP](/docs/service/api), start Nervatura service with the .env.example settings (`nervatura-examples/python` directory):
     ```
-    /snap/nervatura/current/nervatura -env $(pwd)/.env.example
+    /snap/nervatura/current/nervatura -tray -env $(pwd)/.env.example
     ```
 
   - Windows:
@@ -61,9 +75,20 @@ Recommended API:
     Start the Nervatura backend server ([gRPC](/docs/service/grpc) and [HTTP](/docs/service/api) examples) with the .env.example settings (`nervatura-examples/python` directory):
 
     ```
-      & "C:\Program Files\Nervatura\nervatura.exe" -env .env.example
+      & "C:\Program Files\Nervatura\nervatura.exe" -tray -env .env.example
     ```
-### **Go** and **Docker**
+  
+  - Docker (without [CGO](/docs/service/cli#cgo-api))
+    
+    Change the value of the `NT_EXAMPLE_SERVICE_PATH` (`nervatura-examples/python/.env.example` file): "/snap/nervatura/current/nervatura" -> *"docker"*
+
+    Start the Nervatura backend server with the .env.example settings (`nervatura-examples/python` directory):
+
+    ```
+    docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+    ```
+
+### **Go**
 
 Recommended API:
 - [gRPC](/docs/service/grpc)
@@ -72,17 +97,29 @@ Recommended API:
 
     ```
     git clone https://github.com/nervatura/nervatura-examples.git
+    ```
+    ```
     cd nervatura-examples/go
+    ```
+    ```
     go mod vendor
+    ```
+    ```
     go run ./main.go
     ```
     Open your browser to http://localhost:7000
 
 2. ***Nervatura backend*** (`nervatura-examples/go` directory)
+
+- Docker
     ```
     docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
     ```
-### **PHP** and **Docker**
+- Linux and Windows
+
+  Follow the instructions in the [python example](/docs/start/examples/#python)
+
+### **PHP**
 
 Recommended API:
 - [gRPC](/docs/service/grpc)
@@ -92,9 +129,17 @@ Recommended API:
 
     ```
     git clone https://github.com/nervatura/nervatura-examples.git
+    ```
+    ```
     cd nervatura-examples/php
+    ```
+    ```
     composer install
+    ```
+    ```
     cd public
+    ```
+    ```
     php -S localhost:8000
     ```
     Open your browser to http://localhost:8000
@@ -103,17 +148,27 @@ Recommended API:
 
     ```
     sudo pecl install grpc
+    ```
+    ```
     sudo pecl install protobuf
+    ```
+    ```
     php -d extension=grpc.so -d extension=protobuf.so -S localhost:8000
     ```
     More details or Windows installation: [Install gRPC for PHP](https://cloud.google.com/php/grpc)
 
 2. ***Nervatura backend*** (`nervatura-examples/php` directory)
+  
+  - Docker
     ```
     docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
     ```
 
-### **Flutter** client and **Dart** backend
+  - Linux and Windows
+
+    Follow the instructions in the [python example](/docs/start/examples/#python)
+
+### **Flutter** and **Dart**
 
 Recommended API:
 - [gRPC](/docs/service/grpc)
@@ -123,6 +178,8 @@ Recommended API:
 
     ```
     git clone https://github.com/nervatura/nervatura-examples.git
+    ```
+    ```
     cd nervatura-examples/flutter
     ```
 2. ***Nervatura backend***
@@ -130,6 +187,8 @@ Recommended API:
   - Linux
     ```
     sudo snap install nervatura
+    ```
+    ```
     sudo systemctl stop snap.nervatura.nervatura.service
     ```
     The [CLI](/docs/service/cli#cli-api) and [CGO](/docs/service/cli#cgo-api) is ready to use. To use the [gRPC](/docs/service/grpc) and [HTTP](/docs/service/api), start Nervatura service with the .env.example settings (`nervatura-examples/flutter` directory):

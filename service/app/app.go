@@ -2,35 +2,43 @@ package app
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
 
+	"fyne.io/systray"
 	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload" // load .env file automatically
 	db "github.com/nervatura/nervatura/service/pkg/database"
+	"github.com/nervatura/nervatura/service/pkg/icon"
 	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 	srv "github.com/nervatura/nervatura/service/pkg/service"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
+
 	"golang.org/x/sync/errgroup"
 )
 
 // App - Nervatura Application
 type App struct {
-	services  map[string]srv.APIService
-	defConn   nt.DataDriver
-	infoLog   *log.Logger
-	errorLog  *log.Logger
-	httpLog   *log.Logger
-	args      nt.SM
-	tokenKeys map[string]nt.SM
-	config    map[string]interface{}
-	readFile  func(name string) ([]byte, error)
-	getEnv    func(key string) string
+	services   map[string]srv.APIService
+	defConn    nt.DataDriver
+	infoLog    *log.Logger
+	errorLog   *log.Logger
+	httpLog    *log.Logger
+	args       nt.SM
+	tokenKeys  map[string]nt.SM
+	config     map[string]interface{}
+	readFile   func(name string) ([]byte, error)
+	getEnv     func(key string) string
+	tray       bool
+	taskSecKey string
 }
 
 const docsURL = "https://nervatura.github.io/nervatura/"
@@ -47,11 +55,12 @@ func New(version string, args nt.SM) (app *App, err error) {
 			"version":     version,
 			"NT_DOCS_URL": docsURL,
 		},
-		args:      args,
-		services:  services,
-		tokenKeys: make(map[string]nt.SM),
-		readFile:  os.ReadFile,
-		getEnv:    os.Getenv,
+		args:       args,
+		services:   services,
+		tokenKeys:  make(map[string]nt.SM),
+		readFile:   os.ReadFile,
+		getEnv:     os.Getenv,
+		taskSecKey: ut.RandString(32),
 	}
 
 	app.infoLog = log.New(os.Stdout, "INFO: ", log.LstdFlags)
@@ -74,7 +83,7 @@ func New(version string, args nt.SM) (app *App, err error) {
 			}
 		}()
 	}
-	app.setConfig()
+	app.setConfig(app.isSnap())
 	if app.config["NT_HTTP_LOG_FILE"] != "" {
 		f, err := os.OpenFile(app.config["NT_HTTP_LOG_FILE"].(string), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 		if err != nil {
@@ -120,11 +129,7 @@ func (app *App) setEnv() {
 	}
 }
 
-func (app *App) setConfig() {
-	isSnap := func() bool {
-		return app.getEnv("SNAP_COMMON") != "" && strings.Contains(app.getEnv("SNAP_COMMON"), "nervatura")
-	}
-
+func (app *App) setConfig(isSnap bool) {
 	app.config["NT_TLS_CERT_FILE"] = ut.ToString(app.getEnv("NT_TLS_CERT_FILE"), "")
 	app.config["NT_TLS_KEY_FILE"] = ut.ToString(app.getEnv("NT_TLS_KEY_FILE"), "")
 
@@ -134,11 +139,11 @@ func (app *App) setConfig() {
 	app.config["NT_HTTP_READ_TIMEOUT"] = ut.ToFloat(app.getEnv("NT_HTTP_READ_TIMEOUT"), 30)
 	app.config["NT_HTTP_WRITE_TIMEOUT"] = ut.ToFloat(app.getEnv("NT_HTTP_WRITE_TIMEOUT"), 30)
 	app.config["NT_HTTP_HOME"] = ut.ToString(app.getEnv("NT_HTTP_HOME"), "/admin")
-	app.config["NT_HTTP_LOG_FILE"] = ut.ToString(app.args["NT_APP_LOG_FILE"], app.getEnv("NT_HTTP_LOG_FILE"))
+	app.config["NT_HTTP_LOG_FILE"] = ut.ToString(app.args["NT_HTTP_LOG_FILE"], app.getEnv("NT_HTTP_LOG_FILE"))
 
 	dataDir := "data"
-	if isSnap() {
-		dataDir = app.getEnv("SNAP_COMMON")
+	if isSnap {
+		dataDir = "/var/snap/nervatura/common"
 		if app.config["NT_HTTP_LOG_FILE"] == "" {
 			app.config["NT_HTTP_LOG_FILE"] = dataDir + "/http.log"
 		}
@@ -232,7 +237,7 @@ func (app *App) setConfig() {
 
 	app.config["NT_ALIAS_DEMO"] = ut.ToString(app.getEnv("NT_ALIAS_DEMO"), "")
 	if app.config["NT_ALIAS_DEMO"] == "" && ut.Contains(db.Drivers, "sqlite") {
-		if _, err := os.Stat("data"); err == nil || isSnap() {
+		if _, err := os.Stat("data"); err == nil || isSnap {
 			app.config["NT_ALIAS_DEMO"] = "sqlite://file:" + dataDir + "/demo.db?cache=shared&mode=rwc"
 		}
 	}
@@ -267,6 +272,52 @@ func (app *App) setTokenKey(keyType string) error {
 	return nil
 }
 
+func (app *App) openURL(goOS, urlStr string) error {
+	var cmd *exec.Cmd
+	switch goOS {
+	case "darwin":
+		cmd = exec.Command("open", urlStr)
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "start", urlStr)
+	default:
+		cmd = exec.Command("xdg-open", urlStr)
+	}
+	if app.services != nil {
+		return cmd.Start()
+	}
+	return errors.New(ut.GetMessage("error_internal"))
+}
+
+func (app *App) onTrayMenu(mKey string) {
+	var mURL string
+	switch mKey {
+	case "config":
+		app.taskSecKey = ut.RandString(32)
+		mURL = "http://localhost:" + ut.ToString(app.config["NT_HTTP_PORT"], "") + "/admin/task/config/" + app.taskSecKey
+	case "admin":
+		mURL = "http://localhost:" + ut.ToString(app.config["NT_HTTP_PORT"], "") + "/"
+	}
+	if err := app.openURL(runtime.GOOS, mURL); err != nil {
+		app.errorLog.Println(err.Error())
+	}
+}
+
+func (app *App) trayIcon(httpDisabled bool) map[string]*systray.MenuItem {
+	mItems := make(map[string]*systray.MenuItem)
+	systray.SetTemplateIcon(icon.Data, icon.Data)
+	systray.SetTitle("Nervatura")
+	systray.SetTooltip("Nervatura " + ut.ToString(app.config["version"], ""))
+	mItems["config"] = systray.AddMenuItem(ut.GetMessage("view_configuration"), ut.GetMessage("view_configuration"))
+	mItems["admin"] = systray.AddMenuItem(ut.GetMessage("task_admin"), ut.GetMessage("task_admin"))
+	if httpDisabled {
+		mItems["config"].Disable()
+		mItems["admin"].Disable()
+	}
+	systray.AddSeparator()
+	mItems["exit"] = systray.AddMenuItem(ut.GetMessage("task_exit"), ut.GetMessage("task_exit"))
+	return mItems
+}
+
 func (app *App) startServer() error {
 	app.infoLog.Println(ut.GetMessage("skipping_cli"))
 	app.infoLog.Printf(ut.GetMessage("enabled_drivers"), strings.Join(db.Drivers, ","))
@@ -282,12 +333,14 @@ func (app *App) startServer() error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	httpDisabled := false
+	configURL := "http://localhost:" + ut.ToString(app.config["NT_HTTP_PORT"], "") + "/admin/task/config/" + app.taskSecKey
 	if _, found := services["http"]; found && app.config["NT_HTTP_ENABLED"].(bool) {
 		g.Go(func() error {
 			return app.startService("http")
 		})
 	} else {
 		httpDisabled = true
+		configURL = ut.GetMessage("http_disabled")
 		app.infoLog.Println(ut.GetMessage("http_disabled"))
 	}
 
@@ -305,31 +358,61 @@ func (app *App) startServer() error {
 		return nil
 	}
 
-	select {
-	case <-interrupt:
-		break
-	case <-ctx.Done():
-		break
+	onExit := func() {
+		app.infoLog.Println(ut.GetMessage("shutdown_signal"))
+
+		cancel()
+
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer shutdownCancel()
+		if _, found := services["http"]; found && app.config["NT_HTTP_ENABLED"].(bool) {
+			_ = services["http"].StopService(shutdownCtx)
+		}
+		if _, found := services["grpc"]; found && app.config["NT_GRPC_ENABLED"].(bool) {
+			_ = services["grpc"].StopService(nil)
+		}
+
+		_ = g.Wait()
 	}
 
-	app.infoLog.Println(ut.GetMessage("shutdown_signal"))
+	onReady := func() {
+		mItems := app.trayIcon(httpDisabled)
+		go func() {
+			for {
+				select {
+				case <-mItems["config"].ClickedCh:
+					app.onTrayMenu("config")
 
-	cancel()
+				case <-mItems["admin"].ClickedCh:
+					app.onTrayMenu("admin")
 
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer shutdownCancel()
-	if _, found := services["http"]; found && app.config["NT_HTTP_ENABLED"].(bool) {
-		_ = services["http"].StopService(shutdownCtx)
-	}
-	if _, found := services["grpc"]; found && app.config["NT_GRPC_ENABLED"].(bool) {
-		_ = services["grpc"].StopService(nil)
+				case <-mItems["exit"].ClickedCh:
+					systray.Quit()
+
+				case <-interrupt:
+					systray.Quit()
+
+				case <-ctx.Done():
+					systray.Quit()
+				}
+			}
+		}()
 	}
 
-	err := g.Wait()
-	if err != nil {
-		app.errorLog.Printf(ut.GetMessage("application_error"), err)
-		return err
+	trayIcon := app.tray && !app.isDocker()
+	if trayIcon {
+		systray.Run(onReady, onExit)
+	} else {
+		app.infoLog.Println(ut.GetMessage("view_configuration") + ": " + configURL)
+		select {
+		case <-interrupt:
+			break
+		case <-ctx.Done():
+			break
+		}
+		onExit()
 	}
+
 	return nil
 }
 
@@ -373,4 +456,18 @@ func (app *App) GetResults() string {
 
 func (app *App) GetTokenKeys() map[string]nt.SM {
 	return app.tokenKeys
+}
+
+func (app *App) GetTaskSecKey() string {
+	return app.taskSecKey
+}
+
+func (app *App) isDocker() bool {
+	_, err := os.Stat("/.dockerenv")
+	return (err == nil)
+}
+
+func (app *App) isSnap() bool {
+	current, _ := os.Executable()
+	return strings.Contains(current, "snap/nervatura")
 }

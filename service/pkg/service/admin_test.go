@@ -685,3 +685,69 @@ func TestAdminService_Database(t *testing.T) {
 		})
 	}
 }
+
+func TestAdminService_Task(t *testing.T) {
+	type fields struct {
+		Config        map[string]interface{}
+		GetNervaStore func(database string) *nt.NervaStore
+		templates     *template.Template
+		GetParam      func(req *http.Request, name string) string
+		GetTokenKeys  func() map[string]map[string]string
+		GetTaskSecKey func() string
+	}
+	type args struct {
+		w http.ResponseWriter
+		r *http.Request
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{
+			name: "unauthorized",
+			fields: fields{
+				GetTaskSecKey: func() string {
+					return "SEC01234"
+				},
+				GetParam: func(req *http.Request, name string) string {
+					return "config"
+				},
+				templates: testData.templates(),
+			},
+			args: args{
+				w: httptest.NewRecorder(),
+				r: httptest.NewRequest("GET", "/admin/task/config/seckey", nil),
+			},
+		},
+		{
+			name: "config",
+			fields: fields{
+				GetTaskSecKey: func() string {
+					return "config"
+				},
+				GetParam: func(req *http.Request, name string) string {
+					return "config"
+				},
+				templates: testData.templates(),
+			},
+			args: args{
+				w: httptest.NewRecorder(),
+				r: httptest.NewRequest("GET", "/admin/task/config/seckey", nil),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			adm := &AdminService{
+				Config:        tt.fields.Config,
+				GetNervaStore: tt.fields.GetNervaStore,
+				templates:     tt.fields.templates,
+				GetParam:      tt.fields.GetParam,
+				GetTokenKeys:  tt.fields.GetTokenKeys,
+				GetTaskSecKey: tt.fields.GetTaskSecKey,
+			}
+			adm.Task(tt.args.w, tt.args.r)
+		})
+	}
+}

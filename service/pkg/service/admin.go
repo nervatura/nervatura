@@ -22,7 +22,9 @@ type AdminService struct {
 	Config        map[string]interface{}
 	GetNervaStore func(database string) *nt.NervaStore
 	templates     *template.Template
+	GetParam      func(req *http.Request, name string) string
 	GetTokenKeys  func() map[string]map[string]string
+	GetTaskSecKey func() string
 }
 
 func (adm *AdminService) LoadTemplates() {
@@ -35,6 +37,27 @@ func (adm *AdminService) render(w http.ResponseWriter, template string, data int
 	if err := adm.templates.ExecuteTemplate(w, template, data); err != nil {
 		http.Error(w, ut.GetMessage("error_internal"), http.StatusInternalServerError)
 	}
+}
+
+func (adm *AdminService) envList() []nt.SM {
+	envResult := make([]nt.SM, 0)
+	keys := make([]string, 0)
+	configs := nt.IM{}
+	for key, value := range adm.Config {
+		keys = append(keys, key)
+		configs[key] = value
+	}
+	for _, env := range os.Environ() {
+		if strings.HasPrefix(env, "NT_ALIAS_") {
+			configs[strings.Split(env, "=")[0]] = strings.Split(env, "=")[1]
+		}
+	}
+
+	sort.Strings(keys)
+	for _, key := range keys {
+		envResult = append(envResult, nt.SM{"envkey": strings.ToUpper(key), "envvalue": ut.ToString(adm.Config[key], "")})
+	}
+	return envResult
 }
 
 func (adm *AdminService) parseData(r *http.Request) nt.IM {
@@ -116,6 +139,23 @@ func (adm *AdminService) Menu(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (adm *AdminService) Task(w http.ResponseWriter, r *http.Request) {
+	taskName := adm.GetParam(r, "taskName")
+	secKey := adm.GetParam(r, "secKey")
+	if secKey != adm.GetTaskSecKey() {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(ut.GetMessage("error_unauthorized")))
+		return
+	}
+
+	data := nt.IM{}
+	if taskName == "config" {
+		data["view_admin"] = ut.GetMessage("view_configuration")
+		data["env_result"] = adm.envList()
+	}
+	adm.render(w, "task", data)
+}
+
 func (adm *AdminService) Admin(w http.ResponseWriter, r *http.Request) {
 	data := adm.parseData(r)
 	unauthorized := func(errMsg string) {
@@ -159,24 +199,7 @@ func (adm *AdminService) Admin(w http.ResponseWriter, r *http.Request) {
 			data["reportkey"] = ""
 		}
 	case "env_list":
-		envResult := make([]nt.SM, 0)
-		keys := make([]string, 0)
-		configs := nt.IM{}
-		for key, value := range adm.Config {
-			keys = append(keys, key)
-			configs[key] = value
-		}
-		for _, env := range os.Environ() {
-			if strings.HasPrefix(env, "NT_ALIAS_") {
-				configs[strings.Split(env, "=")[0]] = strings.Split(env, "=")[1]
-			}
-		}
-
-		sort.Strings(keys)
-		for _, key := range keys {
-			envResult = append(envResult, nt.SM{"envkey": strings.ToUpper(key), "envvalue": ut.ToString(adm.Config[key], "")})
-		}
-		data["env_result"] = envResult
+		data["env_result"] = adm.envList()
 	}
 	if err != nil {
 		data["errors"].(nt.SM)["admin"] = err.Error()

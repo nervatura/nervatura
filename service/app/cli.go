@@ -81,6 +81,8 @@ func (s *cliServer) parseFlags() {
 
 	var help bool
 	flag.BoolVar(&help, "help", false, ut.GetMessage("cli_usage"))
+	var tray bool
+	flag.BoolVar(&tray, "tray", false, ut.GetMessage("trayicon"))
 	var env string
 	flag.StringVar(&env, "env", "", ut.GetMessage("cli_flag_env"))
 	var cmd string
@@ -105,6 +107,7 @@ func (s *cliServer) parseFlags() {
 	if help {
 		s.args["cmd"] = "help"
 	}
+	s.app.tray = tray
 	if token != "" {
 		s.args["token"] = token
 	}

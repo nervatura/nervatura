@@ -35,7 +35,7 @@ Golang docs:
 
 ## CGO API
 
-The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Go, Python, Ruby, Node, and Java. Supported operating systems: Linux and Windows x64.
+The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Python, Ruby, Node, Java, Lua, Dart, C#. Supported operating systems: Linux and Windows x64.
 
 ## For more examples, 
 see 

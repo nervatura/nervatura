@@ -4,7 +4,8 @@
     <title>Docs on Nervatura</title>
     <link>https://nervatura.github.io/nervatura/docs/</link>
     <description>Recent content in Docs on Nervatura</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://nervatura.github.io/nervatura/docs/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language><atom:link href="https://nervatura.github.io/nervatura/docs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Object Model</title>
       <link>https://nervatura.github.io/nervatura/docs/model/</link>
@@ -21,11 +22,11 @@ The open-data principle regulates the access to our business data.</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://nervatura.github.io/nervatura/docs/install/</guid>
-      <description>Installation # Docker image # docker pull nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
-systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
-Node.js NPM # npm install --save nervatura Add a run script to your package.json file like this:
-&amp;quot;scripts&amp;quot;: { &amp;quot;nervatura&amp;quot;: &amp;quot;./node_modules/nervatura/bin/nervatura&amp;quot; }
-npm run nervatura Winget (Windows Package Manager) # winget install --id Nervatura.Nervatura --source winget Prebuild binaries # Linux and Windows</description>
+      <description>Installation # Docker image # docker pull nervatura/nervatura:latest Example:
+docker run -i -t --rm --name nervatura --env-file YOUR_ENV_FILE_PATH/.env -p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
+systemctl status -l snap.nervatura.nervatura.service Default snap data and http log path: /var/snap/nervatura/common
+The nervatura service starts by default. More examples:
+sudo systemctl stop or start or restart snap.nervatura.nervatura.service sudo systemctl disable or enable snap.</description>
     </item>
     
   </channel>

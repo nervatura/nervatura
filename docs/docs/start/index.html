@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="1. Create a new demo database # Docker # Create a Docker container and set some options
 mkdir data docker run -i -t --rm --name nervatura \ -e NT_API_KEY=DEMO_API_KEY \ -p 5000:5000 -v &#34;$(pwd)&#34;/data:/data nervatura/nervatura:latest In a new command window:
-docker exec -i nervatura /nervatura \ -c DatabaseCreate -k DEMO_API_KEY \ -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Snap # sudo NT_API_KEY=DEMO_API_KEY \ NT_ALIAS_DEMO=&#34;sqlite://file:/var/snap/nervatura/common/demo.db?cache=shared&amp;mode=rwc&#34; \ /snap/nervatura/current/nervatura -c DatabaseCreate \ -k DEMO_API_KEY -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Windows # Open a PowerShell and set the (temporary) variables:">
+docker exec -i nervatura /nervatura \ -c DatabaseCreate -k DEMO_API_KEY \ -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Snap # sudo NT_API_KEY=DEMO_API_KEY \ /snap/nervatura/current/nervatura -c DatabaseCreate \ -k DEMO_API_KEY -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Database path: /var/snap/nervatura/common/demo.db">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Getting Started" />
 <meta property="og:description" content="" />
@@ -854,7 +854,7 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <p>Create a Docker container and set some options</p>
 <pre tabindex="0"><code>mkdir data
-docker run -i -t --rm --name nervatura \
+</code></pre><pre tabindex="0"><code>docker run -i -t --rm --name nervatura \
   -e NT_API_KEY=DEMO_API_KEY \
   -p 5000:5000 -v &#34;$(pwd)&#34;/data:/data nervatura/nervatura:latest
 </code></pre><p>In a new command window:</p>
@@ -866,24 +866,23 @@ docker run -i -t --rm --name nervatura \
   <a class="anchor" href="#snap">#</a>
 </h3>
 <pre tabindex="0"><code>sudo NT_API_KEY=DEMO_API_KEY \
-  NT_ALIAS_DEMO=&#34;sqlite://file:/var/snap/nervatura/common/demo.db?cache=shared&amp;mode=rwc&#34; \
   /snap/nervatura/current/nervatura -c DatabaseCreate \
   -k DEMO_API_KEY -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34;
-</code></pre><h3 id="windows">
+</code></pre><p>Database path: <code>/var/snap/nervatura/common/demo.db</code></p>
+<h3 id="windows">
   Windows
   <a class="anchor" href="#windows">#</a>
 </h3>
 <p>Open a PowerShell and set the (temporary) variables:</p>
 <pre tabindex="0"><code>$env:NT_API_KEY=&#34;DEMO_API_KEY&#34;
-$env:NT_ALIAS_DEMO=&#34;sqlite://file:///C:/ProgramData/Nervatura/data/demo.db?cache=shared&amp;mode=rwc&#34;
 </code></pre><p>Launch nervatura CLI (in the same command window!), and create a database:</p>
 <pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -c DatabaseCreate -k DEMO_API_KEY -o &#39;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#39;
-</code></pre><p>Default Nervatura data directory: <code>C:/ProgramData/Nervatura</code></p>
+</code></pre><p>Default Nervatura data directory: <code>C:\ProgramData\Nervatura\data</code></p>
 <p>Launch nervatura server (in the same command window or Start menu):</p>
-<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34;
+<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -tray
 </code></pre><p>Of course, the environment variables can also be set permanently (see more SystemPropertiesAdvanced.exe). In this case, the server can be started from anywhere.</p>
 <p>Alternatively, the settings can be specified in the parameter:</p>
-<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -env C:\ProgramData\Nervatura\.env.example
+<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -tray -env C:\ProgramData\Nervatura\.env.example
 </code></pre><h3 id="npm">
   NPM
   <a class="anchor" href="#npm">#</a>

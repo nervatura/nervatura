@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Installation # Docker image # docker pull nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
-systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
-Node.js NPM # npm install --save nervatura Add a run script to your package.json file like this:
-&quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
-npm run nervatura Winget (Windows Package Manager) # winget install --id Nervatura.Nervatura --source winget Prebuild binaries # Linux and Windows">
+<meta name="description" content="Installation # Docker image # docker pull nervatura/nervatura:latest Example:
+docker run -i -t --rm --name nervatura --env-file YOUR_ENV_FILE_PATH/.env -p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
+systemctl status -l snap.nervatura.nervatura.service Default snap data and http log path: /var/snap/nervatura/common
+The nervatura service starts by default. More examples:
+sudo systemctl stop or start or restart snap.nervatura.nervatura.service sudo systemctl disable or enable snap.">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="Installation" />
-<meta property="og:description" content="Installation # Docker image # docker pull nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
-systemctl status -l snap.nervatura.nervatura.service Default snap data and http.log path: /var/snap/nervatura/common
-Node.js NPM # npm install --save nervatura Add a run script to your package.json file like this:
-&quot;scripts&quot;: { &quot;nervatura&quot;: &quot;./node_modules/nervatura/bin/nervatura&quot; }
-npm run nervatura Winget (Windows Package Manager) # winget install --id Nervatura.Nervatura --source winget Prebuild binaries # Linux and Windows" />
+<meta property="og:description" content="Installation # Docker image # docker pull nervatura/nervatura:latest Example:
+docker run -i -t --rm --name nervatura --env-file YOUR_ENV_FILE_PATH/.env -p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:
+systemctl status -l snap.nervatura.nervatura.service Default snap data and http log path: /var/snap/nervatura/common
+The nervatura service starts by default. More examples:
+sudo systemctl stop or start or restart snap.nervatura.nervatura.service sudo systemctl disable or enable snap." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nervatura.github.io/nervatura/docs/install/" /><meta property="article:section" content="docs" />
 
@@ -861,6 +861,8 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#docker-image">#</a>
 </h3>
 <pre tabindex="0"><code>docker pull nervatura/nervatura:latest
+</code></pre><p>Example:</p>
+<pre tabindex="0"><code>docker run -i -t --rm --name nervatura --env-file YOUR_ENV_FILE_PATH/.env -p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data nervatura/nervatura:latest
 </code></pre><h3 id="snap-package-linux-daemon">
   <strong>Snap</strong> package (Linux daemon)
   <a class="anchor" href="#snap-package-linux-daemon">#</a>
@@ -868,7 +870,24 @@ https://github.com/alex-shpak/hugo-book
 <pre tabindex="0"><code>sudo snap install nervatura
 </code></pre><p>Checking service status and last logs:</p>
 <pre tabindex="0"><code>systemctl status -l snap.nervatura.nervatura.service
-</code></pre><p>Default snap data and http.log path:  <code>/var/snap/nervatura/common</code></p>
+</code></pre><p>Default snap data and http log path:  <code>/var/snap/nervatura/common</code></p>
+<p>The nervatura service starts by default. More examples:</p>
+<ul>
+<li>
+<p><code>sudo systemctl</code> <code>stop</code> or <code>start</code> or <code>restart</code> <code>snap.nervatura.nervatura.service</code></br>
+<code>sudo systemctl</code> <code>disable</code> or <code>enable</code> <code>snap.nervatura.nervatura.service</code></p>
+</li>
+<li>
+<p>Stop the service and start the program with the system tray icon/menu:</p>
+<pre tabindex="0"><code>sudo systemctl stop snap.nervatura.nervatura.service
+</code></pre><pre tabindex="0"><code>/snap/nervatura/current/nervatura -tray
+</code></pre></li>
+<li>
+<p>Stop the service and start with the tray icon/menu as a background process. The (temporary) log file of the application must also be set, otherwise the info and error messages that have been continuously written to the screen until now will be lost. The new HTTP log file is required for file access reasons.</p>
+<pre tabindex="0"><code>sudo systemctl stop snap.nervatura.nervatura.service
+</code></pre><pre tabindex="0"><code>NT_APP_LOG_FILE=./nervatura.log NT_HTTP_LOG_FILE=./nervatura-http.log /snap/nervatura/current/nervatura -tray &amp;&gt; /dev/null &amp;
+</code></pre></li>
+</ul>
 <h3 id="nodejs-npm">
   Node.js <strong>NPM</strong>
   <a class="anchor" href="#nodejs-npm">#</a>
@@ -882,7 +901,20 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#winget-windows-package-manager">#</a>
 </h3>
 <pre tabindex="0"><code>winget install --id Nervatura.Nervatura --source winget
-</code></pre><h3 id="prebuild-binaries">
+</code></pre><ul>
+<li>
+<p>Start with the tray icon/menu and an .env file</p>
+<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.exe&#34; -tray -env C:\ProgramData\Nervatura\.env.example
+</code></pre></li>
+<li>
+<p>Start with the tray icon/menu as a background process (PS terminal). The (temporary) app and HTTP log file must also be set, otherwise the info and error messages that have been continuously written to the screen until now will be lost.</p>
+<pre tabindex="0"><code>$env:NT_APP_LOG_FILE=&#34;C:/ProgramData/Nervatura/data/nervatura.log&#34;; $env:NT_HTTP_LOG_FILE=&#34;C:/ProgramData/Nervatura/data/http.log&#34;; Start-Process -FilePath &#34;nervatura.exe&#34; -ArgumentList &#34;-tray&#34; -WindowStyle Hidden
+</code></pre><p>or just simply run this</p>
+<pre tabindex="0"><code>&amp; &#34;C:\Program Files\Nervatura\nervatura.bat&#34;
+</code></pre></li>
+</ul>
+<p>Default Nervatura data directory: <code>C:\ProgramData\Nervatura\data</code></p>
+<h3 id="prebuild-binaries">
   Prebuild binaries
   <a class="anchor" href="#prebuild-binaries">#</a>
 </h3>
@@ -893,7 +925,7 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#other-platforms-and-custom-build">#</a>
 </h3>
 <pre tabindex="0"><code>git clone https://github.com/nervatura/nervatura.git
-cd nervatura/service
+</code></pre><pre tabindex="0"><code>cd nervatura/service
 </code></pre><p>Build command:</p>
 <p><code>CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) go build -tags &quot;$(TAGS)&quot; -ldflags=&quot;-w -s -X main.Version=$(VERSION)&quot; -o nervatura main.go</code></p>
 <ul>
@@ -918,8 +950,9 @@ cd nervatura/service
 <p>The application uses environment variables to set configuration options. It will be read from the 
   <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/service/.env.example">.env.example</a> file. Set the environment variables as needed!</p>
 <p>The <code>.env</code> file can be created in the current working directory, where the command is executed (in development mode). The name and location of the configuration file can also be specified in the command line parameters:</p>
-<pre tabindex="0"><code>nervatura -env /path/.env.example
-</code></pre></article>
+<pre tabindex="0"><code>nervatura -tray -env /path/.env.example
+</code></pre><p>System tray icon / menu -&gt; Configuration values</p>
+</article>
  
       
 

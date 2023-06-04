@@ -21,7 +21,7 @@ The Nervatura service is small and fast. A single ~6 MB file contains all the ne
 The framework includes:
 - [**CLI API**](https://nervatura.github.io/nervatura/docs/service/cli#cli-api) (command line)
 - [**CGO API**](https://nervatura.github.io/nervatura/docs/service/cli#cgo-api) (C shared library)
-- standard HTTP [**RESTful API**](https://nervatura.github.io/nervatura/docs/service/api) for client communication
+- standard HTTP [**OpenAPI**](https://nervatura.github.io/nervatura/docs/service/api) for client communication
 - HTTP/2-based [**gRPC API**](https://nervatura.github.io/nervatura/docs/service/grpc) for server-side communication
 - JWT generation, external token validation, SSL/TLS support and other HTTP security [settings](https://github.com/nervatura/nervatura-service/blob/master/.env.example)
 - built-in database drivers for postgres, mysql, mssql, sqlite databases
@@ -41,11 +41,11 @@ The Nervatura Framework **can be used independently**, but it is basically desig
 Nervatura Client supports the business processes that most companies may need. During your own developments, you can only focus on those that really require unique solutions, and you can use the technology that best suits the purpose. This type of development means greater **technological independence and security**, since your self-developed applications are only connected to other systems through well-documented interfaces, so unnecessary external technological dependencies cannot develop.
 
 You can find more information about the use of different programming languages and development environments in the [**Examples**](https://nervatura.github.io/nervatura/docs/start/examples) section:
-- [Node.js and NPM](https://nervatura.github.io/nervatura/docs/start/examples/#nodejs-and-npm)
-- [Python and Snap or Windows Package Manager](https://nervatura.github.io/nervatura/docs/start/examples/#python-and-snap-or-windows-package-manager)
-- [Go and Docker](https://nervatura.github.io/nervatura/docs/start/examples/#go-and-docker)
-- [PHP and Docker](https://nervatura.github.io/nervatura/docs/start/examples/#php-and-docker)
-- [Flutter and Dart](https://nervatura.github.io/nervatura/docs/start/examples/#flutter-client-and-dart-backend)
+- [Node.js and NPM](https://nervatura.github.io/nervatura/docs/start/examples/#nodejs)
+- [Python and Snap or Windows Package Manager](https://nervatura.github.io/nervatura/docs/start/examples/#python)
+- [Go and Docker](https://nervatura.github.io/nervatura/docs/start/examples/#go)
+- [PHP and Docker](https://nervatura.github.io/nervatura/docs/start/examples/#php)
+- [Flutter and Dart](https://nervatura.github.io/nervatura/docs/start/examples/#flutter-and-dart)
 
 [**Installation**](https://nervatura.github.io/nervatura/docs/install) and [**Quick Start**](https://nervatura.github.io/nervatura/docs/start)
 

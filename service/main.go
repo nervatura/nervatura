@@ -34,8 +34,7 @@ or CSV data files
 
 The client and report interface supports multilingualism (https://nervatura.github.io/nervatura/docs/start/customization#customize-the-appearance).
 
-The framework can be easily extended with additional interfaces and functions in the supported languages:
-C#, C++, Dart, Go, Java, Kotlin, Node, Objective-C, PHP, Python, Ruby
+The framework can be easily extended with additional interfaces and functions in the any languages.
 
 # Installation
 
