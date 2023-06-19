@@ -634,6 +634,7 @@ func TestApp_GetTokenKeys(t *testing.T) {
 	}
 }
 
+/*
 func TestApp_trayIcon(t *testing.T) {
 	type fields struct {
 		services   map[string]srv.APIService
@@ -684,6 +685,7 @@ func TestApp_trayIcon(t *testing.T) {
 		})
 	}
 }
+*/
 
 func TestApp_onTrayMenu(t *testing.T) {
 	type fields struct {

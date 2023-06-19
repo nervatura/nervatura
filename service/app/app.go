@@ -13,11 +13,9 @@ import (
 	"syscall"
 	"time"
 
-	"fyne.io/systray"
 	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload" // load .env file automatically
 	db "github.com/nervatura/nervatura/service/pkg/database"
-	"github.com/nervatura/nervatura/service/pkg/icon"
 	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 	srv "github.com/nervatura/nervatura/service/pkg/service"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
@@ -41,9 +39,14 @@ type App struct {
 	taskSecKey string
 }
 
+type trayService interface {
+	Run(app *App, interrupt chan os.Signal, ctx context.Context, httpDisabled bool, onExit func())
+}
+
 const docsURL = "https://nervatura.github.io/nervatura/"
 
 var services = make(map[string]srv.APIService)
+var traySrv trayService
 
 func registerService(name string, server srv.APIService) {
 	services[name] = server
@@ -302,22 +305,6 @@ func (app *App) onTrayMenu(mKey string) {
 	}
 }
 
-func (app *App) trayIcon(httpDisabled bool) map[string]*systray.MenuItem {
-	mItems := make(map[string]*systray.MenuItem)
-	systray.SetTemplateIcon(icon.Data, icon.Data)
-	systray.SetTitle("Nervatura")
-	systray.SetTooltip("Nervatura " + ut.ToString(app.config["version"], ""))
-	mItems["config"] = systray.AddMenuItem(ut.GetMessage("view_configuration"), ut.GetMessage("view_configuration"))
-	mItems["admin"] = systray.AddMenuItem(ut.GetMessage("task_admin"), ut.GetMessage("task_admin"))
-	if httpDisabled {
-		mItems["config"].Disable()
-		mItems["admin"].Disable()
-	}
-	systray.AddSeparator()
-	mItems["exit"] = systray.AddMenuItem(ut.GetMessage("task_exit"), ut.GetMessage("task_exit"))
-	return mItems
-}
-
 func (app *App) startServer() error {
 	app.infoLog.Println(ut.GetMessage("skipping_cli"))
 	app.infoLog.Printf(ut.GetMessage("enabled_drivers"), strings.Join(db.Drivers, ","))
@@ -375,33 +362,9 @@ func (app *App) startServer() error {
 		_ = g.Wait()
 	}
 
-	onReady := func() {
-		mItems := app.trayIcon(httpDisabled)
-		go func() {
-			for {
-				select {
-				case <-mItems["config"].ClickedCh:
-					app.onTrayMenu("config")
-
-				case <-mItems["admin"].ClickedCh:
-					app.onTrayMenu("admin")
-
-				case <-mItems["exit"].ClickedCh:
-					systray.Quit()
-
-				case <-interrupt:
-					systray.Quit()
-
-				case <-ctx.Done():
-					systray.Quit()
-				}
-			}
-		}()
-	}
-
-	trayIcon := app.tray && !app.isDocker()
+	trayIcon := app.tray && !app.isDocker() && (traySrv != nil)
 	if trayIcon {
-		systray.Run(onReady, onExit)
+		traySrv.Run(app, interrupt, ctx, httpDisabled, onExit)
 	} else {
 		app.infoLog.Println(ut.GetMessage("view_configuration") + ": " + configURL)
 		select {

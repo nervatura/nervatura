@@ -89,7 +89,7 @@ Default Nervatura data directory: `C:\ProgramData\Nervatura\data`
 
 ### Prebuild binaries
 
-[Linux and Windows](https://github.com/nervatura/nervatura/releases)
+[Linux, Windows and MacOS](https://github.com/nervatura/nervatura/releases)
 
 ### Other platforms and custom build
 ```

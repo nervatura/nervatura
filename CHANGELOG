@@ -1,3 +1,8 @@
+## 5.1.8
+- service: app systray refactoring
+- service: golang (1.20.5) and dependencies upgrade
+- service: macOS (darwin) build - experimental
+
 ## 5.1.7
 - docs: install, start and examples page update
 - client: lit (2.7.5) upgrade
