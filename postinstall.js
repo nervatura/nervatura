@@ -20,7 +20,7 @@ const ARCH_MAPPING = {
 
 // Mapping between Node's `process.platform` to Golang's 
 const PLATFORM_MAPPING = {
-    //"darwin": "darwin",
+    "darwin": "darwin",
     "linux": "linux",
     "win32": "windows",
     //"freebsd": "freebsd"

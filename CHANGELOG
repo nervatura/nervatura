@@ -1,3 +1,9 @@
+## 5.1.9
+- client: lit (2.7.6) upgrade
+- service: golang (1.20.6) and dependencies upgrade
+- service: Docker image ssl certs. fixes
+- service: npm macOS (darwin) install - experimental
+
 ## 5.1.8
 - service: app systray refactoring
 - service: golang (1.20.5) and dependencies upgrade

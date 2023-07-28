@@ -1,4 +1,4 @@
-FROM golang:1.20.5-alpine AS builder
+FROM golang:1.20.6-alpine AS builder
 
 ARG APP_MODULES=all
 ARG APP_VNUM=dev
@@ -25,6 +25,7 @@ RUN upx --best --lzma $APP_NAME
 
 FROM scratch
 
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # Copy binary and config files from /build to root folder of scratch container.
 COPY --from=builder ["/build/nervatura", "/"]
 #COPY --from=builder ["/build/nervatura.so", "/shared/nervatura.so"]
