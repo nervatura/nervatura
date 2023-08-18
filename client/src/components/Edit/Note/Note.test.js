@@ -51,6 +51,8 @@ describe('Edit-Note', () => {
     const italic = note.shadowRoot.querySelector('#btn_italic')
     italic.click()
 
+    note._onLostFocus()
+
   })
 
   it('renders in the ReadOnly state', async () => {

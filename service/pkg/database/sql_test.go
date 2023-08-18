@@ -511,6 +511,15 @@ func TestSQLDriver_CreateConnection(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name:   "mssql",
+			fields: fields{},
+			args: args{
+				alias:   "test",
+				connStr: "mssql://sa:Password1234_1@localhost:1433?database=nervatura",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

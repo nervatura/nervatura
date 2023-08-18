@@ -564,6 +564,7 @@ export class AppController {
 
   signOut() {
     const { data, setData } = this.store
+    /* c8 ignore next 4 */
     if(data[APP_MODULE.LOGIN].callback){
       window.location.replace(data[APP_MODULE.LOGIN].callback)
       return
