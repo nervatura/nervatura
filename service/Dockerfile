@@ -1,4 +1,4 @@
-FROM golang:1.21.0-alpine AS builder
+FROM golang:1.21.2-alpine AS builder
 
 ARG APP_MODULES=all
 ARG APP_VNUM=dev
