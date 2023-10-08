@@ -1,7 +1,7 @@
 {
   "name": "nervatura-client",
   "description": "Business Management Application",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "keywords": [
     "business management",
     "open-data",
@@ -52,19 +52,19 @@
     "@open-wc/building-rollup": "^3.0.2",
     "@open-wc/eslint-config": "^12.0.0",
     "@open-wc/testing": "^3.2.0",
-    "@rollup/plugin-replace": "^5.0.2",
-    "@web/dev-server": "^0.3.0",
-    "@web/dev-server-storybook": "^1.0.2",
-    "@web/test-runner": "^0.17.0",
+    "@rollup/plugin-replace": "^5.0.3",
+    "@web/dev-server": "^0.3.2",
+    "@web/dev-server-storybook": "^1.0.6",
+    "@web/test-runner": "^0.17.1",
     "deepmerge": "^4.3.1",
-    "eslint": "8.47.0",
+    "eslint": "8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
-    "prettier": "^3.0.2",
-    "rimraf": "5.0.1",
-    "rollup": "3.28.0",
-    "rollup-plugin-copy": "^3.4.0",
-    "sinon": "15.2.0"
+    "prettier": "^3.0.3",
+    "rimraf": "5.0.5",
+    "rollup": "4.0.2",
+    "rollup-plugin-copy": "^3.5.0",
+    "sinon": "16.1.0"
   },
   "eslintConfig": {
     "rules": {

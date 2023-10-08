@@ -1,3 +1,7 @@
+## 5.2.1
+- service: router package upgrade
+- service: golang (1.21.2) and dependencies upgrade
+
 ## 5.2.0
 - client: lit (2.8.0) upgrade
 - client: fixes u. tests
