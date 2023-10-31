@@ -16,7 +16,7 @@ require (
 	github.com/signintech/gopdf v0.19.0
 	github.com/unrolled/secure v1.13.0
 	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/net v0.16.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sync v0.4.0
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
