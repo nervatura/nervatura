@@ -2752,3 +2752,88 @@ func TestSQLDriver_QueryKey(t *testing.T) {
 		})
 	}
 }
+
+func TestSQLDriver_CloseConnection(t *testing.T) {
+	type fields struct {
+		alias   string
+		connStr string
+		engine  string
+		closed  bool
+		db      *sql.DB
+		Config  IM
+	}
+	db, _ := sql.Open("sqlite", "file::memory:")
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		{
+			name:    "nil",
+			fields:  fields{},
+			wantErr: false,
+		},
+		{
+			name: "close",
+			fields: fields{
+				alias:   "test",
+				connStr: "test",
+				closed:  false,
+				db:      db,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ds := &SQLDriver{
+				alias:   tt.fields.alias,
+				connStr: tt.fields.connStr,
+				engine:  tt.fields.engine,
+				closed:  tt.fields.closed,
+				db:      tt.fields.db,
+				Config:  tt.fields.Config,
+			}
+			if err := ds.CloseConnection(); (err != nil) != tt.wantErr {
+				t.Errorf("SQLDriver.CloseConnection() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestSQLDriver_checkConnection(t *testing.T) {
+	type fields struct {
+		alias   string
+		connStr string
+		engine  string
+		closed  bool
+		db      *sql.DB
+		Config  IM
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		{
+			name: "check",
+			fields: fields{
+				alias:   "test",
+				connStr: "test",
+				closed:  true,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ds := &SQLDriver{
+				alias:   tt.fields.alias,
+				connStr: tt.fields.connStr,
+				engine:  tt.fields.engine,
+				closed:  tt.fields.closed,
+				db:      tt.fields.db,
+				Config:  tt.fields.Config,
+			}
+			ds.checkConnection()
+		})
+	}
+}

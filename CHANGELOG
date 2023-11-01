@@ -1,3 +1,7 @@
+## 5.2.2
+- service: sql driver close connection bug fixes
+- service: golang (1.21.3) and dependencies upgrade
+
 ## 5.2.1
 - service: router package upgrade
 - service: golang (1.21.2) and dependencies upgrade

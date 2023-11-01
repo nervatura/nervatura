@@ -43,6 +43,7 @@ type SQLDriver struct {
 	alias   string
 	connStr string
 	engine  string
+	closed  bool
 	db      *sql.DB
 	Config  IM
 }
@@ -250,16 +251,17 @@ func (ds *SQLDriver) CreateConnection(alias, connStr string) error {
 		}
 	}
 	engine := strings.Split(connStr, "://")[0]
+	conn := connStr
 	if engine == "sqlite" {
-		connStr = strings.ReplaceAll(connStr, "sqlite://", "")
+		conn = strings.ReplaceAll(connStr, "sqlite://", "")
 	}
 	if engine == "mysql" {
-		connStr = strings.TrimPrefix(connStr, engine+"://")
+		conn = strings.TrimPrefix(connStr, engine+"://")
 	}
 	if engine == "mssql" {
-		connStr = strings.ReplaceAll(connStr, "mssql", "sqlserver")
+		conn = strings.ReplaceAll(connStr, "mssql", "sqlserver")
 	}
-	db, err := sql.Open(engine, connStr)
+	db, err := sql.Open(engine, conn)
 	if err != nil {
 		return err
 	}
@@ -273,7 +275,23 @@ func (ds *SQLDriver) CreateConnection(alias, connStr string) error {
 	ds.alias = alias
 	ds.engine = engine
 	ds.connStr = connStr
+	ds.closed = false
 	return nil
+}
+
+func (ds *SQLDriver) CloseConnection() error {
+	if ds.db != nil && !ds.closed && !strings.Contains(ds.connStr, "memory") {
+		ds.closed = true
+		return ds.db.Close()
+	}
+	return nil
+}
+
+func (ds *SQLDriver) checkConnection() {
+	reconnect := (ds.closed && ds.alias != "" && ds.connStr != "" && !strings.Contains(ds.connStr, "memory"))
+	if reconnect {
+		ds.CreateConnection(ds.alias, ds.connStr)
+	}
 }
 
 // getPrmString - get database parameter string
@@ -290,6 +308,8 @@ func (ds *SQLDriver) CheckHashtable(hashtable string) error {
 	if ds.db == nil {
 		return errors.New(ut.GetMessage("missing_driver"))
 	}
+	ds.checkConnection()
+
 	var name string
 	sqlString := ""
 	if ds.engine == "sqlite" {
@@ -550,6 +570,7 @@ func (ds *SQLDriver) CreateDatabase(logData []SM) ([]SM, error) {
 			"message": ut.GetMessage("missing_driver")})
 		return logData, errors.New(ut.GetMessage("missing_driver"))
 	}
+	ds.checkConnection()
 
 	logData = append(logData, SM{
 		"database": ds.alias,
@@ -789,6 +810,8 @@ func (ds *SQLDriver) QuerySQL(sqlString string, params []interface{}, trans inte
 		}
 	}
 
+	ds.checkConnection()
+
 	//println(ds.decodeEngine(sqlString))
 	if trans != nil {
 		rows, err = trans.(*sql.Tx).Query(ds.decodeEngine(sqlString), params...)
@@ -878,6 +901,8 @@ func (ds *SQLDriver) Update(options nt.Update) (int64, error) {
 			return id, errors.New(ut.GetMessage("invalid_trans"))
 		}
 	}
+
+	ds.checkConnection()
 	//println(sqlString)
 	var result sql.Result
 	var err error
@@ -897,6 +922,7 @@ func (ds *SQLDriver) Update(options nt.Update) (int64, error) {
 
 // BeginTransaction begins a transaction and returns an *sql.Tx
 func (ds *SQLDriver) BeginTransaction() (interface{}, error) {
+	ds.checkConnection()
 	return ds.db.Begin()
 }
 

@@ -57,6 +57,9 @@ func (ds *testDriver) CreateConnection(alias, connStr string) error {
 	}
 	return nil
 }
+func (ds *testDriver) CloseConnection() error {
+	return nil
+}
 func (ds *testDriver) CreateDatabase(logData []SM) ([]SM, error) {
 	if value, found := ds.Config["CreateDatabase"].(func() ([]SM, error)); found {
 		return value()

@@ -1,24 +1,24 @@
 package nervatura
 
-//TimeLayout DateTime format
+// TimeLayout DateTime format
 const TimeLayout = "2006-01-02 15:04:05"
 
-//IM is a map[string]interface{} type short alias
+// IM is a map[string]interface{} type short alias
 type IM = map[string]interface{}
 
-//SM is a map[string]string type short alias
+// SM is a map[string]string type short alias
 type SM = map[string]string
 
-//IL is a []interface{} type short alias
+// IL is a []interface{} type short alias
 type IL = []interface{}
 
-//IList is a []interface{} string const
+// IList is a []interface{} string const
 const IList = "[]interface{}"
 
-//SL is a []string type short alias
+// SL is a []string type short alias
 type SL = []string
 
-//DataDriver a general database interface
+// DataDriver a general database interface
 type DataDriver interface {
 	Properties() struct {
 		SQL, Transaction bool
@@ -39,9 +39,10 @@ type DataDriver interface {
 	BeginTransaction() (interface{}, error)                                                 //Begins a transaction and returns an it
 	CommitTransaction(trans interface{}) error                                              //Commit a transaction
 	RollbackTransaction(trans interface{}) error                                            //Rollback a transaction
+	CloseConnection() error
 }
 
-//Filter query filter type
+// Filter query filter type
 type Filter struct {
 	Or    bool   // and (False) or (True)
 	Field string //Fieldname and alias
@@ -49,7 +50,7 @@ type Filter struct {
 	Value interface{}
 }
 
-//Query data desc. type
+// Query data desc. type
 type Query struct {
 	Fields  []string //Returns fields
 	From    string   //Table or doc. name and alias
@@ -58,7 +59,7 @@ type Query struct {
 	OrderBy []string
 }
 
-//Update data desc. type
+// Update data desc. type
 type Update struct {
 	Values IM
 	Model  string
