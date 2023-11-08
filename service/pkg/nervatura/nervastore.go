@@ -462,6 +462,7 @@ func (nstore *NervaStore) UpdateData(options IM) (id int64, err error) {
 		if err != nil {
 			return id, err
 		}
+		defer nstore.ds.CloseConnection()
 	}
 	defer func() {
 		pe := recover()
@@ -1072,6 +1073,7 @@ func (nstore *NervaStore) DeleteData(options IM) (err error) {
 		if err != nil {
 			return err
 		}
+		defer nstore.ds.CloseConnection()
 	}
 	defer func() {
 		pe := recover()
@@ -1131,7 +1133,7 @@ func (nstore *NervaStore) DeleteData(options IM) (err error) {
 	return nil
 }
 
-//GetRefnumber - returns public key from id
+// GetRefnumber - returns public key from id
 func (nstore *NervaStore) GetRefnumber(options IM) (IM, error) {
 
 	info := IM{"index": 1}
@@ -1288,8 +1290,8 @@ func (nstore *NervaStore) GetRefnumber(options IM) (IM, error) {
 	return info, err
 }
 
-//GetDataAudit - Nervatura data access rights: own,usergroup,all (transfilter)
-//see more: employee.usergroup+link+transfilter
+// GetDataAudit - Nervatura data access rights: own,usergroup,all (transfilter)
+// see more: employee.usergroup+link+transfilter
 func (nstore *NervaStore) GetDataAudit() (string, error) {
 	result := "own"
 	if nstore.User == nil {
@@ -1313,8 +1315,8 @@ func (nstore *NervaStore) GetDataAudit() (string, error) {
 	return result, nil
 }
 
-//GetObjectAudit - Nervatura objects access rights: disabled,readonly,update,all (inputfilter)
-//see more: audit
+// GetObjectAudit - Nervatura objects access rights: disabled,readonly,update,all (inputfilter)
+// see more: audit
 func (nstore *NervaStore) GetObjectAudit(options IM) ([]string, error) {
 	result := []string{"disabled", ""}
 	if nstore.User == nil {
@@ -1424,7 +1426,7 @@ func (nstore *NervaStore) GetObjectAudit(options IM) ([]string, error) {
 	return result, nil
 }
 
-//GetGroups - returns Nervatura groups map
+// GetGroups - returns Nervatura groups map
 func (nstore *NervaStore) GetGroups(options IM) (IM, error) {
 	groups := IM{"all": []IM{}}
 

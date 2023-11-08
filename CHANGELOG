@@ -1,3 +1,8 @@
+## 5.2.3
+- client: lit (3.0.2) upgrade
+- service: database connection code refactoring
+- service: golang (1.21.4) and dependencies upgrade
+
 ## 5.2.2
 - service: sql driver close connection bug fixes
 - service: golang (1.21.3) and dependencies upgrade

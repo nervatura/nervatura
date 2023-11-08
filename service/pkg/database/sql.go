@@ -341,6 +341,10 @@ func (ds *SQLDriver) UpdateHashtable(hashtable, refname, value string) error {
 	if err != nil {
 		return err
 	}
+
+	ds.checkConnection()
+	defer ds.CloseConnection()
+
 	sqlString := fmt.Sprintf(
 		"select value from %s where refname = %s", hashtable, ds.getPrmString(1))
 	var hash string
@@ -571,6 +575,7 @@ func (ds *SQLDriver) CreateDatabase(logData []SM) ([]SM, error) {
 		return logData, errors.New(ut.GetMessage("missing_driver"))
 	}
 	ds.checkConnection()
+	defer ds.CloseConnection()
 
 	logData = append(logData, SM{
 		"database": ds.alias,
@@ -811,6 +816,9 @@ func (ds *SQLDriver) QuerySQL(sqlString string, params []interface{}, trans inte
 	}
 
 	ds.checkConnection()
+	if trans == nil {
+		defer ds.CloseConnection()
+	}
 
 	//println(ds.decodeEngine(sqlString))
 	if trans != nil {
@@ -903,6 +911,9 @@ func (ds *SQLDriver) Update(options nt.Update) (int64, error) {
 	}
 
 	ds.checkConnection()
+	if options.Trans == nil {
+		defer ds.CloseConnection()
+	}
 	//println(sqlString)
 	var result sql.Result
 	var err error

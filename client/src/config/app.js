@@ -18,7 +18,7 @@ export const store = {
     serverURL,
     apiPath: "/api",
     engines: ["sqlite", "sqlite3", "mysql", "postgres", "mssql"],
-    service: ["dev", "5.2.0", "5.2.1", "5.2.2"],
+    service: ["dev", "5.2.1", "5.2.2", "5.2.3"],
     helpPage: "https://nervatura.github.io/nervatura/docs/client/"
   },
   ui: {

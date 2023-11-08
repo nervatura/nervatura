@@ -155,7 +155,6 @@ func (api *API) TokenRefresh() (string, error) {
 	if !conn.Connected {
 		return "", errors.New(ut.GetMessage("not_connect"))
 	}
-	defer api.NStore.ds.CloseConnection()
 	username := ut.ToString(api.NStore.Customer["custnumber"], api.NStore.User.Username)
 	return ut.CreateToken(username, conn.Alias, api.NStore.config)
 }
@@ -216,7 +215,6 @@ func (api *API) UserPassword(options IM) error {
 	if !api.NStore.ds.Connection().Connected {
 		return errors.New(ut.GetMessage("not_connect"))
 	}
-	defer api.NStore.ds.CloseConnection()
 	refname := ""
 	if _, found := options["custnumber"]; found && api.NStore.Customer != nil {
 		if options["custnumber"] == api.NStore.Customer["custnumber"] {
@@ -284,7 +282,6 @@ func (api *API) UserLogin(options IM) (string, string, error) {
 		}
 		options["database"] = strings.ToLower(ut.ToString(api.NStore.config["NT_ALIAS_DEFAULT"], ""))
 	}
-	defer api.NStore.ds.CloseConnection()
 
 	password := ut.ToString(options["password"], "")
 	if err := api.authUser(options); err != nil {
@@ -349,7 +346,6 @@ func (api *API) DatabaseCreate(options IM) ([]SM, error) {
 			"message": ut.GetMessage("not_connect")})
 		return logData, errors.New(ut.GetMessage("not_connect"))
 	}
-	defer api.NStore.ds.CloseConnection()
 
 	logData, err := api.NStore.ds.CreateDatabase(logData)
 	if err != nil {
@@ -541,7 +537,6 @@ func (api *API) Delete(options IM) error {
 	if _, found := options["id"]; found {
 		options["ref_id"] = ut.ToInteger(options["id"], 0)
 	}
-	defer api.NStore.ds.CloseConnection()
 	return api.NStore.DeleteData(IM{
 		"nervatype": options["nervatype"],
 		"ref_id":    options["ref_id"],
@@ -574,8 +569,6 @@ func (api *API) Get(options IM) (results []IM, err error) {
 		return results, errors.New(ut.GetMessage("invalid_nervatype") + " " + nervatype)
 	}
 	metadata := ut.ToBoolean(options["metadata"], false)
-
-	defer api.NStore.ds.CloseConnection()
 
 	query := []Query{{
 		Fields: []string{"*"}, From: nervatype, Filters: []Filter{}}}
@@ -672,6 +665,7 @@ func (api *API) View(options []IM) (results IM, err error) {
 		if err != nil {
 			return results, err
 		}
+		defer api.NStore.ds.CloseConnection()
 	}
 
 	defer func() {
@@ -681,7 +675,6 @@ func (api *API) View(options []IM) (results IM, err error) {
 				return
 			}
 		}
-		api.NStore.ds.CloseConnection()
 		if pe != nil {
 			panic(pe)
 		}
@@ -766,7 +759,6 @@ func (api *API) Function(options IM) (results interface{}, err error) {
 	if _, valid := options["values"].(IM); !valid {
 		return results, errors.New(ut.GetMessage("missing_required_field") + ": values")
 	}
-	defer api.NStore.ds.CloseConnection()
 	return api.NStore.GetService(key, options["values"].(IM))
 }
 
@@ -1056,6 +1048,7 @@ func (api *API) Update(nervatype string, data []IM) (results []int64, err error)
 		if err != nil {
 			return results, err
 		}
+		defer api.NStore.ds.CloseConnection()
 	}
 
 	defer func() {
@@ -1069,7 +1062,6 @@ func (api *API) Update(nervatype string, data []IM) (results []int64, err error)
 				err = api.NStore.ds.CommitTransaction(trans)
 			}
 		}
-		api.NStore.ds.CloseConnection()
 		if pe != nil {
 			panic(pe)
 		}
@@ -1133,7 +1125,6 @@ Examples:
 	_, err = api.Report(options)
 */
 func (api *API) Report(options IM) (results IM, err error) {
-	defer api.NStore.ds.CloseConnection()
 	return api.NStore.getReport(options)
 }
 
@@ -1148,7 +1139,6 @@ Example:
 	_, err = api.ReportList(options)
 */
 func (api *API) ReportList(options IM) (results []IM, err error) {
-	defer api.NStore.ds.CloseConnection()
 	query := []Query{{
 		Fields: []string{"id", "reportkey"}, From: "ui_report"}}
 	reports, err := api.NStore.ds.Query(query, nil)
@@ -1233,8 +1223,6 @@ func (api *API) ReportDelete(options IM) (err error) {
 		return errors.New(ut.GetMessage("missing_required_field") + ": reportkey")
 	}
 
-	defer api.NStore.ds.CloseConnection()
-
 	query := []Query{{
 		Fields: []string{"*"}, From: "ui_report", Filters: []Filter{
 			{Field: "reportkey", Comp: "==", Value: reportkey},
@@ -1283,8 +1271,6 @@ func (api *API) ReportInstall(options IM) (result int64, err error) {
 	if err = ut.ConvertFromByte(file, &temp); err != nil {
 		return result, err
 	}
-
-	defer api.NStore.ds.CloseConnection()
 
 	report := IM{}
 	meta, found := temp["meta"].(IM)

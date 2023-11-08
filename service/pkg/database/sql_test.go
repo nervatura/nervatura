@@ -625,7 +625,7 @@ func TestSQLDriver_CheckHashtable(t *testing.T) {
 		{
 			name: "create_error",
 			fields: fields{
-				engine: "postgres",
+				engine: "mssql",
 				db: func() *sql.DB {
 					db, _ := sql.Open("sqlite", "file::memory:?cache=shared")
 					return db
