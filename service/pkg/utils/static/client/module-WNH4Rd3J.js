@@ -1,4 +1,4 @@
-import{i as e,s as t,x as i,T as l}from"./TbQfK4PM.js";import{d as a,e as o,B as s,S as r,c as n,f as d,D as c,I as p,P as b,M as h,h as v}from"./rinfYUH4.js";import"./PiSWQ0mn.js";import"./p67gkTkF.js";import"./zPGonIb7.js";import"./pnK57ybA.js";import"./DyZG4uwg.js";import"./r-Be6lM0.js";const u=e`
+import{i as e,s as t,x as i,T as l}from"./module-ORVyXmTn.js";import{d as a,e as o,B as s,S as r,c as n,f as d,D as c,I as p,P as b,M as h,h as u}from"./main-nlu71Zxt.js";import"./module-Ht5vHxX2.js";import"./module-XzzVPTxP.js";import"./module-bL_R6UIF.js";import"./module-l1ZTGuHW.js";import"./module-R3YaJWX2.js";import"./module-r-Be6lM0.js";const v=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -75,7 +75,7 @@ div {
 *::-webkit-scrollbar-thumb:hover {
   background-color: rgba(var(--functional-green), .20)
 }
-`;customElements.define("sidebar-search",class extends t{constructor(){super(),this.msg=e=>e,this.side=a.AUTO,this.groupKey="",this.auditFilter={}}static get properties(){return{side:{type:String,reflect:!0},groupKey:{type:String},auditFilter:{type:Object}}}static get styles(){return[u]}_onSideEvent(e,t){this.onEvent&&this.onEvent.onSideEvent&&this.onEvent.onSideEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("side_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}getButtonStyle(e,t){return"group"===e?{"text-align":"left","border-radius":"0",color:t===this.groupKey?"rgb(var(--functional-yellow))":"",fill:t===this.groupKey?"rgb(var(--functional-yellow))":"","border-color":"rgba(var(--accent-1c), 0.2)"}:{"text-align":"left","border-radius":"0",color:"rgb(var(--functional-blue))",fill:"rgb(var(--functional-blue))","border-color":"rgba(var(--accent-1c), 0.2)"}}searchGroup(e){return i`<div class="row full">
+`;customElements.define("sidebar-search",class extends t{constructor(){super(),this.msg=e=>e,this.side=a.AUTO,this.groupKey="",this.auditFilter={}}static get properties(){return{side:{type:String,reflect:!0},groupKey:{type:String},auditFilter:{type:Object}}}static get styles(){return[v]}_onSideEvent(e,t){this.onEvent&&this.onEvent.onSideEvent&&this.onEvent.onSideEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("side_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}getButtonStyle(e,t){return"group"===e?{"text-align":"left","border-radius":"0",color:t===this.groupKey?"rgb(var(--functional-yellow))":"",fill:t===this.groupKey?"rgb(var(--functional-yellow))":"","border-color":"rgba(var(--accent-1c), 0.2)"}:{"text-align":"left","border-radius":"0",color:"rgb(var(--functional-blue))",fill:"rgb(var(--functional-blue))","border-color":"rgba(var(--accent-1c), 0.2)"}}searchGroup(e){return i`<div class="row full">
         <form-button id="${`btn_group_${e}`}" 
           label="${this.msg("",{id:`search_${e}`})}"
           ?full="${!0}" align=${o.LEFT}
@@ -145,7 +145,7 @@ div {
           @click=${()=>this._onSideEvent(r.QUICK,{value:"servercmd"})} 
         >${this.msg("",{id:"title_servercmd"})}</form-button>
       </div>`:l}
-    </div>`}});const f=e`
+    </div>`}});const m=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -311,10 +311,10 @@ div {
     width: 100%; 
   }
 }
-`;customElements.define("search-browser",class extends t{constructor(){super(),this.msg=e=>e,this.data={vkey:"",view:"",show_header:!0,show_dropdown:!1,show_columns:!1,result:[],columns:{},filters:{},deffield:[],page:1},this.keyMap={},this.viewDef={fields:{},label:"",readonly:!1},this.paginationPage=10,this.onEvent={}}static get properties(){return{data:{type:Object},keyMap:{type:Object},viewDef:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[f]}connectedCallback(){super.connectedCallback();const{show_header:e,show_dropdown:t,show_columns:i}=this.data;this.dropdown=t,this.header=e,this.columns=i}_onBrowserEvent(e,t){this.onEvent&&this.onEvent.onBrowserEvent&&this.onEvent.onBrowserEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("browser_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t,this.dispatchEvent(new CustomEvent("value_change",{bubbles:!0,composed:!0,detail:{key:e,value:t}})),this.requestUpdate()}exportFields(){const{view:e,columns:t}=this.data,i={};return Object.keys(this.viewDef.fields).filter((i=>!0===t[e][i])).forEach((e=>{i[e]=this.viewDef.fields[e]})),i}checkTotalFields(){const{fields:e}=this.viewDef,{deffield:t}=this.data;let i={totalFields:{},totalLabels:{},count:0};return t&&Object.keys(e).includes("deffield_value")?t.filter((e=>"integer"===e.fieldtype||"float"===e.fieldtype)).forEach((e=>{i={...i,totalFields:{...i.totalFields,[e.fieldname]:0},totalLabels:{...i.totalLabels,[e.fieldname]:e.description}}})):Object.keys(e).filter((t=>("integer"===e[t].fieldtype||"float"===e[t].fieldtype)&&"avg"!==e[t].calc)).forEach((t=>{i={...i,totalFields:{...i.totalFields,[t]:0},totalLabels:{...i.totalLabels,[t]:e[t].label}}})),i={...i,count:Object.keys(i.totalFields).length},i}fields(){const{view:e,columns:t}=this.data;let l={view:{columnDef:{id:"view",Header:"",headerStyle:{},Cell:({row:e})=>this.viewDef.readonly?i`<form-icon iconKey="CaretRight" width=9 height=24 ></form-icon>`:i`<form-icon id=${`edit_${e.id}`}
+`;customElements.define("search-browser",class extends t{constructor(){super(),this.msg=e=>e,this.data={vkey:"",view:"",show_header:!0,show_dropdown:!1,show_columns:!1,result:[],columns:{},filters:{},deffield:[],page:1},this.keyMap={},this.viewDef={fields:{},label:"",readonly:!1},this.paginationPage=10,this.onEvent={}}static get properties(){return{data:{type:Object},keyMap:{type:Object},viewDef:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[m]}connectedCallback(){super.connectedCallback();const{show_header:e,show_dropdown:t,show_columns:i}=this.data;this.dropdown=t,this.header=e,this.columns=i}_onBrowserEvent(e,t){this.onEvent&&this.onEvent.onBrowserEvent&&this.onEvent.onBrowserEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("browser_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t,this.dispatchEvent(new CustomEvent("value_change",{bubbles:!0,composed:!0,detail:{key:e,value:t}})),this.requestUpdate()}exportFields(){const{view:e,columns:t}=this.data,i={};return Object.keys(this.viewDef.fields).filter((i=>!0===t[e][i])).forEach((e=>{i[e]=this.viewDef.fields[e]})),i}checkTotalFields(){const{fields:e}=this.viewDef,{deffield:t}=this.data;let i={totalFields:{},totalLabels:{},count:0};return t&&Object.keys(e).includes("deffield_value")?t.filter((e=>"integer"===e.fieldtype||"float"===e.fieldtype)).forEach((e=>{i={...i,totalFields:{...i.totalFields,[e.fieldname]:0},totalLabels:{...i.totalLabels,[e.fieldname]:e.description}}})):Object.keys(e).filter((t=>("integer"===e[t].fieldtype||"float"===e[t].fieldtype)&&"avg"!==e[t].calc)).forEach((t=>{i={...i,totalFields:{...i.totalFields,[t]:0},totalLabels:{...i.totalLabels,[t]:e[t].label}}})),i={...i,count:Object.keys(i.totalFields).length},i}fields(){const{view:e,columns:t}=this.data;let l={view:{columnDef:{id:"view",Header:"",headerStyle:{},Cell:({row:e})=>this.viewDef.readonly?i`<form-icon iconKey="CaretRight" width=9 height=24 ></form-icon>`:i`<form-icon id=${`edit_${e.id}`}
               iconKey="Edit" width=24 height=21.3 
               @click=${()=>this._onBrowserEvent(n.EDIT_CELL,{fieldname:"id",value:e.id,row:e})}
-              .style=${{cursor:"pointer",fill:"rgb(var(--functional-green))"}} ></form-icon>`,cellStyle:{width:"25px",padding:"7px 3px 3px 8px"}}}};return Object.keys(this.viewDef.fields).forEach((i=>{if(t[e][i])switch(this.viewDef.fields[i].fieldtype){case"float":case"integer":l={...l,[i]:{fieldtype:"number",label:this.viewDef.fields[i].label}};break;case"bool":l={...l,[i]:{fieldtype:"bool",label:this.viewDef.fields[i].label}};break;default:l="deffield_value"===i?{...l,[i]:{fieldtype:"deffield",label:this.viewDef.fields[i].label}}:{...l,[i]:{fieldtype:"string",label:this.viewDef.fields[i].label}}}})),l}render(){const{vkey:e,view:t,result:a,columns:r,filters:h,deffield:v,page:u}=this.data,f=this.checkTotalFields();return i`<div @click="${()=>this.dropdown?this._onValueChange("dropdown",!1):null}">
+              .style=${{cursor:"pointer",fill:"rgb(var(--functional-green))"}} ></form-icon>`,cellStyle:{width:"25px",padding:"7px 3px 3px 8px"}}}};return Object.keys(this.viewDef.fields).forEach((i=>{if(t[e][i])switch(this.viewDef.fields[i].fieldtype){case"float":case"integer":l={...l,[i]:{fieldtype:"number",label:this.viewDef.fields[i].label}};break;case"bool":l={...l,[i]:{fieldtype:"bool",label:this.viewDef.fields[i].label}};break;default:l="deffield_value"===i?{...l,[i]:{fieldtype:"deffield",label:this.viewDef.fields[i].label}}:{...l,[i]:{fieldtype:"string",label:this.viewDef.fields[i].label}}}})),l}render(){const{vkey:e,view:t,result:a,columns:r,filters:h,deffield:u,page:v}=this.data,m=this.checkTotalFields();return i`<div @click="${()=>this.dropdown?this._onValueChange("dropdown",!1):null}">
       <div class="panel">
         <div class="panel-title">
           <div class="cell">
@@ -402,8 +402,8 @@ div {
                   icon="InfoCircle" type="${s.BORDER}"
                   label="${this.msg("",{id:"browser_total"})}"
                   .style=${{padding:"8px 12px"}} ?hidelabel=${!0}
-                  ?disabled=${!(0!==f.count&&0!==a.length)}
-                  @click=${()=>this._onBrowserEvent(n.SHOW_TOTAL,{fields:this.viewDef.fields,totalFields:f})}
+                  ?disabled=${!(0!==m.count&&0!==a.length)}
+                  @click=${()=>this._onBrowserEvent(n.SHOW_TOTAL,{fields:this.viewDef.fields,totalFields:m})}
                 >${this.msg("",{id:"browser_total"})}</form-button>
               </div>
             </div>
@@ -422,7 +422,7 @@ div {
                 <form-select id=${`filter_name_${t}`}
                   label="${this.msg("",{id:"browser_filter"})}"
                   .onChange=${e=>this._onBrowserEvent(n.EDIT_FILTER,{index:t,fieldname:"fieldname",value:e.value})}
-                  .options=${Object.keys(this.viewDef.fields).filter((e=>"id"!==e&&"_id"!==e)).flatMap((e=>"deffield_value"===e?v.map((e=>({value:e.fieldname,text:this.msg(e.description,{id:e.fieldname})}))):{value:e,text:this.viewDef.fields[e].label}))} 
+                  .options=${Object.keys(this.viewDef.fields).filter((e=>"id"!==e&&"_id"!==e)).flatMap((e=>"deffield_value"===e?u.map((e=>({value:e.fieldname,text:this.msg(e.description,{id:e.fieldname})}))):{value:e,text:this.viewDef.fields[e].label}))} 
                   .isnull="${!1}" value="${e.fieldname}" >
                 </form-select>
               </div>
@@ -503,7 +503,7 @@ div {
             labelYes="${this.msg("YES",{id:"label_yes"})}"
             labelNo="${this.msg("NO",{id:"label_no"})}"
             pagination="${b.TOP}"
-            currentPage="${u}"
+            currentPage="${v}"
             pageSize="${this.paginationPage}"
             ?tableFilter="${!0}"
             ?hidePaginatonSize="${!1}"
@@ -513,7 +513,7 @@ div {
           </div>
         </div>
       </div>
-    </div>`}});const m=e`
+    </div>`}});const f=e`
 @keyframes animatezoom{from{transform:scale(0)} to{transform:scale(1)}}
 :host {
   font-family: var(--font-family);
@@ -634,7 +634,7 @@ div {
     min-width: 400px;
   }
 }
-`;customElements.define("modal-total",class extends t{constructor(){super(),this.msg=e=>e,this.total={totalFields:{},totalLabels:{},count:0}}static get properties(){return{total:{type:Object}}}static get styles(){return[m]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){return i`<div class="modal">
+`;customElements.define("modal-total",class extends t{constructor(){super(),this.msg=e=>e,this.total={totalFields:{},totalLabels:{},count:0}}static get properties(){return{total:{type:Object}}}static get styles(){return[f]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){return i`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -880,7 +880,7 @@ div {
       .msg=${this.msg}
     ></sidebar-search>
       <div class="page">
-        ${v("browser"===this.data.seltype?i`<search-browser
+        ${u("browser"===this.data.seltype?i`<search-browser
             id="${`browser_${this.data.vkey}`}"
             .data=${this.data}
             .keyMap=${this.queries[this.data.vkey]()}

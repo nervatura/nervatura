@@ -1,4 +1,4 @@
-import{i as e,s as t,x as a,T as i}from"./TbQfK4PM.js";import"./PiSWQ0mn.js";import{d as l,e as s,B as o,S as r,m as d,P as n,n as p,M as c,I as m}from"./rinfYUH4.js";import{o as v}from"./zPGonIb7.js";import{n as b}from"./-NoNbNPa.js";import"./DyZG4uwg.js";import"./25ij1xXb.js";import"./r-Be6lM0.js";import"./pnK57ybA.js";const h=e`
+import{i as e,s as t,x as a,T as i}from"./module-ORVyXmTn.js";import"./module-Ht5vHxX2.js";import{d as l,e as s,B as o,S as r,m as d,P as n,n as p,M as c,I as m}from"./main-nlu71Zxt.js";import{o as v}from"./module-bL_R6UIF.js";import{n as b}from"./module-4wW6Dtqh.js";import"./module-R3YaJWX2.js";import"./module-Dzf8BA_-.js";import"./module-r-Be6lM0.js";import"./module-l1ZTGuHW.js";const h=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -108,7 +108,7 @@ div {
         @click=${()=>this._onSideEvent(...i)} 
       >${l}</form-button>`}formItems(){const e=[];return e.push(this.itemMenu({id:"cmd_back",selected:!0,eventValue:[r.CHECK,{value:r.LOAD_SETTING}],label:this.msg("",{id:"label_back"}),iconKey:"Reply",full:!1})),e.push(a`<hr id="back_sep" class="separator" />`),["_blank","_sample"].includes(this.templateKey)||(e.push(a`<hr id="tmp_sep_2" class="separator" />`),e.push(this.itemMenu({id:"cmd_save",selected:this.dirty,eventValue:[r.SAVE,!0],label:this.msg("",{id:"template_save"}),iconKey:"Check"})),e.push(this.itemMenu({id:"cmd_create",eventValue:[r.CREATE_REPORT,{}],label:this.msg("",{id:"template_create_from"}),iconKey:"Sitemap"})),e.push(this.itemMenu({id:"cmd_delete",eventValue:[r.DELETE,{}],label:this.msg("",{id:"label_delete"}),iconKey:"Times"}))),e.push(a`<hr id="tmp_sep_3" class="separator" />`),e.push(this.itemMenu({id:"cmd_blank",eventValue:[r.CHECK,{value:r.BLANK}],label:this.msg("",{id:"template_new_blank"}),iconKey:"Plus"})),e.push(this.itemMenu({id:"cmd_sample",eventValue:[r.CHECK,{value:r.SAMPLE}],label:this.msg("",{id:"template_new_sample"}),iconKey:"Plus"})),e.push(a`<hr id="tmp_sep_4" class="separator" />`),e.push(this.itemMenu({id:"cmd_print",eventValue:[r.REPORT_SETTINGS,{value:"PREVIEW"}],label:this.msg("",{id:"label_print"}),iconKey:"Eye"})),e.push(this.itemMenu({id:"cmd_json",eventValue:[r.REPORT_SETTINGS,{value:"JSON"}],label:this.msg("",{id:"template_export_json"}),iconKey:"Code"})),e.push(a`<hr id="tmp_sep_5" class="separator" />`),e.push(this.itemMenu({id:"cmd_help",eventValue:[r.HELP,{value:"program/editor"}],label:this.msg("",{id:"label_help"}),iconKey:"QuestionCircle"})),e}render(){return a`<div class="sidebar ${"auto"!==this.side?this.side:""}" >
     ${this.formItems()}
-    </div>`}});const g=e`
+    </div>`}});const u=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -307,7 +307,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
     padding: 4px;
   }
 }
-`,u=e=>Object.getOwnPropertyNames(e)[0];customElements.define("template-editor",class extends t{constructor(){super(),this.msg=e=>e,this.id=Math.random().toString(36).slice(2),this.data={title:"",tabView:"template",template:{meta:{},report:{},header:[],details:[],footer:[],sources:{},data:{}},current:{},current_data:null,dataset:[]},this.paginationPage=10,this.onEvent={}}static get properties(){return{id:{type:String},data:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[g]}_onTemplateEvent(e,t){this.onEvent.onTemplateEvent&&this.onEvent.onTemplateEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("template_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}canvasCallback(e){e&&this._onTemplateEvent(d.CREATE_MAP,{mapRef:e})}tabButton(e,t){const{tabView:i}=this.data;return a`<form-button 
+`,g=e=>Object.getOwnPropertyNames(e)[0];customElements.define("template-editor",class extends t{constructor(){super(),this.msg=e=>e,this.id=Math.random().toString(36).slice(2),this.data={title:"",tabView:"template",template:{meta:{},report:{},header:[],details:[],footer:[],sources:{},data:{}},current:{},current_data:null,dataset:[]},this.paginationPage=10,this.onEvent={}}static get properties(){return{id:{type:String},data:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[u]}_onTemplateEvent(e,t){this.onEvent.onTemplateEvent&&this.onEvent.onTemplateEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("template_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}canvasCallback(e){e&&this._onTemplateEvent(d.CREATE_MAP,{mapRef:e})}tabButton(e,t){const{tabView:i}=this.data;return a`<form-button 
       id="${`btn_${e}`}"
       .style="${{"border-radius":0}}" icon="${t}"
       label="${this.msg("",{id:`template_label_${e}`})}"
@@ -326,12 +326,12 @@ textarea::placeholder, textarea::-ms-input-placeholder {
       label="${l}" align="${s.LEFT}"
       @click=${()=>this._onTemplateEvent(d.SET_CURRENT,[{tmp_id:t}])}
       badge="${v(n)}"
-      type="${o.BORDER}" ?full="${!0}" >${l}</form-button>`}createSubList(e){const{template:t,current:i}=this.data;for(let l=0;l<t[i.section].length;l+=1){const s=u(t[i.section][l]);let o=t[i.section][l][s];const r=`tmp_${i.section}_${l.toString()}_${s}`;if(["row","datagrid"].includes(s)&&(o=o.columns),null===i.parent){const t=this.setListIcon(o);e.push(a`<div key={mkey}>
+      type="${o.BORDER}" ?full="${!0}" >${l}</form-button>`}createSubList(e){const{template:t,current:i}=this.data;for(let l=0;l<t[i.section].length;l+=1){const s=g(t[i.section][l]);let o=t[i.section][l][s];const r=`tmp_${i.section}_${l.toString()}_${s}`;if(["row","datagrid"].includes(s)&&(o=o.columns),null===i.parent){const t=this.setListIcon(o);e.push(a`<div key={mkey}>
           ${this.mapButton(r,r,t,s.toUpperCase(),l+1)}
         </div>`)}else if(i.item===o||i.parent===o){const t=this.setListIcon(o,l+1);if(e.push(a`<div key={mkey}>
             ${this.mapButton(r,r,t,s.toUpperCase(),t.badge)}
-          </div>`),["row","datagrid"].includes(i.type)||["row","datagrid"].includes(i.parent_type))for(let t=0;t<o.length;t+=1){const r=u(o[t]),d=o[t][r],n=`tmp_${i.section}_${l.toString()}_${s}_${t.toString()}_${r}`,p=this.setListIcon(d);e.push(a`<div key={skey}>
-                ${this.mapButton(n,n,p,r.toUpperCase(),p.badge,`primary ${g.badgeBlack}`)}
+          </div>`),["row","datagrid"].includes(i.type)||["row","datagrid"].includes(i.parent_type))for(let t=0;t<o.length;t+=1){const r=g(o[t]),d=o[t][r],n=`tmp_${i.section}_${l.toString()}_${s}_${t.toString()}_${r}`,p=this.setListIcon(d);e.push(a`<div key={skey}>
+                ${this.mapButton(n,n,p,r.toUpperCase(),p.badge,`primary ${u.badgeBlack}`)}
               </div>`)}}}}createMapList(){const{template:e}=this.data,t=[];return["report","header","details","footer"].forEach((i=>{const l=this.setListIcon(e[i]);l.selected&&"report"!==i&&t.push(a`<hr id="${`sep_${i}_0`}" class="separator" />`),t.push(a`<div key={mkey}>
         ${this.mapButton(`tmp_${i}`,`tmp_${i}`,l,i.toUpperCase(),l.badge)}
       </div>`),l.selected&&(t.push(a`<hr id="${`sep_${i}_1`}" class="separator" />`),"report"!==i&&(this.createSubList(t),t.push(a`<hr id="${`sep_${i}_2`}" class="separator" />`)))})),t}dataTitle(e,t,i){return a`<div class="panel-title">

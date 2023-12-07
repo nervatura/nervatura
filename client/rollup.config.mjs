@@ -27,7 +27,7 @@ const baseConfig = createSpaConfig({
     // extractAssets: false,
     minify: true,
     // /nervatura-client/
-    publicPath: (process.env.APP_CONFIG === "SERVER") ? "/client/" : "./",
+    publicPath: (process.env.APP_CONFIG === "SERVER") ? "./client/" : "./",
   }
 });
 
@@ -36,8 +36,8 @@ export default merge(baseConfig, {
   // any <script type="module"> inside will be bundled by rollup
   input: './index.html',
   output: {
-    // entryFileNames: 'client/client-[hash].js',
-    // chunkFileNames: 'client/[name]-[hash].js',
+    entryFileNames: 'main-[hash].js',
+    chunkFileNames: 'module-[hash].js',
     // assetFileNames: '[hash][extname]',
     sourcemap: false,
     manualChunks: {

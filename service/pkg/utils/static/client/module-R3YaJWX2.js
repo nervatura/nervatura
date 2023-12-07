@@ -1,4 +1,4 @@
-import{i as e,s as t,x as i,T as l}from"./TbQfK4PM.js";import{a,o as s}from"./zPGonIb7.js";import"./PiSWQ0mn.js";import"./pnK57ybA.js";import{P as d,I as o,B as n,D as r,j as h,E as c}from"./rinfYUH4.js";const f=e`
+import{i as e,s as t,x as i,T as l}from"./module-ORVyXmTn.js";import{a,o as s}from"./module-bL_R6UIF.js";import"./module-Ht5vHxX2.js";import"./module-l1ZTGuHW.js";import{P as d,I as o,B as n,D as r,j as h,E as c}from"./main-nlu71Zxt.js";const u=e`
 :host {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
@@ -168,7 +168,7 @@ div {
 .middle {
   vertical-align: middle;
 }
-`;customElements.define("form-table",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.name=void 0,this.rows=[],this.fields={},this.rowKey="id",this.pagination=d.TOP,this.currentPage=1,this.pageSize=10,this.hidePaginatonSize=!1,this.tableFilter=!1,this.filterPlaceholder=void 0,this.filterValue="",this.labelYes="YES",this.labelNo="NO",this.labelAdd="",this.addIcon="Plus",this.tablePadding=void 0,this.sortCol=void 0,this.sortAsc=!0,this.style={}}static get properties(){return{id:{type:String},name:{type:String},rowKey:{type:String},rows:{type:Array},fields:{type:Object},pagination:{type:String},currentPage:{type:Number},pageSize:{type:Number},hidePaginatonSize:{type:Boolean},tableFilter:{type:Boolean},filterPlaceholder:{type:String},filterValue:{type:String},labelYes:{type:String},labelNo:{type:String},labelAdd:{type:String},addIcon:{type:String},tablePadding:{type:String},sortCol:{type:String,attribute:!1},sortAsc:{type:Boolean,attribute:!1},style:{type:Object}}}static get styles(){return[f]}connectedCallback(){super.connectedCallback(),this.rows||(this.rows=[]),0===Object.keys(this.fields).length&&this.rows&&Array.isArray(this.rows)&&this.rows.length>0&&Object.keys(this.rows[0]).forEach((e=>{this.fields[e]={fieldtype:"string",label:e}})),this.currentPage>Math.ceil(this.rows.length/this.pageSize)&&(this.currentPage=Math.ceil(this.rows.length/this.pageSize)),this.currentPage<1&&(this.currentPage=1)}_onPagination(e,t){if("setPageSize"===e)return this.currentPage=1,void(this.pageSize=t);this.currentPage=t,this.onCurrentPage&&this.onCurrentPage(t)}_onSort(e){e.stopPropagation();const t=e.target.dataset.sort;this.sortCol&&this.sortCol===t&&(this.sortAsc=!this.sortAsc),this.sortCol=t,this.rows.sort(((e,t)=>e[this.sortCol]<t[this.sortCol]?this.sortAsc?1:-1:this.sortAsc?-1:1))}_onRowSelected(e,t,i){e.stopPropagation(),t.disabled||(this.onRowSelected&&this.onRowSelected(t,i),this.dispatchEvent(new CustomEvent("row_selected",{bubbles:!0,composed:!0,detail:{row:t,index:i}})))}_onEditCell(e,t,i,l){e.stopPropagation(),this.onEditCell&&this.onEditCell(t,i,l),this.dispatchEvent(new CustomEvent("edit_cell",{bubbles:!0,composed:!0,detail:{fieldname:t,resultValue:i,rowData:l}}))}_onAddItem(){this.onAddItem&&this.onAddItem({}),this.dispatchEvent(new CustomEvent("add_item",{bubbles:!0,composed:!0,detail:{}}))}_onFilterChange(e){this.filterValue=e.value,this.dispatchEvent(new CustomEvent("filter_change",{bubbles:!0,composed:!0,detail:{...e}}))}columns(){const e=(e,t,l)=>i`<div class="number-cell">
+`;customElements.define("form-table",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.name=void 0,this.rows=[],this.fields={},this.rowKey="id",this.pagination=d.TOP,this.currentPage=1,this.pageSize=10,this.hidePaginatonSize=!1,this.tableFilter=!1,this.filterPlaceholder=void 0,this.filterValue="",this.labelYes="YES",this.labelNo="NO",this.labelAdd="",this.addIcon="Plus",this.tablePadding=void 0,this.sortCol=void 0,this.sortAsc=!0,this.style={}}static get properties(){return{id:{type:String},name:{type:String},rowKey:{type:String},rows:{type:Array},fields:{type:Object},pagination:{type:String},currentPage:{type:Number},pageSize:{type:Number},hidePaginatonSize:{type:Boolean},tableFilter:{type:Boolean},filterPlaceholder:{type:String},filterValue:{type:String},labelYes:{type:String},labelNo:{type:String},labelAdd:{type:String},addIcon:{type:String},tablePadding:{type:String},sortCol:{type:String,attribute:!1},sortAsc:{type:Boolean,attribute:!1},style:{type:Object}}}static get styles(){return[u]}connectedCallback(){super.connectedCallback(),this.rows||(this.rows=[]),0===Object.keys(this.fields).length&&this.rows&&Array.isArray(this.rows)&&this.rows.length>0&&Object.keys(this.rows[0]).forEach((e=>{this.fields[e]={fieldtype:"string",label:e}})),this.currentPage>Math.ceil(this.rows.length/this.pageSize)&&(this.currentPage=Math.ceil(this.rows.length/this.pageSize)),this.currentPage<1&&(this.currentPage=1)}_onPagination(e,t){if("setPageSize"===e)return this.currentPage=1,void(this.pageSize=t);this.currentPage=t,this.onCurrentPage&&this.onCurrentPage(t)}_onSort(e){e.stopPropagation();const t=e.target.dataset.sort;this.sortCol&&this.sortCol===t&&(this.sortAsc=!this.sortAsc),this.sortCol=t,this.rows.sort(((e,t)=>e[this.sortCol]<t[this.sortCol]?this.sortAsc?1:-1:this.sortAsc?-1:1))}_onRowSelected(e,t,i){e.stopPropagation(),t.disabled||(this.onRowSelected&&this.onRowSelected(t,i),this.dispatchEvent(new CustomEvent("row_selected",{bubbles:!0,composed:!0,detail:{row:t,index:i}})))}_onEditCell(e,t,i,l){e.stopPropagation(),this.onEditCell&&this.onEditCell(t,i,l),this.dispatchEvent(new CustomEvent("edit_cell",{bubbles:!0,composed:!0,detail:{fieldname:t,resultValue:i,rowData:l}}))}_onAddItem(){this.onAddItem&&this.onAddItem({}),this.dispatchEvent(new CustomEvent("add_item",{bubbles:!0,composed:!0,detail:{}}))}_onFilterChange(e){this.filterValue=e.value,this.dispatchEvent(new CustomEvent("filter_change",{bubbles:!0,composed:!0,detail:{...e}}))}columns(){const e=(e,t,l)=>i`<div class="number-cell">
         <span class="cell-label">${t}</span>
         <span style="${a(l)}" >${new Intl.NumberFormat("default").format(e)}</span>
       </div>`,t=(e,t)=>1===e||"true"===e||!0===e?i`
@@ -241,7 +241,7 @@ div {
           ?hidePageSize=${this.hidePaginatonSize}
           .onEvent=${(e,t)=>this._onPagination(e,t)} ></form-pagination>
     </div>`:l}
-    `}});const u=e`
+    `}});const f=e`
 input {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -282,7 +282,7 @@ input:focus, input:hover:not(:disabled) {
       @keydown=${this._onKeyEvent}
       @keypress=${this._onKeyEvent}
       @focus=${this._onFocus}
-    >`}static get styles(){return[u]}});const v=e`
+    >`}static get styles(){return[f]}});const v=e`
 :host {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
@@ -371,45 +371,45 @@ textarea::placeholder, textarea::-ms-input-placeholder {
 .toggle-disabled {
   opacity: 0.5;
 }
-`;customElements.define("form-field",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.field={},this.values={},this.options={},this.data={dataset:{},current:{},audit:"all"},this.style={},this.msg=e=>e}static get properties(){return{id:{type:String},field:{type:Object},values:{type:Object},options:{type:Object},data:{type:Object},style:{type:Object}}}static get styles(){return[v]}_onChange({value:e,item:t,event_type:i,editName:l,fieldMap:a}){const s={id:this.field.id||1,name:l,event_type:i,value:e,extend:!(!a||!a.extend),refnumber:t&&t.label?t.label:this.field.link_label,label_field:a?a.label_field:void 0,item:t};this.onEdit&&this.onEdit(s),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{...s}}))}_onEvent(e,t){this.onEvent&&this.onEvent(e,t),this.dispatchEvent(new CustomEvent("event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onSelector(e,t,i){this.onSelector&&this.onSelector(e,t,i),this.dispatchEvent(new CustomEvent("selector",{bubbles:!0,composed:!0,detail:{type:e,filter:t,callback:i}}))}lnkValue({fieldMap:e,fieldName:t,value:i}){if(void 0===this.values[this.field.name])return[this.data.current[e.source]?this.data.current[e.source].filter((t=>t.ref_id===this.values.id&&t[e.value]===this.field.name))[0]:this.data.dataset[e.source].filter((t=>t.ref_id===this.values.id&&t[e.value]===this.field.name))[0],!1];const l="id"===t&&""===i?null:i;return[this.data.current[e.source]?this.data.current[e.source].filter((t=>t[e.value]===l))[0]:this.data.dataset[e.source].filter((t=>t[e.value]===l))[0],!0]}getOppositeValue(e){return this.options.opposite&&parseFloat(e)<0?String(e).replace("-",""):this.options.opposite&&parseFloat(e)>0?`-${e}`:e}selectorInit({fieldMap:e,value:t,editName:i}){let l={value:this.values.value||"",filter:this.field.description||"",text:this.field.description||"",type:this.field.fieldtype,ntype:["transitem","transmovement","transpayment"].includes(this.field.fieldtype)?"trans":this.field.fieldtype,ttype:null,id:this.values.value||null,table:{name:"fieldvalue",fieldname:"value",id:this.field.id},fieldMap:e,editName:i};if(e){let i;if(l={...l,value:t||"",type:e.seltype,filter:String(l.text).split(" | ")[0],table:{name:e.table,fieldname:e.fieldname},ntype:e.lnktype,ttype:""!==t?""===e.transtype?this.values.transtype:e.transtype:l.ttype,id:""!==t?t:l.id},!0===e.extend||"extend"===e.table)i=this.data.current.extend;else{let t;t=void 0!==this.data.current[e.table]&&Array.isArray(this.data.current[e.table])?this.data.current[e.table].filter((e=>e.id===this.values.id)):this.data.dataset[e.table].filter((e=>e.id===this.values.id)),i=t[0]}void 0!==i?(l=void 0!==this.values[e.label_field]?{...l,text:this.values[e.label_field]||"",filter:this.values[e.label_field]||""}:void 0!==i[e.label_field]&&null!==i[e.label_field]?{...l,text:i[e.label_field],filter:i[e.label_field]}:{...l,text:"",filter:""},void 0!==i[e.fieldname]&&""===l.value&&null!==i[e.fieldname]&&(l={...l,ntype:e.lnktype,ttype:e.transtype,id:i[e.fieldname]}),"trans"===e.lnktype&&void 0!==i.transtype&&(l=void 0!==e.lnkid?{...l,id:i[e.lnkid]}:void 0!==i[e.fieldname]?{...l,id:i[e.fieldname]}:{...l,id:l.value})):l={...l,text:"",filter:""}}return this.selector=l,l}setSelector(e,t){let i={...this.selector,text:"",id:null,filter:t||""};if(e){const t=e.id.split("/");i={...i,text:e.label||e.item.lslabel},i={...i,id:parseInt(t[2],10),ttype:t[1]},"trans"===t[0]&&""!==t[1]&&e.trans_id&&(i={...i,id:e.trans_id})}i={...i,value:i.id||""},this.selector=i,this._onChange({value:i.id,item:e,event_type:"change",editName:i.editName,fieldMap:i.fieldMap})}editName(){return this.field.map?this.field.map.extend&&this.field.map.text?this.field.map.text:this.field.map.fieldname?this.field.map.fieldname:this.field.name:this.field.name}_onTextInput(e){this._onChange({value:e.target.value,event_type:"change",editName:this.editName(),fieldMap:this.field.map})}render(){let{datatype:e}=this.field,t=this.field.disabled||"readonly"===this.data.audit,d=this.field.name,f=this.values[this.field.name];const u=this.field.map||null,p=this.editName(),v=!("true"!==this.field.empty&&!0!==this.field.empty);switch("reportfield"!==this.field.rowtype&&"fieldvalue"!==this.field.rowtype||(f=this.values.value),null==f&&(f=this.field.default?this.field.default:""),"fieldvalue"===e&&(e=this.values.datatype),e){case"password":case"color":return i`<form-input 
+`;customElements.define("form-field",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.field={},this.values={},this.options={},this.data={dataset:{},current:{},audit:"all"},this.style={},this.msg=e=>e}static get properties(){return{id:{type:String},field:{type:Object},values:{type:Object},options:{type:Object},data:{type:Object},style:{type:Object}}}static get styles(){return[v]}_onChange({value:e,item:t,event_type:i,editName:l,fieldMap:a}){const s={id:this.field.id||1,name:l,event_type:i,value:e,extend:!(!a||!a.extend),refnumber:t&&t.label?t.label:this.field.link_label,label_field:a?a.label_field:void 0,item:t};this.onEdit&&this.onEdit(s),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{...s}}))}_onEvent(e,t){this.onEvent&&this.onEvent(e,t),this.dispatchEvent(new CustomEvent("event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onSelector(e,t,i){this.onSelector&&this.onSelector(e,t,i),this.dispatchEvent(new CustomEvent("selector",{bubbles:!0,composed:!0,detail:{type:e,filter:t,callback:i}}))}lnkValue({fieldMap:e,fieldName:t,value:i}){if(void 0===this.values[this.field.name])return[this.data.current[e.source]?this.data.current[e.source].filter((t=>t.ref_id===this.values.id&&t[e.value]===this.field.name))[0]:this.data.dataset[e.source].filter((t=>t.ref_id===this.values.id&&t[e.value]===this.field.name))[0],!1];const l="id"===t&&""===i?null:i;return[this.data.current[e.source]?this.data.current[e.source].filter((t=>t[e.value]===l))[0]:this.data.dataset[e.source].filter((t=>t[e.value]===l))[0],!0]}getOppositeValue(e){return this.options.opposite&&parseFloat(e)<0?String(e).replace("-",""):this.options.opposite&&parseFloat(e)>0?`-${e}`:e}selectorInit({fieldMap:e,value:t,editName:i}){let l={value:this.values.value||"",filter:this.field.description||"",text:this.field.description||"",type:this.field.fieldtype,ntype:["transitem","transmovement","transpayment"].includes(this.field.fieldtype)?"trans":this.field.fieldtype,ttype:null,id:this.values.value||null,table:{name:"fieldvalue",fieldname:"value",id:this.field.id},fieldMap:e,editName:i};if(e){let i;if(l={...l,value:t||"",type:e.seltype,filter:String(l.text).split(" | ")[0],table:{name:e.table,fieldname:e.fieldname},ntype:e.lnktype,ttype:""!==t?""===e.transtype?this.values.transtype:e.transtype:l.ttype,id:""!==t?t:l.id},!0===e.extend||"extend"===e.table)i=this.data.current.extend;else{let t;t=void 0!==this.data.current[e.table]&&Array.isArray(this.data.current[e.table])?this.data.current[e.table].filter((e=>e.id===this.values.id)):this.data.dataset[e.table].filter((e=>e.id===this.values.id)),i=t[0]}void 0!==i?(l=void 0!==this.values[e.label_field]?{...l,text:this.values[e.label_field]||"",filter:this.values[e.label_field]||""}:void 0!==i[e.label_field]&&null!==i[e.label_field]?{...l,text:i[e.label_field],filter:i[e.label_field]}:{...l,text:"",filter:""},void 0!==i[e.fieldname]&&""===l.value&&null!==i[e.fieldname]&&(l={...l,ntype:e.lnktype,ttype:e.transtype,id:i[e.fieldname]}),"trans"===e.lnktype&&void 0!==i.transtype&&(l=void 0!==e.lnkid?{...l,id:i[e.lnkid]}:void 0!==i[e.fieldname]?{...l,id:i[e.fieldname]}:{...l,id:l.value})):l={...l,text:"",filter:""}}return this.selector=l,l}setSelector(e,t){let i={...this.selector,text:"",id:null,filter:t||""};if(e){const t=e.id.split("/");i={...i,text:e.label||e.item.lslabel},i={...i,id:parseInt(t[2],10),ttype:t[1]},"trans"===t[0]&&""!==t[1]&&e.trans_id&&(i={...i,id:e.trans_id})}i={...i,value:i.id||""},this.selector=i,this._onChange({value:i.id,item:e,event_type:"change",editName:i.editName,fieldMap:i.fieldMap})}editName(){return this.field.map?this.field.map.extend&&this.field.map.text?this.field.map.text:this.field.map.fieldname?this.field.map.fieldname:this.field.name:this.field.name}_onTextInput(e){this._onChange({value:e.target.value,event_type:"change",editName:this.editName(),fieldMap:this.field.map})}render(){let{datatype:e}=this.field,t=this.field.disabled||"readonly"===this.data.audit,d=this.field.name,u=this.values[this.field.name];const f=this.field.map||null,p=this.editName(),v=!("true"!==this.field.empty&&!0!==this.field.empty);switch("reportfield"!==this.field.rowtype&&"fieldvalue"!==this.field.rowtype||(u=this.values.value),null==u&&(u=this.field.default?this.field.default:""),"fieldvalue"===e&&(e=this.values.datatype),e){case"password":case"color":return i`<form-input 
           id="${this.id}" name="${d}" type="${e}" 
-          value="${f||""}" label="${d}"
+          value="${u||""}" label="${d}"
           ?full="${!0}"
           .style="${this.style}" 
           ?disabled="${t}"
-          .onChange=${e=>this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:u})}></form-input>`;case"date":case"datetime":if(u)if(u.extend)f=this.data.current.extend[u.text],d=u.text;else{const e=this.lnkValue({fieldMap:u,fieldName:d,value:f});void 0!==e[0]&&(f=e[0][u.text],t=e[1]?e[1]:t)}return i`<form-datetime id="${this.id}"
+          .onChange=${e=>this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:f})}></form-input>`;case"date":case"datetime":if(f)if(f.extend)u=this.data.current.extend[f.text],d=f.text;else{const e=this.lnkValue({fieldMap:f,fieldName:d,value:u});void 0!==e[0]&&(u=e[0][f.text],t=e[1]?e[1]:t)}return i`<form-datetime id="${this.id}"
           name="${d}" label="${d}"
           .style="${this.style}" .isnull="${v}"
           type="${"datetime"===e?r.DATETIME:r.DATE}"
-          .value="${f}"
-          .onChange="${e=>{this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:u})}}"
-          ?disabled="${t}"></form-datetime>`;case"bool":case"flip":const m=t?"toggle-disabled":"";return[1,"1","true",!0].includes(f)?i`<div id="${this.id}"
+          .value="${u}"
+          .onChange="${e=>{this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:f})}}"
+          ?disabled="${t}"></form-datetime>`;case"bool":case"flip":const m=t?"toggle-disabled":"";return[1,"1","true",!0].includes(u)?i`<div id="${this.id}"
             name="${d}" style="${a(this.style)}" 
             class="${`toggle toggle-on ${m}`}"
-            @click="${t?null:()=>this._onChange({value:"fieldvalue_value"!==this.field.name&&0,event_type:"change",editName:p,fieldMap:u})}">
+            @click="${t?null:()=>this._onChange({value:"fieldvalue_value"!==this.field.name&&0,event_type:"change",editName:p,fieldMap:f})}">
             <form-icon iconKey="ToggleOn" width=40 height=32.6 ></form-icon>
           </div>`:i`<div id="${this.id}"
           name="${d}" style="${a(this.style)}" 
           class="${`toggle toggle-off ${m}`}"
-          @click="${t?null:()=>this._onChange({value:"fieldvalue_value"===this.field.name||1,event_type:"change",editName:p,fieldMap:u})}">
+          @click="${t?null:()=>this._onChange({value:"fieldvalue_value"===this.field.name||1,event_type:"change",editName:p,fieldMap:f})}">
           <form-icon iconKey="ToggleOff" width=40 height=32.6 ></form-icon>
-        </div>`;case"label":return null;case"select":this.field.extend&&(f=this.data.current.extend[this.field.name]||"");const $=[];return u?this.data.dataset[u.source].forEach((e=>{let t=e[u.text];void 0!==u.label&&(t=this.msg(`${u.label}_${t}`,{id:`${u.label}_${t}`})),$.push({value:String(e[u.value]),text:t})})):this.field.options.forEach((e=>{let t=e[1];this.msg(t,{id:t})&&(t=this.msg(t,{id:t})),void 0!==this.field.olabel&&(t=this.msg(`${this.field.olabel}_${e[1]}`,{id:`${this.field.olabel}_${e[1]}`})),$.push({value:String(e[0]),text:t})})),i`<form-select id="${this.id}" ?full="${!0}"
+        </div>`;case"label":return null;case"select":this.field.extend&&(u=this.data.current.extend[this.field.name]||"");const $=[];return f?this.data.dataset[f.source].forEach((e=>{let t=e[f.text];void 0!==f.label&&(t=this.msg(`${f.label}_${t}`,{id:`${f.label}_${t}`})),$.push({value:String(e[f.value]),text:t})})):this.field.options.forEach((e=>{let t=e[1];this.msg(t,{id:t})&&(t=this.msg(t,{id:t})),void 0!==this.field.olabel&&(t=this.msg(`${this.field.olabel}_${e[1]}`,{id:`${this.field.olabel}_${e[1]}`})),$.push({value:String(e[0]),text:t})})),i`<form-select id="${this.id}" ?full="${!0}"
             name="${d}" label="${d}"
             .style="${this.style}"
             ?disabled="${t}" 
-            .onChange=${e=>{const t=Number.isNaN(parseInt(e.value,10))?e.value:parseInt(e.value,10);this._onChange({value:t,event_type:"change",editName:p,fieldMap:u})}}
+            .onChange=${e=>{const t=Number.isNaN(parseInt(e.value,10))?e.value:parseInt(e.value,10);this._onChange({value:t,event_type:"change",editName:p,fieldMap:f})}}
             .options=${$} 
-            .isnull="${v}" value="${f}" ></form-select>`;case"valuelist":return i`<form-select id="${this.id}" ?full="${!0}"
+            .isnull="${v}" value="${u}" ></form-select>`;case"valuelist":return i`<form-select id="${this.id}" ?full="${!0}"
           name="${d}" label="${d}"
           .style="${this.style}"
           ?disabled="${t}"
-          .onChange=${e=>this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:u})}
+          .onChange=${e=>this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:f})}
           .options=${this.field.description.map((e=>({value:e,text:e})))} 
-          .isnull="${!1}" value="${f}" ></form-select>`;case"link":let g=this.values;const b=this.lnkValue({fieldMap:u,fieldName:d,value:f});void 0!==b[0]&&(g=b[0],b[0][u.text]&&(f=b[0][u.text]));let y=f;return void 0!==u.label_field&&void 0!==g[u.label_field]&&(y=g[u.label_field]),i`<div 
+          .isnull="${!1}" value="${u}" ></form-select>`;case"link":let g=this.values;const b=this.lnkValue({fieldMap:f,fieldName:d,value:u});void 0!==b[0]&&(g=b[0],b[0][f.text]&&(u=b[0][f.text]));let y=u;return void 0!==f.label_field&&void 0!==g[f.label_field]&&(y=g[f.label_field]),i`<div 
           name="${d}" style="${a(this.style)}" class="link" >
-          <span id=${`link_${u.lnktype}_${d}`} class="link-text" 
-            @click="${()=>this._onEvent(h.CHECK_EDITOR,[{ntype:u.lnktype,ttype:u.transtype,id:f},c.LOAD_EDITOR])}" >${y}</span>
-        </div>`;case"selector":let{selector:x}=this;const w=[],_=u&&(!0===u.extend||"extend"===u.table)&&this.data.current.extend&&this.data.current.extend.seltype;return x?_&&x.type!==this.data.current.extend.seltype&&(x.text=this.data.current.extend[u.label_field],x.type=this.data.current.extend.seltype,x.filter=x.text,x.ntype=this.data.current.extend.seltype,x.ttype=this.data.current.extend.transtype,x.id=this.data.current.extend.ref_id):x=this.selectorInit({fieldMap:u,value:f,editName:p}),t||w.push(i`<div id="sel_show" class="cell search-col">
+          <span id=${`link_${f.lnktype}_${d}`} class="link-text" 
+            @click="${()=>this._onEvent(h.CHECK_EDITOR,[{ntype:f.lnktype,ttype:f.transtype,id:u},c.LOAD_EDITOR])}" >${y}</span>
+        </div>`;case"selector":let{selector:x}=this;const w=[],_=f&&(!0===f.extend||"extend"===f.table)&&this.data.current.extend&&this.data.current.extend.seltype;return x?_&&x.type!==this.data.current.extend.seltype&&(x.text=this.data.current.extend[f.label_field],x.type=this.data.current.extend.seltype,x.filter=x.text,x.ntype=this.data.current.extend.seltype,x.ttype=this.data.current.extend.transtype,x.id=this.data.current.extend.ref_id):x=this.selectorInit({fieldMap:f,value:u,editName:p}),t||w.push(i`<div id="sel_show" class="cell search-col">
             <form-button id="${`sel_show_${d}`}" 
               label="${this.msg("",{id:"label_search"})}"
               .style="${{padding:"5px 8px 7px"}}"
@@ -437,30 +437,30 @@ textarea::placeholder, textarea::-ms-input-placeholder {
           ?full="${this.field.full}"
           ?autofocus="${this.field.focus||!1}"
           icon="${this.field.icon}"
-          @click=${t?null:()=>this._onChange({value:d,item:{},event_type:"click",editName:p,fieldMap:u})} >${this.field.title?this.field.title:l}</form-button>`;case"percent":case"integer":case"float":if(u)if(u.extend)f=this.data.current.extend[u.text],d=u.text;else{const e=this.lnkValue({fieldMap:u,fieldName:d,value:f});void 0!==e[0]&&(f=e[0][u.text],t=e[1]?e[1]:t)}return""===f&&(f=0),void 0!==this.field.opposite&&(f=this.getOppositeValue(f)),i`<form-number id="${this.id}" name="${d}"
+          @click=${t?null:()=>this._onChange({value:d,item:{},event_type:"click",editName:p,fieldMap:f})} >${this.field.title?this.field.title:l}</form-button>`;case"percent":case"integer":case"float":if(f)if(f.extend)u=this.data.current.extend[f.text],d=f.text;else{const e=this.lnkValue({fieldMap:f,fieldName:d,value:u});void 0!==e[0]&&(u=e[0][f.text],t=e[1]?e[1]:t)}return""===u&&(u=0),void 0!==this.field.opposite&&(u=this.getOppositeValue(u)),i`<form-number id="${this.id}" name="${d}"
           ?integer="${!("float"===e)}" 
           ?full="${!0}" .style="${this.style}"
-          value="${f||0}" 
+          value="${u||0}" 
           ?disabled="${t}" label="${d}"
           min="${s(this.field.min)}" 
           max="${s(this.field.max)}" 
-          .onChange=${e=>{this._onChange({value:this.field.opposite?this.getOppositeValue(e.value):e.value,event_type:"change",editName:p,fieldMap:u}),this.event_type="change"}}
-          .onBlur=${e=>{this._onChange({value:this.field.opposite?parseFloat(this.getOppositeValue(e.value)):parseFloat(e.value),event_type:"change"===this.event_type?"blur":null,editName:p,fieldMap:u}),this.event_type="blur"}}
-        ></form-number>`;default:if(u)if(u.extend)f=this.data.current.extend[u.text],d=u.text;else{const e=this.lnkValue({fieldMap:u,fieldName:d,value:f});void 0!==e[0]&&(f=e[0][u.text],t=e[1]?e[1]:t,void 0!==u.label&&(f=this.msg(`${u.label}_${f}`,{id:`${u.label}_${f}`})))}return"notes"===e||"text"===e?i`<textarea id="${this.id}" name="${d}"
+          .onChange=${e=>{this._onChange({value:this.field.opposite?this.getOppositeValue(e.value):e.value,event_type:"change",editName:p,fieldMap:f}),this.event_type="change"}}
+          .onBlur=${e=>{this._onChange({value:this.field.opposite?parseFloat(this.getOppositeValue(e.value)):parseFloat(e.value),event_type:"change"===this.event_type?"blur":null,editName:p,fieldMap:f}),this.event_type="blur"}}
+        ></form-number>`;default:if(f)if(f.extend)u=this.data.current.extend[f.text],d=f.text;else{const e=this.lnkValue({fieldMap:f,fieldName:d,value:u});void 0!==e[0]&&(u=e[0][f.text],t=e[1]?e[1]:t,void 0!==f.label&&(u=this.msg(`${f.label}_${u}`,{id:`${f.label}_${u}`})))}return"notes"===e||"text"===e?i`<textarea id="${this.id}" name="${d}"
             class=${"full"} label="${d}" style="${a(this.style)}"
             rows=${s(this.field.rows?this.field.rows:void 0)}
             @input="${this._onTextInput}"
-            .value="${f||""}"
+            .value="${u||""}"
             ?disabled="${t}" ></textarea>`:i`<form-input 
           id="${this.id}" .id="${`${this.id}_input`}" name="${d}" 
           type="${o.TEXT}" 
-          value="${f||""}" label="${d}"
+          value="${u||""}" label="${d}"
           ?full="${!0}"
           .style="${this.style}" 
           maxlength="${s(this.field.length?this.field.length:void 0)}"
           size="${s(this.field.length?this.field.length:void 0)}"
           ?disabled="${t}"
-          .onChange=${e=>this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:u})}></form-input>`}}});const m=e`
+          .onChange=${e=>this._onChange({value:e.value,event_type:"change",editName:p,fieldMap:f})}></form-input>`}}});const m=e`
 :host {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
@@ -731,7 +731,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
               ${s}
             </div>
           </div>`:null}
-        </div>`}}render(){const{id:e,rowtype:t,label:l,columns:s,name:d,disabled:n,notes:r,selected:h,empty:c,datatype:f,info:u}=this.row;switch(t){case"label":return i`<div id="${this.id}" style="${a(this.style)}" 
+        </div>`}}render(){const{id:e,rowtype:t,label:l,columns:s,name:d,disabled:n,notes:r,selected:h,empty:c,datatype:u,info:f}=this.row;switch(t){case"label":return i`<div id="${this.id}" style="${a(this.style)}" 
           class="container-row label-row">
           <div class="cell padding-small" >${this.values[d]||l}</div>
         </div>`;case"flip":return this.flipItem();case"field":return i`<div id="${this.id}"

@@ -1,3 +1,7 @@
+## 5.2.4
+- client: lit (3.1.0) upgrade
+- service: golang (1.21.5) and dependencies upgrade
+
 ## 5.2.3
 - client: lit (3.0.2) upgrade
 - service: database connection code refactoring
