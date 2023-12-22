@@ -5,40 +5,28 @@
     <link>https://nervatura.github.io/nervatura/docs/service/</link>
     <description>Recent content in Nervatura Service on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language><atom:link href="https://nervatura.github.io/nervatura/docs/service/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <atom:link href="https://nervatura.github.io/nervatura/docs/service/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CLI AND CGO API</title>
       <link>https://nervatura.github.io/nervatura/docs/service/cli/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/service/cli/</guid>
-      <description>CLI API # Full command line API. Program usage:
-docker exec -i nervatura /nervatura -h Windows (PowerShell):
-&amp;amp; &amp;#34;C:\Program Files\Nervatura\nervatura.exe&amp;#34; -h Linux Snap:
-/snap/nervatura/current/nervatura -h NPM:
-./node_modules/nervatura/bin/nervatura -h Example:
-docker exec -i nervatura /nervatura \ -c UserLogin -o &amp;#34;{\&amp;#34;username\&amp;#34;:\&amp;#34;admin\&amp;#34;,\&amp;#34;database\&amp;#34;:\&amp;#34;demo\&amp;#34;}&amp;#34; Golang docs:
-CGO API # The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Python, Ruby, Node, Java, Lua, Dart, C#.</description>
+      <description>CLI API # Full command line API. Program usage:&#xA;docker exec -i nervatura /nervatura -h Windows (PowerShell):&#xA;&amp;amp; &amp;#34;C:\Program Files\Nervatura\nervatura.exe&amp;#34; -h Linux Snap:&#xA;/snap/nervatura/current/nervatura -h NPM:&#xA;./node_modules/nervatura/bin/nervatura -h Example:&#xA;docker exec -i nervatura /nervatura \ -c UserLogin -o &amp;#34;{\&amp;#34;username\&amp;#34;:\&amp;#34;admin\&amp;#34;,\&amp;#34;database\&amp;#34;:\&amp;#34;demo\&amp;#34;}&amp;#34; Golang docs:&#xA;CGO API # The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Python, Ruby, Node, Java, Lua, Dart, C#.</description>
     </item>
-    
     <item>
       <title>HTTP OPEN API</title>
       <link>https://nervatura.github.io/nervatura/docs/service/api/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/service/api/</guid>
       <description> </description>
     </item>
-    
     <item>
       <title>gRPC API</title>
       <link>https://nervatura.github.io/nervatura/docs/service/grpc/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/service/grpc/</guid>
-      <description>Overview # Nervatura gRPC specification. For more examples, see Nervatura example application
-Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn&amp;rsquo;t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report.</description>
+      <description>Overview # Nervatura gRPC specification. For more examples, see Nervatura example application&#xA;Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn&amp;rsquo;t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report.</description>
     </item>
-    
   </channel>
 </rss>

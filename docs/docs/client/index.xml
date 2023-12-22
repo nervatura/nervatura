@@ -5,6 +5,7 @@
     <link>https://nervatura.github.io/nervatura/docs/client/</link>
     <description>Recent content in Nervatura Client on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language><atom:link href="https://nervatura.github.io/nervatura/docs/client/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <atom:link href="https://nervatura.github.io/nervatura/docs/client/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

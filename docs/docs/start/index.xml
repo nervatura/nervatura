@@ -5,76 +5,42 @@
     <link>https://nervatura.github.io/nervatura/docs/start/</link>
     <description>Recent content in Getting Started on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language><atom:link href="https://nervatura.github.io/nervatura/docs/start/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <atom:link href="https://nervatura.github.io/nervatura/docs/start/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Create a new database</title>
       <link>https://nervatura.github.io/nervatura/docs/start/database/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/start/database/</guid>
-      <description>Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database
-Supported database adapters: sqlite3, postgres, mysql, mssql
-For examples:
-NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:
-./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:
-API-KEY: YOUR_API_KEY
-Alias name: your_lowercase_alias_name
-Demo database: false
-The SQLite databases are created automatically. Other types of databases must be created manually before.</description>
+      <description>Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database&#xA;Supported database adapters: sqlite3, postgres, mysql, mssql&#xA;For examples:&#xA;NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:&#xA;./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:&#xA;API-KEY: YOUR_API_KEY&#xA;Alias name: your_lowercase_alias_name&#xA;Demo database: false&#xA;The SQLite databases are created automatically. Other types of databases must be created manually before.</description>
     </item>
-    
     <item>
       <title>Customization</title>
       <link>https://nervatura.github.io/nervatura/docs/start/customization/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/start/customization/</guid>
       <description>Customize the appearance # Nervatura Client language translation Create a file based on the client_config.json file. All subtitles can be found here. The recommended and easy way to create and edit the language file is the ADMIN GUI Translation Helper Tool. For more help on setting up and using the language file, see the Examples section Set NT_CLIENT_CONFIG environment variable value to YOUR_CLIENT_CONFIG_FILE.JSON Docker container: mount local folder to the container Nervatura Client custom remote functions: MENU SHORTCUTS</description>
     </item>
-    
     <item>
       <title>Examples</title>
       <link>https://nervatura.github.io/nervatura/docs/start/examples/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/start/examples/</guid>
-      <description>Quick Start # Node.js # Recommended API:
-gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080
-You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).
-Python # Recommended API:
-gRPC CGO (Linux and Windows x64, without Admin and Client GUI) Download the Python examples</description>
+      <description>Quick Start # Node.js # Recommended API:&#xA;gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080&#xA;You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).&#xA;Python # Recommended API:&#xA;gRPC CGO (Linux and Windows x64, without Admin and Client GUI) Download the Python examples</description>
     </item>
-    
     <item>
       <title>Screenshots</title>
       <link>https://nervatura.github.io/nervatura/docs/start/screenshot/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/start/screenshot/</guid>
-      <description>Screenshots # Service Admin GUI # Create a database
-Report install
-Client translation helper tool - add a new language
-Change language translation (dark theme)
-Web Client # Quick Search
-Advanced search
-Customer data
-Order (dark theme)
-PDF output
-PDF Invoice example
-PDF and CSV report examples (dark theme)
-Report Template Editor
-Default Settings
-Edit Metadata setting (dark theme)</description>
+      <description>Screenshots # Service Admin GUI # Create a database&#xA;Report install&#xA;Client translation helper tool - add a new language&#xA;Change language translation (dark theme)&#xA;Web Client # Quick Search&#xA;Advanced search&#xA;Customer data&#xA;Order (dark theme)&#xA;PDF output&#xA;PDF Invoice example&#xA;PDF and CSV report examples (dark theme)&#xA;Report Template Editor&#xA;Default Settings&#xA;Edit Metadata setting (dark theme)</description>
     </item>
-    
     <item>
       <title>Video</title>
       <link>https://nervatura.github.io/nervatura/docs/start/video/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://nervatura.github.io/nervatura/docs/start/video/</guid>
       <description> Video # Explainer videos # Short episodes # </description>
     </item>
-    
   </channel>
 </rss>
