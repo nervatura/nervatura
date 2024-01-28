@@ -144,6 +144,10 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_HTTP_HOME"] = ut.ToString(app.getEnv("NT_HTTP_HOME"), "/admin")
 	app.config["NT_HTTP_LOG_FILE"] = ut.ToString(app.args["NT_HTTP_LOG_FILE"], app.getEnv("NT_HTTP_LOG_FILE"))
 
+	app.config["NT_SESSION_DB"] = ut.ToString(app.getEnv("NT_SESSION_DB"), "")
+	app.config["NT_SESSION_DIR"] = ut.ToString(app.getEnv("NT_SESSION_DIR"), "")
+	app.config["NT_SESSION_TABLE"] = ut.ToString(app.getEnv("NT_SESSION_TABLE"), "session")
+
 	dataDir := "data"
 	if isSnap {
 		dataDir = "/var/snap/nervatura/common"

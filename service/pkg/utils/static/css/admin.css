@@ -1,0 +1,18 @@
+.admin {
+  color: var(--text-1);
+  fill: var(--text-1);
+  background-color: rgb(var(--base-0));
+  box-sizing: border-box;
+  border: 1px solid rgba(var(--neutral-1), 0.2);
+  border-radius: 5px;
+  margin: 5px auto;
+}
+
+.admin td {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.border-top {
+  border-top: 1px solid rgba(var(--accent-1c), 0.2);
+}

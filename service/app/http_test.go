@@ -11,7 +11,6 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"strings"
 	"testing"
@@ -28,7 +27,6 @@ func Test_httpServer_StartService(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -103,7 +101,6 @@ func Test_httpServer_StartService(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -122,7 +119,6 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -187,7 +183,6 @@ func Test_httpServer_setPublicKeys(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -204,7 +199,6 @@ func Test_httpServer_startServer(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -240,7 +234,6 @@ func Test_httpServer_startServer(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -258,7 +251,6 @@ func Test_httpServer_StopService(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -297,7 +289,6 @@ func Test_httpServer_StopService(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -315,7 +306,6 @@ func Test_httpServer_Results(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -340,7 +330,6 @@ func Test_httpServer_Results(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -358,7 +347,6 @@ func Test_httpServer_ConnectApp(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -385,7 +373,6 @@ func Test_httpServer_ConnectApp(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -401,7 +388,6 @@ func Test_httpServer_tokenAuth(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -448,7 +434,6 @@ func Test_httpServer_tokenAuth(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -459,71 +444,12 @@ func Test_httpServer_tokenAuth(t *testing.T) {
 	}
 }
 
-func Test_httpServer_fileServer(t *testing.T) {
-	type fields struct {
-		app        *App
-		mux        *chi.Mux
-		service    srv.HTTPService
-		admin      srv.AdminService
-		client     srv.ClientService
-		result     string
-		server     *http.Server
-		tlsEnabled bool
-	}
-	type args struct {
-		path string
-		root http.FileSystem
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{
-			name: "fs_error",
-			fields: fields{
-				app: &App{
-					errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
-				},
-			},
-			args: args{
-				path: "{error}",
-			},
-		},
-		{
-			name: "fs_redirect",
-			fields: fields{
-				mux: chi.NewRouter(),
-			},
-			args: args{
-				path: "/redirect",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &httpServer{
-				app:        tt.fields.app,
-				mux:        tt.fields.mux,
-				service:    tt.fields.service,
-				admin:      tt.fields.admin,
-				client:     tt.fields.client,
-				result:     tt.fields.result,
-				server:     tt.fields.server,
-				tlsEnabled: tt.fields.tlsEnabled,
-			}
-			s.fileServer(tt.args.path)
-		})
-	}
-}
-
 func Test_httpServer_homeRoute(t *testing.T) {
 	type fields struct {
 		app        *App
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -559,7 +485,6 @@ func Test_httpServer_homeRoute(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,
@@ -569,185 +494,49 @@ func Test_httpServer_homeRoute(t *testing.T) {
 	}
 }
 
-func Test_httpServer_adminRoute(t *testing.T) {
+func Test_httpServer_fileServer(t *testing.T) {
 	type fields struct {
 		app        *App
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		client     srv.ClientService
-		result     string
-		server     *http.Server
-		tlsEnabled bool
-	}
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
-	formReq := func(params url.Values) *http.Request {
-		req := httptest.NewRequest("POST", "/admin", strings.NewReader(params.Encode()))
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		return req
-	}
-	as := srv.AdminService{
-		Config: nt.IM{
-			"NT_API_KEY": "TEST_API_KEY",
-		},
-		GetNervaStore: func(database string) *nt.NervaStore {
-			return nil
-		},
-		GetTokenKeys: func() map[string]map[string]string {
-			return nil
-		},
-	}
-	as.LoadTemplates()
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{
-			name: "database",
-			fields: fields{
-				admin: as,
-			},
-			args: args{
-				w: httptest.NewRecorder(),
-				r: formReq(url.Values{
-					"formID": []string{"database"},
-				}),
-			},
-		},
-		{
-			name: "admin",
-			fields: fields{
-				admin: as,
-			},
-			args: args{
-				w: httptest.NewRecorder(),
-				r: formReq(url.Values{
-					"formID": []string{"admin"},
-				}),
-			},
-		},
-		{
-			name: "menu",
-			fields: fields{
-				admin: as,
-			},
-			args: args{
-				w: httptest.NewRecorder(),
-				r: formReq(url.Values{
-					"formID": []string{"menu"},
-				}),
-			},
-		},
-		{
-			name: "client",
-			fields: fields{
-				admin: as,
-			},
-			args: args{
-				w: httptest.NewRecorder(),
-				r: formReq(url.Values{
-					"formID": []string{"menu"},
-					"menu":   []string{"client"},
-				}),
-			},
-		},
-		{
-			name: "locales",
-			fields: fields{
-				admin: as,
-			},
-			args: args{
-				w: httptest.NewRecorder(),
-				r: formReq(url.Values{
-					"formID": []string{"menu"},
-					"menu":   []string{"locales"},
-				}),
-			},
-		},
-		{
-			name: "docs",
-			fields: fields{
-				admin: as,
-				app: &App{
-					config: nt.IM{
-						"NT_DOCS_URL": "/",
-					},
-				},
-			},
-			args: args{
-				w: httptest.NewRecorder(),
-				r: formReq(url.Values{
-					"formID": []string{"menu"},
-					"menu":   []string{"docs"},
-				}),
-			},
-		},
-		{
-			name: "login",
-			fields: fields{
-				admin: as,
-			},
-			args: args{
-				w: httptest.NewRecorder(),
-				r: formReq(url.Values{
-					"formID": []string{"login"},
-				}),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &httpServer{
-				app:        tt.fields.app,
-				mux:        tt.fields.mux,
-				service:    tt.fields.service,
-				admin:      tt.fields.admin,
-				client:     tt.fields.client,
-				result:     tt.fields.result,
-				server:     tt.fields.server,
-				tlsEnabled: tt.fields.tlsEnabled,
-			}
-			s.adminRoute(tt.args.w, tt.args.r)
-		})
-	}
-}
-
-func Test_httpServer_serveFile(t *testing.T) {
-	type fields struct {
-		app        *App
-		mux        *chi.Mux
-		service    srv.HTTPService
-		admin      srv.AdminService
-		client     srv.ClientService
 		locales    srv.LocalesService
 		result     string
 		server     *http.Server
-		root       http.FileSystem
 		tlsEnabled bool
+		readAll    func(r io.Reader) ([]byte, error)
+		tokenLogin func(r *http.Request) (ctx context.Context, err error)
 	}
 	type args struct {
-		w http.ResponseWriter
-		r *http.Request
+		path string
+		root http.FileSystem
 	}
 	var publicFS, _ = fs.Sub(ut.Public, "static")
+	mux := chi.NewRouter()
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
 		{
-			name: "serve",
+			name: "fs_error",
 			fields: fields{
-				root: http.FS(publicFS),
+				app: &App{
+					errorLog: log.New(os.Stdout, "ERROR: ", log.LstdFlags),
+				},
 			},
 			args: args{
-				w: httptest.NewRecorder(),
-				r: httptest.NewRequest("GET", "/", nil).WithContext(
-					context.WithValue(context.Background(), chi.RouteCtxKey, chi.NewRouteContext())),
+				path: "{error}",
+			},
+		},
+		{
+			name: "serve",
+			fields: fields{
+				mux: mux,
+			},
+			args: args{
+				path: "/",
+				root: http.FS(publicFS),
 			},
 		},
 	}
@@ -758,14 +547,14 @@ func Test_httpServer_serveFile(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				client:     tt.fields.client,
 				locales:    tt.fields.locales,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
-				root:       tt.fields.root,
 				tlsEnabled: tt.fields.tlsEnabled,
+				readAll:    tt.fields.readAll,
+				tokenLogin: tt.fields.tokenLogin,
 			}
-			s.serveFile(tt.args.w, tt.args.r)
+			s.fileServer(tt.args.path, tt.args.root)
 		})
 	}
 }

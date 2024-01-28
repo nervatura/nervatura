@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -17,6 +18,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 
+	ct "github.com/nervatura/component/component"
+	db "github.com/nervatura/nervatura/service/pkg/database"
+	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 	srv "github.com/nervatura/nervatura/service/pkg/service"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
 	"github.com/unrolled/secure"
@@ -27,11 +31,9 @@ type httpServer struct {
 	mux        *chi.Mux
 	service    srv.HTTPService
 	admin      srv.AdminService
-	client     srv.ClientService
 	locales    srv.LocalesService
 	result     string
 	server     *http.Server
-	root       http.FileSystem
 	tlsEnabled bool
 	readAll    func(r io.Reader) ([]byte, error)
 	tokenLogin func(r *http.Request) (ctx context.Context, err error)
@@ -59,8 +61,17 @@ func (s *httpServer) StartService() error {
 		GetParam:      chi.URLParam,
 		GetTokenKeys:  s.app.GetTokenKeys,
 		GetTaskSecKey: s.app.GetTaskSecKey,
+		Session: nt.SessionService{
+			Config:          s.app.config,
+			Conn:            &db.SQLDriver{Config: s.app.config},
+			CreateDir:       os.Mkdir,
+			CreateFile:      os.Create,
+			ReadFile:        os.ReadFile,
+			FileStat:        os.Stat,
+			ConvertToByte:   ut.ConvertToByte,
+			ConvertFromByte: ut.ConvertFromByte,
+		},
 	}
-	s.admin.LoadTemplates()
 
 	s.locales = srv.LocalesService{
 		ClientMsg:  ut.ClientMsg,
@@ -69,16 +80,6 @@ func (s *httpServer) StartService() error {
 		GetParam:   chi.URLParam,
 	}
 	s.locales.LoadLocales()
-
-	/*
-		s.client = srv.ClientService{
-			Path: "client",
-		}
-		s.client.LoadManifest()
-		if err != nil {
-			return err
-		}
-	*/
 
 	s.setPublicKeys()
 	s.setMiddleware()
@@ -195,11 +196,11 @@ func (s *httpServer) setMiddleware() {
 			ContentTypeNosniff:      s.app.config["NT_SECURITY_CONTENT_TYPE_NOSNIFF"].(bool),
 			BrowserXssFilter:        s.app.config["NT_SECURITY_BROWSER_XSS_FILTER"].(bool),
 			ContentSecurityPolicy:   s.app.config["NT_SECURITY_CONTENT_SECURITY_POLICY"].(string),
-			PublicKey:               s.app.config["NT_SECURITY_PUBLIC_KEY"].(string),
-			ReferrerPolicy:          s.app.config["NT_SECURITY_REFERRER_POLICY"].(string),
-			FeaturePolicy:           s.app.config["NT_SECURITY_FEATURE_POLICY"].(string),
-			ExpectCTHeader:          s.app.config["NT_SECURITY_EXPECT_CT_HEADER"].(string),
-			IsDevelopment:           s.app.config["NT_SECURITY_DEVELOPMENT"].(bool),
+			//PublicKey:               s.app.config["NT_SECURITY_PUBLIC_KEY"].(string),
+			ReferrerPolicy: s.app.config["NT_SECURITY_REFERRER_POLICY"].(string),
+			FeaturePolicy:  s.app.config["NT_SECURITY_FEATURE_POLICY"].(string),
+			//ExpectCTHeader:          s.app.config["NT_SECURITY_EXPECT_CT_HEADER"].(string),
+			IsDevelopment: s.app.config["NT_SECURITY_DEVELOPMENT"].(bool),
 		}).Handler)
 	}
 
@@ -223,46 +224,19 @@ func (s *httpServer) homeRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *httpServer) adminRoute(w http.ResponseWriter, r *http.Request) {
-	switch r.PostFormValue("formID") {
-	case "database":
-		s.admin.Database(w, r)
-
-	case "menu":
-		if r.PostFormValue("menu") == "client" {
-			http.Redirect(w, r, "/client", http.StatusSeeOther)
-			return
-		}
-		if r.PostFormValue("menu") == "locales" {
-			http.Redirect(w, r, "/locales", http.StatusSeeOther)
-			return
-		}
-		if r.PostFormValue("menu") == "docs" {
-			http.Redirect(w, r, s.app.config["NT_DOCS_URL"].(string), http.StatusSeeOther)
-			return
-		}
-		s.admin.Menu(w, r)
-	case "admin":
-		s.admin.Admin(w, r)
-	default:
-		s.admin.Login(w, r)
-	}
-}
-
 // Register API routes.
 func (s *httpServer) setRoutes() {
 	// Register static dirs.
 	var publicFS, _ = fs.Sub(ut.Public, "static")
-	s.root = http.FS(publicFS)
-	s.fileServer("/")
+	var adminFS, _ = fs.Sub(ct.Style, "style")
+	s.fileServer("/", http.FS(publicFS))
+	s.fileServer("/style", http.FS(adminFS))
 
 	s.mux.Get("/", s.homeRoute)
 
-	//s.mux.Get("/"+s.client.Path, s.client.Render)
-
 	s.mux.Route("/admin", func(r chi.Router) {
 		r.Get("/", s.admin.Home)
-		r.Post("/", s.adminRoute)
+		r.Post("/event", s.admin.AppEvent)
 		r.Get("/task/{taskName}/{secKey}", s.admin.Task)
 	})
 	s.mux.Route("/locales", func(r chi.Router) {
@@ -318,16 +292,9 @@ func (s *httpServer) setRoutes() {
 
 }
 
-func (s *httpServer) serveFile(w http.ResponseWriter, r *http.Request) {
-	rctx := chi.RouteContext(r.Context())
-	pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
-	fs := http.StripPrefix(pathPrefix, http.FileServer(s.root))
-	fs.ServeHTTP(w, r)
-}
-
 // FileServer conveniently sets up a http.FileServer handler to serve
 // static files from a http.FileSystem.
-func (s *httpServer) fileServer(path string) {
+func (s *httpServer) fileServer(path string, root http.FileSystem) {
 
 	if strings.ContainsAny(path, "{}*") {
 		s.app.errorLog.Println(ut.GetMessage("error_fileserver"))
@@ -340,5 +307,10 @@ func (s *httpServer) fileServer(path string) {
 	}
 	path += "*"
 
-	s.mux.Get(path, s.serveFile)
+	s.mux.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+		fs.ServeHTTP(w, r)
+	})
 }

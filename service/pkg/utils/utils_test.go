@@ -1132,3 +1132,29 @@ func TestRandString(t *testing.T) {
 		})
 	}
 }
+
+func TestSMAtoIMA(t *testing.T) {
+	type args struct {
+		sRows []map[string]string
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantIRows []map[string]interface{}
+	}{
+		{
+			name: "ok",
+			args: args{
+				sRows: []map[string]string{{"field": "value"}},
+			},
+			wantIRows: []map[string]interface{}{{"field": "value"}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotIRows := SMAtoIMA(tt.args.sRows); !reflect.DeepEqual(gotIRows, tt.wantIRows) {
+				t.Errorf("SMAtoIMA() = %v, want %v", gotIRows, tt.wantIRows)
+			}
+		})
+	}
+}

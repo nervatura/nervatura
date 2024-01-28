@@ -470,3 +470,15 @@ func RandString(length int) string {
 	}
 	return b.String()
 }
+
+func SMAtoIMA(sRows []map[string]string) (iRows []map[string]interface{}) {
+	iRows = []map[string]interface{}{}
+	for _, sRow := range sRows {
+		iRow := map[string]interface{}{}
+		for field, value := range sRow {
+			iRow[field] = value
+		}
+		iRows = append(iRows, iRow)
+	}
+	return iRows
+}
