@@ -5,6 +5,7 @@ package service
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"os"
 	"sort"
@@ -51,12 +52,16 @@ const taskPage = `<!DOCTYPE html>
 
 // AdminService implements the Nervatura Admin GUI
 type AdminService struct {
-	Config        map[string]interface{}
-	GetNervaStore func(database string) *nt.NervaStore
-	GetParam      func(req *http.Request, name string) string
-	GetTokenKeys  func() map[string]map[string]string
-	GetTaskSecKey func() string
-	Session       nt.SessionService
+	Config          map[string]interface{}
+	GetNervaStore   func(database string) *nt.NervaStore
+	GetParam        func(req *http.Request, name string) string
+	GetTokenKeys    func() map[string]map[string]string
+	GetTaskSecKey   func() string
+	Session         nt.SessionService
+	ReadFile        func(name string) ([]byte, error)
+	ConvertFromByte func(data []byte, result interface{}) error
+	CreateFile      func(name string) (*os.File, error)
+	ConvertToWriter func(out io.Writer, data interface{}) error
 }
 
 func (adm *AdminService) envList() []nt.IM {
@@ -133,6 +138,7 @@ func (adm *AdminService) userPassword(token, database string, data nt.IM) (err e
 }
 
 func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent) {
+	var err error
 	errMsg := func(value, toastType string) (re bc.ResponseEvent) {
 		return bc.ResponseEvent{
 			Trigger: &fm.Toast{
@@ -151,8 +157,8 @@ func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent)
 	switch evt.Name {
 	case cp.AdminEventCreate:
 		data := evt.Trigger.GetProperty("data").(nt.IM)
-		result, err := adm.createDatabase(data)
-		if err != nil {
+		var result []nt.IM
+		if result, err = adm.createDatabase(data); err != nil {
 			return errMsg(err.Error(), fm.ToastTypeError)
 		}
 		evt.Trigger.SetProperty("data", bc.MergeIM(data, nt.IM{"create_result": result}))
@@ -176,7 +182,6 @@ func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent)
 		token := ut.ToString(evt.Trigger.GetProperty("token"), "")
 		reportkey := ut.ToString(evt.Value, "")
 		var nstore *nt.NervaStore
-		var err error
 		if evt.Name == cp.AdminEventReportDelete {
 			nstore, err = adm.reportDelete(token, database, reportkey)
 		} else {
@@ -192,12 +197,38 @@ func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent)
 		data := evt.Trigger.GetProperty("data").(nt.IM)
 		database := ut.ToString(data["database"], "")
 		token := ut.ToString(evt.Trigger.GetProperty("token"), "")
-		err := adm.userPassword(token, database, data)
-		if err != nil {
+		if err = adm.userPassword(token, database, data); err != nil {
 			return errMsg(err.Error(), fm.ToastTypeError)
 		}
 		return errMsg(ut.GetMessage("password_change"), fm.ToastTypeSuccess)
 
+	case cp.AdminEventLocalesUndo:
+		data := evt.Trigger.GetProperty("data").(nt.IM)
+		var locales nt.IM
+		if locales, err = adm.loadLocalesData(ut.ClientMsg, ut.ToString(adm.Config["NT_CLIENT_CONFIG"], "")); err != nil {
+			return errMsg(err.Error(), fm.ToastTypeError)
+		}
+		evt.Trigger.SetProperty("data", bc.MergeIM(data,
+			nt.IM{"locfile": locales["locfile"], "locales": locales["locale"]}))
+		evt.Trigger.SetProperty("locales", locales["locales"])
+		evt.Trigger.SetProperty("filter_value", "")
+		evt.Trigger.SetProperty("dirty", false)
+
+	case cp.AdminEventLocalesSave:
+		data := evt.Trigger.GetProperty("data").(nt.IM)
+		configFile := ut.ToString(adm.Config["NT_CLIENT_CONFIG"], "")
+		var fw *os.File
+		if fw, err = adm.CreateFile(configFile); err != nil {
+			return errMsg(err.Error(), fm.ToastTypeError)
+		}
+		defer fw.Close()
+		if err = adm.ConvertToWriter(fw, data["locfile"]); err != nil {
+			return errMsg(err.Error(), fm.ToastTypeError)
+		}
+		evt.Trigger.SetProperty("dirty", false)
+
+	case cp.AdminEventLocalesError:
+		return errMsg(ut.ToString(evt.Value, ""), fm.ToastTypeError)
 	}
 	return evt
 }
@@ -211,6 +242,60 @@ func (adm *AdminService) tokenLogin(database, token string) bool {
 		}
 	}
 	return false
+}
+
+func (adm *AdminService) loadLocalesData(clientFile, configFile string) (locales nt.IM, err error) {
+	var deflang nt.IM
+	tagKeys := nt.SL{}
+	tagValues := map[string]nt.SL{}
+	locfile := nt.IM{
+		"locales": make(nt.IM),
+	}
+	langs := nt.SL{"client"}
+
+	var jsonMessages, _ = ut.Static.ReadFile(clientFile)
+	if err := adm.ConvertFromByte(jsonMessages, &deflang); err != nil {
+		return locales, err
+	}
+	for rowKey := range deflang {
+		tag := strings.Split(rowKey, "_")[0]
+		if !ut.Contains(tagKeys, tag) && !ut.Contains(nt.SL{"en", "key"}, tag) {
+			tagKeys = append(tagKeys, tag)
+			tagValues[tag] = make(nt.SL, 0)
+		}
+		tagValues[tag] = append(tagValues[tag], rowKey)
+		sort.Strings(tagValues[tag])
+	}
+	sort.Strings(tagKeys)
+
+	if content, err := adm.ReadFile(configFile); err == nil {
+		config := nt.IM{}
+		if err = adm.ConvertFromByte(content, &config); err == nil {
+			if locales, valid := config["locales"].(nt.IM); valid {
+				locfile["locales"] = locales
+				for langKey := range locales {
+					langs = append(langs, langKey)
+					sort.Strings(langs)
+				}
+			}
+		}
+	}
+	locales = nt.IM{
+		"deflang":    deflang,
+		"locales":    []fm.SelectOption{},
+		"tag_keys":   []fm.SelectOption{},
+		"locale":     langs[0],
+		"tag_key":    tagKeys[0],
+		"tag_values": tagValues,
+		"locfile":    locfile,
+	}
+	for _, value := range langs {
+		locales["locales"] = append(locales["locales"].([]fm.SelectOption), fm.SelectOption{Value: value, Text: value})
+	}
+	for _, value := range tagKeys {
+		locales["tag_keys"] = append(locales["tag_keys"].([]fm.SelectOption), fm.SelectOption{Value: value, Text: value})
+	}
+	return locales, err
 }
 
 func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
@@ -235,14 +320,12 @@ func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 		TokenLogin: adm.tokenLogin,
 	}
 	ccApp := &pg.Application{
-		Title:  ut.GetMessage("view_admin"),
+		Title:  ut.GetMessage("admin_title"),
 		Header: bc.SM{"X-Session-Token": sessionID},
-		/*
-			Script: []string{
-				"/js/htmx.min.js",
-				"/js/remove-me.js",
-			},
-		*/
+		Script: []string{
+			//"/js/htmx.min.js",
+			//"/js/remove-me.js",
+		},
 		HeadLink: []pg.HeadLink{
 			{Rel: "icon", Href: "/style/static/favicon.svg", Type: "image/svg+xml"},
 			{Rel: "stylesheet", Href: "/style/index.css"},
@@ -252,6 +335,12 @@ func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 	}
 	var err error
 	var res string
+	locales, err := adm.loadLocalesData(ut.ClientMsg, ut.ToString(adm.Config["NT_CLIENT_CONFIG"], ""))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	admin.Data["locales"] = locales
 	res, err = ccApp.Render()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -320,7 +409,7 @@ func (adm *AdminService) Task(w http.ResponseWriter, r *http.Request) {
 
 	data := nt.IM{}
 	if taskName == "config" {
-		data["title"] = ut.GetMessage("view_configuration")
+		data["title"] = ut.GetMessage("admin_configuration_values")
 		data["env_result"] = adm.envList()
 	}
 	tmp, _ := template.New("task").Parse(taskPage)

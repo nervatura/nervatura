@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	fm "github.com/nervatura/component/component/atom"
 	bc "github.com/nervatura/component/component/base"
 	mc "github.com/nervatura/component/component/molecule"
 )
@@ -144,6 +145,28 @@ func TestAdmin_Render(t *testing.T) {
 				Token:      "TOKEN0123456789",
 				TokenLogin: func(database, token string) bool { return (token != "") },
 				View:       "configuration",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Locales",
+			fields: fields{
+				BaseComponent: bc.BaseComponent{
+					Id:       bc.GetComponentID(),
+					EventURL: "/event",
+					Data: bc.IM{
+						"locales": bc.IM{
+							"locale":     "de",
+							"tag_key":    "tag",
+							"locfile":    bc.IM{"locales": bc.IM{"de": bc.IM{"tag_key1": "value1"}}},
+							"deflang":    bc.IM{"tag_key1": "value1", "tag_key2": "value2"},
+							"tag_values": map[string][]string{"tag": {"tag_key1", "tag_key2"}},
+							"locales":    []fm.SelectOption{},
+							"tag_keys":   []fm.SelectOption{},
+						},
+					},
+				},
+				Module: "locales",
 			},
 			wantErr: false,
 		},
@@ -500,6 +523,42 @@ func TestAdmin_response(t *testing.T) {
 			args: args{
 				evt: bc.ResponseEvent{
 					TriggerName: "password_change",
+				},
+			},
+		},
+		{
+			name: "locales_undo",
+			args: args{
+				evt: bc.ResponseEvent{
+					TriggerName: "locales",
+					Name:        LocalesEventUndo,
+				},
+			},
+		},
+		{
+			name: "locales_save",
+			args: args{
+				evt: bc.ResponseEvent{
+					TriggerName: "locales",
+					Name:        AdminEventLocalesSave,
+				},
+			},
+		},
+		{
+			name: "locales_error",
+			args: args{
+				evt: bc.ResponseEvent{
+					TriggerName: "locales",
+					Name:        AdminEventLocalesError,
+				},
+			},
+		},
+		{
+			name: "locales",
+			args: args{
+				evt: bc.ResponseEvent{
+					TriggerName: "locales",
+					Name:        "",
 				},
 			},
 		},

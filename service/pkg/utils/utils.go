@@ -19,7 +19,7 @@ import (
 
 const AdminMsg = "static/locales/admin.json"
 
-//go:embed static/views static/locales
+//go:embed static/locales
 var Static embed.FS
 
 //go:embed static/templates static/fonts

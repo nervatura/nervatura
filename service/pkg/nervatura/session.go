@@ -110,20 +110,18 @@ func (ses *SessionService) saveDbSession(sessionID string, data any) (err error)
 	sessionDb := ut.ToString(ses.Config["NT_SESSION_DB"], "")
 	sessionTable := ut.ToString(ses.Config["NT_SESSION_TABLE"], "session")
 	if err = ses.Conn.CreateConnection("session", sessionDb); err == nil {
+		var bin []byte
+		bin, err = ses.ConvertToByte(data)
 		if err == nil {
-			var bin []byte
-			bin, err = ses.ConvertToByte(data)
-			if err == nil {
-				var sqlString string = fmt.Sprintf(
-					"INSERT INTO %s(id, value, stamp) VALUES('%s', '%s', '%s')",
-					sessionTable, sessionID, bin, time.Now().Format("2006-01-02T15:04:05-0700"))
-				var rows []IM
-				if rows, err = ses.getDbRows(sessionID); err == nil && (len(rows) > 0) {
-					sqlString = fmt.Sprintf(
-						"UPDATE %s SET value='%s' WHERE id='%s'", sessionTable, bin, sessionID)
-				}
-				_, err = ses.Conn.QuerySQL(sqlString, []interface{}{}, nil)
+			var sqlString string = fmt.Sprintf(
+				"INSERT INTO %s(id, value, stamp) VALUES('%s', '%s', '%s')",
+				sessionTable, sessionID, bin, time.Now().Format("2006-01-02T15:04:05-0700"))
+			var rows []IM
+			if rows, err = ses.getDbRows(sessionID); err == nil && (len(rows) > 0) {
+				sqlString = fmt.Sprintf(
+					"UPDATE %s SET value='%s' WHERE id='%s'", sessionTable, bin, sessionID)
 			}
+			_, err = ses.Conn.QuerySQL(sqlString, []interface{}{}, nil)
 		}
 	}
 	return err

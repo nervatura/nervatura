@@ -19,14 +19,17 @@ const (
 	AdminEventPassword      = "password"
 	AdminEventReportInstall = "report_install"
 	AdminEventReportDelete  = "report_delete"
+	AdminEventLocalesUndo   = "undo"
+	AdminEventLocalesSave   = "save"
+	AdminEventLocalesError  = "error"
 )
 
 var adminDefaultLabel bc.SM = bc.SM{
-	"admin_title":                   ut.GetMessage("view_admin"),
+	"admin_title":                   ut.GetMessage("admin_title"),
 	"admin_login":                   ut.GetMessage("admin_login"),
 	"admin_database":                ut.GetMessage("admin_database"),
 	"admin_client":                  ut.GetMessage("admin_client"),
-	"admin_locales":                 ut.GetMessage("view_locales"),
+	"admin_locales":                 ut.GetMessage("admin_locales"),
 	"admin_help":                    ut.GetMessage("admin_help"),
 	"admin_api_key":                 ut.GetMessage("admin_api_key"),
 	"admin_alias":                   ut.GetMessage("admin_alias"),
@@ -41,10 +44,9 @@ var adminDefaultLabel bc.SM = bc.SM{
 	"admin_create_result_datatype":  ut.GetMessage("admin_create_result_datatype"),
 	"admin_username":                ut.GetMessage("admin_username"),
 	"admin_password":                ut.GetMessage("admin_password"),
-	"admin_view_password":           ut.GetMessage("admin_password"),
-	"admin_view_report":             ut.GetMessage("admin_report"),
-	"admin_view_configuration":      ut.GetMessage("admin_view_configuration"),
-	"admin_view_logout":             ut.GetMessage("admin_view_logout"),
+	"admin_report":                  ut.GetMessage("admin_report"),
+	"admin_configuration":           ut.GetMessage("admin_configuration"),
+	"admin_logout":                  ut.GetMessage("admin_logout"),
 	"admin_confirm":                 ut.GetMessage("admin_confirm"),
 	"admin_password_change":         ut.GetMessage("admin_password_change"),
 	"admin_report_list_reportkey":   ut.GetMessage("admin_report_list_reportkey"),
@@ -209,6 +211,21 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 	case "create_result", "env_list":
 		return evt
 
+	case "locales":
+		switch evt.Name {
+		case LocalesEventUndo:
+			admEvt.Trigger = evt.Trigger
+			admEvt.Name = AdminEventLocalesUndo
+		case LocalesEventSave:
+			admEvt.Trigger = evt.Trigger
+			admEvt.Name = AdminEventLocalesSave
+		case LocalesEventError:
+			admEvt.Trigger = evt.Trigger
+			admEvt.Name = AdminEventLocalesError
+		default:
+			return evt
+		}
+
 	case "report_list":
 		if evt.Name == mc.TableEventCurrentPage {
 			adm.SetProperty("data", bc.MergeIM(adm.Data, bc.IM{"report_list_current_page": evt.Value}))
@@ -233,10 +250,6 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 		if admEvt.Value == "client" && adm.ClientURL != "" {
 			admEvt.Header = bc.MergeSM(admEvt.Header,
 				bc.SM{bc.HeaderRedirect: adm.ClientURL})
-		}
-		if admEvt.Value == "locales" && adm.LocalesURL != "" {
-			admEvt.Header = bc.MergeSM(admEvt.Header,
-				bc.SM{bc.HeaderRedirect: adm.LocalesURL})
 		}
 
 	case "view_menu":
@@ -375,10 +388,10 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 		"view_menu": func() bc.ClientComponent {
 			return ccMenu(
 				[]mc.MenuBarItem{
-					{Value: "password", Label: adm.msg("admin_view_password"), Icon: "Key"},
-					{Value: "report", Label: adm.msg("admin_view_report"), Icon: "ChartBar"},
-					{Value: "configuration", Label: adm.msg("admin_view_configuration"), Icon: "Cog"},
-					{Value: "logout", Label: adm.msg("admin_view_logout"), Icon: "Exit"},
+					{Value: "password", Label: adm.msg("admin_password"), Icon: "Key"},
+					{Value: "report", Label: adm.msg("admin_report"), Icon: "ChartBar"},
+					{Value: "configuration", Label: adm.msg("admin_configuration"), Icon: "Cog"},
+					{Value: "logout", Label: adm.msg("admin_logout"), Icon: "Exit"},
 				},
 				bc.ToString(adm.GetProperty("view"), ""), "border-top")
 		},
@@ -542,6 +555,27 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 			rows := bc.ToIMA(adm.Data["env_list"], []bc.IM{})
 			return ccTbl("envkey", rows, fields, 0)
 		},
+		"locales": func() bc.ClientComponent {
+			locales := adm.Data["locales"].(bc.IM)
+			return &Locales{
+				BaseComponent: bc.BaseComponent{
+					Id: adm.Id + "_" + name, Name: name,
+					EventURL:     adm.EventURL,
+					OnResponse:   adm.response,
+					RequestValue: adm.RequestValue,
+					RequestMap:   adm.RequestMap,
+					Data: bc.IM{
+						"deflang":    locales["deflang"],
+						"locales":    locales["locale"],
+						"tag_keys":   locales["tag_key"],
+						"tag_values": locales["tag_values"],
+						"locfile":    locales["locfile"],
+					},
+				},
+				Locales: locales["locales"].([]fm.SelectOption),
+				TagKeys: locales["tag_keys"].([]fm.SelectOption),
+			}
+		},
 	}
 	cc := ccMap[name]()
 	res, err = cc.Render()
@@ -620,6 +654,9 @@ func (adm *Admin) Render() (res string, err error) {
 	</div>
 	{{ end }}
 	</div>
+	{{ end }}
+	{{ if eq .Module "locales" }}
+	{{ adminComponent "locales" }}
 	{{ end }}
 	{{ if eq .Module "login" }}
 	{{ if eq tokenLogin false }}

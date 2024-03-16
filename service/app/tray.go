@@ -28,7 +28,7 @@ func (st *systemTray) onReady() {
 	systray.SetTemplateIcon(icon.Data, icon.Data)
 	systray.SetTitle("Nervatura")
 	systray.SetTooltip("Nervatura " + ut.ToString(st.app.config["version"], ""))
-	mnuConfig := systray.AddMenuItem(ut.GetMessage("view_configuration"), ut.GetMessage("view_configuration"))
+	mnuConfig := systray.AddMenuItem(ut.GetMessage("admin_configuration_values"), ut.GetMessage("admin_configuration_values"))
 	mnuAdmin := systray.AddMenuItem(ut.GetMessage("task_admin"), ut.GetMessage("task_admin"))
 	if st.httpDisabled {
 		mnuConfig.Disable()

@@ -500,7 +500,6 @@ func Test_httpServer_fileServer(t *testing.T) {
 		mux        *chi.Mux
 		service    srv.HTTPService
 		admin      srv.AdminService
-		locales    srv.LocalesService
 		result     string
 		server     *http.Server
 		tlsEnabled bool
@@ -547,7 +546,6 @@ func Test_httpServer_fileServer(t *testing.T) {
 				mux:        tt.fields.mux,
 				service:    tt.fields.service,
 				admin:      tt.fields.admin,
-				locales:    tt.fields.locales,
 				result:     tt.fields.result,
 				server:     tt.fields.server,
 				tlsEnabled: tt.fields.tlsEnabled,

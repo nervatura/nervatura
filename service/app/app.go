@@ -370,7 +370,7 @@ func (app *App) startServer() error {
 	if trayIcon {
 		traySrv.Run(app, interrupt, ctx, httpDisabled, onExit)
 	} else {
-		app.infoLog.Println(ut.GetMessage("view_configuration") + ": " + configURL)
+		app.infoLog.Println(ut.GetMessage("admin_configuration_values") + ": " + configURL)
 		select {
 		case <-interrupt:
 			break

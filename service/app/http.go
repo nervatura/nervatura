@@ -31,7 +31,6 @@ type httpServer struct {
 	mux        *chi.Mux
 	service    srv.HTTPService
 	admin      srv.AdminService
-	locales    srv.LocalesService
 	result     string
 	server     *http.Server
 	tlsEnabled bool
@@ -56,11 +55,15 @@ func (s *httpServer) StartService() error {
 	s.tokenLogin = s.service.TokenLogin
 
 	s.admin = srv.AdminService{
-		Config:        s.app.config,
-		GetNervaStore: s.app.GetNervaStore,
-		GetParam:      chi.URLParam,
-		GetTokenKeys:  s.app.GetTokenKeys,
-		GetTaskSecKey: s.app.GetTaskSecKey,
+		Config:          s.app.config,
+		GetNervaStore:   s.app.GetNervaStore,
+		GetParam:        chi.URLParam,
+		GetTokenKeys:    s.app.GetTokenKeys,
+		GetTaskSecKey:   s.app.GetTaskSecKey,
+		ReadFile:        os.ReadFile,
+		ConvertFromByte: ut.ConvertFromByte,
+		CreateFile:      os.Create,
+		ConvertToWriter: ut.ConvertToWriter,
 		Session: nt.SessionService{
 			Config:          s.app.config,
 			Conn:            &db.SQLDriver{Config: s.app.config},
@@ -72,14 +75,6 @@ func (s *httpServer) StartService() error {
 			ConvertFromByte: ut.ConvertFromByte,
 		},
 	}
-
-	s.locales = srv.LocalesService{
-		ClientMsg:  ut.ClientMsg,
-		ConfigFile: ut.ToString(s.app.config["NT_CLIENT_CONFIG"], ""),
-		Version:    ut.ToString(s.app.config["version"], ""),
-		GetParam:   chi.URLParam,
-	}
-	s.locales.LoadLocales()
 
 	s.setPublicKeys()
 	s.setMiddleware()
@@ -238,19 +233,6 @@ func (s *httpServer) setRoutes() {
 		r.Get("/", s.admin.Home)
 		r.Post("/event", s.admin.AppEvent)
 		r.Get("/task/{taskName}/{secKey}", s.admin.Task)
-	})
-	s.mux.Route("/locales", func(r chi.Router) {
-		r.Get("/", s.locales.Render)
-		r.Route("/{lang}", func(r chi.Router) {
-			r.Get("/", s.locales.Render)
-			r.Get("/{tag}", s.locales.Render)
-		})
-		r.Post("/theme", s.locales.SetTheme)
-		r.Post("/filter", s.locales.SetFilter)
-		r.Post("/update", s.locales.UpdateRow)
-		r.Post("/undo", s.locales.UndoAll)
-		r.Post("/create", s.locales.CreateFile)
-		r.Post("/add", s.locales.AddLang)
 	})
 	s.mux.Route("/api", func(r chi.Router) {
 		r.Post("/database", s.service.DatabaseCreate)
