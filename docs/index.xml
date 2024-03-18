@@ -2,296 +2,296 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>About on Nervatura</title>
-    <link>/nervatura/</link>
+    <link>https://nervatura.github.io/nervatura/</link>
     <description>Recent content in About on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <atom:link href="/nervatura/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://nervatura.github.io/nervatura/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CLI AND CGO API</title>
-      <link>/nervatura/docs/service/cli/</link>
+      <link>https://nervatura.github.io/nervatura/docs/service/cli/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/service/cli/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/service/cli/</guid>
       <description>CLI API # Full command line API. Program usage:&#xA;docker exec -i nervatura /nervatura -h Windows (PowerShell):&#xA;&amp;amp; &amp;#34;C:\Program Files\Nervatura\nervatura.exe&amp;#34; -h Linux Snap:&#xA;/snap/nervatura/current/nervatura -h NPM:&#xA;./node_modules/nervatura/bin/nervatura -h Example:&#xA;docker exec -i nervatura /nervatura \ -c UserLogin -o &amp;#34;{\&amp;#34;username\&amp;#34;:\&amp;#34;admin\&amp;#34;,\&amp;#34;database\&amp;#34;:\&amp;#34;demo\&amp;#34;}&amp;#34; Golang docs:&#xA;CGO API # The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. It can be called from C, Python, Ruby, Node, Java, Lua, Dart, C#.</description>
     </item>
     <item>
       <title>Create a new database</title>
-      <link>/nervatura/docs/start/database/</link>
+      <link>https://nervatura.github.io/nervatura/docs/start/database/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/start/database/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/start/database/</guid>
       <description>Configure your API-KEY and database connection in your environment variables: NT_API_KEY and NT_ALIAS_[ALIASNAME] Connection string form: adapter://user:password@host/database or adapter://user:password@host?database=database&#xA;Supported database adapters: sqlite3, postgres, mysql, mssql&#xA;For examples:&#xA;NT_ALIAS_DEMO=sqlite3://data/database/demo.db NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura Create a new database:&#xA;./nervatura -c DatabaseCreate -k [YOUR_API_KEY] \ -o &amp;#34;{\&amp;#34;database\&amp;#34;:\&amp;#34;[your_lowercase_alias_name]\&amp;#34;,\&amp;#34;demo\&amp;#34;:false}&amp;#34; You can use the ADMIN GUI Database section:&#xA;API-KEY: YOUR_API_KEY&#xA;Alias name: your_lowercase_alias_name&#xA;Demo database: false&#xA;The SQLite databases are created automatically. Other types of databases must be created manually before.</description>
     </item>
     <item>
       <title>Customer</title>
-      <link>/nervatura/docs/client/resources/customer/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/customer/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/customer/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/customer/</guid>
       <description>Overview # Nervatura handles all the partners, suppliers and customers of the company consistantly, at one place.&#xA;Input fields # Customer No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = custnumber) data series.&#xA;Customer Name # Full name of the customer.&#xA;Customer Type # company, private, other&#xA;Taxnumber, Account No., Tax-free # Main general data.</description>
     </item>
     <item>
       <title>Default settings</title>
-      <link>/nervatura/docs/client/settings/setting/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/setting/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/setting/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/setting/</guid>
       <description>Overview # The database settings are not necessarily related to Nervatura Touch program. Could affect the server&amp;rsquo;s settings, the method of data storage or even operation of other programs!&#xA;For example, the default values set here will be used by the Nervatura HTTP API functions as well.&#xA;Some important settings # business year # Set the current fiscal year. This as used by DOCUMENT NUMBERING as the value of the Year</description>
     </item>
     <item>
       <title>Document</title>
-      <link>/nervatura/docs/client/document/document/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/document/document/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/document/document/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/document/document/</guid>
       <description>Overview # Nervatura was made for being able to store all data generated during ones working process. OFFER type forms are used to record the given (CUSTOMER) and also the received (SUPPLIER) offers/quotations. If any of the offers finally results in business deal, then its data are easy to use for further transaction types.&#xA;The ORDER, WORKSHEET and RENTAL transaction types play a significant role in the workflow. They gather all those goods/services that we either committed to deliver or we expect to be delivered by our suppliers.</description>
     </item>
     <item>
       <title>Program settings</title>
-      <link>/nervatura/docs/client/program/psetting/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/psetting/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/psetting/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/psetting/</guid>
       <description>Input fields # Data count/page # Number of rows displayed on a page in queries. Default value: 10&#xA;History size # The number of last changes in the Bookmark tab. Default value: 5. The program marks the items of the last save or deletion. When a line is selected, it will also be loaded, if possible.&#xA;Export data separator # The file’s field (column) separator when the data is exported.</description>
     </item>
     <item>
       <title>Shipping</title>
-      <link>/nervatura/docs/client/stock/shipping/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/stock/shipping/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/stock/shipping/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/stock/shipping/</guid>
       <description>Overview # In Nervatura database a product can be moved into or moved out from a warehouse only based on a certain document or action. This ensures that the origin of all the delivered products can be reliably traced if necessary.&#xA;Warehouse traffic can be generated from items of ORDER, WORKSHEET and RENTAL type documents, as well as from corrective items of INVENTORY and TRANSFER documents. The SHIPPING is the stock control form of ORDER, WORKSHEET and RENTAL documents.</description>
     </item>
     <item>
       <title>Customization</title>
-      <link>/nervatura/docs/start/customization/</link>
+      <link>https://nervatura.github.io/nervatura/docs/start/customization/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/start/customization/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/start/customization/</guid>
       <description>Customize the appearance # Nervatura Client language translation Create a file based on the client_config.json file. All subtitles can be found here. The recommended and easy way to create and edit the language file is the ADMIN GUI Translation Helper Tool. For more help on setting up and using the language file, see the Examples section Set NT_CLIENT_CONFIG environment variable value to YOUR_CLIENT_CONFIG_FILE.JSON Docker container: mount local folder to the container Nervatura Client custom remote functions: MENU SHORTCUTS</description>
     </item>
     <item>
       <title>Data browser</title>
-      <link>/nervatura/docs/client/program/browser/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/browser/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/browser/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/browser/</guid>
       <description>Operations # VIEWS # Switching between data views.&#xA;COLUMNS # Show or hide columns.&#xA;FILTER # Add filters to the query:&#xA;Unlimited number of conditions can be added, which are related to each other with an &amp;ldquo;and&amp;rdquo; restrictive condition Condition set for a certain data view is kept till the program is exited. For filtering all columns in the data view can be selected, regardless of whether they are currently displayed or not All data types can be filtered with EQUAL, IS NULL, NOT EQUAL relations, as well as the numbers and dates with EQUAL TO OR GREATER and EQUAL TO OR LESS conditions.</description>
     </item>
     <item>
       <title>Delivery</title>
-      <link>/nervatura/docs/client/stock/delivery/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/stock/delivery/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/stock/delivery/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/stock/delivery/</guid>
       <description>Overview # In Nervatura the warehouse stock moves for the ORDER, WORKSHEET and RENTAL transaction types are handled by DELIVERY. Based on the direction this can have three types: SHIPPING IN, SHIPPING OUT and TRANSFER.&#xA;Input fields # Document No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = delivery_in or delivery_out or delivery_transfer) data series.</description>
     </item>
     <item>
       <title>Document Item</title>
-      <link>/nervatura/docs/client/document/item/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/document/item/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/document/item/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/document/item/</guid>
       <description>Input fields # Product No. # One of the items of the PRODUCT. Field filling is compulsory. Its value can be defined using a search field but can be set with the help of a barcode as well.&#xA;When the product has been chosen the program will display on the form all available (already defined) data about the product: Description, Unit, Tax Rate, Discount, Unit Price.&#xA;The price of the product is searched by taking into account the following criteria: (product and transaction side), current day, currency, volume, customer.</description>
     </item>
     <item>
       <title>Document numbering</title>
-      <link>/nervatura/docs/client/settings/numberdef/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/numberdef/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/numberdef/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/numberdef/</guid>
       <description>Overview # Format settings of unique identifiers of documents (eg. orders, invoices, cash receipts, delivery notes etc.) and other resources (eg. customers, products, employees, etc.). If a new item is created the identifiers will follow the rule which was set here.&#xA;Input fields # Code # A unique identifier for a certain set of rules. Its value can not be changed.&#xA;Prefix # The text prefix of the identifier. It can be any length, but usage of special characters, spaces in the text is not recommended.</description>
     </item>
     <item>
       <title>HTTP OPEN API</title>
-      <link>/nervatura/docs/service/api/</link>
+      <link>https://nervatura.github.io/nervatura/docs/service/api/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/service/api/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/service/api/</guid>
       <description> </description>
     </item>
     <item>
       <title>Object Model</title>
-      <link>/nervatura/docs/model/</link>
+      <link>https://nervatura.github.io/nervatura/docs/model/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/model/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/model/</guid>
       <description>Overview # It is a general open-data model, which can store all information generated in the operation of a usual corporation. This covers all manufacturer, retailer and service companies (or governmental units) where the business operation can be defined and described within a GOODS (items, services to be sold, provided) – CLIENT (the recipient of goods) - RESOURCE (assets used to produce the goods) triangle.&#xA;The open-data principle regulates the access to our business data.</description>
     </item>
     <item>
       <title>Product</title>
-      <link>/nervatura/docs/client/resources/product/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/product/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/product/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/product/</guid>
       <description>Input fields # Product No. # The unique ID of the product. Can be set when a new product is added, before the first save. Later cannot be modified any more.&#xA;If the field is left empty, the program automatically will generate one when the save happens. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = partnumber) data series.&#xA;Product Name # The full name of the product or short description.</description>
     </item>
     <item>
       <title>Access rights</title>
-      <link>/nervatura/docs/client/settings/usergroup/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/usergroup/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/usergroup/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/usergroup/</guid>
       <description>Overview # The user access rights in Nervatura are managed through user groups. The access rules are assigned to these groups and are applicable to group members. When the rule is changed, the new settings will automatically be valid for all members.&#xA;Each user must be a member of an access rights group, but can only be part of one of these groups. This can be set in EMPLOYEE usergroup field.</description>
     </item>
     <item>
       <title>Employee</title>
-      <link>/nervatura/docs/client/resources/employee/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/employee/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/employee/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/employee/</guid>
       <description>Input fields # Employee No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = empnumber) data series.&#xA;Firtsname, Surname # The name of the employee.&#xA;Status, Phone, Mobile, Email # Contact data.&#xA;Start Date, End Date # Employment start and end date.&#xA;Department # An item of the department group should be set in this field.</description>
     </item>
     <item>
       <title>Examples</title>
-      <link>/nervatura/docs/start/examples/</link>
+      <link>https://nervatura.github.io/nervatura/docs/start/examples/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/start/examples/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/start/examples/</guid>
       <description>Quick Start # Node.js # Recommended API:&#xA;gRPC CGO (Linux and Windows x64, without Admin and Client GUI) git clone https://github.com/nervatura/nervatura-examples.git cd nervatura-examples/node npm install npm start Open your browser to http://localhost:8080&#xA;You do not need a Nervatura backend server to use the CLI and CGO. Automatic server start can be turned off with NT_EXAMPLE_SERVICE_DISABLED=true (see in the nervatura-examples/node/.env file).&#xA;Python # Recommended API:&#xA;gRPC CGO (Linux and Windows x64, without Admin and Client GUI) Download the Python examples</description>
     </item>
     <item>
       <title>gRPC API</title>
-      <link>/nervatura/docs/service/grpc/</link>
+      <link>https://nervatura.github.io/nervatura/docs/service/grpc/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/service/grpc/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/service/grpc/</guid>
       <description>Overview # Nervatura gRPC specification. For more examples, see Nervatura example application&#xA;Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn&amp;rsquo;t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report.</description>
     </item>
     <item>
       <title>Installation</title>
-      <link>/nervatura/docs/install/</link>
+      <link>https://nervatura.github.io/nervatura/docs/install/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/install/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/install/</guid>
       <description>Installation # Docker image # docker pull nervatura/nervatura:latest Example:&#xA;docker run -i -t --rm --name nervatura --env-file YOUR_ENV_FILE_PATH/.env -p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:&#xA;systemctl status -l snap.nervatura.nervatura.service Default snap data and http log path: /var/snap/nervatura/common&#xA;The nervatura service starts by default. More examples:&#xA;sudo systemctl stop or start or restart snap.nervatura.nervatura.service sudo systemctl disable or enable snap.</description>
     </item>
     <item>
       <title>Inventory control</title>
-      <link>/nervatura/docs/client/stock/inventory/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/stock/inventory/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/stock/inventory/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/stock/inventory/</guid>
       <description>Overview # Warehouse stock is influenced by a wide variety of things: merchandise arrives from our supplier, we do deliver to a customer, new products are prepared from raw material, or goods are simply delivered from one warehouse to another. The program offers a user interface for all cases listed before.&#xA;However in daily operation, even more situations can happen, which effect the actual quantity: scrapping, shortage of goods (ie.</description>
     </item>
     <item>
       <title>Payment</title>
-      <link>/nervatura/docs/client/document/payment/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/document/payment/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/document/payment/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/document/payment/</guid>
       <description>Input fields # Document No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = bank_transfer/cash) data series.&#xA;Reference No. # Other reference or bank statement number. Optional, its value can be freely defined.&#xA;Creation # Date of creation. Automatic value, cannot be changed.&#xA;Closed # Technical closing of the document.&#xA;If set, document data become read only.</description>
     </item>
     <item>
       <title>Report</title>
-      <link>/nervatura/docs/client/program/report/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/report/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/report/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/report/</guid>
       <description>Overview # Reports related to a specific transaction (eg. order, invoice, etc.) or resource (eg. customer, product, etc.) can be found at the form including the data themselves. In this section other, general-purpose reports are available, which are processing the data for a given period or related to a specific work flow.&#xA;Reports can be installed into databases. The kind of reports to be seen in this menu will depend on the database you are logged in and the reports available there.</description>
     </item>
     <item>
       <title>Menu shortcuts</title>
-      <link>/nervatura/docs/client/settings/uimenu/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/uimenu/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/uimenu/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/uimenu/</guid>
       <description>Overview # It is possible to create shortcuts in the program, which can call remote functions. Input parameters can also be set and the user will be informed about the result by a message box.&#xA;Input fields # Menukey # The shortcut ID. A unique value, can not be repeated.&#xA;Description # The name set here will be displayed on the user interface.&#xA;Method # When set GET, the program opens your default browser and hands over to it the given Address and also the input parameters if there were any.</description>
     </item>
     <item>
       <title>Report notes</title>
-      <link>/nervatura/docs/client/program/notes/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/notes/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/notes/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/notes/</guid>
       <description>Overview # Documents created with REPORT TEMPLATE (offer, order, invoice, etc.) can be supplemented with additional information.&#xA;You may specify a longer text, which may vary for each transaction and can provide the customers with additional information on the delivery terms, warranty rights, opening hours, etc. Simple formatting can also be made to the texts: bold, italic fonts, lists, indents. From text predefined text templates can be created. The text templates are stored as document types in the program.</description>
     </item>
     <item>
       <title>Screenshots</title>
-      <link>/nervatura/docs/start/screenshot/</link>
+      <link>https://nervatura.github.io/nervatura/docs/start/screenshot/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/start/screenshot/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/start/screenshot/</guid>
       <description>Screenshots # Service Admin GUI # Create a database&#xA;Report install&#xA;Client translation helper tool - add a new language&#xA;Change language translation (dark theme)&#xA;Web Client # Quick Search&#xA;Advanced search&#xA;Customer data&#xA;Order (dark theme)&#xA;PDF output&#xA;PDF Invoice example&#xA;PDF and CSV report examples (dark theme)&#xA;Report Template Editor&#xA;Default Settings&#xA;Edit Metadata setting (dark theme)</description>
     </item>
     <item>
       <title>Tool</title>
-      <link>/nervatura/docs/client/resources/tool/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/tool/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/tool/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/tool/</guid>
       <description>Overview # The stock inventory list shows the availability of goods by quantities. However in some cases it might be needed to have the possibility to follow up a certain item individually. In this case it gets a unique identifier, specific data can be connected to it through additional data, events can be assigned, and also its move can be tracked.&#xA;A typical example could be the management of company cars, which requires recording of many different data types and events.</description>
     </item>
     <item>
       <title>Tool movement</title>
-      <link>/nervatura/docs/client/stock/waybill/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/stock/waybill/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/stock/waybill/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/stock/waybill/</guid>
       <description>Overview # The movement of products in warehouses can be tracked with INVENTORY and DELIVERY document types. To track the moves of tools the WAYBILL type should be used. It helps to connect the tool for a certain period to a customer, employee or document (orders, worksheets, rental, invoice).&#xA;The forms to provide easy handling are designed to enable connecting multiple tools to a customer, employee or document with one data sheet.</description>
     </item>
     <item>
       <title>Metadata</title>
-      <link>/nervatura/docs/client/settings/metadata/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/metadata/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/metadata/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/metadata/</guid>
       <description>Overview # With Nervatura it is easy to store a variety of data. If some new information is needed for which there have not been any data collected yet, the case is simple. Just create a new attribute, specify its type and connect it to the data you would like to use it with.&#xA;Input fields # Data GUID # Automatically generated internal ID. A unique value, can not be changed.</description>
     </item>
     <item>
       <title>Production</title>
-      <link>/nervatura/docs/client/stock/production/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/stock/production/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/stock/production/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/stock/production/</guid>
       <description>Overview # PRODUCTION helps to produce new products from raw material stored in the warehouses. The inventory level will decrease by the amount of raw materials used, and the manufactured new product quantity will appear in stock. The data sheet tracks the material usage. If other costs, resource usage (eg. used energy, time spent, tool used etc.) is needed to be tracked, then through additional data it can be linked to WORKSHEET forms as well.</description>
     </item>
     <item>
       <title>Project</title>
-      <link>/nervatura/docs/client/resources/project/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/project/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/project/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/project/</guid>
       <description>Overview # OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT documents could be linked to projects by setting so their Project No. field.&#xA;Input fields # Project No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = pronumber) data series.&#xA;Description # The name of the project.&#xA;Start Date, End Date # Optional. The project&amp;rsquo;s start and end dates.</description>
     </item>
     <item>
       <title>Report queue</title>
-      <link>/nervatura/docs/client/program/printqueue/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/printqueue/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/printqueue/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/printqueue/</guid>
       <description>Overview # Items to the list can be added by REPORT command of the forms specified in Report Type, then by the Report Queue command.&#xA;Input fields # DATA FILTER # Report Type: CUSTOMER, PRODUCT, EMPLOYEE, TOOL, PROJECT, ORDER, OFFER, INVOICE, RECEIPT, RENTAL, WORKSHEET, DELIVERY, CORRECTION, TOOL MOVEMENT, PRODUCTION, FORMULA, BANK STATEMENT, PETTY CASH Start Date / End Date: The date when added to the REPORT QUEUE list Document No.</description>
     </item>
     <item>
       <title>Video</title>
-      <link>/nervatura/docs/start/video/</link>
+      <link>https://nervatura.github.io/nervatura/docs/start/video/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/start/video/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/start/video/</guid>
       <description> Video # Explainer videos # Short episodes # </description>
     </item>
     <item>
       <title>Data export</title>
-      <link>/nervatura/docs/client/program/export/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/export/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/export/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/export/</guid>
       <description>Input fields # Output Template # The REPORT EDITOR enables you to modify or create new versions.&#xA;Orientation/Size/Copy # Settings of format and number of copies&#xA;Operations # PRINT PDF # The result of the report opens in print preview. Size and Orientation settings are also considered when displayed. Browser compatibility: Google Chrome, Safari, Firefox, Edge, Opera.&#xA;REPORT QUEUE # The report is sent to the REPORT QUEUE list.</description>
     </item>
     <item>
       <title>Event</title>
-      <link>/nervatura/docs/client/resources/event/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/event/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/event/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/event/</guid>
       <description>Input fields # Event No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = calnumber) data series.&#xA;Subject # Brief description of the event.&#xA;Place # Optional. The venue of the event.&#xA;Group # Optional. In this field a valid element of eventgroup group should be given.&#xA;Start Date, End Date # Optional.</description>
     </item>
     <item>
       <title>Formula</title>
-      <link>/nervatura/docs/client/stock/formula/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/stock/formula/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/stock/formula/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/stock/formula/</guid>
       <description>Overview # Production of a product in some cases might require significant amount of raw materials. It can occur as well that the same product can also be produced from different components. In these cases, the work with PRODUCTION forms can be sped up by FORMULA data sheets prepared for the products to be manufactured.&#xA;These can also be imagined as production recipes for a product. All the raw material requirements of the product can be specified for a given quantity.</description>
     </item>
     <item>
       <title>Groups</title>
-      <link>/nervatura/docs/client/settings/groups/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/groups/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/groups/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/groups/</guid>
       <description>Overview # Special pre-created groups, which can be extended with additional elements.&#xA;Input fields # Group Type # department: OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT eventgroup: EVENT paidtype: OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT toolgroup: TOOL rategroup: INTEREST AND RATE Group # The item&amp;rsquo;s name. Must be unique at group level!</description>
     </item>
     <item>
       <title>Place</title>
-      <link>/nervatura/docs/client/settings/place/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/place/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/place/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/place/</guid>
       <description>Overview # In Nervatura those logistic points where our own or someone else’s assets and resources are recorded or physically stored, belong to a special group called PLACE. These are the warehouses, but also the petty cash, where cash is stored and even a virtual place like the bank account belong to this group.&#xA;Input fields # Place No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = planumber) data series.</description>
     </item>
     <item>
       <title>Report Editor</title>
-      <link>/nervatura/docs/client/program/editor/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/editor/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/editor/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/editor/</guid>
       <description>Overview # The REPORT EDITOR is used to modify some of the Nervatura Report definitions and descriptions of REPORT TEMPLATE. It defines the layout of the reports: where and how the data should appear. It will not support changes regarding what data should be displayed from the database, but will give the possibility to modify the report with additional information (eg. logo files, texts, language translations). Therefore this tool is not suitable for creating completely new reports, however the existing reports can freely be modified and by using copies additional versions can be created.</description>
     </item>
     <item>
       <title>Currency</title>
-      <link>/nervatura/docs/client/settings/currency/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/currency/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/currency/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/currency/</guid>
       <description>Input fields # Currency # The ISO 4217 code of the currency.&#xA;Description # The name of the currency.&#xA;Digit # The number of decimal places used for recording and rounding by the program. Default value: 2&#xA;Default Rate # You can specify an exchange rate vs. the default currency, which will be used by the reports.&#xA;Round # Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1.</description>
     </item>
     <item>
       <title>Interest and Rate</title>
-      <link>/nervatura/docs/client/settings/rate/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/settings/rate/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/settings/rate/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/settings/rate/</guid>
       <description>Input fields # Type # rate, buy(interest), average(interest), sell(interest)&#xA;Date # Starting date.&#xA;Currency # The elements of CURRENCY. Its default value is taken from DEFAULT SETTINGS default currency.&#xA;Value # rate or interest value&#xA;Group # A valid item of the group should be defined.&#xA;Account No. # In the search field a bank account can be chosen from bank type items of PLACE.</description>
     </item>
   </channel>

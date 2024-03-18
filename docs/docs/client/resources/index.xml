@@ -2,51 +2,51 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Resources on Nervatura</title>
-    <link>/nervatura/docs/client/resources/</link>
+    <link>https://nervatura.github.io/nervatura/docs/client/resources/</link>
     <description>Recent content in Resources on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <atom:link href="/nervatura/docs/client/resources/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://nervatura.github.io/nervatura/docs/client/resources/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Customer</title>
-      <link>/nervatura/docs/client/resources/customer/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/customer/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/customer/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/customer/</guid>
       <description>Overview # Nervatura handles all the partners, suppliers and customers of the company consistantly, at one place.&#xA;Input fields # Customer No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = custnumber) data series.&#xA;Customer Name # Full name of the customer.&#xA;Customer Type # company, private, other&#xA;Taxnumber, Account No., Tax-free # Main general data.</description>
     </item>
     <item>
       <title>Product</title>
-      <link>/nervatura/docs/client/resources/product/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/product/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/product/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/product/</guid>
       <description>Input fields # Product No. # The unique ID of the product. Can be set when a new product is added, before the first save. Later cannot be modified any more.&#xA;If the field is left empty, the program automatically will generate one when the save happens. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = partnumber) data series.&#xA;Product Name # The full name of the product or short description.</description>
     </item>
     <item>
       <title>Employee</title>
-      <link>/nervatura/docs/client/resources/employee/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/employee/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/employee/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/employee/</guid>
       <description>Input fields # Employee No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = empnumber) data series.&#xA;Firtsname, Surname # The name of the employee.&#xA;Status, Phone, Mobile, Email # Contact data.&#xA;Start Date, End Date # Employment start and end date.&#xA;Department # An item of the department group should be set in this field.</description>
     </item>
     <item>
       <title>Tool</title>
-      <link>/nervatura/docs/client/resources/tool/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/tool/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/tool/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/tool/</guid>
       <description>Overview # The stock inventory list shows the availability of goods by quantities. However in some cases it might be needed to have the possibility to follow up a certain item individually. In this case it gets a unique identifier, specific data can be connected to it through additional data, events can be assigned, and also its move can be tracked.&#xA;A typical example could be the management of company cars, which requires recording of many different data types and events.</description>
     </item>
     <item>
       <title>Project</title>
-      <link>/nervatura/docs/client/resources/project/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/project/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/project/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/project/</guid>
       <description>Overview # OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT documents could be linked to projects by setting so their Project No. field.&#xA;Input fields # Project No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = pronumber) data series.&#xA;Description # The name of the project.&#xA;Start Date, End Date # Optional. The project&amp;rsquo;s start and end dates.</description>
     </item>
     <item>
       <title>Event</title>
-      <link>/nervatura/docs/client/resources/event/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/resources/event/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/resources/event/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/resources/event/</guid>
       <description>Input fields # Event No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = calnumber) data series.&#xA;Subject # Brief description of the event.&#xA;Place # Optional. The venue of the event.&#xA;Group # Optional. In this field a valid element of eventgroup group should be given.&#xA;Start Date, End Date # Optional.</description>
     </item>
   </channel>

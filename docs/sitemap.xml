@@ -2,108 +2,108 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>/nervatura/docs/service/cli/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/service/cli/</loc>
   </url><url>
-    <loc>/nervatura/docs/start/database/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/start/database/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/resources/customer/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/resources/customer/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/setting/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/setting/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/document/document/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/document/document/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/document/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/document/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/psetting/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/psetting/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/stock/shipping/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/stock/shipping/</loc>
   </url><url>
-    <loc>/nervatura/docs/start/customization/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/start/customization/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/browser/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/browser/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/stock/delivery/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/stock/delivery/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/document/item/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/document/item/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/numberdef/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/numberdef/</loc>
   </url><url>
-    <loc>/nervatura/docs/service/api/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/service/api/</loc>
   </url><url>
-    <loc>/nervatura/docs/model/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/model/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/resources/product/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/resources/product/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/stock/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/stock/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/usergroup/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/usergroup/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/resources/employee/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/resources/employee/</loc>
   </url><url>
-    <loc>/nervatura/docs/start/examples/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/start/examples/</loc>
   </url><url>
-    <loc>/nervatura/docs/service/grpc/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/service/grpc/</loc>
   </url><url>
-    <loc>/nervatura/docs/install/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/install/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/stock/inventory/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/stock/inventory/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/document/payment/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/document/payment/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/report/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/report/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/resources/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/resources/</loc>
   </url><url>
-    <loc>/nervatura/docs/start/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/start/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/uimenu/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/uimenu/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/notes/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/notes/</loc>
   </url><url>
-    <loc>/nervatura/docs/start/screenshot/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/start/screenshot/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/resources/tool/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/resources/tool/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/stock/waybill/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/stock/waybill/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/metadata/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/metadata/</loc>
   </url><url>
-    <loc>/nervatura/docs/service/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/service/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/stock/production/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/stock/production/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/resources/project/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/resources/project/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/printqueue/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/printqueue/</loc>
   </url><url>
-    <loc>/nervatura/docs/start/video/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/start/video/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/export/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/export/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/resources/event/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/resources/event/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/stock/formula/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/stock/formula/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/groups/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/groups/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/place/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/place/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/program/editor/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/program/editor/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/currency/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/currency/</loc>
   </url><url>
-    <loc>/nervatura/docs/client/settings/rate/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/client/settings/rate/</loc>
   </url><url>
-    <loc>/nervatura/</loc>
+    <loc>https://nervatura.github.io/nervatura/</loc>
   </url><url>
-    <loc>/nervatura/docs/</loc>
+    <loc>https://nervatura.github.io/nervatura/docs/</loc>
   </url><url>
-    <loc>/nervatura/about/</loc>
+    <loc>https://nervatura.github.io/nervatura/about/</loc>
   </url>
 </urlset>

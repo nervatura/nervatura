@@ -2,58 +2,58 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Program on Nervatura</title>
-    <link>/nervatura/docs/client/program/</link>
+    <link>https://nervatura.github.io/nervatura/docs/client/program/</link>
     <description>Recent content in Program on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <atom:link href="/nervatura/docs/client/program/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://nervatura.github.io/nervatura/docs/client/program/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Program settings</title>
-      <link>/nervatura/docs/client/program/psetting/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/psetting/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/psetting/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/psetting/</guid>
       <description>Input fields # Data count/page # Number of rows displayed on a page in queries. Default value: 10&#xA;History size # The number of last changes in the Bookmark tab. Default value: 5. The program marks the items of the last save or deletion. When a line is selected, it will also be loaded, if possible.&#xA;Export data separator # The file’s field (column) separator when the data is exported.</description>
     </item>
     <item>
       <title>Data browser</title>
-      <link>/nervatura/docs/client/program/browser/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/browser/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/browser/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/browser/</guid>
       <description>Operations # VIEWS # Switching between data views.&#xA;COLUMNS # Show or hide columns.&#xA;FILTER # Add filters to the query:&#xA;Unlimited number of conditions can be added, which are related to each other with an &amp;ldquo;and&amp;rdquo; restrictive condition Condition set for a certain data view is kept till the program is exited. For filtering all columns in the data view can be selected, regardless of whether they are currently displayed or not All data types can be filtered with EQUAL, IS NULL, NOT EQUAL relations, as well as the numbers and dates with EQUAL TO OR GREATER and EQUAL TO OR LESS conditions.</description>
     </item>
     <item>
       <title>Report</title>
-      <link>/nervatura/docs/client/program/report/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/report/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/report/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/report/</guid>
       <description>Overview # Reports related to a specific transaction (eg. order, invoice, etc.) or resource (eg. customer, product, etc.) can be found at the form including the data themselves. In this section other, general-purpose reports are available, which are processing the data for a given period or related to a specific work flow.&#xA;Reports can be installed into databases. The kind of reports to be seen in this menu will depend on the database you are logged in and the reports available there.</description>
     </item>
     <item>
       <title>Report notes</title>
-      <link>/nervatura/docs/client/program/notes/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/notes/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/notes/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/notes/</guid>
       <description>Overview # Documents created with REPORT TEMPLATE (offer, order, invoice, etc.) can be supplemented with additional information.&#xA;You may specify a longer text, which may vary for each transaction and can provide the customers with additional information on the delivery terms, warranty rights, opening hours, etc. Simple formatting can also be made to the texts: bold, italic fonts, lists, indents. From text predefined text templates can be created. The text templates are stored as document types in the program.</description>
     </item>
     <item>
       <title>Report queue</title>
-      <link>/nervatura/docs/client/program/printqueue/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/printqueue/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/printqueue/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/printqueue/</guid>
       <description>Overview # Items to the list can be added by REPORT command of the forms specified in Report Type, then by the Report Queue command.&#xA;Input fields # DATA FILTER # Report Type: CUSTOMER, PRODUCT, EMPLOYEE, TOOL, PROJECT, ORDER, OFFER, INVOICE, RECEIPT, RENTAL, WORKSHEET, DELIVERY, CORRECTION, TOOL MOVEMENT, PRODUCTION, FORMULA, BANK STATEMENT, PETTY CASH Start Date / End Date: The date when added to the REPORT QUEUE list Document No.</description>
     </item>
     <item>
       <title>Data export</title>
-      <link>/nervatura/docs/client/program/export/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/export/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/export/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/export/</guid>
       <description>Input fields # Output Template # The REPORT EDITOR enables you to modify or create new versions.&#xA;Orientation/Size/Copy # Settings of format and number of copies&#xA;Operations # PRINT PDF # The result of the report opens in print preview. Size and Orientation settings are also considered when displayed. Browser compatibility: Google Chrome, Safari, Firefox, Edge, Opera.&#xA;REPORT QUEUE # The report is sent to the REPORT QUEUE list.</description>
     </item>
     <item>
       <title>Report Editor</title>
-      <link>/nervatura/docs/client/program/editor/</link>
+      <link>https://nervatura.github.io/nervatura/docs/client/program/editor/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/nervatura/docs/client/program/editor/</guid>
+      <guid>https://nervatura.github.io/nervatura/docs/client/program/editor/</guid>
       <description>Overview # The REPORT EDITOR is used to modify some of the Nervatura Report definitions and descriptions of REPORT TEMPLATE. It defines the layout of the reports: where and how the data should appear. It will not support changes regarding what data should be displayed from the database, but will give the possibility to modify the report with additional information (eg. logo files, texts, language translations). Therefore this tool is not suitable for creating completely new reports, however the existing reports can freely be modified and by using copies additional versions can be created.</description>
     </item>
   </channel>
