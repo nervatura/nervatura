@@ -7,6 +7,7 @@ import (
 	fm "github.com/nervatura/component/component/atom"
 	bc "github.com/nervatura/component/component/base"
 	mc "github.com/nervatura/component/component/molecule"
+	tp "github.com/nervatura/component/component/template"
 )
 
 func TestAdmin_Render(t *testing.T) {
@@ -531,7 +532,7 @@ func TestAdmin_response(t *testing.T) {
 			args: args{
 				evt: bc.ResponseEvent{
 					TriggerName: "locales",
-					Name:        LocalesEventUndo,
+					Name:        tp.LocalesEventUndo,
 				},
 			},
 		},

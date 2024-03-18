@@ -22,7 +22,7 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
-	modernc.org/libc v1.45.0 // indirect
+	modernc.org/libc v1.45.2 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.7.2 // indirect
 	modernc.org/sqlite v1.29.5 // indirect
@@ -42,7 +42,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/tevino/abool v1.2.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240314234333-6e1732d8331c // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237 // indirect
 )
 
 require (
@@ -51,5 +51,5 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.22.0
 	github.com/mocktools/go-smtp-mock/v2 v2.3.0
-	github.com/nervatura/component v0.0.0-20240120213923-fb88a0f5ebac
+	github.com/nervatura/component v0.0.0-20240317205336-cd28fdbd59b7
 )

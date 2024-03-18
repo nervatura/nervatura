@@ -1,3 +1,6 @@
+## 5.2.7
+- service: Admin GUI component update
+
 ## 5.2.6
 - client: lit (3.1.2) upgrade
 - service: Admin GUI translation helper tool (server-side Go components)

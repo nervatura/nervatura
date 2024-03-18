@@ -209,9 +209,11 @@ func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent)
 			return errMsg(err.Error(), fm.ToastTypeError)
 		}
 		evt.Trigger.SetProperty("data", bc.MergeIM(data,
-			nt.IM{"locfile": locales["locfile"], "locales": locales["locale"]}))
+			nt.IM{"locfile": locales["locfile"], "locales": locales["locale"], "lang_key": "", "lang_name": ""},
+		))
 		evt.Trigger.SetProperty("locales", locales["locales"])
 		evt.Trigger.SetProperty("filter_value", "")
+		evt.Trigger.SetProperty("add_item", false)
 		evt.Trigger.SetProperty("dirty", false)
 
 	case cp.AdminEventLocalesSave:
@@ -251,7 +253,7 @@ func (adm *AdminService) loadLocalesData(clientFile, configFile string) (locales
 	locfile := nt.IM{
 		"locales": make(nt.IM),
 	}
-	langs := nt.SL{"client"}
+	langs := nt.SL{"default"}
 
 	var jsonMessages, _ = ut.Static.ReadFile(clientFile)
 	if err := adm.ConvertFromByte(jsonMessages, &deflang); err != nil {
@@ -275,7 +277,7 @@ func (adm *AdminService) loadLocalesData(clientFile, configFile string) (locales
 				locfile["locales"] = locales
 				for langKey := range locales {
 					langs = append(langs, langKey)
-					sort.Strings(langs)
+					//sort.Strings(langs)
 				}
 			}
 		}

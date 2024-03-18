@@ -7,6 +7,7 @@ import (
 	fm "github.com/nervatura/component/component/atom"
 	bc "github.com/nervatura/component/component/base"
 	mc "github.com/nervatura/component/component/molecule"
+	tp "github.com/nervatura/component/component/template"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
@@ -58,6 +59,18 @@ var adminDefaultLabel bc.SM = bc.SM{
 	"admin_report_list_label":       ut.GetMessage("admin_report_list_label"),
 	"admin_env_list_key":            ut.GetMessage("admin_env_list_key"),
 	"admin_env_list_value":          ut.GetMessage("admin_env_list_value"),
+	"locales_title":                 ut.GetMessage("admin_locales_title"),
+	"locales_missing":               ut.GetMessage("locales_missing"),
+	"locales_update":                ut.GetMessage("locales_update"),
+	"locales_undo":                  ut.GetMessage("locales_undo"),
+	"locales_add":                   ut.GetMessage("locales_add"),
+	"locales_filter":                ut.GetMessage("locales_filter"),
+	"locales_lcode":                 ut.GetMessage("locales_lcode"),
+	"locales_lname":                 ut.GetMessage("locales_lname"),
+	"locales_existing_lang":         ut.GetMessage("error_existing_lang"),
+	"locales_tag":                   ut.GetMessage("locales_tag"),
+	"locales_key":                   ut.GetMessage("locales_key"),
+	"locales_value":                 ut.GetMessage("locales_value"),
 }
 
 var adminIcoMap map[string][]string = map[string][]string{
@@ -213,13 +226,13 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 
 	case "locales":
 		switch evt.Name {
-		case LocalesEventUndo:
+		case tp.LocalesEventUndo:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesUndo
-		case LocalesEventSave:
+		case tp.LocalesEventSave:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesSave
-		case LocalesEventError:
+		case tp.LocalesEventError:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesError
 		default:
@@ -557,7 +570,7 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 		},
 		"locales": func() bc.ClientComponent {
 			locales := adm.Data["locales"].(bc.IM)
-			return &Locales{
+			return &tp.Locale{
 				BaseComponent: bc.BaseComponent{
 					Id: adm.Id + "_" + name, Name: name,
 					EventURL:     adm.EventURL,
@@ -574,6 +587,7 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 				},
 				Locales: locales["locales"].([]fm.SelectOption),
 				TagKeys: locales["tag_keys"].([]fm.SelectOption),
+				Labels:  adminDefaultLabel,
 			}
 		},
 	}
