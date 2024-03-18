@@ -2,51 +2,51 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Stock Control on Nervatura</title>
-    <link>https://nervatura.github.io/nervatura/docs/client/stock/</link>
+    <link>/docs/client/stock/</link>
     <description>Recent content in Stock Control on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <atom:link href="https://nervatura.github.io/nervatura/docs/client/stock/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/docs/client/stock/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Shipping</title>
-      <link>https://nervatura.github.io/nervatura/docs/client/stock/shipping/</link>
+      <link>/docs/client/stock/shipping/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://nervatura.github.io/nervatura/docs/client/stock/shipping/</guid>
+      <guid>/docs/client/stock/shipping/</guid>
       <description>Overview # In Nervatura database a product can be moved into or moved out from a warehouse only based on a certain document or action. This ensures that the origin of all the delivered products can be reliably traced if necessary.&#xA;Warehouse traffic can be generated from items of ORDER, WORKSHEET and RENTAL type documents, as well as from corrective items of INVENTORY and TRANSFER documents. The SHIPPING is the stock control form of ORDER, WORKSHEET and RENTAL documents.</description>
     </item>
     <item>
       <title>Delivery</title>
-      <link>https://nervatura.github.io/nervatura/docs/client/stock/delivery/</link>
+      <link>/docs/client/stock/delivery/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://nervatura.github.io/nervatura/docs/client/stock/delivery/</guid>
+      <guid>/docs/client/stock/delivery/</guid>
       <description>Overview # In Nervatura the warehouse stock moves for the ORDER, WORKSHEET and RENTAL transaction types are handled by DELIVERY. Based on the direction this can have three types: SHIPPING IN, SHIPPING OUT and TRANSFER.&#xA;Input fields # Document No. # Unique ID, generated at the first data save. The format and value of the next data in row is taken from the DOCUMENT NUMBERING (code = delivery_in or delivery_out or delivery_transfer) data series.</description>
     </item>
     <item>
       <title>Inventory control</title>
-      <link>https://nervatura.github.io/nervatura/docs/client/stock/inventory/</link>
+      <link>/docs/client/stock/inventory/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://nervatura.github.io/nervatura/docs/client/stock/inventory/</guid>
+      <guid>/docs/client/stock/inventory/</guid>
       <description>Overview # Warehouse stock is influenced by a wide variety of things: merchandise arrives from our supplier, we do deliver to a customer, new products are prepared from raw material, or goods are simply delivered from one warehouse to another. The program offers a user interface for all cases listed before.&#xA;However in daily operation, even more situations can happen, which effect the actual quantity: scrapping, shortage of goods (ie.</description>
     </item>
     <item>
       <title>Tool movement</title>
-      <link>https://nervatura.github.io/nervatura/docs/client/stock/waybill/</link>
+      <link>/docs/client/stock/waybill/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://nervatura.github.io/nervatura/docs/client/stock/waybill/</guid>
+      <guid>/docs/client/stock/waybill/</guid>
       <description>Overview # The movement of products in warehouses can be tracked with INVENTORY and DELIVERY document types. To track the moves of tools the WAYBILL type should be used. It helps to connect the tool for a certain period to a customer, employee or document (orders, worksheets, rental, invoice).&#xA;The forms to provide easy handling are designed to enable connecting multiple tools to a customer, employee or document with one data sheet.</description>
     </item>
     <item>
       <title>Production</title>
-      <link>https://nervatura.github.io/nervatura/docs/client/stock/production/</link>
+      <link>/docs/client/stock/production/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://nervatura.github.io/nervatura/docs/client/stock/production/</guid>
+      <guid>/docs/client/stock/production/</guid>
       <description>Overview # PRODUCTION helps to produce new products from raw material stored in the warehouses. The inventory level will decrease by the amount of raw materials used, and the manufactured new product quantity will appear in stock. The data sheet tracks the material usage. If other costs, resource usage (eg. used energy, time spent, tool used etc.) is needed to be tracked, then through additional data it can be linked to WORKSHEET forms as well.</description>
     </item>
     <item>
       <title>Formula</title>
-      <link>https://nervatura.github.io/nervatura/docs/client/stock/formula/</link>
+      <link>/docs/client/stock/formula/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://nervatura.github.io/nervatura/docs/client/stock/formula/</guid>
+      <guid>/docs/client/stock/formula/</guid>
       <description>Overview # Production of a product in some cases might require significant amount of raw materials. It can occur as well that the same product can also be produced from different components. In these cases, the work with PRODUCTION forms can be sped up by FORMULA data sheets prepared for the products to be manufactured.&#xA;These can also be imagined as production recipes for a product. All the raw material requirements of the product can be specified for a given quantity.</description>
     </item>
   </channel>

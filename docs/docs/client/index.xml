@@ -2,10 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nervatura Client on Nervatura</title>
-    <link>https://nervatura.github.io/nervatura/docs/client/</link>
+    <link>/docs/client/</link>
     <description>Recent content in Nervatura Client on Nervatura</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <atom:link href="https://nervatura.github.io/nervatura/docs/client/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/docs/client/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
