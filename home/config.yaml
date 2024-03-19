@@ -1,6 +1,7 @@
 canonifyURLs: true
 title: Nervatura
 relativeURLs: true
+absURL: https://nervatura.github.io/nervatura/
 
 #module:
 #  imports:
