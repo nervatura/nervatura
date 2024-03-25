@@ -12,7 +12,7 @@
 <script>
 window.onload = function() {
   const ui = SwaggerUIBundle({
-    url: {{  $original | absURL }},
+    url: {{  $original | relURL }},
     dom_id: '#swagger-ui'
   });
 

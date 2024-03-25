@@ -18,7 +18,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 
-	ct "github.com/nervatura/component/component"
+	ct "github.com/nervatura/component/pkg/static"
 	db "github.com/nervatura/nervatura/service/pkg/database"
 	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 	srv "github.com/nervatura/nervatura/service/pkg/service"
@@ -223,9 +223,9 @@ func (s *httpServer) homeRoute(w http.ResponseWriter, r *http.Request) {
 func (s *httpServer) setRoutes() {
 	// Register static dirs.
 	var publicFS, _ = fs.Sub(ut.Public, "static")
-	var adminFS, _ = fs.Sub(ct.Style, "style")
+	var adminFS, _ = fs.Sub(ct.Static, ".")
 	s.fileServer("/", http.FS(publicFS))
-	s.fileServer("/style", http.FS(adminFS))
+	s.fileServer("/static", http.FS(adminFS))
 
 	s.mux.Get("/", s.homeRoute)
 

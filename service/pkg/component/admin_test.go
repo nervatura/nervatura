@@ -4,15 +4,13 @@ import (
 	"reflect"
 	"testing"
 
-	fm "github.com/nervatura/component/component/atom"
-	bc "github.com/nervatura/component/component/base"
-	mc "github.com/nervatura/component/component/molecule"
-	tp "github.com/nervatura/component/component/template"
+	ct "github.com/nervatura/component/pkg/component"
+	cu "github.com/nervatura/component/pkg/util"
 )
 
 func TestAdmin_Render(t *testing.T) {
 	type fields struct {
-		BaseComponent bc.BaseComponent
+		BaseComponent ct.BaseComponent
 		Version       string
 		Theme         string
 		Module        string
@@ -21,7 +19,7 @@ func TestAdmin_Render(t *testing.T) {
 		HelpURL       string
 		ClientURL     string
 		LocalesURL    string
-		Labels        bc.SM
+		Labels        cu.SM
 		TokenLogin    func(database, token string) bool
 	}
 	tests := []struct {
@@ -32,13 +30,13 @@ func TestAdmin_Render(t *testing.T) {
 		{
 			name: "Default",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					Id:       bc.GetComponentID(),
+				BaseComponent: ct.BaseComponent{
+					Id:       cu.GetComponentID(),
 					EventURL: "/event",
-					OnResponse: func(evt bc.ResponseEvent) (re bc.ResponseEvent) {
+					OnResponse: func(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 						return re
 					},
-					Data: bc.IM{
+					Data: cu.IM{
 						"alias": "demo",
 					},
 				},
@@ -52,13 +50,13 @@ func TestAdmin_Render(t *testing.T) {
 		{
 			name: "Database result",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					Id:       bc.GetComponentID(),
+				BaseComponent: ct.BaseComponent{
+					Id:       cu.GetComponentID(),
 					EventURL: "/event",
-					Data: bc.IM{
+					Data: cu.IM{
 						"api_key": "DEMO_API_KEY",
 						"alias":   "demo",
-						"create_result": []bc.IM{
+						"create_result": []cu.IM{
 							{"database": "demo", "message": "Start process", "stamp": "2023-12-22 17:03:26", "state": "create"},
 							{"message": "The existing table is dropped...", "stamp": "2023-12-22 17:03:26", "state": "err"},
 							{"message": "Creating the tables...", "stamp": "2023-12-22 17:03:26", "state": "create"},
@@ -72,10 +70,10 @@ func TestAdmin_Render(t *testing.T) {
 		{
 			name: "Login",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					Id:       bc.GetComponentID(),
+				BaseComponent: ct.BaseComponent{
+					Id:       cu.GetComponentID(),
 					EventURL: "/event",
-					Data: bc.IM{
+					Data: cu.IM{
 						"username": "admin",
 						"database": "demo",
 					},
@@ -87,10 +85,10 @@ func TestAdmin_Render(t *testing.T) {
 		{
 			name: "Password change",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					Id:       bc.GetComponentID(),
+				BaseComponent: ct.BaseComponent{
+					Id:       cu.GetComponentID(),
 					EventURL: "/event",
-					Data: bc.IM{
+					Data: cu.IM{
 						"username": "admin",
 						"database": "demo",
 					},
@@ -105,13 +103,13 @@ func TestAdmin_Render(t *testing.T) {
 		{
 			name: "Report",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					Id:       bc.GetComponentID(),
+				BaseComponent: ct.BaseComponent{
+					Id:       cu.GetComponentID(),
 					EventURL: "/event",
-					Data: bc.IM{
+					Data: cu.IM{
 						"username": "admin",
 						"database": "demo",
-						"report_list": []bc.IM{
+						"report_list": []cu.IM{
 							{"description": "Accounts Payable and Receivable.", "filename": "csv_custpos_en.json", "installed": true,
 								"label": "", "repname": "Payments Due List - CSV output", "reportkey": "csv_custpos_en", "reptype": "csv"},
 							{"description": "Recoverable and payable VAT summary grouped by currency.", "filename": "csv_vat_en.json",
@@ -130,13 +128,13 @@ func TestAdmin_Render(t *testing.T) {
 		{
 			name: "Configuration",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					Id:       bc.GetComponentID(),
+				BaseComponent: ct.BaseComponent{
+					Id:       cu.GetComponentID(),
 					EventURL: "/event",
-					Data: bc.IM{
+					Data: cu.IM{
 						"username": "admin",
 						"database": "demo",
-						"env_list": []bc.IM{
+						"env_list": []cu.IM{
 							{"envkey": "NT_ALIAS_DEMO", "envvalue": "sqlite://file:data/demo.db?cache=shared&mode=rwc"},
 							{"envkey": "NT_CLIENT_CONFIG", "envvalue": "data/client_config_loc.json"},
 						},
@@ -152,18 +150,18 @@ func TestAdmin_Render(t *testing.T) {
 		{
 			name: "Locales",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					Id:       bc.GetComponentID(),
+				BaseComponent: ct.BaseComponent{
+					Id:       cu.GetComponentID(),
 					EventURL: "/event",
-					Data: bc.IM{
-						"locales": bc.IM{
+					Data: cu.IM{
+						"locales": cu.IM{
 							"locale":     "de",
 							"tag_key":    "tag",
-							"locfile":    bc.IM{"locales": bc.IM{"de": bc.IM{"tag_key1": "value1"}}},
-							"deflang":    bc.IM{"tag_key1": "value1", "tag_key2": "value2"},
+							"locfile":    cu.IM{"locales": cu.IM{"de": cu.IM{"tag_key1": "value1"}}},
+							"deflang":    cu.IM{"tag_key1": "value1", "tag_key2": "value2"},
 							"tag_values": map[string][]string{"tag": {"tag_key1", "tag_key2"}},
-							"locales":    []fm.SelectOption{},
-							"tag_keys":   []fm.SelectOption{},
+							"locales":    []ct.SelectOption{},
+							"tag_keys":   []ct.SelectOption{},
 						},
 					},
 				},
@@ -198,7 +196,7 @@ func TestAdmin_Render(t *testing.T) {
 
 func TestAdmin_Validation(t *testing.T) {
 	type fields struct {
-		BaseComponent bc.BaseComponent
+		BaseComponent ct.BaseComponent
 		Version       string
 		Theme         string
 		Module        string
@@ -206,7 +204,7 @@ func TestAdmin_Validation(t *testing.T) {
 		Token         string
 		HelpURL       string
 		ClientURL     string
-		Labels        bc.SM
+		Labels        cu.SM
 		TokenLogin    func(darabase, token string) bool
 	}
 	type args struct {
@@ -259,7 +257,7 @@ func TestAdmin_Validation(t *testing.T) {
 
 func TestAdmin_SetProperty(t *testing.T) {
 	type fields struct {
-		BaseComponent bc.BaseComponent
+		BaseComponent ct.BaseComponent
 		Version       string
 		Theme         string
 		Module        string
@@ -267,7 +265,7 @@ func TestAdmin_SetProperty(t *testing.T) {
 		Token         string
 		HelpURL       string
 		ClientURL     string
-		Labels        bc.SM
+		Labels        cu.SM
 		TokenLogin    func(darabase, token string) bool
 	}
 	type args struct {
@@ -320,7 +318,7 @@ func TestAdmin_SetProperty(t *testing.T) {
 
 func TestAdmin_msg(t *testing.T) {
 	type fields struct {
-		BaseComponent bc.BaseComponent
+		BaseComponent ct.BaseComponent
 		Version       string
 		Theme         string
 		Module        string
@@ -328,7 +326,7 @@ func TestAdmin_msg(t *testing.T) {
 		Token         string
 		HelpURL       string
 		ClientURL     string
-		Labels        bc.SM
+		Labels        cu.SM
 		TokenLogin    func(darabase, token string) bool
 	}
 	type args struct {
@@ -371,7 +369,7 @@ func TestAdmin_msg(t *testing.T) {
 
 func TestAdmin_response(t *testing.T) {
 	type fields struct {
-		BaseComponent bc.BaseComponent
+		BaseComponent ct.BaseComponent
 		Version       string
 		Theme         string
 		Module        string
@@ -380,11 +378,11 @@ func TestAdmin_response(t *testing.T) {
 		HelpURL       string
 		ClientURL     string
 		LocalesURL    string
-		Labels        bc.SM
+		Labels        cu.SM
 		TokenLogin    func(darabase, token string) bool
 	}
 	type args struct {
-		evt bc.ResponseEvent
+		evt ct.ResponseEvent
 	}
 	tests := []struct {
 		name   string
@@ -394,7 +392,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "api_key",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "api_key",
 				},
 			},
@@ -402,7 +400,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "create_result",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "create_result",
 				},
 			},
@@ -410,16 +408,16 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "theme",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					OnResponse: func(evt bc.ResponseEvent) (re bc.ResponseEvent) {
+				BaseComponent: ct.BaseComponent{
+					OnResponse: func(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 						evt.Trigger = &Admin{}
 						return evt
 					},
 				},
-				Theme: bc.ThemeDark,
+				Theme: ct.ThemeDark,
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "theme",
 				},
 			},
@@ -430,7 +428,7 @@ func TestAdmin_response(t *testing.T) {
 				HelpURL: "/help",
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "main_menu",
 					Value:       "help",
 				},
@@ -442,7 +440,7 @@ func TestAdmin_response(t *testing.T) {
 				ClientURL: "/client",
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "main_menu",
 					Value:       "client",
 				},
@@ -454,7 +452,7 @@ func TestAdmin_response(t *testing.T) {
 				LocalesURL: "/locales",
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "main_menu",
 					Value:       "locales",
 				},
@@ -463,7 +461,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "view_menu",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "view_menu",
 					Value:       "logout",
 				},
@@ -472,7 +470,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "create",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "create",
 				},
 			},
@@ -480,7 +478,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "login",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "login",
 				},
 			},
@@ -488,9 +486,9 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "report_install",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "report_install",
-					Trigger: &bc.BaseComponent{
+					Trigger: &ct.BaseComponent{
 						Data: make(map[string]interface{}),
 					},
 				},
@@ -499,9 +497,9 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "report_delete",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "report_delete",
-					Trigger: &bc.BaseComponent{
+					Trigger: &ct.BaseComponent{
 						Data: make(map[string]interface{}),
 					},
 				},
@@ -510,10 +508,10 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "report_list",
 			args: args{
-				evt: bc.ResponseEvent{
-					Name:        mc.TableEventCurrentPage,
+				evt: ct.ResponseEvent{
+					Name:        ct.TableEventCurrentPage,
 					TriggerName: "report_list",
-					Trigger: &bc.BaseComponent{
+					Trigger: &ct.BaseComponent{
 						Data: make(map[string]interface{}),
 					},
 				},
@@ -522,7 +520,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "password_change",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "password_change",
 				},
 			},
@@ -530,16 +528,16 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "locales_undo",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "locales",
-					Name:        tp.LocalesEventUndo,
+					Name:        ct.LocalesEventUndo,
 				},
 			},
 		},
 		{
 			name: "locales_save",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "locales",
 					Name:        AdminEventLocalesSave,
 				},
@@ -548,7 +546,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "locales_error",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "locales",
 					Name:        AdminEventLocalesError,
 				},
@@ -557,7 +555,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "locales",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "locales",
 					Name:        "",
 				},
@@ -566,7 +564,7 @@ func TestAdmin_response(t *testing.T) {
 		{
 			name: "missing",
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					TriggerName: "missing",
 				},
 			},
@@ -594,7 +592,7 @@ func TestAdmin_response(t *testing.T) {
 
 func TestAdmin_OnRequest(t *testing.T) {
 	type fields struct {
-		BaseComponent bc.BaseComponent
+		BaseComponent ct.BaseComponent
 		Version       string
 		Theme         string
 		Module        string
@@ -603,11 +601,11 @@ func TestAdmin_OnRequest(t *testing.T) {
 		HelpURL       string
 		ClientURL     string
 		LocalesURL    string
-		Labels        bc.SM
+		Labels        cu.SM
 		TokenLogin    func(database, token string) bool
 	}
 	type args struct {
-		te bc.TriggerEvent
+		te ct.TriggerEvent
 	}
 	tests := []struct {
 		name   string
@@ -617,20 +615,20 @@ func TestAdmin_OnRequest(t *testing.T) {
 		{
 			name: "invalid",
 			args: args{
-				te: bc.TriggerEvent{},
+				te: ct.TriggerEvent{},
 			},
 		},
 		{
 			name: "valid",
 			fields: fields{
-				BaseComponent: bc.BaseComponent{
-					RequestMap: map[string]bc.ClientComponent{
+				BaseComponent: ct.BaseComponent{
+					RequestMap: map[string]ct.ClientComponent{
 						"ID12345": &Admin{},
 					},
 				},
 			},
 			args: args{
-				te: bc.TriggerEvent{
+				te: ct.TriggerEvent{
 					Id: "ID12345",
 				},
 			},

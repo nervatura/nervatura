@@ -12,9 +12,8 @@ import (
 	"strings"
 	"text/template"
 
-	fm "github.com/nervatura/component/component/atom"
-	bc "github.com/nervatura/component/component/base"
-	pg "github.com/nervatura/component/component/page"
+	ct "github.com/nervatura/component/pkg/component"
+	cu "github.com/nervatura/component/pkg/util"
 	cp "github.com/nervatura/nervatura/service/pkg/component"
 	db "github.com/nervatura/nervatura/service/pkg/database"
 	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
@@ -27,8 +26,8 @@ const taskPage = `<!DOCTYPE html>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 		<title>{{ .title }}</title>
-		<link rel="icon" type="image/svg+xml" href="/style/static/favicon.svg">
-		<link rel="stylesheet" href="/style/index.css" />
+		<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+		<link rel="stylesheet" href="/static/css/index.css" />
 		<link rel="stylesheet" href="/css/admin.css" />
 	</head>
 	<body><div class="admin row mobile" theme="dark" style="margin:auto;">
@@ -137,20 +136,20 @@ func (adm *AdminService) userPassword(token, database string, data nt.IM) (err e
 	return err
 }
 
-func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent) {
+func (adm *AdminService) appResponse(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 	var err error
-	errMsg := func(value, toastType string) (re bc.ResponseEvent) {
-		return bc.ResponseEvent{
-			Trigger: &fm.Toast{
+	errMsg := func(value, toastType string) (re ct.ResponseEvent) {
+		return ct.ResponseEvent{
+			Trigger: &ct.Toast{
 				Type:    toastType,
 				Value:   value,
 				Timeout: 0,
 			},
 			TriggerName: evt.TriggerName,
 			Name:        evt.Name,
-			Header: bc.SM{
-				bc.HeaderRetarget: "#toast-msg",
-				bc.HeaderReswap:   "innerHTML",
+			Header: cu.SM{
+				ct.HeaderRetarget: "#toast-msg",
+				ct.HeaderReswap:   "innerHTML",
 			},
 		}
 	}
@@ -159,22 +158,22 @@ func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent)
 		data := evt.Trigger.GetProperty("data").(nt.IM)
 		var result []nt.IM
 		if result, err = adm.createDatabase(data); err != nil {
-			return errMsg(err.Error(), fm.ToastTypeError)
+			return errMsg(err.Error(), ct.ToastTypeError)
 		}
-		evt.Trigger.SetProperty("data", bc.MergeIM(data, nt.IM{"create_result": result}))
+		evt.Trigger.SetProperty("data", cu.MergeIM(data, nt.IM{"create_result": result}))
 		evt.Trigger.SetProperty("token", "")
 
 	case cp.AdminEventLogin:
 		data := evt.Trigger.GetProperty("data").(nt.IM)
 		token, nstore, err := adm.userLogin(data)
 		if err != nil {
-			return errMsg(err.Error(), fm.ToastTypeError)
+			return errMsg(err.Error(), ct.ToastTypeError)
 		}
 		evt.Trigger.SetProperty("token", token)
 		evt.Trigger.SetProperty("view", "password")
-		evt.Trigger.SetProperty("data", bc.MergeIM(data, nt.IM{"env_list": adm.envList()}))
+		evt.Trigger.SetProperty("data", cu.MergeIM(data, nt.IM{"env_list": adm.envList()}))
 		reportList, _ := (&nt.API{NStore: nstore}).ReportList(data)
-		evt.Trigger.SetProperty("data", bc.MergeIM(data, nt.IM{"report_list": reportList}))
+		evt.Trigger.SetProperty("data", cu.MergeIM(data, nt.IM{"report_list": reportList}))
 
 	case cp.AdminEventReportInstall, cp.AdminEventReportDelete:
 		data := evt.Trigger.GetProperty("data").(nt.IM)
@@ -188,27 +187,27 @@ func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent)
 			nstore, err = adm.reportInstall(token, database, reportkey)
 		}
 		if err != nil {
-			return errMsg(err.Error(), fm.ToastTypeError)
+			return errMsg(err.Error(), ct.ToastTypeError)
 		}
 		reportList, _ := (&nt.API{NStore: nstore}).ReportList(data)
-		evt.Trigger.SetProperty("data", bc.MergeIM(data, nt.IM{"report_list": reportList}))
+		evt.Trigger.SetProperty("data", cu.MergeIM(data, nt.IM{"report_list": reportList}))
 
 	case cp.AdminEventPassword:
 		data := evt.Trigger.GetProperty("data").(nt.IM)
 		database := ut.ToString(data["database"], "")
 		token := ut.ToString(evt.Trigger.GetProperty("token"), "")
 		if err = adm.userPassword(token, database, data); err != nil {
-			return errMsg(err.Error(), fm.ToastTypeError)
+			return errMsg(err.Error(), ct.ToastTypeError)
 		}
-		return errMsg(ut.GetMessage("password_change"), fm.ToastTypeSuccess)
+		return errMsg(ut.GetMessage("password_change"), ct.ToastTypeSuccess)
 
 	case cp.AdminEventLocalesUndo:
 		data := evt.Trigger.GetProperty("data").(nt.IM)
 		var locales nt.IM
 		if locales, err = adm.loadLocalesData(ut.ClientMsg, ut.ToString(adm.Config["NT_CLIENT_CONFIG"], "")); err != nil {
-			return errMsg(err.Error(), fm.ToastTypeError)
+			return errMsg(err.Error(), ct.ToastTypeError)
 		}
-		evt.Trigger.SetProperty("data", bc.MergeIM(data,
+		evt.Trigger.SetProperty("data", cu.MergeIM(data,
 			nt.IM{"locfile": locales["locfile"], "locales": locales["locale"], "lang_key": "", "lang_name": ""},
 		))
 		evt.Trigger.SetProperty("locales", locales["locales"])
@@ -221,16 +220,16 @@ func (adm *AdminService) appResponse(evt bc.ResponseEvent) (re bc.ResponseEvent)
 		configFile := ut.ToString(adm.Config["NT_CLIENT_CONFIG"], "")
 		var fw *os.File
 		if fw, err = adm.CreateFile(configFile); err != nil {
-			return errMsg(err.Error(), fm.ToastTypeError)
+			return errMsg(err.Error(), ct.ToastTypeError)
 		}
 		defer fw.Close()
 		if err = adm.ConvertToWriter(fw, data["locfile"]); err != nil {
-			return errMsg(err.Error(), fm.ToastTypeError)
+			return errMsg(err.Error(), ct.ToastTypeError)
 		}
 		evt.Trigger.SetProperty("dirty", false)
 
 	case cp.AdminEventLocalesError:
-		return errMsg(ut.ToString(evt.Value, ""), fm.ToastTypeError)
+		return errMsg(ut.ToString(evt.Value, ""), ct.ToastTypeError)
 	}
 	return evt
 }
@@ -284,18 +283,18 @@ func (adm *AdminService) loadLocalesData(clientFile, configFile string) (locales
 	}
 	locales = nt.IM{
 		"deflang":    deflang,
-		"locales":    []fm.SelectOption{},
-		"tag_keys":   []fm.SelectOption{},
+		"locales":    []ct.SelectOption{},
+		"tag_keys":   []ct.SelectOption{},
 		"locale":     langs[0],
 		"tag_key":    tagKeys[0],
 		"tag_values": tagValues,
 		"locfile":    locfile,
 	}
 	for _, value := range langs {
-		locales["locales"] = append(locales["locales"].([]fm.SelectOption), fm.SelectOption{Value: value, Text: value})
+		locales["locales"] = append(locales["locales"].([]ct.SelectOption), ct.SelectOption{Value: value, Text: value})
 	}
 	for _, value := range tagKeys {
-		locales["tag_keys"] = append(locales["tag_keys"].([]fm.SelectOption), fm.SelectOption{Value: value, Text: value})
+		locales["tag_keys"] = append(locales["tag_keys"].([]ct.SelectOption), ct.SelectOption{Value: value, Text: value})
 	}
 	return locales, err
 }
@@ -303,13 +302,13 @@ func (adm *AdminService) loadLocalesData(clientFile, configFile string) (locales
 func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 	sessionID := ut.RandString(30)
 	admin := &cp.Admin{
-		BaseComponent: bc.BaseComponent{
-			Id:           bc.GetComponentID(),
+		BaseComponent: ct.BaseComponent{
+			Id:           cu.GetComponentID(),
 			EventURL:     "/admin/event",
 			OnResponse:   adm.appResponse,
-			RequestValue: map[string]bc.IM{},
-			RequestMap:   map[string]bc.ClientComponent{},
-			Data: bc.IM{
+			RequestValue: map[string]cu.IM{},
+			RequestMap:   map[string]ct.ClientComponent{},
+			Data: cu.IM{
 				"alias": "demo",
 				"demo":  "true",
 			},
@@ -321,16 +320,16 @@ func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 		Version:    ut.ToString(adm.Config["version"], ""),
 		TokenLogin: adm.tokenLogin,
 	}
-	ccApp := &pg.Application{
+	ccApp := &ct.Application{
 		Title:  ut.GetMessage("admin_title"),
-		Header: bc.SM{"X-Session-Token": sessionID},
+		Header: cu.SM{"X-Session-Token": sessionID},
 		Script: []string{
-			//"/js/htmx.min.js",
-			//"/js/remove-me.js",
+			//"https://unpkg.com/htmx.org@latest",
+			//"https://unpkg.com/htmx.org/dist/ext/remove-me.js",
 		},
-		HeadLink: []pg.HeadLink{
-			{Rel: "icon", Href: "/style/static/favicon.svg", Type: "image/svg+xml"},
-			{Rel: "stylesheet", Href: "/style/index.css"},
+		HeadLink: []ct.HeadLink{
+			{Rel: "icon", Href: "/static/favicon.svg", Type: "image/svg+xml"},
+			{Rel: "stylesheet", Href: "/static/css/index.css"},
 			{Rel: "stylesheet", Href: "/css/admin.css"},
 		},
 		MainComponent: admin,
@@ -357,14 +356,14 @@ func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 func (adm *AdminService) AppEvent(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sessionID := r.Header.Get("X-Session-Token")
-	te := bc.TriggerEvent{
+	te := ct.TriggerEvent{
 		Id:     r.Header.Get("HX-Trigger"),
 		Name:   r.Header.Get("HX-Trigger-Name"),
 		Target: r.Header.Get("HX-Target"),
 		Values: r.Form,
 	}
 	var err error
-	var evt bc.ResponseEvent
+	var evt ct.ResponseEvent
 	var admin *cp.Admin
 	var memAdmin interface{}
 	memAdmin, err = adm.Session.LoadSession(sessionID, &admin)
@@ -390,8 +389,8 @@ func (adm *AdminService) AppEvent(w http.ResponseWriter, r *http.Request) {
 		res, err = evt.Trigger.Render()
 	}
 	if err != nil {
-		res, _ = (&fm.Toast{
-			Type: fm.ToastTypeError, Value: err.Error(),
+		res, _ = (&ct.Toast{
+			Type: ct.ToastTypeError, Value: err.Error(),
 		}).Render()
 	}
 	adm.Session.SaveSession(sessionID, admin)

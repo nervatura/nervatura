@@ -13,7 +13,7 @@ import (
 	"reflect"
 	"testing"
 
-	bc "github.com/nervatura/component/component/base"
+	ct "github.com/nervatura/component/pkg/component"
 	cp "github.com/nervatura/nervatura/service/pkg/component"
 	nt "github.com/nervatura/nervatura/service/pkg/nervatura"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
@@ -33,7 +33,7 @@ func TestAdminService_appResponse(t *testing.T) {
 		Session         nt.SessionService
 	}
 	type args struct {
-		evt bc.ResponseEvent
+		evt ct.ResponseEvent
 	}
 	tests := []struct {
 		name   string
@@ -63,9 +63,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"locfile": nt.IM{"locales": nt.IM{}},
 							},
@@ -96,9 +96,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"locfile": nt.IM{"locales": nt.IM{}},
 							},
@@ -132,9 +132,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"locfile": nt.IM{"locales": nt.IM{}},
 							},
@@ -162,9 +162,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"locfile": nt.IM{"locales": nt.IM{}},
 							},
@@ -186,8 +186,8 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
-					Trigger: &bc.BaseComponent{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.BaseComponent{
 						Data: nt.IM{
 							"api_key": testData.apiKey,
 							"alias":   "test",
@@ -209,8 +209,8 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
-					Trigger: &bc.BaseComponent{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.BaseComponent{
 						Data: nt.IM{
 							"api_key": testData.apiKey,
 							"alias":   "",
@@ -234,8 +234,8 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
-					Trigger: &bc.BaseComponent{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.BaseComponent{
 						Data: nt.IM{
 							"username": "admin",
 							"database": testData.testDatabase,
@@ -258,8 +258,8 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
-					Trigger: &bc.BaseComponent{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.BaseComponent{
 						Data: nt.IM{
 							"username": "user",
 							"database": testData.testDatabase,
@@ -286,9 +286,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"database": testData.testDatabase,
 							},
@@ -317,9 +317,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"database": testData.testDatabase,
 							},
@@ -348,9 +348,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"username": "demo",
 								"password": "123",
@@ -380,9 +380,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"username": "name",
 								"password": "123",
@@ -420,9 +420,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"username": "demo",
 								"password": "123",
@@ -458,9 +458,9 @@ func TestAdminService_appResponse(t *testing.T) {
 				},
 			},
 			args: args{
-				evt: bc.ResponseEvent{
+				evt: ct.ResponseEvent{
 					Trigger: &cp.Admin{
-						BaseComponent: bc.BaseComponent{
+						BaseComponent: ct.BaseComponent{
 							Data: nt.IM{
 								"username": "demo",
 								"password": "123",

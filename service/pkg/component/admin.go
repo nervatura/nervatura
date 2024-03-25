@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	fm "github.com/nervatura/component/component/atom"
-	bc "github.com/nervatura/component/component/base"
-	mc "github.com/nervatura/component/component/molecule"
-	tp "github.com/nervatura/component/component/template"
+	ct "github.com/nervatura/component/pkg/component"
+	cu "github.com/nervatura/component/pkg/util"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
 )
 
@@ -25,7 +23,7 @@ const (
 	AdminEventLocalesError  = "error"
 )
 
-var adminDefaultLabel bc.SM = bc.SM{
+var adminDefaultLabel cu.SM = cu.SM{
 	"admin_title":                   ut.GetMessage("admin_title"),
 	"admin_login":                   ut.GetMessage("admin_login"),
 	"admin_database":                ut.GetMessage("admin_database"),
@@ -74,11 +72,11 @@ var adminDefaultLabel bc.SM = bc.SM{
 }
 
 var adminIcoMap map[string][]string = map[string][]string{
-	bc.ThemeDark: {bc.ThemeLight, "Sun"}, bc.ThemeLight: {bc.ThemeDark, "Moon"},
+	ct.ThemeDark: {ct.ThemeLight, "Sun"}, ct.ThemeLight: {ct.ThemeDark, "Moon"},
 }
 
 type Admin struct {
-	bc.BaseComponent
+	ct.BaseComponent
 	Version    string                            `json:"version"`
 	Theme      string                            `json:"theme"`
 	Module     string                            `json:"module"`
@@ -87,14 +85,14 @@ type Admin struct {
 	HelpURL    string                            `json:"help_url"`
 	ClientURL  string                            `json:"client_url"`
 	LocalesURL string                            `json:"locales_url"`
-	Labels     bc.SM                             `json:"labels"`
+	Labels     cu.SM                             `json:"labels"`
 	TokenLogin func(database, token string) bool `json:"-"` // Token validation
 }
 
-func (adm *Admin) Properties() bc.IM {
-	return bc.MergeIM(
+func (adm *Admin) Properties() cu.IM {
+	return cu.MergeIM(
 		adm.BaseComponent.Properties(),
-		bc.IM{
+		cu.IM{
 			"version":     adm.Version,
 			"theme":       adm.Theme,
 			"module":      adm.Module,
@@ -114,12 +112,12 @@ func (adm *Admin) GetProperty(propName string) interface{} {
 func (adm *Admin) Validation(propName string, propValue interface{}) interface{} {
 	pm := map[string]func() interface{}{
 		"theme": func() interface{} {
-			return adm.CheckEnumValue(bc.ToString(propValue, ""), bc.ThemeLight, bc.Theme)
+			return adm.CheckEnumValue(cu.ToString(propValue, ""), ct.ThemeLight, ct.Theme)
 		},
 		"labels": func() interface{} {
-			value := bc.SetSMValue(adm.Labels, "", "")
-			if smap, valid := propValue.(bc.SM); valid {
-				value = bc.MergeSM(value, smap)
+			value := cu.SetSMValue(adm.Labels, "", "")
+			if smap, valid := propValue.(cu.SM); valid {
+				value = cu.MergeSM(value, smap)
 			}
 			if len(value) == 0 {
 				value = adminDefaultLabel
@@ -128,7 +126,7 @@ func (adm *Admin) Validation(propName string, propValue interface{}) interface{}
 		},
 		"target": func() interface{} {
 			adm.SetProperty("id", adm.Id)
-			value := bc.ToString(propValue, adm.Id)
+			value := cu.ToString(propValue, adm.Id)
 			if value != "this" && !strings.HasPrefix(value, "#") {
 				value = "#" + value
 			}
@@ -147,7 +145,7 @@ func (adm *Admin) Validation(propName string, propValue interface{}) interface{}
 func (adm *Admin) SetProperty(propName string, propValue interface{}) interface{} {
 	pm := map[string]func() interface{}{
 		"version": func() interface{} {
-			adm.Version = bc.ToString(propValue, "1.0.0")
+			adm.Version = cu.ToString(propValue, "1.0.0")
 			return adm.Version
 		},
 		"theme": func() interface{} {
@@ -155,31 +153,31 @@ func (adm *Admin) SetProperty(propName string, propValue interface{}) interface{
 			return adm.Theme
 		},
 		"module": func() interface{} {
-			adm.Module = bc.ToString(propValue, "database")
+			adm.Module = cu.ToString(propValue, "database")
 			return adm.Module
 		},
 		"view": func() interface{} {
-			adm.View = bc.ToString(propValue, "password")
+			adm.View = cu.ToString(propValue, "password")
 			return adm.View
 		},
 		"token": func() interface{} {
-			adm.Token = bc.ToString(propValue, "")
+			adm.Token = cu.ToString(propValue, "")
 			return adm.Token
 		},
 		"help_url": func() interface{} {
-			adm.HelpURL = bc.ToString(propValue, "")
+			adm.HelpURL = cu.ToString(propValue, "")
 			return adm.HelpURL
 		},
 		"client_url": func() interface{} {
-			adm.ClientURL = bc.ToString(propValue, "")
+			adm.ClientURL = cu.ToString(propValue, "")
 			return adm.ClientURL
 		},
 		"locales_url": func() interface{} {
-			adm.LocalesURL = bc.ToString(propValue, "")
+			adm.LocalesURL = cu.ToString(propValue, "")
 			return adm.LocalesURL
 		},
 		"labels": func() interface{} {
-			adm.Labels = adm.Validation(propName, propValue).(bc.SM)
+			adm.Labels = adm.Validation(propName, propValue).(cu.SM)
 			return adm.Labels
 		},
 		"target": func() interface{} {
@@ -196,27 +194,27 @@ func (adm *Admin) SetProperty(propName string, propValue interface{}) interface{
 	return propValue
 }
 
-func (adm *Admin) OnRequest(te bc.TriggerEvent) (re bc.ResponseEvent) {
+func (adm *Admin) OnRequest(te ct.TriggerEvent) (re ct.ResponseEvent) {
 	if cc, found := adm.RequestMap[te.Id]; found {
 		return cc.OnRequest(te)
 	}
-	re = bc.ResponseEvent{
-		Trigger: &fm.Toast{
-			Type:  fm.ToastTypeError,
+	re = ct.ResponseEvent{
+		Trigger: &ct.Toast{
+			Type:  ct.ToastTypeError,
 			Value: fmt.Sprintf("Invalid parameter: %s", te.Id),
 		},
 		TriggerName: te.Name,
 		Name:        te.Name,
-		Header: bc.SM{
-			bc.HeaderRetarget: "#toast-msg",
-			bc.HeaderReswap:   "innerHTML",
+		Header: cu.SM{
+			ct.HeaderRetarget: "#toast-msg",
+			ct.HeaderReswap:   "innerHTML",
 		},
 	}
 	return re
 }
 
-func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
-	admEvt := bc.ResponseEvent{
+func (adm *Admin) response(evt ct.ResponseEvent) (re ct.ResponseEvent) {
+	admEvt := ct.ResponseEvent{
 		Trigger: adm, TriggerName: adm.Name, Value: evt.Value,
 	}
 	switch evt.TriggerName {
@@ -226,13 +224,13 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 
 	case "locales":
 		switch evt.Name {
-		case tp.LocalesEventUndo:
+		case ct.LocalesEventUndo:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesUndo
-		case tp.LocalesEventSave:
+		case ct.LocalesEventSave:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesSave
-		case tp.LocalesEventError:
+		case ct.LocalesEventError:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesError
 		default:
@@ -240,14 +238,14 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 		}
 
 	case "report_list":
-		if evt.Name == mc.TableEventCurrentPage {
-			adm.SetProperty("data", bc.MergeIM(adm.Data, bc.IM{"report_list_current_page": evt.Value}))
+		if evt.Name == ct.TableEventCurrentPage {
+			adm.SetProperty("data", cu.MergeIM(adm.Data, cu.IM{"report_list_current_page": evt.Value}))
 		}
 		return evt
 
 	case "api_key", "alias", "demo", "username", "password", "database", "confirm", "report_key":
 		admEvt.Name = AdminEventChange
-		adm.SetProperty("data", bc.IM{evt.TriggerName: admEvt.Value})
+		adm.SetProperty("data", cu.IM{evt.TriggerName: admEvt.Value})
 
 	case "theme":
 		admEvt.Name = AdminEventTheme
@@ -257,12 +255,12 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 		admEvt.Name = AdminEventModule
 		adm.SetProperty("module", admEvt.Value)
 		if admEvt.Value == "help" && adm.HelpURL != "" {
-			admEvt.Header = bc.MergeSM(admEvt.Header,
-				bc.SM{bc.HeaderRedirect: adm.HelpURL})
+			admEvt.Header = cu.MergeSM(admEvt.Header,
+				cu.SM{ct.HeaderRedirect: adm.HelpURL})
 		}
 		if admEvt.Value == "client" && adm.ClientURL != "" {
-			admEvt.Header = bc.MergeSM(admEvt.Header,
-				bc.SM{bc.HeaderRedirect: adm.ClientURL})
+			admEvt.Header = cu.MergeSM(admEvt.Header,
+				cu.SM{ct.HeaderRedirect: adm.ClientURL})
 		}
 
 	case "view_menu":
@@ -279,7 +277,7 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 		admEvt.Name = AdminEventLogin
 
 	case "report_install", "report_delete":
-		reportkey := bc.ToString(evt.Trigger.GetProperty("data").(bc.IM)["reportkey"], "")
+		reportkey := cu.ToString(evt.Trigger.GetProperty("data").(cu.IM)["reportkey"], "")
 		admEvt.Name = evt.TriggerName
 		admEvt.Value = reportkey
 
@@ -294,15 +292,15 @@ func (adm *Admin) response(evt bc.ResponseEvent) (re bc.ResponseEvent) {
 	return admEvt
 }
 
-func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) {
-	ccLbl := func() *fm.Label {
-		return &fm.Label{
+func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) {
+	ccLbl := func() *ct.Label {
+		return &ct.Label{
 			Value: adm.msg(name),
 		}
 	}
-	ccSel := func(options []fm.SelectOption) *fm.Select {
-		return &fm.Select{
-			BaseComponent: bc.BaseComponent{
+	ccSel := func(options []ct.SelectOption) *ct.Select {
+		return &ct.Select{
+			BaseComponent: ct.BaseComponent{
 				Id: adm.Id + "_" + name, Name: name,
 				EventURL:     adm.EventURL,
 				Target:       adm.Target,
@@ -312,30 +310,30 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 			},
 			Label:   adm.msg("admin_" + name),
 			IsNull:  false,
-			Value:   bc.ToString(adm.Data[name], ""),
+			Value:   cu.ToString(adm.Data[name], ""),
 			Options: options,
 		}
 	}
-	ccInp := func(itype string) *fm.Input {
-		return &fm.Input{
-			BaseComponent: bc.BaseComponent{
+	ccInp := func(itype string) *ct.Input {
+		return &ct.Input{
+			BaseComponent: ct.BaseComponent{
 				Id: adm.Id + "_" + name, Name: name,
 				EventURL:     adm.EventURL,
 				Target:       adm.Target,
-				Swap:         bc.SwapOuterHTML,
+				Swap:         ct.SwapOuterHTML,
 				OnResponse:   adm.response,
 				RequestValue: adm.RequestValue,
 				RequestMap:   adm.RequestMap,
 			},
 			Type:  itype,
 			Label: adm.msg("admin_" + name),
-			Value: bc.ToString(adm.Data[name], ""),
+			Value: cu.ToString(adm.Data[name], ""),
 			Full:  true,
 		}
 	}
-	ccBtn := func(btnType, label string, disabled bool) *fm.Button {
-		return &fm.Button{
-			BaseComponent: bc.BaseComponent{
+	ccBtn := func(btnType, label string, disabled bool) *ct.Button {
+		return &ct.Button{
+			BaseComponent: ct.BaseComponent{
 				Id: adm.Id + "_" + name, Name: name,
 				EventURL:     adm.EventURL,
 				Target:       adm.Target,
@@ -348,9 +346,9 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 			Disabled: disabled,
 		}
 	}
-	ccMenu := func(items []mc.MenuBarItem, value, class string) *mc.MenuBar {
-		return &mc.MenuBar{
-			BaseComponent: bc.BaseComponent{
+	ccMenu := func(items []ct.MenuBarItem, value, class string) *ct.MenuBar {
+		return &ct.MenuBar{
+			BaseComponent: ct.BaseComponent{
 				Id: adm.Id + "_" + name, Name: name,
 				EventURL:     adm.EventURL,
 				Target:       adm.Target,
@@ -364,9 +362,9 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 			SideBar: false,
 		}
 	}
-	ccTbl := func(rowKey string, rows []bc.IM, fields []mc.TableField, currentPage int64) *mc.Table {
-		tbl := &mc.Table{
-			BaseComponent: bc.BaseComponent{
+	ccTbl := func(rowKey string, rows []cu.IM, fields []ct.TableField, currentPage int64) *ct.Table {
+		tbl := &ct.Table{
+			BaseComponent: ct.BaseComponent{
 				Id: adm.Id + "_" + name, Name: name,
 				EventURL:     adm.EventURL,
 				OnResponse:   adm.response,
@@ -375,7 +373,7 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 			},
 			Rows:        rows,
 			Fields:      fields,
-			Pagination:  mc.PaginationTypeTop,
+			Pagination:  ct.PaginationTypeTop,
 			PageSize:    10,
 			RowKey:      rowKey,
 			TableFilter: true,
@@ -386,157 +384,157 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 		}
 		return tbl
 	}
-	ccMap := map[string]func() bc.ClientComponent{
-		"main_menu": func() bc.ClientComponent {
+	ccMap := map[string]func() ct.ClientComponent{
+		"main_menu": func() ct.ClientComponent {
 			return ccMenu(
-				[]mc.MenuBarItem{
+				[]ct.MenuBarItem{
 					{Value: "database", Label: adm.msg("admin_database"), Icon: "Database"},
 					{Value: "login", Label: adm.msg("admin_login"), Icon: "Edit"},
 					{Value: "client", Label: adm.msg("admin_client"), Icon: "Globe"},
 					{Value: "locales", Label: adm.msg("admin_locales"), Icon: "User"},
 					{Value: "help", Label: adm.msg("admin_help"), Icon: "QuestionCircle"},
 				},
-				bc.ToString(adm.GetProperty("module"), ""), "border-top")
+				cu.ToString(adm.GetProperty("module"), ""), "border-top")
 		},
-		"view_menu": func() bc.ClientComponent {
+		"view_menu": func() ct.ClientComponent {
 			return ccMenu(
-				[]mc.MenuBarItem{
+				[]ct.MenuBarItem{
 					{Value: "password", Label: adm.msg("admin_password"), Icon: "Key"},
 					{Value: "report", Label: adm.msg("admin_report"), Icon: "ChartBar"},
 					{Value: "configuration", Label: adm.msg("admin_configuration"), Icon: "Cog"},
 					{Value: "logout", Label: adm.msg("admin_logout"), Icon: "Exit"},
 				},
-				bc.ToString(adm.GetProperty("view"), ""), "border-top")
+				cu.ToString(adm.GetProperty("view"), ""), "border-top")
 		},
-		"admin_api_key": func() bc.ClientComponent {
+		"admin_api_key": func() ct.ClientComponent {
 			return ccLbl()
 		},
-		"api_key": func() bc.ClientComponent {
-			return ccInp(fm.InputTypeText)
+		"api_key": func() ct.ClientComponent {
+			return ccInp(ct.InputTypeText)
 		},
-		"admin_alias": func() bc.ClientComponent {
+		"admin_alias": func() ct.ClientComponent {
 			return ccLbl()
 		},
-		"alias": func() bc.ClientComponent {
-			return ccInp(fm.InputTypeText)
+		"alias": func() ct.ClientComponent {
+			return ccInp(ct.InputTypeText)
 		},
-		"admin_demo": func() bc.ClientComponent {
+		"admin_demo": func() ct.ClientComponent {
 			return ccLbl()
 		},
-		"demo": func() bc.ClientComponent {
-			return ccSel([]fm.SelectOption{
+		"demo": func() ct.ClientComponent {
+			return ccSel([]ct.SelectOption{
 				{Value: "true", Text: adm.msg("admin_true")},
 				{Value: "false", Text: adm.msg("admin_false")},
 			})
 		},
-		"create": func() bc.ClientComponent {
-			disabled := (bc.ToString(adm.Data["alias"], "") == "") || (bc.ToString(adm.Data["api_key"], "") == "")
-			return ccBtn(fm.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
+		"create": func() ct.ClientComponent {
+			disabled := (cu.ToString(adm.Data["alias"], "") == "") || (cu.ToString(adm.Data["api_key"], "") == "")
+			return ccBtn(ct.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
 		},
-		"theme": func() bc.ClientComponent {
-			themeBtn := ccBtn(fm.ButtonTypePrimary, "", false)
-			themeBtn.Style = bc.SM{"padding": "4px"}
-			themeBtn.LabelComponent = &fm.Icon{Value: adminIcoMap[adm.Theme][1], Width: 18, Height: 18}
+		"theme": func() ct.ClientComponent {
+			themeBtn := ccBtn(ct.ButtonTypePrimary, "", false)
+			themeBtn.Style = cu.SM{"padding": "4px"}
+			themeBtn.LabelComponent = &ct.Icon{Value: adminIcoMap[adm.Theme][1], Width: 18, Height: 18}
 			return themeBtn
 		},
-		"create_result": func() bc.ClientComponent {
-			fields := []mc.TableField{
-				{Column: &mc.TableColumn{
+		"create_result": func() ct.ClientComponent {
+			fields := []ct.TableField{
+				{Column: &ct.TableColumn{
 					Id:        "state",
 					Header:    adm.msg("admin_create_result_state"),
-					CellStyle: bc.SM{"text-align": "center"},
-					Cell: func(row bc.IM, col mc.TableColumn, value interface{}) string {
+					CellStyle: cu.SM{"text-align": "center"},
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) string {
 						icoKey := "InfoCircle"
 						color := "orange"
 						if value == "err" {
 							icoKey = "ExclamationTriangle"
 							color = "red"
 						}
-						res, _ := (&fm.Icon{Value: icoKey, Color: color}).Render()
+						res, _ := (&ct.Icon{Value: icoKey, Color: color}).Render()
 						return fmt.Sprintf(
 							`<span class="cell-label">%s</span>%s`, col.Header, res)
 					}}},
-				{Name: "stamp", FieldType: mc.TableFieldTypeTime, Label: adm.msg("admin_create_result_stamp")},
-				{Name: "section", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_create_result_section")},
-				{Name: "datatype", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_create_result_datatype")},
-				{Column: &mc.TableColumn{
+				{Name: "stamp", FieldType: ct.TableFieldTypeTime, Label: adm.msg("admin_create_result_stamp")},
+				{Name: "section", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_create_result_section")},
+				{Name: "datatype", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_create_result_datatype")},
+				{Column: &ct.TableColumn{
 					Id:     "message",
 					Header: adm.msg("admin_create_result_message"),
-					Cell: func(row bc.IM, col mc.TableColumn, value interface{}) string {
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) string {
 						style := ""
 						if row["state"] == "err" {
 							style = `style="color:red;"`
 						}
 						return fmt.Sprintf(
 							`<span class="cell-label">%s</span>
-							<span %s >%s</span>`, col.Header, style, bc.ToString(value, ""))
+							<span %s >%s</span>`, col.Header, style, cu.ToString(value, ""))
 					}}},
 			}
-			rows := bc.ToIMA(adm.Data["create_result"], []bc.IM{})
+			rows := cu.ToIMA(adm.Data["create_result"], []cu.IM{})
 			return ccTbl("stamp", rows, fields, 0)
 		},
-		"admin_username": func() bc.ClientComponent {
+		"admin_username": func() ct.ClientComponent {
 			return ccLbl()
 		},
-		"username": func() bc.ClientComponent {
-			return ccInp(fm.InputTypeText)
+		"username": func() ct.ClientComponent {
+			return ccInp(ct.InputTypeText)
 		},
-		"admin_password": func() bc.ClientComponent {
+		"admin_password": func() ct.ClientComponent {
 			return ccLbl()
 		},
-		"password": func() bc.ClientComponent {
-			return ccInp(fm.InputTypePassword)
+		"password": func() ct.ClientComponent {
+			return ccInp(ct.InputTypePassword)
 		},
-		"admin_confirm": func() bc.ClientComponent {
+		"admin_confirm": func() ct.ClientComponent {
 			return ccLbl()
 		},
-		"confirm": func() bc.ClientComponent {
-			return ccInp(fm.InputTypePassword)
+		"confirm": func() ct.ClientComponent {
+			return ccInp(ct.InputTypePassword)
 		},
-		"admin_database": func() bc.ClientComponent {
+		"admin_database": func() ct.ClientComponent {
 			return ccLbl()
 		},
-		"database": func() bc.ClientComponent {
-			return ccInp(fm.InputTypeText)
+		"database": func() ct.ClientComponent {
+			return ccInp(ct.InputTypeText)
 		},
-		"login": func() bc.ClientComponent {
-			disabled := (bc.ToString(adm.Data["username"], "") == "") || (bc.ToString(adm.Data["database"], "") == "")
-			return ccBtn(fm.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
+		"login": func() ct.ClientComponent {
+			disabled := (cu.ToString(adm.Data["username"], "") == "") || (cu.ToString(adm.Data["database"], "") == "")
+			return ccBtn(ct.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
 		},
-		"password_change": func() bc.ClientComponent {
-			disabled := (bc.ToString(adm.Data["username"], "") == "") || (bc.ToString(adm.Data["password"], "") == "") || (bc.ToString(adm.Data["confirm"], "") == "")
-			return ccBtn(fm.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
+		"password_change": func() ct.ClientComponent {
+			disabled := (cu.ToString(adm.Data["username"], "") == "") || (cu.ToString(adm.Data["password"], "") == "") || (cu.ToString(adm.Data["confirm"], "") == "")
+			return ccBtn(ct.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
 		},
-		"install_ico": func() bc.ClientComponent {
-			return &fm.Icon{
-				BaseComponent: bc.BaseComponent{
-					Id: adm.Id + "_" + bc.ToString(data["reportkey"], ""), Name: bc.ToString(data["event"], ""),
+		"install_ico": func() ct.ClientComponent {
+			return &ct.Icon{
+				BaseComponent: ct.BaseComponent{
+					Id: adm.Id + "_" + cu.ToString(data["reportkey"], ""), Name: cu.ToString(data["event"], ""),
 					EventURL:     adm.EventURL,
 					Target:       adm.Target,
-					Indicator:    bc.IndicatorSpinner,
+					Indicator:    ct.IndicatorSpinner,
 					OnResponse:   adm.response,
 					RequestValue: adm.RequestValue,
 					RequestMap:   adm.RequestMap,
 					Data:         data,
 				},
-				Color: bc.ToString(data["color"], ""),
-				Value: bc.ToString(data["ico_key"], ""),
+				Color: cu.ToString(data["color"], ""),
+				Value: cu.ToString(data["ico_key"], ""),
 				Width: 20, Height: 20,
 			}
 		},
-		"report_list": func() bc.ClientComponent {
-			fields := []mc.TableField{
-				{Column: &mc.TableColumn{
+		"report_list": func() ct.ClientComponent {
+			fields := []ct.TableField{
+				{Column: &ct.TableColumn{
 					Id:        "installed",
 					Header:    adm.msg("admin_report_list_installed"),
-					CellStyle: bc.SM{"text-align": "center"},
-					Cell: func(row bc.IM, col mc.TableColumn, value interface{}) string {
-						idata := bc.IM{
+					CellStyle: cu.SM{"text-align": "center"},
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) string {
+						idata := cu.IM{
 							"ico_key": "Plus", "color": "green",
 							"event": AdminEventReportInstall,
 						}
-						if bc.ToBoolean(value, false) {
-							idata = bc.IM{
+						if cu.ToBoolean(value, false) {
+							idata = cu.IM{
 								"ico_key": "Times", "color": "red",
 								"event": AdminEventReportDelete,
 							}
@@ -546,38 +544,38 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 						return fmt.Sprintf(
 							`<span class="cell-label">%s</span>%s`, col.Header, res)
 					}}},
-				{Name: "reportkey", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_report_list_reportkey")},
-				{Name: "repname", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_report_list_repname")},
-				{Name: "description", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_report_list_description")},
-				{Name: "reptype", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_report_list_reptype")},
-				{Name: "filename", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_report_list_filename")},
-				{Name: "label", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_report_list_label")},
+				{Name: "reportkey", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_reportkey")},
+				{Name: "repname", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_repname")},
+				{Name: "description", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_description")},
+				{Name: "reptype", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_reptype")},
+				{Name: "filename", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_filename")},
+				{Name: "label", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_label")},
 			}
-			rows := bc.ToIMA(adm.Data["report_list"], []bc.IM{})
+			rows := cu.ToIMA(adm.Data["report_list"], []cu.IM{})
 			currentPage := int64(0)
 			if current, valid := adm.Data["report_list_current_page"].(int64); valid {
 				currentPage = current
 			}
 			return ccTbl("reportkey", rows, fields, currentPage)
 		},
-		"env_list": func() bc.ClientComponent {
-			fields := []mc.TableField{
-				{Name: "envkey", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_env_list_key")},
-				{Name: "envvalue", FieldType: mc.TableFieldTypeString, Label: adm.msg("admin_env_list_value")},
+		"env_list": func() ct.ClientComponent {
+			fields := []ct.TableField{
+				{Name: "envkey", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_env_list_key")},
+				{Name: "envvalue", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_env_list_value")},
 			}
-			rows := bc.ToIMA(adm.Data["env_list"], []bc.IM{})
+			rows := cu.ToIMA(adm.Data["env_list"], []cu.IM{})
 			return ccTbl("envkey", rows, fields, 0)
 		},
-		"locales": func() bc.ClientComponent {
-			locales := adm.Data["locales"].(bc.IM)
-			return &tp.Locale{
-				BaseComponent: bc.BaseComponent{
+		"locales": func() ct.ClientComponent {
+			locales := adm.Data["locales"].(cu.IM)
+			return &ct.Locale{
+				BaseComponent: ct.BaseComponent{
 					Id: adm.Id + "_" + name, Name: name,
 					EventURL:     adm.EventURL,
 					OnResponse:   adm.response,
 					RequestValue: adm.RequestValue,
 					RequestMap:   adm.RequestMap,
-					Data: bc.IM{
+					Data: cu.IM{
 						"deflang":    locales["deflang"],
 						"locales":    locales["locale"],
 						"tag_keys":   locales["tag_key"],
@@ -585,8 +583,8 @@ func (adm *Admin) getComponent(name string, data bc.IM) (res string, err error) 
 						"locfile":    locales["locfile"],
 					},
 				},
-				Locales: locales["locales"].([]fm.SelectOption),
-				TagKeys: locales["tag_keys"].([]fm.SelectOption),
+				Locales: locales["locales"].([]ct.SelectOption),
+				TagKeys: locales["tag_keys"].([]ct.SelectOption),
 				Labels:  adminDefaultLabel,
 			}
 		},
@@ -617,14 +615,14 @@ func (adm *Admin) Render() (res string, err error) {
 			return strings.Join(adm.Class, " ")
 		},
 		"adminComponent": func(name string) (string, error) {
-			return adm.getComponent(name, bc.IM{})
+			return adm.getComponent(name, cu.IM{})
 		},
 		"showResult": func() bool {
-			return len(bc.ToIMA(adm.Data["create_result"], []bc.IM{})) > 0
+			return len(cu.ToIMA(adm.Data["create_result"], []cu.IM{})) > 0
 		},
 		"tokenLogin": func() bool {
 			if adm.TokenLogin != nil {
-				database := bc.ToString(adm.Data["database"], "")
+				database := cu.ToString(adm.Data["database"], "")
 				return adm.TokenLogin(database, adm.Token)
 			}
 			return false
@@ -735,5 +733,5 @@ func (adm *Admin) Render() (res string, err error) {
 	{{ end }}
 	</div>`
 
-	return bc.TemplateBuilder("admin", tpl, funcMap, adm)
+	return cu.TemplateBuilder("admin", tpl, funcMap, adm)
 }
