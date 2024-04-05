@@ -326,6 +326,8 @@ func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 		Script: []string{
 			//"https://unpkg.com/htmx.org@latest",
 			//"https://unpkg.com/htmx.org/dist/ext/remove-me.js",
+			//"static/js/htmx.min.js",
+			//"static/js/remove-me.js",
 		},
 		HeadLink: []ct.HeadLink{
 			{Rel: "icon", Href: "/static/favicon.svg", Type: "image/svg+xml"},
