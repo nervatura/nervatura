@@ -6,17 +6,21 @@
 <meta name="description" content="Overview # Nervatura gRPC specification. For more examples, see Nervatura example application
 Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn&rsquo;t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report.">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="gRPC API" />
-<meta property="og:description" content="Overview # Nervatura gRPC specification. For more examples, see Nervatura example application
-Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn&rsquo;t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/docs/service/grpc/" /><meta property="article:section" content="docs" />
-
-
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="/docs/service/grpc/">
+  <meta property="og:site_name" content="Nervatura">
+  <meta property="og:title" content="gRPC API">
+  <meta property="og:description" content="Overview # Nervatura gRPC specification. For more examples, see Nervatura example application
+Method Name Request Type Response Type Description UserLogin RequestUserLogin ResponseUserLogin Logs in user by username and password UserPassword RequestUserPassword ResponseEmpty User (employee or customer) password change. TokenLogin RequestEmpty ResponseTokenLogin JWT token auth. TokenRefresh RequestEmpty ResponseTokenRefresh Refreshes JWT token by checking at database whether refresh token exists. TokenDecode RequestTokenDecode ResponseTokenDecode Decoded JWT token but doesn’t validate the signature. Get RequestGet ResponseGet Get returns one or more records Update RequestUpdate ResponseUpdate Add/update one or more items Delete RequestDelete ResponseEmpty Delete an item View RequestView ResponseView Run raw SQL queries in safe mode Function RequestFunction ResponseFunction Call a server-side function Report RequestReport ResponseReport Create and download a Nervatura Report ReportList RequestReportList ResponseReportList List all available Nervatura Report.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
 <title>gRPC API | Nervatura</title>
 <link rel="manifest" href="../../../manifest.json">
 <link rel="icon" href="../../../favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="../../../book.min.893370bae956237d3f5be36e9b65313a6f2d6440b0e807796298a39e800d7861.css" ><!--
+<link rel="stylesheet" href="../../../book.min.893370bae956237d3f5be36e9b65313a6f2d6440b0e807796298a39e800d7861.css" >
+  
+
+<!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
 -->

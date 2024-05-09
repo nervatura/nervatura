@@ -7,14 +7,21 @@
 mkdir data docker run -i -t --rm --name nervatura \ -e NT_API_KEY=DEMO_API_KEY \ -p 5000:5000 -v &#34;$(pwd)&#34;/data:/data nervatura/nervatura:latest In a new command window:
 docker exec -i nervatura /nervatura \ -c DatabaseCreate -k DEMO_API_KEY \ -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Snap # sudo NT_API_KEY=DEMO_API_KEY \ /snap/nervatura/current/nervatura -c DatabaseCreate \ -k DEMO_API_KEY -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Database path: /var/snap/nervatura/common/demo.db">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Getting Started" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="/docs/start/" />
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="/docs/start/">
+  <meta property="og:site_name" content="Nervatura">
+  <meta property="og:title" content="Getting Started">
+  <meta property="og:description" content="1. Create a new demo database # Docker # Create a Docker container and set some options
+mkdir data docker run -i -t --rm --name nervatura \ -e NT_API_KEY=DEMO_API_KEY \ -p 5000:5000 -v &#34;$(pwd)&#34;/data:/data nervatura/nervatura:latest In a new command window:
+docker exec -i nervatura /nervatura \ -c DatabaseCreate -k DEMO_API_KEY \ -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Snap # sudo NT_API_KEY=DEMO_API_KEY \ /snap/nervatura/current/nervatura -c DatabaseCreate \ -k DEMO_API_KEY -o &#34;{\&#34;database\&#34;:\&#34;demo\&#34;,\&#34;demo\&#34;:true}&#34; Database path: /var/snap/nervatura/common/demo.db">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="website">
 <title>Getting Started | Nervatura</title>
 <link rel="manifest" href="../../manifest.json">
 <link rel="icon" href="../../favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="../../book.min.893370bae956237d3f5be36e9b65313a6f2d6440b0e807796298a39e800d7861.css" ><link rel="alternate" type="application/rss+xml" href="../../docs/start/index.xml" title="Nervatura" />
+<link rel="stylesheet" href="../../book.min.893370bae956237d3f5be36e9b65313a6f2d6440b0e807796298a39e800d7861.css" >
+  
+
+<link rel="alternate" type="application/rss+xml" href="../../docs/start/index.xml" title="Nervatura" />
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
