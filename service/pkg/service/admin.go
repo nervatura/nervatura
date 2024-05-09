@@ -389,6 +389,8 @@ func (adm *AdminService) AppEvent(w http.ResponseWriter, r *http.Request) {
 	var res string
 	if evt.Trigger != nil {
 		res, err = evt.Trigger.Render()
+	} else {
+		err = errors.New(ut.GetMessage("error_internal"))
 	}
 	if err != nil {
 		res, _ = (&ct.Toast{
