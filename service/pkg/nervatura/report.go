@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nervatura/nervatura/service/pkg/report"
 	ut "github.com/nervatura/nervatura/service/pkg/utils"
+	"github.com/nervatura/report"
 )
 
 func (nstore *NervaStore) getReportRefValues(options IM) (nervatype string, refValues IM, err error) {
@@ -292,7 +292,7 @@ func (nstore *NervaStore) getReportPDF(options, datarows IM, jsonTemplate string
 	}
 }
 
-//getReport - server-side PDF and CSV report generation
+// getReport - server-side PDF and CSV report generation
 func (nstore *NervaStore) getReport(options IM) (results IM, err error) {
 
 	results = IM{

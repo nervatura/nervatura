@@ -626,3 +626,218 @@ func TestSessionService_LoadSession(t *testing.T) {
 		})
 	}
 }
+
+func TestSessionService_deleteFileSession(t *testing.T) {
+	type fields struct {
+		Config          IM
+		Conn            DataDriver
+		Method          string
+		MemSession      IM
+		CreateDir       func(name string, perm fs.FileMode) error
+		CreateFile      func(name string) (*os.File, error)
+		ReadFile        func(name string) ([]byte, error)
+		FileStat        func(name string) (fs.FileInfo, error)
+		ConvertToByte   func(data interface{}) ([]byte, error)
+		ConvertFromByte func(data []byte, result interface{}) error
+		RemoveFile      func(name string) error
+	}
+	type args struct {
+		fileName string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "delete",
+			fields: fields{
+				RemoveFile: func(name string) error {
+					return nil
+				},
+			},
+			args: args{
+				fileName: "fileName.json",
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ses := &SessionService{
+				Config:          tt.fields.Config,
+				Conn:            tt.fields.Conn,
+				Method:          tt.fields.Method,
+				MemSession:      tt.fields.MemSession,
+				CreateDir:       tt.fields.CreateDir,
+				CreateFile:      tt.fields.CreateFile,
+				ReadFile:        tt.fields.ReadFile,
+				FileStat:        tt.fields.FileStat,
+				ConvertToByte:   tt.fields.ConvertToByte,
+				ConvertFromByte: tt.fields.ConvertFromByte,
+				RemoveFile:      tt.fields.RemoveFile,
+			}
+			if err := ses.deleteFileSession(tt.args.fileName); (err != nil) != tt.wantErr {
+				t.Errorf("SessionService.deleteFileSession() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestSessionService_deleteDbSession(t *testing.T) {
+	type fields struct {
+		Config          IM
+		Conn            DataDriver
+		Method          string
+		MemSession      IM
+		CreateDir       func(name string, perm fs.FileMode) error
+		CreateFile      func(name string) (*os.File, error)
+		ReadFile        func(name string) ([]byte, error)
+		FileStat        func(name string) (fs.FileInfo, error)
+		ConvertToByte   func(data interface{}) ([]byte, error)
+		ConvertFromByte func(data []byte, result interface{}) error
+		RemoveFile      func(name string) error
+	}
+	type args struct {
+		sessionID string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "delete",
+			fields: fields{
+				Config: IM{},
+				Conn: &testDriver{Config: IM{
+					"QuerySQL": func(sqlString string) ([]IM, error) {
+						return []IM{
+							{"id": int64(1)},
+						}, nil
+					},
+				}},
+				ConvertToByte: func(data interface{}) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+			args: args{
+				sessionID: "SES012345",
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ses := &SessionService{
+				Config:          tt.fields.Config,
+				Conn:            tt.fields.Conn,
+				Method:          tt.fields.Method,
+				MemSession:      tt.fields.MemSession,
+				CreateDir:       tt.fields.CreateDir,
+				CreateFile:      tt.fields.CreateFile,
+				ReadFile:        tt.fields.ReadFile,
+				FileStat:        tt.fields.FileStat,
+				ConvertToByte:   tt.fields.ConvertToByte,
+				ConvertFromByte: tt.fields.ConvertFromByte,
+				RemoveFile:      tt.fields.RemoveFile,
+			}
+			if err := ses.deleteDbSession(tt.args.sessionID); (err != nil) != tt.wantErr {
+				t.Errorf("SessionService.deleteDbSession() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestSessionService_DeleteSession(t *testing.T) {
+	type fields struct {
+		Config          IM
+		Conn            DataDriver
+		Method          string
+		MemSession      IM
+		CreateDir       func(name string, perm fs.FileMode) error
+		CreateFile      func(name string) (*os.File, error)
+		ReadFile        func(name string) ([]byte, error)
+		FileStat        func(name string) (fs.FileInfo, error)
+		ConvertToByte   func(data interface{}) ([]byte, error)
+		ConvertFromByte func(data []byte, result interface{}) error
+		RemoveFile      func(name string) error
+	}
+	type args struct {
+		sessionKey string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "file",
+			fields: fields{
+				Method: "file",
+				RemoveFile: func(name string) error {
+					return nil
+				},
+			},
+			args: args{
+				sessionKey: "SES012345",
+			},
+			wantErr: false,
+		},
+		{
+			name: "db",
+			fields: fields{
+				Method: "db",
+				Config: IM{},
+				Conn: &testDriver{Config: IM{
+					"QuerySQL": func(sqlString string) ([]IM, error) {
+						return []IM{
+							{"id": int64(1)},
+						}, nil
+					},
+				}},
+				ConvertToByte: func(data interface{}) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+			args: args{
+				sessionKey: "SES012345",
+			},
+			wantErr: false,
+		},
+		{
+			name: "mem",
+			fields: fields{
+				Method:     "mem",
+				MemSession: IM{},
+			},
+			args: args{
+				sessionKey: "SES012345",
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ses := &SessionService{
+				Config:          tt.fields.Config,
+				Conn:            tt.fields.Conn,
+				Method:          tt.fields.Method,
+				MemSession:      tt.fields.MemSession,
+				CreateDir:       tt.fields.CreateDir,
+				CreateFile:      tt.fields.CreateFile,
+				ReadFile:        tt.fields.ReadFile,
+				FileStat:        tt.fields.FileStat,
+				ConvertToByte:   tt.fields.ConvertToByte,
+				ConvertFromByte: tt.fields.ConvertFromByte,
+				RemoveFile:      tt.fields.RemoveFile,
+			}
+			if err := ses.DeleteSession(tt.args.sessionKey); (err != nil) != tt.wantErr {
+				t.Errorf("SessionService.DeleteSession() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

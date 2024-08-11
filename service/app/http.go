@@ -73,6 +73,7 @@ func (s *httpServer) StartService() error {
 			FileStat:        os.Stat,
 			ConvertToByte:   ut.ConvertToByte,
 			ConvertFromByte: ut.ConvertFromByte,
+			RemoveFile:      os.Remove,
 		},
 	}
 

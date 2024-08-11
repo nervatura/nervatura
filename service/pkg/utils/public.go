@@ -7,7 +7,7 @@ import "embed"
 
 const ClientMsg = "static/locales/client.json"
 
-//go:embed static/client static/css static/js
+//go:embed static/client static/css
 var Public embed.FS
 
 //go:embed static/locales

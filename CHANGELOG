@@ -1,3 +1,10 @@
+## 5.2.8
+- client: lit (3.2.0) upgrade
+- service: Admin GUI component update (github.com/nervatura/component)
+- service: replacing the local report package with github.com/nervatura/report package
+- service: removing unnecessary resource files
+- service: golang (1.22.6) and dependencies upgrade
+
 ## 5.2.7
 - client: lit (3.1.3) upgrade
 - service: Admin GUI component update

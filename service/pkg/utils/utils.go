@@ -22,7 +22,7 @@ const AdminMsg = "static/locales/admin.json"
 //go:embed static/locales
 var Static embed.FS
 
-//go:embed static/templates static/fonts
+//go:embed static/templates
 var Report embed.FS
 
 var tokenAlg = map[string]string{

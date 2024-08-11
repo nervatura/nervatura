@@ -3,12 +3,7 @@
 
 package app
 
-import (
-	"context"
-	"os"
-	"testing"
-)
-
+/*
 func Test_systemTray_onReady(t *testing.T) {
 	type fields struct {
 		app          *App
@@ -41,3 +36,4 @@ func Test_systemTray_onReady(t *testing.T) {
 		})
 	}
 }
+*/

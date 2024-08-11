@@ -341,9 +341,9 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 				RequestValue: adm.RequestValue,
 				RequestMap:   adm.RequestMap,
 			},
-			Type:     btnType,
-			Label:    label,
-			Disabled: disabled,
+			ButtonStyle: btnType,
+			Label:       label,
+			Disabled:    disabled,
 		}
 	}
 	ccMenu := func(items []ct.MenuBarItem, value, class string) *ct.MenuBar {
@@ -410,13 +410,13 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 			return ccLbl()
 		},
 		"api_key": func() ct.ClientComponent {
-			return ccInp(ct.InputTypeText)
+			return ccInp(ct.InputTypeString)
 		},
 		"admin_alias": func() ct.ClientComponent {
 			return ccLbl()
 		},
 		"alias": func() ct.ClientComponent {
-			return ccInp(ct.InputTypeText)
+			return ccInp(ct.InputTypeString)
 		},
 		"admin_demo": func() ct.ClientComponent {
 			return ccLbl()
@@ -429,10 +429,10 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 		},
 		"create": func() ct.ClientComponent {
 			disabled := (cu.ToString(adm.Data["alias"], "") == "") || (cu.ToString(adm.Data["api_key"], "") == "")
-			return ccBtn(ct.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
+			return ccBtn(ct.ButtonStylePrimary, adm.msg("admin_"+name), disabled)
 		},
 		"theme": func() ct.ClientComponent {
-			themeBtn := ccBtn(ct.ButtonTypePrimary, "", false)
+			themeBtn := ccBtn(ct.ButtonStylePrimary, "", false)
 			themeBtn.Style = cu.SM{"padding": "4px"}
 			themeBtn.LabelComponent = &ct.Icon{Value: adminIcoMap[adm.Theme][1], Width: 18, Height: 18}
 			return themeBtn
@@ -477,7 +477,7 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 			return ccLbl()
 		},
 		"username": func() ct.ClientComponent {
-			return ccInp(ct.InputTypeText)
+			return ccInp(ct.InputTypeString)
 		},
 		"admin_password": func() ct.ClientComponent {
 			return ccLbl()
@@ -495,15 +495,15 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 			return ccLbl()
 		},
 		"database": func() ct.ClientComponent {
-			return ccInp(ct.InputTypeText)
+			return ccInp(ct.InputTypeString)
 		},
 		"login": func() ct.ClientComponent {
 			disabled := (cu.ToString(adm.Data["username"], "") == "") || (cu.ToString(adm.Data["database"], "") == "")
-			return ccBtn(ct.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
+			return ccBtn(ct.ButtonStylePrimary, adm.msg("admin_"+name), disabled)
 		},
 		"password_change": func() ct.ClientComponent {
 			disabled := (cu.ToString(adm.Data["username"], "") == "") || (cu.ToString(adm.Data["password"], "") == "") || (cu.ToString(adm.Data["confirm"], "") == "")
-			return ccBtn(ct.ButtonTypePrimary, adm.msg("admin_"+name), disabled)
+			return ccBtn(ct.ButtonStylePrimary, adm.msg("admin_"+name), disabled)
 		},
 		"install_ico": func() ct.ClientComponent {
 			return &ct.Icon{
@@ -632,7 +632,7 @@ func (adm *Admin) Render() (res string, err error) {
 	{{ if styleMap }} style="{{ range $key, $value := .Style }}{{ $key }}:{{ $value }};{{ end }}"{{ end }}>
 	<div class="row title">
 	<div class="cell">
-	<div class="cell title-cell" ><span>{{ msg "admin_title" }}</span></div>
+	<div class="cell container bold" ><span>{{ msg "admin_title" }}</span></div>
 	<div class="cell">{{ adminComponent "theme" }}</div>
 	</div>
 	<div class="cell version-cell" ><span>{{ .Version }}</span></div>

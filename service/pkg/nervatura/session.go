@@ -23,6 +23,7 @@ type SessionService struct {
 	FileStat        func(name string) (fs.FileInfo, error)
 	ConvertToByte   func(data interface{}) ([]byte, error)
 	ConvertFromByte func(data []byte, result interface{}) error
+	RemoveFile      func(name string) error
 }
 
 func (ses *SessionService) saveFileSession(fileName string, data any) (err error) {
@@ -51,18 +52,28 @@ func (ses *SessionService) saveFileSession(fileName string, data any) (err error
 	return err
 }
 
-func (ses *SessionService) loadFileSession(fileName string, data any) (err error) {
-	filePath := fileName + ".json"
+func (ses *SessionService) getFilePath(fileName string) (filePath string) {
+	filePath = fileName + ".json"
 	sessionDir := ut.ToString(ses.Config["NT_SESSION_DIR"], "")
 	if sessionDir != "" {
 		filePath = filepath.FromSlash(fmt.Sprintf(`%s/%s.json`, sessionDir, fileName))
 	}
+	return filePath
+}
+
+func (ses *SessionService) loadFileSession(fileName string, data any) (err error) {
+	filePath := ses.getFilePath(fileName)
 	var sessionFile []byte
 	sessionFile, err = ses.ReadFile(filePath)
 	if err == nil {
 		err = ses.ConvertFromByte(sessionFile, &data)
 	}
 	return err
+}
+
+func (ses *SessionService) deleteFileSession(fileName string) (err error) {
+	filePath := ses.getFilePath(fileName)
+	return ses.RemoveFile(filePath)
 }
 
 func (ses *SessionService) checkSessionTable() (err error) {
@@ -123,6 +134,17 @@ func (ses *SessionService) saveDbSession(sessionID string, data any) (err error)
 			}
 			_, err = ses.Conn.QuerySQL(sqlString, []interface{}{}, nil)
 		}
+	}
+	return err
+}
+
+func (ses *SessionService) deleteDbSession(sessionID string) (err error) {
+	sessionDb := ut.ToString(ses.Config["NT_SESSION_DB"], "")
+	sessionTable := ut.ToString(ses.Config["NT_SESSION_TABLE"], "session")
+	if err = ses.Conn.CreateConnection("session", sessionDb); err == nil {
+		sqlString := fmt.Sprintf(
+			"DELETE FROM %s WHERE ID='%s'", sessionTable, sessionID)
+		_, err = ses.Conn.QuerySQL(sqlString, []interface{}{}, nil)
 	}
 	return err
 }
@@ -194,4 +216,16 @@ func (ses *SessionService) LoadSession(sessionKey string, data any) (result any,
 		}
 	}
 	return result, errors.New(ut.GetMessage("nodata"))
+}
+
+func (ses *SessionService) DeleteSession(sessionKey string) (err error) {
+	switch ses.Method {
+	case "file":
+		return ses.deleteFileSession(sessionKey)
+	case "db":
+		return ses.deleteDbSession(sessionKey)
+	default:
+		delete(ses.MemSession, sessionKey)
+	}
+	return nil
 }
