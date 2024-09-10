@@ -1,3 +1,8 @@
+## 5.2.9
+- service: Admin GUI component update (github.com/nervatura/component)
+- service: token validation fixes
+- service: golang (1.23.1) and dependencies upgrade
+
 ## 5.2.8
 - client: lit (3.2.0) upgrade
 - service: Admin GUI component update (github.com/nervatura/component)

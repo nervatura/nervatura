@@ -224,13 +224,13 @@ func (adm *Admin) response(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 
 	case "locales":
 		switch evt.Name {
-		case ct.LocalesEventUndo:
+		case LocalesEventUndo:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesUndo
-		case ct.LocalesEventSave:
+		case LocalesEventSave:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesSave
-		case ct.LocalesEventError:
+		case LocalesEventError:
 			admEvt.Trigger = evt.Trigger
 			admEvt.Name = AdminEventLocalesError
 		default:
@@ -568,7 +568,7 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 		},
 		"locales": func() ct.ClientComponent {
 			locales := adm.Data["locales"].(cu.IM)
-			return &ct.Locale{
+			return &Locale{
 				BaseComponent: ct.BaseComponent{
 					Id: adm.Id + "_" + name, Name: name,
 					EventURL:     adm.EventURL,

@@ -365,6 +365,9 @@ func CreateToken(username, database string, config map[string]interface{}) (resu
 		},
 	}
 	alg := ToString(config["NT_TOKEN_ALG"], "HS256")
+	if _, found := tokenAlg[alg]; !found {
+		return "", errors.New("Unexpected signing method: " + alg)
+	}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod(alg), claims)
 	token.Header["kid"] = ToString(config["NT_TOKEN_PRIVATE_KID"], GetHash("nervatura"))
 	var key interface{} = []byte(ToString(config["NT_TOKEN_PRIVATE_KEY"], GetHash(time.Now().Format("20060102"))))
@@ -421,7 +424,9 @@ func ParseToken(tokenString string, keyMap map[string]map[string]string, config 
 		}
 		kid := ToString(token.Header["kid"], ToString(config["NT_TOKEN_PRIVATE_KID"], GetHash("nervatura")))
 		if keyMap, found := keyMap[kid]; found {
-			return parsePEM(algType, keyMap["type"], []byte(keyMap["value"]))
+			if (algType == "HMAC") || (keyMap["type"] == "public") {
+				return parsePEM(algType, keyMap["type"], []byte(keyMap["value"]))
+			}
 		}
 		return []byte(ToString(config["NT_TOKEN_PRIVATE_KEY"], GetHash(time.Now().Format("20060102")))), nil
 	})
@@ -459,13 +464,12 @@ func ParseToken(tokenString string, keyMap map[string]map[string]string, config 
 }
 
 func RandString(length int) string {
-	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-		"abcdefghijklmnopqrstuvwxyz" +
-		"0123456789")
+	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 	var b strings.Builder
-	for i := 0; i < length; i++ {
-		var n = big.NewInt(int64(i))
-		n, _ = rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+	n, _ := rand.Int(rand.Reader, big.NewInt(int64(len(chars[:51]))))
+	b.WriteRune(chars[n.Int64()])
+	for i := 1; i < length; i++ {
+		n, _ := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
 		b.WriteRune(chars[n.Int64()])
 	}
 	return b.String()

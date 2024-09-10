@@ -1,6 +1,6 @@
 module github.com/nervatura/nervatura/service
 
-go 1.22.6
+go 1.23
 
 require (
 	github.com/alexedwards/argon2id v1.0.0
@@ -13,14 +13,14 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/signintech/gopdf v0.26.1 // indirect
+	github.com/signintech/gopdf v0.26.2 // indirect
 	github.com/unrolled/secure v1.15.0
-	golang.org/x/crypto v0.26.0 // indirect
-	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/crypto v0.27.0 // indirect
+	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sync v0.8.0
-	golang.org/x/sys v0.24.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
-	google.golang.org/grpc v1.65.0
+	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/text v0.18.0 // indirect
+	google.golang.org/grpc v1.66.1
 	google.golang.org/protobuf v1.34.2
 	modernc.org/libc v1.59.1 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
@@ -40,7 +40,7 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240808171019-573a1156607a // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
 )
 
 require (
@@ -49,6 +49,6 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.22.0
 	github.com/mocktools/go-smtp-mock/v2 v2.3.1
-	github.com/nervatura/component v1.5.0
+	github.com/nervatura/component v1.6.0
 	github.com/nervatura/report v1.5.0
 )

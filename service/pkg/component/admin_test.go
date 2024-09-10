@@ -530,7 +530,7 @@ func TestAdmin_response(t *testing.T) {
 			args: args{
 				evt: ct.ResponseEvent{
 					TriggerName: "locales",
-					Name:        ct.LocalesEventUndo,
+					Name:        LocalesEventUndo,
 				},
 			},
 		},
