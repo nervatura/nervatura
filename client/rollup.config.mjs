@@ -7,7 +7,7 @@ import { createSpaConfig } from '@open-wc/building-rollup';
 
 import copy from 'rollup-plugin-copy';
 import replace from '@rollup/plugin-replace';
-import packageData from './package.json' assert { type: 'json' };
+import packageData from './package.json' with { type: 'json' };
 
 const baseConfig = createSpaConfig({
   // use the outputdir option to modify where files are output

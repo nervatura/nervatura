@@ -1,4 +1,4 @@
-import{i as t,h as e,k as i,D as o}from"./module-Cq_Zev4P.js";import{t as l,s}from"./module-CbpjHWOZ.js";import{e as n,I as a}from"./main-zdcxVATk.js";const r=t`
+import{i as e,r as t,x as i,E as o}from"./module-BsLkbi3z.js";import{o as l,a as s}from"./module-wWMQrsxL.js";import{e as n,I as a}from"./main-DqbyZqBu.js";const r=e`
 button {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -109,7 +109,7 @@ button[button-type='border'].selected {
     padding: 8px 12px;
   }
 }
-`;customElements.define("form-button",class extends e{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.type=void 0,this.name=void 0,this.align=n.CENTER,this.icon=void 0,this.label="",this.disabled=!1,this.autofocus=!1,this.full=!1,this.small=!1,this.selected=!1,this.hidelabel=!1,this.badge=void 0,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},type:{type:String},align:{type:String},label:{type:String},icon:{type:String},disabled:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},full:{type:Boolean},small:{type:Boolean},selected:{type:Boolean},hidelabel:{type:Boolean},badge:{type:Number},style:{type:Object}}}_onClick(t){t.stopPropagation(),this.disabled||(this.onClick&&this.onClick(t),this.dispatchEvent(new CustomEvent("click",{bubbles:!0,composed:!0,detail:{id:this.id}})))}_onKeyEvent(t){const e=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{id:this.id}})))};"keydown"!==t.type&&"keypress"!==t.type||t.stopPropagation(),"keydown"===t.type&&13===t.keyCode&&(t.preventDefault(),e()),this.readonly||"keypress"!==t.type||13!==t.keyCode||e()}render(){return i`<button 
+`;customElements.define("form-button",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.type=void 0,this.name=void 0,this.align=n.CENTER,this.icon=void 0,this.label="",this.disabled=!1,this.autofocus=!1,this.full=!1,this.small=!1,this.selected=!1,this.hidelabel=!1,this.badge=void 0,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},type:{type:String},align:{type:String},label:{type:String},icon:{type:String},disabled:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},full:{type:Boolean},small:{type:Boolean},selected:{type:Boolean},hidelabel:{type:Boolean},badge:{type:Number},style:{type:Object}}}_onClick(e){e.stopPropagation(),this.disabled||(this.onClick&&this.onClick(e),this.dispatchEvent(new CustomEvent("click",{bubbles:!0,composed:!0,detail:{id:this.id}})))}_onKeyEvent(e){const t=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{id:this.id}})))};"keydown"!==e.type&&"keypress"!==e.type||e.stopPropagation(),"keydown"===e.type&&13===e.keyCode&&(e.preventDefault(),t()),this.readonly||"keypress"!==e.type||13!==e.keyCode||t()}render(){return i`<button 
       id="${this.id}"
       name="${l(this.name)}"
       button-type="${l(this.type)}"
@@ -117,7 +117,7 @@ button[button-type='border'].selected {
       ?autofocus="${this.autofocus}"
       aria-label="${l(this.label)}"
       title="${l(this.label)}"
-      class=${`${["small","full","selected","hidelabel"].filter((t=>this[t])).join(" ")} ${this.align}`}
+      class=${`${["small","full","selected","hidelabel"].filter((e=>this[e])).join(" ")} ${this.align}`}
       style="${s(this.style)}"
       @click=${this._onClick}
       @keydown=${this._onKeyEvent}
@@ -126,7 +126,7 @@ button[button-type='border'].selected {
         <slot id="value"></slot>
         ${this.icon&&this.align===n.RIGHT?i`<form-icon iconKey="${this.icon}" width=20 ></form-icon>`:o}
         ${this.badge?i`<span class="right" ><span class="${"badge "+(this.selected?"selected-badge":"")}" >${this.badge}</span></span>`:o}
-      </button>`}static get styles(){return[r]}});const c=t`
+      </button>`}static get styles(){return[r]}});const c=e`
 select {
   font-family: var(--font-family);
   font-size: 13px;
@@ -154,9 +154,9 @@ option:disabled {
 .full{
   width: 100%;
 }
-`;customElements.define("form-select",class extends e{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.value="",this.name=void 0,this.options=[],this.isnull=!0,this.label="",this.disabled=!1,this.autofocus=!1,this.full=!1,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},value:{type:String,reflect:!0},options:{type:Array},isnull:{type:Boolean},label:{type:String},disabled:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},full:{type:Boolean},style:{type:Object}}}_onInput(t){t.target.value!==this.value&&(this.onChange&&this.onChange({value:t.target.value,old:this.value}),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{value:t.target.value,old:this.value}})),this.value=t.target.value),this._select.value!==t.target.value&&(this._select.value=t.target.value)}_onKeyEvent(t){const e=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{value:this.value}})))};"keydown"!==t.type&&"keypress"!==t.type||t.stopPropagation(),"keydown"===t.type&&13===t.keyCode&&(t.preventDefault(),e()),this.readonly||"keypress"!==t.type||13!==t.keyCode||e()}firstUpdated(){this._select=this.renderRoot.querySelector("select")}render(){const t=this.options.map(((t,e)=>i`<option
-      key=${e} value=${t.value} 
-      ?selected=${t.value===this.value} >${t.text}</option>`));return this.isnull&&t.unshift(i`<option
+`;customElements.define("form-select",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.value="",this.name=void 0,this.options=[],this.isnull=!0,this.label="",this.disabled=!1,this.autofocus=!1,this.full=!1,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},value:{type:String,reflect:!0},options:{type:Array},isnull:{type:Boolean},label:{type:String},disabled:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},full:{type:Boolean},style:{type:Object}}}_onInput(e){e.target.value!==this.value&&(this.onChange&&this.onChange({value:e.target.value,old:this.value}),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{value:e.target.value,old:this.value}})),this.value=e.target.value),this._select.value!==e.target.value&&(this._select.value=e.target.value)}_onKeyEvent(e){const t=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{value:this.value}})))};"keydown"!==e.type&&"keypress"!==e.type||e.stopPropagation(),"keydown"===e.type&&13===e.keyCode&&(e.preventDefault(),t()),this.readonly||"keypress"!==e.type||13!==e.keyCode||t()}firstUpdated(){this._select=this.renderRoot.querySelector("select")}render(){const e=this.options.map(((e,t)=>i`<option
+      key=${t} value=${e.value} 
+      ?selected=${e.value===this.value} >${e.text}</option>`));return this.isnull&&e.unshift(i`<option
         ?selected=${""===this.value}
         key="-1" value="" ></option>`),i`<select 
       id="${this.id}"
@@ -170,7 +170,7 @@ option:disabled {
       @input=${this._onInput}
       @keydown=${this._onKeyEvent}
       @keypress=${this._onKeyEvent}
-      >${t}</select>`}static get styles(){return[c]}});const d=t`
+      >${e}</select>`}static get styles(){return[c]}});const d=e`
 input {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -201,7 +201,7 @@ input:focus, input:hover:not(:disabled) {
 .full{
   width: 100%;
 }
-`;customElements.define("form-input",class extends e{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.type=a.TEXT,this.value="",this.name=void 0,this.placeholder=void 0,this.label="",this.disabled=!1,this.readonly=!1,this.autofocus=!1,this.accept=void 0,this.maxlength=void 0,this.size=void 0,this.full=!1,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},type:{type:String,converter:t=>Object.values(a).includes(t)?t:a.TEXT},value:{type:String,reflect:!0},placeholder:{type:String},label:{type:String},disabled:{type:Boolean,reflect:!0},readonly:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},accept:{type:String,reflect:!0},maxlength:{type:Number,reflect:!0},size:{type:Number,reflect:!0},full:{type:Boolean},style:{type:Object}}}_onInput(t){const e=this.type===a.FILE?t.target.files:t.target.value;e!==this.value&&(this.onChange&&this.onChange({value:e,old:this.value}),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{value:e,old:this.value}})),this.value=e),this._input.value!==e&&(this._input.value=e)}_onKeyEvent(t){const e=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{value:this.value}})))};"keydown"!==t.type&&"keypress"!==t.type||t.stopPropagation(),"keydown"===t.type&&13===t.keyCode&&(t.preventDefault(),e()),this.readonly||"keypress"!==t.type||13!==t.keyCode||e()}firstUpdated(){this._input=this.renderRoot.querySelector("input")}render(){return i`<input 
+`;customElements.define("form-input",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.type=a.TEXT,this.value="",this.name=void 0,this.placeholder=void 0,this.label="",this.disabled=!1,this.readonly=!1,this.autofocus=!1,this.accept=void 0,this.maxlength=void 0,this.size=void 0,this.full=!1,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},type:{type:String,converter:e=>Object.values(a).includes(e)?e:a.TEXT},value:{type:String,reflect:!0},placeholder:{type:String},label:{type:String},disabled:{type:Boolean,reflect:!0},readonly:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},accept:{type:String,reflect:!0},maxlength:{type:Number,reflect:!0},size:{type:Number,reflect:!0},full:{type:Boolean},style:{type:Object}}}_onInput(e){const t=this.type===a.FILE?e.target.files:e.target.value;t!==this.value&&(this.onChange&&this.onChange({value:t,old:this.value}),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{value:t,old:this.value}})),this.value=t),this._input.value!==t&&(this._input.value=t)}_onKeyEvent(e){const t=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{value:this.value}})))};"keydown"!==e.type&&"keypress"!==e.type||e.stopPropagation(),"keydown"===e.type&&13===e.keyCode&&(e.preventDefault(),t()),this.readonly||"keypress"!==e.type||13!==e.keyCode||t()}firstUpdated(){this._input=this.renderRoot.querySelector("input")}render(){return i`<input 
       id="${this.id}"
       name="${l(this.name)}"
       .type="${this.type}"
@@ -219,7 +219,7 @@ input:focus, input:hover:not(:disabled) {
       @input=${this._onInput}
       @keydown=${this._onKeyEvent}
       @keypress=${this._onKeyEvent}
-    >`}static get styles(){return[d]}});const h=t`
+    >`}static get styles(){return[d]}});const h=e`
   :host {
     font-family: var(--font-family);
     font-size: var(--font-size);
@@ -255,7 +255,7 @@ input:focus, input:hover:not(:disabled) {
   .bold {
     font-weight: bold;
   }
-`;customElements.define("form-label",class extends e{constructor(){super(),this.id=void 0,this.value="",this.centered=!1,this.leftIcon=void 0,this.rightIcon=void 0,this.style={},this.iconStyle={}}static get properties(){return{id:{type:String},value:{type:String},centered:{type:Boolean},leftIcon:{type:String},rightIcon:{type:String},style:{type:Object},iconStyle:{type:Object}}}render(){return this.leftIcon?i`<div 
+`;customElements.define("form-label",class extends t{constructor(){super(),this.id=void 0,this.value="",this.centered=!1,this.leftIcon=void 0,this.rightIcon=void 0,this.style={},this.iconStyle={}}static get properties(){return{id:{type:String},value:{type:String},centered:{type:Boolean},leftIcon:{type:String},rightIcon:{type:String},style:{type:Object},iconStyle:{type:Object}}}render(){return this.leftIcon?i`<div 
         id="${l(this.id)}" 
         class="row ${this.centered?"centered":""}">
         <div class="cell label_icon_left">

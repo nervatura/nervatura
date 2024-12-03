@@ -5,12 +5,12 @@ package service
 
 import (
 	"errors"
+	"html/template"
 	"io"
 	"net/http"
 	"os"
 	"sort"
 	"strings"
-	"text/template"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -337,14 +337,14 @@ func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 		MainComponent: admin,
 	}
 	var err error
-	var res string
+	var html template.HTML
 	locales, err := adm.loadLocalesData(ut.ClientMsg, ut.ToString(adm.Config["NT_CLIENT_CONFIG"], ""))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	admin.Data["locales"] = locales
-	res, err = ccApp.Render()
+	html, err = ccApp.Render()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -352,7 +352,7 @@ func (adm *AdminService) Home(w http.ResponseWriter, r *http.Request) {
 	adm.Session.SaveSession(sessionID, admin)
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte(res))
+	w.Write([]byte(string(html)))
 }
 
 func (adm *AdminService) AppEvent(w http.ResponseWriter, r *http.Request) {
@@ -386,21 +386,21 @@ func (adm *AdminService) AppEvent(w http.ResponseWriter, r *http.Request) {
 	for key, value := range evt.Header {
 		w.Header().Set(key, value)
 	}
-	var res string
+	var html template.HTML
 	if evt.Trigger != nil {
-		res, err = evt.Trigger.Render()
+		html, err = evt.Trigger.Render()
 	} else {
 		err = errors.New(ut.GetMessage("error_internal"))
 	}
 	if err != nil {
-		res, _ = (&ct.Toast{
+		html, _ = (&ct.Toast{
 			Type: ct.ToastTypeError, Value: err.Error(),
 		}).Render()
 	}
 	adm.Session.SaveSession(sessionID, admin)
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte(res))
+	w.Write([]byte(string(html)))
 }
 
 func (adm *AdminService) Task(w http.ResponseWriter, r *http.Request) {

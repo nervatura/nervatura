@@ -2,6 +2,7 @@ package component
 
 import (
 	"fmt"
+	"html/template"
 	"sort"
 	"strings"
 
@@ -315,7 +316,7 @@ func (loc *Locale) response(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 	return locEvt
 }
 
-func (loc *Locale) getComponent(name string, data ut.IM) (res string, err error) {
+func (loc *Locale) getComponent(name string, data ut.IM) (html template.HTML, err error) {
 	ccSel := func(options []ct.SelectOption) *ct.Select {
 		sel := &ct.Select{
 			BaseComponent: ct.BaseComponent{
@@ -467,12 +468,12 @@ func (loc *Locale) getComponent(name string, data ut.IM) (res string, err error)
 				{Column: &ct.TableColumn{
 					Id:     "tag",
 					Header: loc.msg("locale_tag"),
-					Cell: func(row ut.IM, col ct.TableColumn, value interface{}) string {
+					Cell: func(row ut.IM, col ct.TableColumn, value interface{}) template.HTML {
 						linkLabel := fmt.Sprintf(
 							`<span class="cell-label">%s</span>`, value)
-						var link string
+						var link template.HTML
 						link, _ = loc.getComponent("tag_cell", row)
-						return linkLabel + link
+						return template.HTML(linkLabel + string(link))
 					}}},
 				{Name: "key", FieldType: ct.TableFieldTypeString, Label: loc.msg("locale_key")},
 			}
@@ -484,7 +485,7 @@ func (loc *Locale) getComponent(name string, data ut.IM) (res string, err error)
 					ct.TableField{Column: &ct.TableColumn{
 						Id:     "value",
 						Header: loc.msg("locale_value"),
-						Cell: func(row ut.IM, col ct.TableColumn, value interface{}) string {
+						Cell: func(row ut.IM, col ct.TableColumn, value interface{}) template.HTML {
 							input, _ := loc.getComponent("value_cell", row)
 							return input
 						}}},
@@ -528,8 +529,8 @@ func (loc *Locale) getComponent(name string, data ut.IM) (res string, err error)
 		},
 	}
 	cc := ccMap[name]()
-	res, err = cc.Render()
-	return res, err
+	html, err = cc.Render()
+	return html, err
 }
 
 func (loc *Locale) msg(labelID string) string {
@@ -542,7 +543,7 @@ func (loc *Locale) msg(labelID string) string {
 /*
 Based on the values, it will generate the html code of the [Locale] or return with an error message.
 */
-func (loc *Locale) Render() (res string, err error) {
+func (loc *Locale) Render() (html template.HTML, err error) {
 	loc.InitProps(loc)
 
 	funcMap := map[string]any{
@@ -552,7 +553,7 @@ func (loc *Locale) Render() (res string, err error) {
 		"customClass": func() string {
 			return strings.Join(loc.Class, " ")
 		},
-		"localeComponent": func(name string) (string, error) {
+		"localeComponent": func(name string) (html template.HTML, err error) {
 			return loc.getComponent(name, ut.IM{})
 		},
 		"lang": func() string {

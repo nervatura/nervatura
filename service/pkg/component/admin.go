@@ -2,6 +2,7 @@ package component
 
 import (
 	"fmt"
+	"html/template"
 	"strings"
 
 	ct "github.com/nervatura/component/pkg/component"
@@ -292,7 +293,7 @@ func (adm *Admin) response(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 	return admEvt
 }
 
-func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) {
+func (adm *Admin) getComponent(name string, data cu.IM) (html template.HTML, err error) {
 	ccLbl := func() *ct.Label {
 		return &ct.Label{
 			Value: adm.msg(name),
@@ -443,7 +444,7 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 					Id:        "state",
 					Header:    adm.msg("admin_create_result_state"),
 					CellStyle: cu.SM{"text-align": "center"},
-					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) string {
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) template.HTML {
 						icoKey := "InfoCircle"
 						color := "orange"
 						if value == "err" {
@@ -451,8 +452,8 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 							color = "red"
 						}
 						res, _ := (&ct.Icon{Value: icoKey, Color: color}).Render()
-						return fmt.Sprintf(
-							`<span class="cell-label">%s</span>%s`, col.Header, res)
+						return template.HTML(fmt.Sprintf(
+							`<span class="cell-label">%s</span>%s`, col.Header, res))
 					}}},
 				{Name: "stamp", FieldType: ct.TableFieldTypeTime, Label: adm.msg("admin_create_result_stamp")},
 				{Name: "section", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_create_result_section")},
@@ -460,14 +461,14 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 				{Column: &ct.TableColumn{
 					Id:     "message",
 					Header: adm.msg("admin_create_result_message"),
-					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) string {
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) template.HTML {
 						style := ""
 						if row["state"] == "err" {
 							style = `style="color:red;"`
 						}
-						return fmt.Sprintf(
+						return template.HTML(fmt.Sprintf(
 							`<span class="cell-label">%s</span>
-							<span %s >%s</span>`, col.Header, style, cu.ToString(value, ""))
+							<span %s >%s</span>`, col.Header, style, cu.ToString(value, "")))
 					}}},
 			}
 			rows := cu.ToIMA(adm.Data["create_result"], []cu.IM{})
@@ -528,7 +529,7 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 					Id:        "installed",
 					Header:    adm.msg("admin_report_list_installed"),
 					CellStyle: cu.SM{"text-align": "center"},
-					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) string {
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) template.HTML {
 						idata := cu.IM{
 							"ico_key": "Plus", "color": "green",
 							"event": AdminEventReportInstall,
@@ -541,8 +542,8 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 						}
 						idata["reportkey"] = row["reportkey"]
 						res, _ := adm.getComponent("install_ico", idata)
-						return fmt.Sprintf(
-							`<span class="cell-label">%s</span>%s`, col.Header, res)
+						return template.HTML(fmt.Sprintf(
+							`<span class="cell-label">%s</span>%s`, col.Header, res))
 					}}},
 				{Name: "reportkey", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_reportkey")},
 				{Name: "repname", FieldType: ct.TableFieldTypeString, Label: adm.msg("admin_report_list_repname")},
@@ -590,8 +591,8 @@ func (adm *Admin) getComponent(name string, data cu.IM) (res string, err error) 
 		},
 	}
 	cc := ccMap[name]()
-	res, err = cc.Render()
-	return res, err
+	html, err = cc.Render()
+	return html, err
 }
 
 func (adm *Admin) msg(labelID string) string {
@@ -601,7 +602,7 @@ func (adm *Admin) msg(labelID string) string {
 	return labelID
 }
 
-func (adm *Admin) Render() (res string, err error) {
+func (adm *Admin) Render() (html template.HTML, err error) {
 	adm.InitProps(adm)
 
 	funcMap := map[string]any{
@@ -614,7 +615,7 @@ func (adm *Admin) Render() (res string, err error) {
 		"customClass": func() string {
 			return strings.Join(adm.Class, " ")
 		},
-		"adminComponent": func(name string) (string, error) {
+		"adminComponent": func(name string) (html template.HTML, err error) {
 			return adm.getComponent(name, cu.IM{})
 		},
 		"showResult": func() bool {
