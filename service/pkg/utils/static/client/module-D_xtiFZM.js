@@ -1,4 +1,4 @@
-import{i as e,r as t,x as a,E as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.js";import{d as l,e as s,B as o,S as r,m as d,P as n,n as p,M as c,I as m}from"./main-DqbyZqBu.js";import{o as v}from"./module-wWMQrsxL.js";import{n as b}from"./module-CzBF-UAF.js";import"./module-BN65x8j3.js";import"./module-DIYkrbh-.js";import"./module-C1fQGCtD.js";import"./module-A9oL7HpH.js";const h=e`
+import{i as e,r as t,x as a,E as i}from"./module-FRmUNWHB.js";import"./module-D-7nCm3D.js";import{d as l,e as s,B as o,S as r,m as d,P as n,n as p,I as c,M as m}from"./main-BEo7670f.js";import{o as v}from"./module-CC7fmSsS.js";import{n as b}from"./module-kXYVKzCx.js";import"./module-FD0eyFN_.js";import"./module-CqcvSjRQ.js";import"./module-C1fQGCtD.js";import"./module-DlEFkpPg.js";const h=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -634,7 +634,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
             </div>
             <div class="cell align-right" >
               <span id=${"closeIcon"} class="close-icon" 
-                @click="${()=>this._onModalEvent(c.CANCEL,{})}">
+                @click="${()=>this._onModalEvent(m.CANCEL,{})}">
                 <form-icon iconKey="Times" ></form-icon>
               </span>
             </div>
@@ -661,7 +661,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
                   ></form-label>
                 </div>
                 <form-input id="name"
-                  type="${m.TEXT}"
+                  type="${c.TEXT}"
                   label="${this.msg("",{id:"template_data_name"})}" 
                   .onChange=${e=>this._onValueChange("name",e.value)}
                   value="${t}" ?full=${!0}
@@ -686,13 +686,13 @@ textarea::placeholder, textarea::-ms-input-placeholder {
             <div class="section-row" >
               <div class="cell padding-small half" >
                 <form-button id="btn_cancel" icon="Times"
-                  @click=${()=>this._onModalEvent(c.CANCEL,{})} 
+                  @click=${()=>this._onModalEvent(m.CANCEL,{})} 
                   ?full="${!0}" label="${this.msg("",{id:"msg_cancel"})}"
                 >${this.msg("",{id:"msg_cancel"})}</form-button>
               </div>
               <div class="cell padding-small half" >
                 <form-button id="btn_ok" icon="Check"
-                  @click=${()=>this._onModalEvent(c.OK,{value:{name:t,type:e,columns:l}})} 
+                  @click=${()=>this._onModalEvent(m.OK,{value:{name:t,type:e,columns:l}})} 
                   type="${o.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_ok"})}"
                 >${this.msg("",{id:"msg_ok"})}</form-button>

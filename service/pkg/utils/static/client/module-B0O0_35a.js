@@ -1,4 +1,4 @@
-import{i as e,r as t,x as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.js";import"./module-wWMQrsxL.js";import{A as l,I as a,L as o,B as n}from"./main-DqbyZqBu.js";import{LoginController as s}from"./module-BpZiTZ_d.js";import"./module-C1fQGCtD.js";const r=e`
+import{i as e,r as t,x as i}from"./module-FRmUNWHB.js";import"./module-D-7nCm3D.js";import"./module-CC7fmSsS.js";import{A as l,I as a,B as o,L as n}from"./main-BEo7670f.js";import{LoginController as s}from"./module-etDIZAia.js";import"./module-C1fQGCtD.js";const r=e`
   @keyframes animatezoom{from{transform:scale(0)} to{transform:scale(1)}}
   :host {
     font-family: var(--font-family);
@@ -148,7 +148,7 @@ import{i as e,r as t,x as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.
                   <form-input id="username" type="${a.TEXT}" 
                     label="${this.msg("",{id:"login_username"})}"
                     value="${e}" ?full="${!0}"
-                    .onChange=${e=>this._onPageEvent(o.CHANGE,{fieldname:"username",value:e.value})}
+                    .onChange=${e=>this._onPageEvent(n.CHANGE,{fieldname:"username",value:e.value})}
                   ></form-input>
                 </div>
               </div>
@@ -161,8 +161,8 @@ import{i as e,r as t,x as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.
                     type="${a.PASSWORD}" 
                     label="${this.msg("",{id:"login_password"})}"
                     value="${t}" ?full="${!0}"
-                    .onChange=${e=>this._onPageEvent(o.CHANGE,{fieldname:"password",value:e.value})}
-                    .onEnter=${()=>this._onPageEvent(o.LOGIN,this.data)}
+                    .onChange=${e=>this._onPageEvent(n.CHANGE,{fieldname:"password",value:e.value})}
+                    .onEnter=${()=>this._onPageEvent(n.LOGIN,this.data)}
                   ></form-input>
                 </div>
               </div>
@@ -174,8 +174,8 @@ import{i as e,r as t,x as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.
                   <form-input id="database" type="${a.TEXT}"
                     label="${this.msg("",{id:"login_database"})}"
                     value="${s}" ?full="${!0}"
-                    .onChange=${e=>this._onPageEvent(o.CHANGE,{fieldname:"database",value:e.value})}
-                    .onEnter=${()=>this._onPageEvent(o.LOGIN,this.data)}
+                    .onChange=${e=>this._onPageEvent(n.CHANGE,{fieldname:"database",value:e.value})}
+                    .onEnter=${()=>this._onPageEvent(n.LOGIN,this.data)}
                   ></form-input>
                 </div>
               </div>
@@ -188,7 +188,7 @@ import{i as e,r as t,x as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.
                      <form-input id="server" type="${a.TEXT}" 
                         value="${r}" ?full="${!0}"
                         label="${this.msg("",{id:"login_server"})}"
-                        .onChange=${e=>this._onPageEvent(o.CHANGE,{fieldname:"server",value:e.value})}
+                        .onChange=${e=>this._onPageEvent(n.CHANGE,{fieldname:"server",value:e.value})}
                       ></form-input>
                    </div>
                 </div>
@@ -198,12 +198,12 @@ import{i as e,r as t,x as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.
               <div class="cell section-small mobile" >
                 <div class="cell container" >
                   <form-button id="theme" label="Theme"
-                    @click=${()=>this._onPageEvent(o.THEME,this.theme===l.DARK?l.LIGHT:l.DARK)} 
-                    type="${n.BORDER}" >${this.theme===l.DARK?i`<form-icon iconKey="Sun" width=18 height=18 ></form-icon>`:i`<form-icon iconKey="Moon" width=18 height=18 ></form-icon>`}</form-button>
+                    @click=${()=>this._onPageEvent(n.THEME,this.theme===l.DARK?l.LIGHT:l.DARK)} 
+                    type="${o.BORDER}" >${this.theme===l.DARK?i`<form-icon iconKey="Sun" width=18 height=18 ></form-icon>`:i`<form-icon iconKey="Moon" width=18 height=18 ></form-icon>`}</form-button>
                 </div>
                 <div class="cell" >
                   <form-select id="lang" label="${this.msg("Login",{id:"login_lang"})}"
-                    .onChange=${e=>this._onPageEvent(o.LANG,e.value)}
+                    .onChange=${e=>this._onPageEvent(n.LANG,e.value)}
                     .options=${d} .isnull="${!1}" value="${this.lang}" ></form-select>
                 </div>
               </div>
@@ -211,8 +211,8 @@ import{i as e,r as t,x as i}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.
                 <form-button id="login" ?autofocus="${!0}"
                   ?disabled="${m}" 
                   label="${this.msg("Login",{id:"login_login"})}"
-                  @click=${m?null:()=>this._onPageEvent(o.LOGIN,this.data)} 
-                  type="${n.PRIMARY}" ?full="${!0}" 
+                  @click=${m?null:()=>this._onPageEvent(n.LOGIN,this.data)} 
+                  type="${o.PRIMARY}" ?full="${!0}" 
                 >${this.msg("",{id:"login_login"})}
                 </form-button>
               </div>

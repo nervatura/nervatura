@@ -86,7 +86,7 @@ func (nstore *NervaStore) getReportDataWhere(reportTemplate, filters IM, sources
 
 	setWhere := func(wkey, fieldname, rel string) {
 		fstr := ""
-		if fields[fieldname].(IM)["sql"] == nil || fields[fieldname].(IM)["sql"] == "" {
+		if fields[fieldname].(IM)["sqlstr"] == nil || fields[fieldname].(IM)["sqlstr"] == "" {
 			fstr = fieldname + rel + ut.ToString(filters[fieldname], "")
 		} else {
 			fstr = strings.ReplaceAll(fstr, "@"+fieldname, ut.ToString(filters[fieldname], ""))

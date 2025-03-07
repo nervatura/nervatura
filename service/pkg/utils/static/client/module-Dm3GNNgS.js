@@ -1,4 +1,4 @@
-import{i as e,r as t,x as i,E as a}from"./module-BsLkbi3z.js";import"./module-BpBflBZw.js";import"./module-wWMQrsxL.js";import"./module-DIYkrbh-.js";import{I as l,M as o,B as s,g as n,P as r,b as d,i as c,d as m,E as u,S as h}from"./main-DqbyZqBu.js";import"./module-A9oL7HpH.js";import"./module-C1fQGCtD.js";const p=e`
+import{i as e,r as t,E as i,x as a}from"./module-FRmUNWHB.js";import"./module-D-7nCm3D.js";import"./module-CC7fmSsS.js";import"./module-CqcvSjRQ.js";import{B as l,I as o,M as s,g as n,P as r,b as d,i as c,d as m,E as u,S as h}from"./main-BEo7670f.js";import"./module-DlEFkpPg.js";import"./module-C1fQGCtD.js";const p=e`
 @keyframes animatezoom{from{transform:scale(0)} to{transform:scale(1)}}
 :host {
   font-family: var(--font-family);
@@ -114,7 +114,7 @@ div {
     width:49.99999% 
   }
 }
-`;customElements.define("modal-inputbox",class extends t{constructor(){super(),this.title="",this.message="",this.infoText=void 0,this.value="",this.labelCancel="Cancel",this.labelOK="OK",this.defaultOK=!1,this.showValue=!1,this.values={}}static get properties(){return{title:{type:String},message:{type:String},infoText:{type:String},value:{type:String,reflect:!0},labelOK:{type:String},labelCancel:{type:String},defaultOK:{type:Boolean},showValue:{type:Boolean},values:{type:Object}}}static get styles(){return[p]}_onModalEvent(e){const t={value:(this.renderRoot.querySelector("#input_value")||{}).value,values:this.values};this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){return i`<div class="modal">
+`;customElements.define("modal-inputbox",class extends t{constructor(){super(),this.title="",this.message="",this.infoText=void 0,this.value="",this.labelCancel="Cancel",this.labelOK="OK",this.defaultOK=!1,this.showValue=!1,this.values={}}static get properties(){return{title:{type:String},message:{type:String},infoText:{type:String},value:{type:String,reflect:!0},labelOK:{type:String},labelCancel:{type:String},defaultOK:{type:Boolean},showValue:{type:Boolean},values:{type:Object}}}static get styles(){return[p]}_onModalEvent(e){const t={value:(this.renderRoot.querySelector("#input_value")||{}).value,values:this.values};this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){return a`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -125,28 +125,28 @@ div {
           <div class="section" >
             <div class="section-row" >
               <div class="input">${this.message}</div>
-              ${this.infoText?i`<div class="info">${this.infoText}</div>`:a}
-              ${this.showValue?i`<div class="info">
-                  <form-input id="input_value" type="${l.TEXT}" label="${this.title}"
+              ${this.infoText?a`<div class="info">${this.infoText}</div>`:i}
+              ${this.showValue?a`<div class="info">
+                  <form-input id="input_value" type="${o.TEXT}" label="${this.title}"
                     value="${this.value}" ?full="${!0}"
-                    .onEnter=${()=>this._onModalEvent(o.OK)}
+                    .onEnter=${()=>this._onModalEvent(s.OK)}
                   ></form-input>
-                </div>`:a}
+                </div>`:i}
             </div>
           </div>
           <div class="section buttons" >
             <div class="section-row" >
               <div class="cell padding-small half" >
                 <form-button id="btn_cancel" icon="Times"
-                  @click=${()=>this._onModalEvent(o.CANCEL)} 
+                  @click=${()=>this._onModalEvent(s.CANCEL)} 
                   ?full="${!0}" label="${this.labelCancel}"
                 >${this.labelCancel}</form-button>
               </div>
               <div class="cell padding-small half" >
                 <form-button id="btn_ok" icon="Check"
-                  @click=${()=>this._onModalEvent(o.OK)} 
+                  @click=${()=>this._onModalEvent(s.OK)} 
                   ?autofocus="${!this.showValue&&this.defaultOK}"
-                  type="${s.PRIMARY}" ?full="${!0}" label="${this.labelOK}"
+                  type="${l.PRIMARY}" ?full="${!0}" label="${this.labelOK}"
                 >${this.labelOK}</form-button>
               </div>
             </div>
@@ -255,7 +255,7 @@ div {
     width:49.99999% 
   }
 }
-`;customElements.define("modal-bookmark",class extends t{constructor(){super(),this.bookmark={history:null,bookmark:[]},this.tabView=n.BOOKMARK,this.pageSize=5,this.onEvent={}}static get properties(){return{bookmark:{type:Object},tabView:{type:String},pageSize:{type:Number},onEvent:{type:Object}}}static get styles(){return[b]}_onModalEvent(e,t){this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onTabView(e){this.tabView=e}setBookmark(){return this.bookmark.bookmark.map((e=>{const t=JSON.parse(e.cfvalue),i={bookmark_id:e.id,id:t.id,cfgroup:e.cfgroup,ntype:t.ntype,transtype:"trans"===t.ntype?t.transtype:null,vkey:t.vkey,view:t.view,filters:t.filters,columns:t.columns,lslabel:e.cfname,lsvalue:new Intl.DateTimeFormat("default",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(t.date))};return"editor"===e.cfgroup&&("trans"===t.ntype?i.lsvalue+=` | ${this.msg(`title_${t.transtype}`,{id:`title_${t.transtype}`})} | ${t.info}`:i.lsvalue+=` | ${this.msg(`title_${t.ntype}`,{id:`title_${t.ntype}`})} | ${t.info}`),"browser"===e.cfgroup&&(i.lsvalue+=` | ${this.msg(`browser_${t.vkey}`,{id:`browser_${t.vkey}`})}`),i}))}setHistory(){if(this.bookmark.history&&this.bookmark.history.cfvalue){return JSON.parse(this.bookmark.history.cfvalue).map((e=>({id:e.id,lslabel:e.title,type:e.type,lsvalue:`${new Intl.DateTimeFormat("default",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:!1}).format(new Date(e.datetime))} | ${this.msg(`label_${e.type}`,{id:`label_${e.type}`})}`,ntype:e.ntype,transtype:e.transtype})))}return[]}connectedCallback(){super.connectedCallback(),this.bookmarkList=this.setBookmark(),this.historyList=this.setHistory()}render(){return i`<div class="modal">
+`;customElements.define("modal-bookmark",class extends t{constructor(){super(),this.bookmark={history:null,bookmark:[]},this.tabView=n.BOOKMARK,this.pageSize=5,this.onEvent={}}static get properties(){return{bookmark:{type:Object},tabView:{type:String},pageSize:{type:Number},onEvent:{type:Object}}}static get styles(){return[b]}_onModalEvent(e,t){this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onTabView(e){this.tabView=e}setBookmark(){return this.bookmark.bookmark.map((e=>{const t=JSON.parse(e.cfvalue),i={bookmark_id:e.id,id:t.id,cfgroup:e.cfgroup,ntype:t.ntype,transtype:"trans"===t.ntype?t.transtype:null,vkey:t.vkey,view:t.view,filters:t.filters,columns:t.columns,lslabel:e.cfname,lsvalue:new Intl.DateTimeFormat("default",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(t.date))};return"editor"===e.cfgroup&&("trans"===t.ntype?i.lsvalue+=` | ${this.msg(`title_${t.transtype}`,{id:`title_${t.transtype}`})} | ${t.info}`:i.lsvalue+=` | ${this.msg(`title_${t.ntype}`,{id:`title_${t.ntype}`})} | ${t.info}`),"browser"===e.cfgroup&&(i.lsvalue+=` | ${this.msg(`browser_${t.vkey}`,{id:`browser_${t.vkey}`})}`),i}))}setHistory(){if(this.bookmark.history&&this.bookmark.history.cfvalue){return JSON.parse(this.bookmark.history.cfvalue).map((e=>({id:e.id,lslabel:e.title,type:e.type,lsvalue:`${new Intl.DateTimeFormat("default",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:!1}).format(new Date(e.datetime))} | ${this.msg(`label_${e.type}`,{id:`label_${e.type}`})}`,ntype:e.ntype,transtype:e.transtype})))}return[]}connectedCallback(){super.connectedCallback(),this.bookmarkList=this.setBookmark(),this.historyList=this.setHistory()}render(){return a`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -267,7 +267,7 @@ div {
             </div>
             <div class="cell align-right" >
               <span id=${"closeIcon"} class="close-icon" 
-                @click="${()=>this._onModalEvent(o.CANCEL,{})}">
+                @click="${()=>this._onModalEvent(s.CANCEL,{})}">
                 <form-icon iconKey="Times" ></form-icon>
               </span>
             </div>
@@ -279,7 +279,7 @@ div {
                   .style="${{"border-radius":0}}" icon="Star"
                   label="${this.msg("",{id:"title_bookmark_list"})}"
                   @click=${()=>this._onTabView(n.BOOKMARK)} 
-                  type="${this.tabView===n.BOOKMARK?s.PRIMARY:""}"
+                  type="${this.tabView===n.BOOKMARK?l.PRIMARY:""}"
                   ?full="${!0}" ?selected="${n.BOOKMARK===this.tabView}" >
                   ${this.msg("",{id:"title_bookmark_list"})}</form-button>
               </div>
@@ -288,7 +288,7 @@ div {
                   .style="${{"border-radius":0}}" icon="History"
                   label="${this.msg("",{id:"title_history"})}"
                   @click=${()=>this._onTabView(n.HISTORY)} 
-                  type="${this.tabView===n.HISTORY?s.PRIMARY:""}" 
+                  type="${this.tabView===n.HISTORY?l.PRIMARY:""}" 
                   ?full="${!0}" ?selected="${n.HISTORY===this.tabView}" >
                   ${this.msg("",{id:"title_history"})}</form-button>
               </div>
@@ -302,14 +302,14 @@ div {
                 ?hidePaginatonSize="${!0}"
                 filterPlaceholder="${this.msg("Filter",{id:"placeholder_filter"})}"
                 editIcon="${"bookmark"===this.tabView?"Star":"History"}"
-                .onEdit=${e=>this._onModalEvent(o.SELECTED,{view:this.tabView,row:e})}
-                .onDelete=${"bookmark"===this.tabView?e=>this._onModalEvent(o.DELETE,{bookmark_id:e.bookmark_id}):null}
+                .onEdit=${e=>this._onModalEvent(s.SELECTED,{view:this.tabView,row:e})}
+                .onDelete=${"bookmark"===this.tabView?e=>this._onModalEvent(s.DELETE,{bookmark_id:e.bookmark_id}):null}
               ></form-list>
             </div>
           </div>
         </div>
       </div>
-    </div>`}});class v{constructor(e){this.host=e,this.deleteBookmark=this.deleteBookmark.bind(this),this.onMenuEvent=this.onMenuEvent.bind(this),this.onModalEvent=this.onModalEvent.bind(this),e.addController(this)}async deleteBookmark({bookmark_id:e}){const{inputBox:t}=this.host.app.host,{data:i,setData:a}=this.host.app.store,{requestData:l,resultError:s,loadBookmark:n,msg:r}=this.host.app,{modalBookmark:c}=this.host,m=i[d.LOGIN],u=t({title:r("",{id:"msg_warning"}),message:r("",{id:"msg_delete_text"}),infoText:r("",{id:"msg_delete_info"}),onEvent:{onModalEvent:async({key:t})=>{if(a("current",{modalForm:null}),t===o.CANCEL)return a("current",{modalForm:c()});const i=await l("/ui_userconfig",{method:"DELETE",query:{id:e}});if(i&&i.error)return s(i);const r=await n({user_id:m.data.employee.id});return a("current",{modalForm:c(r)})}}});a("current",{modalForm:u})}onMenuEvent({key:e,data:t}){const{setData:i}=this.host.app.store,{current:a,setting:l}=this.host.app.store.data,{signOut:o,showHelp:s,currentModule:n}=this.host.app,{modalBookmark:r}=this.host;switch(e){case c.SIDEBAR:i("current",{side:a.side===m.SHOW?m.HIDE:m.SHOW});break;case c.MODULE:switch(t.value){case d.LOGIN:o();break;case d.HELP:s("");break;case d.BOOKMARK:i("current",{modalForm:r()});break;default:const e={module:t.value,menu:"",side:m.HIDE};let a=null;t.value!==d.SETTING||l.group_key||(i(d.SETTING,{group_key:"group_admin"}),a={fkey:"checkSetting",args:[{type:"setting"},h.LOAD_SETTING]}),n({data:{...e},content:a})}break;case c.SCROLL:window.scrollTo(0,0)}}onModalEvent({key:e,data:t}){const{currentModule:i}=this.host.app,{setData:a}=this.host.app.store,{search:l}=this.host.app.store.data;switch(e){case o.CANCEL:a("current",{modalForm:null});break;case o.SELECTED:if("bookmark"===t.view&&"browser"===t.row.cfgroup){const e={...l,filters:{...l.filters,[t.row.view]:t.row.filters},columns:{...l.columns,[t.row.view]:t.row.columns}};i({data:{module:d.SEARCH,modalForm:null},content:{fkey:"showBrowser",args:[t.row.vkey,t.row.view,e]}})}else i({data:{module:d.EDIT,modalForm:null},content:{fkey:"checkEditor",args:[{ntype:t.row.ntype,ttype:t.row.transtype,id:t.row.id},u.LOAD_EDITOR]}});break;case o.DELETE:this.deleteBookmark(t)}}}const g=e`
+    </div>`}});class v{constructor(e){this.host=e,this.deleteBookmark=this.deleteBookmark.bind(this),this.onMenuEvent=this.onMenuEvent.bind(this),this.onModalEvent=this.onModalEvent.bind(this),e.addController(this)}async deleteBookmark({bookmark_id:e}){const{inputBox:t}=this.host.app.host,{data:i,setData:a}=this.host.app.store,{requestData:l,resultError:o,loadBookmark:n,msg:r}=this.host.app,{modalBookmark:c}=this.host,m=i[d.LOGIN],u=t({title:r("",{id:"msg_warning"}),message:r("",{id:"msg_delete_text"}),infoText:r("",{id:"msg_delete_info"}),onEvent:{onModalEvent:async({key:t})=>{if(a("current",{modalForm:null}),t===s.CANCEL)return a("current",{modalForm:c()});const i=await l("/ui_userconfig",{method:"DELETE",query:{id:e}});if(i&&i.error)return o(i);const r=await n({user_id:m.data.employee.id});return a("current",{modalForm:c(r)})}}});a("current",{modalForm:u})}onMenuEvent({key:e,data:t}){const{setData:i}=this.host.app.store,{current:a,setting:l}=this.host.app.store.data,{signOut:o,showHelp:s,currentModule:n}=this.host.app,{modalBookmark:r}=this.host;switch(e){case c.SIDEBAR:i("current",{side:a.side===m.SHOW?m.HIDE:m.SHOW});break;case c.MODULE:switch(t.value){case d.LOGIN:o();break;case d.HELP:s("");break;case d.BOOKMARK:i("current",{modalForm:r()});break;default:const e={module:t.value,menu:"",side:m.HIDE};let a=null;t.value!==d.SETTING||l.group_key||(i(d.SETTING,{group_key:"group_admin"}),a={fkey:"checkSetting",args:[{type:"setting"},h.LOAD_SETTING]}),n({data:{...e},content:a})}break;case c.SCROLL:window.scrollTo(0,0)}}onModalEvent({key:e,data:t}){const{currentModule:i}=this.host.app,{setData:a}=this.host.app.store,{search:l}=this.host.app.store.data;switch(e){case s.CANCEL:a("current",{modalForm:null});break;case s.SELECTED:if("bookmark"===t.view&&"browser"===t.row.cfgroup){const e={...l,filters:{...l.filters,[t.row.view]:t.row.filters},columns:{...l.columns,[t.row.view]:t.row.columns}};i({data:{module:d.SEARCH,modalForm:null},content:{fkey:"showBrowser",args:[t.row.vkey,t.row.view,e]}})}else i({data:{module:d.EDIT,modalForm:null},content:{fkey:"checkEditor",args:[{ntype:t.row.ntype,ttype:t.row.transtype,id:t.row.id},u.LOAD_EDITOR]}});break;case s.DELETE:this.deleteBookmark(t)}}}const g=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -393,20 +393,20 @@ div {
     display: none!important; 
   }
 }
-`;customElements.define("client-menubar",class extends t{constructor(){super(),this.scrollTop=!1,this.side=m.AUTO,this.module=d.SEARCH,this.bookmark={history:null,bookmark:[]},this.selectorPage=5,this.onEvent=new v(this),this.modalBookmark=this.modalBookmark.bind(this)}static get properties(){return{side:{type:String},module:{type:String},scrollTop:{type:Boolean},bookmark:{type:Object},selectorPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[g]}_onMenuEvent(e,t){this.onEvent.onMenuEvent&&this.onEvent.onMenuEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("menu_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}modalBookmark(e){return i`<modal-bookmark
+`;customElements.define("client-menubar",class extends t{constructor(){super(),this.scrollTop=!1,this.side=m.AUTO,this.module=d.SEARCH,this.bookmark={history:null,bookmark:[]},this.selectorPage=5,this.onEvent=new v(this),this.modalBookmark=this.modalBookmark.bind(this)}static get properties(){return{side:{type:String},module:{type:String},scrollTop:{type:Boolean},bookmark:{type:Object},selectorPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[g]}_onMenuEvent(e,t){this.onEvent.onMenuEvent&&this.onEvent.onMenuEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("menu_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}modalBookmark(e){return a`<modal-bookmark
       .bookmark="${e||this.bookmark}"
       tabView="bookmark"
       pageSize=${this.selectorPage}
       .onEvent=${this.onEvent}
       .msg=${this.msg}
-    ></modal-bookmark>`}selected(e){return e===this.module?"selected":""}render(){return i`<div class="menubar ${this.scrollTop?"shadow":""}" >
+    ></modal-bookmark>`}selected(e){return e===this.module?"selected":""}render(){return a`<div class="menubar ${this.scrollTop?"shadow":""}" >
       <div class="cell">
         <div id="mnu_sidebar"
           class="menuitem sidebar" 
           @click=${()=>this._onMenuEvent(c.SIDEBAR)}>
-          ${this.side===m.SHOW?i`<form-label 
+          ${this.side===m.SHOW?a`<form-label 
                 value="${this.msg("Hide",{id:"menu_hide"})}" class="selected exit"
-                leftIcon="Close" ></form-label>`:i`<form-label class="menu-label"
+                leftIcon="Close" ></form-label>`:a`<form-label class="menu-label"
                 value="${this.msg("Menu",{id:"menu_side"})}"
                 leftIcon="Bars" .iconStyle="${{width:"24px",height:"24px"}}" ></form-label>`}
         </div>
@@ -452,10 +452,10 @@ div {
             value="${this.msg("Logout",{id:"menu_logout"})}"
             leftIcon="Exit" ></form-label>
         </div>
-        ${this.scrollTop?i`<div id="mnu_scroll" class="menuitem" 
+        ${this.scrollTop?a`<div id="mnu_scroll" class="menuitem" 
             @click=${()=>this._onMenuEvent(c.SIDEBAR)}>
             <span class="menu-label" ><form-icon iconKey="HandUp" ></form-icon></span>
-          </div>`:a}
+          </div>`:i}
       </div>
       <div class="cell container">
         <div id="mnu_help_medium" 

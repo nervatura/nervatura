@@ -116,7 +116,7 @@ func (adm *Admin) Validation(propName string, propValue interface{}) interface{}
 			return adm.CheckEnumValue(cu.ToString(propValue, ""), ct.ThemeLight, ct.Theme)
 		},
 		"labels": func() interface{} {
-			value := cu.SetSMValue(adm.Labels, "", "")
+			value := cu.ToSM(adm.Labels, cu.SM{})
 			if smap, valid := propValue.(cu.SM); valid {
 				value = cu.MergeSM(value, smap)
 			}
@@ -444,7 +444,7 @@ func (adm *Admin) getComponent(name string, data cu.IM) (html template.HTML, err
 					Id:        "state",
 					Header:    adm.msg("admin_create_result_state"),
 					CellStyle: cu.SM{"text-align": "center"},
-					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) template.HTML {
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}, rowIndex int64) template.HTML {
 						icoKey := "InfoCircle"
 						color := "orange"
 						if value == "err" {
@@ -461,7 +461,7 @@ func (adm *Admin) getComponent(name string, data cu.IM) (html template.HTML, err
 				{Column: &ct.TableColumn{
 					Id:     "message",
 					Header: adm.msg("admin_create_result_message"),
-					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) template.HTML {
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}, rowIndex int64) template.HTML {
 						style := ""
 						if row["state"] == "err" {
 							style = `style="color:red;"`
@@ -529,7 +529,7 @@ func (adm *Admin) getComponent(name string, data cu.IM) (html template.HTML, err
 					Id:        "installed",
 					Header:    adm.msg("admin_report_list_installed"),
 					CellStyle: cu.SM{"text-align": "center"},
-					Cell: func(row cu.IM, col ct.TableColumn, value interface{}) template.HTML {
+					Cell: func(row cu.IM, col ct.TableColumn, value interface{}, rowIndex int64) template.HTML {
 						idata := cu.IM{
 							"ico_key": "Plus", "color": "green",
 							"event": AdminEventReportInstall,

@@ -308,7 +308,7 @@ func (nstore *NervaStore) sendEmail(options IM) (results IM, err error) {
 	}
 	getConn := map[string]func() (net.Conn, error){
 		"net": func() (net.Conn, error) {
-			return net.DialTimeout("tcp", fmt.Sprintf("%s:%d", host, port), time.Duration(2)*time.Second)
+			return net.DialTimeout("tcp", net.JoinHostPort(host, fmt.Sprintf("%d", port)), time.Duration(2)*time.Second)
 		},
 		"tls": func() (net.Conn, error) {
 			return tls.Dial("tcp", fmt.Sprintf("%s:%d", host, port), &tlsConfig)

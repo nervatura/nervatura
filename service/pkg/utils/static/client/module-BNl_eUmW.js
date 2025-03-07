@@ -1,4 +1,4 @@
-import{i as e,r as t,x as i,E as a,T as l}from"./module-BsLkbi3z.js";import{a as o,i as n,t as s,e as r,o as d}from"./module-wWMQrsxL.js";import"./module-BpBflBZw.js";import{d as c,k as p,B as m,S as v,e as u,E as h,j as b,P as g,a as f,M as $,I as y}from"./main-DqbyZqBu.js";import"./module-BN65x8j3.js";import"./module-A9oL7HpH.js";import{e as x,n as _}from"./module-CzBF-UAF.js";import"./module-DIYkrbh-.js";import"./module-Bvdj1yGX.js";import"./module-C1fQGCtD.js";const E=e`
+import{i as e,r as t,x as i,E as a,T as l}from"./module-FRmUNWHB.js";import{a as o,i as n,t as s,e as r,o as d}from"./module-CC7fmSsS.js";import"./module-D-7nCm3D.js";import{d as c,k as p,e as m,B as v,S as u,E as h,j as b,P as g,a as f,I as $,M as y}from"./main-BEo7670f.js";import"./module-FD0eyFN_.js";import"./module-DlEFkpPg.js";import{e as x,n as _}from"./module-kXYVKzCx.js";import"./module-CqcvSjRQ.js";import"./module-BTOIQee_.js";import"./module-C1fQGCtD.js";const E=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -99,43 +99,43 @@ div {
 *::-webkit-scrollbar-thumb:hover {
   background-color: rgba(var(--functional-green), .20)
 }
-`;customElements.define("sidebar-edit",class extends t{constructor(){super(),this.msg=e=>e,this.side=c.AUTO,this.view=p.EDIT,this.module={current:{},form_dirty:!1,dirty:!1,panel:{},dataset:{},group_key:""},this.newFilter=[],this.auditFilter={},this.forms={}}static get properties(){return{side:{type:String,reflect:!0},view:{type:String,reflect:!0},newFilter:{type:Array},auditFilter:{type:Object},module:{type:Object},forms:{type:Object}}}static get styles(){return[E]}_onSideEvent(e,t){this.onEvent&&this.onEvent.onSideEvent&&this.onEvent.onSideEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("side_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}itemMenu({id:e,selected:t,eventValue:a,label:l,iconKey:o,full:n,disabled:s,align:r,color:d}){const c=void 0!==t&&t,p=void 0===n||n,v=void 0!==s&&s,h=void 0===r?u.LEFT:r,b={"border-radius":"0","border-color":"rgba(var(--accent-1c), 0.2)"};return d&&(b.color=d,b.fill=d),i`<form-button 
+`;customElements.define("sidebar-edit",class extends t{constructor(){super(),this.msg=e=>e,this.side=c.AUTO,this.view=p.EDIT,this.module={current:{},form_dirty:!1,dirty:!1,panel:{},dataset:{},group_key:""},this.newFilter=[],this.auditFilter={},this.forms={}}static get properties(){return{side:{type:String,reflect:!0},view:{type:String,reflect:!0},newFilter:{type:Array},auditFilter:{type:Object},module:{type:Object},forms:{type:Object}}}static get styles(){return[E]}_onSideEvent(e,t){this.onEvent&&this.onEvent.onSideEvent&&this.onEvent.onSideEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("side_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}itemMenu({id:e,selected:t,eventValue:a,label:l,iconKey:o,full:n,disabled:s,align:r,color:d}){const c=void 0!==t&&t,p=void 0===n||n,u=void 0!==s&&s,h=void 0===r?m.LEFT:r,b={"border-radius":"0","border-color":"rgba(var(--accent-1c), 0.2)"};return d&&(b.color=d,b.fill=d),i`<form-button 
         id="${e}" label="${l}"
-        ?full="${p}" ?disabled="${v}" ?selected="${c}"
+        ?full="${p}" ?disabled="${u}" ?selected="${c}"
         align=${h}
         .style="${b}"
-        icon="${o}" type="${m.PRIMARY}"
+        icon="${o}" type="${v.PRIMARY}"
         @click=${()=>this._onSideEvent(...a)} 
-      >${l}</form-button>`}editItems(e){const{current:t,dirty:a,form_dirty:l,dataset:n}=this.module,s=void 0===e?{}:e,r=[];if((!0===s.back||t.form)&&(r.push(this.itemMenu({id:"cmd_back",selected:!0,eventValue:[v.BACK,{}],label:this.msg("",{id:"label_back"}),iconKey:"Reply",full:!1})),r.push(i`<hr id="back_sep" class="separator" />`)),!0===s.arrow&&(r.push(this.itemMenu({id:"cmd_arrow_left",eventValue:[v.PREV_NUMBER,{}],label:this.msg("",{id:"label_previous"}),iconKey:"ArrowLeft"})),r.push(this.itemMenu({id:"cmd_arrow_right",eventValue:[v.NEXT_NUMBER,{}],label:this.msg("",{id:"label_next"}),iconKey:"ArrowRight",align:u.RIGHT})),r.push(i`<hr id="arrow_sep" class="separator" />`)),s.state&&"normal"!==s.state){const e="deleted"===s.state?"rgb(var(--functional-red))":"cancellation"===s.state?"rgb(var(--functional-yellow))":"rgba(var(--accent-1c), 0.85)",t=["closed","readonly"].includes(s.state)?"Lock":"ExclamationTriangle";r.push(i`<div key="cmd_state" class="state-label" >
+      >${l}</form-button>`}editItems(e){const{current:t,dirty:a,form_dirty:l,dataset:n}=this.module,s=void 0===e?{}:e,r=[];if((!0===s.back||t.form)&&(r.push(this.itemMenu({id:"cmd_back",selected:!0,eventValue:[u.BACK,{}],label:this.msg("",{id:"label_back"}),iconKey:"Reply",full:!1})),r.push(i`<hr id="back_sep" class="separator" />`)),!0===s.arrow&&(r.push(this.itemMenu({id:"cmd_arrow_left",eventValue:[u.PREV_NUMBER,{}],label:this.msg("",{id:"label_previous"}),iconKey:"ArrowLeft"})),r.push(this.itemMenu({id:"cmd_arrow_right",eventValue:[u.NEXT_NUMBER,{}],label:this.msg("",{id:"label_next"}),iconKey:"ArrowRight",align:m.RIGHT})),r.push(i`<hr id="arrow_sep" class="separator" />`)),s.state&&"normal"!==s.state){const e="deleted"===s.state?"rgb(var(--functional-red))":"cancellation"===s.state?"rgb(var(--functional-yellow))":"rgba(var(--accent-1c), 0.85)",t=["closed","readonly"].includes(s.state)?"Lock":"ExclamationTriangle";r.push(i`<div key="cmd_state" class="state-label" >
         <form-icon iconKey="${t}" .style="${{fill:e}}" ></form-icon>
         <span style="${o({color:e,fill:e,"vertical-align":"middle"})}" >${this.msg("",{id:`label_${s.state}`})}</span>
-      </div>`),r.push(i`<hr id="state_sep" class="separator" />`)}return!1!==s.save&&r.push(this.itemMenu({id:"cmd_save",selected:!!(t.form&&l||!t.form&&a),eventValue:[v.SAVE,{}],label:this.msg("",{id:"label_save"}),iconKey:"Check"})),!1!==s.delete&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_delete",eventValue:[v.DELETE,{}],label:this.msg("",{id:"label_delete"}),iconKey:"Times"})),!1===s.new||"normal"!==s.state||t.form||r.push(this.itemMenu({id:"cmd_new",eventValue:[v.NEW,[{}]],label:this.msg("",{id:"label_new"}),iconKey:"Plus"})),!0===s.trans&&(r.push(i`<hr id="trans_sep" class="separator" />`),!1!==s.copy&&r.push(this.itemMenu({id:"cmd_copy",eventValue:[v.COPY,{value:"normal"}],label:this.msg("",{id:"label_copy"}),iconKey:"Copy"})),!1!==s.create&&r.push(this.itemMenu({id:"cmd_create",eventValue:[v.COPY,{value:"create"}],label:this.msg("",{id:"label_create"}),iconKey:"Sitemap"})),!0===s.corrective&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_corrective",eventValue:[v.COPY,{value:"amendment"}],label:this.msg("",{id:"label_corrective"}),iconKey:"Share"})),!0===s.cancellation&&"cancellation"!==s.state&&r.push(this.itemMenu({id:"cmd_cancellation",eventValue:[v.COPY,{value:"cancellation"}],label:this.msg("",{id:"label_cancellation"}),iconKey:"Undo"})),!0===s.formula&&r.push(this.itemMenu({id:"cmd_formula",eventValue:[v.CHECK,[{},h.LOAD_FORMULA]],label:this.msg("",{id:"label_formula"}),iconKey:"Magic"}))),!0===s.link&&r.push(this.itemMenu({id:"cmd_link",eventValue:[v.LINK,{type:s.link_type,field:s.link_field}],label:s.link_label,iconKey:"Link"})),!0===s.password&&r.push(this.itemMenu({id:"cmd_password",eventValue:[v.PASSWORD,{}],label:this.msg("",{id:"title_password"}),iconKey:"Lock"})),!0===s.shipping&&(r.push(this.itemMenu({id:"cmd_shipping_all",eventValue:[v.SHIPPING_ADD_ALL,{}],label:this.msg("",{id:"shipping_all_label"}),iconKey:"Plus"})),r.push(this.itemMenu({id:"cmd_shipping_create",selected:n.shiptemp&&n.shiptemp.length>0,eventValue:[v.SHIPPING_CREATE,{}],label:this.msg("",{id:"shipping_create_label"}),iconKey:"Check"}))),!0===s.more&&(r.push(i`<hr id="more_sep_1" class="separator" />`),!1!==s.report&&r.push(this.itemMenu({id:"cmd_report",eventValue:[v.REPORT_SETTINGS,{}],label:this.msg("",{id:"label_report"}),iconKey:"ChartBar"})),!0===s.search&&r.push(this.itemMenu({id:"cmd_search",eventValue:[v.SEARCH_QUEUE,{}],label:this.msg("",{id:"label_search"}),iconKey:"Search"})),!0===s.export_all&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_all",eventValue:[v.EXPORT_QUEUE_ALL,{}],label:this.msg("",{id:"label_export_all"}),iconKey:"Download"})),!0===s.print&&r.push(this.itemMenu({id:"cmd_print",eventValue:[v.CREATE_REPORT,{value:"print"}],label:this.msg("",{id:"label_print"}),iconKey:"Print"})),!0===s.export_pdf&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_pdf",eventValue:[v.CREATE_REPORT,{value:"pdf"}],label:this.msg("",{id:"label_export_pdf"}),iconKey:"Download"})),!0===s.export_xml&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_xml",eventValue:[v.CREATE_REPORT,{value:"xml"}],label:this.msg("",{id:"label_export_xml"}),iconKey:"Code"})),!0===s.export_csv&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_csv",eventValue:[v.CREATE_REPORT,{value:"csv"}],label:this.msg("",{id:"label_export_csv"}),iconKey:"Download"})),!0===s.export_event&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_event",eventValue:[v.EXPORT_EVENT,{}],label:this.msg("",{id:"label_export_event"}),iconKey:"Calendar"})),r.push(i`<hr id="more_sep_2" class="separator" />`),!1!==s.bookmark&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_bookmark",eventValue:[v.SAVE_BOOKMARK,{value:s.bookmark}],label:this.msg("",{id:"label_bookmark"}),iconKey:"Star"})),!1!==s.help&&r.push(this.itemMenu({id:"cmd_help",eventValue:[v.HELP,{value:s.help}],label:this.msg("",{id:"label_help"}),iconKey:"QuestionCircle"}))),!0!==s.more&&void 0!==s.help&&(r.push(i`<hr id="help_sep" class="separator" />`),r.push(this.itemMenu({id:"cmd_help",eventValue:[v.HELP,{value:s.help}],label:this.msg("",{id:"label_help"}),iconKey:"QuestionCircle"}))),r}newItems(){const{group_key:e}=this.module,t=[];return this.newFilter[0].length>0&&t.push(i`<div class="row full">
-        ${this.itemMenu({id:"new_transitem_group",selected:"new_transitem"===e,eventValue:[v.CHANGE,{fieldname:"group_key",value:"new_transitem"}],label:this.msg("",{id:"search_transitem"}),iconKey:"FileText"})}
+      </div>`),r.push(i`<hr id="state_sep" class="separator" />`)}return!1!==s.save&&r.push(this.itemMenu({id:"cmd_save",selected:!!(t.form&&l||!t.form&&a),eventValue:[u.SAVE,{}],label:this.msg("",{id:"label_save"}),iconKey:"Check"})),!1!==s.delete&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_delete",eventValue:[u.DELETE,{}],label:this.msg("",{id:"label_delete"}),iconKey:"Times"})),!1===s.new||"normal"!==s.state||t.form||r.push(this.itemMenu({id:"cmd_new",eventValue:[u.NEW,[{}]],label:this.msg("",{id:"label_new"}),iconKey:"Plus"})),!0===s.trans&&(r.push(i`<hr id="trans_sep" class="separator" />`),!1!==s.copy&&r.push(this.itemMenu({id:"cmd_copy",eventValue:[u.COPY,{value:"normal"}],label:this.msg("",{id:"label_copy"}),iconKey:"Copy"})),!1!==s.create&&r.push(this.itemMenu({id:"cmd_create",eventValue:[u.COPY,{value:"create"}],label:this.msg("",{id:"label_create"}),iconKey:"Sitemap"})),!0===s.corrective&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_corrective",eventValue:[u.COPY,{value:"amendment"}],label:this.msg("",{id:"label_corrective"}),iconKey:"Share"})),!0===s.cancellation&&"cancellation"!==s.state&&r.push(this.itemMenu({id:"cmd_cancellation",eventValue:[u.COPY,{value:"cancellation"}],label:this.msg("",{id:"label_cancellation"}),iconKey:"Undo"})),!0===s.formula&&r.push(this.itemMenu({id:"cmd_formula",eventValue:[u.CHECK,[{},h.LOAD_FORMULA]],label:this.msg("",{id:"label_formula"}),iconKey:"Magic"}))),!0===s.link&&r.push(this.itemMenu({id:"cmd_link",eventValue:[u.LINK,{type:s.link_type,field:s.link_field}],label:s.link_label,iconKey:"Link"})),!0===s.password&&r.push(this.itemMenu({id:"cmd_password",eventValue:[u.PASSWORD,{}],label:this.msg("",{id:"title_password"}),iconKey:"Lock"})),!0===s.shipping&&(r.push(this.itemMenu({id:"cmd_shipping_all",eventValue:[u.SHIPPING_ADD_ALL,{}],label:this.msg("",{id:"shipping_all_label"}),iconKey:"Plus"})),r.push(this.itemMenu({id:"cmd_shipping_create",selected:n.shiptemp&&n.shiptemp.length>0,eventValue:[u.SHIPPING_CREATE,{}],label:this.msg("",{id:"shipping_create_label"}),iconKey:"Check"}))),!0===s.more&&(r.push(i`<hr id="more_sep_1" class="separator" />`),!1!==s.report&&r.push(this.itemMenu({id:"cmd_report",eventValue:[u.REPORT_SETTINGS,{}],label:this.msg("",{id:"label_report"}),iconKey:"ChartBar"})),!0===s.search&&r.push(this.itemMenu({id:"cmd_search",eventValue:[u.SEARCH_QUEUE,{}],label:this.msg("",{id:"label_search"}),iconKey:"Search"})),!0===s.export_all&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_all",eventValue:[u.EXPORT_QUEUE_ALL,{}],label:this.msg("",{id:"label_export_all"}),iconKey:"Download"})),!0===s.print&&r.push(this.itemMenu({id:"cmd_print",eventValue:[u.CREATE_REPORT,{value:"print"}],label:this.msg("",{id:"label_print"}),iconKey:"Print"})),!0===s.export_pdf&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_pdf",eventValue:[u.CREATE_REPORT,{value:"pdf"}],label:this.msg("",{id:"label_export_pdf"}),iconKey:"Download"})),!0===s.export_xml&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_xml",eventValue:[u.CREATE_REPORT,{value:"xml"}],label:this.msg("",{id:"label_export_xml"}),iconKey:"Code"})),!0===s.export_csv&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_csv",eventValue:[u.CREATE_REPORT,{value:"csv"}],label:this.msg("",{id:"label_export_csv"}),iconKey:"Download"})),!0===s.export_event&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_event",eventValue:[u.EXPORT_EVENT,{}],label:this.msg("",{id:"label_export_event"}),iconKey:"Calendar"})),r.push(i`<hr id="more_sep_2" class="separator" />`),!1!==s.bookmark&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_bookmark",eventValue:[u.SAVE_BOOKMARK,{value:s.bookmark}],label:this.msg("",{id:"label_bookmark"}),iconKey:"Star"})),!1!==s.help&&r.push(this.itemMenu({id:"cmd_help",eventValue:[u.HELP,{value:s.help}],label:this.msg("",{id:"label_help"}),iconKey:"QuestionCircle"}))),!0!==s.more&&void 0!==s.help&&(r.push(i`<hr id="help_sep" class="separator" />`),r.push(this.itemMenu({id:"cmd_help",eventValue:[u.HELP,{value:s.help}],label:this.msg("",{id:"label_help"}),iconKey:"QuestionCircle"}))),r}newItems(){const{group_key:e}=this.module,t=[];return this.newFilter[0].length>0&&t.push(i`<div class="row full">
+        ${this.itemMenu({id:"new_transitem_group",selected:"new_transitem"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_transitem"}],label:this.msg("",{id:"search_transitem"}),iconKey:"FileText"})}
         ${"new_transitem"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[0].map((e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[v.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"FileText",color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[0].map((e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"FileText",color:"rgb(var(--functional-blue))"}):a))}
         </div>`:a}
       </div>`),this.newFilter[1].length>0&&t.push(i`<div class="row full">
-        ${this.itemMenu({id:"new_transpayment_group",selected:"new_transpayment"===e,eventValue:[v.CHANGE,{fieldname:"group_key",value:"new_transpayment"}],label:this.msg("",{id:"search_transpayment"}),iconKey:"Money"})}
+        ${this.itemMenu({id:"new_transpayment_group",selected:"new_transpayment"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_transpayment"}],label:this.msg("",{id:"search_transpayment"}),iconKey:"Money"})}
         ${"new_transpayment"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[1].map((e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[v.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"Money",color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[1].map((e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"Money",color:"rgb(var(--functional-blue))"}):a))}
         </div>`:a}
       </div>`),this.newFilter[2].length>0&&t.push(i`<div class="row full">
-        ${this.itemMenu({id:"new_transmovement_group",selected:"new_transmovement"===e,eventValue:[v.CHANGE,{fieldname:"group_key",value:"new_transmovement"}],label:this.msg("",{id:"search_transmovement"}),iconKey:"Truck"})}
+        ${this.itemMenu({id:"new_transmovement_group",selected:"new_transmovement"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_transmovement"}],label:this.msg("",{id:"search_transmovement"}),iconKey:"Truck"})}
         ${"new_transmovement"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[2].map((e=>"all"===this.auditFilter.trans[e][0]?"delivery"===e?[this.itemMenu({id:"shipping",eventValue:[v.NEW,[{ntype:"trans",ttype:"shipping"}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}),this.itemMenu({id:e,eventValue:[v.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:"title_transfer"}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"})]:this.itemMenu({id:e,eventValue:[v.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[2].map((e=>"all"===this.auditFilter.trans[e][0]?"delivery"===e?[this.itemMenu({id:"shipping",eventValue:[u.NEW,[{ntype:"trans",ttype:"shipping"}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}),this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:"title_transfer"}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"})]:this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a))}
         </div>`:a}
       </div>`),this.newFilter[3].length>0&&t.push(i`<div class="row full">
-        ${this.itemMenu({id:"new_resources_group",selected:"new_resources"===e,eventValue:[v.CHANGE,{fieldname:"group_key",value:"new_resources"}],label:this.msg("",{id:"title_resources"}),iconKey:"Wrench"})}
+        ${this.itemMenu({id:"new_resources_group",selected:"new_resources"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_resources"}],label:this.msg("",{id:"title_resources"}),iconKey:"Wrench"})}
         ${"new_resources"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[3].map((e=>"all"===this.auditFilter[e][0]?this.itemMenu({id:e,eventValue:[v.NEW,[{ntype:e,ttype:null}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[3].map((e=>"all"===this.auditFilter[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:e,ttype:null}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a))}
         </div>`:a}
       </div>`),t}render(){const{current:e,panel:t}=this.module;return i`<div class="sidebar ${"auto"!==this.side?this.side:""}" >
       ${e.form||"transitem_shipping"===e.form_type?a:i`<div class="row full container">
           <div class="cell half">
-            ${this.itemMenu({id:"state_new",selected:!(this.view===p.EDIT&&e.item),eventValue:[v.CHANGE,{fieldname:"side_view",value:"new"}],label:this.msg("",{id:"label_new"}),iconKey:"Plus",align:u.CENTER})}
+            ${this.itemMenu({id:"state_new",selected:!(this.view===p.EDIT&&e.item),eventValue:[u.CHANGE,{fieldname:"side_view",value:"new"}],label:this.msg("",{id:"label_new"}),iconKey:"Plus",align:m.CENTER})}
           </div>
           <div class="cell half">
-            ${this.itemMenu({id:"state_edit",selected:!(this.view!==p.EDIT||!e.item),eventValue:[v.CHANGE,{fieldname:"side_view",value:"edit"}],label:this.msg("",{id:"label_edit"}),iconKey:"Edit",disabled:!e.item,align:u.CENTER})}
+            ${this.itemMenu({id:"state_edit",selected:!(this.view!==p.EDIT||!e.item),eventValue:[u.CHANGE,{fieldname:"side_view",value:"edit"}],label:this.msg("",{id:"label_edit"}),iconKey:"Edit",disabled:!e.item,align:m.CENTER})}
           </div>
         </div>`}
       ${this.view===p.EDIT&&e.form||this.view===p.EDIT&&e.item?this.editItems(t):this.newItems()}
@@ -263,7 +263,7 @@ div {
             <form-button id="btn_new" 
               label="${this.msg("",{id:"label_new"})}"
               .style="${{padding:"6px 16px"}}"
-              icon="Plus" type="${m.BORDER}"
+              icon="Plus" type="${v.BORDER}"
               @click=${()=>this._onEditEvent(b.CHECK_EDITOR,[{fieldname:t.deffield},h.NEW_FIELDVALUE])} 
             >${this.msg("",{id:"label_new"})}</form-button>
           </div>`:a}
@@ -396,19 +396,19 @@ div {
       ${this.readOnly?a:i`<div class="actionbar padding-small">
         <div class="cell padding-tiny">
           <form-button id="btn_pattern_default" 
-            icon="Home" type="${m.BORDER}"
+            icon="Home" type="${v.BORDER}"
             label="${this.msg("",{id:"pattern_default"})}"
             .style=${{padding:"8px 12px"}}
             @click=${()=>this._onEditEvent(b.SET_PATTERN,{key:"default"})}
           ></form-button>
           <form-button id="btn_pattern_load" 
-            icon="Download" type="${m.BORDER}"
+            icon="Download" type="${v.BORDER}"
             label="${this.msg("",{id:"pattern_load"})}"
             .style=${{padding:"8px 12px"}}
             @click=${()=>this._onEditEvent(b.SET_PATTERN,{key:"load",ref:this})}
           ></form-button>
           <form-button id="btn_pattern_save" 
-            icon="Upload" type="${m.BORDER}"
+            icon="Upload" type="${v.BORDER}"
             label="${this.msg("",{id:"pattern_save"})}"
             .style=${{padding:"8px 12px"}}
             @click=${()=>this._onEditEvent(b.SET_PATTERN,{key:"save",text:this._value})}
@@ -416,13 +416,13 @@ div {
         </div>
         <div class="cell padding-tiny">
           <form-button id="btn_pattern_new" 
-            icon="Plus" type="${m.BORDER}"
+            icon="Plus" type="${v.BORDER}"
             label="${this.msg("",{id:"pattern_new"})}"
             .style=${{padding:"8px 12px"}}
             @click=${()=>this._onEditEvent(b.SET_PATTERN,{key:"new"})}
           ></form-button>
           <form-button id="btn_pattern_delete" 
-            icon="Times" type="${m.BORDER}"
+            icon="Times" type="${v.BORDER}"
             label="${this.msg("",{id:"pattern_delete"})}"
             .style=${{padding:"8px 12px"}}
             @click=${()=>this._onEditEvent(b.SET_PATTERN,{key:"delete"})}
@@ -439,13 +439,13 @@ div {
           </div>
           <div class="cell padding-tiny">
             <form-button id="btn_bold" 
-              type="${m.BORDER}"
+              type="${v.BORDER}"
               label="B" ?selected=${this.bold}
               .style=${{padding:"8px 12px"}}
               @click=${()=>this._setContentState("bold")}
             >B</form-button>
             <form-button id="btn_italic" 
-              type="${m.BORDER}"
+              type="${v.BORDER}"
               label="I" ?selected=${this.italic}
               .style=${{padding:"8px 12px","font-style":"italic"}}
               @click=${()=>this._setContentState("italic")}
@@ -631,7 +631,7 @@ div {
         <div class="cell" >
           <form-button id="${`btn_${e}`}" 
             icon="${a}" ?full="${!0}"
-            label="${this.msg(t,{id:t})}" align=${u.LEFT}
+            label="${this.msg(t,{id:t})}" align=${m.LEFT}
             .style=${{"border-radius":0,"margin-top":"2px"}}
             badge="${d(l)}"
             @click=${()=>this._onEditEvent(b.CHANGE,{fieldname:"view",value:o.view===e?"":e})}
@@ -800,7 +800,7 @@ div {
             </div>
             <div class="cell align-right" >
               <span id=${"closeIcon"} class="close-icon" 
-                @click="${()=>this._onModalEvent($.CANCEL,{})}">
+                @click="${()=>this._onModalEvent(y.CANCEL,{})}">
                 <form-icon iconKey="Times" ></form-icon>
               </span>
             </div>
@@ -814,7 +814,7 @@ div {
                       value="${this.msg("",{id:"product_partnumber"})}" 
                     ></form-label>
                   </div>
-                  <form-input type="${y.TEXT}"
+                  <form-input type="${$.TEXT}"
                     label="${t}" .style=${{"font-weight":"bold"}}
                     value="${t}" ?disabled=${!0} ?full=${!0}
                   ></form-input>
@@ -822,7 +822,7 @@ div {
               </div>
               <div class="row full">
                 <div class="cell padding-small" >
-                  <form-input type="${y.TEXT}"
+                  <form-input type="${$.TEXT}"
                     label="${l}" value="${l}" 
                     ?disabled=${!0} ?full=${!0}
                   ></form-input>
@@ -842,15 +842,15 @@ div {
             <div class="section-row" >
               <div class="cell padding-small half" >
                 <form-button id="btn_cancel" icon="Times"
-                  @click=${()=>this._onModalEvent($.CANCEL,{})} 
+                  @click=${()=>this._onModalEvent(y.CANCEL,{})} 
                   ?full="${!0}" label="${this.msg("",{id:"msg_cancel"})}"
                 >${this.msg("",{id:"msg_cancel"})}</form-button>
               </div>
               <div class="cell padding-small half" >
                 <form-button id="btn_ok" icon="Check"
-                  @click=${()=>this._onModalEvent($.OK,{value:parseInt(e,10)})} 
+                  @click=${()=>this._onModalEvent(y.OK,{value:parseInt(e,10)})} 
                   ?disabled="${""===e}"
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_ok"})}"
                 >${this.msg("",{id:"msg_ok"})}</form-button>
               </div>
@@ -972,7 +972,7 @@ div {
     width:49.99999% 
   }
 }
-`;customElements.define("modal-trans",class extends t{constructor(){super(),this.msg=e=>e,this.baseTranstype="",this.transtype="",this.direction="",this.doctypes=[],this.directions=[],this.refno=!0,this.nettoDiv=!1,this.netto=!0,this.fromDiv=!1,this.from=!1,this.elementCount=0}static get properties(){return{baseTranstype:{type:String},transtype:{type:String},direction:{type:String},doctypes:{type:Array},directions:{type:Array},refno:{type:Boolean},nettoDiv:{type:Boolean},netto:{type:Boolean},fromDiv:{type:Boolean},from:{type:Boolean},elementCount:{type:Number}}}static get styles(){return[I]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t}_setTranstype(e){const{baseTranstype:t,elementCount:i}=this;["invoice","receipt"].includes(e)&&["order","rent","worksheet"].includes(t)?(this.nettoDiv=!0,0===i&&(this.fromDiv=!0)):(this.nettoDiv=!1,this.fromDiv=!1),this.transtype=e}render(){const{transtype:e,direction:t,refno:l,from:o,fromDiv:n,netto:s,nettoDiv:r,doctypes:d,directions:c}=this,p=d.map((e=>({value:e,text:e}))),v=c.map((e=>({value:e,text:e})));return i`<div class="modal">
+`;customElements.define("modal-trans",class extends t{constructor(){super(),this.msg=e=>e,this.baseTranstype="",this.transtype="",this.direction="",this.doctypes=[],this.directions=[],this.refno=!0,this.nettoDiv=!1,this.netto=!0,this.fromDiv=!1,this.from=!1,this.elementCount=0}static get properties(){return{baseTranstype:{type:String},transtype:{type:String},direction:{type:String},doctypes:{type:Array},directions:{type:Array},refno:{type:Boolean},nettoDiv:{type:Boolean},netto:{type:Boolean},fromDiv:{type:Boolean},from:{type:Boolean},elementCount:{type:Number}}}static get styles(){return[I]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t}_setTranstype(e){const{baseTranstype:t,elementCount:i}=this;["invoice","receipt"].includes(e)&&["order","rent","worksheet"].includes(t)?(this.nettoDiv=!0,0===i&&(this.fromDiv=!0)):(this.nettoDiv=!1,this.fromDiv=!1),this.transtype=e}render(){const{transtype:e,direction:t,refno:l,from:o,fromDiv:n,netto:s,nettoDiv:r,doctypes:d,directions:c}=this,p=d.map((e=>({value:e,text:e}))),m=c.map((e=>({value:e,text:e})));return i`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -983,7 +983,7 @@ div {
             </div>
             <div class="cell align-right" >
               <span id=${"closeIcon"} class="close-icon" 
-                @click="${()=>this._onModalEvent($.CANCEL,{})}">
+                @click="${()=>this._onModalEvent(y.CANCEL,{})}">
                 <form-icon iconKey="Times" ></form-icon>
               </span>
             </div>
@@ -1006,7 +1006,7 @@ div {
               <div class="cell padding-small half" >
                 <form-select id="direction" label="direction" ?full=${!0}
                   .onChange=${e=>this._onValueChange("direction",e.value)}
-                  .options=${v} .isnull="${!1}" value="${t}" 
+                  .options=${m} .isnull="${!1}" value="${t}" 
                 ></form-select>
               </div>
             </div>
@@ -1045,14 +1045,14 @@ div {
             <div class="section-row" >
               <div class="cell padding-small half" >
                 <form-button id="btn_cancel" icon="Times"
-                  @click=${()=>this._onModalEvent($.CANCEL,{})} 
+                  @click=${()=>this._onModalEvent(y.CANCEL,{})} 
                   ?full="${!0}" label="${this.msg("",{id:"msg_cancel"})}"
                 >${this.msg("",{id:"msg_cancel"})}</form-button>
               </div>
               <div class="cell padding-small half" >
                 <form-button id="btn_ok" icon="Check"
-                  @click=${()=>this._onModalEvent($.OK,{newTranstype:e,newDirection:t,refno:l,fromInventory:o&&n,nettoQty:s&&r})} 
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  @click=${()=>this._onModalEvent(y.OK,{newTranstype:e,newDirection:t,refno:l,fromInventory:o&&n,nettoQty:s&&r})} 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_ok"})}"
                 >${this.msg("",{id:"msg_ok"})}</form-button>
               </div>
@@ -1192,7 +1192,7 @@ div {
             </div>
             <div class="cell align-right" >
               <span id=${"closeIcon"} class="close-icon" 
-                @click="${()=>this._onModalEvent($.CANCEL,{})}">
+                @click="${()=>this._onModalEvent(y.CANCEL,{})}">
                 <form-icon iconKey="Times" ></form-icon>
               </span>
             </div>
@@ -1227,9 +1227,9 @@ div {
               <div class="cell padding-small" >
                 <form-button id="btn_ok" icon="Check"
                   label="${this.msg("",{id:"msg_ok"})}"
-                  @click=${()=>this._onModalEvent($.CANCEL,{})} 
+                  @click=${()=>this._onModalEvent(y.CANCEL,{})} 
                   ?autofocus="${!0}"
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                 >${this.msg("",{id:"msg_ok"})}</form-button>
               </div>
             </div>
@@ -1361,7 +1361,7 @@ div {
             </div>
             <div class="cell align-right" >
               <span id=${"closeIcon"} class="close-icon" 
-                @click="${()=>this._onModalEvent($.CANCEL,{})}">
+                @click="${()=>this._onModalEvent(y.CANCEL,{})}">
                 <form-icon iconKey="Times" ></form-icon>
               </span>
             </div>
@@ -1375,7 +1375,7 @@ div {
                       value="${this.msg("",{id:"product_partnumber"})}" 
                     ></form-label>
                   </div>
-                  <form-input type="${y.TEXT}"
+                  <form-input type="${$.TEXT}"
                     label="${this.msg("",{id:"product_partnumber"})}" 
                     .style=${{"font-weight":"bold"}}
                     value="${e}" ?disabled=${!0} ?full=${!0}
@@ -1389,7 +1389,7 @@ div {
                       value="${this.msg("",{id:"product_description"})}" 
                     ></form-label>
                   </div>
-                  <form-input type="${y.TEXT}"
+                  <form-input type="${$.TEXT}"
                     label="${this.msg("",{id:"product_description"})}" 
                     value="${t}" ?disabled=${!0} ?full=${!0}
                   ></form-input>
@@ -1402,7 +1402,7 @@ div {
                       value="${this.msg("",{id:"product_unit"})}" 
                     ></form-label>
                   </div>
-                  <form-input type="${y.TEXT}"
+                  <form-input type="${$.TEXT}"
                     label="${this.msg("",{id:"product_unit"})}" 
                     value="${a}" ?disabled=${!0} ?full=${!0}
                   ></form-input>
@@ -1415,7 +1415,7 @@ div {
                       value="${this.msg("",{id:"movement_batchnumber"})}" 
                     ></form-label>
                   </div>
-                  <form-input id="batch_no" type="${y.TEXT}"
+                  <form-input id="batch_no" type="${$.TEXT}"
                     label="${this.msg("",{id:"movement_batchnumber"})}"
                     value="${l}" ?autofocus=${!0}
                     .onChange=${e=>this._onValueChange("batch_no",e.value)}
@@ -1443,14 +1443,14 @@ div {
             <div class="section-row" >
               <div class="cell padding-small half" >
                 <form-button id="btn_cancel" icon="Times"
-                  @click=${()=>this._onModalEvent($.CANCEL,{})} 
+                  @click=${()=>this._onModalEvent(y.CANCEL,{})} 
                   ?full="${!0}" label="${this.msg("",{id:"msg_cancel"})}"
                 >${this.msg("",{id:"msg_cancel"})}</form-button>
               </div>
               <div class="cell padding-small half" >
                 <form-button id="btn_ok" icon="Check"
-                  @click=${()=>this._onModalEvent($.OK,{batch_no:l,qty:o})} 
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  @click=${()=>this._onModalEvent(y.OK,{batch_no:l,qty:o})} 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_ok"})}"
                 >${this.msg("",{id:"msg_ok"})}</form-button>
               </div>
@@ -1586,7 +1586,7 @@ div {
             </div>
             <div class="cell align-right" >
               <span id=${"closeIcon"} class="close-icon" 
-                @click="${()=>this._onModalEvent($.CANCEL,"")}">
+                @click="${()=>this._onModalEvent(y.CANCEL,"")}">
                 <form-icon iconKey="Times" ></form-icon>
               </span>
             </div>
@@ -1645,17 +1645,17 @@ div {
             <div class="section-row" >
               <div class="cell padding-small half" >
                 <form-button id="btn_print"
-                  @click=${()=>this._onModalEvent($.OK,"print")}
+                  @click=${()=>this._onModalEvent(y.OK,"print")}
                   ?disabled="${""===t}"
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_print"})}"
                 >${this.msg("",{id:"msg_print"})}</form-button>
               </div>
               <div class="cell padding-small half" >
                 <form-button id="btn_pdf"
-                  @click=${()=>this._onModalEvent($.OK,"pdf")} 
+                  @click=${()=>this._onModalEvent(y.OK,"pdf")} 
                   ?disabled="${""===t}"
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_export_pdf"})}"
                 >${this.msg("",{id:"msg_export_pdf"})}</form-button>
               </div>
@@ -1663,17 +1663,17 @@ div {
             <div class="section-row" >
               <div class="cell padding-small half" >
                 <form-button id="btn_xml"
-                  @click=${()=>this._onModalEvent($.OK,"xml")}
+                  @click=${()=>this._onModalEvent(y.OK,"xml")}
                   ?disabled="${""===t}"
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_export_xml"})}"
                 >${this.msg("",{id:"msg_export_xml"})}</form-button>
               </div>
               <div class="cell padding-small half" >
                 <form-button id="btn_printqueue"
-                  @click=${()=>this._onModalEvent($.OK,"printqueue")} 
+                  @click=${()=>this._onModalEvent(y.OK,"printqueue")} 
                   ?disabled="${""===t}"
-                  type="${m.PRIMARY}" ?full="${!0}" 
+                  type="${v.PRIMARY}" ?full="${!0}" 
                   label="${this.msg("",{id:"msg_printqueue"})}"
                 >${this.msg("",{id:"msg_printqueue"})}</form-button>
               </div>

@@ -128,7 +128,7 @@ It checks the value given to the property of the [Locale] and always returns a v
 func (loc *Locale) Validation(propName string, propValue interface{}) interface{} {
 	pm := map[string]func() interface{}{
 		"labels": func() interface{} {
-			value := ut.SetSMValue(loc.Labels, "", "")
+			value := ut.ToSM(loc.Labels, ut.SM{})
 			if smap, valid := propValue.(ut.SM); valid {
 				value = ut.MergeSM(value, smap)
 			}
@@ -468,7 +468,7 @@ func (loc *Locale) getComponent(name string, data ut.IM) (html template.HTML, er
 				{Column: &ct.TableColumn{
 					Id:     "tag",
 					Header: loc.msg("locale_tag"),
-					Cell: func(row ut.IM, col ct.TableColumn, value interface{}) template.HTML {
+					Cell: func(row ut.IM, col ct.TableColumn, value interface{}, rowIndex int64) template.HTML {
 						linkLabel := fmt.Sprintf(
 							`<span class="cell-label">%s</span>`, value)
 						var link template.HTML
@@ -485,7 +485,7 @@ func (loc *Locale) getComponent(name string, data ut.IM) (html template.HTML, er
 					ct.TableField{Column: &ct.TableColumn{
 						Id:     "value",
 						Header: loc.msg("locale_value"),
-						Cell: func(row ut.IM, col ct.TableColumn, value interface{}) template.HTML {
+						Cell: func(row ut.IM, col ct.TableColumn, value interface{}, rowIndex int64) template.HTML {
 							input, _ := loc.getComponent("value_cell", row)
 							return input
 						}}},

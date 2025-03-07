@@ -1,4 +1,4 @@
-import{i as e,r as t,x as i,E as l}from"./module-BsLkbi3z.js";import{d as a,e as o,B as s,S as r,c as n,f as d,D as c,I as p,P as b,M as h,h as u}from"./main-DqbyZqBu.js";import"./module-BpBflBZw.js";import"./module-Bvdj1yGX.js";import"./module-wWMQrsxL.js";import"./module-A9oL7HpH.js";import"./module-BN65x8j3.js";import"./module-C1fQGCtD.js";const v=e`
+import{i as e,r as t,E as i,x as l}from"./module-FRmUNWHB.js";import{d as a,e as o,B as s,S as r,P as n,c as d,f as c,D as p,I as b,M as h,h as u}from"./main-BEo7670f.js";import"./module-D-7nCm3D.js";import"./module-BTOIQee_.js";import"./module-CC7fmSsS.js";import"./module-DlEFkpPg.js";import"./module-FD0eyFN_.js";import"./module-C1fQGCtD.js";const v=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -75,7 +75,7 @@ div {
 *::-webkit-scrollbar-thumb:hover {
   background-color: rgba(var(--functional-green), .20)
 }
-`;customElements.define("sidebar-search",class extends t{constructor(){super(),this.msg=e=>e,this.side=a.AUTO,this.groupKey="",this.auditFilter={}}static get properties(){return{side:{type:String,reflect:!0},groupKey:{type:String},auditFilter:{type:Object}}}static get styles(){return[v]}_onSideEvent(e,t){this.onEvent&&this.onEvent.onSideEvent&&this.onEvent.onSideEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("side_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}getButtonStyle(e,t){return"group"===e?{"text-align":"left","border-radius":"0",color:t===this.groupKey?"rgb(var(--functional-yellow))":"",fill:t===this.groupKey?"rgb(var(--functional-yellow))":"","border-color":"rgba(var(--accent-1c), 0.2)"}:{"text-align":"left","border-radius":"0",color:"rgb(var(--functional-blue))",fill:"rgb(var(--functional-blue))","border-color":"rgba(var(--accent-1c), 0.2)"}}searchGroup(e){return i`<div class="row full">
+`;customElements.define("sidebar-search",class extends t{constructor(){super(),this.msg=e=>e,this.side=a.AUTO,this.groupKey="",this.auditFilter={}}static get properties(){return{side:{type:String,reflect:!0},groupKey:{type:String},auditFilter:{type:Object}}}static get styles(){return[v]}_onSideEvent(e,t){this.onEvent&&this.onEvent.onSideEvent&&this.onEvent.onSideEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("side_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}getButtonStyle(e,t){return"group"===e?{"text-align":"left","border-radius":"0",color:t===this.groupKey?"rgb(var(--functional-yellow))":"",fill:t===this.groupKey?"rgb(var(--functional-yellow))":"","border-color":"rgba(var(--accent-1c), 0.2)"}:{"text-align":"left","border-radius":"0",color:"rgb(var(--functional-blue))",fill:"rgb(var(--functional-blue))","border-color":"rgba(var(--accent-1c), 0.2)"}}searchGroup(e){return l`<div class="row full">
         <form-button id="${`btn_group_${e}`}" 
           label="${this.msg("",{id:`search_${e}`})}"
           ?full="${!0}" align=${o.LEFT}
@@ -83,7 +83,7 @@ div {
           icon="FileText" type="${s.PRIMARY}"
           @click=${()=>this._onSideEvent(r.CHANGE,{fieldname:"group_key",value:e})} 
         >${this.msg("",{id:`search_${e}`})}</form-button>
-        ${this.groupKey===e?i`<div class="row full panel-group" >
+        ${this.groupKey===e?l`<div class="row full panel-group" >
           <form-button id="${`btn_view_${e}`}" 
             label="${this.msg("",{id:"quick_search"})}"
             ?full="${!0}" align=${o.LEFT}
@@ -98,14 +98,14 @@ div {
             icon="Search" type="${s.PRIMARY}"
             @click=${()=>this._onSideEvent(r.BROWSER,{value:e})} 
           >${this.msg("",{id:`browser_${e}`})}</form-button>
-        </div>`:l}
-      </div>`}render(){return i`<div class="sidebar ${"auto"!==this.side?this.side:""}" >
+        </div>`:i}
+      </div>`}render(){return l`<div class="sidebar ${"auto"!==this.side?this.side:""}" >
       ${this.searchGroup("transitem")}
-      ${"disabled"!==this.auditFilter.trans.bank[0]||"disabled"!==this.auditFilter.trans.cash[0]?this.searchGroup("transpayment"):l}
-      ${"disabled"!==this.auditFilter.trans.delivery[0]||"disabled"!==this.auditFilter.trans.inventory[0]||"disabled"!==this.auditFilter.trans.waybill[0]||"disabled"!==this.auditFilter.trans.production[0]||"disabled"!==this.auditFilter.trans.formula[0]?this.searchGroup("transmovement"):l}
+      ${"disabled"!==this.auditFilter.trans.bank[0]||"disabled"!==this.auditFilter.trans.cash[0]?this.searchGroup("transpayment"):i}
+      ${"disabled"!==this.auditFilter.trans.delivery[0]||"disabled"!==this.auditFilter.trans.inventory[0]||"disabled"!==this.auditFilter.trans.waybill[0]||"disabled"!==this.auditFilter.trans.production[0]||"disabled"!==this.auditFilter.trans.formula[0]?this.searchGroup("transmovement"):i}
       
       <hr class="separator" />
-      ${["customer","product","employee","tool","project"].map((e=>"disabled"!==this.auditFilter[e][0]?this.searchGroup(e):l))}
+      ${["customer","product","employee","tool","project"].map((e=>"disabled"!==this.auditFilter[e][0]?this.searchGroup(e):i))}
 
       <hr class="separator" />
       <form-button id="btn_report" 
@@ -122,7 +122,7 @@ div {
         icon="Inbox" type="${s.PRIMARY}"
         @click=${()=>this._onSideEvent(r.CHANGE,{fieldname:"group_key",value:"office"})} 
       >${this.msg("",{id:"search_office"})}</form-button>
-      ${"office"===this.groupKey?i`<div class="row full panel-group" >
+      ${"office"===this.groupKey?l`<div class="row full panel-group" >
         <form-button id="btn_printqueue" 
           label="${this.msg("",{id:"title_printqueue"})}"
           ?full="${!0}" align=${o.LEFT}
@@ -144,7 +144,7 @@ div {
           icon="Share" type="${s.PRIMARY}"
           @click=${()=>this._onSideEvent(r.QUICK,{value:"servercmd"})} 
         >${this.msg("",{id:"title_servercmd"})}</form-button>
-      </div>`:l}
+      </div>`:i}
     </div>`}});const m=e`
 :host {
   font-family: var(--font-family);
@@ -311,10 +311,10 @@ div {
     width: 100%; 
   }
 }
-`;customElements.define("search-browser",class extends t{constructor(){super(),this.msg=e=>e,this.data={vkey:"",view:"",show_header:!0,show_dropdown:!1,show_columns:!1,result:[],columns:{},filters:{},deffield:[],page:1},this.keyMap={},this.viewDef={fields:{},label:"",readonly:!1},this.paginationPage=10,this.onEvent={}}static get properties(){return{data:{type:Object},keyMap:{type:Object},viewDef:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[m]}connectedCallback(){super.connectedCallback();const{show_header:e,show_dropdown:t,show_columns:i}=this.data;this.dropdown=t,this.header=e,this.columns=i}_onBrowserEvent(e,t){this.onEvent&&this.onEvent.onBrowserEvent&&this.onEvent.onBrowserEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("browser_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t,this.dispatchEvent(new CustomEvent("value_change",{bubbles:!0,composed:!0,detail:{key:e,value:t}})),this.requestUpdate()}exportFields(){const{view:e,columns:t}=this.data,i={};return Object.keys(this.viewDef.fields).filter((i=>!0===t[e][i])).forEach((e=>{i[e]=this.viewDef.fields[e]})),i}checkTotalFields(){const{fields:e}=this.viewDef,{deffield:t}=this.data;let i={totalFields:{},totalLabels:{},count:0};return t&&Object.keys(e).includes("deffield_value")?t.filter((e=>"integer"===e.fieldtype||"float"===e.fieldtype)).forEach((e=>{i={...i,totalFields:{...i.totalFields,[e.fieldname]:0},totalLabels:{...i.totalLabels,[e.fieldname]:e.description}}})):Object.keys(e).filter((t=>("integer"===e[t].fieldtype||"float"===e[t].fieldtype)&&"avg"!==e[t].calc)).forEach((t=>{i={...i,totalFields:{...i.totalFields,[t]:0},totalLabels:{...i.totalLabels,[t]:e[t].label}}})),i={...i,count:Object.keys(i.totalFields).length},i}fields(){const{view:e,columns:t}=this.data;let l={view:{columnDef:{id:"view",Header:"",headerStyle:{},Cell:({row:e})=>this.viewDef.readonly?i`<form-icon iconKey="CaretRight" width=9 height=24 ></form-icon>`:i`<form-icon id=${`edit_${e.id}`}
+`;customElements.define("search-browser",class extends t{constructor(){super(),this.msg=e=>e,this.data={vkey:"",view:"",show_header:!0,show_dropdown:!1,show_columns:!1,result:[],columns:{},filters:{},deffield:[],page:1},this.keyMap={},this.viewDef={fields:{},label:"",readonly:!1},this.paginationPage=10,this.onEvent={}}static get properties(){return{data:{type:Object},keyMap:{type:Object},viewDef:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[m]}connectedCallback(){super.connectedCallback();const{show_header:e,show_dropdown:t,show_columns:i}=this.data;this.dropdown=t,this.header=e,this.columns=i}_onBrowserEvent(e,t){this.onEvent&&this.onEvent.onBrowserEvent&&this.onEvent.onBrowserEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("browser_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t,this.dispatchEvent(new CustomEvent("value_change",{bubbles:!0,composed:!0,detail:{key:e,value:t}})),this.requestUpdate()}exportFields(){const{view:e,columns:t}=this.data,i={};return Object.keys(this.viewDef.fields).filter((i=>!0===t[e][i])).forEach((e=>{i[e]=this.viewDef.fields[e]})),i}checkTotalFields(){const{fields:e}=this.viewDef,{deffield:t}=this.data;let i={totalFields:{},totalLabels:{},count:0};return t&&Object.keys(e).includes("deffield_value")?t.filter((e=>"integer"===e.fieldtype||"float"===e.fieldtype)).forEach((e=>{i={...i,totalFields:{...i.totalFields,[e.fieldname]:0},totalLabels:{...i.totalLabels,[e.fieldname]:e.description}}})):Object.keys(e).filter((t=>("integer"===e[t].fieldtype||"float"===e[t].fieldtype)&&"avg"!==e[t].calc)).forEach((t=>{i={...i,totalFields:{...i.totalFields,[t]:0},totalLabels:{...i.totalLabels,[t]:e[t].label}}})),i={...i,count:Object.keys(i.totalFields).length},i}fields(){const{view:e,columns:t}=this.data;let i={view:{columnDef:{id:"view",Header:"",headerStyle:{},Cell:({row:e})=>this.viewDef.readonly?l`<form-icon iconKey="CaretRight" width=9 height=24 ></form-icon>`:l`<form-icon id=${`edit_${e.id}`}
               iconKey="Edit" width=24 height=21.3 
-              @click=${()=>this._onBrowserEvent(n.EDIT_CELL,{fieldname:"id",value:e.id,row:e})}
-              .style=${{cursor:"pointer",fill:"rgb(var(--functional-green))"}} ></form-icon>`,cellStyle:{width:"25px",padding:"7px 3px 3px 8px"}}}};return Object.keys(this.viewDef.fields).forEach((i=>{if(t[e][i])switch(this.viewDef.fields[i].fieldtype){case"float":case"integer":l={...l,[i]:{fieldtype:"number",label:this.viewDef.fields[i].label}};break;case"bool":l={...l,[i]:{fieldtype:"bool",label:this.viewDef.fields[i].label}};break;default:l="deffield_value"===i?{...l,[i]:{fieldtype:"deffield",label:this.viewDef.fields[i].label}}:{...l,[i]:{fieldtype:"string",label:this.viewDef.fields[i].label}}}})),l}render(){const{vkey:e,view:t,result:a,columns:r,filters:h,deffield:u,page:v}=this.data,m=this.checkTotalFields();return i`<div @click="${()=>this.dropdown?this._onValueChange("dropdown",!1):null}">
+              @click=${()=>this._onBrowserEvent(d.EDIT_CELL,{fieldname:"id",value:e.id,row:e})}
+              .style=${{cursor:"pointer",fill:"rgb(var(--functional-green))"}} ></form-icon>`,cellStyle:{width:"25px",padding:"7px 3px 3px 8px"}}}};return Object.keys(this.viewDef.fields).forEach((l=>{if(t[e][l])switch(this.viewDef.fields[l].fieldtype){case"float":case"integer":i={...i,[l]:{fieldtype:"number",label:this.viewDef.fields[l].label}};break;case"bool":i={...i,[l]:{fieldtype:"bool",label:this.viewDef.fields[l].label}};break;default:i="deffield_value"===l?{...i,[l]:{fieldtype:"deffield",label:this.viewDef.fields[l].label}}:{...i,[l]:{fieldtype:"string",label:this.viewDef.fields[l].label}}}})),i}render(){const{vkey:e,view:t,result:a,columns:r,filters:h,deffield:u,page:v}=this.data,m=this.checkTotalFields();return l`<div @click="${()=>this.dropdown?this._onValueChange("dropdown",!1):null}">
       <div class="panel">
         <div class="panel-title">
           <div class="cell">
@@ -330,19 +330,19 @@ div {
               <form-button id="btn_header" 
                 icon="Filter" type="${s.PRIMARY}" ?full="${!0}"
                 label="${this.viewDef.label}" align=${o.LEFT}
-                @click=${e=>{e.stopPropagation(),this._onBrowserEvent(n.CHANGE,{fieldname:"show_header",value:!this.header}),this._onValueChange("header",!this.header)}}
+                @click=${e=>{e.stopPropagation(),this._onBrowserEvent(d.CHANGE,{fieldname:"show_header",value:!this.header}),this._onValueChange("header",!this.header)}}
               >${this.viewDef.label}
               </form-button>
             </div>
           </div>
-          ${this.header?i`<div class="filter-panel" >
+          ${this.header?l`<div class="filter-panel" >
             <div class="row full" >
               <div class="cell" >
                 <form-button id="btn_search" 
                   icon="Search" type="${s.BORDER}"
                   label="${this.msg("",{id:"browser_search"})}"
                   .style=${{padding:"8px 12px"}} ?hidelabel=${!0}
-                  @click=${()=>this._onBrowserEvent(n.BROWSER_VIEW,{})}
+                  @click=${()=>this._onBrowserEvent(d.BROWSER_VIEW,{})}
                 >${this.msg("",{id:"browser_search"})}</form-button>
               </div>
               <div class="cell align-right" >
@@ -350,19 +350,19 @@ div {
                   icon="Star" type="${s.BORDER}"
                   label="${this.msg("",{id:"browser_bookmark"})}"
                   .style=${{padding:"8px 12px"}} ?hidelabel=${!0}
-                  @click=${()=>this._onBrowserEvent(n.BOOKMARK_SAVE,[])}
+                  @click=${()=>this._onBrowserEvent(d.BOOKMARK_SAVE,[])}
                 >${this.msg("",{id:"browser_bookmark"})}</form-button>
                 <form-button id="btn_export" 
                   icon="Download" type="${s.BORDER}"
                   label="${this.msg("",{id:"browser_export"})}"
                   .style=${{padding:"8px 12px"}} ?hidelabel=${!0}
-                  @click=${()=>this._onBrowserEvent(n.EXPORT_RESULT,{value:this.exportFields()})}
+                  @click=${()=>this._onBrowserEvent(d.EXPORT_RESULT,{value:this.exportFields()})}
                 >${this.msg("",{id:"browser_export"})}</form-button>
                 <form-button id="btn_help" 
                   icon="QuestionCircle" type="${s.BORDER}"
                   label="${this.msg("",{id:"browser_help"})}"
                   .style=${{padding:"8px 12px"}} ?hidelabel=${!0}
-                  @click=${()=>this._onBrowserEvent(n.SHOW_HELP,{value:"program/browser"})}
+                  @click=${()=>this._onBrowserEvent(d.SHOW_HELP,{value:"program/browser"})}
                 >${this.msg("",{id:"browser_help"})}</form-button>
               </div>
             </div>
@@ -376,52 +376,52 @@ div {
                     ?selected="${this.dropdown}" ?hidelabel=${!0}
                     @click=${e=>{e.stopPropagation(),this._onValueChange("dropdown",!this.dropdown)}}
                   >${this.msg("",{id:"browser_views"})}</form-button>
-                  ${this.dropdown?i`<div class="dropdown-content" >
-                    ${Object.keys(this.keyMap).map((a=>"options"!==a?i`<div id=${`view_${a}`}
-                        @click=${()=>this._onBrowserEvent(n.SHOW_BROWSER,{value:e,vname:a})}
+                  ${this.dropdown?l`<div class="dropdown-content" >
+                    ${Object.keys(this.keyMap).map((a=>"options"!==a?l`<div id=${`view_${a}`}
+                        @click=${()=>this._onBrowserEvent(d.SHOW_BROWSER,{value:e,vname:a})}
                         class="drop-label" >
                         <form-label class="${a===t?"active":""}"
                           value="${this.keyMap[a].label}"
                           leftIcon="${a===t?"Check":"Eye"}" ></form-label>
-                      </div>`:l))}
-                  </div>`:l}
+                      </div>`:i))}
+                  </div>`:i}
                 </div>
                 <form-button id="btn_columns" 
                   type="${s.BORDER}"
                   .style=${{padding:"8px 12px"}} icon="Columns" ?hidelabel=${!0}
                   label="${this.msg("",{id:"browser_columns"})}"
-                  @click=${e=>{e.stopPropagation(),this._onBrowserEvent(n.CHANGE,{fieldname:"show_columns",value:!this.columns}),this._onValueChange("columns",!this.columns)}}
+                  @click=${e=>{e.stopPropagation(),this._onBrowserEvent(d.CHANGE,{fieldname:"show_columns",value:!this.columns}),this._onValueChange("columns",!this.columns)}}
                 >${this.msg("",{id:"browser_columns"})}</form-button>
                 <form-button id="btn_filter" 
                   icon="Plus" type="${s.BORDER}" ?hidelabel=${!0}
                   label="${this.msg("",{id:"browser_filter"})}"
                   .style=${{padding:"8px 12px"}}
-                  @click=${()=>this._onBrowserEvent(n.ADD_FILTER,{})}
+                  @click=${()=>this._onBrowserEvent(d.ADD_FILTER,{})}
                 >${this.msg("",{id:"browser_filter"})}</form-button>
                 <form-button id="btn_total" 
                   icon="InfoCircle" type="${s.BORDER}"
                   label="${this.msg("",{id:"browser_total"})}"
                   .style=${{padding:"8px 12px"}} ?hidelabel=${!0}
                   ?disabled=${!(0!==m.count&&0!==a.length)}
-                  @click=${()=>this._onBrowserEvent(n.SHOW_TOTAL,{fields:this.viewDef.fields,totalFields:m})}
+                  @click=${()=>this._onBrowserEvent(d.SHOW_TOTAL,{fields:this.viewDef.fields,totalFields:m})}
                 >${this.msg("",{id:"browser_total"})}</form-button>
               </div>
             </div>
-            ${this.columns?i`<div class="col-box">
-              ${Object.keys(this.viewDef.fields).map((e=>i`<div id=${`col_${e}`} 
+            ${this.columns?l`<div class="col-box">
+              ${Object.keys(this.viewDef.fields).map((e=>l`<div id=${`col_${e}`} 
                   class="cell col-cell base-col ${!0===r[t][e]?"select-col":"edit-col"}"
-                  @click=${()=>this._onBrowserEvent(n.SET_COLUMNS,{fieldname:e,value:!(!0===r[t][e])})}
+                  @click=${()=>this._onBrowserEvent(d.SET_COLUMNS,{fieldname:e,value:!(!0===r[t][e])})}
                   >
                   <form-label
                     value="${this.viewDef.fields[e].label}"
                     leftIcon="${!0===r[t][e]?"CheckSquare":"SquareEmpty"}" ></form-label>
                 </div>`))}              
-            </div>`:l}
-            ${h[t].map(((e,t)=>i`<div class="section-small-top" >
+            </div>`:i}
+            ${h[t].map(((e,t)=>l`<div class="section-small-top" >
               <div class="cell" >
                 <form-select id=${`filter_name_${t}`}
                   label="${this.msg("",{id:"browser_filter"})}"
-                  .onChange=${e=>this._onBrowserEvent(n.EDIT_FILTER,{index:t,fieldname:"fieldname",value:e.value})}
+                  .onChange=${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"fieldname",value:e.value})}
                   .options=${Object.keys(this.viewDef.fields).filter((e=>"id"!==e&&"_id"!==e)).flatMap((e=>"deffield_value"===e?u.map((e=>({value:e.fieldname,text:this.msg(e.description,{id:e.fieldname})}))):{value:e,text:this.viewDef.fields[e].label}))} 
                   .isnull="${!1}" value="${e.fieldname}" >
                 </form-select>
@@ -429,54 +429,54 @@ div {
               <div class="cell" >
                 <form-select id=${`filter_type_${t}`}
                   label="${this.msg("",{id:"browser_filter"})}"
-                  .onChange=${e=>this._onBrowserEvent(n.EDIT_FILTER,{index:t,fieldname:"filtertype",value:e.value})}
-                  .options=${(["date","float","integer"].includes(e.fieldtype)?d:d.slice(0,3)).map((e=>({value:e[0],text:e[1]})))} 
+                  .onChange=${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"filtertype",value:e.value})}
+                  .options=${(["date","float","integer"].includes(e.fieldtype)?c:c.slice(0,3)).map((e=>({value:e[0],text:e[1]})))} 
                   .isnull="${!1}" value="${e.filtertype}" >
                 </form-select>
               </div>
               <div class="cell mobile" >
-                ${"==N"!==e.filtertype?i`<div class="cell" >
-                  ${"bool"===e.fieldtype?i`<form-select 
+                ${"==N"!==e.filtertype?l`<div class="cell" >
+                  ${"bool"===e.fieldtype?l`<form-select 
                     id=${`filter_value_${t}`}
                     label="${this.msg("",{id:"browser_filter"})}"
-                    .onChange=${e=>this._onBrowserEvent(n.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}
+                    .onChange=${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}
                     .options=${[{value:"0",text:this.msg("NO",{id:"label_no"})},{value:"1",text:this.msg("YES",{id:"label_yes"})}]} 
                     .isnull="${!1}" value="${e.value}" >
-                  </form-select>`:l}
-                  ${"integer"===e.fieldtype||"float"===e.fieldtype?i`<form-number 
+                  </form-select>`:i}
+                  ${"integer"===e.fieldtype||"float"===e.fieldtype?l`<form-number 
                     id=${`filter_value_${t}`} 
                     label="${this.msg("",{id:"browser_filter"})}"
                     ?integer="${!("float"===e.fieldtype)}"
                     value="${e.value}"
-                    .onChange=${e=>this._onBrowserEvent(n.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}
-                  ></form-number>`:l}
-                  ${"date"===e.fieldtype?i`<form-datetime 
+                    .onChange=${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}
+                  ></form-number>`:i}
+                  ${"date"===e.fieldtype?l`<form-datetime 
                     id=${`filter_value_${t}`}
                     label="${this.msg("",{id:"browser_filter"})}"
                     .isnull="${!1}"
-                    type="${c.DATE}"
+                    type="${p.DATE}"
                     .value="${e.value}"
-                    .onChange="${e=>this._onBrowserEvent(n.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}"
-                  ></form-datetime>`:l}
-                  ${"string"===e.fieldtype?i`<form-input 
+                    .onChange="${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}"
+                  ></form-datetime>`:i}
+                  ${"string"===e.fieldtype?l`<form-input 
                     id=${`filter_value_${t}`} 
                     label="${this.msg("",{id:"browser_filter"})}"
-                    type="${p.TEXT}" 
+                    type="${b.TEXT}" 
                     value="${e.value}"
-                    .onChange=${e=>this._onBrowserEvent(n.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}
-                  ></form-input>`:l}
-                </div>`:l}
+                    .onChange=${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"value",value:e.value})}
+                  ></form-input>`:i}
+                </div>`:i}
                 <div class="cell" >
                   <form-button id="${`btn_delete_filter_${t}`}" 
                     icon="Times" type="${s.BORDER}"
                     label="${this.msg("",{id:"label_delete"})}"
                     .style=${{padding:"8px","border-radius":"3px"}}
-                    @click=${()=>this._onBrowserEvent(n.DELETE_FILTER,{value:t})}
+                    @click=${()=>this._onBrowserEvent(d.DELETE_FILTER,{value:t})}
                   ></form-button>
                 </div>
               </div>
             </div>`))}
-          </div>`:l}
+          </div>`:i}
           <div class="row full section-small-top" >
             <div class="row full border" >
               <div class="cell result-title" >
@@ -484,14 +484,14 @@ div {
                   value="${this.msg("record(s) found",{id:"browser_result"})}" 
                 ></form-label>
               </div>
-              ${this.viewDef.actions_new?i`<div class="cell result-title-plus" >
+              ${this.viewDef.actions_new?l`<div class="cell result-title-plus" >
                 <form-button 
                 id="btn_actions_new" 
                 icon="Plus" ?small=${!0}
                 label="${this.msg("",{id:"label_new"})}"
-                @click=${()=>this._onBrowserEvent(n.SET_FORM_ACTION,{params:this.viewDef.actions_new,row:void 0})}
+                @click=${()=>this._onBrowserEvent(d.SET_FORM_ACTION,{params:this.viewDef.actions_new,row:void 0})}
                 ></form-button>
-              </div>`:l}
+              </div>`:i}
             </div>
           </div>
           <div class="row full" >
@@ -502,13 +502,13 @@ div {
             filterPlaceholder="${this.msg("Filter",{id:"placeholder_filter"})}"
             labelYes="${this.msg("YES",{id:"label_yes"})}"
             labelNo="${this.msg("NO",{id:"label_no"})}"
-            pagination="${b.TOP}"
+            pagination="${n.TOP}"
             currentPage="${v}"
             pageSize="${this.paginationPage}"
             ?tableFilter="${!0}"
             ?hidePaginatonSize="${!1}"
-            .onEditCell=${(e,t,i)=>this._onBrowserEvent(n.EDIT_CELL,{fieldname:e,value:t,row:i})}
-            .onCurrentPage=${e=>this._onBrowserEvent(n.CURRENT_PAGE,{value:e})}
+            .onEditCell=${(e,t,i)=>this._onBrowserEvent(d.EDIT_CELL,{fieldname:e,value:t,row:i})}
+            .onCurrentPage=${e=>this._onBrowserEvent(d.CURRENT_PAGE,{value:e})}
           ></form-table>
           </div>
         </div>
@@ -634,7 +634,7 @@ div {
     min-width: 400px;
   }
 }
-`;customElements.define("modal-total",class extends t{constructor(){super(),this.msg=e=>e,this.total={totalFields:{},totalLabels:{},count:0}}static get properties(){return{total:{type:Object}}}static get styles(){return[f]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){return i`<div class="modal">
+`;customElements.define("modal-total",class extends t{constructor(){super(),this.msg=e=>e,this.total={totalFields:{},totalLabels:{},count:0}}static get properties(){return{total:{type:Object}}}static get styles(){return[f]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){return l`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -652,14 +652,14 @@ div {
           </div>
           <div class="section" >
             <div class="section-row" >
-              ${Object.keys(this.total.totalFields).map((e=>i`<div class="table-row full">
+              ${Object.keys(this.total.totalFields).map((e=>l`<div class="table-row full">
                   <div class="cell padding-tiny mobile">
                     <form-label
                       value="${this.total.totalLabels[e]}" 
                     ></form-label>
                   </div>
                   <div class="cell padding-tiny mobile">
-                    <form-input type="${p.TEXT}"
+                    <form-input type="${b.TEXT}"
                       label="${this.total.totalLabels[e]}"
                       .style=${{"font-weight":"bold","text-align":"right"}}
                       value="${new Intl.NumberFormat("default").format(this.total.totalFields[e])}"
@@ -797,7 +797,7 @@ div {
     width:49.99999% 
   }
 }
-`;customElements.define("modal-server",class extends t{constructor(){super(),this.msg=e=>e,this.cmd={},this.fields=[],this.values={}}static get properties(){return{cmd:{type:Object},fields:{type:Array},values:{type:Object}}}static get styles(){return[g]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onEdit(e){this.values[e.name]=e.value,this.requestUpdate()}render(){return i`<div class="modal">
+`;customElements.define("modal-server",class extends t{constructor(){super(),this.msg=e=>e,this.cmd={},this.fields=[],this.values={}}static get properties(){return{cmd:{type:Object},fields:{type:Array},values:{type:Object}}}static get styles(){return[g]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onEdit(e){this.values[e.name]=e.value,this.requestUpdate()}render(){return l`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -813,7 +813,7 @@ div {
               </span>
             </div>
           </div>
-          ${this.fields.map(((e,t)=>i`<form-row id=${`row_${t}`}
+          ${this.fields.map(((e,t)=>l`<form-row id=${`row_${t}`}
               .row=${{rowtype:"field",name:e.fieldname,datatype:e.fieldtypeName,label:e.description}} 
               .values=${{...this.values}}
               .options=${{}}
@@ -866,12 +866,12 @@ div {
     padding: 4px;
   }
 }
-`;customElements.define("client-search",class extends t{constructor(){super(),this.data={},this.side=a.AUTO,this.auditFilter={},this.queries={},this.quick={},this.paginationPage=10,this.onEvent={},this.modalServer=this.modalServer.bind(this),this.modalTotal=this.modalTotal.bind(this)}static get properties(){return{data:{type:Object},side:{type:String},auditFilter:{type:Object},paginationPage:{type:Number},queries:{type:Object},quick:{type:Object},onEvent:{type:Object}}}static get styles(){return[$]}connectedCallback(){super.connectedCallback(),this.onEvent.setModule(this)}modalServer({cmd:e,fields:t,values:l,onEvent:a}){return i`<modal-server 
-      .cmd=${e} .fields=${t} .values=${l} 
+`;customElements.define("client-search",class extends t{constructor(){super(),this.data={},this.side=a.AUTO,this.auditFilter={},this.queries={},this.quick={},this.paginationPage=10,this.onEvent={},this.modalServer=this.modalServer.bind(this),this.modalTotal=this.modalTotal.bind(this)}static get properties(){return{data:{type:Object},side:{type:String},auditFilter:{type:Object},paginationPage:{type:Number},queries:{type:Object},quick:{type:Object},onEvent:{type:Object}}}static get styles(){return[$]}connectedCallback(){super.connectedCallback(),this.onEvent.setModule(this)}modalServer({cmd:e,fields:t,values:i,onEvent:a}){return l`<modal-server 
+      .cmd=${e} .fields=${t} .values=${i} 
       .onEvent=${a} .msg=${this.msg}
-    ></modal-server>`}modalTotal(e){return i`<modal-total 
+    ></modal-server>`}modalTotal(e){return l`<modal-total 
       .total=${e} .onEvent=${this.onEvent} .msg=${this.msg}
-    ></modal-total>`}render(){return i`<sidebar-search
+    ></modal-total>`}render(){return l`<sidebar-search
       id="sidebar"
       side="${this.side}"
       groupKey="${this.data.group_key}"
@@ -880,7 +880,7 @@ div {
       .msg=${this.msg}
     ></sidebar-search>
       <div class="page">
-        ${u("browser"===this.data.seltype?i`<search-browser
+        ${u("browser"===this.data.seltype?l`<search-browser
             id="${`browser_${this.data.vkey}`}"
             .data=${this.data}
             .keyMap=${this.queries[this.data.vkey]()}
@@ -888,7 +888,7 @@ div {
             paginationPage=${this.paginationPage}
             .onEvent=${this.onEvent}
             .msg=${this.msg}
-          ></search-browser>`:i`<modal-selector
+          ></search-browser>`:l`<modal-selector
             id="${`selector_${this.data.qview}`}"
             ?isModal="${!1}"
             view="${this.data.qview}"

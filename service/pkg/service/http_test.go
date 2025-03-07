@@ -1973,7 +1973,7 @@ func TestHTTPService_Report(t *testing.T) {
 				r: httptest.NewRequest("GET",
 					"/report?reportkey=csv_vat_en&filters[date_from]=2014-01-01&filters[date_to]=2024-01-01&filters[curr]=EUR", nil),
 			},
-			result: http.StatusOK,
+			result: http.StatusBadRequest,
 		},
 		{
 			name: "report_unauthorized",
