@@ -1,3 +1,10 @@
+## 5.2.12
+- service: golang (1.24.3) and dependencies upgrade
+- client: lit (3.3.0) upgrade
+
+## 5.2.11
+- service: golang (1.24.1) and dependencies upgrade
+
 ## 5.2.10
 - client: lit (3.2.1) upgrade
 - service: Admin GUI component update (github.com/nervatura/component)
