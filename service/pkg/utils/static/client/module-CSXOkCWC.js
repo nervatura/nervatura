@@ -1,4 +1,4 @@
-import{a as e,i as t,x as i}from"./module-D9Io0VgM.js";import{o as a,a as n}from"./module-DEu6bRyP.js";import{B as s}from"./main-D0db8xQQ.js";import"./module-TNcUzx08.js";const o=e`
+import{a as e,i as t,x as i}from"./module-CgqbBeKY.js";import{o as a,a as n}from"./module-pdXndwQj.js";import{B as s}from"./main-CONOq8Fm.js";import"./module-C3sfG5TL.js";const o=e`
 :host {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
@@ -108,7 +108,7 @@ input[type=number] {
           label="Size"
           .style="${{padding:"7px"}}" ?disabled="${0===this.pageCount}"
           .onChange=${e=>this._onEvent("setPageSize",Number(e.value),this.pageCount>0)}
-          .options=${[5,10,20,50,100].map((e=>({value:String(e),text:String(e)})))} 
+          .options=${[5,10,20,50,100].map(e=>({value:String(e),text:String(e)}))} 
           .isnull="${!1}" value="${this.pageSize}" >
         </form-select>
       </div>`}

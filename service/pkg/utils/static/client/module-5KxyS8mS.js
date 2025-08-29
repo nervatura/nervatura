@@ -1,4 +1,4 @@
-import{a as e,i as t,x as a,E as i}from"./module-D9Io0VgM.js";import"./module-TNcUzx08.js";import{d as l,e as s,B as o,S as r,m as d,P as n,n as p,I as c,M as m}from"./main-D0db8xQQ.js";import{o as v}from"./module-DEu6bRyP.js";import{n as b}from"./module-BrQzz2cN.js";import"./module-C2L4Vv7N.js";import"./module-BiR8VKh2.js";import"./module-C1fQGCtD.js";import"./module-V8-Grdf0.js";const h=e`
+import{a as e,i as t,x as a,E as i}from"./module-CgqbBeKY.js";import"./module-C3sfG5TL.js";import{d as l,e as s,B as o,S as r,m as d,P as n,n as p,I as c,M as m}from"./main-CONOq8Fm.js";import{o as v}from"./module-pdXndwQj.js";import{n as b}from"./module-BJ5fixcH.js";import"./module-W-IvZXGK.js";import"./module-C3U_lRlw.js";import"./module-C1fQGCtD.js";import"./module-CSXOkCWC.js";const h=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -332,9 +332,9 @@ textarea::placeholder, textarea::-ms-input-placeholder {
             ${this.mapButton(r,r,t,s.toUpperCase(),t.badge)}
           </div>`),["row","datagrid"].includes(i.type)||["row","datagrid"].includes(i.parent_type))for(let t=0;t<o.length;t+=1){const r=g(o[t]),d=o[t][r],n=`tmp_${i.section}_${l.toString()}_${s}_${t.toString()}_${r}`,p=this.setListIcon(d);e.push(a`<div key={skey}>
                 ${this.mapButton(n,n,p,r.toUpperCase(),p.badge,`primary ${u.badgeBlack}`)}
-              </div>`)}}}}createMapList(){const{template:e}=this.data,t=[];return["report","header","details","footer"].forEach((i=>{const l=this.setListIcon(e[i]);l.selected&&"report"!==i&&t.push(a`<hr id="${`sep_${i}_0`}" class="separator" />`),t.push(a`<div key={mkey}>
+              </div>`)}}}}createMapList(){const{template:e}=this.data,t=[];return["report","header","details","footer"].forEach(i=>{const l=this.setListIcon(e[i]);l.selected&&"report"!==i&&t.push(a`<hr id="${`sep_${i}_0`}" class="separator" />`),t.push(a`<div key={mkey}>
         ${this.mapButton(`tmp_${i}`,`tmp_${i}`,l,i.toUpperCase(),l.badge)}
-      </div>`),l.selected&&(t.push(a`<hr id="${`sep_${i}_1`}" class="separator" />`),"report"!==i&&(this.createSubList(t),t.push(a`<hr id="${`sep_${i}_2`}" class="separator" />`)))})),t}dataTitle(e,t,i){return a`<div class="panel-title">
+      </div>`),l.selected&&(t.push(a`<hr id="${`sep_${i}_1`}" class="separator" />`),"report"!==i&&(this.createSubList(t),t.push(a`<hr id="${`sep_${i}_2`}" class="separator" />`)))}),t}dataTitle(e,t,i){return a`<div class="panel-title">
       <div class="cell">
         <form-label class="title-cell"
           value="${t}"
@@ -390,7 +390,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
                 <form-select id="sel_add_item" label="" 
                   ?full=${!1} .isnull="${!0}" value="${o.add_item||""}"
                   .onChange=${e=>this._onTemplateEvent(d.CHANGE_CURRENT,{key:"add_item",value:e.value})}
-                  .options=${{header:["row","vgap","hline"],details:["row","vgap","hline","html","datagrid"],footer:["row","vgap","hline"],row:["cell","image","barcode","separator"],datagrid:["column"]}[o.type].map((e=>({value:e,text:e.toUpperCase()})))}  
+                  .options=${{header:["row","vgap","hline"],details:["row","vgap","hline","html","datagrid"],footer:["row","vgap","hline"],row:["cell","image","barcode","separator"],datagrid:["column"]}[o.type].map(e=>({value:e,text:e.toUpperCase()}))}  
                 ></form-select>
               </div>`:i}
           </div>
@@ -400,7 +400,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
             value="${o.type.toUpperCase()}" leftIcon="Tag"
           ></form-label>
         </div>
-        ${o.form.rows.map(((e,t)=>a`<div class="template-row" >
+        ${o.form.rows.map((e,t)=>a`<div class="template-row" >
           <form-row id=${`row_${t}`}
             .row=${e} 
             .values=${["row","datagrid"].includes(o.type)?o.item_base:o.item}
@@ -409,7 +409,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
             .onEdit=${e=>this._onTemplateEvent(d.EDIT_ITEM,e)}
             .msg=${this.msg}
           ></form-row>
-        </div>`))}`:i}
+        </div>`)}`:i}
         ${"data"===t?a`<div class="section-container border" >
           ${r&&"string"===r.type?a`<div class="row full section-small">
               ${this.dataTitle("data_string",r.name,[d.SET_CURRENT_DATA,null])}
@@ -421,12 +421,12 @@ textarea::placeholder, textarea::-ms-input-placeholder {
           </div>`:i}
           ${r&&"table"===r.type&&r.item?a`<div class="row full section-small">
               ${this.dataTitle("data_table_item",`${r.name} - ${String(r.item._index+1)}`,[d.SET_CURRENT_DATA_ITEM,null])}
-              ${Object.keys(r.fields).map((e=>a`<div class="row full">
+              ${Object.keys(r.fields).map(e=>a`<div class="row full">
                 <div class="padding-small">
                   <form-label value="${e}"></form-label>
                 </div>
                 ${this.dataText(e,r.item[e],2,{field:e,_index:r.item._index})}
-              </div>`))}
+              </div>`)}
           </div>`:i}
           ${r&&"list"===r.type&&!r.item?a`<div class="row full section-small">
               ${this.dataTitle("data_list",r.name,[d.SET_CURRENT_DATA,null])}
@@ -466,25 +466,25 @@ textarea::placeholder, textarea::-ms-input-placeholder {
         ${"meta"===t?a`<div class="section-container-small border" >
           <div class="cell padding-small" >
             <div class="meta-title-row" >
-              ${Object.keys(l.meta).map((e=>a`<div class="meta-title-cell" >
+              ${Object.keys(l.meta).map(e=>a`<div class="meta-title-cell" >
                 <div class="bold">${e}</div>
                 <div>${l.meta[e]}</div>
-              </div>`))}
+              </div>`)}
             </div>
             <div class="meta-title-sources" >
               <form-label value="${this.msg("",{id:"template_data_sources"})}"></form-label>
             </div>
-            ${Object.keys(l.sources).map((e=>a`<div class="meta-sources" >
+            ${Object.keys(l.sources).map(e=>a`<div class="meta-sources" >
               <div class="cell padding-small">
                 <div class="meta-sources-name padding-small">
                   ${e}
                 </div>
-                ${Object.keys(l.sources[e]).map((t=>a`<div class="row" >
+                ${Object.keys(l.sources[e]).map(t=>a`<div class="row" >
                   <div class="meta-sources-cell padding-small bold" >${t}:</div>
                   <div class="meta-sources-cell padding-small" >${l.sources[e][t]}</div>
-                </div>`))}
+                </div>`)}
               </div>
-            </div>`))}
+            </div>`)}
           </div>
         </div>`:i}
       </div>
@@ -651,7 +651,7 @@ textarea::placeholder, textarea::-ms-input-placeholder {
                   label="${this.msg("",{id:"template_data_type"})}" 
                   ?full=${!0} .isnull="${!1}" value="${e}"
                   .onChange=${e=>this._onValueChange("type",e.value)}
-                  .options=${Object.keys(p).map((e=>({value:p[e],text:e})))}  
+                  .options=${Object.keys(p).map(e=>({value:p[e],text:e}))}  
                 ></form-select>
               </div>
               <div class="cell padding-small half" >

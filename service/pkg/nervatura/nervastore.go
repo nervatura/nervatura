@@ -11,8 +11,8 @@ import (
 
 const (
 	datetimeISOFmt string = "2006-01-02T15:04:05-07:00"
-	datetimeFmt    string = "2006-01-02 15:04:05"
-	dateFmt        string = "2006-01-02"
+	//datetimeFmt    string = "2006-01-02 15:04:05"
+	dateFmt string = "2006-01-02"
 )
 
 // NervaStore is the core structure of the Nervatura

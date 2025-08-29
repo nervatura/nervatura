@@ -938,9 +938,10 @@ func (api *API) updateCheckInfo(nervatype string, data []IM) ([]IM, error) {
 				case "_access", "_key", "_fields", "id":
 
 				case "crdate":
-					if ifield.(MF).Type == "datetime" {
+					switch ifield.(MF).Type {
+					case "datetime":
 						data[index]["crdate"] = time.Now().Format("2006-01-02T15:04:05-0700")
-					} else if ifield.(MF).Type == "date" {
+					case "date":
 						if _, found := data[index]["crdate"]; !found {
 							data[index]["crdate"] = time.Now().Format("2006-01-02")
 						}

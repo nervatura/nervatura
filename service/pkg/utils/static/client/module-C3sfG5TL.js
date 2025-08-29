@@ -1,4 +1,4 @@
-import{a as e,i as t,E as i,x as o}from"./module-D9Io0VgM.js";import{o as l,a as s}from"./module-DEu6bRyP.js";import{e as n,I as a}from"./main-D0db8xQQ.js";const r=e`
+import{a as e,i as t,E as i,x as o}from"./module-CgqbBeKY.js";import{o as l,a as s}from"./module-pdXndwQj.js";import{e as n,I as a}from"./main-CONOq8Fm.js";const r=e`
 button {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -117,7 +117,7 @@ button[button-type='border'].selected {
       ?autofocus="${this.autofocus}"
       aria-label="${l(this.label)}"
       title="${l(this.label)}"
-      class=${`${["small","full","selected","hidelabel"].filter((e=>this[e])).join(" ")} ${this.align}`}
+      class=${`${["small","full","selected","hidelabel"].filter(e=>this[e]).join(" ")} ${this.align}`}
       style="${s(this.style)}"
       @click=${this._onClick}
       @keydown=${this._onKeyEvent}
@@ -154,9 +154,9 @@ option:disabled {
 .full{
   width: 100%;
 }
-`;customElements.define("form-select",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.value="",this.name=void 0,this.options=[],this.isnull=!0,this.label="",this.disabled=!1,this.autofocus=!1,this.full=!1,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},value:{type:String,reflect:!0},options:{type:Array},isnull:{type:Boolean},label:{type:String},disabled:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},full:{type:Boolean},style:{type:Object}}}_onInput(e){e.target.value!==this.value&&(this.onChange&&this.onChange({value:e.target.value,old:this.value}),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{value:e.target.value,old:this.value}})),this.value=e.target.value),this._select.value!==e.target.value&&(this._select.value=e.target.value)}_onKeyEvent(e){const t=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{value:this.value}})))};"keydown"!==e.type&&"keypress"!==e.type||e.stopPropagation(),"keydown"===e.type&&13===e.keyCode&&(e.preventDefault(),t()),this.readonly||"keypress"!==e.type||13!==e.keyCode||t()}firstUpdated(){this._select=this.renderRoot.querySelector("select")}render(){const e=this.options.map(((e,t)=>o`<option
+`;customElements.define("form-select",class extends t{constructor(){super(),this.id=Math.random().toString(36).slice(2),this.value="",this.name=void 0,this.options=[],this.isnull=!0,this.label="",this.disabled=!1,this.autofocus=!1,this.full=!1,this.style={}}static get properties(){return{id:{type:String},name:{type:String,reflect:!0},value:{type:String,reflect:!0},options:{type:Array},isnull:{type:Boolean},label:{type:String},disabled:{type:Boolean,reflect:!0},autofocus:{type:Boolean,reflect:!0},full:{type:Boolean},style:{type:Object}}}_onInput(e){e.target.value!==this.value&&(this.onChange&&this.onChange({value:e.target.value,old:this.value}),this.dispatchEvent(new CustomEvent("change",{bubbles:!0,composed:!0,detail:{value:e.target.value,old:this.value}})),this.value=e.target.value),this._select.value!==e.target.value&&(this._select.value=e.target.value)}_onKeyEvent(e){const t=()=>{this.onEnter&&(this.onEnter({value:this.value}),this.dispatchEvent(new CustomEvent("enter",{bubbles:!0,composed:!0,detail:{value:this.value}})))};"keydown"!==e.type&&"keypress"!==e.type||e.stopPropagation(),"keydown"===e.type&&13===e.keyCode&&(e.preventDefault(),t()),this.readonly||"keypress"!==e.type||13!==e.keyCode||t()}firstUpdated(){this._select=this.renderRoot.querySelector("select")}render(){const e=this.options.map((e,t)=>o`<option
       key=${t} value=${e.value} 
-      ?selected=${e.value===this.value} >${e.text}</option>`));return this.isnull&&e.unshift(o`<option
+      ?selected=${e.value===this.value} >${e.text}</option>`);return this.isnull&&e.unshift(o`<option
         ?selected=${""===this.value}
         key="-1" value="" ></option>`),o`<select 
       id="${this.id}"

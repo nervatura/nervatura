@@ -1,4 +1,4 @@
-import{a as e,i as t,x as i,E as l}from"./module-D9Io0VgM.js";import"./module-TNcUzx08.js";import{d as a,e as n,B as o,S as s,l as r,P as d,M as p,I as c}from"./main-D0db8xQQ.js";import{o as u}from"./module-DEu6bRyP.js";import"./module-C2L4Vv7N.js";import"./module-BiR8VKh2.js";import"./module-V8-Grdf0.js";import"./module-C1fQGCtD.js";const m=e`
+import{a as e,i as t,x as i,E as l}from"./module-CgqbBeKY.js";import"./module-C3sfG5TL.js";import{d as a,e as n,B as o,S as s,l as r,P as d,M as p,I as c}from"./main-CONOq8Fm.js";import{o as u}from"./module-pdXndwQj.js";import"./module-W-IvZXGK.js";import"./module-C3U_lRlw.js";import"./module-CSXOkCWC.js";import"./module-C1fQGCtD.js";const m=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -221,7 +221,7 @@ div {
       <div class="section full">
         <div class="section-row">
           <div id="${this.id}" class="form-panel" >
-            ${a.template.rows.map(((e,t)=>i`<form-row
+            ${a.template.rows.map((e,t)=>i`<form-row
               id=${`row_${t}`}
               .row="${e}"
               .values="${a.fieldvalue||a.form}"
@@ -229,7 +229,7 @@ div {
               .data="${{audit:n,current:a,dataset:o}}"
               .onEdit=${e=>this._onSettingEvent(r.EDIT_ITEM,e)}
               .msg=${this.msg}
-            ></form-row>`))}
+            ></form-row>`)}
           </div>
           ${void 0!==a.template.view.items&&null!==a.form.id||"log"===s?i`<form-table 
             id="form_view" rowKey="id"
@@ -467,7 +467,7 @@ div {
     width:49.99999% 
   }
 }
-`;customElements.define("modal-audit",class extends t{constructor(){super(),this.msg=e=>e,this.idKey=null,this.usergroup=0,this.nervatype=void 0,this.subtype=null,this.inputfilter=void 0,this.supervisor=0,this.typeOptions=[],this.subtypeOptions=[],this.inputfilterOptions=[]}static get properties(){return{idKey:{type:Object},usergroup:{type:Number},nervatype:{type:Number},subtype:{type:Object},inputfilter:{type:Number},supervisor:{type:Number},typeOptions:{type:Array},subtypeOptions:{type:Array},inputfilterOptions:{type:Array}}}static get styles(){return[b]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t}render(){const{idKey:e,usergroup:t,nervatype:a,subtype:n,inputfilter:s,supervisor:r,typeOptions:d,subtypeOptions:c,inputfilterOptions:u}=this,m=d.filter((e=>e.value===String(a)))[0].text,g=["trans","report","menu"].includes(d.filter((e=>e.value===String(a)))[0].text);return i`<div class="modal">
+`;customElements.define("modal-audit",class extends t{constructor(){super(),this.msg=e=>e,this.idKey=null,this.usergroup=0,this.nervatype=void 0,this.subtype=null,this.inputfilter=void 0,this.supervisor=0,this.typeOptions=[],this.subtypeOptions=[],this.inputfilterOptions=[]}static get properties(){return{idKey:{type:Object},usergroup:{type:Number},nervatype:{type:Number},subtype:{type:Object},inputfilter:{type:Number},supervisor:{type:Number},typeOptions:{type:Array},subtypeOptions:{type:Array},inputfilterOptions:{type:Array}}}static get styles(){return[b]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t}render(){const{idKey:e,usergroup:t,nervatype:a,subtype:n,inputfilter:s,supervisor:r,typeOptions:d,subtypeOptions:c,inputfilterOptions:u}=this,m=d.filter(e=>e.value===String(a))[0].text,g=["trans","report","menu"].includes(d.filter(e=>e.value===String(a))[0].text);return i`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -510,7 +510,7 @@ div {
                   <form-select id="subtype" 
                     label="${this.msg("",{id:"audit_subtype"})}"
                     .onChange=${e=>this._onValueChange("subtype",parseInt(e.value,10))}
-                    .options=${c.filter((e=>e.type===m))} 
+                    .options=${c.filter(e=>e.type===m)} 
                     .isnull="${!1}" value="${String(n)}" ?full="${!0}"
                   ></form-select>
                 </div>

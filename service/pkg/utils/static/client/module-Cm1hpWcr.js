@@ -1,4 +1,4 @@
-import{a as e,i as t,x as i,E as a,T as l}from"./module-D9Io0VgM.js";import{a as o,i as n,t as s,e as r,o as d}from"./module-DEu6bRyP.js";import"./module-TNcUzx08.js";import{d as c,k as p,e as m,B as v,S as u,E as h,j as b,P as g,a as f,I as $,M as y}from"./main-D0db8xQQ.js";import"./module-C2L4Vv7N.js";import"./module-V8-Grdf0.js";import{e as x,n as _}from"./module-BrQzz2cN.js";import"./module-BiR8VKh2.js";import"./module-BXAU-OYv.js";import"./module-C1fQGCtD.js";const E=e`
+import{a as e,i as t,x as i,E as a,T as l}from"./module-CgqbBeKY.js";import{a as o,i as n,t as s,e as r,o as d}from"./module-pdXndwQj.js";import"./module-C3sfG5TL.js";import{d as c,k as p,e as m,B as v,S as u,E as h,j as b,P as g,a as f,I as $,M as y}from"./main-CONOq8Fm.js";import"./module-W-IvZXGK.js";import"./module-CSXOkCWC.js";import{e as x,n as _}from"./module-BJ5fixcH.js";import"./module-C3U_lRlw.js";import"./module-GpEAqiCj.js";import"./module-C1fQGCtD.js";const E=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -112,22 +112,22 @@ div {
       </div>`),r.push(i`<hr id="state_sep" class="separator" />`)}return!1!==s.save&&r.push(this.itemMenu({id:"cmd_save",selected:!!(t.form&&l||!t.form&&a),eventValue:[u.SAVE,{}],label:this.msg("",{id:"label_save"}),iconKey:"Check"})),!1!==s.delete&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_delete",eventValue:[u.DELETE,{}],label:this.msg("",{id:"label_delete"}),iconKey:"Times"})),!1===s.new||"normal"!==s.state||t.form||r.push(this.itemMenu({id:"cmd_new",eventValue:[u.NEW,[{}]],label:this.msg("",{id:"label_new"}),iconKey:"Plus"})),!0===s.trans&&(r.push(i`<hr id="trans_sep" class="separator" />`),!1!==s.copy&&r.push(this.itemMenu({id:"cmd_copy",eventValue:[u.COPY,{value:"normal"}],label:this.msg("",{id:"label_copy"}),iconKey:"Copy"})),!1!==s.create&&r.push(this.itemMenu({id:"cmd_create",eventValue:[u.COPY,{value:"create"}],label:this.msg("",{id:"label_create"}),iconKey:"Sitemap"})),!0===s.corrective&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_corrective",eventValue:[u.COPY,{value:"amendment"}],label:this.msg("",{id:"label_corrective"}),iconKey:"Share"})),!0===s.cancellation&&"cancellation"!==s.state&&r.push(this.itemMenu({id:"cmd_cancellation",eventValue:[u.COPY,{value:"cancellation"}],label:this.msg("",{id:"label_cancellation"}),iconKey:"Undo"})),!0===s.formula&&r.push(this.itemMenu({id:"cmd_formula",eventValue:[u.CHECK,[{},h.LOAD_FORMULA]],label:this.msg("",{id:"label_formula"}),iconKey:"Magic"}))),!0===s.link&&r.push(this.itemMenu({id:"cmd_link",eventValue:[u.LINK,{type:s.link_type,field:s.link_field}],label:s.link_label,iconKey:"Link"})),!0===s.password&&r.push(this.itemMenu({id:"cmd_password",eventValue:[u.PASSWORD,{}],label:this.msg("",{id:"title_password"}),iconKey:"Lock"})),!0===s.shipping&&(r.push(this.itemMenu({id:"cmd_shipping_all",eventValue:[u.SHIPPING_ADD_ALL,{}],label:this.msg("",{id:"shipping_all_label"}),iconKey:"Plus"})),r.push(this.itemMenu({id:"cmd_shipping_create",selected:n.shiptemp&&n.shiptemp.length>0,eventValue:[u.SHIPPING_CREATE,{}],label:this.msg("",{id:"shipping_create_label"}),iconKey:"Check"}))),!0===s.more&&(r.push(i`<hr id="more_sep_1" class="separator" />`),!1!==s.report&&r.push(this.itemMenu({id:"cmd_report",eventValue:[u.REPORT_SETTINGS,{}],label:this.msg("",{id:"label_report"}),iconKey:"ChartBar"})),!0===s.search&&r.push(this.itemMenu({id:"cmd_search",eventValue:[u.SEARCH_QUEUE,{}],label:this.msg("",{id:"label_search"}),iconKey:"Search"})),!0===s.export_all&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_all",eventValue:[u.EXPORT_QUEUE_ALL,{}],label:this.msg("",{id:"label_export_all"}),iconKey:"Download"})),!0===s.print&&r.push(this.itemMenu({id:"cmd_print",eventValue:[u.CREATE_REPORT,{value:"print"}],label:this.msg("",{id:"label_print"}),iconKey:"Print"})),!0===s.export_pdf&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_pdf",eventValue:[u.CREATE_REPORT,{value:"pdf"}],label:this.msg("",{id:"label_export_pdf"}),iconKey:"Download"})),!0===s.export_xml&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_xml",eventValue:[u.CREATE_REPORT,{value:"xml"}],label:this.msg("",{id:"label_export_xml"}),iconKey:"Code"})),!0===s.export_csv&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_csv",eventValue:[u.CREATE_REPORT,{value:"csv"}],label:this.msg("",{id:"label_export_csv"}),iconKey:"Download"})),!0===s.export_event&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_export_event",eventValue:[u.EXPORT_EVENT,{}],label:this.msg("",{id:"label_export_event"}),iconKey:"Calendar"})),r.push(i`<hr id="more_sep_2" class="separator" />`),!1!==s.bookmark&&"normal"===s.state&&r.push(this.itemMenu({id:"cmd_bookmark",eventValue:[u.SAVE_BOOKMARK,{value:s.bookmark}],label:this.msg("",{id:"label_bookmark"}),iconKey:"Star"})),!1!==s.help&&r.push(this.itemMenu({id:"cmd_help",eventValue:[u.HELP,{value:s.help}],label:this.msg("",{id:"label_help"}),iconKey:"QuestionCircle"}))),!0!==s.more&&void 0!==s.help&&(r.push(i`<hr id="help_sep" class="separator" />`),r.push(this.itemMenu({id:"cmd_help",eventValue:[u.HELP,{value:s.help}],label:this.msg("",{id:"label_help"}),iconKey:"QuestionCircle"}))),r}newItems(){const{group_key:e}=this.module,t=[];return this.newFilter[0].length>0&&t.push(i`<div class="row full">
         ${this.itemMenu({id:"new_transitem_group",selected:"new_transitem"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_transitem"}],label:this.msg("",{id:"search_transitem"}),iconKey:"FileText"})}
         ${"new_transitem"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[0].map((e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"FileText",color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[0].map(e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"FileText",color:"rgb(var(--functional-blue))"}):a)}
         </div>`:a}
       </div>`),this.newFilter[1].length>0&&t.push(i`<div class="row full">
         ${this.itemMenu({id:"new_transpayment_group",selected:"new_transpayment"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_transpayment"}],label:this.msg("",{id:"search_transpayment"}),iconKey:"Money"})}
         ${"new_transpayment"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[1].map((e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"Money",color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[1].map(e=>"all"===this.auditFilter.trans[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:"Money",color:"rgb(var(--functional-blue))"}):a)}
         </div>`:a}
       </div>`),this.newFilter[2].length>0&&t.push(i`<div class="row full">
         ${this.itemMenu({id:"new_transmovement_group",selected:"new_transmovement"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_transmovement"}],label:this.msg("",{id:"search_transmovement"}),iconKey:"Truck"})}
         ${"new_transmovement"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[2].map((e=>"all"===this.auditFilter.trans[e][0]?"delivery"===e?[this.itemMenu({id:"shipping",eventValue:[u.NEW,[{ntype:"trans",ttype:"shipping"}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}),this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:"title_transfer"}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"})]:this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[2].map(e=>"all"===this.auditFilter.trans[e][0]?"delivery"===e?[this.itemMenu({id:"shipping",eventValue:[u.NEW,[{ntype:"trans",ttype:"shipping"}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}),this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:"title_transfer"}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"})]:this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:"trans",ttype:e}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a)}
         </div>`:a}
       </div>`),this.newFilter[3].length>0&&t.push(i`<div class="row full">
         ${this.itemMenu({id:"new_resources_group",selected:"new_resources"===e,eventValue:[u.CHANGE,{fieldname:"group_key",value:"new_resources"}],label:this.msg("",{id:"title_resources"}),iconKey:"Wrench"})}
         ${"new_resources"===e?i`<div class="row full panel-group" >
-          ${this.newFilter[3].map((e=>"all"===this.auditFilter[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:e,ttype:null}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a))}
+          ${this.newFilter[3].map(e=>"all"===this.auditFilter[e][0]?this.itemMenu({id:e,eventValue:[u.NEW,[{ntype:e,ttype:null}]],label:this.msg("",{id:`title_${e}`}),iconKey:this.forms[e]().options.icon,color:"rgb(var(--functional-blue))"}):a)}
         </div>`:a}
       </div>`),t}render(){const{current:e,panel:t}=this.module;return i`<div class="sidebar ${"auto"!==this.side?this.side:""}" >
       ${e.form||"transitem_shipping"===e.form_type?a:i`<div class="row full container">
@@ -163,7 +163,7 @@ div {
   width: 100%; 
 }
 `;customElements.define("edit-main",class extends t{constructor(){super(),this.msg=e=>e,this.id=Math.random().toString(36).slice(2),this.audit="",this.current={},this.template={},this.dataset={},this.onEvent={}}static get properties(){return{id:{type:String},audit:{type:String},current:{type:Object},template:{type:Object},dataset:{type:Object},onEvent:{type:Object}}}static get styles(){return[w]}_onEditEvent(e,t){this.onEvent.onEditEvent&&this.onEvent.onEditEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("edit_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){const{audit:e,current:t,dataset:l,template:o}=this;return i`<div id="${this.id}" class="panel" >
-      ${o.rows.map(((a,n)=>i`<form-row
+      ${o.rows.map((a,n)=>i`<form-row
         id=${`row_${n}`}
         .row="${a}"
         .values="${t.item}"
@@ -173,9 +173,9 @@ div {
         .onEvent=${(...e)=>this._onEditEvent(...e)}
         .onSelector=${(...e)=>this._onEditEvent(b.SELECTOR,[...e])}
         .msg=${this.msg}
-      ></form-row>`))}
+      ></form-row>`)}
       ${"report"===t.type&&t.fieldvalue.length>0?i`<div class="row full">
-          ${t.fieldvalue.map(((a,n)=>i`<form-row
+          ${t.fieldvalue.map((a,n)=>i`<form-row
             id=${`row_${n}`}
             .row="${a}"
             .values="${a}"
@@ -185,7 +185,7 @@ div {
             .onEvent=${(...e)=>this._onEditEvent(...e)}
             .onSelector=${(...e)=>this._onEditEvent(b.SELECTOR,[...e])}
             .msg=${this.msg}
-          ></form-row>`))}
+          ></form-row>`)}
         </div>`:a}
     </div>`}});const k=e`
 :host {
@@ -238,7 +238,7 @@ div {
     padding: 2px 4px; 
   }
 }
-`;customElements.define("edit-meta",class extends t{constructor(){super(),this.msg=e=>e,this.id=Math.random().toString(36).slice(2),this.audit="",this.current={},this.dataset={},this.pageSize=5,this.onEvent={}}static get properties(){return{id:{type:String},audit:{type:String},current:{type:Object},dataset:{type:Object},pageSize:{type:Number},onEvent:{type:Object}}}static get styles(){return[k]}connectedCallback(){super.connectedCallback(),this.currentPage=this.current.page||1,this.currentPage<1&&(this.currentPage=1)}_onPagination(e,t){if("setPageSize"===e)return this.currentPage=1,void(this.pageSize=t);this.currentPage=t,this.requestUpdate()}_onEditEvent(e,t){this.onEvent.onEditEvent&&this.onEvent.onEditEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("edit_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}prepareRows(){const{current:e,dataset:t}=this;let i=[];return e.fieldvalue.forEach((e=>{const a=t.deffield.filter((t=>t.fieldname===e.fieldname))[0];if(1===a.visible&&0===e.deleted){const l=t.groups.filter((e=>e.id===a.fieldtype))[0].groupvalue;let o=e.value,n=l;if(["customer","tool","trans","transitem","transmovement","transpayment","product","project","employee","place"].includes(l)){const i=t.deffield_prop.filter((t=>t.ftype===l&&t.id===parseInt(e.value,10)))[0];i&&(o=i.description),n="selector"}"urlink"===l&&(n="text"),"valuelist"===l&&(o=a.valuelist.split("|")),i=[...i,{rowtype:"fieldvalue",id:e.id,name:"fieldvalue_value",fieldname:e.fieldname,value:e.value,notes:e.notes||"",label:a.description,description:o,disabled:!!a.readonly,fieldtype:l,datatype:n}]}})),i}renderRows(e,t){const{audit:a,current:l,dataset:o}=this;let n=e;if(t>1){const e=this.currentPage>t?t:this.currentPage,i=(e-1)*this.pageSize,a=e*this.pageSize;n=n.slice(i,a)}return n.map(((e,t)=>i`<form-row
+`;customElements.define("edit-meta",class extends t{constructor(){super(),this.msg=e=>e,this.id=Math.random().toString(36).slice(2),this.audit="",this.current={},this.dataset={},this.pageSize=5,this.onEvent={}}static get properties(){return{id:{type:String},audit:{type:String},current:{type:Object},dataset:{type:Object},pageSize:{type:Number},onEvent:{type:Object}}}static get styles(){return[k]}connectedCallback(){super.connectedCallback(),this.currentPage=this.current.page||1,this.currentPage<1&&(this.currentPage=1)}_onPagination(e,t){if("setPageSize"===e)return this.currentPage=1,void(this.pageSize=t);this.currentPage=t,this.requestUpdate()}_onEditEvent(e,t){this.onEvent.onEditEvent&&this.onEvent.onEditEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("edit_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}prepareRows(){const{current:e,dataset:t}=this;let i=[];return e.fieldvalue.forEach(e=>{const a=t.deffield.filter(t=>t.fieldname===e.fieldname)[0];if(1===a.visible&&0===e.deleted){const l=t.groups.filter(e=>e.id===a.fieldtype)[0].groupvalue;let o=e.value,n=l;if(["customer","tool","trans","transitem","transmovement","transpayment","product","project","employee","place"].includes(l)){const i=t.deffield_prop.filter(t=>t.ftype===l&&t.id===parseInt(e.value,10))[0];i&&(o=i.description),n="selector"}"urlink"===l&&(n="text"),"valuelist"===l&&(o=a.valuelist.split("|")),i=[...i,{rowtype:"fieldvalue",id:e.id,name:"fieldvalue_value",fieldname:e.fieldname,value:e.value,notes:e.notes||"",label:a.description,description:o,disabled:!!a.readonly,fieldtype:l,datatype:n}]}}),i}renderRows(e,t){const{audit:a,current:l,dataset:o}=this;let n=e;if(t>1){const e=this.currentPage>t?t:this.currentPage,i=(e-1)*this.pageSize,a=e*this.pageSize;n=n.slice(i,a)}return n.map((e,t)=>i`<form-row
         id=${`row_${t}`}
         .row="${e}"
         .values="${e}"
@@ -248,7 +248,7 @@ div {
         .onEvent=${(...e)=>this._onEditEvent(...e)}
         .onSelector=${(...e)=>this._onEditEvent(b.SELECTOR,[...e])}
         .msg=${this.msg}
-      ></form-row>`))}deffields(){const{dataset:e,current:t}=this,i=e.groups.filter((e=>"nervatype"===e.groupname&&e.groupvalue===t.type))[0].id;return"trans"===t.type?e.deffield.filter((e=>e.nervatype===i&&1===e.visible)).filter((e=>e.subtype===t.item.transtype||null===e.subtype)).map((e=>({value:e.fieldname,text:e.description}))):e.deffield.filter((e=>e.nervatype===i&&1===e.visible)).map((e=>({value:e.fieldname,text:e.description})))}render(){const{audit:e,current:t}=this,l=this.prepareRows(),o=Math.ceil(l.length/this.pageSize);return i`<div id="${this.id}" class="panel" >
+      ></form-row>`)}deffields(){const{dataset:e,current:t}=this,i=e.groups.filter(e=>"nervatype"===e.groupname&&e.groupvalue===t.type)[0].id;return"trans"===t.type?e.deffield.filter(e=>e.nervatype===i&&1===e.visible).filter(e=>e.subtype===t.item.transtype||null===e.subtype).map(e=>({value:e.fieldname,text:e.description})):e.deffield.filter(e=>e.nervatype===i&&1===e.visible).map(e=>({value:e.fieldname,text:e.description}))}render(){const{audit:e,current:t}=this,l=this.prepareRows(),o=Math.ceil(l.length/this.pageSize);return i`<div id="${this.id}" class="panel" >
       ${"readonly"!==e||o>1?i`<div class="container-row">
         ${"readonly"!==e?i`<div class="cell mobile">
           <div class="cell padding-small" >
@@ -324,7 +324,7 @@ div {
       </div>
     </div>
     <div id="${this.id}" class="panel" >
-      ${t.form_template.rows.map(((l,o)=>i`<form-row
+      ${t.form_template.rows.map((l,o)=>i`<form-row
         id=${`row_${o}`}
         .row="${l}"
         .values="${t.form}"
@@ -334,7 +334,7 @@ div {
         .onEvent=${(...e)=>this._onEditEvent(...e)}
         .onSelector=${(...e)=>this._onEditEvent(b.SELECTOR,[...e])}
         .msg=${this.msg}
-      ></form-row>`))}
+      ></form-row>`)}
     </div>`}});class S extends n{constructor(e){if(super(e),this.it=a,e.type!==s.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(e){if(e===a||null==e)return this._t=void 0,this.it=e;if(e===l)return e;if("string"!=typeof e)throw Error(this.constructor.directiveName+"() called with a non-string value");if(e===this.it)return this._t;this.it=e;const t=[e];return t.raw=t,this._t={_$litType$:this.constructor.resultType,strings:t,values:[]}}}S.directiveName="unsafeHTML",S.resultType=1;const T=r(S),M=e`
 :host {
   font-family: var(--font-family);
@@ -433,7 +433,7 @@ div {
             <form-select id="sel_pattern"
               label="${this.msg("",{id:"title_pattern"})}"
               .onChange=${e=>this._onEditEvent(b.CHANGE,{fieldname:"template",value:e.value})}
-              .options=${this.patterns.map((e=>({value:String(e.id),text:e.description+(1===e.defpattern?"*":"")})))} 
+              .options=${this.patterns.map(e=>({value:String(e.id),text:e.description+(1===e.defpattern?"*":"")}))} 
               .isnull="${!0}" value="${this.patternId?String(this.patternId):""}" >
             </form-select>
           </div>
@@ -657,7 +657,7 @@ div {
               .onEvent=${this.onEvent} .msg=${this.msg}
             ></edit-main>`:a}
 
-          ${null===o.item.id&&!l.options.search_form||void 0===this.dataset.fieldvalue||null===o.item||!0!==l.options.fieldvalue?a:i`${s("fieldvalue","fields_view",l.options.icon,o.fieldvalue.filter((e=>1===n.deffield.filter((t=>t.fieldname===e.fieldname))[0].visible&&0===e.deleted)).length)}${"fieldvalue"===o.view?i`<edit-meta audit="${t}" 
+          ${null===o.item.id&&!l.options.search_form||void 0===this.dataset.fieldvalue||null===o.item||!0!==l.options.fieldvalue?a:i`${s("fieldvalue","fields_view",l.options.icon,o.fieldvalue.filter(e=>1===n.deffield.filter(t=>t.fieldname===e.fieldname)[0].visible&&0===e.deleted).length)}${"fieldvalue"===o.view?i`<edit-meta audit="${t}" 
               .current="${o}" .dataset="${n}" 
               .onEvent=${this.onEvent} .msg=${this.msg} pageSize=${this.selectorPage}
               ></edit-meta>`:a}`}
@@ -669,11 +669,11 @@ div {
                 @blur=${this._onNoteBlur}
               ></edit-note>`:a}`:a}
 
-          ${Object.keys(l.view).filter((e=>"disabled"!==l.view[e].view_audit)).map((e=>i`${s(e,l.view[e].title,l.view[e].icon,n[l.view[e].data].length)}${o.view===e?i`<edit-view
+          ${Object.keys(l.view).filter(e=>"disabled"!==l.view[e].view_audit).map(e=>i`${s(e,l.view[e].title,l.view[e].icon,n[l.view[e].data].length)}${o.view===e?i`<edit-view
                 viewName=${e} .current=${o} .template=${l} 
                 .dataset=${n} audit=${t}
                 .onEvent=${this.onEvent} .msg=${this.msg} pageSize=${this.paginationPage}
-              ></edit-view>`:a}`))}
+              ></edit-view>`:a}`)}
         </div>`}
     </div>`}});const z=e`
 @keyframes animatezoom{from{transform:scale(0)} to{transform:scale(1)}}
@@ -972,7 +972,7 @@ div {
     width:49.99999% 
   }
 }
-`;customElements.define("modal-trans",class extends t{constructor(){super(),this.msg=e=>e,this.baseTranstype="",this.transtype="",this.direction="",this.doctypes=[],this.directions=[],this.refno=!0,this.nettoDiv=!1,this.netto=!0,this.fromDiv=!1,this.from=!1,this.elementCount=0}static get properties(){return{baseTranstype:{type:String},transtype:{type:String},direction:{type:String},doctypes:{type:Array},directions:{type:Array},refno:{type:Boolean},nettoDiv:{type:Boolean},netto:{type:Boolean},fromDiv:{type:Boolean},from:{type:Boolean},elementCount:{type:Number}}}static get styles(){return[I]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t}_setTranstype(e){const{baseTranstype:t,elementCount:i}=this;["invoice","receipt"].includes(e)&&["order","rent","worksheet"].includes(t)?(this.nettoDiv=!0,0===i&&(this.fromDiv=!0)):(this.nettoDiv=!1,this.fromDiv=!1),this.transtype=e}render(){const{transtype:e,direction:t,refno:l,from:o,fromDiv:n,netto:s,nettoDiv:r,doctypes:d,directions:c}=this,p=d.map((e=>({value:e,text:e}))),m=c.map((e=>({value:e,text:e})));return i`<div class="modal">
+`;customElements.define("modal-trans",class extends t{constructor(){super(),this.msg=e=>e,this.baseTranstype="",this.transtype="",this.direction="",this.doctypes=[],this.directions=[],this.refno=!0,this.nettoDiv=!1,this.netto=!0,this.fromDiv=!1,this.from=!1,this.elementCount=0}static get properties(){return{baseTranstype:{type:String},transtype:{type:String},direction:{type:String},doctypes:{type:Array},directions:{type:Array},refno:{type:Boolean},nettoDiv:{type:Boolean},netto:{type:Boolean},fromDiv:{type:Boolean},from:{type:Boolean},elementCount:{type:Number}}}static get styles(){return[I]}_onModalEvent(e,t){this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t}_setTranstype(e){const{baseTranstype:t,elementCount:i}=this;["invoice","receipt"].includes(e)&&["order","rent","worksheet"].includes(t)?(this.nettoDiv=!0,0===i&&(this.fromDiv=!0)):(this.nettoDiv=!1,this.fromDiv=!1),this.transtype=e}render(){const{transtype:e,direction:t,refno:l,from:o,fromDiv:n,netto:s,nettoDiv:r,doctypes:d,directions:c}=this,p=d.map(e=>({value:e,text:e})),m=c.map(e=>({value:e,text:e}));return i`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">
@@ -1575,7 +1575,7 @@ div {
     width:49.99999% 
   }
 }
-`;customElements.define("modal-report",class extends t{constructor(){super(),this.title="",this.template="",this.templates=[],this.report_orientation=[],this.report_size=[],this.orient="portrait",this.size="a4",this.copy=1}static get properties(){return{title:{type:String},templates:{type:Array},report_orientation:{type:Array},report_size:{type:Array},template:{type:String},orient:{type:String},size:{type:String},copy:{type:Number}}}static get styles(){return[N]}_onModalEvent(e,t){const{template:i,orient:a,size:l,copy:o,title:n}=this,s={type:t,template:i,orient:a,size:l,copy:o,title:n};this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:s}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:s}}))}_onValueChange(e,t){this[e]=t}render(){const{title:e,template:t,templates:a,orient:l,size:o,copy:n,report_size:s,report_orientation:r}=this,d=r.map((e=>({value:e[0],text:this.msg("",{id:e[1]})}))),c=s.map((e=>({value:e[0],text:e[1]})));return i`<div class="modal">
+`;customElements.define("modal-report",class extends t{constructor(){super(),this.title="",this.template="",this.templates=[],this.report_orientation=[],this.report_size=[],this.orient="portrait",this.size="a4",this.copy=1}static get properties(){return{title:{type:String},templates:{type:Array},report_orientation:{type:Array},report_size:{type:Array},template:{type:String},orient:{type:String},size:{type:String},copy:{type:Number}}}static get styles(){return[N]}_onModalEvent(e,t){const{template:i,orient:a,size:l,copy:o,title:n}=this,s={type:t,template:i,orient:a,size:l,copy:o,title:n};this.onEvent&&this.onEvent.onModalEvent&&this.onEvent.onModalEvent({key:e,data:s}),this.dispatchEvent(new CustomEvent("modal_event",{bubbles:!0,composed:!0,detail:{key:e,data:s}}))}_onValueChange(e,t){this[e]=t}render(){const{title:e,template:t,templates:a,orient:l,size:o,copy:n,report_size:s,report_orientation:r}=this,d=r.map(e=>({value:e[0],text:this.msg("",{id:e[1]})})),c=s.map(e=>({value:e[0],text:e[1]}));return i`<div class="modal">
       <div class="dialog">
         <div class="panel">
           <div class="panel-title">

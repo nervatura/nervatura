@@ -1,4 +1,4 @@
-import{a as e,i as t,E as i,x as l}from"./module-D9Io0VgM.js";import{d as a,e as o,B as s,S as r,P as n,c as d,f as c,D as p,I as b,M as h,h as u}from"./main-D0db8xQQ.js";import"./module-TNcUzx08.js";import"./module-BXAU-OYv.js";import"./module-DEu6bRyP.js";import"./module-V8-Grdf0.js";import"./module-C2L4Vv7N.js";import"./module-C1fQGCtD.js";const v=e`
+import{a as e,i as t,E as i,x as l}from"./module-CgqbBeKY.js";import{d as a,e as o,B as s,S as r,P as n,c as d,f as c,D as p,I as b,M as h,h as u}from"./main-CONOq8Fm.js";import"./module-C3sfG5TL.js";import"./module-GpEAqiCj.js";import"./module-pdXndwQj.js";import"./module-CSXOkCWC.js";import"./module-W-IvZXGK.js";import"./module-C1fQGCtD.js";const v=e`
 :host {
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -105,7 +105,7 @@ div {
       ${"disabled"!==this.auditFilter.trans.delivery[0]||"disabled"!==this.auditFilter.trans.inventory[0]||"disabled"!==this.auditFilter.trans.waybill[0]||"disabled"!==this.auditFilter.trans.production[0]||"disabled"!==this.auditFilter.trans.formula[0]?this.searchGroup("transmovement"):i}
       
       <hr class="separator" />
-      ${["customer","product","employee","tool","project"].map((e=>"disabled"!==this.auditFilter[e][0]?this.searchGroup(e):i))}
+      ${["customer","product","employee","tool","project"].map(e=>"disabled"!==this.auditFilter[e][0]?this.searchGroup(e):i)}
 
       <hr class="separator" />
       <form-button id="btn_report" 
@@ -311,10 +311,10 @@ div {
     width: 100%; 
   }
 }
-`;customElements.define("search-browser",class extends t{constructor(){super(),this.msg=e=>e,this.data={vkey:"",view:"",show_header:!0,show_dropdown:!1,show_columns:!1,result:[],columns:{},filters:{},deffield:[],page:1},this.keyMap={},this.viewDef={fields:{},label:"",readonly:!1},this.paginationPage=10,this.onEvent={}}static get properties(){return{data:{type:Object},keyMap:{type:Object},viewDef:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[m]}connectedCallback(){super.connectedCallback();const{show_header:e,show_dropdown:t,show_columns:i}=this.data;this.dropdown=t,this.header=e,this.columns=i}_onBrowserEvent(e,t){this.onEvent&&this.onEvent.onBrowserEvent&&this.onEvent.onBrowserEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("browser_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t,this.dispatchEvent(new CustomEvent("value_change",{bubbles:!0,composed:!0,detail:{key:e,value:t}})),this.requestUpdate()}exportFields(){const{view:e,columns:t}=this.data,i={};return Object.keys(this.viewDef.fields).filter((i=>!0===t[e][i])).forEach((e=>{i[e]=this.viewDef.fields[e]})),i}checkTotalFields(){const{fields:e}=this.viewDef,{deffield:t}=this.data;let i={totalFields:{},totalLabels:{},count:0};return t&&Object.keys(e).includes("deffield_value")?t.filter((e=>"integer"===e.fieldtype||"float"===e.fieldtype)).forEach((e=>{i={...i,totalFields:{...i.totalFields,[e.fieldname]:0},totalLabels:{...i.totalLabels,[e.fieldname]:e.description}}})):Object.keys(e).filter((t=>("integer"===e[t].fieldtype||"float"===e[t].fieldtype)&&"avg"!==e[t].calc)).forEach((t=>{i={...i,totalFields:{...i.totalFields,[t]:0},totalLabels:{...i.totalLabels,[t]:e[t].label}}})),i={...i,count:Object.keys(i.totalFields).length},i}fields(){const{view:e,columns:t}=this.data;let i={view:{columnDef:{id:"view",Header:"",headerStyle:{},Cell:({row:e})=>this.viewDef.readonly?l`<form-icon iconKey="CaretRight" width=9 height=24 ></form-icon>`:l`<form-icon id=${`edit_${e.id}`}
+`;customElements.define("search-browser",class extends t{constructor(){super(),this.msg=e=>e,this.data={vkey:"",view:"",show_header:!0,show_dropdown:!1,show_columns:!1,result:[],columns:{},filters:{},deffield:[],page:1},this.keyMap={},this.viewDef={fields:{},label:"",readonly:!1},this.paginationPage=10,this.onEvent={}}static get properties(){return{data:{type:Object},keyMap:{type:Object},viewDef:{type:Object},paginationPage:{type:Number},onEvent:{type:Object}}}static get styles(){return[m]}connectedCallback(){super.connectedCallback();const{show_header:e,show_dropdown:t,show_columns:i}=this.data;this.dropdown=t,this.header=e,this.columns=i}_onBrowserEvent(e,t){this.onEvent&&this.onEvent.onBrowserEvent&&this.onEvent.onBrowserEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("browser_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}_onValueChange(e,t){this[e]=t,this.dispatchEvent(new CustomEvent("value_change",{bubbles:!0,composed:!0,detail:{key:e,value:t}})),this.requestUpdate()}exportFields(){const{view:e,columns:t}=this.data,i={};return Object.keys(this.viewDef.fields).filter(i=>!0===t[e][i]).forEach(e=>{i[e]=this.viewDef.fields[e]}),i}checkTotalFields(){const{fields:e}=this.viewDef,{deffield:t}=this.data;let i={totalFields:{},totalLabels:{},count:0};return t&&Object.keys(e).includes("deffield_value")?t.filter(e=>"integer"===e.fieldtype||"float"===e.fieldtype).forEach(e=>{i={...i,totalFields:{...i.totalFields,[e.fieldname]:0},totalLabels:{...i.totalLabels,[e.fieldname]:e.description}}}):Object.keys(e).filter(t=>("integer"===e[t].fieldtype||"float"===e[t].fieldtype)&&"avg"!==e[t].calc).forEach(t=>{i={...i,totalFields:{...i.totalFields,[t]:0},totalLabels:{...i.totalLabels,[t]:e[t].label}}}),i={...i,count:Object.keys(i.totalFields).length},i}fields(){const{view:e,columns:t}=this.data;let i={view:{columnDef:{id:"view",Header:"",headerStyle:{},Cell:({row:e})=>this.viewDef.readonly?l`<form-icon iconKey="CaretRight" width=9 height=24 ></form-icon>`:l`<form-icon id=${`edit_${e.id}`}
               iconKey="Edit" width=24 height=21.3 
               @click=${()=>this._onBrowserEvent(d.EDIT_CELL,{fieldname:"id",value:e.id,row:e})}
-              .style=${{cursor:"pointer",fill:"rgb(var(--functional-green))"}} ></form-icon>`,cellStyle:{width:"25px",padding:"7px 3px 3px 8px"}}}};return Object.keys(this.viewDef.fields).forEach((l=>{if(t[e][l])switch(this.viewDef.fields[l].fieldtype){case"float":case"integer":i={...i,[l]:{fieldtype:"number",label:this.viewDef.fields[l].label}};break;case"bool":i={...i,[l]:{fieldtype:"bool",label:this.viewDef.fields[l].label}};break;default:i="deffield_value"===l?{...i,[l]:{fieldtype:"deffield",label:this.viewDef.fields[l].label}}:{...i,[l]:{fieldtype:"string",label:this.viewDef.fields[l].label}}}})),i}render(){const{vkey:e,view:t,result:a,columns:r,filters:h,deffield:u,page:v}=this.data,m=this.checkTotalFields();return l`<div @click="${()=>this.dropdown?this._onValueChange("dropdown",!1):null}">
+              .style=${{cursor:"pointer",fill:"rgb(var(--functional-green))"}} ></form-icon>`,cellStyle:{width:"25px",padding:"7px 3px 3px 8px"}}}};return Object.keys(this.viewDef.fields).forEach(l=>{if(t[e][l])switch(this.viewDef.fields[l].fieldtype){case"float":case"integer":i={...i,[l]:{fieldtype:"number",label:this.viewDef.fields[l].label}};break;case"bool":i={...i,[l]:{fieldtype:"bool",label:this.viewDef.fields[l].label}};break;default:i="deffield_value"===l?{...i,[l]:{fieldtype:"deffield",label:this.viewDef.fields[l].label}}:{...i,[l]:{fieldtype:"string",label:this.viewDef.fields[l].label}}}}),i}render(){const{vkey:e,view:t,result:a,columns:r,filters:h,deffield:u,page:v}=this.data,m=this.checkTotalFields();return l`<div @click="${()=>this.dropdown?this._onValueChange("dropdown",!1):null}">
       <div class="panel">
         <div class="panel-title">
           <div class="cell">
@@ -377,13 +377,13 @@ div {
                     @click=${e=>{e.stopPropagation(),this._onValueChange("dropdown",!this.dropdown)}}
                   >${this.msg("",{id:"browser_views"})}</form-button>
                   ${this.dropdown?l`<div class="dropdown-content" >
-                    ${Object.keys(this.keyMap).map((a=>"options"!==a?l`<div id=${`view_${a}`}
+                    ${Object.keys(this.keyMap).map(a=>"options"!==a?l`<div id=${`view_${a}`}
                         @click=${()=>this._onBrowserEvent(d.SHOW_BROWSER,{value:e,vname:a})}
                         class="drop-label" >
                         <form-label class="${a===t?"active":""}"
                           value="${this.keyMap[a].label}"
                           leftIcon="${a===t?"Check":"Eye"}" ></form-label>
-                      </div>`:i))}
+                      </div>`:i)}
                   </div>`:i}
                 </div>
                 <form-button id="btn_columns" 
@@ -408,21 +408,21 @@ div {
               </div>
             </div>
             ${this.columns?l`<div class="col-box">
-              ${Object.keys(this.viewDef.fields).map((e=>l`<div id=${`col_${e}`} 
+              ${Object.keys(this.viewDef.fields).map(e=>l`<div id=${`col_${e}`} 
                   class="cell col-cell base-col ${!0===r[t][e]?"select-col":"edit-col"}"
                   @click=${()=>this._onBrowserEvent(d.SET_COLUMNS,{fieldname:e,value:!(!0===r[t][e])})}
                   >
                   <form-label
                     value="${this.viewDef.fields[e].label}"
                     leftIcon="${!0===r[t][e]?"CheckSquare":"SquareEmpty"}" ></form-label>
-                </div>`))}              
+                </div>`)}              
             </div>`:i}
-            ${h[t].map(((e,t)=>l`<div class="section-small-top" >
+            ${h[t].map((e,t)=>l`<div class="section-small-top" >
               <div class="cell" >
                 <form-select id=${`filter_name_${t}`}
                   label="${this.msg("",{id:"browser_filter"})}"
                   .onChange=${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"fieldname",value:e.value})}
-                  .options=${Object.keys(this.viewDef.fields).filter((e=>"id"!==e&&"_id"!==e)).flatMap((e=>"deffield_value"===e?u.map((e=>({value:e.fieldname,text:this.msg(e.description,{id:e.fieldname})}))):{value:e,text:this.viewDef.fields[e].label}))} 
+                  .options=${Object.keys(this.viewDef.fields).filter(e=>"id"!==e&&"_id"!==e).flatMap(e=>"deffield_value"===e?u.map(e=>({value:e.fieldname,text:this.msg(e.description,{id:e.fieldname})})):{value:e,text:this.viewDef.fields[e].label})} 
                   .isnull="${!1}" value="${e.fieldname}" >
                 </form-select>
               </div>
@@ -430,7 +430,7 @@ div {
                 <form-select id=${`filter_type_${t}`}
                   label="${this.msg("",{id:"browser_filter"})}"
                   .onChange=${e=>this._onBrowserEvent(d.EDIT_FILTER,{index:t,fieldname:"filtertype",value:e.value})}
-                  .options=${(["date","float","integer"].includes(e.fieldtype)?c:c.slice(0,3)).map((e=>({value:e[0],text:e[1]})))} 
+                  .options=${(["date","float","integer"].includes(e.fieldtype)?c:c.slice(0,3)).map(e=>({value:e[0],text:e[1]}))} 
                   .isnull="${!1}" value="${e.filtertype}" >
                 </form-select>
               </div>
@@ -475,7 +475,7 @@ div {
                   ></form-button>
                 </div>
               </div>
-            </div>`))}
+            </div>`)}
           </div>`:i}
           <div class="row full section-small-top" >
             <div class="row full border" >
@@ -652,7 +652,7 @@ div {
           </div>
           <div class="section" >
             <div class="section-row" >
-              ${Object.keys(this.total.totalFields).map((e=>l`<div class="table-row full">
+              ${Object.keys(this.total.totalFields).map(e=>l`<div class="table-row full">
                   <div class="cell padding-tiny mobile">
                     <form-label
                       value="${this.total.totalLabels[e]}" 
@@ -666,7 +666,7 @@ div {
                       ?disabled=${!0} ?full=${!0}
                     ></form-input>
                   </div>
-                </div>`))}
+                </div>`)}
             </div>
           </div>
           <div class="section buttons" >
@@ -813,14 +813,14 @@ div {
               </span>
             </div>
           </div>
-          ${this.fields.map(((e,t)=>l`<form-row id=${`row_${t}`}
+          ${this.fields.map((e,t)=>l`<form-row id=${`row_${t}`}
               .row=${{rowtype:"field",name:e.fieldname,datatype:e.fieldtypeName,label:e.description}} 
               .values=${{...this.values}}
               .options=${{}}
               .data=${{audit:"all",current:{},dataset:{}}}
               .onEdit=${e=>{this._onEdit(e)}}
               .msg=${this.msg}
-            ></form-row>`))}
+            ></form-row>`)}
           <div class="section buttons" >
             <div class="section-row" >
               <div class="cell padding-small half" >

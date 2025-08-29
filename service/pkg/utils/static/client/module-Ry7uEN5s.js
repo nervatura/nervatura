@@ -1,4 +1,4 @@
-import{a as e,i as t,x as i}from"./module-D9Io0VgM.js";import"./module-TNcUzx08.js";import"./module-DEu6bRyP.js";import{A as l,I as a,B as o,L as n}from"./main-D0db8xQQ.js";import{LoginController as s}from"./module-BNlEwbSx.js";import"./module-C1fQGCtD.js";const r=e`
+import{a as e,i as t,x as i}from"./module-CgqbBeKY.js";import"./module-C3sfG5TL.js";import"./module-pdXndwQj.js";import{A as l,I as a,B as o,L as n}from"./main-CONOq8Fm.js";import{LoginController as s}from"./module-8v-bbBYz.js";import"./module-C1fQGCtD.js";const r=e`
   @keyframes animatezoom{from{transform:scale(0)} to{transform:scale(1)}}
   :host {
     font-family: var(--font-family);
@@ -127,7 +127,7 @@ import{a as e,i as t,x as i}from"./module-D9Io0VgM.js";import"./module-TNcUzx08.
       min-width: 400px;
     }
   }
-`;customElements.define("client-login",class extends t{constructor(){super(),this.version="",this.serverURL="",this.theme=l.LIGHT,this.lang="en",this.locales=[],this.data={},this.onEvent=new s(this)}static get properties(){return{version:{type:String},serverURL:{type:String},theme:{type:String},lang:{type:String},locales:{type:Object,attribute:!1},data:{type:Object,attribute:!1},onEvent:{type:Object}}}_onPageEvent(e,t){this.onEvent.onPageEvent&&this.onEvent.onPageEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("page_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){const{username:e,password:t,database:s,server:r}=this.data,d=Object.keys(this.locales).map((e=>({value:e,text:this.locales[e][e]||e}))),m=!e||0===String(e).length||!s||0===String(s).length;return i`
+`;customElements.define("client-login",class extends t{constructor(){super(),this.version="",this.serverURL="",this.theme=l.LIGHT,this.lang="en",this.locales=[],this.data={},this.onEvent=new s(this)}static get properties(){return{version:{type:String},serverURL:{type:String},theme:{type:String},lang:{type:String},locales:{type:Object,attribute:!1},data:{type:Object,attribute:!1},onEvent:{type:Object}}}_onPageEvent(e,t){this.onEvent.onPageEvent&&this.onEvent.onPageEvent({key:e,data:t}),this.dispatchEvent(new CustomEvent("page_event",{bubbles:!0,composed:!0,detail:{key:e,data:t}}))}render(){const{username:e,password:t,database:s,server:r}=this.data,d=Object.keys(this.locales).map(e=>({value:e,text:this.locales[e][e]||e})),m=!e||0===String(e).length||!s||0===String(s).length;return i`
       <div class="modal" theme="${this.theme}" >
         <div class="middle">
           <div class="dialog">
