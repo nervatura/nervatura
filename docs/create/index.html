@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nervatura Getting Started</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="../css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#demo" class="text-slate-600 hover:text-slate-800">
+                Demo database
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#drivers" class="text-slate-600 hover:text-slate-800">
+                Database drivers
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#login" class="text-slate-600 hover:text-slate-800">
+                Login to the database
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#customization" class="text-slate-600 hover:text-slate-800">
+                Customization
+              </a>
+            </h2>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Getting Started
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            Create a new database
+          </h1>
+        </header>
+
+        <h3 id="demo" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Create a new demo database
+        </h3>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Docker
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          Create a Docker container and set some options
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            mkdir data
+          </code>
+        </div>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker run -i -t --rm --name nervatura \ <br />
+            &nbsp;&nbsp;-p 5000:5000 -v "$(pwd)"/data:/data nervatura/nervatura:latest
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          In a new command window:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker exec -i nervatura /nervatura \ <br />
+            &nbsp;&nbsp;-c create -o "{\"alias\":\"demo\",\"demo\":true}"
+          </code>
+        </div>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Snap
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            sudo /snap/nervatura/current/nervatura -c create \ <br />
+            &nbsp;&nbsp;-o "{\"alias\":\"demo\",\"demo\":true}"
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Database path: <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >/var/snap/nervatura/common/demo.db</code>
+        </p>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Windows
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            & "C:\Program Files\Nervatura\nervatura.exe" -c create -o '{\"alias\":\"demo\",\"demo\":true}'
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Default Nervatura data directory: <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >C:\ProgramData\Nervatura\data</code>
+        </p>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Node.js NPM
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            mkdir data
+          </code>
+        </div>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            ./node_modules/nervatura/bin/nervatura -c create \ <br />
+            &nbsp;&nbsp;-o '{\"alias\":\"demo\",\"demo\":true, \"NT_ALIAS_DEMO\": \"sqlite://file:data/demo.db?cache=shared&mode=rwc\"}'
+          </code>
+        </div>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Admin GUI
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          You can use the <a href="../admin/" class="text-blue-600 dark:text-blue-500 hover:underline">ADMIN GUI</a> Database section 
+          to create a new database.
+        </p>
+
+        <p class="mb-2">
+          <p class="text-slate-600">API Key: <code class="text-base font-semibold text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >NT_API_KEY</code> environment variable.</p>
+          <p class="text-slate-600">Alias name: <b>demo</b></p>
+          <p class="text-slate-600">Demo database: <b>true</b></p>
+        </p>
+
+        <h3 id="drivers" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Database drivers
+        </h3>
+
+        <p class="mb-2">
+          <p class="text-slate-600">Configure your database connection in your environment variables: <code 
+            class="text-base font-semibold text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >NT_ALIAS_[ALIASNAME]</code>
+          <p>
+          <p class="text-slate-600">Connection string format: <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >adapter://user:password@host/database</code> or <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >adapter://user:password@host?database=database</code>
+          </p>
+          <p class="text-slate-600">Supported database adapters: <span class="font-semibold italic">sqlite, postgres, mysql, mssql</span></p>
+        </p>
+
+        <p class="mb-2 mt-2 text-base text-slate-600">
+          For examples:
+        </p>
+
+        <ul class="list-disc list-inside text-slate-600">
+          <li class="mb-2">
+            <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >NT_ALIAS_DEMO=sqlite://data/database/demo.db?cache=shared&mode=rwc</code>
+          </li>
+          <li class="mb-2">
+            <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >NT_ALIAS_PGDEMO=postgres://postgres:password@localhost:5432/nervatura?sslmode=disable</code>
+          </li>
+          <li class="mb-2">
+            <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >NT_ALIAS_MYDEMO=mysql://root:password@localhost:3306/nervatura</code>
+          </li>
+          <li class="mb-2">
+            <code class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >NT_ALIAS_MSDEMO=mssql://sa:Password1234_1@localhost:1433?database=nervatura</code>
+          </li>
+        </ul>
+
+        <p class="mb-2 mt-2 text-base text-slate-600">
+          Create a new database:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            ./nervatura -c create -k [YOUR_API_KEY] \ <br />
+            &nbsp;&nbsp;-o "{\"alias\":\"[your_lowercase_alias_name]\",\"demo\":false}"
+          </code>
+        </div>
+
+        <p class="mb-2 mt-2 text-base text-slate-600">
+          The SQLite databases are created automatically. Other types of databases must be created manually before. For testing 
+          you can fill in the database with some dummy data (demo=true). If you don’t need those later, then you can create 
+          a blank database again. <b>All data in the database will be destroyed!</b>
+        </p>
+
+        <p class="mb-2 mt-2 text-base text-slate-600">
+          Optional: Install Nervatura Report templates to the database
+        </p>
+
+        <ul class="list-disc list-inside text-slate-600 pl-6">
+          <li class="mb-2">
+            Login to the database: <a href="../admin/" class="text-blue-600 dark:text-blue-500 hover:underline">ADMIN GUI</a>
+          </li>
+          <li class="mb-2">
+            List reports: Returns all installable files from the <code 
+              class="text-base font-semibold text-green-600 dark:text-green-600 bg-slate-50 p-1"
+              >NT_REPORT_DIR</code> directory (empty value: all built-in Nervatura Report templates)
+          </li>
+          <li class="mb-2">
+            Install reports: Installs the selected report templates to the database
+          </li>
+        </ul>
+
+        <h3 id="login" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Login to the new database
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Start <a href="../client/" class="text-blue-600 dark:text-blue-500 hover:underline">Nervatura Client</a> and login:
+        </p>
+
+        <p class="mb-2">
+          <p class="text-slate-600">Username: <b>admin</b></p>
+          <p class="text-slate-600">Password: The default admin password is the <code class="text-base font-semibold text-green-600 dark:text-green-600 bg-slate-50 p-1"
+            >NT_API_KEY</code> environment variable. Please change after the first login!</p>
+          <p class="text-slate-600">Database: <b>alias name</b> (e.g. <b>demo</b>)</p>
+        </p>
+
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../upgrade/" class="text-base font-semibold text-slate-900 hover:underline">
+                Upgrade
+              </a>
+            </dd>
+          </div>
+
+          <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../examples/" class="text-base font-semibold text-slate-900 hover:underline">
+                Examples
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </div>
+</main>
+</body>
+</html>

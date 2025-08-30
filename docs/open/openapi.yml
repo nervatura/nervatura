@@ -1,0 +1,4079 @@
+openapi: "3.0.3"
+info:
+  title: "HTTP API"
+  version: "6.0"
+servers:
+  - url: "http://localhost:5000/api/v6"
+security:
+  - jwt: []
+  - ApiKeyAuth: []
+tags:
+  - name: auth
+  - name: auth-me
+  - name: config
+  - name: currency
+  - name: customer
+  - name: employee
+  - name: item
+  - name: link
+  - name: log
+  - name: movement
+  - name: payment
+  - name: place
+  - name: price
+  - name: product
+  - name: project
+  - name: rate
+  - name: tax
+  - name: tool
+  - name: trans
+  - name: service
+paths:
+  /auth/login:
+    post:
+      tags:
+        - auth
+      security: []
+      summary: Create a user token by email/username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthLogin'
+      responses:
+        '200':
+          description: Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthLoginResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth:
+    post:
+      tags:
+        - auth
+      summary: Create a new user. Only admin users can create new users.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthPost"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/{id_code}:
+    get:
+      tags:
+        - auth
+      summary: Get user by ID or code. If user is not admin, the user id and code are set to the current user id and code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - auth
+      summary: Update a user by ID or code. Only admin users can update other users.
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Auth"
+      responses:
+        "204":
+          description: User updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/reset/{id_code}:
+    put:
+      tags:
+        - auth
+      summary: Reset user password by ID or code. If user is not admin, the user id and code are set to the current user id and code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  password:
+                    type: string
+                    description: New password
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /auth/me:
+    get:
+      tags:
+        - auth-me
+      summary: Get current user
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags:
+        - auth-me
+      summary: Update current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Auth"
+      responses:
+        "204":
+          description: User updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/me/password:
+    put:
+      tags:
+        - auth-me
+      summary: Password change request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthPassword'
+      responses:
+        '204':
+          description: Password updated successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/me/password/reset:
+    post:
+      tags:
+        - auth-me
+      summary: Reset current user password
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  password:
+                    type: string
+                    description: New password
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/me/token:
+    get:
+      tags:
+        - auth-me
+      summary: Refreshes JWT token.
+      description: >-
+        Refreshes JWT token by checking at database whether refresh token
+        exists.
+      responses:
+        '200':
+          description: Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthLoginResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /currency:
+    get:
+      tags:
+        - currency
+      summary: List currencies
+      parameters:
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CurrencyResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - currency
+      summary: Create a new currency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/CurrencyPost"
+      responses:
+        "201":
+          description: Currency created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Currency"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /currency/{id_code}:
+    get:
+      tags:
+        - currency
+      summary: Get currency by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrencyResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - currency
+      summary: Update an existing currency by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Currency"
+      responses:
+        "204":
+          description: Currency updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - currency
+      summary: Delete a currency by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Currency deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /config:
+    get:
+      tags:
+        - config
+      summary: List configs
+      parameters:
+        - name: config_type
+          in: query
+          schema:
+            type: string
+            enum: [CONFIG_MAP, CONFIG_SHORTCUT, CONFIG_MESSAGE, CONFIG_PATTERN, CONFIG_REPORT, CONFIG_PRINT_QUEUE, CONFIG_DATA]
+            description: Config type enumeration
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConfigResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized' 
+    post:
+      tags:
+        - config
+      summary: Create a new config
+      description: >-
+        Only admin users can create or update configurations except for CONFIG_PRINT_QUEUE and CONFIG_PATTERN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/ConfigPost"
+      responses:
+        "201":
+          description: Config created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Config"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /config/{id_code}:
+    get:
+      tags:
+        - config
+      summary: Get config by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - config
+      summary: Update an existing config by ID or code
+      description: >-
+        Only admin users can create or update configurations except for CONFIG_PRINT_QUEUE and CONFIG_PATTERN
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Config"
+      responses:
+        "204":
+          description: Config updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - config
+      summary: Delete a config by ID or code
+      description: >-
+        Only admin users can delete configurations except for CONFIG_PRINT_QUEUE and CONFIG_PATTERN
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Config deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /customer:
+    get:
+      tags:
+        - customer
+      summary: List customers
+      parameters:
+        - name: customer_type
+          in: query
+          schema:
+            type: string
+            enum: [CUSTOMER_COMPANY, CUSTOMER_PRIVATE, CUSTOMER_OTHER, CUSTOMER_OWN]
+            description: Customer type enumeration
+        - name: customer_name
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CustomerResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - customer
+      summary: Create a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/CustomerPost"
+      responses:
+        "201":
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /customer/{id_code}:
+    get:
+      tags:
+        - customer
+      summary: Get customer by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - customer
+      summary: Update an existing customer by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        "204":
+          description: Customer updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - customer
+      summary: Delete a customer by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Customer deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /employee:
+    get:
+      tags:
+        - employee
+      summary: List employees
+      parameters:
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmployeeResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - employee
+      summary: Create a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/EmployeePost"
+      responses:
+        "201":
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /employee/{id_code}:
+    get:
+      tags:
+        - employee
+      summary: Get employee by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - employee
+      summary: Update an existing employee by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Employee"
+      responses:
+        "204":
+          description: Employee updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - employee
+      summary: Delete a employee by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Employee deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /item:
+    get:
+      tags:
+        - item
+      summary: List items
+      parameters:
+        - name: trans_code  
+          in: query
+          schema:
+            type: string
+        - name: product_code
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ItemResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'    
+    post:
+      tags:
+        - item
+      summary: Create a new item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/ItemPost"
+      responses:
+        "201":
+          description: Item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /item/{id_code}:
+    get:
+      tags:
+        - item
+      summary: Get item by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - item
+      summary: Update an existing item by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
+      responses:
+        "204":
+          description: Item updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - item
+      summary: Delete a item by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized' 
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /link:
+    get:
+      tags:
+        - link
+      summary: List links
+      parameters:
+        - name: link_type_1  
+          in: query
+          schema:
+            type: string
+            enum: [LINK_CUSTOMER, LINK_EMPLOYEE, LINK_ITEM, LINK_MOVEMENT, LINK_PAYMENT, LINK_PLACE, LINK_PRODUCT, LINK_PROJECT, LINK_TOOL, LINK_TRANS]
+        - name: link_code_1
+          in: query
+          schema:
+            type: string
+        - name: link_type_2
+          in: query
+          schema:
+            type: string
+            enum: [LINK_CUSTOMER, LINK_EMPLOYEE, LINK_ITEM, LINK_MOVEMENT, LINK_PAYMENT, LINK_PLACE, LINK_PRODUCT, LINK_PROJECT, LINK_TOOL, LINK_TRANS]
+        - name: link_code_2
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LinkResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - link
+      summary: Create a new link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/LinkPost"
+      responses:
+        "201":
+          description: Link created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Link"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /link/{id_code}:
+    get:
+      tags:
+        - link
+      summary: Get link by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - link
+      summary: Update an existing link by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Link"
+      responses:
+        "204":
+          description: Link updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - link
+      summary: Delete a link by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Link deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'   
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /log:
+    get:
+      tags:
+        - log
+      summary: List logs
+      parameters:
+        - name: log_type  
+          in: query
+          schema:
+            type: string
+            enum: [LOG_INSERT, LOG_UPDATE, LOG_DELETE]
+        - name: ref_type
+          in: query
+          schema:
+            type: string
+        - name: ref_code
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LinkResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+  /log/{id_code}:
+    get:
+      tags:
+        - log
+      summary: Get log by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /movement:
+    get:
+      tags:
+        - movement
+      summary: List movements
+      parameters:
+        - name: movement_type  
+          in: query
+          schema:
+            type: string
+            enum: [MOVEMENT_INVENTORY, MOVEMENT_TOOL, MOVEMENT_PLAN, MOVEMENT_HEAD]
+        - name: trans_code
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovementResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - movement
+      summary: Create a new movement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/MovementPost"
+      responses:
+        "201":
+          description: Movement created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movement"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /movement/{id_code}:
+    get:
+      tags:
+        - movement
+      summary: Get movement by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MovementResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - movement
+      summary: Update an existing movement by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Movement"
+      responses:
+        "204":
+          description: Movement updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - movement
+      summary: Delete a movement by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Movement deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized' 
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /payment:
+    get:
+      tags:
+        - payment
+      summary: List payments
+      parameters:
+        - name: paid_date  
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: trans_code
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - payment
+      summary: Create a new payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/PaymentPost"
+      responses:
+        "201":
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /payment/{id_code}:
+    get:
+      tags:
+        - payment
+      summary: Get payment by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - payment
+      summary: Update an existing payment by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Payment"
+      responses:
+        "204":
+          description: Payment updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - payment
+      summary: Delete a payment by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Payment deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized' 
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /place:
+    get:
+      tags:
+        - place
+      summary: List places
+      parameters:
+        - name: place_type
+          in: query
+          schema:
+            type: string
+            enum: [PLACE_WAREHOUSE, PLACE_BANK, PLACE_CASH, PLACE_OTHER]
+            description: Place type enumeration
+        - name: place_name
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlaceResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - place
+      summary: Create a new place
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/PlacePost"
+      responses:
+        "201":
+          description: Place created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Place"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /place/{id_code}:
+    get:
+      tags:
+        - place
+      summary: Get place by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaceResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - place
+      summary: Update an existing place by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Place"
+      responses:
+        "204":
+          description: Place updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - place
+      summary: Delete a place by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Place deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'   
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  
+  /price:
+    get:
+      tags:
+        - price
+      summary: List prices
+      parameters:
+        - name: price_type
+          in: query
+          schema:
+            type: string
+            enum: [PRICE_CUSTOMER, PRICE_VENDOR]
+            description: Price type enumeration
+        - name: product_code
+          in: query
+          schema:
+            type: string
+        - name: currency_code
+          in: query
+          schema:
+            type: string
+        - name: customer_code
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PriceResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - price
+      summary: Create a new price
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/PricePost"
+      responses:
+        "201":
+          description: Price created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Price"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /price/{id_code}:
+    get:
+      tags:
+        - price
+      summary: Get price by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PriceResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - price
+      summary: Update an existing price by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Price"
+      responses:
+        "204":
+          description: Price updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - price
+      summary: Delete a price by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Price deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized' 
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+  
+  /product:
+    get:
+      tags:
+        - product
+      summary: List products
+      parameters:
+        - name: product_type
+          in: query
+          schema:
+            type: string
+            enum: [PRODUCT_ITEM, PRODUCT_SERVICE]
+        - name: product_name
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - product
+      summary: Create a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/ProductPost"
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /product/{id_code}:
+    get:
+      tags:
+        - product
+      summary: Get product by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - product
+      summary: Update an existing product by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "204":
+          description: Product updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - product
+      summary: Delete a product by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Product deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized' 
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /project:
+    get:
+      tags:
+        - project
+      summary: List projects
+      parameters:
+        - name: project_name
+          in: query
+          schema:
+            type: string
+        - name: customer_code
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - project
+      summary: Create a new project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/ProjectPost"
+      responses:
+        "201":
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /project/{id_code}:
+    get:
+      tags:
+        - project
+      summary: Get project by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - project
+      summary: Update an existing project by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Project"
+      responses:
+        "204":
+          description: Project updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - project
+      summary: Delete a project by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Project deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /rate:
+    get:
+      tags:
+        - rate
+      summary: List rates
+      parameters:
+        - name: rate_type
+          in: query
+          schema:
+            type: string
+            enum: ["RATE_RATE", "RATE_BUY", "RATE_SELL", "RATE_AVERAGE"]
+        - name: currency_code
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RateResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - rate
+      summary: Create a new rate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/RatePost"
+      responses:
+        "201":
+          description: Rate created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rate"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /rate/{id_code}:
+    get:
+      tags:
+        - rate
+      summary: Get rate by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RateResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - rate
+      summary: Update an existing rate by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rate"
+      responses:
+        "204":
+          description: Rate updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - rate
+      summary: Delete a rate by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Rate deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /tax:
+    get:
+      tags:
+        - tax
+      summary: List taxes
+      parameters:
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TaxResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - tax
+      summary: Create a new tax
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/TaxPost"
+      responses:
+        "201":
+          description: Tax created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tax"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /tax/{id_code}:
+    get:
+      tags:
+        - tax
+      summary: Get tax by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaxResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - tax
+      summary: Update an existing tax by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tax"
+      responses:
+        "204":
+          description: Tax updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - tax
+      summary: Delete a tax by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Tax deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /tool:
+    get:
+      tags:
+        - tool
+      summary: List tools
+      parameters:
+        - name: description
+          in: query
+          schema:
+            type: string
+        - name: product_code
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ToolResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - tool
+      summary: Create a new tool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/ToolPost"
+      responses:
+        "201":
+          description: Tool created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tool"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /tool/{id_code}:
+    get:
+      tags:
+        - tool
+      summary: Get tool by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - tool
+      summary: Update an existing tool by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tool"
+      responses:
+        "204":
+          description: Tool updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - tool
+      summary: Delete a tool by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Tool deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /trans:
+    get:
+      tags:
+        - trans
+      summary: List transactions
+      parameters:
+        - name: trans_type
+          in: query
+          schema:
+            type: string
+            enum: ["TRANS_INVOICE", "TRANS_RECEIPT", "TRANS_ORDER", "TRANS_OFFER", "TRANS_WORKSHEET", "TRANS_RENT", "TRANS_DELIVERY", "TRANS_INVENTORY", "TRANS_WAYBILL", "TRANS_PRODUCTION", "TRANS_FORMULA", "TRANS_BANK", "TRANS_CASH"]
+        - name: direction
+          in: query
+          schema:
+            type: string
+            enum: ["DIRECTION_OUT", "DIRECTION_IN", "DIRECTION_TRANSFER"]
+        - name: trans_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TransResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - trans
+      summary: Create a new trans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/TransPost"
+      responses:
+        "201":
+          description: Trans created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trans"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /trans/{id_code}:
+    get:
+      tags:
+        - trans
+      summary: Get trans by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransResponse"
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - trans
+      summary: Update an existing trans by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trans"
+      responses:
+        "204":
+          description: Trans updated successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+        - trans
+      summary: Delete a trans by ID or code
+      parameters:
+        - name: id_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Trans deleted successfully
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+  /service/database:
+    post:
+      tags:
+        - service
+      summary: Create a new Nervatura database schema. API key is required.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alias:
+                  type: string
+                  description: Database alias
+                  example: "demo"
+                demo:
+                  type: boolean
+                  description: If true, the database will be created demo data
+                  example: true
+      responses:
+        "200":
+          description: Process log data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+  /service/function:
+    post:
+      tags:
+        - service
+      summary: Execute a server side function and return the result.
+      description: >-
+        Valid function names and parameter values:
+          
+          **report_install** </br>
+          { ***report_key*** *::string::required*, ***report_dir*** *::string::optional* }
+          
+          Example:
+          
+            `{"name": "report_install", "values": {"report_key":"ntr_invoice_en"}}`
+          
+          **report_list** </br>
+          { ***label*** *::string::optional*, ***report_dir*** *::string::optional* }
+
+          Example:
+          
+            `{"name": "report_list", "values": {"label":"Invoice"}}`
+
+          **report_get** </br>
+          { ***report_key*** *::string::optional*, ***report_id*** *::integer::optional*, ***template*** *::string::optional*, ***code*** *::string::optional*, ***filters*** *::object::optional*, ***output*** *::enum[data, xml, pdf, base64]::optional*, ***orientation*** *::enum[p, l]::optional*, ***size*** *::enum[a3, a4, a5, letter, legal]::optional* }
+
+          PDF report example:
+          
+            `{"name": "report_get", "values": {"report_key":"ntr_invoice_en", "code":"INV0000000000N5", "output":"base64", "orientation":"p", "size":"a4"}}`
+
+          CSV report example:
+          
+            `{"alias":"demo", "name": "report_get", "values": {"report_key":"csv_vat_en", "filters":{"date_from":"2025-01-01", "date_to":"2025-01-31", "curr":"EUR"}}}`
+
+          **email_send** </br>
+          { ***provider*** *::enum[smtp]::optional*, </br>
+          ***email*** *::object::required*: { 
+          ***from*** *::string::required*, ***recipients*** *::array map::required*: [{ ***email*** *::string::required* }], 
+          ***subject*** *::string::required*, ***text*** *::string::optional*, ***html*** *::string::optional*, 
+          ***attachments*** *::array map::optional*: </br>
+          [{ ***filename*** *::string::optional*, ***report_key*** *::string::optional*, ***report_id*** *::integer::optional*, ***template*** *::string::optional*, ***code*** *::string::optional*, ***orientation*** *::enum[p, l]::optional*, ***size*** *::enum[a3, a4, a5, letter, legal]::optional* }] }}
+
+          Email sending:
+          
+            `{"name": "email_send", "values": {"provider":"smtp", 
+            "email":{"from":"info@example.com", "recipients":[{"email":"sample@company.com"}], 
+            "subject":"Basic email", "text":"Sending a simple text email"}}}`
+
+          Email sending with attached PDF:
+          
+            `{"name": "email_send", "values": {"provider":"smtp", 
+            "email":{"from":"info@example.com", "recipients":[{"email":"sample@company.com"}], 
+            "subject":"Demo Invoice", "text":"Email sending with attached invoice",
+            "attachments":[{"filename":"invoice.pdf", "report_key":"ntr_invoice_en", "code":"INV0000000000N5", "orientation":"p", "size":"a4"}]}}}'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Server function name
+                values:
+                  type: object
+                  description: The array of parameter values
+                  additionalProperties: true
+      responses:
+        '200':
+          description: A JSON object with the result of the function
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /service/view:
+    post:
+      tags:
+        - service
+      summary: Get the data of a predefined view
+      description: >-
+        Valid view names are:
+         - VIEW_CONFIG_DATA, VIEW_CONFIG_MAP, VIEW_CONFIG_MESSAGE, VIEW_CONFIG_PATTERN, VIEW_CONFIG_PRINT_QUEUE, VIEW_CONFIG_REPORT, VIEW_CONFIG_SHORTCUT, 
+         - VIEW_CURRENCY_MAP, VIEW_CURRENCY_TAGS, VIEW_CURRENCY_VIEW,
+         - VIEW_CUSTOMER_ADDRESSES, VIEW_CUSTOMER_CONTACTS, VIEW_CUSTOMER_EVENTS, VIEW_CUSTOMER_MAP, VIEW_CUSTOMER_TAGS, VIEW_CUSTOMER_VIEW,
+         - VIEW_EMPLOYEE_EVENTS, VIEW_EMPLOYEE_MAP, VIEW_EMPLOYEE_TAGS, VIEW_EMPLOYEE_VIEW, 
+         - VIEW_ITEM_MAP, VIEW_ITEM_TAGS, VIEW_ITEM_VIEW, 
+         - VIEW_LINK_MAP, VIEW_LINK_TAGS, VIEW_LINK_VIEW, 
+         - VIEW_MOVEMENT_MAP, VIEW_MOVEMENT_TAGS, VIEW_MOVEMENT_VIEW, 
+         - VIEW_PAYMENT_MAP, VIEW_PAYMENT_TAGS, VIEW_PAYMENT_VIEW, 
+         - VIEW_PLACE_CONTACTS, VIEW_PLACE_MAP, VIEW_PLACE_TAGS, VIEW_PLACE_VIEW, 
+         - VIEW_PRICE_MAP, VIEW_PRICE_TAGS, VIEW_PRICE_VIEW, 
+         - VIEW_PRODUCT_EVENTS, VIEW_PRODUCT_MAP, VIEW_PRODUCT_TAGS, VIEW_PRODUCT_VIEW, 
+         - VIEW_PROJECT_ADDRESSES, VIEW_PROJECT_CONTACTS, VIEW_PROJECT_EVENTS, VIEW_PROJECT_MAP, VIEW_PROJECT_TAGS, VIEW_PROJECT_VIEW, 
+         - VIEW_RATE_MAP, VIEW_RATE_TAGS, VIEW_RATE_VIEW, 
+         - VIEW_TAX_MAP, VIEW_TAX_TAGS, VIEW_TAX_VIEW, 
+         - VIEW_TOOL_EVENTS, VIEW_TOOL_MAP, VIEW_TOOL_TAGS, VIEW_TOOL_VIEW, 
+         - VIEW_TRANS_MAP, VIEW_TRANS_TAGS, VIEW_TRANS_VIEW
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/View"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "422":
+          $ref: '#/components/responses/ValidationError'
+
+components:
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  responses:
+    204OK:
+      description:  Success status response
+    OKDelete:
+      description: The resource was deleted successfully.
+    ValidationError:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Unauthorized:
+      description: Authentication information is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    MethodNotAllowed:
+      description: Method not allowed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Data not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    MetaTags:
+      type: array
+      items:
+        type: string
+      description: Additional tags for the data
+      example: ["TAG1", "TAG2"]
+
+    DataMap:
+      type: object
+      additionalProperties: true
+      description: Flexible key-value map for additional metadata. The value is any json type.
+      example:
+        field_name: "Field value"
+
+    Address:
+      type: object
+      properties:
+        country:
+          type: string
+        state:
+          type: string
+        zip_code:
+          type: string
+        city:
+          type: string
+        street:
+          type: string
+        notes:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          description: Additional tags for the data
+          example: ["TAG1", "TAG2"]
+        map:
+          $ref: "#/components/schemas/DataMap"
+
+    Contact:
+      type: object
+      properties:
+        first_name:
+          type: string
+        surname:
+          type: string
+        status:
+          type: string
+        phone:
+          type: string
+        mobile:
+          type: string
+        email:
+          type: string
+        notes:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          description: Additional tags for the data
+          example: ["TAG1", "TAG2"]
+        map:
+          $ref: "#/components/schemas/DataMap"
+
+    Event:
+      type: object
+      properties:
+        uid:
+          type: string
+        subject:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        place:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          description: Additional tags for the data
+          example: ["TAG1", "TAG2"]
+        map:
+          $ref: "#/components/schemas/DataMap"
+
+
+    Auth:
+      type: object
+      properties:
+        user_name:
+          type: string
+          description: Friendly username, nickname or email for login. It can be changed, but it is a unique identifier at the database level.
+          example: "user@example.com"
+        disabled:
+          type: boolean
+          description: Disabled status
+          example: false
+        auth_meta:
+          type: object
+          properties:
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        auth_map:
+          $ref: "#/components/schemas/DataMap"
+
+    AuthPost:
+      type: object
+      required:
+        - user_name
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "USR1731101982N123"
+        - $ref: "#/components/schemas/Auth"
+
+    AuthResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+        - $ref: "#/components/schemas/AuthPost"
+        - properties:
+            user_group:
+              type: string
+              enum: [GROUP_USER, GROUP_ADMIN, GROUP_GUEST]
+              example: "GROUP_ADMIN"
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+              example: "2023-06-15T10:30:15Z"
+
+    AuthLogin:
+      type: object
+      required:
+        - user_name
+        - password
+      properties:
+        user_name:
+          type: string
+          example: "user@example.com"
+        password:
+          type: string
+        database:
+          type: string
+          example: "default"
+    AuthLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: TOKENDATA0123456789
+        version:
+          type: string
+          example: 1.0.0
+    
+    AuthPassword:
+      type: object
+      required:
+        - password
+        - confirm
+      properties:
+        password:
+          type: string
+          description: New password
+        confirm:
+          type: string
+          description: New password confirmation
+    
+    ConfigMap:
+      type: object
+      properties:
+        field_name:
+          type: string
+        field_type:
+          type: string
+          enum: [FIELD_STRING, FIELD_BOOL, FIELD_INTEGER, FIELD_NUMBER, FIELD_DATE, FIELD_DATETIME, FIELD_MEMO, FIELD_ENUM, FIELD_URL, FIELD_CUSTOMER, FIELD_EMPLOYEE, FIELD_PLACE, FIELD_PRODUCT, FIELD_PROJECT, FIELD_TOOL, FIELD_TRANS_ITEM, FIELD_TRANS_MOVEMENT, FIELD_TRANS_PAYMENT]
+        description:
+          type: string
+        tags:
+          type: array
+          description: ENUM list if FieldType is ENUM
+          items:
+            type: string
+        filter:
+          type: array
+          items:
+            type: string
+            enum: [FILTER_ADDRESS, FILTER_BARCODE, FILTER_CONTACT, FILTER_CURRENCY, FILTER_CUSTOMER, FILTER_EMPLOYEE, FILTER_EVENT, FILTER_ITEM, FILTER_MOVEMENT, FILTER_PAYMENT, FILTER_PLACE, FILTER_PRICE, FILTER_PRODUCT, FILTER_PROJECT, FILTER_RATE, FILTER_TAX, FILTER_TOOL, FILTER_USER, FILTER_TRANS, FILTER_INVOICE, FILTER_RECEIPT, FILTER_ORDER, FILTER_OFFER, FILTER_WORKSHEET, FILTER_RENT, FILTER_DELIVERY, FILTER_INVENTORY, FILTER_WAYBILL, FILTER_PRODUCTION, FILTER_FORMULA, FILTER_BANK, FILTER_CASH]
+    
+    ConfigShortcut:
+      type: object
+      properties:
+        shortcut_key:
+          type: string
+        description:
+          type: string
+        modul:
+          type: string
+        icon:
+          type: string
+        method:
+          type: string
+          enum: [METHOD_GET, METHOD_POST]
+        funcname:
+          type: string
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              field_name:
+                type: string
+              description:
+                type: string
+              field_type:
+                type: string
+                enum: [SHORTCUT_STRING, SHORTCUT_BOOL, SHORTCUT_INTEGER, SHORTCUT_NUMBER, SHORTCUT_DATE, SHORTCUT_DATETIME, SHORTCUT_MEMO, SHORTCUT_ENUM, SHORTCUT_URL]
+              order:
+                type: integer
+                format: int64
+    
+    ConfigMessage:
+      type: object
+      properties:
+        section:
+          type: string
+        message_key:
+          type: string
+        lang:
+          type: string
+        message_value:
+          type: string
+
+    ConfigPattern:
+      type: object
+      properties:
+        trans_type:
+          type: string
+          enum: [TRANS_INVOICE, TRANS_RECEIPT, TRANS_ORDER, TRANS_OFFER, TRANS_WORKSHEET, TRANS_RENT, TRANS_DELIVERY, TRANS_INVENTORY, TRANS_WAYBILL, TRANS_PRODUCTION, TRANS_FORMULA, TRANS_BANK, TRANS_CASH]
+        description:
+          type: string
+        notes:
+          type: string
+        default_pattern:
+          type: boolean
+
+    ConfigPrintQueue:
+      type: object
+      properties:
+        ref_type:
+          type: string
+        ref_code:
+          type: string
+        qty:
+          type: integer
+          format: int64
+        report_code:
+          type: string
+        auth_code:
+          type: string
+        time_stamp:
+          type: string
+          format: date-time
+    
+    ConfigReport:
+      type: object
+      properties:
+        report_key:
+          type: string
+        report_type:
+          type: string
+        trans_type:
+          type: string
+        direction:
+          type: string
+        report_name:
+          type: string
+        description:
+          type: string
+        label:
+          type: string
+        file_type:
+          type: string
+          enum: [FILE_PDF, FILE_CSV]
+        template:
+          type: string
+    
+    Config:
+      type: object
+      required:
+        - config_type
+      properties:
+        config_type:
+          type: string
+          enum: [CONFIG_MAP, CONFIG_SHORTCUT, CONFIG_MESSAGE, CONFIG_PATTERN, CONFIG_REPORT, CONFIG_PRINT_QUEUE, CONFIG_DATA]
+        data:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/ConfigMap"
+            - $ref: "#/components/schemas/ConfigShortcut"
+            - $ref: "#/components/schemas/ConfigMessage"
+            - $ref: "#/components/schemas/ConfigPattern"
+            - $ref: "#/components/schemas/ConfigReport"
+            - $ref: "#/components/schemas/ConfigPrintQueue"
+            - $ref: "#/components/schemas/DataMap"
+
+    ConfigPost:
+      type: object
+      required:
+        - config_type
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "CNF1731101982N123"
+        - $ref: "#/components/schemas/Config"
+    
+    ConfigResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/ConfigPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    Currency:
+      type: object
+      properties:
+        currency_meta:
+          type: object
+          properties:
+            description:
+              type: string
+              description: The name of the currency
+            digit:
+              type: integer
+              format: int64
+              description: Number of decimal places for recording and rounding
+            cash_round:
+              type: integer
+              format: int64
+              description: Rounding value for cash transactions
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        currency_map:
+          $ref: "#/components/schemas/DataMap"
+
+    CurrencyPost:
+      type: object
+      required:
+        - code
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. The ISO 4217 code of the currency. The value is always mandatory
+              example: "EUR"
+        - $ref: "#/components/schemas/Currency"
+
+    CurrencyResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+              example: 12345
+        - $ref: "#/components/schemas/CurrencyPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of currency creation
+              example: "2023-06-15T10:30:15Z"
+
+    Customer:
+      type: object
+      properties:
+        customer_type:
+          type: string
+          enum: [CUSTOMER_COMPANY, CUSTOMER_PRIVATE, CUSTOMER_OTHER, CUSTOMER_OWN]
+          example: "CUSTOMER_COMPANY"
+          description: Customer type enumeration
+        customer_name:
+          type: string
+          description: Full name of the customer
+        addresses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Address"
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Contact"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+        customer_meta:
+          type: object
+          properties:
+            tax_number:
+              type: string
+            account:
+              type: string
+            tax_free:
+              type: boolean
+              description: Tax-free status
+            terms:
+              type: integer
+              format: int64
+              description: Payment per.
+            credit_limit:
+              type: number
+              format: double
+              description: Customer's credit limit. Data is used by financial reports.
+            discount:
+              type: number
+              format: double
+              description: If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field.
+            notes:
+              type: string
+            inactive:
+              type: boolean
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        customer_map:
+          $ref: "#/components/schemas/DataMap"
+
+    CustomerPost:
+      type: object
+      required:
+        - customer_type
+        - customer_name
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "CUS1731101982N123"
+        - $ref: "#/components/schemas/Customer"
+
+    CustomerResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+              example: 12345
+        - $ref: "#/components/schemas/CustomerPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of customer creation
+              example: "2023-06-15T10:30:15Z"
+
+    Employee:
+      type: object
+      properties:
+        address:
+          $ref: "#/components/schemas/Address"
+        contact:
+          $ref: "#/components/schemas/Contact"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+        employee_meta:
+          type: object
+          properties:
+            start_date:
+              type: string
+              format: date
+              description: Employee start date
+            end_date:
+              type: string
+              format: date
+              description: Employee end date
+            inactive:
+              type: boolean
+              description: Inactive status
+            notes:
+              type: string
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        map:
+          $ref: "#/components/schemas/DataMap"
+
+    EmployeePost:
+      type: object
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "EMP1731101982N123"
+        - $ref: "#/components/schemas/Employee"
+
+    EmployeeResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+              example: 12345
+        - $ref: "#/components/schemas/EmployeePost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of employee creation
+              example: "2023-06-15T10:30:15Z"
+
+    Item:
+      type: object
+      properties:
+        trans_code:
+          type: string
+          description: Reference to trans.code
+          example: "TRN1731101982N123"
+        product_code:
+          type: string
+          description: Reference to product.code
+          example: "PRD1731101982N123"
+        tax_code:
+          type: string
+          description: Reference to Tax.code
+          example: "TAX1731101982N123"
+        item_meta:
+          type: object
+          properties:
+            unit:
+              type: string
+            qty:
+              type: number
+              format: double
+            fx_price:
+              type: number
+              format: double
+            net_amount:
+              type: number
+              format: double
+            discount:
+              type: number
+              format: double
+            vat_amount:
+              type: number
+              format: double
+            amount:
+              type: number
+              format: double
+            description:
+              type: string
+            deposit:
+              type: boolean
+            own_stock:
+              type: number
+              format: double
+            action_price:
+              type: boolean
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        item_map:
+          $ref: "#/components/schemas/DataMap"
+
+    ItemPost:
+      type: object
+      required:
+        - trans_code
+        - product_code
+        - tax_code
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "ITM1731101982N123"
+        - $ref: "#/components/schemas/Item"
+    
+    ItemResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+              example: 12345
+        - $ref: "#/components/schemas/ItemPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+              example: "2023-06-15T10:30:15Z"
+    
+    Link:
+      type: object
+      properties:
+        link_type_1:
+          type: string
+          enum: [LINK_CUSTOMER, LINK_EMPLOYEE, LINK_ITEM, LINK_MOVEMENT, LINK_PAYMENT, LINK_PLACE, LINK_PRODUCT, LINK_PROJECT, LINK_TOOL, LINK_TRANS]
+          description: ENUM field specifying the first link type
+        link_code_1:
+          type: string
+          description: Reference to LinkType1.code
+        link_type_2:
+          type: string
+          enum: [LINK_CUSTOMER, LINK_EMPLOYEE, LINK_ITEM, LINK_MOVEMENT, LINK_PAYMENT, LINK_PLACE, LINK_PRODUCT, LINK_PROJECT, LINK_TOOL, LINK_TRANS]
+          description: ENUM field specifying the second link type
+        link_code_2:
+          type: string
+          description: Reference to LinkType2.code
+        link_meta:
+          type: object
+          properties:
+            qty:
+              type: number
+              format: double
+            rate:
+              type: number
+              format: double
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        link_map:
+          $ref: "#/components/schemas/DataMap"
+
+    LinkPost:
+      type: object
+      required:
+        - link_type_1
+        - link_code_1
+        - link_type_2
+        - link_code_2
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "LNK1731101982N123"
+        - $ref: "#/components/schemas/Link"
+    
+    LinkResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/LinkPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+              
+    Log:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        code:
+          type: string
+          description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example - LOG1731101982N123 ("LOG" + UNIX Time stamp + "N" + current ID)
+        log_type:
+          type: string
+          enum: [LOG_INSERT, LOG_UPDATE, LOG_DELETE]
+          description: ENUM field specifying the type of log entry
+        ref_type:
+          type: string
+          description: The type of entity being referenced
+        ref_code:
+          type: string
+          description: The code of the referenced entity
+        auth_code:
+          type: string
+          description: Reference to Auth.code
+        data:
+          type: object
+          description: Flexible field to store the log data
+        time_stamp:
+          type: string
+          format: date-time
+          description: Timestamp of data creation
+    
+    Movement:
+      type: object
+      properties:
+        movement_type:
+          type: string
+          enum: [MOVEMENT_INVENTORY, MOVEMENT_TOOL, MOVEMENT_PLAN, MOVEMENT_HEAD]
+          description: ENUM field for movement type
+        shipping_time:
+          type: string
+          format: date-time
+          description: Date-time of shipping
+        trans_code:
+          type: string
+          description: Reference to trans.code
+        product_code:
+          type: string
+          description: Reference to Product.code
+        tool_code:
+          type: string
+          description: Reference to Tool.code
+        place_code:
+          type: string
+          description: Reference to Place.code
+        movement_meta:
+          type: object
+          properties:
+            qty:
+              type: number
+              format: float
+            notes:
+              type: string
+            shared:
+              type: boolean
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        movement_map:
+          $ref: "#/components/schemas/DataMap"
+
+    MovementPost:
+      type: object
+      required:
+        - movement_type
+        - trans_code
+        - shipping_time
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "MOV1731101982N123"
+        - $ref: "#/components/schemas/Movement"
+    
+    MovementResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/MovementPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    Payment:
+      type: object
+      properties:
+        paid_date:
+          type: string
+          format: date
+          description: Date when payment was made
+        trans_code:
+          type: string
+          description: Reference to trans.code
+        payment_meta:
+          type: object
+          properties:
+            amount:
+              type: number
+              format: double
+            notes:
+              type: string
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        payment_map:
+          $ref: "#/components/schemas/DataMap"
+
+    PaymentPost:
+      type: object
+      required:
+        - paid_date
+        - trans_code
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "PMT1731101982N123"
+        - $ref: "#/components/schemas/Payment"
+
+    PaymentResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/PaymentPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    Place:
+      type: object
+      properties:
+        place_type:
+          type: string
+          enum: [PLACE_WAREHOUSE, PLACE_BANK, PLACE_CASH, PLACE_OTHER]
+          description: ENUM field for place type
+        place_name:
+          type: string
+          description: The full name of the place.
+        currency_code:
+          type: string
+          description: Reference to currency.code
+        address:
+          $ref: '#/components/schemas/Address'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+        place_meta:
+          type: object
+          properties:
+            notes:
+              type: string
+            inactive:
+              type: boolean
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        place_map:
+          $ref: "#/components/schemas/DataMap"
+
+    PlacePost:
+      type: object
+      required:
+        - place_type
+        - place_name
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "PLC1731101982N123"
+        - $ref: "#/components/schemas/Place"
+
+    PlaceResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/PlacePost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    Price:
+      type: object
+      properties:
+        price_type:
+          type: string
+          enum: [PRICE_CUSTOMER, PRICE_VENDOR]
+          description: ENUM field. Valid values - CUSTOMER, VENDOR
+        valid_from:
+          type: string
+          format: date
+          description: Start of validity, mandatory data.
+        valid_to:
+          type: string
+          format: date
+          description: End of validity, can be left empty.
+        product_code:
+          type: string
+          description: Reference to Product.code
+        currency_code:
+          type: string
+          description: Reference to Currency.code
+        customer_code:
+          type: string
+          description: Reference to Customer.code
+        qty:
+          type: number
+          format: double
+          description: Price ranges can also be specified, thus different price can be set for a smaller and bigger quantity of the same product. The quantity should be used as the lower threshold, ie. this should be the minimum quantity for the price set.
+        price_meta:
+          type: object
+          properties:
+            price_value:
+              type: number
+              format: double
+              description: Price value
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        price_map:
+          $ref: "#/components/schemas/DataMap"
+
+    PricePost:
+      type: object
+      required:
+        - price_type
+        - valid_from
+        - product_code
+        - currency_code
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "PRC1731101982N123"
+        - $ref: "#/components/schemas/Price"
+
+    PriceResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/PricePost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    Product:
+      type: object
+      properties:
+        product_type:
+          type: string
+          enum: [PRODUCT_ITEM, PRODUCT_SERVICE]
+        product_name:
+          type: string
+          description: The full name of the product or short description.
+        tax_code:
+          type: string
+          description: Reference to Tax.code
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        product_meta:
+          type: object
+          properties:
+            unit:
+              type: string
+              example: "piece"
+            barcode_type:
+              type: string
+              enum: [BARCODE_39, BARCODE_128, BARCODE_EAN_8, BARCODE_EAN_13, BARCODE_QR_CODE]
+            barcode:
+              type: string
+              example: "BC0123456789"
+            barcode_qty:
+              type: number
+              format: double
+              example: 1
+            notes:
+              type: string  
+            inactive:
+              type: boolean
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        product_map:
+          $ref: "#/components/schemas/DataMap"
+
+    ProductPost:
+      type: object
+      required:
+        - product_type
+        - tax_code
+        - product_name
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "PRD1731101982N123"
+        - $ref: "#/components/schemas/Product"
+    
+    ProductResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/ProductPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    Project:
+      type: object
+      properties:
+        project_name:
+          type: string
+          description: The name of the project.
+        customer_code:
+          type: string
+          description: Reference to Customer.code
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        contacts:
+          type: array  
+          items:
+            $ref: '#/components/schemas/Contact'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        project_meta:
+          type: object
+          properties:
+            start_date:
+              type: string
+              format: date
+            end_date:
+              type: string
+              format: date
+            notes:
+              type: string
+            inactive:
+              type: boolean
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        project_map:
+          $ref: "#/components/schemas/DataMap"
+
+    ProjectPost:
+      type: object
+      required:
+        - project_name
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "PRJ1731101982N123"
+        - $ref: "#/components/schemas/Project"  
+
+    ProjectResponse:  
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/ProjectPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    Rate:
+      type: object
+      properties:
+        rate_type:
+          type: string
+          enum: [RATE_RATE, RATE_BUY, RATE_SELL, RATE_AVERAGE]
+          description: ENUM field specifying the type of rate
+        rate_date:
+          type: string
+          format: date
+          description: Date of the rate
+        place_code:
+          type: string
+          description: Reference to Place.code
+        currency_code:
+          type: string
+          description: Reference to Currency.code
+        rate_meta:
+          type: object
+          properties:
+            rate_value:
+              type: number
+              format: double
+            tags:
+              tags:
+              $ref: "#/components/schemas/MetaTags"
+        rate_map:
+          $ref: "#/components/schemas/DataMap"
+
+    RatePost:
+      type: object
+      required:
+        - rate_type
+        - rate_date
+        - place_code
+        - currency_code
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "RAT1731101982N123"
+        - $ref: "#/components/schemas/Rate"
+    
+    RateResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/RatePost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+    
+    Tax:
+      type: object
+      properties:
+        tax_meta:
+          type: object
+          properties:
+            description:
+              type: string
+              example: "VAT 20%"
+            rate_value:
+              type: number
+              format: double
+              example: 0.2
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        tax_map:
+          $ref: "#/components/schemas/DataMap"
+
+    TaxPost:
+      type: object
+      required:
+        - code
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Unique tax ID.
+              example: "VAT20"
+        - $ref: "#/components/schemas/Tax"
+    
+    TaxResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/TaxPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+  
+    Tool:
+      type: object
+      properties:
+        description:
+          type: string
+          description: The description of the tool.
+          example: "Company car"
+        product_code:
+          type: string
+          description: Reference to Product.code
+        tool_meta:
+          type: object
+          properties:
+            serial_number:
+              type: string
+              example: "ABC-123"
+            notes:
+              type: string
+            inactive:
+              type: boolean
+            tags:
+              $ref: "#/components/schemas/MetaTags"
+        tool_map:
+          $ref: "#/components/schemas/DataMap"
+
+    ToolPost:
+      type: object
+      required:
+        - description
+        - product_code
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "SER1731101982N123"
+        - $ref: "#/components/schemas/Tool"
+  
+    ToolResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+        - $ref: "#/components/schemas/ToolPost"
+        - properties:
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+    
+    TransHead:
+      type: object
+      properties:
+        trans_type:
+          type: string
+          enum: [TRANS_INVOICE, TRANS_RECEIPT, TRANS_ORDER, TRANS_OFFER, TRANS_WORKSHEET, TRANS_RENT, TRANS_DELIVERY, TRANS_INVENTORY, TRANS_WAYBILL, TRANS_PRODUCTION, TRANS_FORMULA, TRANS_BANK, TRANS_CASH]
+          description: Type of transaction
+        direction:
+          type: string 
+          enum: [DIRECTION_OUT, DIRECTION_IN, DIRECTION_TRANSFER]
+          description: Direction of transaction
+        trans_date:
+          type: string
+          format: date
+        trans_code:
+          type: string
+          description: Reference to Trans.code
+        customer_code:
+          type: string
+          description: Reference to Customer.code
+        employee_code:
+          type: string
+          description: Reference to Employee.code
+        project_code:
+          type: string
+          description: Reference to Project.code
+        place_code:
+          type: string
+          description: Reference to Place.code
+        currency_code:
+          type: string
+          description: Reference to Currency.code
+        auth_code:
+          type: string
+          description: Reference to Auth.code
+
+    TransMeta:
+      type: object
+      properties:
+        due_time:
+          type: string
+          format: date-time
+        ref_number:
+          type: string
+        paid_type:
+          type: string
+          enum: [PAID_ONLINE, PAID_CARD, PAID_TRANSFER, PAID_CASH, PAID_OTHER]
+        tax_free:
+          type: boolean
+        paid:
+          type: boolean
+        rate:
+          type: number
+          format: float
+        closed:
+          type: boolean
+        status:
+          type: string
+          enum: [STATUS_NORMAL, STATUS_CANCELLATION, STATUS_AMENDMENT]
+        trans_state:
+          type: string
+          enum: [STATE_OK, STATE_NEW, STATE_BACK]
+        notes:
+          type: string
+        internal_notes:
+          type: string
+        report_notes:
+          type: string
+        worksheet:
+          type: object
+          properties:
+            distance:
+              type: number
+              format: float
+              description: Distance (km)
+            repair:
+              type: number
+              format: float
+              description: Repair time (hour)
+            total:
+              type: number
+              format: float
+              description: Total time (hour)
+            notes:
+              type: string
+              description: Worksheet justification
+        rent:
+          type: object
+          properties:
+            holiday:
+              type: number
+              format: float
+              description: Holidays (day)
+            bad_tool:
+              type: number
+              format: float
+              description: Bad tool / machine (hour)
+            other:
+              type: number
+              format: float
+              description: Other non-eligible
+            notes:
+              type: string
+              description: Rent justification
+
+    Trans:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/TransHead"
+        - properties:
+            trans_meta:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/TransMeta"
+                - properties:
+                    tags:
+                      $ref: "#/components/schemas/MetaTags"
+            trans_map:
+              $ref: "#/components/schemas/DataMap"
+
+    TransPost:
+      type: object
+      required:
+        - trans_type
+        - direction
+        - trans_date
+      allOf:
+        - properties:
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "INV1731101982N123"
+        - $ref: "#/components/schemas/Trans"
+    
+    TransResponse:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              format: int64
+              description: Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+            code:
+              type: string
+              description: Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+              example: "INV1731101982N123"
+        - $ref: "#/components/schemas/Trans"
+        - properties:
+            trans_meta:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/TransMeta"
+                - properties:
+                    invoice:
+                      type: object
+                      properties:
+                        company_name:
+                          type: string
+                        company_address:
+                          type: string
+                        company_tax_number:
+                          type: string
+                        customer_name:
+                          type: string
+                        customer_address:
+                          type: string
+                        customer_tax_number:
+                          type: string
+                    tags:
+                      $ref: "#/components/schemas/MetaTags"
+            trans_map:
+              $ref: "#/components/schemas/DataMap"
+            time_stamp:
+              type: string
+              format: date-time
+              description: Timestamp of data creation
+
+    View:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          enum:
+            - "VIEW_CONFIG_DATA"
+            - "VIEW_CONFIG_MAP"
+            - "VIEW_CONFIG_MESSAGE"
+            - "VIEW_CONFIG_PATTERN"
+            - "VIEW_CONFIG_PRINT_QUEUE"
+            - "VIEW_CONFIG_REPORT"
+            - "VIEW_CONFIG_SHORTCUT"
+            - "VIEW_CURRENCY_MAP"
+            - "VIEW_CURRENCY_TAGS"
+            - "VIEW_CURRENCY_VIEW"
+            - "VIEW_CUSTOMER_ADDRESSES"
+            - "VIEW_CUSTOMER_CONTACTS"
+            - "VIEW_CUSTOMER_EVENTS"
+            - "VIEW_CUSTOMER_MAP"
+            - "VIEW_CUSTOMER_TAGS"
+            - "VIEW_CUSTOMER_VIEW"
+            - "VIEW_EMPLOYEE_EVENTS"
+            - "VIEW_EMPLOYEE_MAP"
+            - "VIEW_EMPLOYEE_TAGS"
+            - "VIEW_EMPLOYEE_VIEW"
+            - "VIEW_ITEM_MAP"
+            - "VIEW_ITEM_TAGS"
+            - "VIEW_ITEM_VIEW"
+            - "VIEW_LINK_MAP"
+            - "VIEW_LINK_TAGS"
+            - "VIEW_LINK_VIEW"
+            - "VIEW_MOVEMENT_MAP"
+            - "VIEW_MOVEMENT_TAGS"
+            - "VIEW_MOVEMENT_VIEW"
+            - "VIEW_PAYMENT_MAP"
+            - "VIEW_PAYMENT_TAGS"
+            - "VIEW_PAYMENT_VIEW"
+            - "VIEW_PLACE_CONTACTS"
+            - "VIEW_PLACE_MAP"
+            - "VIEW_PLACE_TAGS"
+            - "VIEW_PLACE_VIEW"
+            - "VIEW_PRICE_MAP"
+            - "VIEW_PRICE_TAGS"
+            - "VIEW_PRICE_VIEW"
+            - "VIEW_PRODUCT_EVENTS"
+            - "VIEW_PRODUCT_MAP"
+            - "VIEW_PRODUCT_TAGS"
+            - "VIEW_PRODUCT_VIEW"
+            - "VIEW_PROJECT_ADDRESSES"
+            - "VIEW_PROJECT_CONTACTS"
+            - "VIEW_PROJECT_EVENTS"
+            - "VIEW_PROJECT_MAP"
+            - "VIEW_PROJECT_TAGS"
+            - "VIEW_PROJECT_VIEW"
+            - "VIEW_RATE_MAP"
+            - "VIEW_RATE_TAGS"
+            - "VIEW_RATE_VIEW"
+            - "VIEW_TAX_MAP"
+            - "VIEW_TAX_TAGS"
+            - "VIEW_TAX_VIEW"
+            - "VIEW_TOOL_EVENTS"
+            - "VIEW_TOOL_MAP"
+            - "VIEW_TOOL_TAGS"
+            - "VIEW_TOOL_VIEW"
+            - "VIEW_TRANS_MAP"
+            - "VIEW_TRANS_TAGS"
+            - "VIEW_TRANS_VIEW"
+          description: The name of the view.
+          example: "VIEW_CUSTOMER_EVENTS"
+        filter:
+          type: string
+          description: The filter string. Any valid SQL WHERE clause.
+          example: "subject like '%visit%' and place='City1'"
+        order_by:
+          type: array
+          items:
+            type: string
+          description: The order by string. Any valid SQL ORDER BY clause.
+          example: ["id"]
+        limit:
+          type: integer
+          description: The limit of the view.
+          example: 100
+        offset:
+          type: integer
+          description: The offset of the view.
+          example: 0
+
+
+        

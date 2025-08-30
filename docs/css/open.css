@@ -1,0 +1,43 @@
+.swagger-ui .title {
+  font-family: 'Inter';
+  font-size: 20px!important;
+  font-weight: 600;
+}
+
+.swagger-ui .info pre {
+  font-size: 10px;
+}
+
+.swagger-ui .scheme-container {
+  /*padding: 20px 0!important;*/
+  background-color: rgb(226 232 240)!important;
+}
+
+.swagger-ui .info {
+  font-family: 'Inter';
+  margin: 20px 0;
+}
+
+.swagger-ui .opblock-tag {
+  font-family: 'Inter';
+}
+
+.swagger-ui .opblock-tag .opblock-tag-section {
+  font-family: 'Inter';
+}
+
+.swagger-ui .opblock-tag .opblock-tag-section .opblock-tag-section-header {
+  font-family: 'Inter';
+}
+
+.swagger-ui .opblock-tag .opblock-tag-section .opblock-tag-section-header .opblock-tag-section-header-label {
+  font-family: 'Inter';
+}
+
+.swagger-ui .opblock-tag .opblock-tag-section .opblock-tag-section-header .opblock-tag-section-header-label .opblock-tag-section-header-label-text {
+  font-family: 'Inter';
+} 
+
+.swagger-ui .opblock-tag .opblock-tag-section .opblock-tag-section-header .opblock-tag-section-header-label .opblock-tag-section-header-label-text .opblock-tag-section-header-label-text-text {
+  font-family: 'Inter';
+}

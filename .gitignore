@@ -102,10 +102,13 @@ data/test/*.xml
 data/test/*.txt
 service/data/session
 service/data/session.db
-demo.db
+demo*.db
 private.key
 public.key
 service/CHANGELOG
 service/LICENSE
 client_config_loc.json
 test_cover.html
+__debug*
+test_json*
+__pycache__

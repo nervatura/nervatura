@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nervatura Upgrade</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="../css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#cli" class="text-slate-600 hover:text-slate-800">
+                CLI upgrade commands
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#losing" class="text-slate-600 hover:text-slate-800">
+                Losing data
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#password" class="text-slate-600 hover:text-slate-800">
+                User password
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#report" class="text-slate-600 hover:text-slate-800">
+                Report upgrade
+              </a>
+            </h2>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Nervatura
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            Upgrade to v6.*
+          </h1>
+        </header>
+
+        <h3 id="cli" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          CLI upgrade commands
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Before upgrading the database, be sure to <b>create a database backup</b>. Not only the alias name of the database, 
+          but also its connection can be specified: <br />
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            -o {"alias": "demo", "NT_ALIAS_DEMO": "sqlite://file:data/demo.db?cache=shared&mode=rwc"}"
+          </code>
+        </p>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Docker example
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker exec -i nervatura /nervatura -c upgrade -o "{\"alias\":\"demo\"}"
+          </code>
+        </div>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Snap example
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            sudo /snap/nervatura/current/nervatura -c upgrade -o "{\"alias\":\"demo\"}"
+          </code>
+        </div>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Windows example
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            & "C:\Program Files\Nervatura\nervatura.exe" -c upgrade -o '{\"alias\":\"demo\"}'
+          </code>
+        </div>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
+          Node.js NPM example
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            ./node_modules/nervatura/bin/nervatura -c upgrade -o '{\"alias\":\"demo\"}'
+          </code>
+        </div>
+
+        <h3 id="losing" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Losing data
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          The following data will not be transferred:
+          <ul class="list-disc list-inside text-slate-600">
+            <li>only one barcode per product (product meta)</li>
+            <li>only the value data of the old meta data (fieldvalue), the notes data is lost</li>
+            <li>log, report, printqueue and user password data are not transferred</li>
+          </ul>
+        </p>
+        
+        <h3 id="password" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          User password
+        </h3>
+
+        <h3 id="report" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Report upgrade
+        </h3>
+        
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../install/" class="text-base font-semibold text-slate-900 hover:underline">
+                Installation
+              </a>
+            </dd>
+          </div>
+
+          <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../create/" class="text-base font-semibold text-slate-900 hover:underline">
+                Create a new database
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </div>
+</main>
+</body>
+</html>

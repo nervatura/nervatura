@@ -1,0 +1,16 @@
+html, body {
+  background-color: rgb(var(--base-0));
+}
+
+.task-container {
+  color: var(--text-1);
+  fill: var(--text-1);
+  background-color: rgb(var(--base-0));
+  box-sizing: border-box;
+  border: 1px solid rgba(var(--neutral-1), 0.2);
+}
+
+.task-container td {
+  max-width: 300px;
+  word-wrap: break-word;
+}

@@ -1,0 +1,34 @@
+DROP TABLE IF EXISTS bck_address;
+DROP TABLE IF EXISTS bck_barcode;
+DROP TABLE IF EXISTS bck_contact;
+DROP TABLE IF EXISTS bck_currency;
+DROP TABLE IF EXISTS bck_deffield;
+DROP TABLE IF EXISTS bck_event;
+DROP TABLE IF EXISTS bck_fieldvalue;
+DROP TABLE IF EXISTS bck_item;
+DROP TABLE IF EXISTS bck_link;
+DROP TABLE IF EXISTS bck_log;
+DROP TABLE IF EXISTS bck_movement;
+DROP TABLE IF EXISTS bck_numberdef;
+DROP TABLE IF EXISTS bck_pattern;
+DROP TABLE IF EXISTS bck_payment;
+DROP TABLE IF EXISTS bck_price;
+DROP TABLE IF EXISTS bck_project;
+DROP TABLE IF EXISTS bck_rate;
+DROP TABLE IF EXISTS bck_tool;
+DROP TABLE IF EXISTS bck_trans;
+DROP TABLE IF EXISTS bck_ui_audit;
+DROP TABLE IF EXISTS bck_ui_menu;
+DROP TABLE IF EXISTS bck_ui_menufields;
+DROP TABLE IF EXISTS bck_ui_message;
+DROP TABLE IF EXISTS bck_ui_printqueue;
+DROP TABLE IF EXISTS bck_ui_report;
+DROP TABLE IF EXISTS bck_ui_userconfig;
+DROP TABLE IF EXISTS bck_customer;
+DROP TABLE IF EXISTS bck_employee;
+DROP TABLE IF EXISTS bck_place;
+DROP TABLE IF EXISTS bck_product;
+DROP TABLE IF EXISTS bck_tax;
+DROP TABLE IF EXISTS bck_groups;
+
+

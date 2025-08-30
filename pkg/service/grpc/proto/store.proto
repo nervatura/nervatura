@@ -1,0 +1,1448 @@
+syntax = "proto3";
+
+option go_package = "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto";
+
+package nervatura;
+
+/*
+Nervatura gRPC API
+*/
+service API {
+  // Login by username and password and get access token
+  rpc AuthLogin(RequestAuthLogin) returns (ResponseAuthLogin) {}
+  // Update or create user account. 
+  // If id or existing code is set, the user is updated, otherwise a new user is created. 
+  // If user is not admin, the user id and code are set to the current token user id or code
+  rpc AuthUpdate(Auth) returns (Auth) {}
+  // Get user account by database id or code (unique key) 
+  // If user is not admin, the user id and code are set to the current token user id or code
+  rpc AuthGet(RequestGet) returns (Auth) {}
+  // Change token user password
+  rpc AuthPassword(RequestPasswordChange) returns (ResponseStatus) {}
+  // Reset a user password and result a new password 
+  // If user is not admin, the user id and code are set to the current token user id or code
+  rpc AuthPasswordReset(RequestGet) returns (ResponseStatus) {}
+
+  // Login by access token. Returns token user
+  rpc TokenLogin(RequestEmpty) returns (Auth) {}
+  // Refresh access token
+  rpc TokenRefresh(RequestEmpty) returns (ResponseAuthLogin) {}
+  // Decode JWT access token but doesn't validate the signature
+  rpc TokenDecode(RequestTokenDecode) returns (ResponseTokenDecode) {}
+
+  // Create new nervatura database schema
+  rpc Database(RequestDatabase) returns (JsonBytes) {}
+  // Delete data by database id or code (unique key)
+  // Only admin users can delete configurations except for CONFIG_PRINT_QUEUE and CONFIG_PATTERN
+  // Auth user cannot be deleted, only disabled by admin users
+  rpc Delete(RequestDelete) returns (ResponseStatus) {}
+  // Call a server side function and get the result 
+  // Example: create new PDF invoice, send email or get a product price
+  rpc Function(RequestFunction) returns (JsonBytes) {}
+  // Get a predefined view by name
+  rpc View(RequestView) returns (JsonBytes) {}
+
+  // Update (replace) or create configuration 
+  // If id or existing code is set, the configuration is updated, otherwise a new configuration is created.
+  // Only admin users can create or update configurations except for CONFIG_PRINT_QUEUE and CONFIG_PATTERN
+  rpc ConfigUpdate(Config) returns (Config) {}
+  // Get configuration by database id or code (unique key)
+  rpc ConfigGet(RequestGet) returns (Config) {}
+  // Get configurations by query parameters
+  // Valid filters: config_type
+  rpc ConfigQuery(RequestQuery) returns (Configs) {}
+
+  // Update (replace) or create currency 
+  // If id or existing code is set, the currency is updated, otherwise a new currency is created.
+  rpc CurrencyUpdate(Currency) returns (Currency) {}
+  // Get currency by database id or code (unique key)
+  rpc CurrencyGet(RequestGet) returns (Currency) {}
+  // Get currencies by query parameters
+  // Valid filters: tag
+  rpc CurrencyQuery(RequestQuery) returns (Currencies) {}
+
+  // Update (replace) or create customer 
+  // If id or existing code is set, the customer is updated, otherwise a new customer is created.
+  rpc CustomerUpdate(Customer) returns (Customer) {}
+  // Get customer by database id or code (unique key)
+  rpc CustomerGet(RequestGet) returns (Customer) {}
+  // Get customers by query parameters
+  // Valid filters: customer_type, customer_name, tag
+  rpc CustomerQuery(RequestQuery) returns (Customers) {}
+
+  /*
+  Update (replace) or create employee
+  If id or existing code is set, the employee is updated, otherwise a new employee is created.
+  */
+  rpc EmployeeUpdate(Employee) returns (Employee) {}
+  // Get employee by database id or code (unique key)
+  rpc EmployeeGet(RequestGet) returns (Employee) {}
+  // Get employees by query parameters
+  // Valid filters: tag
+  rpc EmployeeQuery(RequestQuery) returns (Employees) {}
+
+  // Update (replace) or create item 
+  // If id or existing code is set, the item is updated, otherwise a new item is created.
+  rpc ItemUpdate(Item) returns (Item) {}
+  // Get item by database id or code (unique key)
+  rpc ItemGet(RequestGet) returns (Item) {}
+  // Get items by query parameters 
+  // Valid filters: trans_code, product_code, tag
+  rpc ItemQuery(RequestQuery) returns (Items) {}
+
+  // Update (replace) or create link 
+  // If id or existing code is set, the link is updated, otherwise a new link is created.
+  rpc LinkUpdate(Link) returns (Link) {}
+  // Get link by database id or code (unique key)
+  rpc LinkGet(RequestGet) returns (Link) {}
+  // Get links by query parameters 
+  // Valid filters: link_type_1, link_code_1, link_type_2, link_code_2, tag
+  rpc LinkQuery(RequestQuery) returns (Links) {}
+
+  // Get log by database id or code (unique key)
+  rpc LogGet(RequestGet) returns (Log) {}
+  // Get logs by query parameters 
+  // Valid filters: log_type, ref_type, ref_code, tag
+  rpc LogQuery(RequestQuery) returns (Logs) {}
+
+  // Update (replace) or create movement 
+  // If id or existing code is set, the movement is updated, otherwise a new movement is created.
+  rpc MovementUpdate(Movement) returns (Movement) {}
+  // Get movement by database id or code (unique key)
+  rpc MovementGet(RequestGet) returns (Movement) {}
+  // Get movements by query parameters 
+  // Valid filters: trans_code, movement_type, tag
+  rpc MovementQuery(RequestQuery) returns (Movements) {}
+
+  // Update (replace) or create payment 
+  // If id or existing code is set, the payment is updated, otherwise a new payment is created.
+  rpc PaymentUpdate(Payment) returns (Payment) {}
+  // Get payment by database id or code (unique key)
+  rpc PaymentGet(RequestGet) returns (Payment) {}
+  // Get payments by query parameters   
+  // Valid filters: trans_code, paid_date, tag
+  rpc PaymentQuery(RequestQuery) returns (Payments) {}
+
+  // Update (replace) or create place 
+  // If id or existing code is set, the place is updated, otherwise a new place is created.
+  rpc PlaceUpdate(Place) returns (Place) {}
+  // Get place by database id or code (unique key)
+  rpc PlaceGet(RequestGet) returns (Place) {}
+  // Get places by query parameters   
+  // Valid filters: place_type, place_name, tag
+  rpc PlaceQuery(RequestQuery) returns (Places) {}
+
+  // Update (replace) or create price 
+  // If id or existing code is set, the price is updated, otherwise a new price is created.
+  rpc PriceUpdate(Price) returns (Price) {}
+  // Get price by database id or code (unique key)
+  rpc PriceGet(RequestGet) returns (Price) {}
+  // Get prices by query parameters   
+  // Valid filters: price_type, product_code, currency_code, customer_code, tag
+  rpc PriceQuery(RequestQuery) returns (Prices) {}
+
+  // Update (replace) or create product 
+  // If id or existing code is set, the product is updated, otherwise a new product is created.
+  rpc ProductUpdate(Product) returns (Product) {}
+  // Get product by database id or code (unique key)
+  rpc ProductGet(RequestGet) returns (Product) {}
+  // Get products by query parameters   
+  // Valid filters: product_type, product_name, tag
+  rpc ProductQuery(RequestQuery) returns (Products) {}
+
+  // Update (replace) or create project 
+  // If id or existing code is set, the project is updated, otherwise a new project is created.
+  rpc ProjectUpdate(Project) returns (Project) {}
+  // Get project by database id or code (unique key)
+  rpc ProjectGet(RequestGet) returns (Project) {}
+  // Get projects by query parameters     
+  // Valid filters: project_name, customer_code, tag
+  rpc ProjectQuery(RequestQuery) returns (Projects) {}
+
+  // Update (replace) or create rate 
+  // If id or existing code is set, the rate is updated, otherwise a new rate is created.
+  rpc RateUpdate(Rate) returns (Rate) {}
+  // Get rate by database id or code (unique key)
+  rpc RateGet(RequestGet) returns (Rate) {}
+  // Get rates by query parameters     
+  // Valid filters: rate_type, currency_code, tag
+  rpc RateQuery(RequestQuery) returns (Rates) {}
+
+  // Update (replace) or create tax 
+  // If id or existing code is set, the tax is updated, otherwise a new tax is created.
+  rpc TaxUpdate(Tax) returns (Tax) {}
+  // Get tax by database id or code (unique key)
+  rpc TaxGet(RequestGet) returns (Tax) {}
+  // Get taxes by query parameters     
+  // Valid filters: tag
+  rpc TaxQuery(RequestQuery) returns (Taxes) {}
+
+  // Update (replace) or create tool
+  // If id or existing code is set, the tool is updated, otherwise a new tool is created.
+  rpc ToolUpdate(Tool) returns (Tool) {}
+  // Get tool by database id or code (unique key)
+  rpc ToolGet(RequestGet) returns (Tool) {}
+  // Get tools by query parameters     
+  // Valid filters: product_code, description, tag
+  rpc ToolQuery(RequestQuery) returns (Tools) {}
+
+  // Update (replace) or create transaction 
+  // If id or existing code is set, the transaction is updated, otherwise a new transaction is created.
+  rpc TransUpdate(Trans) returns (Trans) {}
+  // Get transaction by database id or code (unique key)
+  rpc TransGet(RequestGet) returns (Trans) {}
+  // Get transactions by query parameters     
+  // Valid filters: trans_type, direction, trans_date, tag
+  rpc TransQuery(RequestQuery) returns (Transactions) {}
+}
+
+enum UserGroup {
+  GROUP_USER = 0;
+  GROUP_ADMIN = 1;
+  GROUP_GUEST = 2;
+}
+
+enum CustomerType {
+  CUSTOMER_COMPANY = 0;
+  CUSTOMER_PRIVATE = 1;
+  CUSTOMER_OTHER = 2;
+  CUSTOMER_OWN = 3;
+}
+
+enum LinkType {
+  LINK_CUSTOMER = 0;
+  LINK_EMPLOYEE = 1;
+  LINK_ITEM = 2;
+  LINK_MOVEMENT = 3;
+  LINK_PAYMENT = 4;
+  LINK_PLACE = 5;
+  LINK_PRODUCT = 6;
+  LINK_PROJECT = 7;
+  LINK_TOOL = 8;
+  LINK_TRANS = 9;
+}
+
+enum LogType {
+  LOG_INSERT = 0;
+  LOG_UPDATE = 1;
+  LOG_DELETE = 2;
+}
+
+enum MovementType {
+  MOVEMENT_INVENTORY = 0;
+  MOVEMENT_TOOL = 1;
+  MOVEMENT_PLAN = 2;
+  MOVEMENT_HEAD = 3;
+}
+
+enum PlaceType {
+  PLACE_WAREHOUSE = 0;
+  PLACE_BANK = 1;
+  PLACE_CASH = 2;
+  PLACE_OTHER = 3;
+}
+
+enum PriceType {
+  PRICE_CUSTOMER = 0;
+  PRICE_VENDOR = 1;
+}
+
+enum BarcodeType {
+  BARCODE_CODE_39 = 0;
+  BARCODE_CODE_128 = 1;
+  BARCODE_EAN_8 = 2;
+  BARCODE_EAN_13 = 3;
+  BARCODE_QR_CODE = 4;
+}
+
+enum ProductType {
+  PRODUCT_ITEM = 0;
+  PRODUCT_SERVICE = 1;
+}
+
+enum RateType {
+  RATE_RATE = 0;
+  RATE_BUY = 1;
+  RATE_SELL = 2;
+  RATE_AVERAGE = 3;
+}
+
+enum PaidType {
+  PAID_ONLINE = 0;
+  PAID_CARD = 1;
+  PAID_TRANSFER = 2;
+  PAID_CASH = 3;
+  PAID_OTHER = 4;
+}
+
+enum TransStatus {
+  TRANS_NORMAL = 0;
+  TRANS_CANCELLATION = 1;
+  TRANS_AMENDMENT = 2;
+}
+
+enum TransState {
+  TRANS_OK = 0;
+  TRANS_NEW = 1;
+  TRANS_BACK = 2;
+}
+
+enum Direction {
+  DIRECTION_OUT = 0;
+  DIRECTION_IN = 1;
+  DIRECTION_TRANSFER = 2;
+}
+
+enum TransType {
+  TRANS_INVOICE = 0;
+  TRANS_RECEIPT = 1;
+  TRANS_ORDER = 2;
+  TRANS_OFFER = 3;
+  TRANS_WORKSHEET = 4;
+  TRANS_RENT = 5;
+  TRANS_DELIVERY = 6;
+  TRANS_INVENTORY = 7;
+  TRANS_WAYBILL = 8;
+  TRANS_PRODUCTION = 9;
+  TRANS_FORMULA = 10;
+  TRANS_BANK = 11;
+  TRANS_CASH = 12;
+}
+
+enum ConfigType {
+  CONFIG_MAP = 0;
+  CONFIG_SHORTCUT = 1;
+  CONFIG_MESSAGE = 2;
+  CONFIG_PATTERN = 3;
+  CONFIG_REPORT = 4;
+  CONFIG_PRINT_QUEUE = 5;
+  CONFIG_DATA = 6;
+}
+
+enum FieldType {
+  FIELD_STRING = 0;
+  FIELD_BOOL = 1;
+  FIELD_INTEGER = 2;
+  FIELD_NUMBER = 3;
+  FIELD_DATE = 4;
+  FIELD_DATETIME = 5;
+  FIELD_MEMO = 6;
+  FIELD_ENUM = 7;
+  FIELD_URL = 8;
+  FIELD_CUSTOMER = 9;
+  FIELD_EMPLOYEE = 10;
+  FIELD_PLACE = 11;
+  FIELD_PRODUCT = 12;
+  FIELD_PROJECT = 13;
+  FIELD_TOOL = 14;
+  FIELD_TRANS = 15;
+  FIELD_TRANS_ITEM = 16;
+  FIELD_TRANS_MOVEMENT = 17;
+  FIELD_TRANS_PAYMENT = 18;
+}
+
+enum MapFilter {
+  FILTER_ADDRESS = 0;
+  FILTER_BARCODE = 1;
+  FILTER_CONTACT = 2;
+  FILTER_CURRENCY = 3;
+  FILTER_CUSTOMER = 4;
+  FILTER_EMPLOYEE = 5;
+  FILTER_EVENT = 6;
+  FILTER_ITEM = 7;
+  FILTER_MOVEMENT = 8;
+  FILTER_PAYMENT = 9;
+  FILTER_PLACE = 10;
+  FILTER_PRICE = 11;
+  FILTER_PRODUCT = 12;
+  FILTER_PROJECT = 13;
+  FILTER_RATE = 14;
+  FILTER_TAX = 15;
+  FILTER_TOOL = 16;
+  FILTER_USER = 17;
+  FILTER_TRANS = 18;
+  FILTER_INVOICE = 19;
+  FILTER_RECEIPT = 20;
+  FILTER_ORDER = 21;
+  FILTER_OFFER = 22;
+  FILTER_WORKSHEET = 23;
+  FILTER_RENT = 24;
+  FILTER_DELIVERY = 25;
+  FILTER_INVENTORY = 26;
+  FILTER_WAYBILL = 27;
+  FILTER_PRODUCTION = 28;
+  FILTER_FORMULA = 29;
+  FILTER_BANK = 30;
+  FILTER_CASH = 31;
+}
+
+enum ShortcutMethod {
+  METHOD_GET = 0;
+  METHOD_POST = 1;
+}
+
+enum ShortcutField {
+  SHORTCUT_STRING = 0;
+  SHORTCUT_BOOL = 1;
+  SHORTCUT_INTEGER = 2;
+  SHORTCUT_NUMBER = 3;
+  SHORTCUT_DATE = 4;
+}
+
+enum FileType {
+  FILE_PDF = 0;
+  FILE_CSV = 1;
+}
+
+enum Model {
+  AUTH = 0;
+  CONFIG = 1;
+  CURRENCY = 2;
+  CUSTOMER = 3;
+  EMPLOYEE = 4;
+  ITEM = 5;
+  LINK = 6;
+  MOVEMENT = 7;
+  PAYMENT = 8;
+  PLACE = 9;
+  PRICE = 10;
+  PRODUCT = 11;
+  PROJECT = 12;
+  RATE = 13;
+  TAX = 14;
+  TOOL = 15;
+  TRANS = 16;
+}
+
+enum ViewName {
+  VIEW_CONFIG_DATA = 0;
+  VIEW_CONFIG_MAP = 1;
+  VIEW_CONFIG_MESSAGE = 2;
+  VIEW_CONFIG_PATTERN = 3;
+  VIEW_CONFIG_PRINT_QUEUE = 4;
+  VIEW_CONFIG_REPORT = 5;
+  VIEW_CONFIG_SHORTCUT = 6;
+  VIEW_CURRENCY_MAP = 7;
+  VIEW_CURRENCY_TAGS = 8;
+  VIEW_CURRENCY_VIEW = 9;
+  VIEW_CUSTOMER_ADDRESSES = 10;
+  VIEW_CUSTOMER_CONTACTS = 11;
+  VIEW_CUSTOMER_EVENTS = 12;
+  VIEW_CUSTOMER_MAP = 13;
+  VIEW_CUSTOMER_TAGS = 14;
+  VIEW_CUSTOMER_VIEW = 15;
+  VIEW_EMPLOYEE_EVENTS = 16;
+  VIEW_EMPLOYEE_MAP = 17;
+  VIEW_EMPLOYEE_TAGS = 18;
+  VIEW_EMPLOYEE_VIEW = 19;
+  VIEW_ITEM_MAP = 20;
+  VIEW_ITEM_TAGS = 21;
+  VIEW_ITEM_VIEW = 22;
+  VIEW_LINK_MAP = 23;
+  VIEW_LINK_TAGS = 24;
+  VIEW_LINK_VIEW = 25;
+  VIEW_MOVEMENT_MAP = 26;
+  VIEW_MOVEMENT_TAGS = 27;
+  VIEW_MOVEMENT_VIEW = 28;
+  VIEW_PAYMENT_MAP = 29;
+  VIEW_PAYMENT_TAGS = 30;
+  VIEW_PAYMENT_VIEW = 31;
+  VIEW_PLACE_MAP = 32;
+  VIEW_PLACE_TAGS = 33;
+  VIEW_PLACE_VIEW = 34;
+  VIEW_PRICE_MAP = 35;
+  VIEW_PRICE_TAGS = 36;
+  VIEW_PRICE_VIEW = 37;
+  VIEW_PRODUCT_MAP = 38;
+  VIEW_PRODUCT_TAGS = 39;
+  VIEW_PRODUCT_VIEW = 40;
+  VIEW_PROJECT_MAP = 41;
+  VIEW_PROJECT_TAGS = 42;
+  VIEW_PROJECT_VIEW = 43;
+  VIEW_RATE_MAP = 44;
+  VIEW_RATE_TAGS = 45;
+  VIEW_RATE_VIEW = 46;
+  VIEW_TAX_MAP = 47;
+  VIEW_TAX_TAGS = 48;
+  VIEW_TAX_VIEW = 49;
+  VIEW_TOOL_MAP = 50;
+  VIEW_TOOL_TAGS = 51;
+  VIEW_TOOL_VIEW = 52;
+  VIEW_TRANS_MAP = 53;
+  VIEW_TRANS_TAGS = 54;
+  VIEW_TRANS_VIEW = 55;
+}
+
+enum BookmarkType {
+  BOOKMARK_BROWSER = 0;
+  BOOKMARK_EDITOR = 1;
+}
+
+// No request parameters
+message RequestEmpty {}
+
+// Does not return content.
+message ResponseStatus {
+  bool success = 1;
+  string message = 2;
+}
+
+message RequestAuthLogin {
+  string user_name = 1;
+  string password = 2;
+  string database = 3;
+}
+
+message ResponseAuthLogin {
+  string token = 1;
+  string version = 2;
+}
+
+message RequestPasswordChange {
+  string password = 1;
+  string confirm = 2;
+}
+
+message RequestTokenDecode {
+  string token = 1;
+}
+
+message ResponseTokenDecode {
+  string code = 1;
+  string user_name = 2;
+  string database = 3;
+  // JWT expiration time
+  string exp = 4;
+  // JWT issuer
+  string iss = 5;
+}
+
+message RequestGet {
+  // Database primary key. If specified, the code does not need to be set.
+  int64 id = 1;
+  // Database independent unique external key. If specified, the id does not need to be set.
+  string code = 2;
+}
+
+message RequestDelete {
+  // Database primary key. If specified, the code does not need to be set.
+  int64 id = 1;
+  // Database independent unique external key. If specified, the id does not need to be set.
+  string code = 2;
+  // Model name
+  Model model = 3;
+}
+
+message RequestQueryFilter {
+  string field = 1;
+  string value = 2;
+}
+
+message RequestQuery {
+  repeated RequestQueryFilter filters = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+
+message RequestFunction {
+  // Server function name.
+  // Valid function names: report_install, report_list, report_get, product_price, email_send
+  string function = 1;
+  // Function arguments
+  map<string, string> args = 2;
+}
+
+message RequestView {
+  // Predefined view name
+  ViewName name = 1;
+  // Valid SQL WHERE clause
+  string filter = 2;
+  // Valid SQL ORDER BY clause
+  repeated string order_by = 3;
+  // Limit the number of records
+  int64 limit = 4;
+  // Skip the first N records
+  int64 offset = 5;
+}
+
+message RequestDatabase {
+  // Database alias name
+  string alias = 1;
+  // Create demo data
+  bool demo = 2;
+}
+
+message JsonString {
+  // Build in convertion of number, boolean, array and object types to string
+  map<string, string> data = 1;
+}
+
+message JsonBytes {
+  // JSON data as bytes
+  bytes data = 1;
+}
+
+// Address message
+message Address {
+  string country = 1;
+  string state = 2;
+  string zip_code = 3;
+  string city = 4;
+  string street = 5;
+  string notes = 6;
+  // Additional tags for the address
+  repeated string tags = 7;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString address_map = 8;
+}
+
+// Contact message
+message Contact {
+  string first_name = 1;
+  string surname = 2;
+  string status = 3;
+  string phone = 4;
+  string mobile = 5;
+  string email = 6;
+  string notes = 7;
+  // Additional tags for the contact
+  repeated string tags = 8;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString contact_map = 9;
+}
+
+// Event message
+message Event {
+  string uid = 1;
+  string subject = 2;
+  // ISO 8601 date-time
+  string start_time = 3;
+  // ISO 8601 date-time
+  string end_time = 4;
+  string place = 5;
+  string description = 6;
+  // Additional tags for the event
+  repeated string tags = 7;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString event_map = 8;
+}
+
+// AuthMeta Bookmark message
+message Bookmark {
+  // ENUM field. Valid values: BROWSER, EDITOR
+  BookmarkType bookmark_type = 1;
+  // Label of the bookmark
+  string label = 2;
+  // Editor model or browser view name
+  string key = 3;
+  // Model code
+  string code = 4;
+  // Browser filters
+  JsonString filters = 5;
+  // Browser visible columns
+  map<string, bool> columns = 6;
+  // Timestamp of data creation
+  string time_stamp = 7;
+}
+
+// AuthMeta message
+message AuthMeta {
+  // Additional tags for the user
+  repeated string tags = 1;
+  repeated Bookmark bookmarks = 2;
+}
+
+// Auth message
+message Auth {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: USR1731101982N123 ("USR" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Friendly username, nickname or email for login.
+  // It can be changed, but it is a unique identifier at the database level.
+  string user_name = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field. Default value: GROUP_USER
+  UserGroup user_group = 4;
+  bool disabled = 5;
+  AuthMeta auth_meta = 6;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString auth_map = 7;
+  // Timestamp of data creation
+  string time_stamp = 8;
+}
+
+// CurrencyMeta message
+message CurrencyMeta {
+  // The name of the currency.
+  string description = 1;
+  // The number of decimal places used for recording and rounding by the program.
+  int64 digit = 2;
+  // Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1.
+  int64 cash_round = 3;
+  // Additional tags for the currency
+  repeated string tags = 4;
+}
+
+// Currency message
+message Currency {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // The ISO 4217 code of the currency. It cannot be modified after creation.
+  string code = 2;
+  CurrencyMeta currency_meta = 3;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString currency_map = 4;
+  // Timestamp of data creation
+  string time_stamp = 5;
+}
+
+message Currencies {
+  repeated Currency data = 1;
+}
+
+// CustomerMeta message
+message CustomerMeta {
+  string tax_number = 1;
+  string account = 2;
+  // Tax-free
+  bool tax_free = 3;
+  // Payment per.
+  int64 terms = 4;
+  // Customer's credit limit. Data is used by financial reports.
+  double credit_limit = 5;
+  // If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field. If the product has a separate customer price, the value specified here will not be considered by the program.
+  double discount = 6;
+  string notes = 7;
+  bool inactive = 8;
+  // Additional tags for the customer
+  repeated string tags = 9;
+}
+
+// Customer message
+message Customer {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: CUS1731101982N123 ("CUS" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field. Default value: CUSTOMER_COMPANY
+  CustomerType customer_type = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Full name of the customer
+  string customer_name = 4;
+  repeated Address addresses = 5;
+  repeated Contact contacts = 6;
+  repeated Event events = 7;
+  CustomerMeta customer_meta = 8;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString customer_map = 9;
+  // Timestamp of data creation
+  string time_stamp = 10;
+}
+
+message Customers {
+  repeated Customer data = 1;
+}
+
+// EmployeeMeta message
+message EmployeeMeta {
+  // ISO 8601 date
+  string start_date = 1;
+  // ISO 8601 date
+  string end_date = 2;
+  bool inactive = 3;
+  string notes = 4;
+  // Additional tags for the employee
+  repeated string tags = 5;
+}
+
+// Employee message
+message Employee {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: EMP1731101982N123 ("EMP" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  Address address = 3;
+  Contact contact = 4;
+  repeated Event events = 5;
+  EmployeeMeta employee_meta = 6;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString employee_map = 7;
+  // Timestamp of data creation
+  string time_stamp = 8;
+}
+
+message Employees {
+  repeated Employee data = 1;
+}
+
+// ItemMeta message
+message ItemMeta {
+  string unit = 1;
+  double qty = 2;
+  double fx_price = 3;
+  double net_amount = 4;
+  double discount = 5;
+  double vat_amount = 6;
+  double amount = 7;
+  string description = 8;
+  bool deposit = 9;
+  double own_stock = 10;
+  bool action_price = 11;
+  // Additional tags for the item
+  repeated string tags = 12;
+}
+
+// Item message
+message Item {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: ITM1731101982N123 ("ITM" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Trans">Trans</a>.Code
+  string trans_code = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Product">Product</a>.Code
+  string product_code = 4;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Tax">Tax</a>.Code
+  string tax_code = 5;
+  ItemMeta item_meta = 6;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString item_map = 7;
+  // Timestamp of data creation
+  string time_stamp = 8;
+}
+
+message Items {
+  repeated Item data = 1;
+}
+
+// LinkMeta message
+message LinkMeta {
+  double qty = 1;
+  double rate = 2;
+  // Additional tags for the link
+  repeated string tags = 3;
+}
+
+// Link message
+message Link {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: LNK1731101982N123 ("LNK" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  LinkType link_type_1 = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to LinkType1.code
+  string link_code_1 = 4;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  LinkType link_type_2 = 5;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to LinkType2.code
+  string link_code_2 = 6;
+  LinkMeta link_meta = 7;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString link_map = 8;
+  // Timestamp of data creation
+  string time_stamp = 9;
+}
+
+message Links {
+  repeated Link data = 1;
+}
+
+// Log message
+message Log {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: LOG1731101982N123 ("LOG" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // ENUM field.
+  LogType log_type = 3;
+  string ref_type = 4;
+  // Reference to RefType.code
+  string ref_code = 5;
+  // Reference to <a href="#Auth">Auth</a>.Code
+  string auth_code = 6;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString log_map = 7;
+  // Timestamp of data creation
+  string time_stamp = 8;
+}
+
+message Logs {
+  repeated Log data = 1;
+}
+
+// MovementMeta message
+message MovementMeta {
+  double qty = 1;
+  string notes = 2;
+  bool shared = 3;
+  // Additional tags for the movement
+  repeated string tags = 4;
+}
+
+// Movement message
+message Movement {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: MOV1731101982N123 ("MOV" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  MovementType movement_type = 3;
+  // ISO 8601 date-time
+  string shipping_time = 4;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Trans">Trans</a>.Code
+  string trans_code = 5;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Product">Product</a>.Code
+  string product_code = 6;
+  // Reference to <a href="#Tool">Tool</a>.Code
+  string tool_code = 7;
+  // Reference to <a href="#Place">Place</a>.Code
+  string place_code = 8;
+  MovementMeta movement_meta = 9;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString movement_map = 10;
+  // Timestamp of data creation
+  string time_stamp = 11;
+}
+
+message Movements {
+  repeated Movement data = 1;
+}
+
+// PaymentMeta message
+message PaymentMeta {
+  double amount = 1;
+  string notes = 2;
+  // Additional tags for the payment
+  repeated string tags = 3;
+}
+
+// Payment message
+message Payment {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: PMT1731101982N123 ("PMT" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ISO 8601 date-time
+  string paid_date = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Trans">Trans</a>.Code
+  string trans_code = 4;
+  PaymentMeta payment_meta = 5;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString payment_map = 6;
+  // Timestamp of data creation
+  string time_stamp = 7;
+}
+
+message Payments {
+  repeated Payment data = 1;
+}
+
+// PlaceMeta message
+message PlaceMeta {
+  string notes = 1;
+  bool inactive = 2;
+  // Additional tags for the place
+  repeated string tags = 3;
+}
+
+// Place message
+message Place {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: PLA1731101982N123 ("PLA" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  PlaceType place_type = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // The full name of the place.
+  string place_name = 4;
+  // Reference to <a href="#Currency">Currency</a>.Code
+  string currency_code = 5;
+  Address address = 6;
+  repeated Contact contacts = 7;
+  PlaceMeta place_meta = 8;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString place_map = 9;
+  // Timestamp of data creation
+  string time_stamp = 10;
+}
+
+message Places {
+  repeated Place data = 1;
+}
+
+// PriceMeta message
+message PriceMeta {
+  double price_value = 1;
+  // Additional tags for the price
+  repeated string tags = 2;
+}
+
+// Price message
+message Price {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. 
+  // Example: PRC1731101982N123 ("PRC" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  PriceType price_type = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Start of validity, mandatory data. ISO 8601 date
+  string valid_from = 4;
+  // End of validity, can be left empty. ISO 8601 date
+  string valid_to = 5;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Product">Product</a>.Code
+  string product_code = 6;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Currency">Currency</a>.Code
+  string currency_code = 7;
+  // Optional field. Reference to <a href="#Customer">Customer</a>.Code
+  string customer_code = 8;
+  // Price ranges can also be specified, thus different price can be set for a smaller and bigger quantity of the same product.
+  // The quantity should be used as the lower threshold, ie. this should be the minimum quantity for the price set.
+  double qty = 9;
+  PriceMeta price_meta = 10;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString price_map = 11;
+  // Timestamp of data creation
+  string time_stamp = 12;
+}
+
+message Prices {
+  repeated Price data = 1;
+}
+
+// ProductMeta message
+message ProductMeta {
+  string unit = 1;
+  // ENUM field.
+  BarcodeType barcode_type = 2;
+  // Any barcode or QR code data
+  string barcode_data = 3;
+  // The actual amount of the products identified by the barcode. For example can be used for packaged goods, tray packaging.
+  double barcode_qty = 4;
+  string notes = 5;
+  bool inactive = 6;
+  // Additional tags for the product
+  repeated string tags = 7;
+}
+
+// Product message
+message Product {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: PRD1731101982N123 ("PRD" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  ProductType product_type = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // The full name of the product or short description.
+  string product_name = 4;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Tax">Tax</a>.Code
+  string tax_code = 5;
+  repeated Event events = 6;
+  ProductMeta product_meta = 7;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString product_map = 8;
+  // Timestamp of data creation
+  string time_stamp = 9;
+}
+
+message Products {
+  repeated Product data = 1;
+}
+
+// ProjectMeta message
+message ProjectMeta {
+  // ISO 8601 date
+  string start_date = 1;
+  // ISO 8601 date
+  string end_date = 2;
+  string notes = 3;
+  bool inactive = 4;
+  // Additional tags for the project
+  repeated string tags = 5;
+}
+
+// Project message
+message Project {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: PRJ1731101982N123 ("PRJ" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // The name of the project.
+  string project_name = 3;
+  // Reference to <a href="#Customer">Customer</a>.Code
+  string customer_code = 4;
+  repeated Address addresses = 5;
+  repeated Contact contacts = 6;
+  repeated Event events = 7;
+  ProjectMeta project_meta = 8;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString project_map = 9;
+  // Timestamp of data creation
+  string time_stamp = 10;
+}
+
+message Projects {
+  repeated Project data = 1;
+}
+
+// RateMeta message
+message RateMeta {
+  double rate_value = 1;
+  // Additional tags for the rate
+  repeated string tags = 2;
+}
+
+// Rate message
+message Rate {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: RAT1731101982N123 ("RAT" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  RateType rate_type = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ISO 8601 date
+  string rate_date = 4;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Place">Place</a>.Code
+  string place_code = 5;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Currency">Currency</a>.Code
+  string currency_code = 6;
+  RateMeta rate_meta = 7;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString rate_map = 8;
+  // Timestamp of data creation
+  string time_stamp = 9;
+}
+
+message Rates {
+  repeated Rate data = 1;
+}
+
+// TaxMeta message
+message TaxMeta {
+  string description = 1;
+  double rate_value = 2;
+  // Additional tags for the tax
+  repeated string tags = 3;
+}
+
+// Tax message
+message Tax {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Database independent unique external key. It cannot be modified after creation.
+  string code = 2;
+  TaxMeta tax_meta = 3;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString tax_map = 4;
+  // Timestamp of data creation
+  string time_stamp = 5;
+}
+
+message Taxes {
+  repeated Tax data = 1;
+}
+
+// ToolMeta message
+message ToolMeta {
+  string serial_number = 1;
+  string notes = 2;
+  bool inactive = 3;
+  // Additional tags for the tool
+  repeated string tags = 4;
+}
+
+// Tool message
+message Tool {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: SER1731101982N123 ("SER" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // The description of the tool.
+  string description = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // Reference to <a href="#Product">Product</a>.Code
+  string product_code = 4;
+  repeated Event events = 5;
+  ToolMeta tool_meta = 6;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString tool_map = 7;
+  // Timestamp of data creation
+  string time_stamp = 8;
+}
+
+message Tools {
+  repeated Tool data = 1;
+}
+
+// Trans Worksheet message
+message Worksheet {
+  // Distance (km)
+  double distance = 1;
+  // Repair time (hour)
+  double repair = 2;
+  // Total time (hour)
+  double total = 3;
+  // Worksheet justification
+  string notes = 4;
+}
+
+// Trans Rent message
+message Rent {
+  // Holidays (day)
+  double holiday = 1;
+  // Bad tool / machine (hour)
+  double bad_tool = 2;
+  // Other non-eligible
+  double other = 3;
+  // Rent justification
+  string notes = 4;
+}
+
+// TransInvoice message
+message Invoice {
+  string company_name = 1;
+  string company_address = 2;
+  string company_tax_number = 3;
+  string customer_name = 4;
+  string customer_address = 5;
+  string customer_tax_number = 6;
+}
+
+// TransMeta message
+message TransMeta {
+  // ISO 8601 date-time
+  string due_time = 1;
+  string ref_number = 2;
+  // ENUM field.
+  PaidType paid_type = 3;
+  bool tax_free = 4;
+  bool paid = 5;
+  double rate = 6;
+  bool closed = 7;
+  // ENUM field.
+  TransStatus status = 8;
+  // ENUM field.
+  TransState trans_state = 9;
+  string notes = 10;
+  string internal_notes = 11;
+  string report_notes = 12;
+  Worksheet worksheet = 13;
+  Rent rent = 14;
+  Invoice invoice = 15;
+  // Additional tags for the trans
+  repeated string tags = 16;
+}
+
+// Trans message
+message Trans {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: TRN1731101982N123 ("TRN" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  TransType trans_type = 3;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ISO 8601 date
+  string trans_date = 4;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  Direction direction = 5;
+  // Reference to <a href="#Trans">Trans</a>.Code
+  string trans_code = 6;
+  // Reference to <a href="#Customer">Customer</a>.Code
+  string customer_code = 7;
+  // Reference to <a href="#Employee">Employee</a>.Code
+  string employee_code = 8;
+  // Reference to <a href="#Project">Project</a>.Code
+  string project_code = 9;
+  // Reference to <a href="#Place">Place</a>.Code
+  string place_code = 10;
+  // Reference to <a href="#Currency">Currency</a>.Code
+  string currency_code = 11;
+  // Reference to <a href="#Auth">Auth</a>.Code
+  string auth_code = 12;
+  TransMeta trans_meta = 13;
+  // Flexible key-value map for additional metadata. The value is any json type.
+  JsonString trans_map = 14;
+  // Timestamp of data creation
+  string time_stamp = 15;
+}
+
+message Transactions {
+  repeated Trans data = 1;
+}
+
+// Config message
+message Config {
+  // Database primary key
+  // Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+  int64 id = 1;
+  // Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
+  // Example: CNF1731101982N123 ("CNF" + UNIX Time stamp + "N" + current ID)
+  string code = 2;
+  // <span class="text-red-500 font-bold">*</span> Required field.
+  // ENUM field.
+  ConfigType config_type = 3;
+  // The data of the config. The value is any json type.
+  oneof data {
+    ConfigMap map = 4;
+    ConfigShortcut shortcut = 5;
+    ConfigMessage message = 6;
+    ConfigPattern pattern = 7;
+    ConfigReport report = 8;
+    ConfigPrintQueue print_queue = 9;
+    JsonString config_data = 10;
+  }
+  // Timestamp of data creation
+  string time_stamp = 11;
+}
+
+message Configs {
+  repeated Config data = 1;
+}
+
+// ConfigMap message
+message ConfigMap {
+  string field_name = 1;
+  // ENUM field.
+  FieldType field_type = 2;
+  string description = 3;
+  // ENUM list if FieldType is ENUM
+  // ENUM field. Valid values: ADDRESS, BARCODE, CONTACT, CURRENCY, CUSTOMER, EMPLOYEE, EVENT, ITEM,
+  // MOVEMENT, PAYMENT, PLACE, PRICE, PRODUCT, PROJECT, RATE, TAX, TOOL, USER, TRANS,
+  // INVOICE, RECEIPT, ORDER, OFFER, WORKSHEET, RENT, DELIVERY,
+  // INVENTORY, WAYBILL, PRODUCTION, FORMULA, BANK, CASH
+  repeated string tags = 4;
+  // ENUM list if FieldType is FILTER
+  repeated MapFilter filter = 5;
+}
+
+// ConfigShortcutField message
+message ConfigShortcutField {
+  string field_name = 1;
+  string description = 2;
+  // ENUM field.
+  ShortcutField field_type = 3;
+  int64 order = 4;
+}
+
+// ConfigShortcut message
+message ConfigShortcut {
+  string shortcut_key = 1;
+  string description = 2;
+  string modul = 3;
+  string icon = 4;
+  // ENUM field.
+  ShortcutMethod method = 5;
+  string funcname = 6;
+  string address = 7;
+  repeated ConfigShortcutField fields = 8;
+}
+
+// ConfigMessage message
+message ConfigMessage {
+  string section = 1;
+  string key = 2;
+  string lang = 3;
+  string value = 4;
+}
+
+// ConfigPattern message
+message ConfigPattern {
+  // ENUM field.
+  TransType trans_type = 1;
+  string description = 2;
+  string notes = 3;
+  bool default_pattern = 4;
+}
+
+// ConfigPrintQueue message
+message ConfigPrintQueue {
+  string ref_type = 1;
+  string ref_code = 2;
+  int64 qty = 3;
+  string report_code = 4;
+  string auth_code = 5;
+  string time_stamp = 6;
+}
+
+// ConfigReport message
+message ConfigReport {
+  string report_key = 1;
+  string report_type = 2;
+  // ENUM field.
+  optional TransType trans_type = 3;
+  // ENUM field.
+  optional Direction direction = 4;
+  // ENUM field.
+  FileType file_type = 5;
+  string report_name = 6;
+  string description = 7;
+  string label = 8;
+  string template = 9;
+}

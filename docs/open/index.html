@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Nervatura HTTP Open API</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.min.css" />
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link href="../css/style.css" rel="stylesheet">
+  <link href="../css/open.css" rel="stylesheet">
+</head>
+
+<body>
+  <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto py-7 pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800 align-middle">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h3 class="font-semibold tracking-tight text-slate-900">
+              <a href="#example" class="text-slate-600 hover:text-slate-800">
+                Examples
+              </a>
+            </h>
+          </li>
+
+          <li class="mb-4">
+            <h3 class="font-semibold tracking-tight text-slate-900">
+              Paths
+            </h3>
+
+            <ul role="list" class="pl-3 mt-1 space-y-1">
+              <li>
+                <a href="#/auth" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-900 hover:text-slate-800">
+                  Auth
+                </a>
+              </li>
+
+              <li>
+                <a href="#/config" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Config
+                </a>
+              </li>
+
+              <li>
+                <a href="#/currency" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Currency
+                </a>
+              </li>
+
+              <li>
+                <a href="#/customer" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Customer
+                </a>
+              </li>
+
+              <li>
+                <a href="#/employee" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Employee
+                </a>
+              </li>
+
+              <li>
+                <a href="#/item" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Item
+                </a>
+              </li>
+
+              <li>
+                <a href="#/link" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Link
+                </a>
+              </li>
+
+              <li>
+                <a href="#/log" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Log
+                </a>
+              </li>
+
+              <li>
+                <a href="#/movement" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Movement
+                </a>
+              </li>
+
+              <li>
+                <a href="#/payment" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Payment
+                </a>
+              </li>
+
+              <li>
+                <a href="#/place" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Place
+                </a>
+              </li>
+
+              <li>
+                <a href="#/price" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Price
+                </a>
+              </li>
+
+              <li>
+                <a href="#/product" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Product
+                </a>
+              </li>
+
+              <li>
+                <a href="#/project" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Project
+                </a>
+              </li>
+
+              <li>
+                <a href="#/rate" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Rate
+                </a>
+              </li>
+
+              <li>
+                <a href="#/tax" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Tax
+                </a>
+              </li>
+
+              <li>
+                <a href="#/tool" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Tool
+                </a>
+              </li>
+
+              <li>
+                <a href="#/trans" onclick="setTimeout(location.reload.bind(location), 1)" 
+                  class="text-slate-600 hover:text-slate-800">
+                  Trans
+                </a>
+              </li>
+            </ul>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Nervatura Service
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            HTTP Open API
+          </h1>
+        </header>
+
+        <h3 id="example" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          <a class="text-blue-600 dark:text-blue-500 hover:underline" 
+            href="https://curl.se" target="_blank">Curl</a> examples
+        </h3>
+
+        <p class="mb-2">
+          Login to the demo database and get a token:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            curl -X 'POST' 'http://localhost:5000/api/v6/auth/login' \ <br />
+            &nbsp;&nbsp;-H 'accept: application/json' -H 'Content-Type: application/json' \ <br />  
+            &nbsp;&nbsp;-d '{"user_name": "admin", "password": "", "database": "demo"}'
+          </code>
+        </div>
+
+        <div id="swagger-ui"></div>
+        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.min.js" crossorigin></script>
+        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.min.js" crossorigin></script>
+        <script>
+          window.onload = function () {
+            const ui = SwaggerUIBundle({
+              url: './openapi.yml',
+              dom_id: '#swagger-ui',
+              deepLinking: true,
+              docExpansion: 'none',
+              //presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+              //plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+              //layout: 'StandaloneLayout',
+            });
+            window.ui = ui;
+          };
+        </script>
+
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../cli/" class="text-base font-semibold text-slate-900 hover:underline">
+                CLI and CGO API
+              </a>
+            </dd>
+          </div>
+
+          <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../grpc/" class="text-base font-semibold text-slate-900 hover:underline">
+                gRPC API
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

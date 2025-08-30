@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nervatura CLI and CGO API</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="../css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#cli" class="text-slate-600 hover:text-slate-800">
+                CLI API
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#cli-examples" class="text-slate-600 hover:text-slate-800">
+                CLI examples
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#cgo" class="text-slate-600 hover:text-slate-800">
+                CGO API
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#cgo-examples" class="text-slate-600 hover:text-slate-800">
+                CGO example
+              </a>
+            </h2>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Nervatura Service
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            CLI and CGO API
+          </h1>
+        </header>
+
+        <p class="mt-6 mb-3">The functions of the CLI and CGO interfaces are the same, the difference is in the way they are used.</p>
+
+        <h3 id="cli" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          CLI command line API
+        </h3>
+
+        <p class="mb-2">
+          Data retrieval and operations from the command line locally in shared memory. To access the program remotely from the 
+          command line, you can use <a class="text-blue-600 dark:text-blue-500 hover:underline" 
+          href="https://curl.se" target="_blank">Curl</a> (HTTP API) or <a class="text-blue-600 dark:text-blue-500 hover:underline" 
+          href="https://github.com/fullstorydev/grpcurl" target="_blank">gRPCurl</a> (gRPC API). Program usage:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            <ul role="list">
+              <li class="py-2">
+                <p>-c (command string)</p> 
+                Available commands: server, <a href="#cgo_create" class="text-blue-600 dark:text-blue-500 hover:underline" >create</a>, 
+                <a href="#cgo_update" class="text-blue-600 dark:text-blue-500 hover:underline" >update</a>, 
+                <a href="#cgo_delete" class="text-blue-600 dark:text-blue-500 hover:underline" >delete</a>, 
+                <a href="#cgo_get" class="text-blue-600 dark:text-blue-500 hover:underline" >get</a>, 
+                <a href="#cgo_query" class="text-blue-600 dark:text-blue-500 hover:underline" >query</a>, 
+                <a href="#cgo_database" class="text-blue-600 dark:text-blue-500 hover:underline" >database</a>, 
+                <a href="#cgo_function" class="text-blue-600 dark:text-blue-500 hover:underline" >function</a>,
+                <a href="#cgo_view" class="text-blue-600 dark:text-blue-500 hover:underline" >view</a>,
+                <a href="#cgo_reset" class="text-blue-600 dark:text-blue-500 hover:underline" >reset</a> (default "server")
+              </li>
+              <li class="py-2">
+                <p>-m (model string)</p> 
+                Available models: auth, config, currency, customer, employee, item, link, log, movement, payment, place, price, product, 
+                project, rate, tax, tool, trans
+              </li>
+              <li class="py-2">
+                <p>-o (options string)</p> 
+                Options JSON Object string. Required for the following commands: create, update, delete, get, query, database, function, view, reset
+              </li>
+              <li class="py-2">
+                <p>-d (data string)</p> 
+                Data JSON Object string. Required for the following commands: create, update
+              </li>
+            </ul>
+          </code>
+        </div>
+
+        <h3 id="cli-examples" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          CLI examples
+        </h3>
+
+        <p class="mb-2">
+          Create a new <a href="../grpc/#Customer" class="text-blue-600 dark:text-blue-500 hover:underline" >customer</a> 
+          (Docker container). Result the full customer data:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker exec -i nervatura /nervatura \ <br />
+            &nbsp;&nbsp;-c create -m customer -o '{"alias":"demo"}' -d '{"customer_name":"CLI Test"}'
+          </code>
+        </div>
+
+        <p class="mb-2">
+          Update a <a href="../grpc/#Customer" class="text-blue-600 dark:text-blue-500 hover:underline" >customer</a> 
+          data (Windows PowerShell):
+        </p>
+        
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            & "C:\Program Files\Nervatura\nervatura.exe" \ <br />
+            &nbsp;&nbsp;-c update -m customer \ -o '{"alias":"demo","code":"CUS0000000000N2"}' \ <br />
+            &nbsp;&nbsp;-d '{"customer_meta":{"account":"1234567890"}}'
+          </code>
+        </div>
+
+        <p class="mb-2">
+          Get a <a href="../grpc/#Customer" class="text-blue-600 dark:text-blue-500 hover:underline" >customer</a> 
+          data by code (Linux Snap). The customer code and database ID can also be specified.
+        </p>
+        
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            /snap/nervatura/current/nervatura \ <br />
+            &nbsp;&nbsp;-c get -m customer -o '{"alias":"demo", "code":"CUS0000000000N2"}'
+          </code>
+        </div>
+
+        <p class="mb-2">
+          Query customers by query parameters (Node NPM). Possible filter parameters can be found in the 
+          <a href="../open/#/customer/get_customer" class="text-blue-600 dark:text-blue-500 hover:underline" >Open API</a> 
+          or <a href="../grpc/#CustomerQuery" class="text-blue-600 dark:text-blue-500 hover:underline" >gRPC</a> documentation.
+        </p>
+        
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            ./node_modules/nervatura/bin/nervatura \ <br />
+            &nbsp;&nbsp;-c query -m customer -o '{"alias":"demo", "customer_type":"CUSTOMER_COMPANY"}'
+          </code>
+        </div>
+
+        <h3 id="cgo" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          CGO API
+        </h3>
+
+        <p class="mb-4 text-sm">The CGO API a standard shared object binary file (.so or .dll) exposing Nervatura functions as a C-style APIs. 
+          It can be called from C, Python, Ruby, Node, Java, Lua, Dart, C#. Supported operating systems: Linux and Windows x64.</p>
+
+        <ul role="list" class="w-full text-sm text-left rtl:text-right text-gray-600 dark:text-gray-400 border border-slate-200">
+          <li id="cgo_create" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Create</span>(<span class="text-amber-700 dark:text-amber-700 italic">model</span> char/string, 
+            <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string, 
+            <span class="text-amber-700 dark:text-amber-700 italic">data</span> char/string) 
+            <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Create a new model data.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">model</span>: New data type name. Valid values:
+                  auth, config, currency, customer, employee, item, link, movement, payment, place, price, product, 
+                  project, rate, tax, tool, trans</li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. Its optional content is the alias field, 
+                the value of which is the alias name of the database. If not specified, the value of the NT_DEFAULT_ALIAS 
+                environment variable will be used, or an error message will be returned if none is provided. 
+                Example: <code class="text-green-600 dark:text-green-600">'{"alias":"demo"}'</code> <br />
+                The contents of options can be used to override the value of any config setting and its environment variables. For example, 
+                not only the alias name of the database, but also its connection can be specified: <br />
+                <code class="text-green-600 dark:text-green-600">'{"alias": "demo", "NT_ALIAS_DEMO": "sqlite://file:data/demo.db?cache=shared&mode=rwc"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">data</span>: JSON Object string. Specifying the mandatory data of the new data. Optional 
+                data will be stored with their default values. The code field is the database independent unique external key. 
+                If not specified, it is generated on creation. It cannot be modified after creation. 
+                Example: <code class="text-green-600 dark:text-green-600">'{"customer_name":"CLI Test"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: JSON Object string. 
+                The success result is all data of the created data type:
+                <a href="../grpc/#Auth" class="text-blue-600 dark:text-blue-500 hover:underline" >Auth</a>,
+                <a href="../grpc/#Config" class="text-blue-600 dark:text-blue-500 hover:underline" >Config</a>,
+                <a href="../grpc/#Currency" class="text-blue-600 dark:text-blue-500 hover:underline" >Currency</a>,
+                <a href="../grpc/#Customer" class="text-blue-600 dark:text-blue-500 hover:underline" >Customer</a>,
+                <a href="../grpc/#Employee" class="text-blue-600 dark:text-blue-500 hover:underline" >Employee</a>,
+                <a href="../grpc/#Item" class="text-blue-600 dark:text-blue-500 hover:underline" >Item</a>,
+                <a href="../grpc/#Link" class="text-blue-600 dark:text-blue-500 hover:underline" >Link</a>,
+                <a href="../grpc/#Movement" class="text-blue-600 dark:text-blue-500 hover:underline" >Movement</a>,
+                <a href="../grpc/#Payment" class="text-blue-600 dark:text-blue-500 hover:underline" >Payment</a>,
+                <a href="../grpc/#Place" class="text-blue-600 dark:text-blue-500 hover:underline" >Place</a>,
+                <a href="../grpc/#Price" class="text-blue-600 dark:text-blue-500 hover:underline" >Price</a>,
+                <a href="../grpc/#Product" class="text-blue-600 dark:text-blue-500 hover:underline" >Product</a>,
+                <a href="../grpc/#Project" class="text-blue-600 dark:text-blue-500 hover:underline" >Project</a>,
+                <a href="../grpc/#Rate" class="text-blue-600 dark:text-blue-500 hover:underline" >Rate</a>,
+                <a href="../grpc/#Tax" class="text-blue-600 dark:text-blue-500 hover:underline" >Tax</a>,
+                <a href="../grpc/#Tool" class="text-blue-600 dark:text-blue-500 hover:underline" >Tool</a>,
+                <a href="../grpc/#Trans" class="text-blue-600 dark:text-blue-500 hover:underline" >Trans</a>.
+                If error occurs, the result is an error code and message.
+              </li>
+            </ul>
+          </li>
+          <li id="cgo_update" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Update</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">model</span> char/string, 
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string, 
+              <span class="text-amber-700 dark:text-amber-700 italic">data</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Update an existing model data.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">model</span>: Valid values:
+                auth, config, currency, customer, employee, item, link, movement, payment, place, price, product, 
+                project, rate, tax, tool, trans</li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                To identify the data, you can specify the database identifier or the code value, but at least one of them is required. <br />
+                Its optional content is the alias field, the value of which is the alias name of the database. If not specified, 
+                the value of the NT_DEFAULT_ALIAS environment variable will be used, or an error message will be returned if none 
+                is provided. The contents of options can be used to override the value of any config setting and its environment variables.<br />
+                Example: <code class="text-green-600 dark:text-green-600">'{"alias":"demo", "code":"CUS0000000000N2"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">data</span>: JSON Object string. 
+                Any field and meta field can be modified individually (for example, customer_name, customer_meta.account), but for 
+                complex and custom map data and arrays, the entire data must always be provided (for example, addresses, customer_map).
+                Example: <code class="text-green-600 dark:text-green-600">'{"customer_meta":{"account":"1234567890"}}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: If error occurs, the 
+                result is an error code and message, otherwise the success code and message.
+              </li> 
+            </ul>
+          </li>
+          <li id="cgo_delete" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Delete</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">model</span> char/string, 
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Delete an existing model data.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">model</span>: Valid values:
+                auth, config, currency, customer, employee, item, link, movement, payment, place, price, product, 
+                project, rate, tax, tool, trans</li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                To identify the data, you can specify the database identifier or the code value, but at least one of them is required. <br />
+                Its optional content is the alias field, the value of which is the alias name of the database. If not specified, 
+                the value of the NT_DEFAULT_ALIAS environment variable will be used, or an error message will be returned if none 
+                is provided. The contents of options can be used to override the value of any config setting and its environment variables.<br />
+                Example: <code class="text-green-600 dark:text-green-600">'{"alias":"demo", "code":"CUS0000000000N2"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: If error occurs, the 
+                result is an error code and message, otherwise the success code and message.
+              </li> 
+            </ul>
+          </li>
+          <li id="cgo_get" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Get</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">model</span> char/string, 
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Get a model data.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">model</span>: Valid values:
+                auth, config, currency, customer, employee, item, link, log, movement, payment, place, price, product, 
+                project, rate, tax, tool, trans</li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                To identify the data, you can specify the database identifier or the code value, but at least one of them is required. <br />
+                Its optional content is the alias field, the value of which is the alias name of the database. If not specified, 
+                the value of the NT_DEFAULT_ALIAS environment variable will be used, or an error message will be returned if none 
+                is provided. The contents of options can be used to override the value of any config setting and its environment variables.<br />
+                Example: <code class="text-green-600 dark:text-green-600">'{"alias":"demo", "code":"CUS0000000000N2"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: JSON Object string. 
+                The success result is the data of the specified model:
+                <a href="../grpc/#Auth" class="text-blue-600 dark:text-blue-500 hover:underline" >Auth</a>,
+                <a href="../grpc/#Config" class="text-blue-600 dark:text-blue-500 hover:underline" >Config</a>,
+                <a href="../grpc/#Currency" class="text-blue-600 dark:text-blue-500 hover:underline" >Currency</a>,
+                <a href="../grpc/#Customer" class="text-blue-600 dark:text-blue-500 hover:underline" >Customer</a>,
+                <a href="../grpc/#Employee" class="text-blue-600 dark:text-blue-500 hover:underline" >Employee</a>,
+                <a href="../grpc/#Item" class="text-blue-600 dark:text-blue-500 hover:underline" >Item</a>,
+                <a href="../grpc/#Link" class="text-blue-600 dark:text-blue-500 hover:underline" >Link</a>,
+                <a href="../grpc/#Log" class="text-blue-600 dark:text-blue-500 hover:underline" >Log</a>,
+                <a href="../grpc/#Movement" class="text-blue-600 dark:text-blue-500 hover:underline" >Movement</a>,
+                <a href="../grpc/#Payment" class="text-blue-600 dark:text-blue-500 hover:underline" >Payment</a>,
+                <a href="../grpc/#Place" class="text-blue-600 dark:text-blue-500 hover:underline" >Place</a>,
+                <a href="../grpc/#Price" class="text-blue-600 dark:text-blue-500 hover:underline" >Price</a>,
+                <a href="../grpc/#Product" class="text-blue-600 dark:text-blue-500 hover:underline" >Product</a>,
+                <a href="../grpc/#Project" class="text-blue-600 dark:text-blue-500 hover:underline" >Project</a>,
+                <a href="../grpc/#Rate" class="text-blue-600 dark:text-blue-500 hover:underline" >Rate</a>,
+                <a href="../grpc/#Tax" class="text-blue-600 dark:text-blue-500 hover:underline" >Tax</a>,
+                <a href="../grpc/#Tool" class="text-blue-600 dark:text-blue-500 hover:underline" >Tool</a>,
+                <a href="../grpc/#Trans" class="text-blue-600 dark:text-blue-500 hover:underline" >Trans</a>.
+                If error occurs, the result is an error code and message.
+              </li> 
+            </ul>
+          </li>
+          <li id="cgo_query" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Query</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">model</span> char/string, 
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Query data by query parameters.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">model</span>: Valid values:
+                auth, config, currency, customer, employee, item, link, log, movement, payment, place, price, product, 
+                project, rate, tax, tool, trans</li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                Possible filter parameters can be found in the 
+                <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline" >Open API</a> or 
+                <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline" >gRPC</a> documentation. <br />
+                Its optional content is the alias field, the value of which is the alias name of the database. If not specified, 
+                the value of the NT_DEFAULT_ALIAS environment variable will be used, or an error message will be returned if none 
+                is provided. The contents of options can be used to override the value of any config setting and its environment variables.<br />
+                Example: <code class="text-green-600 dark:text-green-600">
+                  '{"alias":"demo", "customer_type":"CUSTOMER_COMPANY", "limit":10}'
+                </code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: JSON Array string. 
+                The success result is the array of data of the specified model:
+                <a href="../grpc/#Auth" class="text-blue-600 dark:text-blue-500 hover:underline" >Auth</a>,
+                <a href="../grpc/#Config" class="text-blue-600 dark:text-blue-500 hover:underline" >Config</a>,
+                <a href="../grpc/#Currency" class="text-blue-600 dark:text-blue-500 hover:underline" >Currency</a>,
+                <a href="../grpc/#Customer" class="text-blue-600 dark:text-blue-500 hover:underline" >Customer</a>,
+                <a href="../grpc/#Employee" class="text-blue-600 dark:text-blue-500 hover:underline" >Employee</a>,
+                <a href="../grpc/#Item" class="text-blue-600 dark:text-blue-500 hover:underline" >Item</a>,
+                <a href="../grpc/#Link" class="text-blue-600 dark:text-blue-500 hover:underline" >Link</a>,
+                <a href="../grpc/#Log" class="text-blue-600 dark:text-blue-500 hover:underline" >Log</a>,
+                <a href="../grpc/#Movement" class="text-blue-600 dark:text-blue-500 hover:underline" >Movement</a>,
+                <a href="../grpc/#Payment" class="text-blue-600 dark:text-blue-500 hover:underline" >Payment</a>,
+                <a href="../grpc/#Place" class="text-blue-600 dark:text-blue-500 hover:underline" >Place</a>,
+                <a href="../grpc/#Price" class="text-blue-600 dark:text-blue-500 hover:underline" >Price</a>,
+                <a href="../grpc/#Product" class="text-blue-600 dark:text-blue-500 hover:underline" >Product</a>,
+                <a href="../grpc/#Project" class="text-blue-600 dark:text-blue-500 hover:underline" >Project</a>,
+                <a href="../grpc/#Rate" class="text-blue-600 dark:text-blue-500 hover:underline" >Rate</a>,
+                <a href="../grpc/#Tax" class="text-blue-600 dark:text-blue-500 hover:underline" >Tax</a>,
+                <a href="../grpc/#Tool" class="text-blue-600 dark:text-blue-500 hover:underline" >Tool</a>,
+                <a href="../grpc/#Trans" class="text-blue-600 dark:text-blue-500 hover:underline" >Trans</a>.
+                If error occurs, the result is an error code and message.
+              </li> 
+            </ul>
+          </li>
+          <li id="cgo_view" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">View</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Get the data of a predefined view.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                Required values ​​are the name of the view. Additionally, you can specify the filter 
+                (valid SQL where clause without the where keyword), order by, limit and offset parameters. <br />
+                Valid predefined view names are:<ul class="list-disc list-inside text-xs pl-6">
+                  <li>VIEW_AUTH_MAP, VIEW_AUTH_VIEW</li>
+                  <li>VIEW_CONFIG_DATA, VIEW_CONFIG_MAP, VIEW_CONFIG_MESSAGE, VIEW_CONFIG_PATTERN, VIEW_CONFIG_PRINT_QUEUE, VIEW_CONFIG_REPORT, VIEW_CONFIG_SHORTCUT</li>
+                  <li>VIEW_CURRENCY_MAP, VIEW_CURRENCY_TAGS, VIEW_CURRENCY_VIEW</li>
+                  <li>VIEW_CUSTOMER_ADDRESSES, VIEW_CUSTOMER_CONTACTS, VIEW_CUSTOMER_EVENTS, VIEW_CUSTOMER_MAP, VIEW_CUSTOMER_TAGS, VIEW_CUSTOMER_VIEW</li>
+                  <li>VIEW_EMPLOYEE_EVENTS, VIEW_EMPLOYEE_MAP, VIEW_EMPLOYEE_TAGS, VIEW_EMPLOYEE_VIEW</li>
+                  <li>VIEW_ITEM_MAP, VIEW_ITEM_TAGS, VIEW_ITEM_VIEW</li>
+                  <li>VIEW_LINK_MAP, VIEW_LINK_TAGS, VIEW_LINK_VIEW</li>
+                  <li>VIEW_MOVEMENT_MAP, VIEW_MOVEMENT_TAGS, VIEW_MOVEMENT_VIEW</li>
+                  <li>VIEW_PAYMENT_MAP, VIEW_PAYMENT_TAGS, VIEW_PAYMENT_VIEW</li>
+                  <li>VIEW_PLACE_CONTACTS, VIEW_PLACE_MAP, VIEW_PLACE_TAGS, VIEW_PLACE_VIEW</li>
+                  <li>VIEW_PRICE_MAP, VIEW_PRICE_TAGS, VIEW_PRICE_VIEW</li>
+                  <li>VIEW_PRODUCT_EVENTS, VIEW_PRODUCT_MAP, VIEW_PRODUCT_TAGS, VIEW_PRODUCT_VIEW</li>
+                  <li>VIEW_PROJECT_ADDRESSES, VIEW_PROJECT_CONTACTS, VIEW_PROJECT_EVENTS, VIEW_PROJECT_MAP, VIEW_PROJECT_TAGS, VIEW_PROJECT_VIEW</li>
+                  <li>VIEW_RATE_MAP, VIEW_RATE_TAGS, VIEW_RATE_VIEW</li>
+                  <li>VIEW_TAX_MAP, VIEW_TAX_TAGS, VIEW_TAX_VIEW</li>
+                  <li>VIEW_TOOL_EVENTS, VIEW_TOOL_MAP, VIEW_TOOL_TAGS, VIEW_TOOL_VIEW</li>
+                  <li>VIEW_TRANS_MAP, VIEW_TRANS_TAGS, VIEW_TRANS_VIEW</li>
+                </ul>
+                Its optional content is the alias field, the value of which is the alias name of the database. If not specified, 
+                the value of the NT_DEFAULT_ALIAS environment variable will be used, or an error message will be returned if none is provided. 
+                The contents of options can be used to override the value of any config setting and its environment variables. <br />
+                Example: <code class="text-green-600 dark:text-green-600">
+                  '{"alias":"demo", "name": "VIEW_CUSTOMER_EVENTS", "filter":"subject like '%visit%' and place='City1'", "limit":10}'
+                </code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: If error occurs, the 
+                result is an error code and message, otherwise the success code and result of the view.
+              </li>
+            </ul>
+          </li>
+          <li id="cgo_function" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Function</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Execute a server side function and return the result. For example, get a PDF invoice, send email or get a product price.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                Required values ​​are the name of the function to be executed and its parameters. Its optional content is the alias field, 
+                the value of which is the alias name of the database. If not specified, the value of the NT_DEFAULT_ALIAS environment variable 
+                will be used, or an error message will be returned if none is provided. The contents of options can be used to override the 
+                value of any config setting and its environment variables.
+                <p class="pt-2">
+                  Report install example: <code class="text-green-600 dark:text-green-600">
+                    '{"alias":"demo", "name": "report_install", 
+                    "values": {"report_key":"ntr_invoice_en"}}'
+                  </code>
+                </p>
+                <p class="pt-2">
+                  PDF report example: <code class="text-green-600 dark:text-green-600">
+                    '{"alias":"demo", "name": "report_get", 
+                    "values": {"report_key":"ntr_invoice_en", "code":"INV0000000000N5", "output":"base64", "orientation":"p", "size":"a4"}}'
+                  </code>
+                </p>
+                <p class="pt-2">
+                  CSV report example: <code class="text-green-600 dark:text-green-600">
+                    '{"alias":"demo", "name": "report_get", 
+                    "values": {"report_key":"csv_vat_en", "filters":{"date_from":"2025-01-01", "date_to":"2025-01-31", "curr":"EUR"}}}'
+                  </code>
+                </p>
+                <p class="pt-2">
+                  Price example: <code class="text-green-600 dark:text-green-600">
+                    '{"alias":"demo", "name": "product_price", 
+                    "values": {"product_code":"PRD0000000000N2", "currency_code":"EUR", "price_type":"PRICE_CUSTOMER"}}'
+                  </code>
+                </p>
+                <p class="pt-2">
+                  Email sending: <code class="text-green-600 dark:text-green-600">
+                    '{"alias":"demo", "name": "email_send", 
+                    "values": {"provider":"smtp", 
+                    "email":{"from":"info@example.com", "recipients":[{"email":"sample@company.com"}], 
+                    "subject":"Basic email", "text":"Sending a simple text email"}}}'
+                  </code>
+                </p>
+                <p class="pt-2">
+                  Email sending with attached PDF: <code class="text-green-600 dark:text-green-600">
+                    '{"alias":"demo", "name": "email_send", 
+                    "values": {"provider":"smtp", 
+                    "email":{"from":"info@example.com", "recipients":[{"email":"sample@company.com"}], 
+                    "subject":"Demo Invoice", "text":"Email sending with attached invoice",
+                    "attachments":[{"filename":"invoice.pdf", "report_key":"ntr_invoice_en", "code":"INV0000000000N5", "orientation":"p", "size":"a4"}]}}}'
+                  </code>
+                </p>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: If error occurs, the 
+                result is an error code and message, otherwise the success code and result of the function.
+              </li>
+            </ul>
+            <p class="pt-2">
+              Valid function names and parameter values:
+              <ul class="list-disc list-inside">
+                <li><b>report_install</b>
+                  <ul class="list-disc list-inside pl-3">
+                    <li><i>report_key</i> :: string :: required</li>
+                    <li><i>report_dir</i> :: string :: optional</li>
+                  </ul>
+                </li>
+                <li><b>report_list</b>
+                  <ul class="list-disc list-inside pl-3">
+                    <li><i>report_dir</i> :: string :: optional</li>
+                    <li><i>label</i> :: string :: optional</li>
+                  </ul>
+                </li>
+                <li><b>report_get</b>
+                  <ul class="list-disc list-inside pl-3">
+                    <li><i>report_key</i> :: string :: optional</li>
+                    <li><i>report_id</i> :: integer :: optional</li>
+                    <li><i>template</i> :: string :: optional</li>
+                    <li><i>code</i> :: string :: optional</li>
+                    <li><i>filters</i> :: JSON Object string :: optional</li>
+                    <li><i>output</i> :: enum[data, pdf, xml, base64] :: optional</li>
+                    <li><i>orientation</i> :: enum[p, l] :: optional</li>
+                    <li><i>size</i> :: enum[a3, a4, a5, letter, legal] :: optional</li>
+                  </ul>
+                </li>
+                <li><b>email_send</b>
+                  <ul class="list-disc list-inside pl-3">
+                    <li><i>email</i> :: map :: required
+                      <ul class="list-disc list-inside pl-3">
+                        <li><i>from</i> :: string :: optional</li>
+                        <li><i>recipients</i> :: JSON Object Array string :: required
+                          <ul class="list-disc list-inside pl-3">
+                            <li><i>email</i> :: string :: required</li>
+                          </ul>
+                        </li>
+                        <li><i>subject</i> :: string :: required</li>
+                        <li><i>text</i> :: string :: optional</li>
+                        <li><i>html</i> :: string :: optional</li>
+                        <li><i>attachments</i> :: JSON Object Array string :: optional
+                          <ul class="list-disc list-inside pl-3">
+                            <li><i>filename</i> :: string :: optional</li>
+                            <li><i>report_key</i> :: string :: optional</li>
+                            <li><i>report_id</i> :: integer :: optional</li>
+                            <li><i>template</i> :: string :: optional</li>
+                            <li><i>code</i> :: string :: optional</li>
+                            <li><i>orientation</i> :: enum[p, l] :: optional</li>
+                            <li><i>size</i> :: enum[a3, a4, a5, letter, legal] :: optional</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><i>provider</i> :: enum[smtp] :: optional</li>
+                  </ul>
+                </li>
+                <li><b>product_price</b>
+                  <ul class="list-disc list-inside pl-3">
+                    <li><i>product_code</i> :: string :: required</li>
+                    <li><i>currency_code</i> :: string :: required</li>
+                    <li><i>price_type</i> :: enum[PRICE_CUSTOMER, PRICE_SUPPLIER] :: required</li>
+                    <li><i>qty</i> :: float :: optional</li>
+                    <li><i>posdate</i> :: string :: optional</li>
+                    <li><i>tag</i> :: string :: optional</li>
+                  </ul>
+                </li>                
+              </ul>
+            </p>
+          </li>
+          <li id="cgo_reset" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">ResetPassword</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Reset a user password and result a new password
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                Required values ​​are the code of the user to be reset. Its optional content is the alias field, 
+                the value of which is the alias name of the database. If not specified, the value of the NT_DEFAULT_ALIAS environment variable 
+                will be used, or an error message will be returned if none is provided. The contents of options can be used to override the 
+                value of any config setting and its environment variables. <br />
+                Example: <code class="text-green-600 dark:text-green-600">'{"alias":"demo", "code":"USR0000000000N2"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: If error occurs, the 
+                result is an error code and message, otherwise the success code and a new password.
+              </li>
+            </ul>
+          </li>
+          <li id="cgo_database" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Database</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Create a new Nervatura database schema.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                Required values ​​are the alias name of the database to be created and whether it should contain demo data. 
+                Example: <code class="text-green-600 dark:text-green-600">'{"alias":"demo", "demo":true}'</code> <br />
+                The contents of options can be used to override the value of any config setting and its environment variables. 
+                For example, not only the alias name of the database, but also its connection can be specified: <br />
+                <code class="text-green-600 dark:text-green-600">'{"alias": "demo", "demo":true, "NT_ALIAS_DEMO": "sqlite://file:data/demo.db?cache=shared&mode=rwc"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: If error occurs, the 
+                result is an error code and message, otherwise the success code and message.
+              </li>
+            </ul>
+          </li>
+          <li id="cgo_upgrade" class="text-gray-600 bg-white dark:bg-slate-200 px-6 py-3">
+            <span class="font-bold">Upgrade</span>(
+              <span class="text-amber-700 dark:text-amber-700 italic">options</span> char/string) 
+              <span class="text-amber-700 dark:text-amber-700 italic">result</span> char/string
+          </li>
+          <li class="text-gray-600 bg-gray-50 dark:bg-slate-50 px-6 py-3">
+            Upgrade the Nervatura database schema to the latest version.
+            <ul class="list-disc list-inside">
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">options</span>: JSON Object string. 
+                Required values ​​are the alias name of the database to be upgraded. 
+                Example: <code class="text-green-600 dark:text-green-600">'{"alias":"demo"}'</code> <br />
+                The contents of options can be used to override the value of any config setting and its environment variables. 
+                For example, not only the alias name of the database, but also its connection can be specified: <br />
+                <code class="text-green-600 dark:text-green-600">'{"alias": "demo", "NT_ALIAS_DEMO": "sqlite://file:data/demo.db?cache=shared&mode=rwc"}'</code>
+              </li>
+
+              <li class="pt-2"><span class="text-amber-700 dark:text-amber-700 italic">result</span>: If error occurs, the 
+                result is an error code and message, otherwise the success code and message.
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3 id="cgo-examples" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          CGO example
+        </h3>
+
+        <p class="mb-2">
+          Python LoadLibrary example:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            <pre>
+<span class="text-sky-600 dark:text-sky-600">import</span> ctypes
+<span class="text-sky-600 dark:text-sky-600">import</span> json
+
+ntura = ctypes.cdll.LoadLibrary(<span class="text-yellow-600 dark:text-yellow-600">"path/to/nervatura.so"</span> or <span class="text-yellow-600 dark:text-yellow-600">"path/to/nervatura.dll"</span>)
+
+<span class="text-sky-600 dark:text-sky-600">def</span> encodeOptions(data):
+  <span class="text-sky-600 dark:text-sky-600">return</span> json.dumps(data).encode(<span class="text-yellow-600 dark:text-yellow-600">"utf-8"</span>)
+
+<span class="text-sky-600 dark:text-sky-600">def</span> checkJson(data):
+  try:
+    jdata = json.loads(data)
+  except ValueError as err:
+    <span class="text-sky-600 dark:text-sky-600"></span>return</span> data
+  <span class="text-sky-600 dark:text-sky-600">return</span> jdata
+
+<span class="text-sky-600 dark:text-sky-600">def</span> decodeResult(resultStr):
+  result = checkJson(resultStr)
+  <span class="text-sky-600 dark:text-sky-600">if</span> type(result) == dict:
+    <span class="text-sky-600 dark:text-sky-600">if</span> <span class="text-yellow-600 dark:text-yellow-600">"code"</span> <span class="text-sky-600 dark:text-sky-600">in</span> result:
+      <span class="text-sky-600 dark:text-sky-600">if</span> result[<span class="text-yellow-600 dark:text-yellow-600">"code"</span>] <span class="text-sky-600 dark:text-sky-600">not</span> <span class="text-sky-600 dark:text-sky-600">in</span> [200, 201, 204]:
+        <span class="text-sky-600 dark:text-sky-600">return</span> [None, result[<span class="text-yellow-600 dark:text-yellow-600">"data"</span>]]
+  <span class="text-sky-600 dark:text-sky-600">return</span> [result, None]
+
+<span class="text-sky-600 dark:text-sky-600">def</span> Get(model, options):
+  Get = ntura.Get
+  Get.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+  Get.restype = ctypes.c_void_p
+  result = ctypes.string_at(Get(model.encode(<span class="text-yellow-600 dark:text-yellow-600">"utf-8"</span>), encodeOptions(options))).decode(<span class="text-yellow-600 dark:text-yellow-600">"utf-8"</span>)
+  <span class="text-sky-600 dark:text-sky-600">return</span> decodeResult(result)
+
+result, err = Get(<span class="text-yellow-600 dark:text-yellow-600">"customer"</span>, {<span class="text-yellow-600 dark:text-yellow-600">"alias":"demo"</span>, <span class="text-yellow-600 dark:text-yellow-600">"code":"CUS0000000000N2"</span>})
+
+<span class="text-sky-600 dark:text-sky-600">if</span> err:
+  print("Get error: "+err)
+<span class="text-sky-600 dark:text-sky-600">else</span>:
+  print(result)
+            </pre>
+          </code>
+        </div>
+
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../screenshots/" class="text-base font-semibold text-slate-900 hover:underline">
+                Screenshots and videos
+              </a>
+            </dd>
+          </div>
+
+          <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../open/" class="text-base font-semibold text-slate-900 hover:underline">
+                HTTP Open API
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </div>
+</main>
+</body>
+</html>

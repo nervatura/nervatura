@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nervatura Object Model</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="../css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#overview" class="text-slate-600 hover:text-slate-800">
+                Overview
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#objects" class="text-slate-600 hover:text-slate-800">
+                Objects
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#base-objects" class="text-slate-600 hover:text-slate-800">
+                Base objects
+              </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Nervatura
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            Object Model
+          </h1>
+        </header>
+
+        <h3 id="overview" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Overview
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          It is a general <b>open-data model</b>, which can store all information generated in the operation of a usual corporation. 
+          This covers all manufacturer, retailer and service companies (or governmental units) where the business operation can be defined 
+          and described within a <b>GOODS</b> (items, services to be sold, provided) - <b>CLIENT</b> (the recipient of goods) - 
+          <b>RESOURCE</b> (assets used to produce the goods) triangle.
+        </p>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-4">
+          <p class="mb-2">
+            The <b>open-data principle</b> regulates the access to our business data. The point is the logic of the data storage. It means that 
+            the data are defined for storage so, that those are compliant with an open data-model which could be accessed and interpreted 
+            by anyone. It doesn’t concern the physical storage of the data, that can be implemented according to one’s needs. However it 
+            should ensure that data can be managed safely according to published description. Retrieving, new data creation, possibility 
+            to export the entire data structure should be provided.
+          </p>
+          <p class="mb-2 italic">
+            What are the main advantages of open-data applications?
+          </p>
+          <ul class="list-disc list-inside">
+            <li class="mb-2   ">
+              <b>safety:</b> provided one’s have proper usage rights and physical access to a database, then will be able to interpret 
+              and process the data correctly without any help or permission from a third party. Information in the data becomes 
+              independent of any management system, its treatment is not tied to specific programs or technologies.
+            </li>
+            <li>
+              <b>efficiency and cost reduction:</b> the business management system can be developed and diversified in accordance with 
+              one’s needs. There is no need and pressure to be tied to a solution of any vendor, the most appropriate tools and programs 
+              can be selected for all tasks. The only criteria is that selected applications should be able to communicate and exchange 
+              data with each other or with a central database according to the open-data description. The elements of the system can at 
+              any time be flexibly developed or new ones added by choosing the best offers available on the market.
+            </li>
+          </ul>
+        </div>
+
+        <p class="mb-2 mt-4 text-base text-slate-600">
+          It is located between the application surfaces that are using and creating the data and the real data storage layer. It defines 
+          logical objects; data is stored in these freely defined attributes and in relations between them. Its flexible structure allows 
+          defining new properties or assigning events to our objects.
+        </p>
+        <p class="mb-2 text-base text-slate-600">
+          The number of objects is minimal, their structure is simple. It has an easy to learn, clear and straightforward logic. However 
+          it is capable to store the required data in structures. It ensures the possibility to attach defined type metadata of any kind 
+          to each object and also makes the objects linkable to each other arbitrarily.
+        </p>
+        <p class="mb-2 text-base text-slate-600">
+          The data model is independent from data storage layer. The data storage can be implemented in any way or with any device but as 
+          a main requirement the user of the data model must not sense this at all.
+        </p>
+
+        <h3 id="objects" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Objects
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Such <b></i>pre-defined functional roles</i></b> which can have any type of attributes, events can be attached to them as well as their 
+          elements can be attached to elements of other objects.
+        </p>
+        <div class="flex items-center justify-center w-full max-w-96 mx-auto bg-gray-50 p-1">
+          <img alt="Nervatura Object Model" src="../images/nom.svg" />
+        </div>
+
+        <h3 id="base-objects" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Base objects
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          <b>CUSTOMER</b> - all external partners of the company, including the buyer, consumer and supplier side
+        </p>
+        
+        <p class="mb-2 text-base text-slate-600">
+          <b>PRODUCT</b> - all raw materials, semi-finished and end-products that are related to our activity (as customer 
+          or vendor), produced by us as a manufacturer or offered as service
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          <b>EMPLOYEE, TOOL, PLACE</b> resources which are available for executing the activity and they contribute to it. 
+          These can be human resources (EMPLOYEE), material devices, tools, machines (TOOL) or financial, potentially 
+          infrastructural conditions such as warehouses, bank account, petty cash (PLACE)
+        </p>
+
+        <div class="flex items-center justify-center w-full max-w-auto mx-auto bg-gray-50 p-1">
+          <img alt="Object relations" src="../images/nom_rel.svg" />
+        </div>
+        
+
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../" class="text-base font-semibold text-slate-900 hover:underline">
+                Overview
+              </a>
+            </dd>
+          </div>
+
+          <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../install/" class="text-base font-semibold text-slate-900 hover:underline">
+                Installation
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </div>
+</main>
+</body>
+</html>

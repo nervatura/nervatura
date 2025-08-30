@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nervatura Installation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="../css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#docker" class="text-slate-600 hover:text-slate-800">
+                Docker image
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#snap" class="text-slate-600 hover:text-slate-800">
+                Snap package
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#npm" class="text-slate-600 hover:text-slate-800">
+                Node.js NPM
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#winget" class="text-slate-600 hover:text-slate-800">
+                Winget
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#prebuild" class="text-slate-600 hover:text-slate-800">
+                Prebuild binaries
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#custom" class="text-slate-600 hover:text-slate-800">
+                Custom build
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#configuration" class="text-slate-600 hover:text-slate-800">
+                Configuration Options
+              </a>
+            </h2>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Nervatura
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            Installation
+          </h1>
+        </header>
+
+        <h3 id="docker" class="mt-6 mb-3 text-base font-bold tracking-tight text-slate-900">
+          Docker image
+        </h3>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker pull nervatura/nervatura:latest
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Example:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker run -i -t --rm --name nervatura \ <br />
+            &nbsp;&nbsp;--env-file YOUR_ENV_FILE_PATH/.env \ <br />
+            &nbsp;&nbsp;-p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data \ <br />
+            &nbsp;&nbsp;nervatura/nervatura:latest
+          </code>
+        </div>
+
+        <h3 id="snap" class="mt-6 mb-3 text-base font-bold tracking-tight text-slate-900">
+          Snap package (Linux daemon)
+        </h3>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            sudo snap install nervatura
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Checking service status and last logs:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            systemctl status -l snap.nervatura.nervatura.service
+          </code>
+        </div>
+
+        <p class="mt-3 text-base text-slate-600">
+          Default snap data and http log path:  <code 
+            class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1"">/var/snap/nervatura/common</code>
+        </p>
+
+        <p class="mt-3 text-base text-slate-600">
+          The nervatura service starts by default. More examples:
+        </p>
+        <div class="pl-6 pt-2">
+          <div class="relative overflow-x-auto">
+            <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+              sudo systemctl stop<span 
+                class="text-green-600 italic">&nbsp;or&nbsp;</span>start<span 
+                class="text-green-600 italic">&nbsp;or&nbsp;</span>restart
+                snap.nervatura.nervatura.service
+            </code>
+          </div>
+          <div class="relative overflow-x-auto mt-1">
+            <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+              sudo systemctl disable <span 
+                class="text-green-600 italic">&nbsp;or&nbsp;</span> enable snap.nervatura.nervatura.service
+            </code>
+          </div>
+        </div>
+        <ul class="text-base text-slate-600 list-disc list-inside pl-6">
+          <li class="pt-2">
+            Stop the service and start the program with the system tray icon/menu:
+            <div class="relative overflow-x-auto pt-2">
+              <code class="mb-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                sudo snap install nervatura
+              </code>
+            </div>
+            <div class="relative overflow-x-auto pt-2">
+              <code class="mb-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                /snap/nervatura/current/nervatura -tray
+              </code>
+            </div>
+          </li>
+
+          <li class="pt-2">
+            Stop the service and start with the tray icon/menu as a background process. The (temporary) log file of the application 
+            must also be set, otherwise the info and error messages that have been continuously written to the screen until now will 
+            be lost. The new HTTP log file is required for file access reasons.
+            <div class="relative overflow-x-auto pt-2">
+              <code class="mb-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                sudo systemctl stop snap.nervatura.nervatura.service
+              </code>
+            </div>
+            <div class="relative overflow-x-auto pt-2">
+              <code class="mb-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                NT_APP_LOG_FILE=./nervatura.log NT_HTTP_LOG_FILE=./nervatura-http.log \ <br />
+                /snap/nervatura/current/nervatura -tray &> /dev/null &
+              </code>
+            </div>
+          </li>
+        </ul>
+
+        <h3 id="npm" class="mt-6 mb-3 text-base font-bold tracking-tight text-slate-900">
+          Node.js NPM
+        </h3>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            npm install --save nervatura
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Add a run script to your package.json file like this:<br />
+          <code class="text-xs text-green-600 dark:text-green-600 bg-slate-50 p-1">"scripts": { "nervatura": "./node_modules/nervatura/bin/nervatura" }</code>
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            npm run nervatura
+          </code>
+        </div>
+
+        <h3 id="winget" class="mt-6 mb-3 text-base font-bold tracking-tight text-slate-900">
+          Winget (Windows Package Manager)
+        </h3>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            winget install --id Nervatura.Nervatura --source winget
+          </code>
+        </div>
+
+        <ul class="text-base text-slate-600 list-disc list-inside">
+          <li class="pt-2">
+            Start with the tray icon/menu and an .env file
+            <div class="relative overflow-x-auto pt-2">
+              <code class="mb-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                & "C:\Program Files\Nervatura\nervatura.exe" -tray \ <br />
+                &nbsp;&nbsp;-env C:\ProgramData\Nervatura\.env.example
+              </code>
+            </div>
+          </li>
+          <li class="pt-2">
+            Start with the tray icon/menu as a background process (PS terminal). The (temporary) app and HTTP log file must also be set, 
+            otherwise the info and error messages that have been continuously written to the screen until now will be lost.
+            <div class="relative overflow-x-auto pt-2">
+              <code class="mb-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                $env:NT_APP_LOG_FILE="C:/ProgramData/Nervatura/data/nervatura.log"; $env:NT_HTTP_LOG_FILE="C:/ProgramData/Nervatura/data/http.log"; Start-Process -FilePath "nervatura.exe" -ArgumentList "-tray" -WindowStyle Hidden
+              </code>
+            </div>
+            <p class="mb-1 text-base text-slate-600">
+              or just simply run this
+            </p>
+            <div class="relative overflow-x-auto pt-2">
+              <code class="mb-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                & "C:\Program Files\Nervatura\nervatura.bat"
+              </code>
+            </div>
+          </li>
+        </ul>
+
+        <p class="mt-3 text-base text-slate-600">
+          Default Nervatura data directory:  <code 
+            class="text-sm text-green-600 dark:text-green-600 bg-slate-50 p-1">C:\ProgramData\Nervatura\data</code>
+        </p>
+
+        <h3 id="prebuild" class="mt-6 mb-3 text-base font-bold tracking-tight text-slate-900">
+          Prebuild binaries
+        </h3>
+
+        <p class="mt-3 text-base text-slate-600">
+          <a href="https://github.com/nervatura/nervatura/releases" target="_blank"
+            class="text-blue-600 hover:underline">Linux, Windows and MacOS</a>
+        </p>
+
+        <h3 id="custom" class="mt-6 mb-3 text-base font-bold tracking-tight text-slate-900">
+          Other platforms and custom build
+        </h3>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            git clone https://github.com/nervatura/nervatura.git
+          </code>
+        </div>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            cd nervatura/service
+          </code>
+        </div>
+
+        <p class="mb-2 mt-2 text-base text-slate-600">
+          Build command:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            CGO_ENABLED=0 GOOS=$(OS_NAME) GOARCH=$(ARCH_NAME) \ <br />
+            &nbsp;&nbsp;go build -tags "$(TAGS)" -ldflags="-w -s -X main.Version=$(VERSION)" \ <br />
+            &nbsp;&nbsp;-o nervatura main.go
+          </code>
+        </div>
+
+        <ul class="text-base text-slate-600 list-disc list-inside pl-6">
+          <li class="pt-2">
+            <code class="text-xs bg-gray-800 text-white p-1">`$(OS_NAME)`</code> and <code 
+            class="text-xs bg-gray-800 text-white p-1">`$(ARCH_NAME)`</code>
+            <p class="py-2 text-base text-slate-600">
+              You can see the list of supported platform by running:
+            </p>
+            <div class="relative overflow-x-auto">
+              <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg p-2 pl-3">
+                go tool dist list
+              </code>
+            </div>
+          </li>
+          <li class="pt-2">
+            <code class="text-xs bg-gray-800 text-white p-1">`$(TAGS)`</code> optional modul list: 
+            <b>all, http, grpc, postgres, mysql, mssql, sqlite</b>
+          </li>
+          <li class="pt-2">
+            <code class="text-xs bg-gray-800 text-white p-1">`$(VERSION)`</code> application version
+          </li>
+        </ul>
+
+        <p class="mb-2 mt-3 text-base text-slate-600">
+          Example:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \ <br />
+            &nbsp;&nbsp;go build -tags "http postgres" -ldflags="-w -s -X main.Version=5.1.0" \ <br />
+            &nbsp;&nbsp;-o nervatura main.go
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          See more: <a href="https://golangdocs.com/building-applications-in-golang" target="_blank"
+            class="text-blue-600 hover:underline">Building Applications in GoLang</a>
+        </p>
+
+        <h3 id="configuration" class="mt-6 mb-3 text-base font-bold tracking-tight text-slate-900">
+          Configuration Options
+        </h3>
+
+        <p class="mb-3 text-base text-slate-600">
+          The application uses environment variables to set configuration options. It will be read from 
+          the <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/.env.example" target="_blank"
+            class="text-blue-600 hover:underline">.env.example</a> file. 
+          Set the environment variables as needed!
+        </p>
+
+        <p class="mb-3 text-base text-slate-600">
+          The <b>.env</b> file can be created in the current working directory, where the command is executed (in development mode). 
+          The name and location of the configuration file can also be specified in the command line parameters:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            nervatura -tray -env /path/.env.example
+          </code>
+        </div>
+
+        <p class="mb-3 text-base text-slate-600">
+          System tray icon / menu -> Configuration values
+        </p>
+
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../model" class="text-base font-semibold text-slate-900 hover:underline">
+                Object Model
+              </a>
+            </dd>
+          </div>
+
+          <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../upgrade/" class="text-base font-semibold text-slate-900 hover:underline">
+                Upgrade
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </div>
+</main>
+</body>
+</html>
