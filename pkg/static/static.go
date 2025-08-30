@@ -17,9 +17,9 @@ var Report embed.FS
 const (
 	ApiPath        = "/api/v6"
 	ClientPath     = "/client"
-	DocsClientPath = "/docs/client"
+	DocsClientPath = "/docs6/client"
 	AdminPath      = "/admin"
-	DocsPath       = "/docs"
+	DocsPath       = "/docs6"
 
 	AuthRedirectURL = "http://%s/api/auth/callback"
 	BrowserRowLimit = 100
@@ -52,7 +52,7 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"tls_enabled":   "false",
 		"read_timeout":  "30",
 		"write_timeout": "30",
-		"home":          "/docs",
+		"home":          "/docs6",
 	},
 	"grpc": {
 		"enabled":     "true",

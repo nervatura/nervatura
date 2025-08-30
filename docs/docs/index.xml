@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docs on Nervatura</title>
+    <link>/docs/</link>
+    <description>Recent content in Docs on Nervatura</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/docs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Object Model</title>
+      <link>/docs/model/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/model/</guid>
+      <description>Overview # It is a general open-data model, which can store all information generated in the operation of a usual corporation. This covers all manufacturer, retailer and service companies (or governmental units) where the business operation can be defined and described within a GOODS (items, services to be sold, provided) – CLIENT (the recipient of goods) - RESOURCE (assets used to produce the goods) triangle.&#xA;The open-data principle regulates the access to our business data.</description>
+    </item>
+    <item>
+      <title>Installation</title>
+      <link>/docs/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/install/</guid>
+      <description>Installation # Docker image # docker pull nervatura/nervatura:latest Example:&#xA;docker run -i -t --rm --name nervatura --env-file YOUR_ENV_FILE_PATH/.env -p 5000:5000 -p 9200:9200 -v YOUR_DATA_PATH:/data nervatura/nervatura:latest Snap package (Linux daemon) # sudo snap install nervatura Checking service status and last logs:&#xA;systemctl status -l snap.nervatura.nervatura.service Default snap data and http log path: /var/snap/nervatura/common&#xA;The nervatura service starts by default. More examples:&#xA;sudo systemctl stop or start or restart snap.nervatura.nervatura.service sudo systemctl disable or enable snap.</description>
+    </item>
+  </channel>
+</rss>
