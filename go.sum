@@ -184,6 +184,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20250811230008-5f3141c8851a h1:
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250811230008-5f3141c8851a/go.mod h1:gw1tLEfykwDz2ET4a12jcXt4couGAm7IwsVaTy0Sflo=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250818200422-3122310a409c h1:qXWI/sQtv5UKboZ/zUk7h+mrf/lXORyI+n9DKDAusdg=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250818200422-3122310a409c/go.mod h1:gw1tLEfykwDz2ET4a12jcXt4couGAm7IwsVaTy0Sflo=
+google.golang.org/genproto/googleapis/rpc v0.0.0-20250826171959-ef028d996bc1 h1:pmJpJEvT846VzausCQ5d7KreSROcDqmO388w5YbnltA=
+google.golang.org/genproto/googleapis/rpc v0.0.0-20250826171959-ef028d996bc1/go.mod h1:GmFNa4BdJZ2a8G+wCe9Bg3wwThLrJun751XstdJt5Og=
 google.golang.org/grpc v1.72.0 h1:S7UkcVa60b5AAQTaO6ZKamFp1zMZSU0fGDK2WZLbBnM=
 google.golang.org/grpc v1.72.0/go.mod h1:wH5Aktxcg25y1I3w7H69nHfXdOG3UiadoBtjh3izSDM=
 google.golang.org/grpc v1.72.1 h1:HR03wO6eyZ7lknl75XlxABNVLLFc2PAb6mHlYh756mA=
@@ -228,6 +230,8 @@ modernc.org/libc v1.65.10 h1:ZwEk8+jhW7qBjHIT+wd0d9VjitRyQef9BnzlzGwMODc=
 modernc.org/libc v1.65.10/go.mod h1:StFvYpx7i/mXtBAfVOjaU0PWZOvIRoZSgXhrwXzr8Po=
 modernc.org/libc v1.66.7 h1:rjhZ8OSCybKWxS1CJr0hikpEi6Vg+944Ouyrd+bQsoY=
 modernc.org/libc v1.66.7/go.mod h1:ln6tbWX0NH+mzApEoDRvilBvAWFt1HX7AUA4VDdVDPM=
+modernc.org/libc v1.66.8 h1:/awsvTnyN/sNjvJm6S3lb7KZw5WV4ly/sBEG7ZUzmIE=
+modernc.org/libc v1.66.8/go.mod h1:aVdcY7udcawRqauu0HukYYxtBSizV+R80n/6aQe9D5k=
 modernc.org/mathutil v1.7.1 h1:GCZVGXdaN8gTqB1Mf/usp1Y/hSqgI2vAGGP4jZMCxOU=
 modernc.org/mathutil v1.7.1/go.mod h1:4p5IwJITfppl0G4sUEDtCr4DthTaT47/N3aT6MhfgJg=
 modernc.org/memory v1.10.0 h1:fzumd51yQ1DxcOxSO+S6X7+QTuVU+n8/Aj7swYjFfC4=

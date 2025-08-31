@@ -212,53 +212,45 @@ func (cls *ClientService) transUpdate(ds *api.DataStore, data cu.IM) (editor cu.
 		update.IDKey = trans.Id
 	}
 	if transID, err = ds.StoreDataUpdate(update); err == nil && newTrans {
-		var transs []cu.IM = []cu.IM{}
-		if transs, err = ds.StoreDataGet(cu.IM{"id": transID, "model": "trans"}, true); err == nil {
-			data["trans"] = transs[0]
-			data["editor_title"] = cu.ToString(cu.ToIM(transs[0], cu.IM{})["code"], "")
+		var rows []cu.IM = []cu.IM{}
+		if rows, err = ds.StoreDataGet(cu.IM{"id": transID, "model": "trans"}, true); err == nil {
+			data["trans"] = rows[0]
+			trans.Code = cu.ToString(cu.ToIM(rows[0], cu.IM{})["code"], "")
+			data["editor_title"] = trans.Code
 		}
 	}
 
-	for _, pr := range cu.ToIMA(data["prices"], []cu.IM{}) {
-		var price md.Price = md.Price{
-			PriceType: md.PriceType(md.PriceTypeCustomer),
-			PriceMeta: md.PriceMeta{
+	for _, it := range cu.ToIMA(data["items"], []cu.IM{}) {
+		var item md.Item = md.Item{
+			TransCode: trans.Code,
+			ItemMeta: md.ItemMeta{
 				Tags: []string{},
 			},
-			PriceMap: cu.IM{},
+			ItemMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(pr, &price); err == nil {
+		if err = ut.ConvertToType(it, &item); err == nil {
 			values = cu.IM{
-				"valid_from":    price.ValidFrom.Format(time.DateOnly),
-				"valid_to":      "",
-				"price_type":    price.PriceType.String(),
-				"currency_code": price.CurrencyCode,
-				"qty":           price.Qty,
-				"customer_code": nil,
+				"trans_code":   trans.Code,
+				"product_code": item.ProductCode,
+				"tax_code":     item.TaxCode,
 			}
-			if !price.ValidTo.IsZero() {
-				values["valid_to"] = price.ValidTo.Format(time.DateOnly)
-			}
-			if price.CustomerCode != "" {
-				values["customer_code"] = price.CustomerCode
-			}
-			ut.ConvertByteToIMData(price.PriceMeta, values, "price_meta")
-			ut.ConvertByteToIMData(price.PriceMap, values, "price_map")
+			ut.ConvertByteToIMData(item.ItemMeta, values, "item_meta")
+			ut.ConvertByteToIMData(item.ItemMap, values, "item_map")
 
-			priceID := price.Id
-			update := md.Update{Values: values, Model: "price"}
-			if priceID > 0 {
-				update.IDKey = priceID
+			itemID := item.Id
+			update := md.Update{Values: values, Model: "item"}
+			if itemID > 0 {
+				update.IDKey = itemID
 			}
-			if priceID, err = ds.StoreDataUpdate(update); err != nil {
+			if itemID, err = ds.StoreDataUpdate(update); err != nil {
 				return data, err
 			}
-			pr["id"] = priceID
+			it["id"] = itemID
 		}
 	}
 
-	for _, pr := range cu.ToIMA(data["prices_delete"], []cu.IM{}) {
-		if err = ds.DataDelete("price", cu.ToInteger(pr["id"], 0), ""); err != nil {
+	for _, it := range cu.ToIMA(data["items_delete"], []cu.IM{}) {
+		if err = ds.DataDelete("item", cu.ToInteger(it["id"], 0), ""); err != nil {
 			return data, err
 		}
 	}
