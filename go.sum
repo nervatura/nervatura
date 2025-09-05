@@ -52,6 +52,8 @@ github.com/ncruces/go-strftime v0.1.9 h1:bY0MQC28UADQmHmaF5dgpLmImcShSi2kHU9XLdh
 github.com/ncruces/go-strftime v0.1.9/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJmn9CehxcKcls=
 github.com/nervatura/component v1.7.42 h1:qXc07oq8dQvWxVt33wZq25H4NkkqCfMjcMDJJDk/jwk=
 github.com/nervatura/component v1.7.42/go.mod h1:9xkb/QOQ6sMqfB8Q7IFROfZslHpFGNU+5GtA0rBYSpQ=
+github.com/nervatura/component v1.7.43 h1:VRdmGJ/lQakZNbeQStU6D3/Q0RryDrpsXshz0dqhFUY=
+github.com/nervatura/component v1.7.43/go.mod h1:9xkb/QOQ6sMqfB8Q7IFROfZslHpFGNU+5GtA0rBYSpQ=
 github.com/nervatura/report v1.5.1 h1:C6T52X4ylRyLGqUbykA0oTEMaZmJXoDMVlv135/M1v0=
 github.com/nervatura/report v1.5.1/go.mod h1:tgxmk7RqAa5UbFRiXoqAkrGB37rFRHQKN8upJ/hHwH0=
 github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=
