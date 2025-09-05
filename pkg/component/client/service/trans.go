@@ -46,6 +46,7 @@ func (cls *ClientService) transData(ds *api.DataStore, user, params cu.IM) (data
 		"tax_codes":     cu.IM{},
 		"currencies":    cu.IM{},
 		"units":         cu.IM{},
+		"invoice_items": cu.IM{},
 		"user":          user,
 		"dirty":         false,
 		"editor_icon":   ct.IconShoppingCart,
@@ -130,6 +131,25 @@ func (cls *ClientService) transData(ds *api.DataStore, user, params cu.IM) (data
 			return data, err
 		}
 		data["links"] = append(cu.ToIMA(data["links"], []cu.IM{}), rows...)
+
+		if rows, err = ds.StoreDataQuery(md.Query{
+			Fields: []string{"i.*", "t.id as trans_id", "t.trans_date", "t.currency_code"},
+			From:   "link l inner join trans t on t.code = l.link_code_1 inner join item i on i.trans_code = t.code",
+			Filters: []md.Filter{
+				{Field: "l.link_code_2", Comp: "==", Value: cu.ToString(trans[0]["code"], "")},
+				{Field: "l.link_type_2", Comp: "==", Value: md.LinkTypeTrans.String()},
+				{Field: "l.link_type_1", Comp: "==", Value: md.LinkTypeTrans.String()},
+				{Field: "t.trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
+					md.TransTypeInvoice.String(), md.TransTypeReceipt.String())},
+				{Field: "t.direction", Comp: "==", Value: cu.ToString(trans[0]["direction"], "")},
+				{Field: "l.deleted", Comp: "==", Value: false},
+				{Field: "t.deleted", Comp: "==", Value: false},
+				{Field: "i.deleted", Comp: "==", Value: false},
+			},
+		}, false); err != nil {
+			return data, err
+		}
+		data["invoice_items"] = rows
 	}
 	trans := cu.ToIM(data["trans"], cu.IM{})
 
@@ -750,10 +770,28 @@ func (cls *ClientService) transResponseEditorField(evt ct.ResponseEvent) (re ct.
 	fieldMap := map[string]func() (re ct.ResponseEvent, err error){
 		ct.TableEventRowSelected: func() (re ct.ResponseEvent, err error) {
 			valueData := cu.ToIM(values["value"], cu.IM{})
-			client.SetForm(cu.ToString(stateData["view"], ""),
-				cu.MergeIM(cu.ToIM(valueData["row"], cu.IM{}),
-					cu.IM{"tax_codes": stateData["tax_codes"], "product_selector": stateData["product_selector"]}),
-				cu.ToInteger(valueData["index"], 0), false)
+			row := cu.ToIM(valueData["row"], cu.IM{})
+			switch cu.ToString(stateData["view"], "") {
+			case "invoice_items":
+				stateData["params"] = cu.IM{
+					"trans_code": cu.ToString(row["trans_code"], ""),
+					"session_id": client.Ticket.SessionID}
+				if cu.ToBoolean(stateData["dirty"], false) {
+					modal := cu.IM{
+						"warning_label":   client.Msg("inputbox_dirty"),
+						"warning_message": client.Msg("inputbox_drop"),
+						"next":            "trans",
+					}
+					client.SetForm("warning", modal, 0, true)
+				} else {
+					return cls.setEditor(evt, "trans", stateData["params"].(cu.IM)), nil
+				}
+			default:
+				client.SetForm(cu.ToString(stateData["view"], ""),
+					cu.MergeIM(cu.ToIM(valueData["row"], cu.IM{}),
+						cu.IM{"tax_codes": stateData["tax_codes"], "product_selector": stateData["product_selector"]}),
+					cu.ToInteger(valueData["index"], 0), false)
+			}
 			return evt, nil
 		},
 

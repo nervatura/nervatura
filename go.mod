@@ -20,7 +20,6 @@ require (
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/phpdave11/gofpdi v1.0.15 // indirect
@@ -42,7 +41,6 @@ require (
 	fyne.io/systray v1.11.0
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/golang-jwt/jwt/v4 v4.5.2
-	github.com/gorilla/csrf v1.7.3
 	github.com/gorilla/handlers v1.5.2
 	github.com/nervatura/report v1.5.1
 	golang.org/x/oauth2 v0.30.0

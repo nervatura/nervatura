@@ -63,7 +63,7 @@ var searchQuery map[string]md.Query = map[string]md.Query{
 		Limit:   st.BrowserRowLimit,
 	},
 	"transitem_item": {
-		Fields: []string{"i.*", "t.code as code", "i.code as item_code", "t.trans_date", "t.currency_code",
+		Fields: []string{"i.*", "i.code as item_code", "t.trans_date", "t.currency_code",
 			"t.id as trans_id", "'trans' as editor", "'items' as editor_view"},
 		From:    "item_view i inner join trans t on i.trans_code = t.code",
 		OrderBy: []string{"i.id"},

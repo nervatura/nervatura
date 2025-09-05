@@ -213,7 +213,7 @@ func SearchViewConfig(view string, labels cu.SM) (config SearchView) {
 			HideFilters: cu.IM{},
 			Fields: []ct.TableField{
 				{Name: "item_code", Label: labels["item_code"]},
-				{Name: "code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "trans_code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
 				{Name: "trans_date", Label: labels["trans_date"], FieldType: ct.TableFieldTypeDate},
 				{Name: "product_code", Label: labels["product_code"], FieldType: ct.TableFieldTypeLink},
 				{Name: "description", Label: labels["item_description"]},
@@ -232,7 +232,7 @@ func SearchViewConfig(view string, labels cu.SM) (config SearchView) {
 				{Name: "tag_lst", Label: labels["price_tags"]},
 			},
 			VisibleColumns: cu.IM{
-				"code": true, "trans_date": true, "description": true, "qty": true, "currency_code": true,
+				"trans_code": true, "trans_date": true, "description": true, "qty": true, "currency_code": true,
 				"fx_price": true, "net_amount": true, "discount": true, "vat_amount": true,
 				"amount": true, "deposit": true,
 			},

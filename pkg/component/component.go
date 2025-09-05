@@ -45,11 +45,10 @@ func ErrorPage(w http.ResponseWriter, title, msg string) {
 	RespondMessage(w, html, err)
 }
 
-func Application(sessionID, csrfToken string, mainComponent ct.ClientComponent) (ccApp *ct.Application) {
+func Application(sessionID string, mainComponent ct.ClientComponent) (ccApp *ct.Application) {
 	return &ct.Application{
 		Title: ut.GetMessage("en", "app_title"),
 		Header: cu.SM{
-			"X-CSRF-Token":    csrfToken,
 			"X-Session-Token": sessionID,
 		},
 		Script: []string{

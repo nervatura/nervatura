@@ -323,6 +323,8 @@
     "item_action_price": "Action Price",
     "item_tags": "Tags",
 
+    "invoice_items_view": "Invoice Rows",
+
     "place_code": "Place No.",
 
     "tax_code": "Tax Rate",

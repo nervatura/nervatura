@@ -82,7 +82,11 @@ func (s *httpServer) Results() string {
 
 // Register API routes.
 func (s *httpServer) setRoutes() {
-	clientCSRF := src.ClientCsrfProtect(s.config)
+	antiCSRF := http.NewCrossOriginProtection()
+	trustedOrigins := s.config["NT_CSRF_TRUSTED_ORIGINS"].([]string)
+	for _, origin := range trustedOrigins {
+		antiCSRF.AddTrustedOrigin(origin)
+	}
 	CORS := handlers.CORS(
 		handlers.AllowedOrigins(s.config["NT_CORS_ALLOW_ORIGINS"].([]string)),
 		handlers.AllowedMethods(s.config["NT_CORS_ALLOW_METHODS"].([]string)),
@@ -95,7 +99,7 @@ func (s *httpServer) setRoutes() {
 	s.mux.HandleFunc("/", s.homeRoute)
 	s.mux.HandleFunc("/config/{secKey}", s.configRoute)
 
-	s.mux.Handle(st.ClientPath+"/", clientCSRF(s.headerClient(s.clientUIRoutes())))
+	s.mux.Handle(st.ClientPath+"/", antiCSRF.Handler(s.headerClient(s.clientUIRoutes())))
 	s.mux.Handle(st.ClientPath+"/api/", CORS(s.headerClient(s.clientAPIRoutes())))
 
 	s.mux.Handle(st.ApiPath+"/", CORS(s.headerAPI(s.apiRoutes())))

@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gorilla/csrf"
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -25,29 +24,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func clientCsrfError(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		http.Redirect(w, r, st.ClientPath+"/auth/", http.StatusSeeOther)
-		return
-	}
-	w.Header().Set("HX-Redirect", st.ClientPath+"/auth/")
-	w.Write(nil)
-}
-
-func ClientCsrfProtect(config cu.IM) func(http.Handler) http.Handler {
-	authKey := []byte(cu.ToString(config["NT_AUTH_KEY"], ""))
-	//secure := (cu.ToString(config["version"], "dev") != "dev")
-	trustedOrigins := config["NT_CSRF_TRUSTED_ORIGINS"].([]string)
-	return csrf.Protect(
-		authKey,
-		//csrf.Secure(secure),                // false in development only!
-		csrf.RequestHeader("X-CSRF-Token"), // Must be in CORS Allowed and Exposed Headers
-		csrf.TrustedOrigins(trustedOrigins),
-		csrf.SameSite(csrf.SameSiteStrictMode),
-		csrf.ErrorHandler(http.HandlerFunc(clientCsrfError)),
-	)
-}
-
 func ClientAuth(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var html template.HTML
@@ -59,7 +35,7 @@ func ClientAuth(w http.ResponseWriter, r *http.Request) {
 	sessionID := ut.GetSessionID()
 	client := cs.GetClient(r.Host, sessionID, st.ClientPath+"/auth/event", lang, theme)
 	client.Data["auth_configs"] = cs.AuthConfigs
-	ccApp := cpu.Application(sessionID, csrf.Token(r), client)
+	ccApp := cpu.Application(sessionID, client)
 
 	if html, err = ccApp.Render(); err == nil {
 		cs.Session.SaveSession(client.Ticket.SessionID, client)
@@ -136,7 +112,7 @@ func ClientSession(w http.ResponseWriter, r *http.Request) {
 		//}
 	}
 
-	ccApp := cpu.Application(client.Ticket.SessionID, csrf.Token(r), client)
+	ccApp := cpu.Application(client.Ticket.SessionID, client)
 
 	if html, err = ccApp.Render(); err == nil {
 		cs.Session.SaveSession(client.Ticket.SessionID, client)

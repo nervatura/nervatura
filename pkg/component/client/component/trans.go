@@ -108,6 +108,7 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{})
 	transMap := cu.ToIM(trans["trans_map"], cu.IM{})
 	items := cu.ToIMA(data["items"], []cu.IM{})
+	invoiceItems := cu.ToIMA(data["invoice_items"], []cu.IM{})
 	newInput := (cu.ToInteger(trans["id"], 0) == 0)
 
 	if newInput {
@@ -119,7 +120,7 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 			},
 		}
 	}
-	return []ct.EditorView{
+	views = []ct.EditorView{
 		{
 			Key:   "trans",
 			Label: labels[strings.ToLower(cu.ToString(trans["trans_type"], ""))],
@@ -138,6 +139,15 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 			Badge: cu.ToString(int64(len(items)), "0"),
 		},
 	}
+	if slices.Contains([]string{md.TransTypeOrder.String(), md.TransTypeRent.String(), md.TransTypeWorksheet.String()}, cu.ToString(trans["trans_type"], "")) {
+		views = append(views, ct.EditorView{
+			Key:   "invoice_items",
+			Label: labels["invoice_items_view"],
+			Icon:  ct.IconListOl,
+			Badge: cu.ToString(int64(len(invoiceItems)), "0"),
+		})
+	}
+	return views
 }
 
 func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
@@ -781,7 +791,7 @@ func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 }
 
 func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
-	if !slices.Contains([]string{"maps", "items"}, view) {
+	if !slices.Contains([]string{"maps", "items", "invoice_items"}, view) {
 		return []ct.Table{}
 	}
 
@@ -844,6 +854,46 @@ func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 					FilterPlaceholder: labels["placeholder_filter"],
 					AddItem:           !newInput,
 					LabelAdd:          labels["item_new"],
+				},
+			}
+		},
+		"invoice_items": func() []ct.Table {
+			itemRows := func() []cu.IM {
+				rows := []cu.IM{}
+				items := cu.ToIMA(data["invoice_items"], []cu.IM{})
+				for _, item := range items {
+					rows = append(rows, cu.IM{
+						"trans_code":    item["trans_code"],
+						"trans_date":    item["trans_date"],
+						"description":   cu.ToIM(item["item_meta"], cu.IM{})["description"],
+						"unit":          cu.ToIM(item["item_meta"], cu.IM{})["unit"],
+						"currency_code": item["currency_code"],
+						"qty":           cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["qty"], 0),
+						"amount":        cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["amount"], 0),
+						"deposit":       cu.ToBoolean(cu.ToIM(item["item_meta"], cu.IM{})["deposit"], false),
+					})
+				}
+				return rows
+			}
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "trans_code", Label: labels["trans_code"]},
+						//{Name: "trans_date", Label: labels["trans_date"]},
+						{Name: "description", Label: labels["item_description"]},
+						{Name: "unit", Label: labels["item_unit"]},
+						{Name: "currency_code", Label: labels["currency_code"]},
+						{Name: "qty", Label: labels["item_qty"], FieldType: ct.TableFieldTypeNumber},
+						{Name: "amount", Label: labels["item_amount"], FieldType: ct.TableFieldTypeNumber},
+						{Name: "deposit", Label: labels["item_deposit"], FieldType: ct.TableFieldTypeBool, TextAlign: ct.TextAlignCenter},
+					},
+					Rows:              itemRows(),
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          5,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
 				},
 			}
 		},
