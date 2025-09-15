@@ -188,6 +188,90 @@ func modalInputString(labels cu.SM, data cu.IM) (form ct.Form) {
 	}
 }
 
+func modalSelect(labels cu.SM, data cu.IM) (form ct.Form) {
+	form = ct.Form{
+		Title: cu.ToString(data["title"], labels["inputbox_select"]),
+		Icon:  cu.ToString(data["icon"], ct.IconEdit),
+		Modal: true,
+		BodyRows: []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Label: cu.ToString(data["label"], ""),
+						Value: ct.Field{
+							Type: ct.FieldTypeSelect,
+							Value: cu.IM{
+								"name":       cu.ToString(data["field_name"], "value"),
+								"options":    ct.SelectOptionRangeValidation(data["options"], []ct.SelectOption{}),
+								"value":      cu.ToString(data["value"], ""),
+								"label":      cu.ToString(data["label"], ""),
+								"is_null":    cu.ToBoolean(data["is_null"], false),
+								"auto_focus": true,
+							},
+						}},
+				},
+				Full:         false,
+				FieldCol:     false,
+				BorderTop:    false,
+				BorderBottom: false,
+			},
+		},
+		FooterRows: []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventOK,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStylePrimary,
+							"icon":         ct.IconCheck,
+							"label":        cu.ToString(data["submit_label"], labels["inputbox_ok"]),
+						},
+					}},
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventCancel,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStyleDefault,
+							"icon":         ct.IconTimes,
+							"label":        cu.ToString(data["cancel_label"], labels["inputbox_cancel"]),
+						},
+					}},
+				},
+				Full:         true,
+				FieldCol:     false,
+				BorderTop:    false,
+				BorderBottom: false,
+			},
+		},
+	}
+
+	if cu.ToString(data["info_label"], "") != "" || cu.ToString(data["info_message"], "") != "" {
+		form.BodyRows = append(form.BodyRows, ct.Row{
+			Columns: []ct.RowColumn{
+				{Label: cu.ToString(data["info_label"], ""),
+					Value: ct.Field{
+						Type: ct.FieldTypeLabel,
+						Value: cu.IM{
+							"value": cu.ToString(data["info_message"], ""),
+							"style": cu.SM{
+								"font-weight": "normal",
+								"font-style":  "italic",
+							},
+						},
+					}},
+			},
+			Full:         false,
+			FieldCol:     false,
+			BorderTop:    false,
+			BorderBottom: false,
+		})
+	}
+
+	return form
+}
+
 func modalReport(labels cu.SM, data cu.IM) (form ct.Form) {
 	configData := cu.ToIMA(data["config_data"], []cu.IM{})
 	configReport := cu.ToIMA(data["config_report"], []cu.IM{})

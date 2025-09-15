@@ -5,11 +5,14 @@ import (
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
 var settingIconMap = map[string]string{
-	"setting": ct.IconKeyboard,
+	"setting":    ct.IconKeyboard,
+	"config_map": ct.IconMap,
 }
 
 func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
@@ -29,6 +32,7 @@ func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		&ct.SideBarSeparator{},
 	}
 	sb = append(sb, sideElement("setting", viewName == "setting"))
+	sb = append(sb, sideElement("config_map", viewName == "config_map"))
 	return sb
 }
 
@@ -46,6 +50,8 @@ func settingEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	var setting cu.IM = cu.ToIM(data["setting"], cu.IM{})
 	configData := cu.ToIMA(data["config_data"], []cu.IM{})
+	//configMap := cu.ToIMA(data["config_map"], []cu.IM{})
+	configValues := cu.ToIMA(data["config_values"], []cu.IM{})
 
 	pageSizeOpt := fromConfig("paper_size", configData)
 	orientationOpt := fromConfig("orientation", configData)
@@ -210,6 +216,51 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 				}, Full: true, BorderBottom: true},
 			}
 		},
+		"config_map": func() []ct.Row {
+			mapRows := []cu.IM{}
+			for _, row := range configValues {
+				if row["config_type"] == md.ConfigTypeMap.String() {
+					/*
+						configMap := cu.ToIM(row["data"], cu.IM{})
+						mapRows = append(mapRows, cu.IM{
+							"lslabel": cu.ToString(configMap["field_name"], ""),
+							"lsvalue": configMap["description"],
+						})
+					*/
+					configMap := cu.ToIM(row["data"], cu.IM{})
+					mapRows = append(mapRows, cu.MergeIM(row,
+						cu.IM{"lslabel": cu.ToString(configMap["field_name"], ""), "lsvalue": cu.ToString(configMap["description"], "")}))
+				}
+			}
+			return []ct.Row{
+				{Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Id: "config_map_list",
+							//EventURL:     eventURL,
+							//OnResponse:   testFieldResponse,
+							//RequestValue: requestValue,
+							//RequestMap:   requestMap,
+						},
+						Type: ct.FieldTypeList,
+						Value: cu.IM{
+							"name": "config_map",
+							"rows": mapRows,
+							//"label_field":         "field_name",
+							//"label_value":         "description",
+							"pagination":          ct.PaginationTypeTop,
+							"page_size":           5,
+							"hide_paginaton_size": true,
+							"list_filter":         true,
+							"filter_placeholder":  labels["placeholder_filter"],
+							"add_item":            true,
+							"edit_item":           true,
+							"delete_item":         true,
+						},
+					}},
+				}, Full: true, BorderBottom: false},
+			}
+		},
 	}
 
 	if rows, found := viewMap[view]; found {
@@ -222,6 +273,186 @@ func settingTable(_ string, _ cu.SM, _ cu.IM) []ct.Table {
 	return []ct.Table{}
 }
 
-func settingForm(_ string, _ cu.SM, _ cu.IM) (form ct.Form) {
+func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+	formData := cu.ToIM(data, cu.IM{})
+	footerRows := func(disabled bool) []ct.Row {
+		rows := []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventOK,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStylePrimary,
+							"icon":         ct.IconCheck,
+							"label":        labels["editor_save"],
+							//"auto_focus":   true,
+							"selected": true,
+							"disabled": disabled,
+						},
+					}},
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventCancel,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStyleDefault,
+							"icon":         ct.IconReply,
+							"label":        labels["editor_back"],
+						},
+					}},
+					{Value: ct.Field{
+						Type:  ct.FieldTypeLabel,
+						Value: cu.IM{},
+					}},
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         "form_delete",
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStyleBorder,
+							"icon":         ct.IconTimes,
+							"label":        labels["editor_delete"],
+							"style":        cu.SM{"color": "red", "fill": "red"},
+							"disabled":     disabled,
+						},
+					}},
+				},
+				Full:         true,
+				FieldCol:     false,
+				BorderTop:    false,
+				BorderBottom: false,
+			},
+		}
+		return rows
+	}
+	frmMap := map[string]func() ct.Form{
+		"config_map": func() ct.Form {
+			var mp md.ConfigMap = md.ConfigMap{}
+			cfData := cu.ToIM(formData["data"], cu.IM{})
+			ut.ConvertToType(cfData, &mp)
+			fieldTypeOpt := func() (opt []ct.SelectOption) {
+				opt = []ct.SelectOption{}
+				ft := md.FieldType(0)
+				for _, ftKey := range ft.Keys() {
+					opt = append(opt, ct.SelectOption{
+						Value: ftKey, Text: ftKey,
+					})
+				}
+				return opt
+			}
+			return ct.Form{
+				Title: labels["setting_config_map"],
+				Icon:  ct.IconMap,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["setting_config_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "code",
+								"value":    cu.ToString(formData["code"], ""),
+								"disabled": true,
+							},
+							//FormTrigger: true,
+						}},
+						{Label: labels["setting_map_field_type"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "field_type",
+							},
+							Type: ct.FieldTypeSelect, Value: cu.IM{
+								"name":    "field_type",
+								"options": fieldTypeOpt(),
+								"is_null": false,
+								"value":   mp.FieldType.String(),
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["setting_map_field_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "field_name",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":        "field_name",
+								"invalid":     (mp.FieldName == ""),
+								"placeholder": labels["mandatory_data"],
+								"value":       mp.FieldName,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["setting_map_description"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "description",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":        "description",
+								"invalid":     (mp.Description == ""),
+								"placeholder": labels["mandatory_data"],
+								"value":       mp.Description,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true, FieldCol: true},
+					{Columns: []ct.RowColumn{
+						{
+							Label: labels["setting_map_tags"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "tags",
+								},
+								Type: ct.FieldTypeList, Value: cu.IM{
+									"name":                "tags",
+									"rows":                ut.ToTagList(mp.Tags),
+									"label_value":         "tag",
+									"pagination":          ct.PaginationTypeBottom,
+									"page_size":           5,
+									"hide_paginaton_size": true,
+									"list_filter":         true,
+									"filter_placeholder":  labels["placeholder_filter"],
+									"add_item":            true,
+									"add_icon":            ct.IconTag,
+									"edit_item":           false,
+									"delete_item":         true,
+									"indicator":           ct.IndicatorSpinner,
+								},
+								FormTrigger: true,
+							},
+						},
+						{
+							Label: labels["setting_map_filter"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "filter",
+								},
+								Type: ct.FieldTypeList, Value: cu.IM{
+									"name":                "filter",
+									"rows":                ut.ToTagList(ut.ToStringArray(cfData["filter"])),
+									"label_value":         "tag",
+									"pagination":          ct.PaginationTypeBottom,
+									"page_size":           5,
+									"hide_paginaton_size": true,
+									"list_filter":         true,
+									"filter_placeholder":  labels["placeholder_filter"],
+									"add_item":            true,
+									"add_icon":            ct.IconFilter,
+									"edit_item":           false,
+									"delete_item":         true,
+									"indicator":           ct.IndicatorSpinner,
+								},
+								FormTrigger: true,
+							},
+						},
+					}, Full: true, BorderBottom: true},
+				},
+				FooterRows: footerRows(((mp.FieldName == "") || (mp.Description == ""))),
+			}
+		},
+	}
+
+	if frm, found := frmMap[formKey]; found {
+		return frm()
+	}
 	return ct.Form{}
 }

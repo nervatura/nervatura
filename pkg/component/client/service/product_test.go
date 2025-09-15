@@ -784,7 +784,7 @@ func TestClientService_productResponse(t *testing.T) {
 						},
 					},
 					Name: ct.FormEventOK,
-					Value: cu.IM{"data": cu.IM{"next": "form_add_tag", "frm_key": "view", "frm_index": 0,
+					Value: cu.IM{"data": cu.IM{"next": "form_add_tag", "frm_key": "view", "frm_index": 0, "name": "tags",
 						"row": cu.IM{"tags": []string{"tag1", "tag2"},
 							"view_meta": cu.IM{"tags": []string{"tag1", "tag2"}}}},
 						"value": cu.IM{
@@ -824,7 +824,7 @@ func TestClientService_productResponse(t *testing.T) {
 						},
 					},
 					Name: ct.FormEventOK,
-					Value: cu.IM{"data": cu.IM{"next": "form_add_tag", "frm_key": "view", "frm_index": 0,
+					Value: cu.IM{"data": cu.IM{"next": "form_add_tag", "frm_key": "view", "frm_index": 0, "name": "tags",
 						"row": cu.IM{"tags": []string{"tag1", "tag2"}}},
 						"value": cu.IM{
 							"value": "tag3",
@@ -870,7 +870,7 @@ func TestClientService_productResponse(t *testing.T) {
 						},
 					},
 					Name:  ct.FormEventOK,
-					Value: cu.IM{"data": cu.IM{"next": "form_add_tag"}, "value": cu.IM{"value": ""}},
+					Value: cu.IM{"data": cu.IM{"next": "form_add_tag", "name": "tags"}, "value": cu.IM{"value": ""}},
 				},
 			},
 			wantErr: false,

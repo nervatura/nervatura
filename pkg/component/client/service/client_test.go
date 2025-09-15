@@ -2364,7 +2364,8 @@ func TestClientService_editorFormTags(t *testing.T) {
 		NewDataStore func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore
 	}
 	type args struct {
-		evt ct.ResponseEvent
+		params cu.IM
+		evt    ct.ResponseEvent
 	}
 	tests := []struct {
 		name    string
@@ -2386,6 +2387,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				},
 			},
 			args: args{
+				params: cu.IM{"row_field": "tags"},
 				evt: ct.ResponseEvent{
 					Trigger: &ct.Client{
 						BaseComponent: ct.BaseComponent{
@@ -2431,6 +2433,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				},
 			},
 			args: args{
+				params: cu.IM{"row_field": "tags"},
 				evt: ct.ResponseEvent{
 					Trigger: &ct.Client{
 						BaseComponent: ct.BaseComponent{
@@ -2476,6 +2479,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				},
 			},
 			args: args{
+				params: cu.IM{"row_field": "tags"},
 				evt: ct.ResponseEvent{
 					Trigger: &ct.Client{
 						BaseComponent: ct.BaseComponent{
@@ -2525,6 +2529,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				},
 			},
 			args: args{
+				params: cu.IM{"row_field": "tags"},
 				evt: ct.ResponseEvent{
 					Trigger: &ct.Client{
 						BaseComponent: ct.BaseComponent{
@@ -2566,7 +2571,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				Session:      tt.fields.Session,
 				NewDataStore: tt.fields.NewDataStore,
 			}
-			_, err := cls.editorFormTags(tt.args.evt)
+			_, err := cls.editorFormTags(tt.args.params, tt.args.evt)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ClientService.editorFormTags() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -92,6 +92,8 @@
     "inputbox_warning": "Warning!",
     "inputbox_new_tag": "New tag",
     "inputbox_enter_tag": "Enter tag",
+    "inputbox_new_filter": "New filter",
+    "inputbox_enter_filter": "Enter filter",
     "inputbox_info": "Information",
     "customer_title": "CUSTOMER",
     "customer_new": "NEW CUSTOMER",
@@ -173,6 +175,14 @@
     "setting_change_password": "Change password",
     "setting_password_validation": "Password validation",
     "setting_password_ok": "Password successfully changed",
+
+    "setting_config_map": "META DATA",
+    "setting_config_code": "Code",
+    "setting_map_field_type": "Field Type",
+    "setting_map_field_name": "Field Name",
+    "setting_map_description": "Description",
+    "setting_map_tags": "Tags",
+    "setting_map_filter": "Filter",
 
     "bookmark_title": "Bookmarks",
     "BOOKMARK_BROWSER": "Browser",

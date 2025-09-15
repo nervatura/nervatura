@@ -202,7 +202,7 @@ func (ds *DataStore) StoreDataGet(params cu.IM, foundErr bool) (result []cu.IM, 
 	if offset := cu.ToInteger(params["offset"], 0); offset > 0 {
 		query.Offset = offset
 	}
-	if !strings.Contains(query.From, "_") {
+	if !strings.Contains(query.From, "_") && !slices.Contains([]string{"log", "config"}, query.From) {
 		query.Filters = append(query.Filters, md.Filter{Field: "deleted", Comp: "==", Value: false})
 	}
 	if fields, found := params["fields"].([]string); found {

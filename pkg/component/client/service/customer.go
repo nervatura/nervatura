@@ -172,17 +172,18 @@ func (cls *ClientService) customerResponseFormNext(evt ct.ResponseEvent) (re ct.
 			frmIndex := cu.ToInteger(frmData["frm_index"], 0)
 			row := cu.ToIM(frmData["row"], cu.IM{})
 			metaName := ut.MetaName(row, "_meta")
+			rowField := cu.ToString(frmData["row_field"], "")
 			if tag != "" {
-				tags := ut.ToStringArray(row["tags"])
+				tags := ut.ToStringArray(row[rowField])
 				if metaName != "" {
-					tags = ut.ToStringArray(cu.ToIM(row[metaName], cu.IM{})["tags"])
+					tags = ut.ToStringArray(cu.ToIM(row[metaName], cu.IM{})[rowField])
 				}
 				if !slices.Contains(tags, tag) {
 					tags = append(tags, tag)
 					if metaName != "" {
-						cu.ToIM(row[metaName], cu.IM{})["tags"] = tags
+						cu.ToIM(row[metaName], cu.IM{})[rowField] = tags
 					} else {
-						row["tags"] = tags
+						row[rowField] = tags
 					}
 					client.SetForm(frmKey, row, frmIndex, false)
 					return evt, nil
@@ -286,7 +287,7 @@ func (cls *ClientService) customerResponseFormEvent(evt ct.ResponseEvent) (re ct
 			fieldName := cu.ToString(frmValues["name"], "")
 			switch fieldName {
 			case "tags":
-				return cls.editorFormTags(evt)
+				return cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
 			default:
 				frmBaseValues[fieldName] = frmValues["value"]
 				cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone

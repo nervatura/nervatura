@@ -252,6 +252,9 @@ func ClientModalForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 		"input_string": func() ct.Form {
 			return modalInputString(labels, data)
 		},
+		"select": func() ct.Form {
+			return modalSelect(labels, data)
+		},
 		"report": func() ct.Form {
 			return modalReport(labels, data)
 		},

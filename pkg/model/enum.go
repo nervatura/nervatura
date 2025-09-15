@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -283,6 +284,15 @@ func (ft FieldType) String() string {
 		}
 	}
 	return ""
+}
+
+func (ft FieldType) Keys() []string {
+	keys := []string{}
+	for k := range fieldTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func (ft *FieldType) UnmarshalJSON(b []byte) error {
@@ -947,6 +957,15 @@ func (mf MapFilter) String() string {
 		}
 	}
 	return ""
+}
+
+func (mf MapFilter) Keys() []string {
+	keys := []string{}
+	for k := range mapFilterMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func (mf *MapFilter) UnmarshalJSON(b []byte) error {

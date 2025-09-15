@@ -358,17 +358,18 @@ func (cls *ClientService) transResponseFormNext(evt ct.ResponseEvent) (re ct.Res
 			frmIndex := cu.ToInteger(frmData["frm_index"], 0)
 			row := cu.ToIM(frmData["row"], cu.IM{})
 			metaName := ut.MetaName(row, "_meta")
+			rowField := cu.ToString(frmData["row_field"], "")
 			if tag != "" {
-				tags := ut.ToStringArray(row["tags"])
+				tags := ut.ToStringArray(row[rowField])
 				if metaName != "" {
-					tags = ut.ToStringArray(cu.ToIM(row[metaName], cu.IM{})["tags"])
+					tags = ut.ToStringArray(cu.ToIM(row[metaName], cu.IM{})[rowField])
 				}
 				if !slices.Contains(tags, tag) {
 					tags = append(tags, tag)
 					if metaName != "" {
-						cu.ToIM(row[metaName], cu.IM{})["tags"] = tags
+						cu.ToIM(row[metaName], cu.IM{})[rowField] = tags
 					} else {
-						row["tags"] = tags
+						row[rowField] = tags
 					}
 					client.SetForm(frmKey, row, frmIndex, false)
 					return evt, nil
@@ -585,7 +586,7 @@ func (cls *ClientService) transResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 			}
 			switch fieldName {
 			case "tags":
-				return cls.editorFormTags(evt)
+				return cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
 			case "product_code":
 				return cls.editorCodeSelector(evt, strings.Split(fieldName, "_")[0], frmBaseValues,
 					func(params cu.IM) (re ct.ResponseEvent, err error) {

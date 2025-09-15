@@ -420,7 +420,7 @@ func (cls *ClientService) editorFormOK(evt ct.ResponseEvent, rows []cu.IM, custo
 	return evt, err
 }
 
-func (cls *ClientService) editorFormTags(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (cls *ClientService) editorFormTags(params cu.IM, evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 
@@ -432,12 +432,13 @@ func (cls *ClientService) editorFormTags(evt ct.ResponseEvent) (re ct.ResponseEv
 	frmKey := cu.ToString(form["key"], "")
 	frmBaseValues := cu.ToIM(form["data"], cu.IM{})
 	formEvent := cu.ToString(frmValues["form_event"], "")
+	rowField := cu.ToString(params["row_field"], "tags")
 
 	if formEvent == ct.ListEventAddItem {
 		modal := cu.IM{
-			"title":         client.Msg("inputbox_new_tag"),
-			"icon":          ct.IconTag,
-			"label":         client.Msg("inputbox_enter_tag"),
+			"title":         cu.ToString(params["title"], client.Msg("inputbox_new_tag")),
+			"icon":          cu.ToString(params["icon"], ct.IconTag),
+			"label":         cu.ToString(params["label"], client.Msg("inputbox_enter_tag")),
 			"placeholder":   "",
 			"field_name":    "value",
 			"default_value": "",
@@ -446,23 +447,28 @@ func (cls *ClientService) editorFormTags(evt ct.ResponseEvent) (re ct.ResponseEv
 			"frm_key":       frmKey,
 			"frm_index":     frmIndex,
 			"row":           frmBaseValues,
+			"row_field":     rowField,
+			"meta_name":     params["meta_name"],
+			"options":       params["options"],
+			"value":         params["value"],
+			"is_null":       params["is_null"],
 		}
-		client.SetForm("input_string", modal, 0, true)
+		client.SetForm(cu.ToString(params["form_key"], "input_string"), modal, 0, true)
 		return evt, nil
 	}
 	if formEvent == ct.ListEventDelete {
-		metaName := ut.MetaName(frmBaseValues, "_meta")
-		tags := ut.ToStringArray(frmBaseValues["tags"])
+		metaName := ut.MetaName(frmBaseValues, cu.ToString(params["meta_name"], "_meta"))
+		tags := ut.ToStringArray(frmBaseValues[rowField])
 		if metaName != "" {
-			tags = ut.ToStringArray(cu.ToIM(frmBaseValues[metaName], cu.IM{})["tags"])
+			tags = ut.ToStringArray(cu.ToIM(frmBaseValues[metaName], cu.IM{})[rowField])
 		}
-		deleteIndex := cu.ToInteger(frmValue["index"], 0)
-		if idx := slices.Index(tags, tags[deleteIndex]); idx > int(-1) {
+		row := cu.ToIM(frmValue["row"], cu.IM{})
+		if idx := slices.Index(tags, cu.ToString(row["tag"], "")); idx > int(-1) {
 			tags = append(tags[:idx], tags[idx+1:]...)
 			if metaName != "" {
-				cu.ToIM(frmBaseValues[metaName], cu.IM{})["tags"] = tags
+				cu.ToIM(frmBaseValues[metaName], cu.IM{})[rowField] = tags
 			} else {
-				frmBaseValues["tags"] = tags
+				frmBaseValues[rowField] = tags
 			}
 		}
 		stateData["dirty"] = true
