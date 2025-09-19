@@ -379,6 +379,7 @@ func customerTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 					AddItem:           !newInput && (cu.ToString(data["map_field"], "") != ""),
 					LabelAdd:          labels["map_new"],
 					Editable:          true,
+					Unsortable:        true,
 				},
 			}
 		},

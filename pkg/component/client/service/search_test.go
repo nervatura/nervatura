@@ -664,6 +664,206 @@ func TestClientService_searchFilter(t *testing.T) {
 			},
 			want: []string{"and (name like '%John Doe%')"},
 		},
+		{
+			name: "place_simple",
+			args: args{
+				view: "place_simple",
+				filter: ct.BrowserFilter{
+					Field: "code",
+					Comp:  "==",
+					Value: "123",
+				},
+			},
+			want: []string{"and (code like '%123%')"},
+		},
+		{
+			name: "place_inactive",
+			args: args{
+				view: "place",
+				filter: ct.BrowserFilter{
+					Field: "inactive",
+					Comp:  "==",
+					Value: true,
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (inactive = true)"},
+		},
+		{
+			name: "place_code",
+			args: args{
+				view: "place",
+				filter: ct.BrowserFilter{
+					Field: "code",
+					Comp:  "==",
+					Value: "123",
+				},
+			},
+			want: []string{"and (code like '%123%')"},
+		},
+		{
+			name: "place_id",
+			args: args{
+				view: "place",
+				filter: ct.BrowserFilter{
+					Field: "id",
+					Comp:  "==",
+					Value: "456",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (id = 456)"},
+		},
+		{
+			name: "place_default",
+			args: args{
+				view: "place",
+				filter: ct.BrowserFilter{
+					Field: "default",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{},
+		},
+		{
+			name: "place_map",
+			args: args{
+				view: "place_map",
+				filter: ct.BrowserFilter{
+					Field: "demo_number",
+					Comp:  "==",
+					Value: "123",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (demo_number like '%123%')"},
+		},
+		{
+			name: "place_contacts",
+			args: args{
+				view: "place_contacts",
+				filter: ct.BrowserFilter{
+					Field: "name",
+					Comp:  "==",
+					Value: "John Doe",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (name like '%John Doe%')"},
+		},
+		{
+			name: "transitem_simple",
+			args: args{
+				view: "transitem_simple",
+				filter: ct.BrowserFilter{
+					Field: "code",
+					Comp:  "==",
+					Value: "123",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (code like '%123%')"},
+		},
+		{
+			name: "transitem_closed",
+			args: args{
+				view: "transitem",
+				filter: ct.BrowserFilter{
+					Field: "closed",
+					Comp:  "==",
+					Value: true,
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (closed = true)"},
+		},
+		{
+			name: "transitem_trans_date",
+			args: args{
+				view: "transitem",
+				filter: ct.BrowserFilter{
+					Field: "trans_date",
+					Comp:  "==",
+					Value: "2021-01-01",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (trans_date = '2021-01-01')"},
+		},
+		{
+			name: "transitem_id",
+			args: args{
+				view: "transitem",
+				filter: ct.BrowserFilter{
+					Field: "id",
+					Comp:  "==",
+					Value: "456",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (id = 456)"},
+		},
+		{
+			name: "transitem_default",
+			args: args{
+				view: "transitem",
+				filter: ct.BrowserFilter{
+					Field: "default",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (default  '%%')"},
+		},
+		{
+			name: "transitem_map",
+			args: args{
+				view: "transitem_map",
+				filter: ct.BrowserFilter{
+					Field: "demo_number",
+					Comp:  "==",
+					Value: "123",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (demo_number like '%123%')"},
+		},
+		{
+			name: "transitem_item",
+			args: args{
+				view: "transitem_item",
+				filter: ct.BrowserFilter{
+					Field: "qty",
+					Comp:  "==",
+					Value: "123",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (qty = 123)"},
+		},
+		{
+			name: "transitem_item_deposit",
+			args: args{
+				view: "transitem_item",
+				filter: ct.BrowserFilter{
+					Field: "deposit",
+					Comp:  "==",
+					Value: true,
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (deposit = true)"},
+		},
+		{
+			name: "transitem_item_default",
+			args: args{
+				view: "transitem_item",
+				filter: ct.BrowserFilter{
+					Field: "default",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (default  '%%')"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -909,6 +1109,56 @@ func TestClientService_searchResponse(t *testing.T) {
 						},
 					},
 					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "bookmark_add"}, "value": cu.IM{"value": "label"}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "bookmark_new",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Update": func(data md.Update) (int64, error) {
+								return 1, nil
+							},
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToType: func(data interface{}, result any) (err error) {
+							return nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"search": cu.IM{
+									"view":     "customer",
+									"customer": cu.IM{},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"id": 1,
+							},
+						},
+						Lang: "en",
+						ClientLabels: func(lang string) cu.SM {
+							return cu.SM{}
+						},
+					},
+					Name:  ct.BrowserEventBookmark,
 					Value: cu.IM{"data": cu.IM{"next": "bookmark_add"}, "value": cu.IM{"value": "label"}},
 				},
 			},

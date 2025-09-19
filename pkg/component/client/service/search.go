@@ -300,6 +300,45 @@ var searchQuery map[string]md.Query = map[string]md.Query{
 		OrderBy: []string{"e.id"},
 		Limit:   st.BrowserRowLimit,
 	},
+	"place_simple": {
+		Fields: []string{
+			"p.*", "'place' as editor", "p.id as editor_id", "'place' as editor_view"},
+		From:    "place_view p",
+		OrderBy: []string{"p.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"place": {
+		Fields: []string{
+			"p.*", "'place' as editor", "p.id as editor_id", "'place' as editor_view"},
+		From:    "place_view p",
+		OrderBy: []string{"p.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"place_map": {
+		Fields: []string{"pm.id", "pm.code", "pm.place_name",
+			"pm.map_key as field_name",
+			"COALESCE(cf.description, pm.map_key) as description",
+			"pm.map_value as value", "COALESCE(cf.field_type, 'FIELD_STRING') as field_type",
+			`case when cf.field_type = 'FIELD_BOOL' then 'bool'
+				when cf.field_type = 'FIELD_INTEGER' then 'integer'
+			when cf.field_type = 'FIELD_NUMBER' then 'float'
+			when cf.field_type = 'FIELD_DATE' then 'date'
+			when cf.field_type = 'FIELD_DATETIME' then 'datetime'
+			when cf.field_type in (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			else 'string' end as value_meta`,
+			"pm.id as place_id", "'place' as editor", "'maps' as editor_view"},
+		From:    "place_map pm left join config_map cf on pm.map_key = cf.field_name",
+		OrderBy: []string{"pm.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"place_contacts": {
+		Fields:  []string{"p.*", "p.id as place_id", "'place' as editor", "'contacts' as editor_view"},
+		From:    "place_contacts p",
+		OrderBy: []string{"p.id"},
+		Limit:   st.BrowserRowLimit,
+	},
 }
 
 var compMap = cu.SM{
@@ -550,6 +589,40 @@ func searchFilterEmployee(view string, filter ct.BrowserFilter, queryFilters []s
 	return result[view]()
 }
 
+func searchFilterPlace(view string, filter ct.BrowserFilter, queryFilters []string) []string {
+	result := map[string]func() []string{
+		"place_simple": func() []string {
+			return append(queryFilters,
+				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+		"place": func() []string {
+			switch filter.Field {
+			case "inactive":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
+			case "code", "place_name", "place_type", "currency_code", "notes", "tag_lst",
+				"country", "state", "zip_code", "city", "street":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+			case "id":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			default:
+				return queryFilters
+			}
+		},
+		"place_map": func() []string {
+			return append(queryFilters,
+				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+		"place_contacts": func() []string {
+			return append(queryFilters,
+				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+	}
+	return result[view]()
+}
+
 func searchFilterTransItem(view string, filter ct.BrowserFilter, queryFilters []string) []string {
 	result := map[string]func() []string{
 		"transitem_simple": func() []string {
@@ -681,6 +754,18 @@ func (cls *ClientService) searchFilter(view string, filter ct.BrowserFilter, que
 		},
 		"transitem_item": func() []string {
 			return searchFilterTransItem(view, filter, queryFilters)
+		},
+		"place_simple": func() []string {
+			return searchFilterPlace(view, filter, queryFilters)
+		},
+		"place": func() []string {
+			return searchFilterPlace(view, filter, queryFilters)
+		},
+		"place_map": func() []string {
+			return searchFilterPlace(view, filter, queryFilters)
+		},
+		"place_contacts": func() []string {
+			return searchFilterPlace(view, filter, queryFilters)
 		},
 	}
 

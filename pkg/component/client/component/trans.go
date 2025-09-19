@@ -25,7 +25,7 @@ func transSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	}
 
 	smState := func() *ct.SideBarStatic {
-		if cu.ToBoolean(trans["inactive"], false) {
+		if cu.ToBoolean(trans["closed"], false) {
 			return &ct.SideBarStatic{
 				Icon: ct.IconLock, Label: labels["state_closed"], Color: "brown",
 			}
@@ -817,6 +817,7 @@ func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 					AddItem:           !newInput && (cu.ToString(data["map_field"], "") != ""),
 					LabelAdd:          labels["map_new"],
 					Editable:          true,
+					Unsortable:        true,
 				},
 			}
 		},
@@ -1141,99 +1142,6 @@ func transForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 					}, Full: true},
 				},
 				FooterRows: footerRows(item.ProductCode == ""),
-			}
-		},
-		"events": func() ct.Form {
-			var event md.Event = md.Event{}
-			ut.ConvertToType(formData, &event)
-			return ct.Form{
-				Title: labels["event_view"],
-				Icon:  ct.IconCalendar,
-				BodyRows: []ct.Row{
-					{Columns: []ct.RowColumn{
-						{Label: labels["event_subject"], Value: ct.Field{
-							BaseComponent: ct.BaseComponent{
-								Name: "subject",
-							},
-							Type: ct.FieldTypeString, Value: cu.IM{
-								"name":  "subject",
-								"value": event.Subject,
-							},
-							FormTrigger: true,
-						}},
-					}, Full: true, BorderBottom: true, FieldCol: true},
-					{Columns: []ct.RowColumn{
-						{Label: labels["event_start_time"], Value: ct.Field{
-							BaseComponent: ct.BaseComponent{
-								Name: "start_time",
-							},
-							Type: ct.FieldTypeDateTime, Value: cu.IM{
-								"name":    "start_time",
-								"value":   event.StartTime.String(),
-								"is_null": false,
-							},
-							FormTrigger: true,
-						}},
-						{Label: labels["event_end_time"], Value: ct.Field{
-							BaseComponent: ct.BaseComponent{
-								Name: "end_time",
-							},
-							Type: ct.FieldTypeDateTime, Value: cu.IM{
-								"name":    "end_time",
-								"is_null": true,
-								"value":   event.EndTime.String(),
-							},
-							FormTrigger: true,
-						}},
-						{Label: labels["event_place"], Value: ct.Field{
-							BaseComponent: ct.BaseComponent{
-								Name: "place",
-							},
-							Type: ct.FieldTypeString, Value: cu.IM{
-								"name":  "place",
-								"value": event.Place,
-							},
-							FormTrigger: true,
-						}},
-					}, Full: true, BorderBottom: true},
-					{Columns: []ct.RowColumn{
-						{Label: labels["event_description"], Value: ct.Field{
-							BaseComponent: ct.BaseComponent{
-								Name: "description",
-							},
-							Type: ct.FieldTypeText, Value: cu.IM{
-								"name":  "description",
-								"value": event.Description,
-								"rows":  4,
-							},
-							FormTrigger: true,
-						}},
-						{
-							Label: labels["event_tags"], Value: ct.Field{
-								BaseComponent: ct.BaseComponent{
-									Name: "tags",
-								},
-								Type: ct.FieldTypeList, Value: cu.IM{
-									"name":                "tags",
-									"rows":                ut.ToTagList(event.Tags),
-									"label_value":         "tag",
-									"pagination":          ct.PaginationTypeBottom,
-									"page_size":           5,
-									"hide_paginaton_size": true,
-									"list_filter":         true,
-									"filter_placeholder":  labels["placeholder_filter"],
-									"add_item":            true,
-									"add_icon":            ct.IconTag,
-									"edit_item":           false,
-									"delete_item":         true,
-									"indicator":           ct.IndicatorSpinner,
-								},
-								FormTrigger: true,
-							},
-						},
-					}, Full: true, BorderBottom: true},
-				},
-				FooterRows: footerRows(false),
 			}
 		},
 	}

@@ -127,6 +127,59 @@ func Test_moduleEditorView(t *testing.T) {
 			},
 		},
 		{
+			name: "place_new",
+			args: args{
+				mKey:   "place",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "place_edit",
+			args: args{
+				mKey:   "place",
+				labels: cu.SM{},
+				data: cu.IM{
+					"place": cu.IM{
+						"id": 1,
+					},
+				},
+			},
+		},
+		{
+			name: "trans_new",
+			args: args{
+				mKey:   "trans",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "trans_edit",
+			args: args{
+				mKey:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": "TRANS_ORDER",
+					},
+				},
+			},
+		},
+		{
+			name: "setting",
+			args: args{
+				mKey:   "setting",
+				labels: cu.SM{},
+				data: cu.IM{
+					"setting": cu.IM{
+						"id": 1,
+					},
+				},
+			},
+		},
+		{
 			name: "invalid",
 			args: args{
 				mKey:   "invalid",
@@ -204,6 +257,27 @@ func Test_moduleEditorRow(t *testing.T) {
 				view:   "invalid",
 				labels: cu.SM{},
 				data:   cu.IM{},
+			},
+		},
+		{
+			name: "setting_config_map",
+			args: args{
+				mKey:   "setting",
+				view:   "config_map",
+				labels: cu.SM{},
+				data: cu.IM{
+					"config_values": []cu.IM{
+						{
+							"code":        "123",
+							"config_type": "CONFIG_MAP",
+							"data": cu.IM{
+								"field_name":  "demo_number",
+								"field_type":  "FIELD_NUMBER",
+								"description": "Demo Number",
+							},
+						},
+					},
+				},
 			},
 		},
 		{
@@ -384,6 +458,197 @@ func Test_moduleEditorRow(t *testing.T) {
 				view:   "events",
 				labels: cu.SM{},
 				data:   cu.IM{},
+			},
+		},
+		{
+			name: "place",
+			args: args{
+				mKey:   "place",
+				view:   "place",
+				labels: cu.SM{},
+				data: cu.IM{
+					"place": cu.IM{
+						"id":         1,
+						"place_type": "PLACE_BANK",
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "place_maps",
+			args: args{
+				mKey:   "place",
+				view:   "maps",
+				labels: cu.SM{},
+				data: cu.IM{
+					"config_map": []cu.IM{
+						{
+							"field_name":  "demo_number",
+							"field_type":  "FIELD_NUMBER",
+							"description": "Demo Number",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "place_contacts",
+			args: args{
+				mKey:   "place",
+				view:   "contacts",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "trans_order",
+			args: args{
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": "TRANS_ORDER",
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_receipt",
+			args: args{
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": "TRANS_RECEIPT",
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_worksheet",
+			args: args{
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": "TRANS_WORKSHEET",
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_rent",
+			args: args{
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": "TRANS_RENT",
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_delivery",
+			args: args{
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": "TRANS_DELIVERY",
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_maps",
+			args: args{
+				mKey:   "trans",
+				view:   "maps",
+				labels: cu.SM{},
+				data: cu.IM{
+					"config_map": []cu.IM{
+						{
+							"field_name":  "demo_number",
+							"field_type":  "FIELD_NUMBER",
+							"description": "Demo Number",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_items",
+			args: args{
+				mKey:   "trans",
+				view:   "items",
+				labels: cu.SM{},
+				data: cu.IM{
+					"items": []cu.IM{
+						{
+							"product_code": "123",
+							"tax_code":     "123",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_payments",
+			args: args{
+				mKey:   "trans",
+				view:   "payments",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id": 1,
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+				},
 			},
 		},
 		{
@@ -622,6 +887,158 @@ func Test_moduleEditorTable(t *testing.T) {
 				view:   "maps",
 				labels: cu.SM{},
 				data:   cu.IM{},
+			},
+		},
+		{
+			name: "place",
+			args: args{
+				mKey:   "place",
+				view:   "place",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "place_contacts",
+			args: args{
+				mKey:   "place",
+				view:   "contacts",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "place_maps",
+			args: args{
+				mKey:   "place",
+				view:   "maps",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "trans",
+			args: args{
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "trans_items",
+			args: args{
+				mKey:   "trans",
+				view:   "items",
+				labels: cu.SM{},
+				data: cu.IM{
+					"items": []cu.IM{
+						{
+							"trans_code":  "123",
+							"trans_date":  "2021-01-01",
+							"description": "Demo Number",
+							"unit":        "1",
+							"qty":         "1",
+							"amount":      "1",
+							"deposit":     "1",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_invoice_items",
+			args: args{
+				mKey:   "trans",
+				view:   "invoice_items",
+				labels: cu.SM{},
+				data: cu.IM{
+					"invoice_items": []cu.IM{
+						{
+							"trans_code":  "123",
+							"trans_date":  "2021-01-01",
+							"description": "Demo Number",
+							"unit":        "1",
+							"qty":         "1",
+							"amount":      "1",
+							"deposit":     "1",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_maps",
+			args: args{
+				mKey:   "trans",
+				view:   "maps",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "setting",
+			args: args{
+				mKey:   "setting",
+				view:   "setting",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "setting_config_data",
+			args: args{
+				mKey:   "setting",
+				view:   "config_data",
+				labels: cu.SM{},
+				data: cu.IM{
+					"config_data": []cu.IM{
+						{
+							"config_code":  "123",
+							"config_key":   "123",
+							"config_value": "123",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "setting_currency",
+			args: args{
+				mKey:   "setting",
+				view:   "currency",
+				labels: cu.SM{},
+				data: cu.IM{
+					"currency": []cu.IM{
+						{
+							"code": "123",
+							"currency_meta": cu.IM{
+								"description": "123",
+								"digit":       123,
+								"cash_round":  123,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "setting_tax",
+			args: args{
+				mKey:   "setting",
+				view:   "tax",
+				labels: cu.SM{},
+				data: cu.IM{
+					"tax": []cu.IM{
+						{
+							"code": "123",
+							"tax_meta": cu.IM{
+								"description": "123",
+								"rate_value":  123,
+							},
+						},
+					},
+				},
 			},
 		},
 		{
@@ -911,6 +1328,80 @@ func TestClientSideBar(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "place_new",
+			args: args{
+				moduleKey: "place",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"place": cu.IM{
+						"id": 0,
+					},
+				},
+			},
+		},
+		{
+			name: "place_edit",
+			args: args{
+				moduleKey: "place",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"place": cu.IM{
+						"id": 1,
+					},
+				},
+			},
+		},
+		{
+			name: "place_inactive",
+			args: args{
+				moduleKey: "place",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"place": cu.IM{
+						"id":       1,
+						"inactive": true,
+					},
+				},
+			},
+		},
+		{
+			name: "trans_new",
+			args: args{
+				moduleKey: "trans",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id": 0,
+					},
+				},
+			},
+		},
+		{
+			name: "trans_edit",
+			args: args{
+				moduleKey: "trans",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id": 1,
+					},
+				},
+			},
+		},
+		{
+			name: "trans_closed",
+			args: args{
+				moduleKey: "trans",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":     1,
+						"closed": true,
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -989,6 +1480,24 @@ func TestClientEditor(t *testing.T) {
 			args: args{
 				editorKey:  "employee",
 				viewName:   "employee",
+				labels:     cu.SM{},
+				editorData: cu.IM{},
+			},
+		},
+		{
+			name: "place",
+			args: args{
+				editorKey:  "place",
+				viewName:   "place",
+				labels:     cu.SM{},
+				editorData: cu.IM{},
+			},
+		},
+		{
+			name: "trans",
+			args: args{
+				editorKey:  "trans",
+				viewName:   "trans",
 				labels:     cu.SM{},
 				editorData: cu.IM{},
 			},
@@ -1169,6 +1678,77 @@ func TestClientForm(t *testing.T) {
 			},
 		},
 		{
+			name: "place_contacts",
+			args: args{
+				editorKey: "place",
+				formKey:   "contacts",
+				labels:    cu.SM{},
+				data:      cu.IM{},
+			},
+		},
+		{
+			name: "place_place",
+			args: args{
+				editorKey: "place",
+				formKey:   "place",
+				labels:    cu.SM{},
+				data:      cu.IM{},
+			},
+		},
+		{
+			name: "trans_items",
+			args: args{
+				editorKey: "trans",
+				formKey:   "items",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"tax_codes": []cu.IM{
+						{
+							"code": "123",
+							"tax_meta": cu.IM{
+								"description": "123",
+								"rate_value":  123,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_trans",
+			args: args{
+				editorKey: "trans",
+				formKey:   "trans",
+				labels:    cu.SM{},
+				data:      cu.IM{},
+			},
+		},
+		{
+			name: "setting_config_map",
+			args: args{
+				editorKey: "setting",
+				formKey:   "config_map",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"code": "123",
+					"data": cu.IM{
+						"field_name":  "123",
+						"field_type":  "123",
+						"description": "123",
+					},
+				},
+			},
+		},
+		{
+			name: "setting_setting",
+			args: args{
+				editorKey: "setting",
+				formKey:   "setting",
+				labels:    cu.SM{},
+				data:      cu.IM{},
+			},
+		},
+		{
 			name: "invalid",
 			args: args{
 				editorKey: "invalid",
@@ -1243,6 +1823,17 @@ func TestClientModalForm(t *testing.T) {
 				formKey: "selector",
 				labels:  cu.SM{},
 				data:    cu.IM{},
+			},
+		},
+		{
+			name: "select",
+			args: args{
+				formKey: "select",
+				labels:  cu.SM{},
+				data: cu.IM{
+					"info_label":   "label",
+					"info_message": "message",
+				},
 			},
 		},
 		{

@@ -99,6 +99,9 @@ func ClientSideBar(moduleKey string, labels cu.SM, data cu.IM) ct.SideBar {
 		"setting": func() []ct.SideBarItem {
 			return settingSideBar(labels, data)
 		},
+		"place": func() []ct.SideBarItem {
+			return placeSideBar(labels, data)
+		},
 	}
 	sb := ct.SideBar{
 		Items: []ct.SideBarItem{},
@@ -144,6 +147,9 @@ func moduleEditorView(editorKey string, labels cu.SM, data cu.IM) []ct.EditorVie
 		"setting": func() []ct.EditorView {
 			return settingEditorView(labels, data)
 		},
+		"place": func() []ct.EditorView {
+			return placeEditorView(labels, data)
+		},
 	}
 	if view, found := viewMap[editorKey]; found {
 		return view()
@@ -173,6 +179,9 @@ func moduleEditorRow(editorKey, viewName string, labels cu.SM, data cu.IM) []ct.
 		},
 		"setting": func() []ct.Row {
 			return settingRow(viewName, labels, data)
+		},
+		"place": func() []ct.Row {
+			return placeRow(viewName, labels, data)
 		},
 	}
 	if row, found := rowMap[editorKey]; found {
@@ -204,6 +213,9 @@ func moduleEditorTable(editorKey, viewName string, labels cu.SM, data cu.IM) []c
 		"setting": func() []ct.Table {
 			return settingTable(viewName, labels, data)
 		},
+		"place": func() []ct.Table {
+			return placeTable(viewName, labels, data)
+		},
 	}
 	if tbl, found := tblMap[editorKey]; found {
 		return tbl()
@@ -233,6 +245,9 @@ func ClientForm(editorKey, formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 		},
 		"setting": func() ct.Form {
 			return settingForm(formKey, labels, data)
+		},
+		"place": func() ct.Form {
+			return placeForm(formKey, labels, data)
 		},
 	}
 	if frm, found := frmMap[editorKey]; found {
@@ -359,6 +374,7 @@ func mapTableRows(mapData cu.IM, configMap []cu.IM) (tableRows []cu.IM) {
 	tableRows = []cu.IM{}
 	for field, value := range mapData {
 		row := cu.IM{
+			"id":         field,
 			"field_name": field, "description": field, "value": value,
 			"value_meta": "string", "field_type": "FIELD_STRING",
 		}

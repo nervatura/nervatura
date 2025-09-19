@@ -97,6 +97,14 @@ func searchSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		((sideGroup == "") && slices.Contains(projectViews, cu.ToString(data["view"], "")))
 	sb = append(sb, projectGroup)
 
+	placeViews := []string{
+		"place_simple", "place", "place_map", "place_contacts",
+	}
+	placeGroup := sideGroupElement("group_place", labels["place_title"], placeViews)
+	placeGroup.Selected = (sideGroup == "group_place") ||
+		((sideGroup == "") && slices.Contains(placeViews, cu.ToString(data["view"], "")))
+	sb = append(sb, placeGroup)
+
 	//for _, name := range []string{"customer_simple", "customer", "customer_addresses", "customer_contacts"} {
 	//	sb = append(sb, sideElement(name))
 	//}
@@ -806,6 +814,97 @@ func SearchViewConfig(view string, labels cu.SM) (config SearchView) {
 			},
 			VisibleColumns: cu.IM{
 				"code": true, "first_name": true, "surname": true, "subject": true, "start_time": true, "place": true, "tag_lst": true,
+			},
+			Filters: []any{},
+		},
+		"place_simple": {
+			Title:    labels["quick_search"],
+			Icon:     ct.IconHome,
+			Simple:   true,
+			ReadOnly: false,
+			LabelAdd: "",
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["place_code"]},
+				{Name: "place_name", Label: labels["place_name"]},
+				{Name: "place_type", Label: labels["place_type"]},
+			},
+			VisibleColumns: cu.IM{},
+			HideFilters:    cu.IM{},
+			Filters: []any{
+				cu.IM{"or": true, "field": "code", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "place_name", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "place_type", "comp": "==", "value": ""},
+			},
+			FilterPlaceholder: strings.Join([]string{
+				labels["place_code"], labels["place_name"],
+				labels["place_type"]}, ", "),
+		},
+		"place": {
+			Title:    labels["place_view"],
+			Icon:     ct.IconHome,
+			Simple:   false,
+			ReadOnly: false,
+			LabelAdd: labels["place_new"],
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["place_code"]},
+				{Name: "place_name", Label: labels["place_name"]},
+				{Name: "place_type", Label: labels["place_type"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "country", Label: labels["address_country"]},
+				{Name: "state", Label: labels["address_state"]},
+				{Name: "zip_code", Label: labels["address_zip_code"]},
+				{Name: "city", Label: labels["address_city"]},
+				{Name: "street", Label: labels["address_street"]},
+				{Name: "notes", Label: labels["place_notes"]},
+				{Name: "tag_lst", Label: labels["place_tags"]},
+				{Name: "inactive", Label: labels["place_inactive"], FieldType: ct.TableFieldTypeBool},
+			},
+			VisibleColumns: cu.IM{
+				"code": true, "place_name": true, "place_type": true, "currency_code": true, "tag_lst": true,
+			},
+			HideFilters: cu.IM{},
+			Filters:     []any{
+				//cu.IM{"field": "customer_name", "comp": "==", "value": ""},
+			},
+		},
+		"place_map": {
+			Title:       labels["map_view"],
+			Icon:        ct.IconHome,
+			Simple:      false,
+			ReadOnly:    true,
+			LabelAdd:    "",
+			HideFilters: cu.IM{},
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["place_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "place_name", Label: labels["place_name"], FieldType: ct.TableFieldTypeLink},
+				{Name: "description", Label: labels["map_description"]},
+				{Name: "value", Label: labels["map_value"], FieldType: ct.TableFieldTypeMeta},
+			},
+			VisibleColumns: cu.IM{
+				"place_name": true, "description": true, "value": true,
+			},
+			Filters: []any{},
+		},
+		"place_contacts": {
+			Title:       labels["contact_view"],
+			Icon:        ct.IconMobile,
+			Simple:      false,
+			ReadOnly:    true,
+			LabelAdd:    "",
+			HideFilters: cu.IM{},
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["place_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "place_name", Label: labels["place_name"], FieldType: ct.TableFieldTypeLink},
+				{Name: "first_name", Label: labels["contact_first_name"]},
+				{Name: "surname", Label: labels["contact_surname"]},
+				{Name: "status", Label: labels["contact_status"]},
+				{Name: "phone", Label: labels["contact_phone"]},
+				{Name: "mobile", Label: labels["contact_mobile"]},
+				{Name: "email", Label: labels["contact_email"]},
+				{Name: "notes", Label: labels["contact_notes"]},
+			},
+			VisibleColumns: cu.IM{
+				"place_name": true, "first_name": true, "surname": true, "phone": true, "email": true,
 			},
 			Filters: []any{},
 		},

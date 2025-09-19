@@ -89,6 +89,7 @@
     "inputbox_dirty": "The data has changed, but has not been saved!",
     "inputbox_drop": "Are you sure you want to drop these data?",
     "inputbox_delete": "Are you sure you want to delete these data?",
+    "inputbox_delete_error": "Data deleted failed!",
     "inputbox_warning": "Warning!",
     "inputbox_new_tag": "New tag",
     "inputbox_enter_tag": "Enter tag",
@@ -177,7 +178,10 @@
     "setting_password_ok": "Password successfully changed",
 
     "setting_config_map": "META DATA",
+    "setting_config_data": "CONFIG DATA",
     "setting_config_code": "Code",
+    "setting_config_key": "Field Name",
+    "setting_config_value": "Value",
     "setting_map_field_type": "Field Type",
     "setting_map_field_name": "Field Name",
     "setting_map_description": "Description",
@@ -188,7 +192,26 @@
     "BOOKMARK_BROWSER": "Browser",
     "BOOKMARK_EDITOR": "Editor",
 
+    "setting_currency": "CURRENCY",
+    "currency_new": "New Currency",
+    "currency_enter": "Enter currency ISO 4217 code",
+    "currency_invalid": "Invalid currency ISO 4217 code",
+    "currency_exists": "Currency already exists",
     "currency_code": "Currency",
+    "currency_description": "Description",
+    "currency_digit": "Digit",
+    "currency_cash_round": "Cash Round",
+    "currency_tags": "Tags",
+
+    "setting_tax": "TAX RATE",
+    "tax_code": "Tax Rate",
+    "tax_new": "New Tax",
+    "tax_enter": "Enter tax code",
+    "tax_invalid": "Invalid tax code",
+    "tax_exists": "Tax already exists",
+    "tax_description": "Description",
+    "tax_rate_value": "Rate Value",
+    "tax_tags": "Tags",
 
     "product_title": "PRODUCT",
     "product_view": "Product Data",
@@ -244,6 +267,21 @@
     "employee_notes": "Comment",
     "employee_tags": "Tags",
     "employee_inactive": "Inactive",
+
+    "place_title": "PLACE",
+    "place_view": "Place Data",
+    "place_new": "NEW PLACE",
+    "place_code": "Place No.",
+    "place_name": "Place Name",
+    "place_type": "Place Type",
+    "place_currency": "Currency",
+    "place_notes": "Comment",
+    "place_tags": "Tags",
+    "place_inactive": "Inactive",
+    "PLACE_WAREHOUSE": "Warehouse",
+    "PLACE_BANK": "Bank",
+    "PLACE_CASH": "Cash",
+    "PLACE_OTHER": "Other",
 
     "transitem_title": "DOCUMENT",
     "transitem_view": "Document Data",
@@ -334,10 +372,6 @@
     "item_tags": "Tags",
 
     "invoice_items_view": "Invoice Rows",
-
-    "place_code": "Place No.",
-
-    "tax_code": "Tax Rate",
 
     "auth_code": "User"
   }

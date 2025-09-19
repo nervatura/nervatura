@@ -1,6 +1,7 @@
 package component
 
 import (
+	"slices"
 	"strings"
 
 	ct "github.com/nervatura/component/pkg/component"
@@ -11,8 +12,11 @@ import (
 )
 
 var settingIconMap = map[string]string{
-	"setting":    ct.IconKeyboard,
-	"config_map": ct.IconMap,
+	"setting":     ct.IconKeyboard,
+	"config_map":  ct.IconMap,
+	"config_data": ct.IconCog,
+	"currency":    ct.IconDollar,
+	"tax":         ct.IconTicket,
 }
 
 func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
@@ -32,7 +36,10 @@ func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		&ct.SideBarSeparator{},
 	}
 	sb = append(sb, sideElement("setting", viewName == "setting"))
+	sb = append(sb, sideElement("config_data", viewName == "config_data"))
 	sb = append(sb, sideElement("config_map", viewName == "config_map"))
+	sb = append(sb, sideElement("currency", viewName == "currency"))
+	sb = append(sb, sideElement("tax", viewName == "tax"))
 	return sb
 }
 
@@ -50,7 +57,6 @@ func settingEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	var setting cu.IM = cu.ToIM(data["setting"], cu.IM{})
 	configData := cu.ToIMA(data["config_data"], []cu.IM{})
-	//configMap := cu.ToIMA(data["config_map"], []cu.IM{})
 	configValues := cu.ToIMA(data["config_values"], []cu.IM{})
 
 	pageSizeOpt := fromConfig("paper_size", configData)
@@ -220,13 +226,6 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 			mapRows := []cu.IM{}
 			for _, row := range configValues {
 				if row["config_type"] == md.ConfigTypeMap.String() {
-					/*
-						configMap := cu.ToIM(row["data"], cu.IM{})
-						mapRows = append(mapRows, cu.IM{
-							"lslabel": cu.ToString(configMap["field_name"], ""),
-							"lsvalue": configMap["description"],
-						})
-					*/
 					configMap := cu.ToIM(row["data"], cu.IM{})
 					mapRows = append(mapRows, cu.MergeIM(row,
 						cu.IM{"lslabel": cu.ToString(configMap["field_name"], ""), "lsvalue": cu.ToString(configMap["description"], "")}))
@@ -237,19 +236,13 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 					{Value: ct.Field{
 						BaseComponent: ct.BaseComponent{
 							Id: "config_map_list",
-							//EventURL:     eventURL,
-							//OnResponse:   testFieldResponse,
-							//RequestValue: requestValue,
-							//RequestMap:   requestMap,
 						},
 						Type: ct.FieldTypeList,
 						Value: cu.IM{
-							"name": "config_map",
-							"rows": mapRows,
-							//"label_field":         "field_name",
-							//"label_value":         "description",
+							"name":                "config_map",
+							"rows":                mapRows,
 							"pagination":          ct.PaginationTypeTop,
-							"page_size":           5,
+							"page_size":           10,
 							"hide_paginaton_size": true,
 							"list_filter":         true,
 							"filter_placeholder":  labels["placeholder_filter"],
@@ -269,8 +262,116 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	return []ct.Row{}
 }
 
-func settingTable(_ string, _ cu.SM, _ cu.IM) []ct.Table {
-	return []ct.Table{}
+func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
+	if !slices.Contains([]string{"config_data", "currency", "tax"}, view) {
+		return []ct.Table{}
+	}
+
+	//configValues := cu.ToIMA(data["config_values"], []cu.IM{})
+	tblMap := map[string]func() []ct.Table{
+		"config_data": func() []ct.Table {
+			configData := cu.ToIMA(data["config_data"], []cu.IM{})
+			return []ct.Table{
+				{
+					BaseComponent: ct.BaseComponent{
+						Name: "config_data",
+					},
+					Fields: []ct.TableField{
+						{Name: "config_code", Label: labels["setting_config_code"], ReadOnly: true},
+						{Name: "config_key", Label: labels["setting_config_key"], ReadOnly: true},
+						{Name: "config_value", Label: labels["setting_config_value"], Required: true},
+					},
+					RowKey:             "id",
+					Rows:               configData,
+					Pagination:         ct.PaginationTypeTop,
+					PageSize:           10,
+					HidePaginatonSize:  true,
+					RowSelected:        true,
+					TableFilter:        true,
+					FilterPlaceholder:  labels["placeholder_filter"],
+					Editable:           true,
+					EditDeleteDisabled: true,
+					Unsortable:         true,
+				},
+			}
+		},
+		"currency": func() []ct.Table {
+			itemRows := func() []cu.IM {
+				rows := []cu.IM{}
+				currencies := cu.ToIMA(data["currency"], []cu.IM{})
+				for _, currency := range currencies {
+					currencyMeta := cu.ToIM(currency["currency_meta"], cu.IM{})
+					rows = append(rows, cu.IM{
+						"id":          currency["id"],
+						"code":        currency["code"],
+						"description": currencyMeta["description"],
+						"digit":       cu.ToInteger(currencyMeta["digit"], 0),
+						"cash_round":  cu.ToInteger(currencyMeta["cash_round"], 0),
+					})
+				}
+				return rows
+			}
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "code", Label: labels["currency_code"], ReadOnly: true},
+						{Name: "description", Label: labels["currency_description"]},
+						{Name: "digit", Label: labels["currency_digit"], FieldType: ct.TableFieldTypeInteger},
+						{Name: "cash_round", Label: labels["currency_cash_round"], FieldType: ct.TableFieldTypeInteger},
+					},
+					Rows:              itemRows(),
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          10,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           true,
+					LabelAdd:          labels["currency_new"],
+					Editable:          true,
+					Unsortable:        true,
+				},
+			}
+		},
+		"tax": func() []ct.Table {
+			itemRows := func() []cu.IM {
+				rows := []cu.IM{}
+				taxes := cu.ToIMA(data["tax"], []cu.IM{})
+				for _, tax := range taxes {
+					taxMeta := cu.ToIM(tax["tax_meta"], cu.IM{})
+					rows = append(rows, cu.IM{
+						"id":          tax["id"],
+						"code":        tax["code"],
+						"description": taxMeta["description"],
+						"rate_value":  cu.ToFloat(taxMeta["rate_value"], 0),
+					})
+				}
+				return rows
+			}
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "code", Label: labels["tax_code"], ReadOnly: true},
+						{Name: "description", Label: labels["tax_description"]},
+						{Name: "rate_value", Label: labels["tax_rate_value"], FieldType: ct.TableFieldTypeNumber},
+					},
+					Rows:              itemRows(),
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          10,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           true,
+					LabelAdd:          labels["tax_new"],
+					Editable:          true,
+					Unsortable:        true,
+				},
+			}
+		},
+	}
+
+	return tblMap[view]()
 }
 
 func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {

@@ -2,6 +2,7 @@ package service
 
 import (
 	"slices"
+	"strings"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -29,6 +30,8 @@ func (cls *ClientService) settingData(ds *api.DataStore, user, _ cu.IM) (data cu
 		"config_data":   []cu.IM{},
 		"config_map":    []cu.IM{},
 		"config_values": []cu.IM{},
+		"currency":      []cu.IM{},
+		"tax":           []cu.IM{},
 		"dirty":         false,
 		"editor_icon":   ct.IconCog,
 		"editor_title":  "",
@@ -36,7 +39,7 @@ func (cls *ClientService) settingData(ds *api.DataStore, user, _ cu.IM) (data cu
 
 	var rows []cu.IM = []cu.IM{}
 	if rows, err = ds.StoreDataQuery(md.Query{
-		Fields: []string{"*"}, From: "config_data",
+		Fields: []string{"*"}, From: "config_data", OrderBy: []string{"config_code", "config_key"},
 	}, false); err != nil {
 		return data, err
 	}
@@ -58,6 +61,20 @@ func (cls *ClientService) settingData(ds *api.DataStore, user, _ cu.IM) (data cu
 		return data, err
 	}
 	data["config_values"] = rows
+
+	if rows, err = ds.StoreDataQuery(md.Query{
+		Fields: []string{"*"}, From: "currency",
+	}, false); err != nil {
+		return data, err
+	}
+	data["currency"] = rows
+
+	if rows, err = ds.StoreDataQuery(md.Query{
+		Fields: []string{"*"}, From: "tax",
+	}, false); err != nil {
+		return data, err
+	}
+	data["tax"] = rows
 
 	return data, nil
 }
@@ -100,6 +117,139 @@ func (cls *ClientService) configUpdate(ds *api.DataStore, data cu.IM) (editor cu
 	return data, err
 }
 
+func (cls *ClientService) currencyUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+	var currencyData md.Currency = md.Currency{
+		CurrencyMeta: md.CurrencyMeta{
+			Tags: []string{},
+		},
+		CurrencyMap: cu.IM{},
+	}
+	ut.ConvertToType(data, &currencyData)
+	values := cu.IM{}
+	if currencyData.Code != "" {
+		values["code"] = currencyData.Code
+	}
+
+	ut.ConvertByteToIMData(currencyData.CurrencyMeta, values, "currency_meta")
+	ut.ConvertByteToIMData(currencyData.CurrencyMap, values, "currency_map")
+
+	var currencyID int64
+	newConfig := (currencyData.Id == 0)
+	update := md.Update{Values: values, Model: "currency"}
+	if !newConfig {
+		update.IDKey = currencyData.Id
+	}
+	if currencyID, err = ds.StoreDataUpdate(update); err == nil && newConfig {
+		var currencies []cu.IM = []cu.IM{}
+		if currencies, err = ds.StoreDataGet(cu.IM{"id": currencyID, "model": "currency"}, true); err == nil {
+			data = currencies[0]
+		}
+	}
+	return data, err
+}
+
+func (cls *ClientService) currencyAdd(evt ct.ResponseEvent, code string) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
+	ds := cls.getDataStore(client.Ticket.Database)
+
+	errorModal := func(msg string) {
+		modal := cu.IM{
+			"title":      client.Msg("currency_new"),
+			"info_label": msg,
+			"icon":       ct.IconExclamationTriangle,
+		}
+		client.SetForm("info", modal, 0, true)
+	}
+
+	code = strings.ToUpper(code)
+	if len(code) != 3 {
+		errorModal(client.Msg("currency_invalid"))
+		return evt, nil
+	}
+
+	if _, err = ds.StoreDataGet(cu.IM{"code": code, "model": "currency"}, true); err == nil {
+		errorModal(client.Msg("currency_exists"))
+		return evt, nil
+	}
+
+	var currencyData cu.IM
+	if currencyData, err = cls.currencyUpdate(ds, cu.IM{"code": code}); err == nil {
+		currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
+		currencies = append(currencies, currencyData)
+		stateData["currency"] = currencies
+	}
+	if err != nil {
+		errorModal(err.Error())
+		return evt, nil
+	}
+	return evt, nil
+}
+
+func (cls *ClientService) taxUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+	var taxData md.Tax = md.Tax{
+		TaxMeta: md.TaxMeta{
+			Tags: []string{},
+		},
+		TaxMap: cu.IM{},
+	}
+	ut.ConvertToType(data, &taxData)
+	values := cu.IM{}
+	if taxData.Code != "" {
+		values["code"] = taxData.Code
+	}
+
+	ut.ConvertByteToIMData(taxData.TaxMeta, values, "tax_meta")
+	ut.ConvertByteToIMData(taxData.TaxMap, values, "tax_map")
+
+	var taxID int64
+	newConfig := (taxData.Id == 0)
+	update := md.Update{Values: values, Model: "tax"}
+	if !newConfig {
+		update.IDKey = taxData.Id
+	}
+	if taxID, err = ds.StoreDataUpdate(update); err == nil && newConfig {
+		var taxes []cu.IM = []cu.IM{}
+		if taxes, err = ds.StoreDataGet(cu.IM{"id": taxID, "model": "tax"}, true); err == nil {
+			data = taxes[0]
+		}
+	}
+	return data, err
+}
+
+func (cls *ClientService) taxAdd(evt ct.ResponseEvent, code string) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
+	ds := cls.getDataStore(client.Ticket.Database)
+
+	errorModal := func(msg string) {
+		modal := cu.IM{
+			"title":      client.Msg("tax_new"),
+			"info_label": msg,
+			"icon":       ct.IconExclamationTriangle,
+		}
+		client.SetForm("info", modal, 0, true)
+	}
+
+	code = strings.ToUpper(code)
+	if _, err = ds.StoreDataGet(cu.IM{"code": code, "model": "tax"}, true); err == nil {
+		errorModal(client.Msg("tax_exists"))
+		return evt, nil
+	}
+
+	var taxData cu.IM
+	if taxData, err = cls.taxUpdate(ds, cu.IM{"code": code}); err == nil {
+		taxes := cu.ToIMA(stateData["tax"], []cu.IM{})
+		taxes = append(taxes, taxData)
+		stateData["tax"] = taxes
+	}
+	if err != nil {
+		errorModal(err.Error())
+		return evt, nil
+	}
+	return evt, nil
+}
+
 func (cls *ClientService) settingPassword(ds *api.DataStore, user, data cu.IM) (err error) {
 	return ds.UserPassword(
 		cu.ToString(user["code"], ""), cu.ToString(data["password"], ""), cu.ToString(data["confirm"], ""),
@@ -133,6 +283,8 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 	ds := cls.getDataStore(client.Ticket.Database)
 	//setting := cu.ToIM(stateData["setting"], cu.IM{})
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
+	currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
+	taxes := cu.ToIMA(stateData["tax"], []cu.IM{})
 
 	frmValues := cu.ToIM(evt.Value, cu.IM{})
 	frmData := cu.ToIM(frmValues["data"], cu.IM{})
@@ -175,6 +327,54 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 				}
 			}
 			return evt, err
+		},
+
+		"currency_delete": func() (re ct.ResponseEvent, err error) {
+			if idx := slices.IndexFunc(currencies, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == cu.ToString(frmData["code"], "")
+			}); idx > int(-1) {
+				if _, err = ds.StoreDataUpdate(md.Update{Model: "currency", IDKey: cu.ToInteger(currencies[idx]["id"], 0)}); err == nil {
+					currencies = append(currencies[:idx], currencies[idx+1:]...)
+					stateData["currency"] = currencies
+				}
+			}
+			if err != nil {
+				modal := cu.IM{
+					"info_label":   client.Msg("inputbox_delete_error"),
+					"info_message": err.Error(),
+					"icon":         ct.IconExclamationTriangle,
+				}
+				client.SetForm("info", modal, 0, true)
+			}
+			return evt, nil
+		},
+
+		"currency_add": func() (re ct.ResponseEvent, err error) {
+			return cls.currencyAdd(evt, cu.ToString(frmValue["value"], ""))
+		},
+
+		"tax_delete": func() (re ct.ResponseEvent, err error) {
+			if idx := slices.IndexFunc(taxes, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == cu.ToString(frmData["code"], "")
+			}); idx > int(-1) {
+				if _, err = ds.StoreDataUpdate(md.Update{Model: "tax", IDKey: cu.ToInteger(taxes[idx]["id"], 0)}); err == nil {
+					taxes = append(taxes[:idx], taxes[idx+1:]...)
+					stateData["tax"] = taxes
+				}
+			}
+			if err != nil {
+				modal := cu.IM{
+					"info_label":   client.Msg("inputbox_delete_error"),
+					"info_message": err.Error(),
+					"icon":         ct.IconExclamationTriangle,
+				}
+				client.SetForm("info", modal, 0, true)
+			}
+			return evt, nil
+		},
+
+		"tax_add": func() (re ct.ResponseEvent, err error) {
+			return cls.taxAdd(evt, cu.ToString(frmValue["value"], ""))
 		},
 	}
 
@@ -268,7 +468,6 @@ func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.
 			case "field_name", "field_type", "description":
 				configMeta[fieldName] = frmValues["value"]
 				client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
-				//cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
 
 			default:
 				//frmBaseValues[fieldName] = frmValues["value"]
@@ -291,8 +490,12 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 	_, stateKey, stateData := client.GetStateData()
 	ds := cls.getDataStore(client.Ticket.Database)
 	user := client.Ticket.User
+	view := cu.ToString(stateData["view"], "")
 	setting := cu.ToIM(stateData["setting"], cu.IM{})
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
+	currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
+	taxes := cu.ToIMA(stateData["tax"], []cu.IM{})
+	//configData := cu.ToIMA(stateData["config_data"], []cu.IM{})
 
 	values := cu.ToIM(evt.Value, cu.IM{})
 	fieldName := cu.ToString(values["name"], "")
@@ -395,6 +598,122 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 				configValues = append(configValues, configValue)
 				stateData["config_values"] = configValues
 				client.SetForm("config_map", configValue, int64(len(configValues)-1), false)
+			}
+			return evt, err
+		},
+
+		ct.TableEventRowSelected: func() (re ct.ResponseEvent, err error) {
+			valueData := cu.ToIM(values["value"], cu.IM{})
+			client.SetForm(cu.ToString(stateData["view"], ""),
+				cu.ToIM(valueData["row"], cu.IM{}),
+				cu.ToInteger(valueData["index"], 0), false)
+			return evt, nil
+		},
+
+		ct.TableEventFormUpdate: func() (re ct.ResponseEvent, err error) {
+			values := cu.ToIM(evt.Value, cu.IM{})
+			valueData := cu.ToIM(values["value"], cu.IM{})
+			row := cu.ToIM(valueData["row"], cu.IM{})
+			switch view {
+			case "config_data":
+				configCode := cu.ToString(row["config_code"], "")
+				fieldName := cu.ToString(row["config_key"], "")
+				if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
+					return cu.ToString(c["code"], "") == configCode
+				}); idx > int(-1) {
+					configData := cu.ToIM(configValues[idx]["data"], cu.IM{})
+					configData[fieldName] = row["config_value"]
+					configValues[idx]["data"] = configData
+					if configValues[idx], err = cls.configUpdate(ds, configValues[idx]); err == nil {
+						stateData["config_values"] = configValues
+					}
+				}
+
+			case "currency":
+				currencyCode := cu.ToString(row["code"], "")
+				if idx := slices.IndexFunc(currencies, func(c cu.IM) bool {
+					return cu.ToString(c["code"], "") == currencyCode
+				}); idx > int(-1) {
+					currencyMeta := cu.ToIM(currencies[idx]["currency_meta"], cu.IM{})
+					currencyMeta["description"] = row["description"]
+					currencyMeta["digit"] = cu.ToInteger(row["digit"], 0)
+					currencyMeta["cash_round"] = cu.ToInteger(row["cash_round"], 0)
+					currencies[idx]["currency_meta"] = currencyMeta
+					if currencies[idx], err = cls.currencyUpdate(ds, currencies[idx]); err == nil {
+						stateData["currency"] = currencies
+					}
+				}
+
+			case "tax":
+				taxCode := cu.ToString(row["code"], "")
+				if idx := slices.IndexFunc(taxes, func(c cu.IM) bool {
+					return cu.ToString(c["code"], "") == taxCode
+				}); idx > int(-1) {
+					taxMeta := cu.ToIM(taxes[idx]["tax_meta"], cu.IM{})
+					taxMeta["description"] = row["description"]
+					taxMeta["rate_value"] = cu.ToFloat(row["rate_value"], 0)
+					taxes[idx]["tax_meta"] = taxMeta
+					if taxes[idx], err = cls.taxUpdate(ds, taxes[idx]); err == nil {
+						stateData["tax"] = taxes
+					}
+				}
+			}
+			return evt, err
+		},
+
+		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
+			values := cu.ToIM(evt.Value, cu.IM{})
+			valueData := cu.ToIM(values["value"], cu.IM{})
+			row := cu.ToIM(valueData["row"], cu.IM{})
+			switch view {
+			case "currency":
+				modal := cu.IM{
+					"warning_label":   client.Msg("inputbox_delete"),
+					"warning_message": "",
+					"next":            "currency_delete",
+					"code":            cu.ToString(row["code"], ""),
+				}
+				client.SetForm("warning", modal, 0, true)
+
+			case "tax":
+				modal := cu.IM{
+					"warning_label":   client.Msg("inputbox_delete"),
+					"warning_message": "",
+					"next":            "tax_delete",
+					"code":            cu.ToString(row["code"], ""),
+				}
+				client.SetForm("warning", modal, 0, true)
+			}
+			return evt, err
+		},
+
+		ct.TableEventAddItem: func() (re ct.ResponseEvent, err error) {
+			switch view {
+			case "currency":
+				modal := cu.IM{
+					"title":         client.Msg("currency_new"),
+					"icon":          ct.IconDollar,
+					"label":         client.Msg("currency_enter"),
+					"placeholder":   "",
+					"field_name":    "value",
+					"default_value": "",
+					"required":      false,
+					"next":          "currency_add",
+				}
+				client.SetForm("input_string", modal, 0, true)
+
+			case "tax":
+				modal := cu.IM{
+					"title":         client.Msg("tax_new"),
+					"icon":          ct.IconTicket,
+					"label":         client.Msg("tax_enter"),
+					"placeholder":   "",
+					"field_name":    "value",
+					"default_value": "",
+					"required":      false,
+					"next":          "tax_add",
+				}
+				client.SetForm("input_string", modal, 0, true)
 			}
 			return evt, err
 		},

@@ -185,6 +185,9 @@ func (cls *ClientService) moduleData(ds *api.DataStore, mKey string, user cu.IM,
 		"trans": func() (cu.IM, error) {
 			return cls.transData(ds, user, params)
 		},
+		"place": func() (cu.IM, error) {
+			return cls.placeData(ds, user, params)
+		},
 	}
 	if rm, found := modelMap[mKey]; found {
 		return rm()
@@ -217,6 +220,9 @@ func (cls *ClientService) moduleResponse(mKey string, evt ct.ResponseEvent) (re 
 		},
 		"trans": func() (re ct.ResponseEvent, err error) {
 			return cls.transResponse(evt)
+		},
+		"place": func() (re ct.ResponseEvent, err error) {
+			return cls.placeResponse(evt)
 		},
 	}
 	if rm, found := modelMap[mKey]; found {
