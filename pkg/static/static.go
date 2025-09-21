@@ -52,7 +52,7 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"tls_enabled":   "false",
 		"read_timeout":  "30",
 		"write_timeout": "30",
-		"home":          "/docs6",
+		"home":          "/client",
 	},
 	"grpc": {
 		"enabled":     "true",

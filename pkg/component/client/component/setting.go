@@ -13,21 +13,22 @@ import (
 
 var settingIconMap = map[string]string{
 	"setting":     ct.IconKeyboard,
-	"config_map":  ct.IconMap,
+	"config_map":  ct.IconDatabase,
 	"config_data": ct.IconCog,
 	"currency":    ct.IconDollar,
 	"tax":         ct.IconTicket,
+	"auth":        ct.IconUserLock,
 }
 
 func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
-	//sideGroup := cu.ToString(data["side_group"], "")
 	viewName := cu.ToString(data["view"], "")
+	user := cu.ToIM(data["user"], cu.IM{})
 
 	sideElement := func(name string, selected bool) *ct.SideBarElement {
 		return &ct.SideBarElement{
 			Name:     name,
 			Value:    name,
-			Label:    labels["setting_"+name],
+			Label:    " " + labels["setting_"+name],
 			Icon:     settingIconMap[name],
 			Selected: selected,
 		}
@@ -36,10 +37,13 @@ func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		&ct.SideBarSeparator{},
 	}
 	sb = append(sb, sideElement("setting", viewName == "setting"))
-	sb = append(sb, sideElement("config_data", viewName == "config_data"))
-	sb = append(sb, sideElement("config_map", viewName == "config_map"))
-	sb = append(sb, sideElement("currency", viewName == "currency"))
-	sb = append(sb, sideElement("tax", viewName == "tax"))
+	if cu.ToString(user["user_group"], "") == md.UserGroupAdmin.String() {
+		sb = append(sb, sideElement("config_data", viewName == "config_data"))
+		sb = append(sb, sideElement("config_map", viewName == "config_map"))
+		sb = append(sb, sideElement("auth", viewName == "auth"))
+		sb = append(sb, sideElement("currency", viewName == "currency"))
+		sb = append(sb, sideElement("tax", viewName == "tax"))
+	}
 	return sb
 }
 
@@ -58,6 +62,7 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	var setting cu.IM = cu.ToIM(data["setting"], cu.IM{})
 	configData := cu.ToIMA(data["config_data"], []cu.IM{})
 	configValues := cu.ToIMA(data["config_values"], []cu.IM{})
+	auth := cu.ToIMA(data["auth"], []cu.IM{})
 
 	pageSizeOpt := fromConfig("paper_size", configData)
 	orientationOpt := fromConfig("orientation", configData)
@@ -161,17 +166,6 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 							"value":   cu.ToString(setting["orientation"], st.DefaultOrientation),
 						},
 					}},
-					/*
-						{Label: labels["setting_history"], Value: ct.Field{
-							BaseComponent: ct.BaseComponent{
-								Name: "history",
-							},
-							Type: ct.FieldTypeInteger, Value: cu.IM{
-								"name":  "history",
-								"value": cu.ToInteger(setting["history"], st.DefaultHistory),
-							},
-						}},
-					*/
 					{Label: labels["setting_export_sep"], Value: ct.Field{
 						BaseComponent: ct.BaseComponent{
 							Name: "export_sep",
@@ -254,6 +248,36 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 				}, Full: true, BorderBottom: false},
 			}
 		},
+		"auth": func() []ct.Row {
+			userRows := []cu.IM{}
+			for _, row := range auth {
+				userRows = append(userRows, cu.MergeIM(row,
+					cu.IM{"lslabel": cu.ToString(row["user_name"], ""),
+						"lsvalue": labels[cu.ToString(row["user_group"], "")]}))
+			}
+			return []ct.Row{
+				{Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Id: "auth_list",
+						},
+						Type: ct.FieldTypeList,
+						Value: cu.IM{
+							"name":                "auth",
+							"rows":                userRows,
+							"pagination":          ct.PaginationTypeTop,
+							"page_size":           10,
+							"hide_paginaton_size": true,
+							"list_filter":         true,
+							"filter_placeholder":  labels["placeholder_filter"],
+							"add_item":            true,
+							"edit_item":           true,
+							"delete_item":         false,
+						},
+					}},
+				}, Full: true, BorderBottom: false},
+			}
+		},
 	}
 
 	if rows, found := viewMap[view]; found {
@@ -267,7 +291,6 @@ func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 		return []ct.Table{}
 	}
 
-	//configValues := cu.ToIMA(data["config_values"], []cu.IM{})
 	tblMap := map[string]func() []ct.Table{
 		"config_data": func() []ct.Table {
 			configData := cu.ToIMA(data["config_data"], []cu.IM{})
@@ -376,7 +399,7 @@ func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 
 func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
-	footerRows := func(disabled bool) []ct.Row {
+	footerRows := func(updateDisabled, deleteDisabled bool) []ct.Row {
 		rows := []ct.Row{
 			{
 				Columns: []ct.RowColumn{
@@ -390,7 +413,7 @@ func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 							"label":        labels["editor_save"],
 							//"auto_focus":   true,
 							"selected": true,
-							"disabled": disabled,
+							"disabled": updateDisabled,
 						},
 					}},
 					{Value: ct.Field{
@@ -416,7 +439,7 @@ func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 							"icon":         ct.IconTimes,
 							"label":        labels["editor_delete"],
 							"style":        cu.SM{"color": "red", "fill": "red"},
-							"disabled":     disabled,
+							"disabled":     deleteDisabled,
 						},
 					}},
 				},
@@ -445,7 +468,7 @@ func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 			}
 			return ct.Form{
 				Title: labels["setting_config_map"],
-				Icon:  ct.IconMap,
+				Icon:  ct.IconDatabase,
 				BodyRows: []ct.Row{
 					{Columns: []ct.RowColumn{
 						{Label: labels["setting_config_code"], Value: ct.Field{
@@ -547,7 +570,152 @@ func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 						},
 					}, Full: true, BorderBottom: true},
 				},
-				FooterRows: footerRows(((mp.FieldName == "") || (mp.Description == ""))),
+				FooterRows: footerRows(((mp.FieldName == "") || (mp.Description == "")), false),
+			}
+		},
+		"auth": func() ct.Form {
+			var auth md.Auth = md.Auth{}
+			authMeta := cu.ToIM(formData["auth_meta"], cu.IM{})
+			ut.ConvertToType(formData, &auth)
+			userGroupOpt := func() (opt []ct.SelectOption) {
+				opt = []ct.SelectOption{}
+				ug := md.UserGroup(0)
+				for _, ugKey := range ug.Keys() {
+					opt = append(opt, ct.SelectOption{
+						Value: ugKey, Text: ugKey,
+					})
+				}
+				return opt
+			}
+			return ct.Form{
+				Title: labels["setting_auth"],
+				Icon:  ct.IconUserLock,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["auth_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "code",
+								"value":    cu.ToString(formData["code"], ""),
+								"disabled": true,
+							},
+							//FormTrigger: true,
+						}},
+						{Label: labels["auth_user_group"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "user_group",
+							},
+							Type: ct.FieldTypeSelect, Value: cu.IM{
+								"name":     "user_group",
+								"options":  userGroupOpt(),
+								"is_null":  false,
+								"value":    auth.UserGroup.String(),
+								"disabled": (auth.UserName == "admin"),
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["auth_user_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "user_name",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":        "user_name",
+								"invalid":     (auth.UserName == ""),
+								"placeholder": labels["mandatory_data"],
+								"value":       auth.UserName,
+								"disabled":    true,
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["auth_disabled"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "disabled",
+							},
+							Type: ct.FieldTypeBool, Value: cu.IM{
+								"name":     "disabled",
+								"value":    auth.Disabled,
+								"disabled": (auth.UserName == "admin"),
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["auth_description"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "description",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "description",
+								"value": auth.AuthMeta.Description,
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["auth_password"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "password",
+							},
+							Type: ct.FieldTypeButton, Value: cu.IM{
+								"name":         "password",
+								"type":         ct.ButtonTypeSubmit,
+								"button_style": ct.ButtonStyleBorder,
+								"icon":         ct.IconKey,
+								"label":        labels["auth_password_reset"],
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{
+							Label: labels["auth_tags"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "tags",
+								},
+								Type: ct.FieldTypeList, Value: cu.IM{
+									"name":                "tags",
+									"rows":                ut.ToTagList(auth.AuthMeta.Tags),
+									"label_value":         "tag",
+									"pagination":          ct.PaginationTypeBottom,
+									"page_size":           5,
+									"hide_paginaton_size": true,
+									"list_filter":         true,
+									"filter_placeholder":  labels["placeholder_filter"],
+									"add_item":            true,
+									"add_icon":            ct.IconTag,
+									"edit_item":           false,
+									"delete_item":         true,
+									"indicator":           ct.IndicatorSpinner,
+								},
+								FormTrigger: true,
+							},
+						},
+						{
+							Label: labels["setting_map_filter"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "filter",
+								},
+								Type: ct.FieldTypeList, Value: cu.IM{
+									"name":                "filter",
+									"rows":                ut.ToTagList(ut.ToStringArray(authMeta["filter"])),
+									"label_value":         "tag",
+									"pagination":          ct.PaginationTypeBottom,
+									"page_size":           5,
+									"hide_paginaton_size": true,
+									"list_filter":         auth.UserGroup != md.UserGroupAdmin,
+									"filter_placeholder":  labels["placeholder_filter"],
+									"add_item":            auth.UserGroup != md.UserGroupAdmin,
+									"add_icon":            ct.IconFilter,
+									"edit_item":           false,
+									"delete_item":         true,
+									"indicator":           ct.IndicatorSpinner,
+								},
+								FormTrigger: true,
+							},
+						},
+					}, Full: true, BorderBottom: true},
+				},
+				FooterRows: footerRows((auth.UserName == ""), (auth.UserName == "admin") || (auth.UserName == "")),
 			}
 		},
 	}

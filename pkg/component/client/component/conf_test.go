@@ -6,6 +6,7 @@ import (
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 
 func Test_moduleEditorView(t *testing.T) {
@@ -275,6 +276,28 @@ func Test_moduleEditorRow(t *testing.T) {
 								"field_type":  "FIELD_NUMBER",
 								"description": "Demo Number",
 							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "setting_auth",
+			args: args{
+				mKey:   "setting",
+				view:   "auth",
+				labels: cu.SM{},
+				data: cu.IM{
+					"auth": []cu.IM{
+						{
+							"code":       "123",
+							"user_group": md.UserGroupAdmin.String(),
+							"user_name":  "admin",
+							"disabled":   false,
+							"auth_meta": cu.IM{
+								"tags": []string{},
+							},
+							"auth_map": cu.IM{},
 						},
 					},
 				},
@@ -1245,7 +1268,11 @@ func TestClientSideBar(t *testing.T) {
 			args: args{
 				moduleKey: "setting",
 				labels:    cu.SM{},
-				data:      cu.IM{},
+				data: cu.IM{
+					"user": cu.IM{
+						"user_group": md.UserGroupAdmin.String(),
+					},
+				},
 			},
 		},
 		{
@@ -1615,15 +1642,6 @@ func TestClientForm(t *testing.T) {
 			},
 		},
 		{
-			name: "setting",
-			args: args{
-				editorKey: "setting",
-				formKey:   "setting",
-				labels:    cu.SM{},
-				data:      cu.IM{},
-			},
-		},
-		{
 			name: "project_addresses",
 			args: args{
 				editorKey: "project",
@@ -1735,6 +1753,26 @@ func TestClientForm(t *testing.T) {
 						"field_name":  "123",
 						"field_type":  "123",
 						"description": "123",
+					},
+				},
+			},
+		},
+		{
+			name: "setting_auth",
+			args: args{
+				editorKey: "setting",
+				formKey:   "auth",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"code": "123",
+					"data": cu.IM{
+						"user_group": md.UserGroupAdmin.String(),
+						"user_name":  "admin",
+						"disabled":   false,
+						"auth_meta": cu.IM{
+							"tags": []string{},
+						},
+						"auth_map": cu.IM{},
 					},
 				},
 			},

@@ -150,38 +150,13 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	return views
 }
 
-func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
-	if !slices.Contains([]string{"trans", "maps", "items"}, view) {
-		return []ct.Row{}
-	}
-
-	var trans md.Trans = md.Trans{}
-	ut.ConvertToType(data["trans"], &trans)
-
-	configMap := cu.ToIMA(data["config_map"], []cu.IM{})
+func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	currencies := cu.ToIMA(data["currencies"], []cu.IM{})
-	items := cu.ToIMA(data["items"], []cu.IM{})
-	selectedField := cu.ToString(data["map_field"], "")
 	customerSelectorRows := cu.ToIMA(data["customer_selector"], []cu.IM{})
 	customerName := cu.ToString(data["customer_name"], "")
 	transitemSelectorRows := cu.ToIMA(data["transitem_selector"], []cu.IM{})
 	employeeSelectorRows := cu.ToIMA(data["employee_selector"], []cu.IM{})
 	projectSelectorRows := cu.ToIMA(data["project_selector"], []cu.IM{})
-
-	mapFieldOpt := func() (opt []ct.SelectOption) {
-		opt = []ct.SelectOption{}
-		for _, field := range configMap {
-			filter := ut.ToStringArray(field["filter"])
-			if slices.Contains(filter, "FILTER_TRANS") || len(filter) == 0 {
-				if _, ok := trans.TransMap[cu.ToString(field["field_name"], "")]; !ok {
-					opt = append(opt, ct.SelectOption{
-						Value: cu.ToString(field["field_name"], ""), Text: cu.ToString(field["description"], ""),
-					})
-				}
-			}
-		}
-		return opt
-	}
 
 	transStateOpt := func() (opt []ct.SelectOption) {
 		opt = []ct.SelectOption{}
@@ -257,77 +232,6 @@ func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 
 	typeLabel := func(key string) string {
 		return cu.ToString(labels[key+"_"+strings.ToLower(strings.Split(trans.TransType.String(), "_")[1])], labels[key])
-	}
-
-	itemTotal := func() (netAmount, vatAmount, amount float64) {
-		for _, item := range items {
-			netAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["net_amount"], 0)
-			vatAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["vat_amount"], 0)
-			amount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["amount"], 0)
-		}
-		return netAmount, vatAmount, amount
-	}
-
-	if view == "maps" {
-		return []ct.Row{
-			{Columns: []ct.RowColumn{
-				{Label: labels["map_fields"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "map_field_" + cu.ToString(trans.Id, ""),
-					},
-					Type: ct.FieldTypeSelect, Value: cu.IM{
-						"name":    "map_field",
-						"options": mapFieldOpt(),
-						"is_null": true,
-						"value":   selectedField,
-					},
-				}},
-			}, Full: false, FieldCol: true},
-		}
-	}
-
-	if view == "items" {
-		netAmount, vatAmount, amount := itemTotal()
-		return []ct.Row{
-			{Columns: []ct.RowColumn{
-				{
-					Label: labels["item_net_amount"],
-					Value: ct.Field{
-						Type: ct.FieldTypeNumber, Value: cu.IM{
-							"name":     "net_amount",
-							"value":    netAmount,
-							"disabled": true,
-							"style": cu.SM{
-								"opacity": "1",
-							},
-						},
-					}},
-				{
-					Label: labels["item_vat_amount"],
-					Value: ct.Field{
-						Type: ct.FieldTypeNumber, Value: cu.IM{
-							"name":     "vat_amount",
-							"value":    vatAmount,
-							"disabled": true,
-							"style": cu.SM{
-								"opacity": "1",
-							},
-						},
-					}},
-				{
-					Label: labels["item_amount"],
-					Value: ct.Field{
-						Type: ct.FieldTypeNumber, Value: cu.IM{
-							"name":     "amount",
-							"value":    amount,
-							"disabled": true,
-							"style": cu.SM{
-								"opacity": "1",
-							},
-						},
-					}},
-			}, Full: false},
-		}
 	}
 
 	if slices.Contains([]string{
@@ -784,7 +688,115 @@ func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 					},
 				}},
 			}, Full: true, BorderBottom: true})
-		return rows
+	}
+
+	return rows
+}
+
+func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	if !slices.Contains([]string{"trans", "maps", "items"}, view) {
+		return []ct.Row{}
+	}
+
+	var trans md.Trans = md.Trans{}
+	ut.ConvertToType(data["trans"], &trans)
+
+	configMap := cu.ToIMA(data["config_map"], []cu.IM{})
+	items := cu.ToIMA(data["items"], []cu.IM{})
+	selectedField := cu.ToString(data["map_field"], "")
+
+	mapFieldOpt := func() (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		for _, field := range configMap {
+			filter := ut.ToStringArray(field["filter"])
+			if slices.Contains(filter, "FILTER_TRANS") || len(filter) == 0 {
+				if _, ok := trans.TransMap[cu.ToString(field["field_name"], "")]; !ok {
+					opt = append(opt, ct.SelectOption{
+						Value: cu.ToString(field["field_name"], ""), Text: cu.ToString(field["description"], ""),
+					})
+				}
+			}
+		}
+		return opt
+	}
+
+	itemTotal := func() (netAmount, vatAmount, amount float64) {
+		for _, item := range items {
+			netAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["net_amount"], 0)
+			vatAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["vat_amount"], 0)
+			amount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["amount"], 0)
+		}
+		return netAmount, vatAmount, amount
+	}
+
+	if view == "maps" {
+		return []ct.Row{
+			{Columns: []ct.RowColumn{
+				{Label: labels["map_fields"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "map_field_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeSelect, Value: cu.IM{
+						"name":    "map_field",
+						"options": mapFieldOpt(),
+						"is_null": true,
+						"value":   selectedField,
+					},
+				}},
+			}, Full: false, FieldCol: true},
+		}
+	}
+
+	if view == "items" {
+		netAmount, vatAmount, amount := itemTotal()
+		return []ct.Row{
+			{Columns: []ct.RowColumn{
+				{
+					Label: labels["item_net_amount"],
+					Value: ct.Field{
+						Type: ct.FieldTypeNumber, Value: cu.IM{
+							"name":     "net_amount",
+							"value":    netAmount,
+							"disabled": true,
+							"style": cu.SM{
+								"opacity": "1",
+							},
+						},
+					}},
+				{
+					Label: labels["item_vat_amount"],
+					Value: ct.Field{
+						Type: ct.FieldTypeNumber, Value: cu.IM{
+							"name":     "vat_amount",
+							"value":    vatAmount,
+							"disabled": true,
+							"style": cu.SM{
+								"opacity": "1",
+							},
+						},
+					}},
+				{
+					Label: labels["item_amount"],
+					Value: ct.Field{
+						Type: ct.FieldTypeNumber, Value: cu.IM{
+							"name":     "amount",
+							"value":    amount,
+							"disabled": true,
+							"style": cu.SM{
+								"opacity": "1",
+							},
+						},
+					}},
+			}, Full: false},
+		}
+	}
+
+	if slices.Contains([]string{
+		md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
+		md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()},
+		trans.TransType.String(),
+	) {
+		return transMainItemRow(trans, labels, data)
 	}
 
 	return rows

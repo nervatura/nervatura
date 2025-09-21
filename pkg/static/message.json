@@ -213,6 +213,25 @@
     "tax_rate_value": "Rate Value",
     "tax_tags": "Tags",
 
+    "setting_auth": "USER ACCOUNT",
+    "auth_new": "New User",
+    "auth_enter": "Enter user name",
+    "auth_invalid": "Invalid user name",
+    "auth_exists": "User already exists",
+    "auth_code": "User Code",
+    "auth_user_name": "User Name",
+    "auth_user_group": "User Group",
+    "auth_disabled": "Disabled",
+    "auth_description": "Description",
+    "auth_tags": "Tags",
+    "auth_password": "Password",
+    "auth_password_reset": "Reset user password",
+    "auth_password_enter": "Enter new password",
+    "auth_password_reset_ok": "Password successfully reset!",
+    "GROUP_ADMIN": "ADMIN",
+    "GROUP_USER": "USER",
+    "GROUP_GUEST": "GUEST",
+
     "product_title": "PRODUCT",
     "product_view": "Product Data",
     "product_new": "NEW PRODUCT",
@@ -371,8 +390,6 @@
     "item_action_price": "Action Price",
     "item_tags": "Tags",
 
-    "invoice_items_view": "Invoice Rows",
-
-    "auth_code": "User"
+    "invoice_items_view": "Invoice Rows"
   }
 }

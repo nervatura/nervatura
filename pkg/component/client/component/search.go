@@ -45,6 +45,11 @@ func searchSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		}
 		return sg
 	}
+	selectedGroup := func(groupKey string, views []string) bool {
+		return (sideGroup == groupKey) ||
+			((sideGroup == "") && slices.Contains(views, cu.ToString(data["view"], "")))
+	}
+
 	sb := []ct.SideBarItem{
 		&ct.SideBarSeparator{},
 	}
@@ -53,56 +58,49 @@ func searchSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		"transitem_simple", "transitem", "transitem_map", "transitem_item",
 	}
 	transitemGroup := sideGroupElement("group_transitem", labels["transitem_title"], transitemViews)
-	transitemGroup.Selected = (sideGroup == "group_transitem") ||
-		((sideGroup == "") && slices.Contains(transitemViews, cu.ToString(data["view"], "")))
+	transitemGroup.Selected = selectedGroup("group_transitem", transitemViews)
 	sb = append(sb, transitemGroup)
 
 	customerViews := []string{
 		"customer_simple", "customer", "customer_map", "customer_addresses", "customer_contacts", "customer_events",
 	}
 	customerGroup := sideGroupElement("group_customer", labels["customer_title"], customerViews)
-	customerGroup.Selected = (sideGroup == "group_customer") ||
-		((sideGroup == "") && slices.Contains(customerViews, cu.ToString(data["view"], "")))
+	customerGroup.Selected = selectedGroup("group_customer", customerViews)
 	sb = append(sb, customerGroup)
 
 	productViews := []string{
 		"product_simple", "product", "product_map", "product_events", "product_prices",
 	}
 	productGroup := sideGroupElement("group_product", labels["product_title"], productViews)
-	productGroup.Selected = (sideGroup == "group_product") ||
-		((sideGroup == "") && slices.Contains(productViews, cu.ToString(data["view"], "")))
+	productGroup.Selected = selectedGroup("group_product", productViews)
 	sb = append(sb, productGroup)
 
 	employeeViews := []string{
 		"employee_simple", "employee", "employee_map", "employee_events",
 	}
 	employeeGroup := sideGroupElement("group_employee", labels["employee_title"], employeeViews)
-	employeeGroup.Selected = (sideGroup == "group_employee") ||
-		((sideGroup == "") && slices.Contains(employeeViews, cu.ToString(data["view"], "")))
+	employeeGroup.Selected = selectedGroup("group_employee", employeeViews)
 	sb = append(sb, employeeGroup)
 
 	toolViews := []string{
 		"tool_simple", "tool", "tool_map", "tool_events",
 	}
 	toolGroup := sideGroupElement("group_tool", labels["tool_title"], toolViews)
-	toolGroup.Selected = (sideGroup == "group_tool") ||
-		((sideGroup == "") && slices.Contains(toolViews, cu.ToString(data["view"], "")))
+	toolGroup.Selected = selectedGroup("group_tool", toolViews)
 	sb = append(sb, toolGroup)
 
 	projectViews := []string{
 		"project_simple", "project", "project_map", "project_addresses", "project_contacts", "project_events",
 	}
 	projectGroup := sideGroupElement("group_project", labels["project_title"], projectViews)
-	projectGroup.Selected = (sideGroup == "group_project") ||
-		((sideGroup == "") && slices.Contains(projectViews, cu.ToString(data["view"], "")))
+	projectGroup.Selected = selectedGroup("group_project", projectViews)
 	sb = append(sb, projectGroup)
 
 	placeViews := []string{
 		"place_simple", "place", "place_map", "place_contacts",
 	}
 	placeGroup := sideGroupElement("group_place", labels["place_title"], placeViews)
-	placeGroup.Selected = (sideGroup == "group_place") ||
-		((sideGroup == "") && slices.Contains(placeViews, cu.ToString(data["view"], "")))
+	placeGroup.Selected = selectedGroup("group_place", placeViews)
 	sb = append(sb, placeGroup)
 
 	//for _, name := range []string{"customer_simple", "customer", "customer_addresses", "customer_contacts"} {

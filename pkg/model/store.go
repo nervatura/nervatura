@@ -61,8 +61,12 @@ type Bookmark struct {
 }
 
 type AuthMeta struct {
+	// The description of the user
+	Description string `json:"description"`
 	// Additional tags for the user
 	Tags []string `json:"tags"`
+	// User's UI Filters
+	Filter []AuthFilter `json:"filter"`
 	// User's Bookmarks
 	Bookmarks []Bookmark `json:"bookmarks"`
 }

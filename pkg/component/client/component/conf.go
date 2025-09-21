@@ -64,8 +64,8 @@ func ClientLogin(labels cu.SM, config cu.IM) ct.Login {
 		Lang:         lang,
 		HideDatabase: false,
 		HidePassword: false,
-		ShowHelp:     false,
-		HelpURL:      "",
+		ShowHelp:     true,
+		HelpURL:      st.DocsPath,
 	}
 	return login
 }

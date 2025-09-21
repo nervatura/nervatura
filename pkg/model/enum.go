@@ -97,6 +97,15 @@ func (ug UserGroup) String() string {
 	return ""
 }
 
+func (ug UserGroup) Keys() []string {
+	keys := []string{}
+	for k := range userGroupMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func (ug *UserGroup) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 
@@ -1231,4 +1240,65 @@ func (lt *ViewName) UnmarshalJSON(b []byte) error {
 
 func (lt ViewName) MarshalJSON() ([]byte, error) {
 	return json.Marshal(lt.String())
+}
+
+type AuthFilter int
+
+const (
+	AuthFilterCustomer AuthFilter = iota
+	AuthFilterEmployee
+	AuthFilterPlace
+	AuthFilterProduct
+	AuthFilterProject
+	AuthFilterTool
+	AuthFilterTransItem
+	AuthFilterTransMovement
+	AuthFilterTransPayment
+	AuthFilterOffice
+)
+
+var authFilterMap = map[string]AuthFilter{
+	"AUTH_CUSTOMER":       AuthFilterCustomer,
+	"AUTH_EMPLOYEE":       AuthFilterEmployee,
+	"AUTH_PLACE":          AuthFilterPlace,
+	"AUTH_PRODUCT":        AuthFilterProduct,
+	"AUTH_PROJECT":        AuthFilterProject,
+	"AUTH_TOOL":           AuthFilterTool,
+	"AUTH_TRANS_ITEM":     AuthFilterTransItem,
+	"AUTH_TRANS_MOVEMENT": AuthFilterTransMovement,
+	"AUTH_TRANS_PAYMENT":  AuthFilterTransPayment,
+	"AUTH_OFFICE":         AuthFilterOffice,
+}
+
+func (ft AuthFilter) String() string {
+	for k, v := range authFilterMap {
+		if v == ft {
+			return k
+		}
+	}
+	return ""
+}
+
+func (ft AuthFilter) Keys() []string {
+	keys := []string{}
+	for k := range authFilterMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func (ft *AuthFilter) UnmarshalJSON(b []byte) error {
+	s := JSONString(b)
+
+	if result, found := authFilterMap[s]; found {
+		*ft = result
+	} else {
+		return fmt.Errorf("invalid field type")
+	}
+	return nil
+}
+
+func (ft AuthFilter) MarshalJSON() ([]byte, error) {
+	return json.Marshal(ft.String())
 }
