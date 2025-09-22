@@ -147,7 +147,7 @@ func (cls *ClientService) AuthUser(database, username string) (user cu.IM, err e
 			"id": authUser.Id, "code": authUser.Code,
 			"user_name": authUser.UserName, "user_group": authUser.UserGroup.String(),
 			"tags": authUser.AuthMeta.Tags, "auth_map": authUser.AuthMap,
-			"bookmarks": authUser.AuthMeta.Bookmarks,
+			"bookmarks": authUser.AuthMeta.Bookmarks, "auth_filter": authUser.AuthMeta.Filter,
 		}
 	}
 	return user, err
@@ -589,6 +589,8 @@ func (cls *ClientService) setBookmark(evt ct.ResponseEvent) ct.ResponseEvent {
 	client.SetSearch(cu.ToString(bookmark["key"], ""), cu.IM{
 		"session_id":  client.Ticket.SessionID,
 		"user_config": userConfig,
+		"auth_filter": client.Ticket.User["auth_filter"],
+		"user_group":  client.Ticket.User["user_group"],
 		cu.ToString(bookmark["key"], ""): cu.IM{
 			"filters":         bookmark["filters"],
 			"visible_columns": bookmark["columns"],
@@ -665,6 +667,8 @@ func (cls *ClientService) mainResponseLogin(evt ct.ResponseEvent) (re ct.Respons
 	client.Theme = cu.ToString(userConfig["theme"], st.DefaultTheme)
 	client.SetSearch(st.DefaultSearchView, cu.IM{
 		"user_config": userConfig,
+		"auth_filter": user["auth_filter"],
+		"user_group":  user["user_group"],
 	}, true)
 
 	url := fmt.Sprintf(st.ClientPath+"/session/%s", client.Ticket.SessionID)

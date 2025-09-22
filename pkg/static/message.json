@@ -188,6 +188,9 @@
     "setting_map_tags": "Tags",
     "setting_map_filter": "Filter",
 
+    "setting_shortcut": "MENU SHORTCUT",
+    "setting_report": "REPORT TEMPLATE",
+
     "bookmark_title": "Bookmarks",
     "BOOKMARK_BROWSER": "Browser",
     "BOOKMARK_EDITOR": "Editor",
@@ -305,6 +308,12 @@
     "transitem_title": "DOCUMENT",
     "transitem_view": "Document Data",
     "transitem_new": "NEW DOCUMENT",
+    "transpayment_title": "PAYMENT",
+    "transpayment_view": "Payment Data",
+    "transpayment_new": "NEW PAYMENT",
+    "transmovement_title": "STOCK CONTROL",
+    "transmovement_view": "Movement Data",
+    "transmovement_new": "NEW MOVEMENT",
     "trans_invoice": "Invoice",
     "trans_receipt": "Receipt",
     "trans_order": "Order",
@@ -390,6 +399,15 @@
     "item_action_price": "Action Price",
     "item_tags": "Tags",
 
-    "invoice_items_view": "Invoice Rows"
+    "invoice_items_view": "Invoice Rows",
+
+    "office_title": "BACK OFFICE",
+    "office_report_title": "REPORT",
+    "office_report_queue_title": "REPORT QUEUE",
+    "office_report_editor_title": "REPORT EDITOR",
+    "office_rate_title": "INTEREST AND RATE",
+    "office_shortcut_title": "SERVER SHORTCUT",
+    "office_log_title": "DATABASE LOG"
+
   }
 }

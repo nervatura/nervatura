@@ -12,8 +12,10 @@ import (
 
 func employeeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var employee cu.IM = cu.ToIM(data["employee"], cu.IM{"employee_meta": cu.IM{}})
+	user := cu.ToIM(data["user"], cu.IM{})
 
 	dirty := cu.ToBoolean(data["dirty"], false)
+	readonly := (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String())
 	newInput := (cu.ToInteger(employee["id"], 0) == 0)
 	updateLabel := labels["editor_save"]
 	if newInput {
@@ -54,14 +56,14 @@ func employeeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 			Label:    updateLabel,
 			Icon:     ct.IconUpload,
 			Selected: dirty,
-			Disabled: false,
+			Disabled: readonly,
 		},
 		&ct.SideBarElement{
 			Name:     "editor_delete",
 			Value:    "editor_delete",
 			Label:    labels["editor_delete"],
 			Icon:     ct.IconTimes,
-			Disabled: newInput,
+			Disabled: newInput || readonly,
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{
@@ -69,7 +71,7 @@ func employeeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 			Value:    "editor_new",
 			Label:    labels["employee_new"],
 			Icon:     ct.IconUser,
-			Disabled: newInput || dirty,
+			Disabled: newInput || dirty || readonly,
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{

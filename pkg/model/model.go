@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/smtp"
 
+	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 )
 
@@ -76,6 +77,28 @@ type View struct {
 	OrderBy []string `json:"order_by"`
 	Limit   int64    `json:"limit"`
 	Offset  int64    `json:"offset"`
+}
+
+type SideGroup struct {
+	Name       string   `json:"name"`
+	Label      string   `json:"label"`
+	Views      []string `json:"views"`
+	AuthFilter string   `json:"auth_filter"`
+	Disabled   bool     `json:"disabled"`
+}
+
+type SearchView struct {
+	Title             string
+	Icon              string
+	Simple            bool
+	ReadOnly          bool
+	LabelAdd          string
+	Fields            []ct.TableField
+	VisibleColumns    cu.IM
+	HideFilters       cu.IM
+	Filters           []any
+	FilterPlaceholder string
+	Disabled          bool
 }
 
 type SmtpClient interface {

@@ -18,6 +18,8 @@ var settingIconMap = map[string]string{
 	"currency":    ct.IconDollar,
 	"tax":         ct.IconTicket,
 	"auth":        ct.IconUserLock,
+	"shortcut":    ct.IconShare,
+	"report":      ct.IconBook,
 }
 
 func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
@@ -43,6 +45,8 @@ func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		sb = append(sb, sideElement("auth", viewName == "auth"))
 		sb = append(sb, sideElement("currency", viewName == "currency"))
 		sb = append(sb, sideElement("tax", viewName == "tax"))
+		sb = append(sb, sideElement("shortcut", viewName == "shortcut"))
+		sb = append(sb, sideElement("report", viewName == "report"))
 	}
 	return sb
 }

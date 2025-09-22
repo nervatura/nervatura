@@ -12,15 +12,17 @@ import (
 
 func placeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var place cu.IM = cu.ToIM(data["place"], cu.IM{"place_meta": cu.IM{}})
+	user := cu.ToIM(data["user"], cu.IM{})
 
 	dirty := cu.ToBoolean(data["dirty"], false)
+	readonly := (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String())
 	newInput := (cu.ToInteger(place["id"], 0) == 0)
 	updateLabel := labels["editor_save"]
 	if newInput {
 		updateLabel = labels["editor_create"]
 	}
 	updateDisabled := func() (disabled bool) {
-		return (cu.ToString(place["place_name"], "") == "")
+		return (cu.ToString(place["place_name"], "") == "") || readonly
 	}
 
 	smState := func() *ct.SideBarStatic {
@@ -64,7 +66,7 @@ func placeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 			Value:    "editor_delete",
 			Label:    labels["editor_delete"],
 			Icon:     ct.IconTimes,
-			Disabled: newInput,
+			Disabled: newInput || readonly,
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{
@@ -72,7 +74,7 @@ func placeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 			Value:    "editor_new",
 			Label:    labels["place_new"],
 			Icon:     ct.IconHome,
-			Disabled: newInput || dirty,
+			Disabled: newInput || dirty || readonly,
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{

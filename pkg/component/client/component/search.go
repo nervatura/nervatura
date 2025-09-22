@@ -6,111 +6,148 @@ import (
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-type SearchView struct {
-	Title             string
-	Icon              string
-	Simple            bool
-	ReadOnly          bool
-	LabelAdd          string
-	Fields            []ct.TableField
-	VisibleColumns    cu.IM
-	HideFilters       cu.IM
-	Filters           []any
-	FilterPlaceholder string
+func searchSideBarGroupConfig(labels cu.SM) []md.SideGroup {
+	return []md.SideGroup{
+		{
+			Name:  "group_transitem",
+			Label: labels["transitem_title"],
+			Views: []string{
+				"transitem_simple", "transitem", "transitem_map", "transitem_item",
+			},
+			AuthFilter: md.AuthFilterTransItem.String(),
+		},
+		{
+			Name:       "group_transpayment",
+			Label:      labels["transpayment_title"],
+			Views:      []string{},
+			AuthFilter: md.AuthFilterTransPayment.String(),
+			Disabled:   true,
+		},
+		{
+			Name:       "group_transmovement",
+			Label:      labels["transmovement_title"],
+			Views:      []string{},
+			AuthFilter: md.AuthFilterTransMovement.String(),
+			Disabled:   true,
+		},
+		{
+			Name:  "group_customer",
+			Label: labels["customer_title"],
+			Views: []string{
+				"customer_simple", "customer", "customer_map", "customer_addresses", "customer_contacts", "customer_events",
+			},
+			AuthFilter: md.AuthFilterCustomer.String(),
+		},
+		{
+			Name:  "group_product",
+			Label: labels["product_title"],
+			Views: []string{
+				"product_simple", "product", "product_map", "product_events", "product_prices",
+			},
+			AuthFilter: md.AuthFilterProduct.String(),
+		},
+		{
+			Name:  "group_employee",
+			Label: labels["employee_title"],
+			Views: []string{
+				"employee_simple", "employee", "employee_map", "employee_events",
+			},
+			AuthFilter: md.AuthFilterEmployee.String(),
+		},
+		{
+			Name:  "group_tool",
+			Label: labels["tool_title"],
+			Views: []string{
+				"tool_simple", "tool", "tool_map", "tool_events",
+			},
+			AuthFilter: md.AuthFilterTool.String(),
+		},
+		{
+			Name:  "group_project",
+			Label: labels["project_title"],
+			Views: []string{
+				"project_simple", "project", "project_map", "project_addresses", "project_contacts", "project_events",
+			},
+			AuthFilter: md.AuthFilterProject.String(),
+		},
+		{
+			Name:  "group_place",
+			Label: labels["place_title"],
+			Views: []string{
+				"place_simple", "place", "place_map", "place_contacts",
+			},
+			AuthFilter: md.AuthFilterPlace.String(),
+		},
+		{
+			Name:  "group_office",
+			Label: labels["office_title"],
+			Views: []string{
+				"office_report", "office_report_queue", "office_report_editor", "office_rate", "office_shortcut", "office_log",
+			},
+			AuthFilter: md.AuthFilterOffice.String(),
+		},
+	}
 }
 
 func searchSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	sideGroup := cu.ToString(data["side_group"], "")
+	authFilter := ut.ToStringArray(data["auth_filter"])
+	userGroup := cu.ToString(data["user_group"], "")
 	sideElement := func(name string) *ct.SideBarElement {
 		return &ct.SideBarElement{
-			Name:  name,
-			Value: name,
-			Label: " " + SearchViewConfig(name, labels).Title,
-			Icon:  SearchViewConfig(name, labels).Icon,
+			Name:     name,
+			Value:    name,
+			Label:    " " + SearchViewConfig(name, labels).Title,
+			Icon:     SearchViewConfig(name, labels).Icon,
+			Disabled: SearchViewConfig(name, labels).Disabled,
 			//Selected: (cu.ToString(data["view"], "") == name),
 		}
 	}
-	sideGroupElement := func(name, label string, views []string) *ct.SideBarGroup {
+
+	sideGroupElement := func(group md.SideGroup) *ct.SideBarGroup {
 		sg := &ct.SideBarGroup{
-			Name:  name,
-			Value: name,
-			Label: label,
+			Name:  group.Name,
+			Value: group.Name,
+			Label: group.Label,
 		}
-		for _, name := range views {
+		for _, name := range group.Views {
 			se := sideElement(name)
 			//se.Selected = (cu.ToString(data["view"], "") == name)
 			sg.Items = append(sg.Items, *se)
 		}
 		return sg
 	}
-	selectedGroup := func(groupKey string, views []string) bool {
-		return (sideGroup == groupKey) ||
-			((sideGroup == "") && slices.Contains(views, cu.ToString(data["view"], "")))
+
+	selectedGroup := func(group md.SideGroup) bool {
+		return (sideGroup == group.Name) ||
+			((sideGroup == "") && slices.Contains(group.Views, cu.ToString(data["view"], "")))
+	}
+
+	visibleGroups := func(group md.SideGroup) bool {
+		return userGroup == md.UserGroupAdmin.String() || len(authFilter) == 0 || slices.Contains(authFilter, group.AuthFilter)
 	}
 
 	sb := []ct.SideBarItem{
 		&ct.SideBarSeparator{},
 	}
-
-	transitemViews := []string{
-		"transitem_simple", "transitem", "transitem_map", "transitem_item",
+	for _, group := range searchSideBarGroupConfig(labels) {
+		if visibleGroups(group) {
+			groupElement := sideGroupElement(group)
+			groupElement.Selected = selectedGroup(group)
+			groupElement.Disabled = group.Disabled
+			sb = append(sb, groupElement)
+		}
 	}
-	transitemGroup := sideGroupElement("group_transitem", labels["transitem_title"], transitemViews)
-	transitemGroup.Selected = selectedGroup("group_transitem", transitemViews)
-	sb = append(sb, transitemGroup)
 
-	customerViews := []string{
-		"customer_simple", "customer", "customer_map", "customer_addresses", "customer_contacts", "customer_events",
-	}
-	customerGroup := sideGroupElement("group_customer", labels["customer_title"], customerViews)
-	customerGroup.Selected = selectedGroup("group_customer", customerViews)
-	sb = append(sb, customerGroup)
-
-	productViews := []string{
-		"product_simple", "product", "product_map", "product_events", "product_prices",
-	}
-	productGroup := sideGroupElement("group_product", labels["product_title"], productViews)
-	productGroup.Selected = selectedGroup("group_product", productViews)
-	sb = append(sb, productGroup)
-
-	employeeViews := []string{
-		"employee_simple", "employee", "employee_map", "employee_events",
-	}
-	employeeGroup := sideGroupElement("group_employee", labels["employee_title"], employeeViews)
-	employeeGroup.Selected = selectedGroup("group_employee", employeeViews)
-	sb = append(sb, employeeGroup)
-
-	toolViews := []string{
-		"tool_simple", "tool", "tool_map", "tool_events",
-	}
-	toolGroup := sideGroupElement("group_tool", labels["tool_title"], toolViews)
-	toolGroup.Selected = selectedGroup("group_tool", toolViews)
-	sb = append(sb, toolGroup)
-
-	projectViews := []string{
-		"project_simple", "project", "project_map", "project_addresses", "project_contacts", "project_events",
-	}
-	projectGroup := sideGroupElement("group_project", labels["project_title"], projectViews)
-	projectGroup.Selected = selectedGroup("group_project", projectViews)
-	sb = append(sb, projectGroup)
-
-	placeViews := []string{
-		"place_simple", "place", "place_map", "place_contacts",
-	}
-	placeGroup := sideGroupElement("group_place", labels["place_title"], placeViews)
-	placeGroup.Selected = selectedGroup("group_place", placeViews)
-	sb = append(sb, placeGroup)
-
-	//for _, name := range []string{"customer_simple", "customer", "customer_addresses", "customer_contacts"} {
-	//	sb = append(sb, sideElement(name))
-	//}
 	return sb
 }
 
-func SearchViewConfig(view string, labels cu.SM) (config SearchView) {
-	viewMap := map[string]SearchView{
+func SearchViewConfig(view string, labels cu.SM) (config md.SearchView) {
+	viewMap := map[string]md.SearchView{
 		"transitem_simple": {
 			Title:    labels["quick_search"],
 			Icon:     ct.IconBolt,
@@ -817,7 +854,7 @@ func SearchViewConfig(view string, labels cu.SM) (config SearchView) {
 		},
 		"place_simple": {
 			Title:    labels["quick_search"],
-			Icon:     ct.IconHome,
+			Icon:     ct.IconBolt,
 			Simple:   true,
 			ReadOnly: false,
 			LabelAdd: "",
@@ -905,6 +942,36 @@ func SearchViewConfig(view string, labels cu.SM) (config SearchView) {
 				"place_name": true, "first_name": true, "surname": true, "phone": true, "email": true,
 			},
 			Filters: []any{},
+		},
+		"office_report": {
+			Title:    labels["office_report_title"],
+			Icon:     ct.IconChartBar,
+			Disabled: true,
+		},
+		"office_report_queue": {
+			Title:    labels["office_report_queue_title"],
+			Icon:     ct.IconPrint,
+			Disabled: true,
+		},
+		"office_report_editor": {
+			Title:    labels["office_report_editor_title"],
+			Icon:     ct.IconTextHeight,
+			Disabled: true,
+		},
+		"office_rate": {
+			Title:    labels["office_rate_title"],
+			Icon:     ct.IconGlobe,
+			Disabled: true,
+		},
+		"office_shortcut": {
+			Title:    labels["office_shortcut_title"],
+			Icon:     ct.IconShare,
+			Disabled: true,
+		},
+		"office_log": {
+			Title:    labels["office_log_title"],
+			Icon:     ct.IconInfoCircle,
+			Disabled: true,
 		},
 	}
 	return viewMap[view]

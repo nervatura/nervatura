@@ -12,7 +12,9 @@ import (
 
 func projectSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var project cu.IM = cu.ToIM(data["project"], cu.IM{"project_meta": cu.IM{}})
+	user := cu.ToIM(data["user"], cu.IM{})
 
+	readonly := (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String())
 	dirty := cu.ToBoolean(data["dirty"], false)
 	newInput := (cu.ToInteger(project["id"], 0) == 0)
 	updateLabel := labels["editor_save"]
@@ -20,7 +22,7 @@ func projectSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		updateLabel = labels["editor_create"]
 	}
 	updateDisabled := func() (disabled bool) {
-		return (cu.ToString(project["project_name"], "") == "")
+		return (cu.ToString(project["project_name"], "") == "") || readonly
 	}
 
 	smState := func() *ct.SideBarStatic {
@@ -64,7 +66,7 @@ func projectSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 			Value:    "editor_delete",
 			Label:    labels["editor_delete"],
 			Icon:     ct.IconTimes,
-			Disabled: newInput,
+			Disabled: newInput || readonly,
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{
@@ -72,7 +74,7 @@ func projectSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 			Value:    "editor_new",
 			Label:    labels["project_new"],
 			Icon:     ct.IconUser,
-			Disabled: newInput || dirty,
+			Disabled: newInput || dirty || readonly,
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{
