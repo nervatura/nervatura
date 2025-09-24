@@ -19,7 +19,7 @@ var settingIconMap = map[string]string{
 	"tax":         ct.IconTicket,
 	"auth":        ct.IconUserLock,
 	"shortcut":    ct.IconShare,
-	"report":      ct.IconBook,
+	"template":    ct.IconBook,
 }
 
 func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
@@ -46,7 +46,7 @@ func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		sb = append(sb, sideElement("currency", viewName == "currency"))
 		sb = append(sb, sideElement("tax", viewName == "tax"))
 		sb = append(sb, sideElement("shortcut", viewName == "shortcut"))
-		sb = append(sb, sideElement("report", viewName == "report"))
+		sb = append(sb, sideElement("template", viewName == "template"))
 	}
 	return sb
 }
@@ -252,6 +252,38 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 				}, Full: true, BorderBottom: false},
 			}
 		},
+		"shortcut": func() []ct.Row {
+			mapRows := []cu.IM{}
+			for _, row := range configValues {
+				if row["config_type"] == md.ConfigTypeShortcut.String() {
+					configMap := cu.ToIM(row["data"], cu.IM{})
+					mapRows = append(mapRows, cu.MergeIM(row,
+						cu.IM{"lslabel": cu.ToString(configMap["shortcut_key"], ""), "lsvalue": cu.ToString(configMap["description"], "")}))
+				}
+			}
+			return []ct.Row{
+				{Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Id: "shortcut_list",
+						},
+						Type: ct.FieldTypeList,
+						Value: cu.IM{
+							"name":                "shortcut",
+							"rows":                mapRows,
+							"pagination":          ct.PaginationTypeTop,
+							"page_size":           10,
+							"hide_paginaton_size": true,
+							"list_filter":         true,
+							"filter_placeholder":  labels["placeholder_filter"],
+							"add_item":            true,
+							"edit_item":           true,
+							"delete_item":         true,
+						},
+					}},
+				}, Full: true, BorderBottom: false},
+			}
+		},
 		"auth": func() []ct.Row {
 			userRows := []cu.IM{}
 			for _, row := range auth {
@@ -291,7 +323,7 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 }
 
 func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
-	if !slices.Contains([]string{"config_data", "currency", "tax"}, view) {
+	if !slices.Contains([]string{"config_data", "currency", "tax", "template"}, view) {
 		return []ct.Table{}
 	}
 
@@ -391,6 +423,33 @@ func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 					FilterPlaceholder: labels["placeholder_filter"],
 					AddItem:           true,
 					LabelAdd:          labels["tax_new"],
+					Editable:          true,
+					Unsortable:        true,
+				},
+			}
+		},
+		"template": func() []ct.Table {
+			templates := cu.ToIMA(data["template"], []cu.IM{})
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "installed", Label: labels["template_installed"],
+							FieldType: ct.TableFieldTypeBool, TextAlign: ct.TextAlignCenter, ReadOnly: true},
+						{Name: "report_key", Label: labels["template_report_key"], ReadOnly: true},
+						{Name: "report_name", Label: labels["template_report_name"], ReadOnly: true},
+						{Name: "label", Label: labels["template_label"], ReadOnly: true},
+						//{Name: "file_type", Label: labels["template_file_type"], ReadOnly: true},
+						{Name: "description", Label: labels["template_description"], ReadOnly: true},
+						//{Name: "file_name", Label: labels["template_file_name"], ReadOnly: true},
+					},
+					Rows:              templates,
+					RowKey:            "report_key",
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          10,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
 					Editable:          true,
 					Unsortable:        true,
 				},
@@ -574,7 +633,154 @@ func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 						},
 					}, Full: true, BorderBottom: true},
 				},
-				FooterRows: footerRows(((mp.FieldName == "") || (mp.Description == "")), false),
+				FooterRows: footerRows(((mp.FieldName == "") || (mp.Description == "")), (cu.ToString(formData["code"], "") == "")),
+			}
+		},
+		"shortcut": func() ct.Form {
+			var mp md.ConfigShortcut = md.ConfigShortcut{}
+			cfData := cu.ToIM(formData["data"], cu.IM{})
+			ut.ConvertToType(cfData, &mp)
+			methodOpt := func() (opt []ct.SelectOption) {
+				opt = []ct.SelectOption{}
+				mm := md.ShortcutMethod(0)
+				for _, mmKey := range mm.Keys() {
+					opt = append(opt, ct.SelectOption{
+						Value: mmKey, Text: mmKey,
+					})
+				}
+				return opt
+			}
+			fieldRows := []cu.IM{}
+			sfields := cu.ToIMA(cfData["fields"], []cu.IM{})
+			for _, row := range sfields {
+				fieldRows = append(fieldRows, cu.MergeIM(row,
+					cu.IM{
+						"lslabel": cu.ToString(row["field_name"], "") + " - " + cu.ToString(row["field_type"], ""),
+						"lsvalue": cu.ToString(row["description"], "")}))
+			}
+			return ct.Form{
+				Title: labels["setting_shortcut"],
+				Icon:  ct.IconShare,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["setting_config_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "code",
+								"value":    cu.ToString(formData["code"], ""),
+								"disabled": true,
+							},
+							//FormTrigger: true,
+						}},
+						{Label: labels["setting_shortcut_method"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "method",
+							},
+							Type: ct.FieldTypeSelect, Value: cu.IM{
+								"name":    "method",
+								"options": methodOpt(),
+								"is_null": false,
+								"value":   mp.Method.String(),
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["setting_shortcut_shortcut_key"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "shortcut_key",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":        "shortcut_key",
+								"invalid":     (mp.ShortcutKey == ""),
+								"placeholder": labels["mandatory_data"],
+								"value":       mp.ShortcutKey,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["setting_shortcut_modul"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "modul",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "modul",
+								"value": mp.Modul,
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["setting_shortcut_icon"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "icon",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "icon",
+								"value": mp.Icon,
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["setting_shortcut_func_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "func_name",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "func_name",
+								"value": mp.Funcname,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["setting_shortcut_description"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "description",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":        "description",
+								"invalid":     (mp.Description == ""),
+								"placeholder": labels["mandatory_data"],
+								"value":       mp.Description,
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["setting_shortcut_address"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "address",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "address",
+								"value": mp.Address,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{
+							Label: labels["setting_shortcut_fields"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "fields",
+								},
+								Type: ct.FieldTypeList, Value: cu.IM{
+									"name":                "fields",
+									"rows":                fieldRows,
+									"pagination":          ct.PaginationTypeBottom,
+									"page_size":           5,
+									"hide_paginaton_size": true,
+									"list_filter":         true,
+									"filter_placeholder":  labels["placeholder_filter"],
+									"add_item":            true,
+									"add_icon":            ct.IconKeyboard,
+									"edit_item":           true,
+									"delete_item":         true,
+									"indicator":           ct.IndicatorSpinner,
+								},
+								FormTrigger: true,
+							},
+						},
+					}, Full: true, BorderBottom: true},
+				},
+				FooterRows: footerRows(((mp.ShortcutKey == "") || (mp.Description == "")), (cu.ToString(formData["code"], "") == "")),
 			}
 		},
 		"auth": func() ct.Form {

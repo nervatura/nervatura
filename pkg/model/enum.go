@@ -830,6 +830,15 @@ func (mm ShortcutMethod) String() string {
 	return ""
 }
 
+func (mm ShortcutMethod) Keys() []string {
+	keys := []string{}
+	for k := range shortcutMethodMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func (mm *ShortcutMethod) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 
@@ -870,6 +879,15 @@ func (ft ShortcutField) String() string {
 		}
 	}
 	return ""
+}
+
+func (ft ShortcutField) Keys() []string {
+	keys := []string{}
+	for k := range shortcutFieldMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func (ft *ShortcutField) UnmarshalJSON(b []byte) error {

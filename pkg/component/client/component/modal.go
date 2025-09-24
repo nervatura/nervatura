@@ -5,6 +5,7 @@ import (
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 
 func modalInfoMessage(labels cu.SM, data cu.IM) (form ct.Form) {
@@ -466,5 +467,118 @@ func modalSelector(labels cu.SM, data cu.IM) (form ct.Form) {
 			},
 		},
 		FooterRows: []ct.Row{},
+	}
+}
+
+func modalConfigField(labels cu.SM, data cu.IM) (form ct.Form) {
+	ftOpt := func() (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		mm := md.ShortcutField(0)
+		for _, mmKey := range mm.Keys() {
+			opt = append(opt, ct.SelectOption{
+				Value: mmKey, Text: mmKey,
+			})
+		}
+		return opt
+	}
+	return ct.Form{
+		Title: cu.ToString(data["title"], labels["setting_shortcut_field"]),
+		Icon:  cu.ToString(data["icon"], ct.IconKeyboard),
+		Modal: true,
+		BodyRows: []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Label: labels["setting_shortcut_field_field_name"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "field_name",
+						},
+						Type: ct.FieldTypeString, Value: cu.IM{
+							"name":        "field_name",
+							"invalid":     (cu.ToString(data["field_name"], "") == ""),
+							"placeholder": labels["mandatory_data"],
+							"value":       cu.ToString(data["field_name"], ""),
+							"required":    true,
+							"auto_focus":  true,
+						},
+					}},
+				},
+				Full:         true,
+				BorderBottom: true,
+			},
+			{
+				Columns: []ct.RowColumn{
+					{Label: labels["setting_shortcut_field_description"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "description",
+						},
+						Type: ct.FieldTypeString, Value: cu.IM{
+							"name":        "description",
+							"invalid":     (cu.ToString(data["description"], "") == ""),
+							"placeholder": labels["mandatory_data"],
+							"value":       cu.ToString(data["description"], ""),
+							"required":    true,
+						},
+					}},
+				},
+				Full:         true,
+				BorderBottom: true,
+			},
+			{
+				Columns: []ct.RowColumn{
+					{Label: labels["setting_shortcut_field_field_type"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "field_type",
+						},
+						Type: ct.FieldTypeSelect, Value: cu.IM{
+							"name":    "field_type",
+							"options": ftOpt(),
+							"is_null": false,
+							"value":   cu.ToString(data["field_type"], ""),
+						},
+					}},
+					{Label: labels["setting_shortcut_field_order"],
+						Value: ct.Field{
+							Type: ct.FieldTypeInteger,
+							Value: cu.IM{
+								"name":  "order",
+								"value": cu.ToInteger(data["order"], 0),
+							},
+							FormTrigger: true,
+						}},
+				},
+				Full:         true,
+				BorderBottom: true,
+			},
+		},
+		FooterRows: []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventOK,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStylePrimary,
+							"icon":         ct.IconCheck,
+							"label":        cu.ToString(data["submit_label"], labels["inputbox_ok"]),
+						},
+					}},
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventCancel,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStyleDefault,
+							"icon":         ct.IconTimes,
+							"label":        cu.ToString(data["cancel_label"], labels["inputbox_cancel"]),
+						},
+					}},
+				},
+				Full:         true,
+				FieldCol:     false,
+				BorderTop:    false,
+				BorderBottom: false,
+			},
+		},
 	}
 }

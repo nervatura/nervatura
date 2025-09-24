@@ -33,6 +33,7 @@ func (cls *ClientService) settingData(ds *api.DataStore, user, _ cu.IM) (data cu
 		"currency":      []cu.IM{},
 		"tax":           []cu.IM{},
 		"auth":          []cu.IM{},
+		"template":      []cu.IM{},
 		"dirty":         false,
 		"user":          user,
 		"editor_icon":   ct.IconCog,
@@ -85,7 +86,9 @@ func (cls *ClientService) settingData(ds *api.DataStore, user, _ cu.IM) (data cu
 	}
 	data["auth"] = rows
 
-	return data, nil
+	data["template"], err = ds.ReportList(cu.ToString(ds.Config["NT_REPORT_DIR"], ""), "")
+
+	return data, err
 }
 
 func (cls *ClientService) settingUpdate(ds *api.DataStore, user, data cu.IM) (err error) {
@@ -339,8 +342,10 @@ func (cls *ClientService) settingPassword(ds *api.DataStore, user, data cu.IM) (
 
 func (cls *ClientService) settingResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
-	_, _, stateData := client.GetStateData()
-	stateData["view"] = cu.ToString(evt.Value, "")
+	state, _, stateData := client.GetStateData()
+	if state != "form" {
+		stateData["view"] = cu.ToString(evt.Value, "")
+	}
 
 	/*
 		menuMap := map[string]func() (re ct.ResponseEvent, err error){
@@ -394,19 +399,34 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	ds := cls.getDataStore(client.Ticket.Database)
-	//setting := cu.ToIM(stateData["setting"], cu.IM{})
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
 	currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
 	taxes := cu.ToIMA(stateData["tax"], []cu.IM{})
 	auth := cu.ToIMA(stateData["auth"], []cu.IM{})
+	templates := cu.ToIMA(stateData["template"], []cu.IM{})
 
 	frmValues := cu.ToIM(evt.Value, cu.IM{})
 	frmData := cu.ToIM(frmValues["data"], cu.IM{})
 	frmValue := cu.ToIM(frmValues["value"], cu.IM{})
 
+	setErrorModal := func(err error) {
+		if err != nil {
+			modal := cu.IM{
+				"info_label":   client.Msg("inputbox_delete_error"),
+				"info_message": err.Error(),
+				"icon":         ct.IconExclamationTriangle,
+			}
+			client.SetForm("info", modal, 0, true)
+		}
+	}
+
 	nextMap := map[string]func() (re ct.ResponseEvent, err error){
 		"form_add_tag": func() (re ct.ResponseEvent, err error) {
 			return cls.settingResponseFormNextTags(evt)
+		},
+
+		"form_update_shortcut_field": func() (re ct.ResponseEvent, err error) {
+			return cls.settingResponseFormEventChangeShortcutField(evt)
 		},
 
 		"config_delete": func() (re ct.ResponseEvent, err error) {
@@ -416,6 +436,19 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 				if _, err = ds.StoreDataUpdate(md.Update{Model: "config", IDKey: cu.ToInteger(configValues[idx]["id"], 0)}); err == nil {
 					configValues = append(configValues[:idx], configValues[idx+1:]...)
 					stateData["config_values"] = configValues
+				}
+			}
+			return evt, err
+		},
+
+		"template_delete": func() (re ct.ResponseEvent, err error) {
+			if idx := slices.IndexFunc(templates, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == cu.ToString(frmData["code"], "") && cu.ToInteger(c["id"], 0) > 0
+			}); idx > int(-1) {
+				if _, err = ds.StoreDataUpdate(md.Update{Model: "config", IDKey: cu.ToInteger(templates[idx]["id"], 0)}); err == nil {
+					templates[idx]["installed"] = false
+					templates[idx]["id"] = 0
+					stateData["template"] = templates
 				}
 			}
 			return evt, err
@@ -456,14 +489,7 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 					stateData["currency"] = currencies
 				}
 			}
-			if err != nil {
-				modal := cu.IM{
-					"info_label":   client.Msg("inputbox_delete_error"),
-					"info_message": err.Error(),
-					"icon":         ct.IconExclamationTriangle,
-				}
-				client.SetForm("info", modal, 0, true)
-			}
+			setErrorModal(err)
 			return evt, nil
 		},
 
@@ -480,14 +506,7 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 					stateData["tax"] = taxes
 				}
 			}
-			if err != nil {
-				modal := cu.IM{
-					"info_label":   client.Msg("inputbox_delete_error"),
-					"info_message": err.Error(),
-					"icon":         ct.IconExclamationTriangle,
-				}
-				client.SetForm("info", modal, 0, true)
-			}
+			setErrorModal(err)
 			return evt, nil
 		},
 
@@ -506,6 +525,122 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 	return evt, err
 }
 
+func (cls *ClientService) settingResponseFormEventChangeAuth(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
+
+	frmValues := cu.ToIM(evt.Value, cu.IM{})
+	frmData := cu.ToIM(frmValues["data"], cu.IM{})
+	form := cu.ToIM(frmData["form"], cu.IM{})
+	frmIndex := cu.ToInteger(form["index"], 0)
+	configValue := cu.ToIM(form["data"], cu.IM{})
+	authMeta := cu.ToIM(configValue["auth_meta"], cu.IM{})
+
+	fieldName := cu.ToString(frmValues["name"], "")
+
+	switch fieldName {
+	case "tags":
+		return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta"}, evt)
+	case "filter":
+		opt := []ct.SelectOption{}
+		ft := md.AuthFilter(0)
+		for _, ftKey := range ft.Keys() {
+			opt = append(opt, ct.SelectOption{
+				Value: ftKey, Text: ftKey,
+			})
+		}
+		return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta",
+			"options": opt, "value": opt[0].Value, "is_null": false, "form_key": "select",
+			"icon": ct.IconFilter, "title": client.Msg("inputbox_new_filter"),
+			"label": client.Msg("inputbox_enter_filter")}, evt)
+	case "user_name", "disabled":
+		configValue[fieldName] = frmValues["value"]
+		client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
+	case "user_group":
+		configValue[fieldName] = frmValues["value"]
+		if cu.ToString(frmValues["value"], "") == md.UserGroupAdmin.String() {
+			authMeta["filter"] = []md.AuthFilter{}
+		}
+		client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
+	case "description":
+		authMeta[fieldName] = frmValues["value"]
+		client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
+	case "password":
+		modal := cu.IM{
+			"title":         client.Msg("auth_password"),
+			"icon":          ct.IconKey,
+			"label":         client.Msg("auth_password_enter"),
+			"placeholder":   "",
+			"field_name":    "value",
+			"default_value": "",
+			"required":      false,
+			"next":          "password_reset",
+			"code":          cu.ToString(configValue["code"], ""),
+		}
+		client.SetForm("input_string", modal, 0, true)
+	}
+
+	return evt, err
+}
+
+func (cls *ClientService) settingResponseFormEventChangeShortcutField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+
+	frmValues := cu.ToIM(evt.Value, cu.IM{})
+	frmValue := cu.ToIM(frmValues["value"], cu.IM{})
+	row := cu.ToIM(frmValue["row"], cu.IM{})
+	frmData := cu.ToIM(frmValues["data"], cu.IM{})
+	form := cu.ToIM(frmData["form"], cu.IM{})
+	frmIndex := cu.ToInteger(form["index"], 0)
+	frmKey := cu.ToString(form["key"], "")
+	frmBaseValues := cu.ToIM(form["data"], cu.IM{})
+	formEvent := cu.ToString(frmValues["form_event"], "")
+
+	switch formEvent {
+	case ct.ListEventAddItem, ct.ListEventEditItem:
+		row := cu.ToIM(frmValue["row"], cu.IM{})
+		modal := cu.IM{
+			"next":        "form_update_shortcut_field",
+			"frm_key":     frmKey,
+			"frm_index":   frmIndex,
+			"row":         frmBaseValues,
+			"field_name":  cu.ToString(row["field_name"], ""),
+			"description": cu.ToString(row["description"], ""),
+			"field_type":  cu.ToString(row["field_type"], md.ShortcutFieldString.String()),
+			"order":       cu.ToInteger(row["order"], 0),
+		}
+		client.SetForm("config_field", modal, 0, true)
+
+	case ct.ListEventDelete:
+		configData := cu.ToIM(frmBaseValues["data"], cu.IM{})
+		fields := cu.ToIMA(configData["fields"], []cu.IM{})
+		if idx := slices.IndexFunc(fields, func(c cu.IM) bool {
+			return cu.ToString(c["field_name"], "") == cu.ToString(row["field_name"], "")
+		}); idx > int(-1) {
+			fields = append(fields[:idx], fields[idx+1:]...)
+			configData["fields"] = fields
+			frmBaseValues["data"] = configData
+		}
+		client.SetForm("shortcut", frmBaseValues, frmIndex, false)
+	}
+	if evt.Name == ct.FormEventOK {
+		frmBaseValues := cu.ToIM(frmData["row"], cu.IM{})
+		configData := cu.ToIM(frmBaseValues["data"], cu.IM{})
+		fields := cu.ToIMA(configData["fields"], []cu.IM{})
+		if idx := slices.IndexFunc(fields, func(c cu.IM) bool {
+			return cu.ToString(c["field_name"], "") == cu.ToString(frmValue["field_name"], "")
+		}); idx > int(-1) {
+			fields[idx] = frmValue
+		} else {
+			fields = append(fields, frmValue)
+		}
+		configData["fields"] = fields
+		frmBaseValues["data"] = configData
+		client.SetForm("shortcut", frmBaseValues, frmIndex, false)
+	}
+	return evt, nil
+}
+
 func (cls *ClientService) settingResponseFormEventChange(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
@@ -516,7 +651,6 @@ func (cls *ClientService) settingResponseFormEventChange(evt ct.ResponseEvent) (
 	frmIndex := cu.ToInteger(form["index"], 0)
 	configValue := cu.ToIM(form["data"], cu.IM{})
 	configMeta := cu.ToIM(configValue["data"], cu.IM{})
-	authMeta := cu.ToIM(configValue["auth_meta"], cu.IM{})
 
 	fieldName := cu.ToString(frmValues["name"], "")
 	switch cu.ToString(form["key"], "") {
@@ -542,48 +676,17 @@ func (cls *ClientService) settingResponseFormEventChange(evt ct.ResponseEvent) (
 			client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
 		}
 
-	case "auth":
+	case "shortcut":
 		switch fieldName {
-		case "tags":
-			return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta"}, evt)
-		case "filter":
-			opt := []ct.SelectOption{}
-			ft := md.AuthFilter(0)
-			for _, ftKey := range ft.Keys() {
-				opt = append(opt, ct.SelectOption{
-					Value: ftKey, Text: ftKey,
-				})
-			}
-			return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta",
-				"options": opt, "value": opt[0].Value, "is_null": false, "form_key": "select",
-				"icon": ct.IconFilter, "title": client.Msg("inputbox_new_filter"),
-				"label": client.Msg("inputbox_enter_filter")}, evt)
-		case "user_name", "disabled":
-			configValue[fieldName] = frmValues["value"]
+		case "fields":
+			return cls.settingResponseFormEventChangeShortcutField(evt)
+		default:
+			configMeta[fieldName] = frmValues["value"]
 			client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
-		case "user_group":
-			configValue[fieldName] = frmValues["value"]
-			if cu.ToString(frmValues["value"], "") == md.UserGroupAdmin.String() {
-				authMeta["filter"] = []md.AuthFilter{}
-			}
-			client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
-		case "description":
-			authMeta[fieldName] = frmValues["value"]
-			client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
-		case "password":
-			modal := cu.IM{
-				"title":         client.Msg("auth_password"),
-				"icon":          ct.IconKey,
-				"label":         client.Msg("auth_password_enter"),
-				"placeholder":   "",
-				"field_name":    "value",
-				"default_value": "",
-				"required":      false,
-				"next":          "password_reset",
-				"code":          cu.ToString(configValue["code"], ""),
-			}
-			client.SetForm("input_string", modal, 0, true)
 		}
+
+	case "auth":
+		return cls.settingResponseFormEventChangeAuth(evt)
 	}
 
 	return evt, err
@@ -605,38 +708,60 @@ func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.
 	configMeta := cu.ToIM(configValue["data"], cu.IM{})
 	delete := (cu.ToString(frmValue["form_delete"], "") != "")
 
+	updateMap := map[string]func(){
+		"config_map": func() {
+			configMeta["field_name"] = cu.ToString(frmValue["field_name"], "")
+			configMeta["field_type"] = cu.ToString(frmValue["field_type"], "")
+			configMeta["description"] = cu.ToString(frmValue["description"], "")
+			if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
+			}); idx > int(-1) {
+				if configValue, err = cls.configUpdate(ds, configValue); err == nil {
+					configValues[idx] = configValue
+					stateData["config_values"] = configValues
+				}
+			}
+		},
+		"shortcut": func() {
+			configMeta["shortcut_key"] = cu.ToString(frmValue["shortcut_key"], "")
+			configMeta["method"] = cu.ToString(frmValue["method"], "")
+			configMeta["description"] = cu.ToString(frmValue["description"], "")
+			configMeta["func_name"] = cu.ToString(frmValue["func_name"], "")
+			configMeta["address"] = cu.ToString(frmValue["address"], "")
+			configMeta["modul"] = cu.ToString(frmValue["modul"], "")
+			configMeta["icon"] = cu.ToString(frmValue["icon"], "")
+			if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
+			}); idx > int(-1) {
+				if configValue, err = cls.configUpdate(ds, configValue); err == nil {
+					configValues[idx] = configValue
+					stateData["config_values"] = configValues
+				}
+			}
+		},
+		"auth": func() {
+			if idx := slices.IndexFunc(authValues, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
+			}); idx > int(-1) {
+				if configValue, err = cls.authUpdate(ds, configValue); err == nil {
+					authValues[idx] = configValue
+					stateData["auth"] = authValues
+				}
+			}
+		},
+	}
+
 	eventMap := map[string]func() (re ct.ResponseEvent, err error){
 		ct.FormEventOK: func() (re ct.ResponseEvent, err error) {
-			switch cu.ToString(form["key"], "") {
-			case "config_map":
-				configMeta["field_name"] = cu.ToString(frmValue["field_name"], "")
-				configMeta["field_type"] = cu.ToString(frmValue["field_type"], "")
-				configMeta["description"] = cu.ToString(frmValue["description"], "")
-				if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
-					return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
-				}); idx > int(-1) {
-					if configValue, err = cls.configUpdate(ds, configValue); err == nil {
-						configValues[idx] = configValue
-						stateData["config_values"] = configValues
-					}
-				}
-
-			case "auth":
-				if idx := slices.IndexFunc(authValues, func(c cu.IM) bool {
-					return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
-				}); idx > int(-1) {
-					if configValue, err = cls.authUpdate(ds, configValue); err == nil {
-						authValues[idx] = configValue
-						stateData["auth"] = authValues
-					}
-				}
+			if fn, ok := updateMap[cu.ToString(form["key"], "")]; ok {
+				fn()
 			}
 			return evt, err
 		},
 
 		ct.FormEventCancel: func() (re ct.ResponseEvent, err error) {
 			switch cu.ToString(form["key"], "") {
-			case "config_map":
+			case "config_map", "shortcut":
 				if delete {
 					configValue := cu.ToIM(form["data"], cu.IM{})
 					modal := cu.IM{
@@ -691,9 +816,75 @@ func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) 
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
 	currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
 	taxes := cu.ToIMA(stateData["tax"], []cu.IM{})
+	templates := cu.ToIMA(stateData["template"], []cu.IM{})
 
 	values := cu.ToIM(evt.Value, cu.IM{})
 	fieldName := cu.ToString(values["name"], "")
+
+	updateMap := map[string]func(row cu.IM){
+		"config_data": func(row cu.IM) {
+			configCode := cu.ToString(row["config_code"], "")
+			fieldName := cu.ToString(row["config_key"], "")
+			if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == configCode
+			}); idx > int(-1) {
+				configData := cu.ToIM(configValues[idx]["data"], cu.IM{})
+				configData[fieldName] = row["config_value"]
+				configValues[idx]["data"] = configData
+				if configValues[idx], err = cls.configUpdate(ds, configValues[idx]); err == nil {
+					stateData["config_values"] = configValues
+				}
+			}
+		},
+		"currency": func(row cu.IM) {
+			currencyCode := cu.ToString(row["code"], "")
+			if idx := slices.IndexFunc(currencies, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == currencyCode
+			}); idx > int(-1) {
+				currencyMeta := cu.ToIM(currencies[idx]["currency_meta"], cu.IM{})
+				currencyMeta["description"] = row["description"]
+				currencyMeta["digit"] = cu.ToInteger(row["digit"], 0)
+				currencyMeta["cash_round"] = cu.ToInteger(row["cash_round"], 0)
+				currencies[idx]["currency_meta"] = currencyMeta
+				if currencies[idx], err = cls.currencyUpdate(ds, currencies[idx]); err == nil {
+					stateData["currency"] = currencies
+				}
+			}
+		},
+		"tax": func(row cu.IM) {
+			taxCode := cu.ToString(row["code"], "")
+			if idx := slices.IndexFunc(taxes, func(c cu.IM) bool {
+				return cu.ToString(c["code"], "") == taxCode
+			}); idx > int(-1) {
+				taxMeta := cu.ToIM(taxes[idx]["tax_meta"], cu.IM{})
+				taxMeta["description"] = row["description"]
+				taxMeta["rate_value"] = cu.ToFloat(row["rate_value"], 0)
+				taxes[idx]["tax_meta"] = taxMeta
+				if taxes[idx], err = cls.taxUpdate(ds, taxes[idx]); err == nil {
+					stateData["tax"] = taxes
+				}
+			}
+		},
+		"template": func(row cu.IM) {
+			reportKey := cu.ToString(row["report_key"], "")
+			if idx := slices.IndexFunc(templates, func(c cu.IM) bool {
+				return cu.ToString(c["report_key"], "") == reportKey && cu.ToInteger(c["id"], 0) == 0
+			}); idx > int(-1) {
+				var id int64
+				if id, err = ds.ReportInstall(reportKey, cu.ToString(ds.Config["NT_REPORT_DIR"], "")); err == nil {
+					templates[idx]["installed"] = true
+					templates[idx]["id"] = cu.ToInteger(id, 0)
+					stateData["template"] = templates
+					modal := cu.IM{
+						"info_label":   client.Msg("template_install_ok"),
+						"info_message": "",
+						"icon":         ct.IconCheck,
+					}
+					client.SetForm("info", modal, 0, true)
+				}
+			}
+		},
+	}
 
 	fieldMap := map[string]func() (re ct.ResponseEvent, err error){
 		ct.TableEventRowSelected: func() (re ct.ResponseEvent, err error) {
@@ -708,49 +899,8 @@ func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) 
 			values := cu.ToIM(evt.Value, cu.IM{})
 			valueData := cu.ToIM(values["value"], cu.IM{})
 			row := cu.ToIM(valueData["row"], cu.IM{})
-			switch view {
-			case "config_data":
-				configCode := cu.ToString(row["config_code"], "")
-				fieldName := cu.ToString(row["config_key"], "")
-				if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
-					return cu.ToString(c["code"], "") == configCode
-				}); idx > int(-1) {
-					configData := cu.ToIM(configValues[idx]["data"], cu.IM{})
-					configData[fieldName] = row["config_value"]
-					configValues[idx]["data"] = configData
-					if configValues[idx], err = cls.configUpdate(ds, configValues[idx]); err == nil {
-						stateData["config_values"] = configValues
-					}
-				}
-
-			case "currency":
-				currencyCode := cu.ToString(row["code"], "")
-				if idx := slices.IndexFunc(currencies, func(c cu.IM) bool {
-					return cu.ToString(c["code"], "") == currencyCode
-				}); idx > int(-1) {
-					currencyMeta := cu.ToIM(currencies[idx]["currency_meta"], cu.IM{})
-					currencyMeta["description"] = row["description"]
-					currencyMeta["digit"] = cu.ToInteger(row["digit"], 0)
-					currencyMeta["cash_round"] = cu.ToInteger(row["cash_round"], 0)
-					currencies[idx]["currency_meta"] = currencyMeta
-					if currencies[idx], err = cls.currencyUpdate(ds, currencies[idx]); err == nil {
-						stateData["currency"] = currencies
-					}
-				}
-
-			case "tax":
-				taxCode := cu.ToString(row["code"], "")
-				if idx := slices.IndexFunc(taxes, func(c cu.IM) bool {
-					return cu.ToString(c["code"], "") == taxCode
-				}); idx > int(-1) {
-					taxMeta := cu.ToIM(taxes[idx]["tax_meta"], cu.IM{})
-					taxMeta["description"] = row["description"]
-					taxMeta["rate_value"] = cu.ToFloat(row["rate_value"], 0)
-					taxes[idx]["tax_meta"] = taxMeta
-					if taxes[idx], err = cls.taxUpdate(ds, taxes[idx]); err == nil {
-						stateData["tax"] = taxes
-					}
-				}
+			if fn, ok := updateMap[view]; ok {
+				fn(row)
 			}
 			return evt, err
 		},
@@ -760,23 +910,17 @@ func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) 
 			valueData := cu.ToIM(values["value"], cu.IM{})
 			row := cu.ToIM(valueData["row"], cu.IM{})
 			switch view {
-			case "currency":
-				modal := cu.IM{
-					"warning_label":   client.Msg("inputbox_delete"),
-					"warning_message": "",
-					"next":            "currency_delete",
-					"code":            cu.ToString(row["code"], ""),
+			case "currency", "tax", "template":
+				if cu.ToInteger(row["id"], 0) > 0 {
+					modal := cu.IM{
+						"warning_label":   client.Msg("inputbox_delete"),
+						"warning_message": "",
+						"next":            view + "_delete",
+						"code":            cu.ToString(row["code"], ""),
+					}
+					client.SetForm("warning", modal, 0, true)
 				}
-				client.SetForm("warning", modal, 0, true)
 
-			case "tax":
-				modal := cu.IM{
-					"warning_label":   client.Msg("inputbox_delete"),
-					"warning_message": "",
-					"next":            "tax_delete",
-					"code":            cu.ToString(row["code"], ""),
-				}
-				client.SetForm("warning", modal, 0, true)
 			}
 			return evt, err
 		},
@@ -925,6 +1069,46 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 				configValues = append(configValues, configValue)
 				stateData["config_values"] = configValues
 				client.SetForm("config_map", configValue, int64(len(configValues)-1), false)
+			}
+			return evt, err
+		},
+		"shortcut": func() (re ct.ResponseEvent, err error) {
+			event := cu.ToString(cu.ToIM(evt.Value, cu.IM{})["event"], "")
+			evValue := cu.ToIM(cu.ToIM(evt.Value, cu.IM{})["value"], cu.IM{})
+			row := cu.ToIM(evValue["row"], cu.IM{})
+			index := cu.ToInteger(evValue["index"], 0)
+			switch event {
+			case ct.ListEventEditItem:
+				client.SetForm("shortcut", row, index, false)
+
+			case ct.ListEventDelete:
+				modal := cu.IM{
+					"warning_label":   client.Msg("inputbox_delete"),
+					"warning_message": "",
+					"next":            "config_delete",
+					"code":            cu.ToString(row["code"], ""),
+				}
+				client.SetForm("warning", modal, 0, true)
+
+			case ct.ListEventAddItem:
+				configValue := cu.IM{
+					"id":          0,
+					"code":        "",
+					"config_type": md.ConfigTypeShortcut.String(),
+					"data": cu.IM{
+						"shortcut_key": "",
+						"method":       md.ShortcutMethodGET.String(),
+						"description":  "",
+						"func_name":    "",
+						"address":      "",
+						"modul":        "",
+						"icon":         "",
+						"fields":       []cu.IM{},
+					},
+				}
+				configValues = append(configValues, configValue)
+				stateData["config_values"] = configValues
+				client.SetForm("shortcut", configValue, int64(len(configValues)-1), false)
 			}
 			return evt, err
 		},

@@ -84,8 +84,10 @@ func (ds *DataStore) ReportList(reportDir, filter string) (results []cu.IM, err 
 			if meta, found := temp["meta"].(cu.IM); found {
 				report := cu.IM{"installed": false, "label": ""}
 				report["report_key"] = meta["report_key"]
-				if _, found := installed[cu.ToString(meta["report_key"], "")]; found {
+				report["code"] = cu.ToString(report["report_key"], "")
+				if id, found := installed[cu.ToString(meta["report_key"], "")]; found {
 					report["installed"] = true
+					report["id"] = cu.ToInteger(id, 0)
 				}
 				report["report_name"] = meta["report_name"]
 				report["description"] = meta["description"]

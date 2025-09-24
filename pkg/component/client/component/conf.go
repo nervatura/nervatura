@@ -276,6 +276,9 @@ func ClientModalForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 		"selector": func() ct.Form {
 			return modalSelector(labels, data)
 		},
+		"config_field": func() ct.Form {
+			return modalConfigField(labels, data)
+		},
 	}
 	if frm, found := mMap[formKey]; found {
 		return frm()

@@ -282,6 +282,37 @@ func Test_moduleEditorRow(t *testing.T) {
 			},
 		},
 		{
+			name: "setting_shortcut",
+			args: args{
+				mKey:   "setting",
+				view:   "shortcut",
+				labels: cu.SM{},
+				data: cu.IM{
+					"config_values": []cu.IM{
+						{
+							"code":        "123",
+							"config_type": "CONFIG_SHORTCUT",
+							"data": cu.IM{
+								"shortcut_key": "shortcut_key",
+								"description":  "description",
+								"modul":        "modul",
+								"method":       "method",
+								"func_name":    "func_name",
+								"address":      "address",
+								"fields": []cu.IM{
+									{
+										"field_name":  "field_name",
+										"field_type":  "FIELD_NUMBER",
+										"description": "Demo Number",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "setting_auth",
 			args: args{
 				mKey:   "setting",
@@ -1065,6 +1096,27 @@ func Test_moduleEditorTable(t *testing.T) {
 			},
 		},
 		{
+			name: "setting_template",
+			args: args{
+				mKey:   "setting",
+				view:   "template",
+				labels: cu.SM{},
+				data: cu.IM{
+					"template": []cu.IM{
+						{
+							"code":        "123",
+							"report_key":  "123",
+							"report_name": "123",
+							"label":       "123",
+							"description": "123",
+							"installed":   true,
+							"id":          123,
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "invalid",
 			args: args{
 				mKey: "invalid",
@@ -1787,6 +1839,31 @@ func TestClientForm(t *testing.T) {
 			},
 		},
 		{
+			name: "setting_shortcut",
+			args: args{
+				editorKey: "setting",
+				formKey:   "shortcut",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"data": cu.IM{
+						"shortcut_key": "shortcut_key",
+						"description":  "description",
+						"modul":        "modul",
+						"method":       "method",
+						"func_name":    "func_name",
+						"address":      "address",
+						"fields": []cu.IM{
+							{
+								"field_name":  "field_name",
+								"field_type":  "FIELD_NUMBER",
+								"description": "Demo Number",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "invalid",
 			args: args{
 				editorKey: "invalid",
@@ -1871,6 +1948,19 @@ func TestClientModalForm(t *testing.T) {
 				data: cu.IM{
 					"info_label":   "label",
 					"info_message": "message",
+				},
+			},
+		},
+		{
+			name: "config_field",
+			args: args{
+				formKey: "config_field",
+				labels:  cu.SM{},
+				data: cu.IM{
+					"field_name":  "field_name",
+					"description": "description",
+					"field_type":  "field_type",
+					"order":       "order",
 				},
 			},
 		},

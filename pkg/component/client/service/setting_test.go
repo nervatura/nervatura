@@ -49,6 +49,12 @@ func TestClientService_settingData(t *testing.T) {
 					ConvertToType: func(data interface{}, result any) (err error) {
 						return nil
 					},
+					ReadFile: func(name string) ([]byte, error) {
+						return []byte(`{"meta": {"report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}`), nil
+					},
+					ConvertFromByte: func(data []byte, result interface{}) error {
+						return cu.ConvertFromByte([]byte(`{"meta": {"report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}`), result)
+					},
 				},
 				user: cu.IM{},
 			},
@@ -1102,6 +1108,197 @@ func TestClientService_settingResponse(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "shortcut_edit",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"setting": cu.IM{
+										"password": "123456",
+										"confirm":  "123456",
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.EditorEventField,
+					Value: cu.IM{
+						"name":  "shortcut",
+						"event": ct.ListEventEditItem,
+						"value": cu.IM{
+							"row": cu.IM{
+								"id": 1,
+							},
+							"index": 0,
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "shortcut_delete",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"setting": cu.IM{
+										"password": "123456",
+										"confirm":  "123456",
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.EditorEventField,
+					Value: cu.IM{
+						"name":  "shortcut",
+						"event": ct.ListEventDelete,
+						"value": cu.IM{
+							"row": cu.IM{
+								"id":   1,
+								"code": "123456",
+							},
+							"index": 0,
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "shortcut_add",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"setting": cu.IM{
+										"password": "123456",
+										"confirm":  "123456",
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.EditorEventField,
+					Value: cu.IM{
+						"name":  "shortcut",
+						"event": ct.ListEventAddItem,
+						"value": cu.IM{
+							"row": cu.IM{
+								"id":   1,
+								"code": "123456",
+							},
+							"index": 0,
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "auth_edit",
 			fields: fields{
 				Config: cu.IM{},
@@ -1694,6 +1891,85 @@ func TestClientService_settingResponse(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "table_form_update_template_edit",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+						ReadFile: func(name string) ([]byte, error) {
+							return []byte(`{"meta": {"report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}`), nil
+						},
+						ConvertFromByte: func(data []byte, result interface{}) error {
+							return cu.ConvertFromByte([]byte(`{"meta": {"report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}`), result)
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"view": "template",
+									"template": []cu.IM{{
+										"id":          0,
+										"code":        "ntr_invoice_en",
+										"report_key":  "ntr_invoice_en",
+										"report_name": "test",
+										"label":       "test",
+										"description": "test",
+										"installed":   false,
+									}},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.EditorEventField,
+					Value: cu.IM{
+						"name": ct.TableEventFormUpdate,
+						"value": cu.IM{
+							"row": cu.IM{
+								"id":          0,
+								"report_key":  "ntr_invoice_en",
+								"report_name": "test",
+								"label":       "test",
+								"description": "test",
+								"installed":   false,
+							},
+							"index": 0,
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "table_form_delete_tax",
 			fields: fields{
 				Config: cu.IM{},
@@ -2006,6 +2282,86 @@ func TestClientService_settingResponse(t *testing.T) {
 									"field_name":  "field_name",
 									"field_type":  "field_type",
 									"description": "description",
+								},
+							},
+							"data": cu.IM{"code": "123456"}},
+						"value": cu.IM{"code": "123456"},
+						"event": ct.FormEventOK,
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "table_form_event_ok_shortcut",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"config_values": []cu.IM{{
+										"id":   1,
+										"code": "123456",
+										"data": cu.IM{},
+									}},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.ClientEventForm,
+					Value: cu.IM{
+						"data": cu.IM{
+							"form": cu.IM{
+								"index": 0, "key": "shortcut",
+								"data": cu.IM{
+									"id":           1,
+									"code":         "123456",
+									"shortcut_key": "shortcut_key",
+									"method":       "method",
+									"func_name":    "func_name",
+									"address":      "address",
+									"modul":        "modul",
+									"icon":         "icon",
+									"fields": []cu.IM{
+										{
+											"field_name":  "field_name",
+											"field_type":  "field_type",
+											"description": "description",
+										},
+									},
 								},
 							},
 							"data": cu.IM{"code": "123456"}},
@@ -2564,6 +2920,206 @@ func TestClientService_settingResponse(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "table_form_event_change_shortcut_fields_edit",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"config_values": []cu.IM{{
+										"id":   1,
+										"code": "123456",
+										"data": cu.IM{},
+									}},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.ClientEventForm,
+					Value: cu.IM{
+						"data": cu.IM{
+							"form": cu.IM{"index": 0, "key": "shortcut",
+								"data": cu.IM{"data": cu.IM{"fields": []cu.IM{
+									{
+										"field_name":  "field_name",
+										"field_type":  "field_type",
+										"description": "description",
+									},
+								}}}}, "data": cu.IM{"code": "123456"}},
+						"value": "value",
+						"event": ct.FormEventChange, "name": "fields", "form_event": ct.ListEventEditItem,
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "table_form_event_change_shortcut_fields_delete",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"config_values": []cu.IM{{
+										"id":   1,
+										"code": "123456",
+										"data": cu.IM{},
+									}},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.ClientEventForm,
+					Value: cu.IM{
+						"data": cu.IM{
+							"form": cu.IM{"index": 0, "key": "shortcut",
+								"data": cu.IM{"data": cu.IM{"fields": []cu.IM{
+									{
+										"field_name":  "field_name",
+										"field_type":  "field_type",
+										"description": "description",
+									},
+								}}}}, "data": cu.IM{"code": "123456"}},
+						"value": cu.IM{
+							"row": cu.IM{
+								"field_name": "field_name",
+							},
+						},
+						"event": ct.FormEventChange, "name": "fields", "form_event": ct.ListEventDelete,
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "table_form_event_change_shortcut_fields_add",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+							"Update": func(data md.Update) (int64, error) {
+								return 12345, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+						CreatePasswordHash: func(password string) (hash string, err error) {
+							return "123456", nil
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"view": "shortcut",
+									"config_values": []cu.IM{{
+										"id":   1,
+										"code": "123456",
+										"data": cu.IM{},
+									}},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"code": "123456",
+								"auth_map": cu.IM{
+									"theme": "dark",
+								},
+							},
+						},
+					},
+					Name: ct.ClientEventForm,
+					Value: cu.IM{
+						"data": cu.IM{
+							"form": cu.IM{"index": 0, "key": "shortcut",
+								"data": cu.IM{"data": cu.IM{"tags": []string{"tag1", "tag2"}}}}, "data": cu.IM{"code": "123456"}},
+						"value": "value",
+						"event": ct.FormEventChange, "name": "field_name",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "table_form_event_change_auth_tags",
 			fields: fields{
 				Config: cu.IM{},
@@ -3057,6 +3613,100 @@ func TestClientService_settingResponse(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "form_update_shortcut_field_edit",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"shortcut": cu.IM{
+										"id": 1,
+										"meta": cu.IM{
+											"tags": []string{"tag1", "tag2"},
+										},
+									},
+								},
+							},
+						},
+					},
+					Name: ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "form_update_shortcut_field", "frm_key": "view", "frm_index": 0, "name": "tags",
+						"row": cu.IM{
+							"data": cu.IM{
+								"fields": []cu.IM{
+									{
+										"field_name": "field_name",
+									},
+								},
+							},
+						}},
+						"value": cu.IM{
+							"field_name": "field_name",
+						}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "form_update_shortcut_field_add",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"shortcut": cu.IM{
+										"id": 1,
+										"meta": cu.IM{
+											"tags": []string{"tag1", "tag2"},
+										},
+									},
+								},
+							},
+						},
+					},
+					Name: ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "form_update_shortcut_field", "frm_key": "view", "frm_index": 0, "name": "tags",
+						"row": cu.IM{
+							"data": cu.IM{
+								"fields": []cu.IM{
+									{
+										"field_name": "field_name",
+									},
+								},
+							},
+						}},
+						"value": cu.IM{
+							"field_name": "field_name2",
+						}},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "form_config_delete",
 			fields: fields{
 				Config: cu.IM{},
@@ -3095,6 +3745,51 @@ func TestClientService_settingResponse(t *testing.T) {
 					},
 					Name:  ct.FormEventOK,
 					Value: cu.IM{"data": cu.IM{"next": "config_delete", "code": "123456"}, "value": cu.IM{"value": "123456"}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "form_template_delete",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Update": func(data md.Update) (int64, error) {
+								return 1, nil
+							},
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1}}, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"template": []cu.IM{{
+										"id":          1,
+										"code":        "ntr_invoice_en",
+										"report_key":  "ntr_invoice_en",
+										"report_name": "test",
+										"label":       "test",
+										"description": "test",
+										"installed":   false,
+									}},
+								},
+							},
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "template_delete", "code": "ntr_invoice_en"}, "value": cu.IM{"value": "ntr_invoice_en"}},
 				},
 			},
 			wantErr: false,

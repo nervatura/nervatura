@@ -1506,6 +1506,12 @@ func TestClientService_MainResponse(t *testing.T) {
 						}},
 						Config: config,
 						AppLog: appLog,
+						ReadFile: func(name string) ([]byte, error) {
+							return []byte(`{"meta": {"report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}`), nil
+						},
+						ConvertFromByte: func(data []byte, result interface{}) error {
+							return cu.ConvertFromByte([]byte(`{"meta": {"report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}`), result)
+						},
 					}
 				},
 			},
