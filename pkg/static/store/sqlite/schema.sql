@@ -861,7 +861,7 @@ CREATE TRIGGER trans_invoice_customer_insert
   FOR EACH ROW
 WHEN ((NEW.trans_type = 'TRANS_INVOICE') AND (NEW.direction = 'DIRECTION_OUT'))
 BEGIN
-  UPDATE trans SET trans_meta = json_set(trans_meta, '$.invoice', sl.idata)
+  UPDATE trans SET trans_meta = json_set(trans_meta, '$.invoice', json_extract(sl.idata, '$'))
   FROM (SELECT json_object(
       'customer_name', cu.customer_name, 'customer_tax_number', cu.customer_meta->>'tax_number', 
       'customer_account', cu.customer_meta->>'account',
@@ -883,7 +883,7 @@ CREATE TRIGGER trans_invoice_customer_update
   FOR EACH ROW
 WHEN ((NEW.trans_type = 'TRANS_INVOICE') AND (NEW.direction = 'DIRECTION_OUT') AND (OLD.customer_code <> NEW.customer_code))
 BEGIN
-  UPDATE trans SET trans_meta = json_set(trans_meta, '$.invoice', sl.idata)
+  UPDATE trans SET trans_meta = json_set(trans_meta, '$.invoice', json_extract(sl.idata, '$'))
   FROM (SELECT json_object(
       'customer_name', cu.customer_name, 'customer_tax_number', cu.customer_meta->>'tax_number', 
       'customer_account', cu.customer_meta->>'account',

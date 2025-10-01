@@ -7,7 +7,7 @@ VALUES('setting', 'CONFIG_DATA', JSON_OBJECT(
   'default_lang', 'en',
   'default_currency', 'EUR',
   'default_deadline', 8,
-  'default_paidtype', 'transfer',
+  'default_paidtype', 'PAID_TRANSFER',
   'default_unit', 'piece',
   'default_taxcode', 'VAT20'
 ));

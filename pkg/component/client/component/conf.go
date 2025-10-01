@@ -279,6 +279,9 @@ func ClientModalForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 		"config_field": func() ct.Form {
 			return modalConfigField(labels, data)
 		},
+		"trans_create": func() ct.Form {
+			return modalTransCreate(labels, data)
+		},
 	}
 	if frm, found := mMap[formKey]; found {
 		return frm()

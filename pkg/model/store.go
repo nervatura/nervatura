@@ -418,6 +418,7 @@ type Product struct {
 	ProductMap cu.IM `json:"product_map"`
 	// Timestamp of data creation
 	TimeStamp TimeDateTime `json:"time_stamp"`
+	Deleted   bool         `json:"deleted"`
 }
 
 type ProjectMeta struct {
@@ -614,6 +615,7 @@ type Trans struct {
 	TransMap cu.IM `json:"trans_map"`
 	// Timestamp of data creation
 	TimeStamp TimeDateTime `json:"time_stamp"`
+	Deleted   bool         `json:"deleted"`
 }
 
 type Config struct {

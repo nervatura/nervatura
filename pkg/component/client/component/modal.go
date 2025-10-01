@@ -2,10 +2,12 @@ package component
 
 import (
 	"fmt"
+	"slices"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 func modalInfoMessage(labels cu.SM, data cu.IM) (form ct.Form) {
@@ -581,4 +583,156 @@ func modalConfigField(labels cu.SM, data cu.IM) (form ct.Form) {
 			},
 		},
 	}
+}
+
+func modalTransCreate(labels cu.SM, data cu.IM) (form ct.Form) {
+	nextCmd := cu.ToString(data["next"], "")
+	transType := cu.ToString(data["create_trans_type"], md.TransTypeOrder.String())
+	showRefno := nextCmd != "trans_new"
+	showNetto := slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) && showRefno
+	showDelivery := cu.ToBoolean(data["show_delivery"], false) && showNetto
+	createDelivery := cu.ToBoolean(data["create_delivery"], false)
+	transTypeOpt := func() (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		transTypes := ut.ToStringArray(data["trans_types"])
+		for _, ttKey := range transTypes {
+			opt = append(opt, ct.SelectOption{
+				Value: ttKey, Text: ttKey,
+			})
+		}
+		return opt
+	}
+	directionOpt := func() (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		for _, direction := range []md.Direction{
+			md.DirectionOut, md.DirectionIn,
+		} {
+			opt = append(opt, ct.SelectOption{
+				Value: direction.String(), Text: direction.String(),
+			})
+		}
+		return opt
+	}
+	frm := ct.Form{
+		Title: cu.ToString(data["title"], labels["trans_create_title"]),
+		Icon:  cu.ToString(data["icon"], ct.IconFileText),
+		Modal: true,
+		BodyRows: []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Label: labels["trans_type"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "create_trans_type",
+						},
+						Type: ct.FieldTypeSelect, Value: cu.IM{
+							"name":    "create_trans_type",
+							"options": transTypeOpt(),
+							"is_null": false,
+							"value":   cu.ToString(data["create_trans_type"], md.TransTypeOrder.String()),
+						},
+						FormTrigger: true,
+					}},
+					{Label: labels["trans_direction"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "create_direction",
+						},
+						Type: ct.FieldTypeSelect, Value: cu.IM{
+							"name":    "create_direction",
+							"options": directionOpt(),
+							"is_null": false,
+							"value":   cu.ToString(data["create_direction"], md.DirectionOut.String()),
+						},
+						FormTrigger: true,
+					}},
+				},
+				Full:         true,
+				BorderBottom: true,
+			},
+		},
+		FooterRows: []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventOK,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStylePrimary,
+							"icon":         ct.IconCheck,
+							"label":        cu.ToString(data["submit_label"], labels["inputbox_ok"]),
+						},
+					}},
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventCancel,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStyleDefault,
+							"icon":         ct.IconTimes,
+							"label":        cu.ToString(data["cancel_label"], labels["inputbox_cancel"]),
+						},
+					}},
+				},
+				Full:         true,
+				FieldCol:     false,
+				BorderTop:    false,
+				BorderBottom: false,
+			},
+		},
+	}
+	if showRefno {
+		frm.BodyRows = append(frm.BodyRows, ct.Row{
+			Columns: []ct.RowColumn{
+				{Label: labels["trans_create_setref"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "create_ref_number",
+						},
+						Type: ct.FieldTypeBool, Value: cu.IM{
+							"name":  "create_ref_number",
+							"value": cu.ToBoolean(data["create_ref_number"], false),
+						},
+						FormTrigger: true,
+					}},
+			},
+			Full: true, FieldCol: true,
+		})
+	}
+	if showNetto && ((showDelivery && !createDelivery) || !showDelivery) {
+		frm.BodyRows = append(frm.BodyRows, ct.Row{
+			Columns: []ct.RowColumn{
+				{Label: labels["trans_create_deduction"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "create_netto",
+						},
+						Type: ct.FieldTypeBool, Value: cu.IM{
+							"name":  "create_netto",
+							"value": cu.ToBoolean(data["create_netto"], false),
+						},
+						FormTrigger: true,
+					}},
+			},
+			Full: true, FieldCol: true,
+		})
+	}
+	if showDelivery {
+		frm.BodyRows = append(frm.BodyRows, ct.Row{
+			Columns: []ct.RowColumn{
+				{Label: labels["trans_create_delivery"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "create_delivery",
+						},
+						Type: ct.FieldTypeBool, Value: cu.IM{
+							"name":  "create_delivery",
+							"value": createDelivery,
+						},
+						FormTrigger: true,
+					}},
+			},
+			Full: true, FieldCol: true,
+		})
+	}
+	return frm
 }

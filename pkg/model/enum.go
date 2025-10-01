@@ -440,6 +440,15 @@ func (tt TransType) String() string {
 	return ""
 }
 
+func (tt TransType) Keys() []string {
+	keys := []string{}
+	for k := range transTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func (tt *TransType) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 
@@ -746,6 +755,13 @@ func (tc TransStatus) String() string {
 		}
 	}
 	return ""
+}
+
+func (tc TransStatus) Get(value string) TransStatus {
+	if result, found := transStatusMap[value]; found {
+		return result
+	}
+	return TransStatusNormal
 }
 
 func (tc *TransStatus) UnmarshalJSON(b []byte) error {

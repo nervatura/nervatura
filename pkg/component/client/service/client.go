@@ -20,7 +20,7 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-// ClientService implements the Component Client GUI
+// ClientService implements the Nervatura Client GUI
 type ClientService struct {
 	Config       cu.IM
 	AuthConfigs  map[string]*oauth2.Config
@@ -790,33 +790,61 @@ func (cls *ClientService) mainResponseModule(evt ct.ResponseEvent) (re ct.Respon
 	return evt
 }
 
-func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEvent) {
+func (cls *ClientService) MainResponseModuleEvent(evt ct.ResponseEvent, nextKey string) (re ct.ResponseEvent) {
 	var err error
 	client := evt.Trigger.(*ct.Client)
 	state, stateKey, stateData := client.GetStateData()
 
-	moduleEvent := func() ct.ResponseEvent {
-		moduleKey := stateKey
-		if values, ok := evt.Value.(cu.IM); ok && cu.ToString(values["name"], "") == "bookmark" {
-			if cu.ToString(values["event"], "") == "list_delete" {
-				return cls.deleteBookmark(evt)
-			}
-			if cu.ToString(values["event"], "") == "list_filter_change" {
-				return evt
-			}
-			return cls.setBookmark(evt)
+	moduleKey := cu.ToString(nextKey, stateKey)
+	if values, ok := evt.Value.(cu.IM); ok && cu.ToString(values["name"], "") == "bookmark" {
+		if cu.ToString(values["event"], "") == "list_delete" {
+			return cls.deleteBookmark(evt)
 		}
-		if state == "search" || state == "browser" {
-			moduleKey = "search"
+		if cu.ToString(values["event"], "") == "list_filter_change" {
+			return evt
 		}
-		if state == "form" {
-			moduleKey = cu.ToString(stateData["key"], "")
-		}
-		if evt, err = cls.moduleResponse(moduleKey, evt); err != nil {
-			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
-		}
-		return evt
+		return cls.setBookmark(evt)
 	}
+	if (state == "search" || state == "browser") && nextKey == "" {
+		moduleKey = "search"
+	}
+	if state == "form" {
+		moduleKey = cu.ToString(stateData["key"], "")
+	}
+	if evt, err = cls.moduleResponse(moduleKey, evt); err != nil {
+		return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+	}
+	return evt
+}
+
+func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEvent) {
+	client := evt.Trigger.(*ct.Client)
+	_, stateKey, _ := client.GetStateData()
+
+	/*
+		moduleEvent := func(nextKey string) ct.ResponseEvent {
+			moduleKey := cu.ToString(nextKey, stateKey)
+			if values, ok := evt.Value.(cu.IM); ok && cu.ToString(values["name"], "") == "bookmark" {
+				if cu.ToString(values["event"], "") == "list_delete" {
+					return cls.deleteBookmark(evt)
+				}
+				if cu.ToString(values["event"], "") == "list_filter_change" {
+					return evt
+				}
+				return cls.setBookmark(evt)
+			}
+			if (state == "search" || state == "browser") && nextKey == "" {
+				moduleKey = "search"
+			}
+			if state == "form" {
+				moduleKey = cu.ToString(stateData["key"], "")
+			}
+			if evt, err = cls.moduleResponse(moduleKey, evt); err != nil {
+				return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+			}
+			return evt
+		}
+	*/
 
 	reMap := map[string]func() ct.ResponseEvent{
 		ct.BrowserEventSearch: func() ct.ResponseEvent {
@@ -832,6 +860,10 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 		},
 
 		ct.TableEventAddItem: func() ct.ResponseEvent {
+			if slices.Contains([]string{"transitem", "transmovement", "transpayment"}, stateKey) {
+				return cls.transCreateModal(evt,
+					cu.IM{"state_key": stateKey, "next": "trans_new"})
+			}
 			return cls.setEditor(evt, stateKey, cu.IM{
 				"session_id": client.Ticket.SessionID,
 			})
@@ -898,25 +930,28 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 			case "set_bookmark":
 				return cls.mainResponseBookmark(evt)
 
+			case "trans_new":
+				return cls.MainResponseModuleEvent(evt, "trans")
+
 			default:
-				return moduleEvent()
+				return cls.MainResponseModuleEvent(evt, "")
 			}
 		},
 
 		ct.FormEventChange: func() ct.ResponseEvent {
-			return moduleEvent()
+			return cls.MainResponseModuleEvent(evt, "")
 		},
 
 		ct.ClientEventForm: func() ct.ResponseEvent {
-			return moduleEvent()
+			return cls.MainResponseModuleEvent(evt, "")
 		},
 
 		ct.ClientEventSideMenu: func() ct.ResponseEvent {
-			return moduleEvent()
+			return cls.MainResponseModuleEvent(evt, "")
 		},
 
 		ct.BrowserEventBookmark: func() ct.ResponseEvent {
-			return moduleEvent()
+			return cls.MainResponseModuleEvent(evt, "")
 		},
 
 		ct.EditorEventField: func() ct.ResponseEvent {
@@ -925,7 +960,7 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 			if fieldName == ct.TableEventEditCell {
 				return cls.mainResponseLink(evt, cu.ToIM(evtData["value"], cu.IM{}))
 			}
-			return moduleEvent()
+			return cls.MainResponseModuleEvent(evt, "")
 		},
 
 		ct.LoginEventLogin: func() ct.ResponseEvent {

@@ -607,6 +607,9 @@ func Test_moduleEditorRow(t *testing.T) {
 					"trans": cu.IM{
 						"id":         1,
 						"trans_type": "TRANS_WORKSHEET",
+						"trans_meta": cu.IM{
+							"status": "STATUS_AMENDMENT",
+						},
 					},
 					"currencies": []cu.IM{
 						{
@@ -1001,13 +1004,13 @@ func Test_moduleEditorTable(t *testing.T) {
 			},
 		},
 		{
-			name: "trans_invoice_items",
+			name: "trans_transitem_invoice",
 			args: args{
 				mKey:   "trans",
-				view:   "invoice_items",
+				view:   "transitem_invoice",
 				labels: cu.SM{},
 				data: cu.IM{
-					"invoice_items": []cu.IM{
+					"transitem_invoice": []cu.IM{
 						{
 							"trans_code":  "123",
 							"trans_date":  "2021-01-01",
@@ -1463,7 +1466,12 @@ func TestClientSideBar(t *testing.T) {
 				labels:    cu.SM{},
 				data: cu.IM{
 					"trans": cu.IM{
-						"id": 1,
+						"id":         1,
+						"trans_type": md.TransTypeInvoice.String(),
+						"direction":  md.DirectionOut.String(),
+						"trans_meta": cu.IM{
+							"status": md.TransStatusNormal.String(),
+						},
 					},
 				},
 			},
@@ -1475,8 +1483,31 @@ func TestClientSideBar(t *testing.T) {
 				labels:    cu.SM{},
 				data: cu.IM{
 					"trans": cu.IM{
-						"id":     1,
-						"closed": true,
+						"id":         1,
+						"trans_type": md.TransTypeOrder.String(),
+						"direction":  md.DirectionOut.String(),
+						"trans_meta": cu.IM{
+							"status": md.TransStatusNormal.String(),
+							"closed": true,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_deleted",
+			args: args{
+				moduleKey: "trans",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": md.TransTypeInvoice.String(),
+						"direction":  md.DirectionOut.String(),
+						"trans_meta": cu.IM{
+							"status": md.TransStatusNormal.String(),
+						},
+						"deleted": true,
 					},
 				},
 			},
@@ -1961,6 +1992,22 @@ func TestClientModalForm(t *testing.T) {
 					"description": "description",
 					"field_type":  "field_type",
 					"order":       "order",
+				},
+			},
+		},
+		{
+			name: "trans_create",
+			args: args{
+				formKey: "trans_create",
+				labels:  cu.SM{},
+				data: cu.IM{
+					"trans_type":        md.TransTypeOrder.String(),
+					"direction":         md.DirectionOut.String(),
+					"status":            md.TransStatusNormal.String(),
+					"show_delivery":     true,
+					"trans_types":       []string{md.TransTypeOrder.String(), md.TransTypeInvoice.String(), md.TransTypeReceipt.String()},
+					"create_trans_type": md.TransTypeInvoice.String(),
+					"next":              "trans_create",
 				},
 			},
 		},

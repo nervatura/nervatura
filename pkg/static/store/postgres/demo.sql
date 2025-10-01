@@ -446,6 +446,20 @@ VALUES('PLA0000000000N4', 'PLACE_WAREHOUSE', 'Raw material',
 INSERT INTO trans(
   code, trans_type, direction, trans_date, trans_code, customer_code, employee_code, project_code, 
   place_code, currency_code, auth_code, trans_meta, trans_map) 
+VALUES('OFF0000000000N4', 'TRANS_OFFER', 'DIRECTION_OUT', '2024-11-05', NULL, 'CUS0000000000N2', NULL, NULL, NULL, 'EUR', 'USR0000000000N1',
+jsonb_build_object(
+  'due_time', '2024-11-30T00:00:00', 'ref_number', '', 'paid_type', 'PAID_TRANSFER', 
+  'tax_free', false, 'paid', false, 'rate', 0, 'closed', false, 
+  'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
+  'notes', 'DEMO invoice offer', 
+  'internal_notes', '', 'report_notes', '',
+  'worksheet', '{}'::JSONB, 'rent', '{}'::JSONB, 'invoice', '{}'::JSONB,
+  'tags', jsonb_build_array('SALES')
+), 
+'{}'::JSONB);
+INSERT INTO trans(
+  code, trans_type, direction, trans_date, trans_code, customer_code, employee_code, project_code, 
+  place_code, currency_code, auth_code, trans_meta, trans_map) 
 VALUES('ORD0000000000N1', 'TRANS_ORDER', 'DIRECTION_IN', '2024-11-01', NULL, 'CUS0000000000N4', NULL, NULL, NULL, 'EUR', 'USR0000000000N1',
 jsonb_build_object(
   'due_time', '2024-11-10T00:00:00', 'ref_number', '', 'paid_type', 'PAID_TRANSFER', 
@@ -474,26 +488,12 @@ jsonb_build_object(
 INSERT INTO trans(
   code, trans_type, direction, trans_date, trans_code, customer_code, employee_code, project_code, 
   place_code, currency_code, auth_code, trans_meta, trans_map) 
-VALUES('ORD0000000000N3', 'TRANS_ORDER', 'DIRECTION_OUT', '2024-12-10', NULL, 'CUS0000000000N2', NULL, NULL, NULL, 'EUR', 'USR0000000000N1',
+VALUES('ORD0000000000N3', 'TRANS_ORDER', 'DIRECTION_OUT', '2024-12-10', 'OFF0000000000N4', 'CUS0000000000N2', NULL, NULL, NULL, 'EUR', 'USR0000000000N1',
 jsonb_build_object(
   'due_time', '2024-12-20T00:00:00', 'ref_number', '', 'paid_type', 'PAID_TRANSFER', 
   'tax_free', false, 'paid', false, 'rate', 0, 'closed', false, 
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
   'notes', 'DEMO invoice order.', 
-  'internal_notes', '', 'report_notes', '',
-  'worksheet', '{}'::JSONB, 'rent', '{}'::JSONB, 'invoice', '{}'::JSONB,
-  'tags', jsonb_build_array('SALES')
-), 
-'{}'::JSONB);
-INSERT INTO trans(
-  code, trans_type, direction, trans_date, trans_code, customer_code, employee_code, project_code, 
-  place_code, currency_code, auth_code, trans_meta, trans_map) 
-VALUES('OFF0000000000N4', 'TRANS_OFFER', 'DIRECTION_OUT', '2024-11-05', 'ORD0000000000N3', 'CUS0000000000N2', NULL, NULL, NULL, 'EUR', 'USR0000000000N1',
-jsonb_build_object(
-  'due_time', '2024-11-30T00:00:00', 'ref_number', '', 'paid_type', 'PAID_TRANSFER', 
-  'tax_free', false, 'paid', false, 'rate', 0, 'closed', false, 
-  'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
-  'notes', 'DEMO invoice offer', 
   'internal_notes', '', 'report_notes', '',
   'worksheet', '{}'::JSONB, 'rent', '{}'::JSONB, 'invoice', '{}'::JSONB,
   'tags', jsonb_build_array('SALES')
@@ -1019,35 +1019,6 @@ jsonb_build_object(
   'unit', 'piece', 'qty', 3, 'fx_price', 12, 'net_amount', 396, 'discount', 0, 'vat_amount', 79.2, 'amount', 475.2,
   'description', 'Pallet', 'deposit', false, 'own_stock', 0, 'action_price', false,
   'tags', '[]'::JSONB
-), 
-'{}'::JSONB);
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_TRANS', 'OFF0000000000N4', 'LINK_TRANS', 'ORD0000000000N3',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-), 
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_TRANS', 'INV0000000000N5', 'LINK_TRANS', 'ORD0000000000N3',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-), 
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_TRANS', 'INV0000000000N6', 'LINK_TRANS', 'ORD0000000000N2',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-), 
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_TRANS', 'INV0000000000N7', 'LINK_TRANS', 'ORD0000000000N1',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
