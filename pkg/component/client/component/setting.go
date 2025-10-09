@@ -340,7 +340,7 @@ func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 						{Name: "config_key", Label: labels["setting_config_key"], ReadOnly: true},
 						{Name: "config_value", Label: labels["setting_config_value"], Required: true},
 					},
-					RowKey:             "id",
+					//RowKey:             "id",
 					Rows:               configData,
 					Pagination:         ct.PaginationTypeTop,
 					PageSize:           10,

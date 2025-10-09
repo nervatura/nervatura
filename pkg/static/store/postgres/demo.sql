@@ -255,8 +255,7 @@ jsonb_build_object(
 ), 
 jsonb_build_object(
   'demo_color', 'WHITE'
-),
-'{}'::JSONB);
+));
 INSERT INTO product(code, product_type, product_name, tax_code, events, product_meta, product_map) 
 VALUES('PRD0000000000N4', 'PRODUCT_ITEM', 'Car', 'VAT20',
 '[]'::JSONB,
@@ -434,7 +433,7 @@ VALUES('SER0000000000N3', 'Motorola', 'PRD0000000000N13',
 jsonb_build_object(
   'serial_number', 'IMEI-023456789', 'inactive', false, 'notes', '', 'tags', '[]'::JSONB
 ), 
-jsonb_build_object());
+'{}'::JSONB);
 
 INSERT INTO place(code, place_type, place_name, place_meta) 
 VALUES('PLA0000000000N4', 'PLACE_WAREHOUSE', 'Raw material', 
@@ -509,7 +508,7 @@ jsonb_build_object(
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
   'notes', '', 'internal_notes', '', 
   'report_notes', 'A long and <b><i>rich text</b></i> at the bottom of the invoice...<br><br>Can be multiple lines ...',
-  'worksheet', '{}'::JSONB, 'rent', '{}'::JSONB, 'invoice', jsonb_build_object(),
+  'worksheet', '{}'::JSONB, 'rent', '{}'::JSONB, 'invoice', '{}'::JSONB,
   'tags', jsonb_build_array('SALES')
 ), 
 '{}'::JSONB);
@@ -522,7 +521,7 @@ jsonb_build_object(
   'tax_free', false, 'paid', false, 'rate', 0, 'closed', false, 
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
   'notes', 'Virtual product sample.', 'internal_notes', '', 'report_notes', '',
-  'worksheet', '{}'::JSONB, 'rent', '{}'::JSONB, 'invoice', jsonb_build_object(),
+  'worksheet', '{}'::JSONB, 'rent', '{}'::JSONB, 'invoice', '{}'::JSONB,
   'tags', jsonb_build_array('SALES')
 ), 
 '{}'::JSONB);
@@ -1056,490 +1055,346 @@ INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N1', 'LINK_TRANS', 'INV0000000000N7',
 jsonb_build_object(
-  'qty', 4000, 'rate', 1, 'tags', '[]'::JSONB
+  'amount', 4000, 'rate', 1, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N2', 'LINK_TRANS', 'INV0000000000N5',
 jsonb_build_object(
-  'qty', 849, 'rate', 1, 'tags', '[]'::JSONB
+  'amount', 849, 'rate', 1, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N3', 'LINK_TRANS', 'INV0000000000N6',
 jsonb_build_object(
-  'qty', 228, 'rate', 1, 'tags', '[]'::JSONB
+  'amount', 228, 'rate', 1, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N4', 'LINK_TRANS', 'INV0000000000N7',
 jsonb_build_object(
-  'qty', 488, 'rate', 1, 'tags', '[]'::JSONB
+  'amount', 488, 'rate', 1, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N1', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N1', NULL,
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N1', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N1', NULL, NULL, NULL,
 jsonb_build_object(
   'qty', 0, 'notes', '', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N2', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N3', NULL,
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N2', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N3', NULL, NULL, NULL,
 jsonb_build_object(
   'qty', 0, 'notes', 'mobile phone', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N3', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N3', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N5', NULL, 'PLA0000000000N4', 'ITM0000000000N1', NULL,
 jsonb_build_object(
   'qty', 30, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N4', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N4', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N6', NULL, 'PLA0000000000N4', 'ITM0000000000N2', NULL,
 jsonb_build_object(
   'qty', 50, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N5', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N5', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N7', NULL, 'PLA0000000000N4', 'ITM0000000000N3', NULL,
 jsonb_build_object(
   'qty', 50, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N6', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N6', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N8', NULL, 'PLA0000000000N4', 'ITM0000000000N4', NULL,
 jsonb_build_object(
   'qty', 15, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N7', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N1', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N7', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N1', NULL, 'PLA0000000000N4', 'ITM0000000000N5', NULL,
 jsonb_build_object(
   'qty', 10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N8', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N3', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N8', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N3', NULL, 'PLA0000000000N4', 'ITM0000000000N6', NULL,
 jsonb_build_object(
   'qty', 10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N9', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N9', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N9', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N9', NULL, 'PLA0000000000N4', 'ITM0000000000N7', NULL,
 jsonb_build_object(
   'qty', 15, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N10', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N10', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N10', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N10', NULL, 'PLA0000000000N4', 'ITM0000000000N8', NULL,
 jsonb_build_object(
   'qty', 10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N11', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N11', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N11', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N11', NULL, 'PLA0000000000N4', 'ITM0000000000N9', NULL,
 jsonb_build_object(
   'qty', 20, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N12', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N9', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N12', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N9', NULL, 'PLA0000000000N1', 'ITM0000000000N10', NULL,
 jsonb_build_object(
   'qty', -2, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N13', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N10', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N13', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N10', NULL, 'PLA0000000000N1', 'ITM0000000000N10', NULL,
 jsonb_build_object(
   'qty', -2, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N14', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N14', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1', 'ITM0000000000N10', NULL,
 jsonb_build_object(
   'qty', -4, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N15', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N15', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1', 'ITM0000000000N11', NULL,
 jsonb_build_object(
   'qty', -3, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N16', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N1', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N16', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N1', NULL, 'PLA0000000000N1', 'ITM0000000000N13', NULL,
 jsonb_build_object(
   'qty', -3, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N17', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N3', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N17', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N3', NULL, 'PLA0000000000N1', 'ITM0000000000N14', NULL,
 jsonb_build_object(
   'qty', -5, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N18', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N18', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N19', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N19', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N18',
 jsonb_build_object(
   'qty', 10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N20', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N20', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N21', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N21', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N20',
 jsonb_build_object(
   'qty', 10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N22', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N22', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -15, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N23', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N23', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N22',
 jsonb_build_object(
   'qty', 15, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N24', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N24', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N25', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N25', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N24',
 jsonb_build_object(
   'qty', 10, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N26', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N26', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -20, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N27', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N27', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N26',
 jsonb_build_object(
   'qty', 20, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N28', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N1', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N28', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N1', NULL, 'PLA0000000000N1', NULL, NULL,
 jsonb_build_object(
   'qty', -2, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N29', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N10', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N29', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N10', NULL, 'PLA0000000000N1', NULL, NULL,
 jsonb_build_object(
   'qty', -3, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N30', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N4', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N30', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N4', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 5, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N31', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N31', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N5', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 20, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N32', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N32', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N6', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 20, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N33', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N33', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N7', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 30, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N34', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N34', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N8', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 1, 'notes', 'demo', 'shared', true, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N35', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N4', NULL, NULL,
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N35', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N4', NULL, NULL, NULL, NULL,
 jsonb_build_object(
   'qty', 5, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N36', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N36', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N5', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 20, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N37', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N37', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N6', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 15, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N38', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N38', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N7', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 28, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N39', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N39', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N8', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', 1, 'notes', 'demo', 'shared', true, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N40', 'MOVEMENT_INVENTORY', '2024-12-02T00:00:00', 'PRO0000000000N20', 'PRD0000000000N4', NULL, 'PLA0000000000N1',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N40', 'MOVEMENT_INVENTORY', '2024-12-02T00:00:00', 'PRO0000000000N20', 'PRD0000000000N4', NULL, 'PLA0000000000N1', NULL, NULL,
 jsonb_build_object(
   'qty', 2, 'notes', 'demo', 'shared', true, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N41', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N41', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N5', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -8, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N42', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N42', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N6', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -8, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N43', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N43', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N7', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -12, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
 '{}'::JSONB);
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N44', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N44', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N8', NULL, 'PLA0000000000N4', NULL, NULL,
 jsonb_build_object(
   'qty', -1, 'notes', 'demo', 'shared', false, 'tags', '[]'::JSONB
 ), 
-'{}'::JSONB);
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N3', 'LINK_ITEM', 'ITM0000000000N1',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N4', 'LINK_ITEM', 'ITM0000000000N2',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N5', 'LINK_ITEM', 'ITM0000000000N3',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N6', 'LINK_ITEM', 'ITM0000000000N4',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N7', 'LINK_ITEM', 'ITM0000000000N5',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N8', 'LINK_ITEM', 'ITM0000000000N6',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N9', 'LINK_ITEM', 'ITM0000000000N7',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N10', 'LINK_ITEM', 'ITM0000000000N8',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N11', 'LINK_ITEM', 'ITM0000000000N9',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N12', 'LINK_ITEM', 'ITM0000000000N10',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N13', 'LINK_ITEM', 'ITM0000000000N10',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N14', 'LINK_ITEM', 'ITM0000000000N10',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N15', 'LINK_ITEM', 'ITM0000000000N11',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N16', 'LINK_ITEM', 'ITM0000000000N13',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N17', 'LINK_ITEM', 'ITM0000000000N14',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N18', 'LINK_MOVEMENT', 'MOV0000000000N19',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N20', 'LINK_MOVEMENT', 'MOV0000000000N21',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N22', 'LINK_MOVEMENT', 'MOV0000000000N23',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N24', 'LINK_MOVEMENT', 'MOV0000000000N25',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
-'{}'::JSONB);
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N26', 'LINK_MOVEMENT', 'MOV0000000000N27',
-jsonb_build_object(
-  'qty', 0, 'rate', 0, 'tags', '[]'::JSONB
-),
 '{}'::JSONB);
 
 INSERT INTO config(config_type, data) 

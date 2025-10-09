@@ -48,10 +48,12 @@ func (cli *CLIService) MovementInsert(options cu.IM, requestData string) string 
 
 	// Optional fields
 	optionalFields := map[string]string{
-		"code":         data.Code,
-		"product_code": data.ProductCode,
-		"tool_code":    data.ToolCode,
-		"place_code":   data.PlaceCode,
+		"code":          data.Code,
+		"product_code":  data.ProductCode,
+		"tool_code":     data.ToolCode,
+		"place_code":    data.PlaceCode,
+		"item_code":     data.ItemCode,
+		"movement_code": data.MovementCode,
 	}
 	for key, value := range optionalFields {
 		if value != "" {

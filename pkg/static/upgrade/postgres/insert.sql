@@ -542,11 +542,33 @@ where mv.deleted = 0;
 
 SELECT setval('movement_id_seq', (select max(id) from movement), true);
 
+UPDATE movement set item_code = tr.code 
+FROM (
+  select l.ref_id_1 as movement_id, i.code
+  from bck_link l
+  inner join item i on l.ref_id_2 = i.id
+  where l.deleted = 0 
+    and l.nervatype_1 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='movement')
+    and l.nervatype_2 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='item')
+) tr
+where tr.movement_id = id;
+
+UPDATE movement set movement_code = tr.code 
+FROM (
+  select l.ref_id_2 as movement_id, mv.code
+  from bck_link l
+  inner join movement mv on l.ref_id_1 = mv.id
+  where l.deleted = 0 
+    and l.nervatype_1 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='movement')
+    and l.nervatype_2 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='movement')
+) tr
+where tr.movement_id = id;
+
 INSERT INTO payment(id, code, paid_date, trans_code, payment_meta, payment_map)
 select pm.id, 'PMT'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||pm.id as code,
   pm.paiddate as paid_date, t.code as trans_code,
   jsonb_build_object(
-	'amount', pm.amount, 'amount', COALESCE(pm.notes, ''),
+	'amount', pm.amount, 'notes', COALESCE(pm.notes, ''),
 	'tags', '[]'::JSONB
   ) as payment_meta, COALESCE(fld.md, '{}'::JSONB) as payment_map
 from bck_payment pm
@@ -586,7 +608,7 @@ select l.id, 'LNK'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||l.id as
 	when nt2.groupvalue = 'tool' then tl2.code
 	else t2.code end as link_code_2,
   jsonb_build_object(
-	'qty', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'link_qty' as float),0),
+	'amount', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'link_qty' as float),0),
 	'rate', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'link_rate' as float),0),
 	'tags', '[]'::JSONB
   ) as link_meta, COALESCE(fld.md, '{}'::JSONB) as link_map

@@ -10,9 +10,54 @@ import (
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
+	cp "github.com/nervatura/nervatura/v6/pkg/component/client/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
+
+var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
+	"items": func(stateData cu.IM) cu.IM {
+		var item cu.IM
+		ut.ConvertToType(md.Item{
+			//TransCode: cu.ToString(trans["code"], ""),
+			TaxCode: cu.ToString(cu.ToIMA(stateData["tax_codes"], []cu.IM{})[0]["code"], ""),
+			ItemMeta: md.ItemMeta{
+				Qty:  1,
+				Tags: []string{},
+			},
+			ItemMap: cu.IM{},
+		}, &item)
+		return item
+	},
+	"payments": func(stateData cu.IM) cu.IM {
+		var payment cu.IM
+		ut.ConvertToType(md.Payment{
+			//TransCode: cu.ToString(trans["code"], ""),
+			PaidDate: md.TimeDate{Time: time.Now()},
+			PaymentMeta: md.PaymentMeta{
+				Amount: 0,
+				Tags:   []string{},
+			},
+			PaymentMap: cu.IM{},
+		}, &payment)
+		return payment
+	},
+	"link": func(stateData cu.IM) cu.IM {
+		var link cu.IM
+		ut.ConvertToType(md.Link{
+			LinkType1: md.LinkType(md.LinkTypePayment),
+			LinkType2: md.LinkType(md.LinkTypeTrans),
+			LinkMeta: md.LinkMeta{
+				Amount: 0,
+				Qty:    0,
+				Rate:   1,
+				Tags:   []string{},
+			},
+			LinkMap: cu.IM{},
+		}, &link)
+		return link
+	},
+}
 
 func (cls *ClientService) codeName(ds *api.DataStore, code, model string) (name string) {
 	if code != "" {
@@ -28,9 +73,9 @@ func (cls *ClientService) codeName(ds *api.DataStore, code, model string) (name 
 	return name
 }
 
-var transDataQueryBase = map[string]func(trans cu.IM) md.Query{
-	"items": func(trans cu.IM) md.Query {
-		return md.Query{
+var transDataQueryBase = map[string]func(trans cu.IM) ([]string, md.Query){
+	"items": func(trans cu.IM) ([]string, md.Query) {
+		return []string{}, md.Query{
 			Fields: []string{"*"}, From: "item",
 			Filters: []md.Filter{
 				{Field: "trans_code", Comp: "==", Value: cu.ToString(trans["code"], "")},
@@ -38,8 +83,8 @@ var transDataQueryBase = map[string]func(trans cu.IM) md.Query{
 			},
 		}
 	},
-	"movements": func(trans cu.IM) md.Query {
-		return md.Query{
+	"movements": func(trans cu.IM) ([]string, md.Query) {
+		return []string{}, md.Query{
 			Fields: []string{"*"}, From: "movement",
 			Filters: []md.Filter{
 				{Field: "trans_code", Comp: "==", Value: cu.ToString(trans["code"], "")},
@@ -47,8 +92,8 @@ var transDataQueryBase = map[string]func(trans cu.IM) md.Query{
 			},
 		}
 	},
-	"payments": func(trans cu.IM) md.Query {
-		return md.Query{
+	"payments": func(trans cu.IM) ([]string, md.Query) {
+		return []string{}, md.Query{
 			Fields: []string{"*"}, From: "payment",
 			Filters: []md.Filter{
 				{Field: "trans_code", Comp: "==", Value: cu.ToString(trans["code"], "")},
@@ -56,18 +101,34 @@ var transDataQueryBase = map[string]func(trans cu.IM) md.Query{
 			},
 		}
 	},
-	"links": func(trans cu.IM) md.Query {
-		return md.Query{
-			Fields: []string{"*"}, From: "link",
+	"payment_link": func(trans cu.IM) ([]string, md.Query) {
+		transType := cu.ToString(trans["trans_type"], "")
+		query := md.Query{
+			Fields: []string{"l.*", "pl.place_name", "pl.currency_code", "pt.trans_type",
+				"pt.direction", "pt.code as pt_code", "pm.paid_date", "it.currency_code as invoice_curr"},
+			From: `link l inner join payment_view pm on l.link_code_1 = pm.code inner join trans_view it on l.link_code_2 = it.code 
+			inner join trans_view pt on pm.trans_code = pt.code inner join place pl on pt.place_code = pl.code`,
 			Filters: []md.Filter{
-				{Field: "link_type_1", Comp: "==", Value: md.LinkTypeTrans.String()},
-				{Field: "link_code_1", Comp: "==", Value: cu.ToString(trans["code"], "")},
-				{Field: "deleted", Comp: "==", Value: false},
+				{Field: "l.link_type_1", Comp: "==", Value: md.LinkTypePayment.String()},
+				{Field: "l.link_type_2", Comp: "==", Value: md.LinkTypeTrans.String()},
+				{Field: "it.trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
+					md.TransTypeInvoice.String(), md.TransTypeReceipt.String())},
+				{Field: "it.deleted", Comp: "==", Value: false},
+				{Field: "l.deleted", Comp: "==", Value: false},
 			},
+			OrderBy: []string{"pm.id"},
 		}
+		if slices.Contains([]string{md.TransTypeBank.String(), md.TransTypeCash.String()}, transType) {
+			query.Filters = append(query.Filters, md.Filter{Field: "pm.trans_code", Comp: "==", Value: cu.ToString(trans["code"], "")})
+		}
+		if slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) {
+			query.Filters = append(query.Filters, md.Filter{Field: "l.link_code_2", Comp: "==", Value: cu.ToString(trans["code"], "")})
+		}
+		return []string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String(),
+			md.TransTypeBank.String(), md.TransTypeCash.String()}, query
 	},
-	"trans_cancellation": func(trans cu.IM) md.Query {
-		return md.Query{
+	"trans_cancellation": func(trans cu.IM) ([]string, md.Query) {
+		return []string{}, md.Query{
 			Fields: []string{"*"}, From: "trans_view",
 			Filters: []md.Filter{
 				{Field: "status", Comp: "==", Value: md.TransStatusCancellation.String()},
@@ -76,39 +137,23 @@ var transDataQueryBase = map[string]func(trans cu.IM) md.Query{
 			},
 		}
 	},
-	"transitem_invoice": func(trans cu.IM) md.Query {
-		/*
-			return md.Query{
+	"transitem_invoice": func(trans cu.IM) ([]string, md.Query) {
+		return []string{md.TransTypeOrder.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()},
+			md.Query{
 				Fields: []string{"i.*", "t.id as trans_id", "t.trans_date", "t.currency_code"},
-				From:   "link l inner join trans t on t.code = l.link_code_1 inner join item i on i.trans_code = t.code",
+				From:   "trans t inner join item i on i.trans_code = t.code",
 				Filters: []md.Filter{
-					{Field: "l.link_code_2", Comp: "==", Value: cu.ToString(trans["code"], "")},
-					{Field: "l.link_type_2", Comp: "==", Value: md.LinkTypeTrans.String()},
-					{Field: "l.link_type_1", Comp: "==", Value: md.LinkTypeTrans.String()},
+					{Field: "t.trans_code", Comp: "==", Value: cu.ToString(trans["code"], "")},
 					{Field: "t.trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
 						md.TransTypeInvoice.String(), md.TransTypeReceipt.String())},
 					{Field: "t.direction", Comp: "==", Value: cu.ToString(trans["direction"], "")},
-					{Field: "l.deleted", Comp: "==", Value: false},
 					{Field: "t.deleted", Comp: "==", Value: false},
 					{Field: "i.deleted", Comp: "==", Value: false},
 				},
 			}
-		*/
-		return md.Query{
-			Fields: []string{"i.*", "t.id as trans_id", "t.trans_date", "t.currency_code"},
-			From:   "trans t inner join item i on i.trans_code = t.code",
-			Filters: []md.Filter{
-				{Field: "t.trans_code", Comp: "==", Value: cu.ToString(trans["code"], "")},
-				{Field: "t.trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
-					md.TransTypeInvoice.String(), md.TransTypeReceipt.String())},
-				{Field: "t.direction", Comp: "==", Value: cu.ToString(trans["direction"], "")},
-				{Field: "t.deleted", Comp: "==", Value: false},
-				{Field: "i.deleted", Comp: "==", Value: false},
-			},
-		}
 	},
-	"element_count": func(trans cu.IM) md.Query {
-		return md.Query{
+	"element_count": func(trans cu.IM) ([]string, md.Query) {
+		return []string{}, md.Query{
 			Fields: []string{"p.*"},
 			From:   "item i inner join product p on p.code = i.product_code",
 			Filters: []md.Filter{
@@ -119,8 +164,8 @@ var transDataQueryBase = map[string]func(trans cu.IM) md.Query{
 			},
 		}
 	},
-	"config_report": func(trans cu.IM) md.Query {
-		return md.Query{
+	"config_report": func(trans cu.IM) ([]string, md.Query) {
+		return []string{}, md.Query{
 			Fields: []string{"id", "report_key", "report_name"}, From: "config_report",
 			Filters: []md.Filter{
 				{Field: "report_type", Comp: "==", Value: "TRANS"},
@@ -146,34 +191,46 @@ var transDataQueryExt = map[string]md.Query{
 		Fields: []string{"code", "description", "digit"}, From: "currency_view",
 		OrderBy: []string{"code"},
 	},
+	"places": {
+		Fields: []string{"code", "place_type", "place_name", "currency_code", "inactive"}, From: "place_view",
+		OrderBy: []string{"code"},
+	},
 }
 
 func (cls *ClientService) transDataDefault(trans cu.IM, configData []cu.IM) (data cu.IM) {
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
-	isItems := slices.Contains([]string{
-		md.TransTypeOffer.String(), md.TransTypeOrder.String(), md.TransTypeWorksheet.String(),
-		md.TransTypeRent.String(), md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, cu.ToString(trans["trans_type"], ""))
+	transType := cu.ToString(trans["trans_type"], "")
 	valueMap := map[string]func(value string){
 		"default_taxcode": func(value string) {
 			trans["tax_code"] = value
 		},
 		"default_currency": func(value string) {
-			if isItems {
-				transMeta["currency_code"] = value
+			if cp.TransIsItem(transType) {
+				trans["currency_code"] = value
 			}
 		},
 		"default_deadline": func(value string) {
-			if cu.ToString(trans["trans_type"], "") == md.TransTypeInvoice.String() {
+			if transType == md.TransTypeInvoice.String() {
 				transMeta["due_time"] = md.TimeDateTime{Time: time.Now().AddDate(0, 0, int(cu.ToInteger(value, 0)))}
 			}
 			if !slices.Contains([]string{
-				md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, cu.ToString(trans["trans_type"], "")) {
+				md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) {
 				transMeta["rate"] = cu.ToInteger(value, 0)
 			}
 		},
 		"default_paidtype": func(value string) {
-			if isItems {
+			if cp.TransIsItem(transType) {
 				transMeta["paid_type"] = value
+			}
+		},
+		"default_bank": func(value string) {
+			if transType == md.TransTypeBank.String() {
+				trans["place_code"] = value
+			}
+		},
+		"default_chest": func(value string) {
+			if transType == md.TransTypeCash.String() {
+				trans["place_code"] = value
 			}
 		},
 	}
@@ -191,6 +248,7 @@ func (cls *ClientService) transData(ds *api.DataStore, user, params cu.IM) (data
 		"trans": cu.IM{
 			"trans_type": cu.ToString(params["trans_type"], md.TransType(0).String()),
 			"direction":  cu.ToString(params["direction"], md.Direction(0).String()),
+			"trans_date": md.TimeDateTime{Time: time.Now()}.Format(time.DateOnly),
 			"trans_meta": cu.IM{
 				"status":      md.TransStatusNormal.String(),
 				"trans_state": md.TransStateOK.String(),
@@ -200,16 +258,18 @@ func (cls *ClientService) transData(ds *api.DataStore, user, params cu.IM) (data
 				"rent":        cu.IM{},
 				"invoice":     cu.IM{},
 			},
+			"trans_map": cu.IM{},
 		},
 		"items":              []cu.IM{},
 		"movements":          []cu.IM{},
 		"payments":           []cu.IM{},
-		"links":              []cu.IM{},
+		"payment_link":       []cu.IM{},
 		"config_map":         []cu.IM{},
 		"config_data":        []cu.IM{},
 		"config_report":      []cu.IM{},
 		"tax_codes":          []cu.IM{},
 		"currencies":         []cu.IM{},
+		"places":             []cu.IM{},
 		"transitem_invoice":  []cu.IM{},
 		"trans_cancellation": []cu.IM{},
 		"element_count":      []cu.IM{},
@@ -220,6 +280,9 @@ func (cls *ClientService) transData(ds *api.DataStore, user, params cu.IM) (data
 		"customer_name":      "",
 		"project_name":       "",
 		"place_name":         "",
+	}
+	if cu.ToString(params["trans_type"], md.TransType(0).String()) == md.TransTypeCash.String() {
+		data["payments"] = []cu.IM{transRowTypeMap["payments"](data)}
 	}
 
 	var rows []cu.IM = []cu.IM{}
@@ -237,28 +300,20 @@ func (cls *ClientService) transData(ds *api.DataStore, user, params cu.IM) (data
 		}
 		if len(trans) > 0 {
 			data["trans"] = trans[0]
+			transType := cu.ToString(trans[0]["trans_type"], "")
 			data["editor_title"] = cu.ToString(trans[0]["code"], "")
+			data["editor_icon"] = cp.TransTypeIcon(transType)
 			data["customer_name"] = cls.codeName(ds, cu.ToString(trans[0]["customer_code"], ""), "customer")
-		}
 
-		for key, query := range transDataQueryBase {
-			if rows, err = ds.StoreDataQuery(query(trans[0]), false); err != nil {
-				return data, err
+			for key, query := range transDataQueryBase {
+				if tt, qr := query(trans[0]); len(tt) == 0 || slices.Contains(tt, transType) {
+					if rows, err = ds.StoreDataQuery(qr, false); err != nil {
+						return data, err
+					}
+					data[key] = rows
+				}
 			}
-			data[key] = rows
 		}
-
-		if rows, err = ds.StoreDataQuery(md.Query{
-			Fields: []string{"*"}, From: "link",
-			Filters: []md.Filter{
-				{Field: "link_type_2", Comp: "==", Value: md.LinkTypeTrans.String()},
-				{Field: "link_code_2", Comp: "==", Value: cu.ToString(trans[0]["code"], "")},
-				{Field: "deleted", Comp: "==", Value: false},
-			},
-		}, false); err != nil {
-			return data, err
-		}
-		data["links"] = append(cu.ToIMA(data["links"], []cu.IM{}), rows...)
 	}
 
 	trans := cu.ToIM(data["trans"], cu.IM{})
@@ -308,7 +363,73 @@ func (cls *ClientService) transUpdateItems(ds *api.DataStore, data cu.IM, transC
 	return data, err
 }
 
-func (cls *ClientService) transUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (cls *ClientService) transUpdatePayments(ds *api.DataStore, data cu.IM, transCode string) (editor cu.IM, err error) {
+	for _, it := range cu.ToIMA(data["payments"], []cu.IM{}) {
+		var payment md.Payment = md.Payment{
+			TransCode: transCode,
+			PaidDate:  md.TimeDate{Time: time.Now()},
+			PaymentMeta: md.PaymentMeta{
+				Tags: []string{},
+			},
+			PaymentMap: cu.IM{},
+		}
+		if err = ut.ConvertToType(it, &payment); err == nil {
+			values := cu.IM{
+				"trans_code": transCode,
+				"paid_date":  payment.PaidDate.String(),
+			}
+			ut.ConvertByteToIMData(payment.PaymentMeta, values, "payment_meta")
+			ut.ConvertByteToIMData(payment.PaymentMap, values, "payment_map")
+
+			paymentID := payment.Id
+			update := md.Update{Values: values, Model: "payment"}
+			if paymentID > 0 {
+				update.IDKey = paymentID
+			}
+			if paymentID, err = ds.StoreDataUpdate(update); err != nil {
+				return data, err
+			}
+			it["id"] = paymentID
+		}
+	}
+	return data, err
+}
+
+func (cls *ClientService) transUpdateLinks(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+	for _, ln := range cu.ToIMA(data["payment_link"], []cu.IM{}) {
+		var link md.Link = md.Link{
+			LinkType1: md.LinkType(md.LinkTypePayment),
+			LinkType2: md.LinkType(md.LinkTypeTrans),
+			LinkMeta: md.LinkMeta{
+				Tags: []string{},
+			},
+			LinkMap: cu.IM{},
+		}
+		if err = ut.ConvertToType(ln, &link); err == nil {
+			values := cu.IM{
+				"link_type_1": link.LinkType1.String(),
+				"link_code_1": link.LinkCode1,
+				"link_type_2": link.LinkType2.String(),
+				"link_code_2": link.LinkCode2,
+			}
+			ut.ConvertByteToIMData(link.LinkMeta, values, "link_meta")
+			ut.ConvertByteToIMData(link.LinkMap, values, "link_map")
+
+			linkID := link.Id
+			update := md.Update{Values: values, Model: "link"}
+			if linkID > 0 {
+				update.IDKey = linkID
+			}
+			if linkID, err = ds.StoreDataUpdate(update); err != nil {
+				return data, err
+			}
+			ln["id"] = linkID
+		}
+	}
+	return data, err
+}
+
+func (cls *ClientService) transUpdate(ds *api.DataStore, data cu.IM) (transID int64, err error) {
 	user := cu.ToIM(data["user"], cu.IM{})
 	var trans md.Trans = md.Trans{}
 	ut.ConvertToType(data["trans"], &trans)
@@ -344,7 +465,7 @@ func (cls *ClientService) transUpdate(ds *api.DataStore, data cu.IM) (editor cu.
 	ut.ConvertByteToIMData(trans.TransMeta, values, "trans_meta")
 	ut.ConvertByteToIMData(trans.TransMap, values, "trans_map")
 
-	var transID int64
+	//var transID int64
 	newTrans := (trans.Id == 0)
 	update := md.Update{Values: values, Model: "trans"}
 	if !newTrans {
@@ -362,16 +483,38 @@ func (cls *ClientService) transUpdate(ds *api.DataStore, data cu.IM) (editor cu.
 	}
 
 	if data, err = cls.transUpdateItems(ds, data, trans.Code); err != nil {
-		return data, err
+		return transID, err
 	}
 
-	for _, it := range cu.ToIMA(data["items_delete"], []cu.IM{}) {
-		if err = ds.DataDelete("item", cu.ToInteger(it["id"], 0), ""); err != nil {
-			return data, err
+	if data, err = cls.transUpdatePayments(ds, data, trans.Code); err != nil {
+		return transID, err
+	}
+
+	if data, err = cls.transUpdateLinks(ds, data); err != nil {
+		return transID, err
+	}
+
+	deleteRows := func(model, deleteKey string) (err error) {
+		for _, it := range cu.ToIMA(data[deleteKey], []cu.IM{}) {
+			if err = ds.DataDelete(model, cu.ToInteger(it["id"], 0), ""); err != nil {
+				return err
+			}
+		}
+		return err
+	}
+
+	deleteMap := cu.SM{
+		"items_delete":        "item",
+		"payments_delete":     "payment",
+		"payment_link_delete": "link",
+	}
+
+	for deleteKey, model := range deleteMap {
+		if err = deleteRows(model, deleteKey); err != nil {
+			return transID, err
 		}
 	}
-
-	return data, err
+	return transID, err
 }
 
 func (cls *ClientService) transDelete(ds *api.DataStore, transID int64) (err error) {
@@ -381,7 +524,9 @@ func (cls *ClientService) transDelete(ds *api.DataStore, transID int64) (err err
 func (cls *ClientService) transResponseFormNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
+	view := cu.ToString(stateData["view"], "")
 	ds := cls.getDataStore(client.Ticket.Database)
+
 	trans := cu.ToIM(stateData["trans"], cu.IM{})
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
 	transMap := cu.ToIM(trans["trans_map"], cu.IM{})
@@ -393,7 +538,7 @@ func (cls *ClientService) transResponseFormNext(evt ct.ResponseEvent) (re ct.Res
 		if dirty {
 			stateData["dirty"] = dirty
 		}
-		client.SetEditor("trans", cu.ToString(stateData["view"], ""), stateData)
+		client.SetEditor("trans", view, stateData)
 		return evt, err
 	}
 
@@ -415,13 +560,28 @@ func (cls *ClientService) transResponseFormNext(evt ct.ResponseEvent) (re ct.Res
 			return evt, err
 		},
 
-		"trans_new": func() (re ct.ResponseEvent, err error) {
+		"transitem_new": func() (re ct.ResponseEvent, err error) {
 			return cls.setEditor(evt, "trans", cu.IM{
 				"session_id":   client.Ticket.SessionID,
-				"trans_type":   frmValue["trans_type"],
-				"direction":    frmValue["direction"],
+				"trans_type":   frmValue["create_trans_type"],
+				"direction":    frmValue["create_direction"],
 				"editor_title": client.Msg("transitem_title"),
 				"editor_icon":  ct.IconFileText,
+			}), nil
+		},
+
+		"transpayment_new": func() (re ct.ResponseEvent, err error) {
+			transType := cu.ToString(frmValue["create_trans_type"], "")
+			direction := cu.ToString(frmValue["create_direction"], "")
+			if transType == md.TransTypeBank.String() {
+				direction = md.DirectionTransfer.String()
+			}
+			return cls.setEditor(evt, "trans", cu.IM{
+				"session_id":   client.Ticket.SessionID,
+				"trans_type":   transType,
+				"direction":    direction,
+				"editor_title": client.Msg("transpayment_title"),
+				"editor_icon":  ct.IconMoney,
 			}), nil
 		},
 
@@ -624,14 +784,16 @@ func (cls *ClientService) transResponseFormEventChange(evt ct.ResponseEvent) (re
 	frmBaseValues := cu.ToIM(form["data"], cu.IM{})
 
 	fieldName := cu.ToString(frmValues["name"], "")
-	rowMeta := cu.ToIM(frmBaseValues["item_meta"], cu.IM{})
+	itemMeta := cu.ToIM(frmBaseValues["item_meta"], cu.IM{})
+	linkMeta := cu.ToIM(frmBaseValues["link_meta"], cu.IM{})
+
 	setPriceValues := func(calcMode string, value float64) {
 		priceValues := cls.calcItemPrice(calcMode, value, stateData, frmBaseValues)
-		rowMeta["net_amount"] = priceValues["net_amount"]
-		rowMeta["vat_amount"] = priceValues["vat_amount"]
-		rowMeta["amount"] = priceValues["amount"]
-		rowMeta["fx_price"] = priceValues["fx_price"]
-		frmBaseValues["item_meta"] = rowMeta
+		itemMeta["net_amount"] = priceValues["net_amount"]
+		itemMeta["vat_amount"] = priceValues["vat_amount"]
+		itemMeta["amount"] = priceValues["amount"]
+		itemMeta["fx_price"] = priceValues["fx_price"]
+		frmBaseValues["item_meta"] = itemMeta
 	}
 	switch fieldName {
 	case "tags":
@@ -641,16 +803,16 @@ func (cls *ClientService) transResponseFormEventChange(evt ct.ResponseEvent) (re
 			func(params cu.IM) (re ct.ResponseEvent, err error) {
 				if cu.ToString(params["event"], "") == ct.SelectorEventSelected {
 					selectedValues := cu.ToIM(params["values"], cu.IM{})
-					rowMeta["unit"] = selectedValues["unit"]
-					rowMeta["description"] = selectedValues["product_name"]
-					rowMeta["fx_price"], rowMeta["discount"] = cls.getProductPrice(ds,
+					itemMeta["unit"] = selectedValues["unit"]
+					itemMeta["description"] = selectedValues["product_name"]
+					itemMeta["fx_price"], itemMeta["discount"] = cls.getProductPrice(ds,
 						cu.IM{"currency_code": trans["currency_code"],
 							"product_code":  frmBaseValues["product_code"],
 							"customer_code": trans["customer_code"],
-							"qty":           rowMeta["qty"]})
+							"qty":           itemMeta["qty"]})
 					frmBaseValues["tax_code"] = cu.ToIM(params["values"], cu.IM{})["tax_code"]
-					frmBaseValues["item_meta"] = rowMeta
-					setPriceValues("fx_price", cu.ToFloat(rowMeta["fx_price"], 0))
+					frmBaseValues["item_meta"] = itemMeta
+					setPriceValues("fx_price", cu.ToFloat(itemMeta["fx_price"], 0))
 				}
 				client.SetForm(cu.ToString(form["key"], ""),
 					cu.MergeIM(frmBaseValues,
@@ -659,19 +821,35 @@ func (cls *ClientService) transResponseFormEventChange(evt ct.ResponseEvent) (re
 				return evt, nil
 			})
 
+	case "invoice_code":
+		return cls.editorCodeSelector(evt, strings.Split(fieldName, "_")[0], frmBaseValues,
+			func(params cu.IM) (re ct.ResponseEvent, err error) {
+				if cu.ToString(params["event"], "") == ct.SelectorEventSelected {
+					selectedValues := cu.ToIM(params["values"], cu.IM{})
+					frmBaseValues["link_code_2"] = selectedValues["code"]
+					frmBaseValues["currency_code"] = strings.Split(cu.ToString(selectedValues["currency_code"], ""), "/")[0] + "/" + cu.ToString(selectedValues["currency_code"], "")
+					frmBaseValues["invoice_curr"] = selectedValues["currency_code"]
+				}
+				client.SetForm(cu.ToString(form["key"], ""),
+					cu.MergeIM(frmBaseValues,
+						cu.IM{"invoice_selector": stateData["invoice_selector"]}),
+					cu.ToInteger(form["index"], 0), false)
+				return evt, nil
+			})
+
 	case "qty", "discount", "tax_code":
 		if fieldName != "tax_code" {
-			rowMeta[fieldName] = cu.ToFloat(frmValues["value"], 0)
-			frmBaseValues["item_meta"] = rowMeta
+			itemMeta[fieldName] = cu.ToFloat(frmValues["value"], 0)
+			frmBaseValues["item_meta"] = itemMeta
 		} else {
 			frmBaseValues[fieldName] = frmValues["value"]
 		}
-		setPriceValues("fx_price", cu.ToFloat(rowMeta["fx_price"], 0))
+		setPriceValues("fx_price", cu.ToFloat(itemMeta["fx_price"], 0))
 		return cls.editorCodeSelector(evt, strings.Split(fieldName, "_")[0], frmBaseValues,
 			func(params cu.IM) (re ct.ResponseEvent, err error) {
 				client.SetForm(cu.ToString(form["key"], ""),
 					cu.MergeIM(frmBaseValues,
-						cu.IM{"tax_codes": stateData["tax_codes"], "product_selector": stateData["product_selector"]}),
+						cu.IM{"tax_codes": stateData["tax_codes"]}),
 					cu.ToInteger(form["index"], 0), false)
 				return evt, nil
 			})
@@ -682,20 +860,25 @@ func (cls *ClientService) transResponseFormEventChange(evt ct.ResponseEvent) (re
 			func(params cu.IM) (re ct.ResponseEvent, err error) {
 				client.SetForm(cu.ToString(form["key"], ""),
 					cu.MergeIM(frmBaseValues,
-						cu.IM{"tax_codes": stateData["tax_codes"], "product_selector": stateData["product_selector"]}),
+						cu.IM{"tax_codes": stateData["tax_codes"]}),
 					cu.ToInteger(form["index"], 0), false)
 				return evt, nil
 			})
 
 	case "own_stock":
-		rowMeta[fieldName] = cu.ToFloat(frmValues["value"], 0)
-		frmBaseValues["item_meta"] = rowMeta
+		itemMeta[fieldName] = cu.ToFloat(frmValues["value"], 0)
+		frmBaseValues["item_meta"] = itemMeta
 		cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
 
 	case "deposit":
-		rowMeta[fieldName] = cu.ToBoolean(frmValues["value"], false)
-		frmBaseValues["item_meta"] = rowMeta
+		itemMeta[fieldName] = cu.ToBoolean(frmValues["value"], false)
+		frmBaseValues["item_meta"] = itemMeta
 		cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
+
+	case "link_amount", "link_rate":
+		linkMeta[strings.Split(fieldName, "_")[1]] = cu.ToFloat(frmValues["value"], 0)
+		frmBaseValues["link_meta"] = linkMeta
+		client.SetForm(cu.ToString(form["key"], ""), frmBaseValues, cu.ToInteger(form["index"], 0), false)
 
 	default:
 		frmBaseValues[fieldName] = frmValues["value"]
@@ -765,6 +948,15 @@ func (cls *ClientService) transResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 				"frm_unit": func(value any) {
 					rowMeta["unit"] = value
 				},
+				"frm_notes": func(value any) {
+					rowMeta["notes"] = value
+				},
+				"frm_link_amount": func(value any) {
+					rowMeta["amount"] = cu.ToFloat(value, 0)
+				},
+				"frm_link_rate": func(value any) {
+					rowMeta["rate"] = cu.ToFloat(value, 0)
+				},
 
 				"base_item_meta": func(value any) {
 					rowMeta["tags"] = cu.ToIM(value, cu.IM{})["tags"]
@@ -779,6 +971,12 @@ func (cls *ClientService) transResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 				"base_tags": func(value any) {
 					rows[frmIndex]["tags"] = value
 				},
+				"base_link_code_2": func(value any) {
+					rows[frmIndex]["link_code_2"] = value
+				},
+				"base_invoice_curr": func(value any) {
+					rows[frmIndex]["invoice_curr"] = value
+				},
 			}
 			return cls.editorFormOK(evt, rows, customValues)
 		},
@@ -788,7 +986,8 @@ func (cls *ClientService) transResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 				delete = true
 			}
 			if delete {
-				if _, found := stateData[frmKey]; found {
+				rowId := cu.ToInteger(rows[frmIndex]["id"], 0)
+				if _, found := stateData[frmKey]; found && rowId > 0 {
 					deleteRows := cu.ToIMA(stateData[frmKey+"_delete"], []cu.IM{})
 					deleteRows = append(deleteRows, rows[frmIndex])
 					stateData[frmKey+"_delete"] = deleteRows
@@ -816,6 +1015,8 @@ func (cls *ClientService) transResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 func (cls *ClientService) transResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
+
+	view := cu.ToString(stateData["view"], "")
 	trans := cu.ToIM(stateData["trans"], cu.IM{})
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
 	user := cu.ToIM(stateData["user"], cu.IM{})
@@ -823,12 +1024,18 @@ func (cls *ClientService) transResponseSideMenu(evt ct.ResponseEvent) (re ct.Res
 
 	menuMap := map[string]func() (re ct.ResponseEvent, err error){
 		"editor_save": func() (re ct.ResponseEvent, err error) {
-			if stateData, err = cls.transUpdate(ds, stateData); err != nil {
+			var transID int64
+			if transID, err = cls.transUpdate(ds, stateData); err != nil {
 				return evt, err
 			}
-			stateData["dirty"] = false
-			client.SetEditor("trans", cu.ToString(stateData["view"], ""), stateData)
-			return evt, err
+			//stateData["dirty"] = false
+			//client.SetEditor("trans", view, stateData)
+			//return evt, err
+			return cls.setEditor(evt, "trans", cu.IM{
+				"editor_view": view,
+				"trans_id":    transID,
+				"session_id":  client.Ticket.SessionID,
+			}), nil
 		},
 
 		"editor_delete": func() (re ct.ResponseEvent, err error) {
@@ -859,13 +1066,24 @@ func (cls *ClientService) transResponseSideMenu(evt ct.ResponseEvent) (re ct.Res
 			return evt, err
 		},
 
-		"editor_new": func() (re ct.ResponseEvent, err error) {
+		"transitem_new": func() (re ct.ResponseEvent, err error) {
 			params := cu.IM{
 				"session_id":   client.Ticket.SessionID,
 				"trans_type":   trans["trans_type"],
 				"direction":    trans["direction"],
 				"editor_title": client.Msg("transitem_title"),
 				"editor_icon":  ct.IconFileText,
+			}
+			return cls.setEditor(evt, "trans", params), nil
+		},
+
+		"transpayment_new": func() (re ct.ResponseEvent, err error) {
+			params := cu.IM{
+				"session_id":   client.Ticket.SessionID,
+				"trans_type":   trans["trans_type"],
+				"direction":    trans["direction"],
+				"editor_title": client.Msg("transpayment_title"),
+				"editor_icon":  ct.IconMoney,
 			}
 			return cls.setEditor(evt, "trans", params), nil
 		},
@@ -907,6 +1125,15 @@ func (cls *ClientService) transResponseSideMenu(evt ct.ResponseEvent) (re ct.Res
 					"show_delivery": len(elementCount) > 0, "next": "trans_create"}), nil
 		},
 
+		"payment_link_add": func() (re ct.ResponseEvent, err error) {
+			payments := cu.ToIMA(stateData["payments"], []cu.IM{})
+			cashPayment := cu.ToIM(payments[0], cu.IM{})
+			cashPaymentMeta := cu.ToIM(cashPayment["payment_meta"], cu.IM{})
+			return cls.transResponseLinkAdd(evt,
+				cu.IM{"view": "payment_link", "code1": cu.ToString(cashPayment["code"], ""), "code2": "",
+					"amount": math.Abs(cu.ToFloat(cashPaymentMeta["amount"], 0))})
+		},
+
 		"editor_report": func() (re ct.ResponseEvent, err error) {
 			return cls.showReportSelector(evt, "TRANS", cu.ToString(trans["code"], ""))
 		},
@@ -934,10 +1161,122 @@ func (cls *ClientService) transResponseSideMenu(evt ct.ResponseEvent) (re ct.Res
 	return evt, err
 }
 
+func (cls *ClientService) transResponseEditorFieldCashPayment(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
+
+	view := cu.ToString(stateData["view"], "")
+	trans := cu.ToIM(stateData["trans"], cu.IM{})
+	direction := cu.ToString(trans["direction"], "")
+	payments := cu.ToIMA(stateData["payments"], []cu.IM{})
+	if len(payments) == 0 {
+		payments = append(payments, transRowTypeMap["payments"](stateData))
+	}
+	cashPayment := cu.ToIM(payments[0], cu.IM{})
+
+	values := cu.ToIM(evt.Value, cu.IM{})
+	fieldName := cu.ToString(values["name"], "")
+	value := cu.ToString(values["value"], "")
+
+	switch fieldName {
+	case "payment_paid_date":
+		cashPayment["paid_date"] = value
+	case "payment_amount":
+		cashPaymentMeta := cu.ToIM(cashPayment["payment_meta"], cu.IM{})
+		cashPaymentMeta["amount"] = cu.ToFloat(value, 0)
+		if direction == md.DirectionOut.String() {
+			cashPaymentMeta["amount"] = -cu.ToFloat(cashPaymentMeta["amount"], 0)
+		}
+		cashPayment["payment_meta"] = cashPaymentMeta
+	}
+	payments[0] = cashPayment
+	stateData["payments"] = payments
+	stateData["dirty"] = true
+	client.SetEditor("trans", view, stateData)
+	return evt, err
+}
+
+func (cls *ClientService) transResponseLinkAdd(evt ct.ResponseEvent, params cu.IM) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
+
+	trans := cu.ToIM(stateData["trans"], cu.IM{})
+	currencyCode := cu.ToString(trans["currency_code"], "")
+	places := cu.ToIMA(stateData["places"], []cu.IM{})
+	if idx := slices.IndexFunc(places, func(place cu.IM) bool {
+		return cu.ToString(place["code"], "") == cu.ToString(trans["place_code"], "")
+	}); idx != -1 {
+		currencyCode = cu.ToString(places[idx]["currency_code"], "")
+	}
+
+	view := cu.ToString(params["view"], "")
+	code1 := cu.ToString(params["code1"], "")
+	code2 := cu.ToString(params["code2"], "")
+
+	rows := cu.ToIMA(stateData[view], []cu.IM{})
+	index := len(rows)
+	row := transRowTypeMap["link"](cu.IM{})
+	row["id"] = -(index + 1)
+	if code1 != "" {
+		row["link_code_1"] = code1
+	}
+	if code2 != "" {
+		row["link_code_2"] = code2
+	}
+	cu.ToIM(row["link_meta"], cu.IM{})["amount"] = cu.ToFloat(params["amount"], 0)
+	rows = append(rows, row)
+	stateData[view] = rows
+	stateData["view"] = view
+	stateData["dirty"] = true
+	client.SetForm(view, cu.MergeIM(row, cu.IM{
+		"trans_code": code2, "currency_code": currencyCode,
+		"amount": cu.ToFloat(params["amount"], 0), "rate": 1,
+	}), int64(index), false)
+	return evt, err
+}
+
+func (cls *ClientService) transResponseEditorFieldViewAdd(evt ct.ResponseEvent, transMap cu.IM,
+	resultUpdate func(params cu.IM) (re ct.ResponseEvent, err error)) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
+	view := cu.ToString(stateData["view"], "")
+	trans := cu.ToIM(stateData["trans"], cu.IM{})
+
+	getBase := func() (base cu.IM) {
+		if _, found := trans[view]; found {
+			return trans
+		}
+		return stateData
+	}
+	appendRow := func() (row cu.IM, index int64) {
+		base := getBase()
+		rows := cu.ToIMA(base[view], []cu.IM{})
+		row = transRowTypeMap[view](stateData)
+		row["id"] = -(len(rows) + 1)
+		rows = append(rows, row)
+		base[view] = rows
+		return row, int64(len(rows) - 1)
+	}
+
+	switch view {
+	case "items", "payments":
+		row, index := appendRow()
+		client.SetForm(view,
+			cu.MergeIM(row, cu.IM{"tax_codes": stateData["tax_codes"]}),
+			index, false)
+
+	case "maps":
+		return cls.addMapField(evt, transMap, resultUpdate)
+	}
+	return evt, err
+}
+
 func (cls *ClientService) transResponseEditorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	ds := cls.getDataStore(client.Ticket.Database)
+	view := cu.ToString(stateData["view"], "")
+
 	trans := cu.ToIM(stateData["trans"], cu.IM{})
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
 	transMetaWorksheet := cu.ToIM(transMeta["worksheet"], cu.IM{})
@@ -951,19 +1290,21 @@ func (cls *ClientService) transResponseEditorField(evt ct.ResponseEvent) (re ct.
 		if cu.ToBoolean(params["dirty"], false) {
 			stateData["dirty"] = true
 		}
-		client.SetEditor("trans", cu.ToString(stateData["view"], ""), stateData)
+		client.SetEditor("trans", view, stateData)
 		return evt, err
 	}
 
 	values := cu.ToIM(evt.Value, cu.IM{})
 	fieldName := cu.ToString(values["name"], "")
 	value := cu.ToString(values["value"], "")
+	valueData := cu.ToIM(values["value"], cu.IM{})
+	row := cu.ToIM(valueData["row"], cu.IM{})
 
 	fieldMap := map[string]func() (re ct.ResponseEvent, err error){
 		ct.TableEventRowSelected: func() (re ct.ResponseEvent, err error) {
-			valueData := cu.ToIM(values["value"], cu.IM{})
-			row := cu.ToIM(valueData["row"], cu.IM{})
-			switch cu.ToString(stateData["view"], "") {
+			//valueData := cu.ToIM(values["value"], cu.IM{})
+			//row := cu.ToIM(valueData["row"], cu.IM{})
+			switch view {
 			case "transitem_invoice":
 				stateData["params"] = cu.IM{
 					"trans_code": cu.ToString(row["trans_code"], ""),
@@ -979,62 +1320,19 @@ func (cls *ClientService) transResponseEditorField(evt ct.ResponseEvent) (re ct.
 					return cls.setEditor(evt, "trans", stateData["params"].(cu.IM)), nil
 				}
 			default:
-				client.SetForm(cu.ToString(stateData["view"], ""),
-					cu.MergeIM(cu.ToIM(valueData["row"], cu.IM{}),
-						cu.IM{"tax_codes": stateData["tax_codes"], "product_selector": stateData["product_selector"]}),
+				client.SetForm(view,
+					cu.MergeIM(row, cu.IM{"tax_codes": stateData["tax_codes"]}),
 					cu.ToInteger(valueData["index"], 0), false)
 			}
 			return evt, nil
 		},
 
 		ct.TableEventAddItem: func() (re ct.ResponseEvent, err error) {
-			view := cu.ToString(stateData["view"], "")
-			typeMap := map[string]func() cu.IM{
-				"items": func() cu.IM {
-					var item cu.IM
-					ut.ConvertToType(md.Item{
-						TransCode: cu.ToString(trans["code"], ""),
-						TaxCode:   cu.ToString(cu.ToIMA(stateData["tax_codes"], []cu.IM{})[0]["code"], ""),
-						ItemMeta: md.ItemMeta{
-							Qty:  1,
-							Tags: []string{},
-						},
-						ItemMap: cu.IM{},
-					}, &item)
-					return item
-				},
-				"events": func() cu.IM {
-					var event cu.IM
-					ut.ConvertToType(md.Event{
-						Tags:     []string{},
-						EventMap: cu.IM{},
-					}, &event)
-					return event
-				},
-			}
-			if slices.Contains([]string{"items", "events"}, view) {
-				getBase := func() (base cu.IM) {
-					if _, found := trans[view]; found {
-						return trans
-					}
-					return stateData
-				}
-				base := getBase()
-				rows := cu.ToIMA(base[view], []cu.IM{})
-				rows = append(rows, typeMap[view]())
-				base[view] = rows
-				client.SetForm(view,
-					cu.MergeIM(typeMap[view](),
-						cu.IM{"tax_codes": stateData["tax_codes"], "product_selector": stateData["product_selector"]}),
-					cu.ToInteger(len(rows)-1, 0), false)
-				return evt, nil
-			}
-			return cls.addMapField(evt, transMap, resultUpdate)
+			return cls.transResponseEditorFieldViewAdd(evt, transMap, resultUpdate)
+
 		},
 
 		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
-			valueData := cu.ToIM(values["value"], cu.IM{})
-			row := cu.ToIM(valueData["row"], cu.IM{})
 			fieldName := cu.ToString(row["field_name"], "")
 			delete(transMap, fieldName)
 			return resultUpdate(cu.IM{"dirty": true})
@@ -1049,6 +1347,15 @@ func (cls *ClientService) transResponseEditorField(evt ct.ResponseEvent) (re ct.
 		},
 
 		ct.TableEventFormCancel: func() (re ct.ResponseEvent, err error) {
+			return evt, nil
+		},
+
+		ct.TableEventEditCell: func() (re ct.ResponseEvent, err error) {
+			if cu.ToString(valueData["fieldname"], "") == "payment_link_add" {
+				return cls.transResponseLinkAdd(evt,
+					cu.IM{"view": "payment_link", "code1": cu.ToString(row["code"], ""), "code2": "",
+						"amount": cu.ToFloat(row["amount"], 0)})
+			}
 			return evt, nil
 		},
 
@@ -1205,6 +1512,14 @@ func (cls *ClientService) transResponseEditorField(evt ct.ResponseEvent) (re ct.
 		"rent_notes": func() (re ct.ResponseEvent, err error) {
 			transMetaRent["notes"] = value
 			return resultUpdate(cu.IM{"dirty": true})
+		},
+
+		"payment_amount": func() (re ct.ResponseEvent, err error) {
+			return cls.transResponseEditorFieldCashPayment(evt)
+		},
+
+		"payment_paid_date": func() (re ct.ResponseEvent, err error) {
+			return cls.transResponseEditorFieldCashPayment(evt)
 		},
 	}
 
@@ -1478,6 +1793,14 @@ func (cls *ClientService) transCreateMovements(evt ct.ResponseEvent, options cu.
 		if mv.PlaceCode != "" {
 			values["place_code"] = mv.PlaceCode
 		}
+		if status == md.TransStatusCancellation.String() {
+			if mv.ItemCode != "" {
+				values["item_code"] = mv.ItemCode
+			}
+			if mv.MovementCode != "" {
+				values["movement_code"] = mv.MovementCode
+			}
+		}
 		ut.ConvertByteToIMData(mv.MovementMeta, values, "movement_meta")
 		ut.ConvertByteToIMData(mv.MovementMap, values, "movement_map")
 		return ds.StoreDataUpdate(md.Update{Values: values, Model: "movement"})
@@ -1698,13 +2021,29 @@ func (cls *ClientService) transCreateModal(evt ct.ResponseEvent, data cu.IM) (re
 		"create_direction":  md.DirectionOut.String(),
 		"status":            md.TransStatusNormal.String(),
 		"show_delivery":     false,
-		"next":              "trans_new",
+		"next":              "transitem_new",
+		"module":            "trans",
 		"editor_title":      client.Msg("transitem_title"),
 		"editor_icon":       ct.IconFileText,
 	}
 	dataMap := map[string]func() cu.IM{
 		"transitem": func() cu.IM {
 			return baseTransItem
+		},
+		"transpayment": func() cu.IM {
+			return cu.IM{
+				"title": client.Msg("trans_create_title"),
+				"icon":  ct.IconMoney,
+				"trans_types": []string{
+					md.TransTypeCash.String(), md.TransTypeBank.String()},
+				"create_trans_type": md.TransTypeCash.String(),
+				"create_direction":  md.DirectionOut.String(),
+				"status":            md.TransStatusNormal.String(),
+				"next":              "transpayment_new",
+				"module":            "trans",
+				"editor_title":      client.Msg("transpayment_title"),
+				"editor_icon":       ct.IconMoney,
+			}
 		},
 		md.TransTypeOffer.String(): func() cu.IM {
 			return cu.MergeIM(baseTransItem, cu.IM{

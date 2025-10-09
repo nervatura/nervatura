@@ -927,11 +927,15 @@ message Movement {
   string tool_code = 7;
   // Reference to <a href="#Place">Place</a>.Code
   string place_code = 8;
-  MovementMeta movement_meta = 9;
+  // Reference to <a href="#Item">Item</a>.Code
+  string item_code = 9;
+  // Reference to <a href="#Movement">Movement</a>.Code
+  string movement_code = 10;
+  MovementMeta movement_meta = 11;
   // Flexible key-value map for additional metadata. The value is any json type.
-  JsonString movement_map = 10;
+  JsonString movement_map = 12;
   // Timestamp of data creation
-  string time_stamp = 11;
+  string time_stamp = 13;
 }
 
 message Movements {

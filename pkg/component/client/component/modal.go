@@ -3,6 +3,7 @@ package component
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -588,7 +589,7 @@ func modalConfigField(labels cu.SM, data cu.IM) (form ct.Form) {
 func modalTransCreate(labels cu.SM, data cu.IM) (form ct.Form) {
 	nextCmd := cu.ToString(data["next"], "")
 	transType := cu.ToString(data["create_trans_type"], md.TransTypeOrder.String())
-	showRefno := nextCmd != "trans_new"
+	showRefno := !strings.HasSuffix(nextCmd, "_new")
 	showNetto := slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) && showRefno
 	showDelivery := cu.ToBoolean(data["show_delivery"], false) && showNetto
 	createDelivery := cu.ToBoolean(data["create_delivery"], false)
@@ -632,18 +633,6 @@ func modalTransCreate(labels cu.SM, data cu.IM) (form ct.Form) {
 						},
 						FormTrigger: true,
 					}},
-					{Label: labels["trans_direction"], Value: ct.Field{
-						BaseComponent: ct.BaseComponent{
-							Name: "create_direction",
-						},
-						Type: ct.FieldTypeSelect, Value: cu.IM{
-							"name":    "create_direction",
-							"options": directionOpt(),
-							"is_null": false,
-							"value":   cu.ToString(data["create_direction"], md.DirectionOut.String()),
-						},
-						FormTrigger: true,
-					}},
 				},
 				Full:         true,
 				BorderBottom: true,
@@ -679,6 +668,23 @@ func modalTransCreate(labels cu.SM, data cu.IM) (form ct.Form) {
 				BorderBottom: false,
 			},
 		},
+	}
+	if !slices.Contains([]string{md.TransTypeBank.String()}, transType) {
+		frm.BodyRows[0].Columns = append(frm.BodyRows[0].Columns,
+			ct.RowColumn{
+				Label: labels["trans_direction"],
+				Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "create_direction",
+					},
+					Type: ct.FieldTypeSelect, Value: cu.IM{
+						"name":    "create_direction",
+						"options": directionOpt(),
+						"is_null": false,
+						"value":   cu.ToString(data["create_direction"], md.DirectionOut.String()),
+					},
+					FormTrigger: true,
+				}})
 	}
 	if showRefno {
 		frm.BodyRows = append(frm.BodyRows, ct.Row{

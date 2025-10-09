@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -24,6 +25,18 @@ var searchQuery map[string]md.Query = map[string]md.Query{
 		Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s','%s')",
 			md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
 			md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()),
+		OrderBy: []string{"t.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"invoice_simple": {
+		Fields: []string{
+			"t.*", "c.customer_name as customer_name", "COALESCE(i.amount, 0) as amount",
+			"'trans' as editor", "t.id as editor_id", "'trans' as editor_view"},
+		From: `trans_view t inner join customer c on t.customer_code = c.code  
+		left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
+		Filter: fmt.Sprintf("trans_type in('%s','%s')",
+			md.TransTypeInvoice.String(), md.TransTypeReceipt.String(),
+		),
 		OrderBy: []string{"t.id"},
 		Limit:   st.BrowserRowLimit,
 	},
@@ -67,6 +80,72 @@ var searchQuery map[string]md.Query = map[string]md.Query{
 			"t.id as trans_id", "'trans' as editor", "'items' as editor_view"},
 		From:    "item_view i inner join trans t on i.trans_code = t.code",
 		OrderBy: []string{"i.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"transpayment_simple": {
+		Fields: []string{
+			"t.id", "t.code", "t.trans_date", "t.trans_type", "t.direction", "p.currency_code",
+			"p.place_name as place_name", "COALESCE(pm.amount, 0) as amount",
+			"'trans' as editor", "t.id as editor_id", "'trans' as editor_view"},
+		From: `trans_view t inner join place p on t.place_code = p.code  
+		left join(select trans_code, sum(amount) as amount from payment_view group by trans_code) pm on t.code = pm.trans_code`,
+		Filter: fmt.Sprintf("trans_type in('%s','%s')",
+			md.TransTypeBank.String(), md.TransTypeCash.String()),
+		OrderBy: []string{"t.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"transpayment": {
+		Fields: []string{
+			"t.id", "pm.code as payment_code", "t.code", "t.trans_type", "t.direction", "t.status", "t.ref_number", "t.trans_date", "pm.paid_date",
+			"t.place_code", "p.place_name", "p.currency_code", "pm.amount", "pm.notes as description",
+			"t.employee_code", "t.tag_lst", "t.trans_state", "t.notes", "t.internal_notes", "t.auth_code",
+			"t.closed", "t.deleted", "'trans' as editor", "t.id as editor_id", "'trans' as editor_view"},
+		From: `trans_view t inner join place p on t.place_code = p.code  
+		inner join payment_view pm on t.code = pm.trans_code`,
+		Filter: fmt.Sprintf("trans_type in('%s','%s')",
+			md.TransTypeBank.String(), md.TransTypeCash.String()),
+		OrderBy: []string{"t.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"transpayment_map": {
+		Fields: []string{"tm.id", "tm.code", "tm.trans_type", "tm.direction", "tm.trans_date",
+			"tm.map_key as field_name",
+			"COALESCE(cf.description, tm.map_key) as description",
+			"tm.map_value as value", "COALESCE(cf.field_type, 'FIELD_STRING') as field_type",
+			`case when cf.field_type = 'FIELD_BOOL' then 'bool'
+				when cf.field_type = 'FIELD_INTEGER' then 'integer'
+			when cf.field_type = 'FIELD_NUMBER' then 'float'
+			when cf.field_type = 'FIELD_DATE' then 'date'
+			when cf.field_type = 'FIELD_DATETIME' then 'datetime'
+			when cf.field_type in (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			else 'string' end as value_meta`,
+			"tm.id as trans_id", "'trans' as editor", "'maps' as editor_view"},
+		From:    "trans_map tm left join config_map cf on tm.map_key = cf.field_name",
+		Filters: []md.Filter{},
+		Filter: fmt.Sprintf("trans_type in('%s','%s')",
+			md.TransTypeBank.String(), md.TransTypeCash.String()),
+		OrderBy: []string{"tm.id"},
+		Limit:   st.BrowserRowLimit,
+	},
+	"transpayment_invoice": {
+		Fields: []string{
+			"pt.id", "pt.code as payment_code", "pt.trans_type", "pt.direction", "pm.paid_date", "pl.place_name", "pl.currency_code",
+			"l.amount as paid_amount", "l.rate as paid_rate", "it.code as trans_code", "it.currency_code invoice_curr",
+			"im.amount as invoice_amount", "pm.notes as description",
+			"'trans' as editor", "pt.id as editor_id", "'payment_link' as editor_view"},
+		From: `link_view l inner join payment_view pm on l.link_code_1 = pm.code
+    inner join trans_view pt on pm.trans_code = pt.code inner join place pl on pt.place_code = pl.code
+    inner join trans_view it on l.link_code_2 = it.code
+    inner join(select trans_code, sum(amount) as amount from item_view group by trans_code) im on it.code = im.trans_code`,
+		Filters: []md.Filter{
+			{Field: "l.link_type_1", Comp: "==", Value: md.LinkTypePayment.String()},
+			{Field: "l.link_type_2", Comp: "==", Value: md.LinkTypeTrans.String()},
+			{Field: "it.trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
+				md.TransTypeInvoice.String(), md.TransTypeReceipt.String())},
+		},
+		OrderBy: []string{"pt.id"},
 		Limit:   st.BrowserRowLimit,
 	},
 	"customer_simple": {
@@ -629,9 +708,13 @@ func searchFilterTransItem(view string, filter ct.BrowserFilter, queryFilters []
 			return append(queryFilters,
 				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
 		},
+		"invoice_simple": func() []string {
+			return append(queryFilters,
+				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
 		"transitem": func() []string {
 			switch filter.Field {
-			case "tax_free", "paid", "closed":
+			case "tax_free", "paid", "closed", "deleted":
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
 			case "trans_date", "due_time":
@@ -657,6 +740,52 @@ func searchFilterTransItem(view string, filter ct.BrowserFilter, queryFilters []
 			case "id", "qty", "fx_price", "net_amount", "discount", "vat_amount", "amount", "own_stock":
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			default:
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+			}
+		},
+	}
+	return result[view]()
+}
+
+func searchFilterTransPayment(view string, filter ct.BrowserFilter, queryFilters []string) []string {
+	result := map[string]func() []string{
+		"transpayment_simple": func() []string {
+			return append(queryFilters,
+				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+		"transpayment": func() []string {
+			switch filter.Field {
+			case "closed", "deleted":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
+			case "trans_date", "paid_date":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			case "id", "amount":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			default:
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+			}
+		},
+		"transpayment_map": func() []string {
+			return append(queryFilters,
+				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+		"transpayment_invoice": func() []string {
+			switch filter.Field {
+			case "id", "paid_amount", "paid_rate", "invoice_amount":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			case "trans_date", "payment_date":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			case "currency_code":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
 			default:
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
@@ -746,6 +875,9 @@ func (cls *ClientService) searchFilter(view string, filter ct.BrowserFilter, que
 		"transitem_simple": func() []string {
 			return searchFilterTransItem(view, filter, queryFilters)
 		},
+		"invoice_simple": func() []string {
+			return searchFilterTransItem(view, filter, queryFilters)
+		},
 		"transitem": func() []string {
 			return searchFilterTransItem(view, filter, queryFilters)
 		},
@@ -754,6 +886,18 @@ func (cls *ClientService) searchFilter(view string, filter ct.BrowserFilter, que
 		},
 		"transitem_item": func() []string {
 			return searchFilterTransItem(view, filter, queryFilters)
+		},
+		"transpayment_simple": func() []string {
+			return searchFilterTransPayment(view, filter, queryFilters)
+		},
+		"transpayment": func() []string {
+			return searchFilterTransPayment(view, filter, queryFilters)
+		},
+		"transpayment_map": func() []string {
+			return searchFilterTransPayment(view, filter, queryFilters)
+		},
+		"transpayment_invoice": func() []string {
+			return searchFilterTransPayment(view, filter, queryFilters)
 		},
 		"place_simple": func() []string {
 			return searchFilterPlace(view, filter, queryFilters)
@@ -780,13 +924,14 @@ func (cls *ClientService) searchData(ds *api.DataStore, view string, query md.Qu
 	}
 
 	if len(queryFilters) > 0 {
-		query.Filter = strings.Join(queryFilters, " ")
-		query.Filter, _ = strings.CutPrefix(query.Filter, "or ")
-		query.Filter, _ = strings.CutPrefix(query.Filter, "and ")
-		query.Filter = "(" + query.Filter + ")"
-		if len(query.Filters) > 0 {
-			query.Filter = " and " + query.Filter
+		queryFilter := strings.Join(queryFilters, " ")
+		queryFilter, _ = strings.CutPrefix(queryFilter, "or ")
+		queryFilter, _ = strings.CutPrefix(queryFilter, "and ")
+		queryFilter = "(" + queryFilter + ")"
+		if len(query.Filter) > 0 {
+			queryFilter = " and " + queryFilter
 		}
+		query.Filter += queryFilter
 	}
 
 	return ds.StoreDataQuery(query, false)
@@ -795,15 +940,26 @@ func (cls *ClientService) searchData(ds *api.DataStore, view string, query md.Qu
 func (cls *ClientService) searchResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, stateKey, stateData := client.GetStateData()
+	groups := cp.SearchSideBarGroupConfig(client.Labels())
 	switch strings.Split(cu.ToString(evt.Value, ""), "_")[0] {
 
 	case "group":
+		viewName := stateKey
+		simple := cu.ToBoolean(stateData["simple"], false)
 		if cu.ToString(stateData["side_group"], "") == cu.ToString(evt.Value, "") {
 			stateData["side_group"] = ""
 		} else {
 			stateData["side_group"] = evt.Value
+			if idx := slices.IndexFunc(groups, func(g md.SideGroup) bool {
+				return g.Name == evt.Value
+			}); idx > int(-1) {
+				viewName = groups[idx].Views[0]
+				simple = cp.SearchViewConfig(viewName, client.Labels()).Simple
+				stateData["rows"] = []cu.IM{}
+				stateData["filter_value"] = ""
+			}
 		}
-		client.SetSearch(stateKey, stateData, cu.ToBoolean(stateData["simple"], false))
+		client.SetSearch(viewName, stateData, simple)
 
 	default:
 		stateData["rows"] = []cu.IM{}

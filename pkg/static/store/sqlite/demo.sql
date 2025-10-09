@@ -1057,491 +1057,347 @@ INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N1', 'LINK_TRANS', 'INV0000000000N7',
 json_object(
-  'qty', 4000, 'rate', 1, 'tags', json_array()
+  'amount', 4000, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N2', 'LINK_TRANS', 'INV0000000000N5',
 json_object(
-  'qty', 849, 'rate', 1, 'tags', json_array()
+  'amount', 849, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N3', 'LINK_TRANS', 'INV0000000000N6',
 json_object(
-  'qty', 228, 'rate', 1, 'tags', json_array()
+  'amount', 228, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N4', 'LINK_TRANS', 'INV0000000000N7',
 json_object(
-  'qty', 488, 'rate', 1, 'tags', json_array()
+  'amount', 488, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N1', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N1', NULL,
-json_object(
-  'qty', 0, 'notes', '', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N1', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N1', NULL, NULL, NULL,
+JSON_OBJECT(
+  'qty', 0, 'notes', '', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N2', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N3', NULL,
-json_object(
-  'qty', 0, 'notes', 'mobile phone', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N2', 'MOVEMENT_TOOL', '2024-12-05T00:00:00', 'WAY0000000000N12', NULL, 'SER0000000000N3', NULL, NULL, NULL,
+JSON_OBJECT(
+  'qty', 0, 'notes', 'mobile phone', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N3', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 30, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N3', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N5', NULL, 'PLA0000000000N4', 'ITM0000000000N1', NULL,
+JSON_OBJECT(
+  'qty', 30, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N4', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 50, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N4', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N6', NULL, 'PLA0000000000N4', 'ITM0000000000N2', NULL,
+JSON_OBJECT(
+  'qty', 50, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N5', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 50, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N5', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N7', NULL, 'PLA0000000000N4', 'ITM0000000000N3', NULL,
+JSON_OBJECT(
+  'qty', 50, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N6', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 15, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N6', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N8', NULL, 'PLA0000000000N4', 'ITM0000000000N4', NULL,
+JSON_OBJECT(
+  'qty', 15, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N7', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N1', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N7', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N1', NULL, 'PLA0000000000N4', 'ITM0000000000N5', NULL,
+JSON_OBJECT(
+  'qty', 10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N8', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N3', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N8', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N3', NULL, 'PLA0000000000N4', 'ITM0000000000N6', NULL,
+JSON_OBJECT(
+  'qty', 10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N9', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N9', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 15, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N9', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N9', NULL, 'PLA0000000000N4', 'ITM0000000000N7', NULL,
+JSON_OBJECT(
+  'qty', 15, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N10', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N10', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N10', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N10', NULL, 'PLA0000000000N4', 'ITM0000000000N8', NULL,
+JSON_OBJECT(
+  'qty', 10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N11', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N11', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 20, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N11', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N13', 'PRD0000000000N11', NULL, 'PLA0000000000N4', 'ITM0000000000N9', NULL,
+JSON_OBJECT(
+  'qty', 20, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N12', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N9', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -2, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N12', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N9', NULL, 'PLA0000000000N1', 'ITM0000000000N10', NULL,
+JSON_OBJECT(
+  'qty', -2, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N13', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N10', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -2, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N13', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N10', NULL, 'PLA0000000000N1', 'ITM0000000000N10', NULL,
+JSON_OBJECT(
+  'qty', -2, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N14', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -4, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N14', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1', 'ITM0000000000N10', NULL,
+JSON_OBJECT(
+  'qty', -4, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N15', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -3, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N15', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1', 'ITM0000000000N11', NULL,
+JSON_OBJECT(
+  'qty', -3, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N16', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N1', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -3, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N16', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N1', NULL, 'PLA0000000000N1', 'ITM0000000000N13', NULL,
+JSON_OBJECT(
+  'qty', -3, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N17', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N3', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -5, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N17', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N15', 'PRD0000000000N3', NULL, 'PLA0000000000N1', 'ITM0000000000N14', NULL,
+JSON_OBJECT(
+  'qty', -5, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N18', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N18', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N19', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', 10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N19', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N1', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N18',
+JSON_OBJECT(
+  'qty', 10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N20', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N20', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N21', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', 10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N21', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N3', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N20',
+JSON_OBJECT(
+  'qty', 10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N22', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -15, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N22', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -15, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N23', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', 15, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N23', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N9', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N22',
+JSON_OBJECT(
+  'qty', 15, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N24', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N24', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N25', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', 10, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N25', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N10', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N24',
+JSON_OBJECT(
+  'qty', 10, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N26', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -20, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N26', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -20, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N27', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', 20, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N27', 'MOVEMENT_INVENTORY', '2024-11-08T00:00:00', 'DEL0000000000N16', 'PRD0000000000N11', NULL, 'PLA0000000000N1', NULL, 'MOV0000000000N26',
+JSON_OBJECT(
+  'qty', 20, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N28', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N1', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -2, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N28', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N1', NULL, 'PLA0000000000N1', NULL, NULL,
+JSON_OBJECT(
+  'qty', -2, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N29', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N10', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', -3, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N29', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'INE0000000000N17', 'PRD0000000000N10', NULL, 'PLA0000000000N1', NULL, NULL,
+JSON_OBJECT(
+  'qty', -3, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N30', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N4', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 5, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N30', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N4', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 5, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N31', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 20, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N31', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N5', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 20, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N32', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 20, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N32', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N6', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 20, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N33', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 30, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N33', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N7', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 30, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N34', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 1, 'notes', 'demo', 'shared', json('true'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N34', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N18', 'PRD0000000000N8', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 1, 'notes', 'demo', 'shared', true, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N35', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N4', NULL, NULL,
-json_object(
-  'qty', 5, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N35', 'MOVEMENT_HEAD', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N4', NULL, NULL, NULL, NULL,
+JSON_OBJECT(
+  'qty', 5, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N36', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 20, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N36', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N5', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 20, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N37', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 15, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N37', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N6', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 15, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N38', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 28, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N38', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N7', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 28, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N39', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', 1, 'notes', 'demo', 'shared', json('true'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N39', 'MOVEMENT_PLAN', '2024-12-01T00:00:00', 'FOR0000000000N19', 'PRD0000000000N8', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', 1, 'notes', 'demo', 'shared', true, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N40', 'MOVEMENT_INVENTORY', '2024-12-02T00:00:00', 'PRO0000000000N20', 'PRD0000000000N4', NULL, 'PLA0000000000N1',
-json_object(
-  'qty', 2, 'notes', 'demo', 'shared', json('true'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N40', 'MOVEMENT_INVENTORY', '2024-12-02T00:00:00', 'PRO0000000000N20', 'PRD0000000000N4', NULL, 'PLA0000000000N1', NULL, NULL,
+JSON_OBJECT(
+  'qty', 2, 'notes', 'demo', 'shared', true, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N41', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N5', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -8, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N41', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N5', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -8, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N42', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N6', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -8, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N42', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N6', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -8, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N43', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N7', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -12, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N43', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N7', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -12, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
+JSON_OBJECT());
 INSERT INTO movement(
-  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N44', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N8', NULL, 'PLA0000000000N4',
-json_object(
-  'qty', -1, 'notes', 'demo', 'shared', json('false'), 'tags', json_array()
+  code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
+VALUES('MOV0000000000N44', 'MOVEMENT_INVENTORY', '2024-12-01T00:00:00', 'PRO0000000000N20', 'PRD0000000000N8', NULL, 'PLA0000000000N4', NULL, NULL,
+JSON_OBJECT(
+  'qty', -1, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 
-json_object());
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N3', 'LINK_ITEM', 'ITM0000000000N1',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N4', 'LINK_ITEM', 'ITM0000000000N2',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N5', 'LINK_ITEM', 'ITM0000000000N3',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N6', 'LINK_ITEM', 'ITM0000000000N4',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N7', 'LINK_ITEM', 'ITM0000000000N5',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N8', 'LINK_ITEM', 'ITM0000000000N6',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N9', 'LINK_ITEM', 'ITM0000000000N7',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-    link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N10', 'LINK_ITEM', 'ITM0000000000N8',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N11', 'LINK_ITEM', 'ITM0000000000N9',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N12', 'LINK_ITEM', 'ITM0000000000N10',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N13', 'LINK_ITEM', 'ITM0000000000N10',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N14', 'LINK_ITEM', 'ITM0000000000N10',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N15', 'LINK_ITEM', 'ITM0000000000N11',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N16', 'LINK_ITEM', 'ITM0000000000N13',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N17', 'LINK_ITEM', 'ITM0000000000N14',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N18', 'LINK_MOVEMENT', 'MOV0000000000N19',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N20', 'LINK_MOVEMENT', 'MOV0000000000N21',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N22', 'LINK_MOVEMENT', 'MOV0000000000N23',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N24', 'LINK_MOVEMENT', 'MOV0000000000N25',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
-INSERT INTO link(
-  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
-VALUES('LINK_MOVEMENT', 'MOV0000000000N26', 'LINK_MOVEMENT', 'MOV0000000000N27',
-json_object(
-  'qty', 0, 'rate', 0, 'tags', json_array()
-),
-json_object());
+JSON_OBJECT());
 
 INSERT INTO config(config_type, data) 
 VALUES('CONFIG_SHORTCUT', json_object(

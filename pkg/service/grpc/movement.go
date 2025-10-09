@@ -46,10 +46,12 @@ func (s *GService) MovementUpdate(ctx context.Context, req *pb.Movement) (pbMove
 
 	// Optional fields
 	optionalFields := map[string]string{
-		"code":         req.Code,
-		"product_code": req.ProductCode,
-		"tool_code":    req.ToolCode,
-		"place_code":   req.PlaceCode,
+		"code":          req.Code,
+		"product_code":  req.ProductCode,
+		"tool_code":     req.ToolCode,
+		"place_code":    req.PlaceCode,
+		"item_code":     req.ItemCode,
+		"movement_code": req.MovementCode,
 	}
 	for key, value := range optionalFields {
 		if value != "" {

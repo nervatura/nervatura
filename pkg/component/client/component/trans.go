@@ -11,11 +11,26 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
-func transIsItem(trans_type string) bool {
+func TransTypeIcon(transType string) string {
+	switch transType {
+	case md.TransTypeBank.String(), md.TransTypeCash.String():
+		return ct.IconMoney
+	}
+	return ct.IconFileText
+}
+
+func TransIsItem(transType string) bool {
 	return slices.Contains([]string{
 		md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
 		md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()},
-		trans_type,
+		transType,
+	)
+}
+
+func TransIsPayment(transType string) bool {
+	return slices.Contains([]string{
+		md.TransTypeBank.String(), md.TransTypeCash.String()},
+		transType,
 	)
 }
 
@@ -32,8 +47,8 @@ func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (i
 					items = append(items,
 						&ct.SideBarSeparator{},
 						&ct.SideBarElement{
-							Name:  "editor_new",
-							Value: "editor_new",
+							Name:  "transitem_new",
+							Value: "transitem_new",
 							Label: labels["transitem_new"],
 							Icon:  ct.IconFileText,
 						})
@@ -76,6 +91,71 @@ func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (i
 		},
 		func() (bool, func()) {
 			return slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, cu.ToString(trans["trans_type"], "")) &&
+					cu.ToString(trans["direction"], "") == md.DirectionOut.String() && cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
+					stateOptions["deleted"] && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
+					items = append(items,
+						&ct.SideBarElement{
+							Name:  "trans_cancellation",
+							Value: "trans_cancellation",
+							Label: labels["trans_cancellation"],
+							Icon:  ct.IconUndo,
+						})
+				}
+		},
+	}
+	for _, fn := range optionalItems {
+		if ok, fn := fn(); ok {
+			fn()
+		}
+	}
+	return items
+}
+
+func transSideBarPayment(labels cu.SM, data cu.IM, stateOptions map[string]bool) (items []ct.SideBarItem) {
+	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{"trans_meta": cu.IM{}})
+	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
+	enabled := !stateOptions["newInput"] && !stateOptions["dirty"] && !stateOptions["readonly"]
+
+	items = []ct.SideBarItem{}
+	optionalItems := []func() (bool, func()){
+		func() (bool, func()) {
+			return cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
+					enabled, func() {
+					items = append(items,
+						&ct.SideBarSeparator{},
+						&ct.SideBarElement{
+							Name:  "transpayment_new",
+							Value: "transpayment_new",
+							Label: labels["transpayment_new"],
+							Icon:  ct.IconMoney,
+						})
+				}
+		},
+		func() (bool, func()) {
+			return enabled, func() {
+				items = append(items,
+					&ct.SideBarElement{
+						Name:  "trans_copy",
+						Value: "trans_copy",
+						Label: labels["trans_copy"],
+						Icon:  ct.IconCopy,
+					})
+			}
+		},
+		func() (bool, func()) {
+			return slices.Contains([]string{md.TransTypeCash.String()}, cu.ToString(trans["trans_type"], "")) &&
+					enabled, func() {
+					items = append(items,
+						&ct.SideBarElement{
+							Name:  "payment_link_add",
+							Value: "payment_link_add",
+							Label: strings.ToUpper(labels["payment_link_add"]),
+							Icon:  ct.IconLink,
+						})
+				}
+		},
+		func() (bool, func()) {
+			return slices.Contains([]string{md.TransTypeCash.String()}, cu.ToString(trans["trans_type"], "")) &&
 					cu.ToString(trans["direction"], "") == md.DirectionOut.String() && cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
 					stateOptions["deleted"] && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
 					items = append(items,
@@ -195,8 +275,12 @@ func transSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		})
 	}
 
-	if transIsItem(cu.ToString(trans["trans_type"], "")) {
+	if TransIsItem(cu.ToString(trans["trans_type"], "")) {
 		items = append(items, transSideBarItem(labels, data, stateOptions)...)
+	}
+
+	if TransIsPayment(cu.ToString(trans["trans_type"], "")) {
+		items = append(items, transSideBarPayment(labels, data, stateOptions)...)
 	}
 
 	items = append(items,
@@ -234,37 +318,43 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	transMap := cu.ToIM(trans["trans_map"], cu.IM{})
 	items := cu.ToIMA(data["items"], []cu.IM{})
 	invoiceItems := cu.ToIMA(data["transitem_invoice"], []cu.IM{})
+	payments := cu.ToIMA(data["payments"], []cu.IM{})
+	paymentLink := cu.ToIMA(data["payment_link"], []cu.IM{})
+
 	newInput := (cu.ToInteger(trans["id"], 0) == 0)
+	transType := cu.ToString(trans["trans_type"], "")
 
 	if newInput {
 		return []ct.EditorView{
 			{
 				Key:   "trans",
-				Label: labels[strings.ToLower(cu.ToString(trans["trans_type"], ""))],
-				Icon:  ct.IconFileText,
+				Label: labels[strings.ToLower(transType)],
+				Icon:  TransTypeIcon(transType),
 			},
 		}
 	}
 	views = []ct.EditorView{
 		{
 			Key:   "trans",
-			Label: labels[strings.ToLower(cu.ToString(trans["trans_type"], ""))],
-			Icon:  ct.IconFileText,
+			Label: labels[strings.ToLower(transType)],
+			Icon:  TransTypeIcon(transType),
 		},
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
-			Icon:  ct.IconFileText,
+			Icon:  TransTypeIcon(transType),
 			Badge: cu.ToString(int64(len(transMap)), "0"),
 		},
-		{
+	}
+	if TransIsItem(transType) {
+		views = append(views, ct.EditorView{
 			Key:   "items",
 			Label: labels["items_view"],
 			Icon:  ct.IconListOl,
 			Badge: cu.ToString(int64(len(items)), "0"),
-		},
+		})
 	}
-	if slices.Contains([]string{md.TransTypeOrder.String(), md.TransTypeRent.String(), md.TransTypeWorksheet.String()}, cu.ToString(trans["trans_type"], "")) {
+	if slices.Contains([]string{md.TransTypeOrder.String(), md.TransTypeRent.String(), md.TransTypeWorksheet.String()}, transType) {
 		views = append(views, ct.EditorView{
 			Key:   "transitem_invoice",
 			Label: labels["transitem_invoice_view"],
@@ -272,17 +362,31 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 			Badge: cu.ToString(int64(len(invoiceItems)), "0"),
 		})
 	}
+	if transType == md.TransTypeBank.String() {
+		views = append(views, ct.EditorView{
+			Key:   "payments",
+			Label: labels["payments_view"],
+			Icon:  ct.IconListOl,
+			Badge: cu.ToString(int64(len(payments)), "0"),
+		})
+	}
+	if slices.Contains([]string{md.TransTypeBank.String(), md.TransTypeCash.String(),
+		md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) {
+		views = append(views, ct.EditorView{
+			Key:   "payment_link",
+			Label: transTypeLabel(labels, transType, "payment_link_view"),
+			Icon:  ct.IconFileText,
+			Badge: cu.ToString(int64(len(paymentLink)), "0"),
+		})
+	}
 	return views
 }
 
-func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) {
-	currencies := cu.ToIMA(data["currencies"], []cu.IM{})
-	customerSelectorRows := cu.ToIMA(data["customer_selector"], []cu.IM{})
-	customerName := cu.ToString(data["customer_name"], "")
-	transitemSelectorRows := cu.ToIMA(data["transitem_selector"], []cu.IM{})
-	employeeSelectorRows := cu.ToIMA(data["employee_selector"], []cu.IM{})
-	projectSelectorRows := cu.ToIMA(data["project_selector"], []cu.IM{})
+func transTypeLabel(labels cu.SM, transType string, key string) string {
+	return cu.ToString(labels[key+"_"+strings.ToLower(strings.Split(transType, "_")[1])], labels[key])
+}
 
+func transMainHeadRow(trans md.Trans, labels cu.SM, _ cu.IM) (rows []ct.Row) {
 	transStateOpt := func() (opt []ct.SelectOption) {
 		opt = []ct.SelectOption{}
 		for _, state := range []md.TransState{
@@ -295,68 +399,21 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 		return opt
 	}
 
-	currencyOpt := func() (opt []ct.SelectOption) {
-		opt = []ct.SelectOption{}
-		for _, currency := range currencies {
-			opt = append(opt, ct.SelectOption{
-				Value: cu.ToString(currency["code"], ""), Text: cu.ToString(currency["code"], ""),
-			})
-		}
-		return opt
-	}
-
 	directionOpt := func() (opt []ct.SelectOption) {
 		opt = []ct.SelectOption{}
 		for _, direction := range []md.Direction{
-			md.DirectionOut, md.DirectionIn, md.DirectionTransfer,
+			md.DirectionOut, md.DirectionIn,
 		} {
 			opt = append(opt, ct.SelectOption{
 				Value: direction.String(), Text: direction.String(),
 			})
 		}
-		return opt
-	}
-
-	paidTypeOpt := func() (opt []ct.SelectOption) {
-		opt = []ct.SelectOption{}
-		for _, paidType := range []md.PaidType{
-			md.PaidTypeOnline, md.PaidTypeCard, md.PaidTypeTransfer, md.PaidTypeCash, md.PaidTypeOther,
-		} {
-			opt = append(opt, ct.SelectOption{
-				Value: paidType.String(), Text: paidType.String(),
-			})
+		if slices.Contains([]string{md.TransTypeBank.String()}, trans.TransType.String()) {
+			opt = []ct.SelectOption{{
+				Value: md.DirectionTransfer.String(), Text: md.DirectionTransfer.String(),
+			}}
 		}
 		return opt
-	}
-
-	var customerSelectorFields []ct.TableField = []ct.TableField{
-		{Name: "code", Label: labels["customer_code"]},
-		{Name: "customer_name", Label: labels["customer_name"]},
-		{Name: "tax_number", Label: labels["customer_tax_number"]},
-	}
-
-	var transitemSelectorFields []ct.TableField = []ct.TableField{
-		{Name: "code", Label: labels["trans_code"]},
-		{Name: "trans_date", Label: labels["trans_date"]},
-		{Name: "trans_type", Label: labels["trans_type"]},
-		{Name: "direction", Label: labels["trans_direction"]},
-	}
-
-	var employeeSelectorFields []ct.TableField = []ct.TableField{
-		{Name: "code", Label: labels["employee_code"]},
-		{Name: "first_name", Label: labels["contact_first_name"]},
-		{Name: "surname", Label: labels["contact_surname"]},
-		{Name: "status", Label: labels["contact_status"]},
-	}
-
-	var projectSelectorFields []ct.TableField = []ct.TableField{
-		{Name: "code", Label: labels["project_code"]},
-		{Name: "project_name", Label: labels["project_name"]},
-		{Name: "customer_code", Label: labels["customer_code"]},
-	}
-
-	typeLabel := func(key string) string {
-		return cu.ToString(labels[key+"_"+strings.ToLower(strings.Split(trans.TransType.String(), "_")[1])], labels[key])
 	}
 
 	rows = []ct.Row{{Columns: []ct.RowColumn{
@@ -415,7 +472,7 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 					"disabled": true,
 				},
 			}},
-			{Label: typeLabel("trans_date"),
+			{Label: transTypeLabel(labels, trans.TransType.String(), "trans_date"),
 				Value: ct.Field{
 					BaseComponent: ct.BaseComponent{
 						Name: "trans_date_" + cu.ToString(trans.Id, ""),
@@ -426,18 +483,130 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 						"value":   trans.TransDate.String(),
 					},
 				}},
-			{Label: typeLabel("trans_due_time"),
-				Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "due_time_" + cu.ToString(trans.Id, ""),
-					},
-					Type: ct.FieldTypeDate, Value: cu.IM{
-						"name":    "due_time",
-						"is_null": false,
-						"value":   trans.TransMeta.DueTime.String(),
-					},
-				}},
 		}, Full: true, BorderBottom: true}}
+	return rows
+}
+
+func transMainFooterRow(trans md.Trans, labels cu.SM, _ cu.IM) (rows []ct.Row) {
+	rows = []ct.Row{
+		{Columns: []ct.RowColumn{
+			{Label: labels["trans_notes"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "notes_" + cu.ToString(trans.Id, ""),
+				},
+				Type: ct.FieldTypeText, Value: cu.IM{
+					"name":  "notes",
+					"value": trans.TransMeta.Notes,
+					"rows":  4,
+				},
+			}},
+			{
+				Label: labels["trans_tags"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "tags_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeList, Value: cu.IM{
+						"name":                "tags",
+						"rows":                ut.ToTagList(trans.TransMeta.Tags),
+						"label_value":         "tag",
+						"pagination":          ct.PaginationTypeBottom,
+						"page_size":           5,
+						"hide_paginaton_size": true,
+						"list_filter":         true,
+						"filter_placeholder":  labels["placeholder_filter"],
+						"add_item":            true,
+						"add_icon":            ct.IconTag,
+						"edit_item":           false,
+						"delete_item":         true,
+						"indicator":           ct.IndicatorSpinner,
+					},
+				},
+			},
+		}, Full: true, BorderBottom: true},
+		{Columns: []ct.RowColumn{
+			{Label: labels["trans_internal_notes"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "internal_notes_" + cu.ToString(trans.Id, ""),
+				},
+				Type: ct.FieldTypeText, Value: cu.IM{
+					"name":  "internal_notes",
+					"value": trans.TransMeta.InternalNotes,
+					"rows":  4,
+				},
+			}},
+		}, Full: true, BorderBottom: true},
+	}
+	return rows
+}
+
+func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	currencies := cu.ToIMA(data["currencies"], []cu.IM{})
+	customerSelectorRows := cu.ToIMA(data["customer_selector"], []cu.IM{})
+	customerName := cu.ToString(data["customer_name"], "")
+	transitemSelectorRows := cu.ToIMA(data["transitem_selector"], []cu.IM{})
+	employeeSelectorRows := cu.ToIMA(data["employee_selector"], []cu.IM{})
+	projectSelectorRows := cu.ToIMA(data["project_selector"], []cu.IM{})
+
+	currencyOpt := func() (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		for _, currency := range currencies {
+			opt = append(opt, ct.SelectOption{
+				Value: cu.ToString(currency["code"], ""), Text: cu.ToString(currency["code"], ""),
+			})
+		}
+		return opt
+	}
+
+	paidTypeOpt := func() (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		for _, paidType := range []md.PaidType{
+			md.PaidTypeOnline, md.PaidTypeCard, md.PaidTypeTransfer, md.PaidTypeCash, md.PaidTypeOther,
+		} {
+			opt = append(opt, ct.SelectOption{
+				Value: paidType.String(), Text: paidType.String(),
+			})
+		}
+		return opt
+	}
+
+	var customerSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["customer_code"]},
+		{Name: "customer_name", Label: labels["customer_name"]},
+		{Name: "tax_number", Label: labels["customer_tax_number"]},
+	}
+
+	var transitemSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["trans_code"]},
+		{Name: "trans_date", Label: labels["trans_date"]},
+		{Name: "trans_type", Label: labels["trans_type"]},
+		{Name: "direction", Label: labels["trans_direction"]},
+	}
+
+	var employeeSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["employee_code"]},
+		{Name: "first_name", Label: labels["contact_first_name"]},
+		{Name: "surname", Label: labels["contact_surname"]},
+		{Name: "status", Label: labels["contact_status"]},
+	}
+
+	var projectSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["project_code"]},
+		{Name: "project_name", Label: labels["project_name"]},
+		{Name: "customer_code", Label: labels["customer_code"]},
+	}
+
+	rows = transMainHeadRow(trans, labels, data)
+	rows[1].Columns = append(rows[1].Columns, ct.RowColumn{Label: transTypeLabel(labels, trans.TransType.String(), "trans_due_time"),
+		Value: ct.Field{
+			BaseComponent: ct.BaseComponent{
+				Name: "due_time_" + cu.ToString(trans.Id, ""),
+			},
+			Type: ct.FieldTypeDate, Value: cu.IM{
+				"name":    "due_time",
+				"is_null": false,
+				"value":   trans.TransMeta.DueTime.String(),
+			},
+		}})
 
 	transCodeValue := func() ct.Field {
 		if trans.TransMeta.Status != md.TransStatusNormal {
@@ -737,7 +906,7 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 					"value":   trans.CurrencyCode,
 				},
 			}},
-			{Label: typeLabel("trans_rate"), Value: ct.Field{
+			{Label: transTypeLabel(labels, trans.TransType.String(), "trans_rate"), Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
 					Name: "rate_" + cu.ToString(trans.Id, ""),
 				},
@@ -746,7 +915,7 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 					"value": trans.TransMeta.Rate,
 				},
 			}},
-			{Label: typeLabel("trans_paid"), Value: ct.Field{
+			{Label: transTypeLabel(labels, trans.TransType.String(), "trans_paid"), Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
 					Name: "paid_" + cu.ToString(trans.Id, ""),
 				},
@@ -764,59 +933,239 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 					"value": cu.ToBoolean(trans.TransMeta.Closed, false),
 				},
 			}},
-		}, Full: true, BorderBottom: true},
-		ct.Row{Columns: []ct.RowColumn{
-			{Label: labels["trans_notes"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "notes_" + cu.ToString(trans.Id, ""),
-				},
-				Type: ct.FieldTypeText, Value: cu.IM{
-					"name":  "notes",
-					"value": trans.TransMeta.Notes,
-					"rows":  4,
-				},
-			}},
-			{
-				Label: labels["trans_tags"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "tags_" + cu.ToString(trans.Id, ""),
-					},
-					Type: ct.FieldTypeList, Value: cu.IM{
-						"name":                "tags",
-						"rows":                ut.ToTagList(trans.TransMeta.Tags),
-						"label_value":         "tag",
-						"pagination":          ct.PaginationTypeBottom,
-						"page_size":           5,
-						"hide_paginaton_size": true,
-						"list_filter":         true,
-						"filter_placeholder":  labels["placeholder_filter"],
-						"add_item":            true,
-						"add_icon":            ct.IconTag,
-						"edit_item":           false,
-						"delete_item":         true,
-						"indicator":           ct.IndicatorSpinner,
-					},
-				},
-			},
-		}, Full: true, BorderBottom: true},
-		ct.Row{Columns: []ct.RowColumn{
-			{Label: labels["trans_internal_notes"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "internal_notes_" + cu.ToString(trans.Id, ""),
-				},
-				Type: ct.FieldTypeText, Value: cu.IM{
-					"name":  "internal_notes",
-					"value": trans.TransMeta.InternalNotes,
-					"rows":  4,
-				},
-			}},
 		}, Full: true, BorderBottom: true})
 
+	rows = append(rows, transMainFooterRow(trans, labels, data)...)
 	return rows
 }
 
+func transMainPaymentRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	payments := cu.ToIMA(data["payments"], []cu.IM{})
+	cashPayment := cu.ToIM(payments[0], cu.IM{})
+	cashPaymentMeta := cu.ToIM(cashPayment["payment_meta"], cu.IM{})
+	employeeSelectorRows := cu.ToIMA(data["employee_selector"], []cu.IM{})
+	places := cu.ToIMA(data["places"], []cu.IM{})
+
+	cashAmount := func() (amount float64) {
+		amount = cu.ToFloat(cashPaymentMeta["amount"], 0)
+		if trans.Direction == md.DirectionOut {
+			amount = -amount
+		}
+		return amount
+	}
+
+	placeOpt := func(placeType md.PlaceType) (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		for _, place := range places {
+			if cu.ToString(place["place_type"], "") == placeType.String() {
+				opt = append(opt, ct.SelectOption{
+					Value: cu.ToString(place["code"], ""), Text: cu.ToString(place["place_name"], ""),
+				})
+			}
+		}
+		return opt
+	}
+
+	var employeeSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["employee_code"]},
+		{Name: "first_name", Label: labels["contact_first_name"]},
+		{Name: "surname", Label: labels["contact_surname"]},
+		{Name: "status", Label: labels["contact_status"]},
+	}
+
+	rows = transMainHeadRow(trans, labels, data)
+	if trans.TransType == md.TransTypeBank {
+		rows[1].Columns[0] = ct.RowColumn{
+			Label: transTypeLabel(labels, trans.TransType.String(), "trans_place_code"),
+			Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "place_code_" + cu.ToString(trans.Id, ""),
+				},
+				Type: ct.FieldTypeSelect, Value: cu.IM{
+					"name":    "place_code",
+					"options": placeOpt(md.PlaceTypeBank),
+					"is_null": false,
+					"value":   trans.PlaceCode,
+				},
+			}}
+	}
+	if trans.TransType == md.TransTypeCash {
+		rows[0].Columns[1] = ct.RowColumn{
+			Label: labels["employee_code"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "employee_code_" + cu.ToString(trans.Id, ""),
+				},
+				Type: ct.FieldTypeSelector, Value: cu.IM{
+					"name":  "employee_code",
+					"title": labels["employee_view"],
+					"value": ct.SelectOption{
+						Value: trans.EmployeeCode,
+						Text:  trans.EmployeeCode,
+					},
+					"fields":  employeeSelectorFields,
+					"rows":    employeeSelectorRows,
+					"link":    true,
+					"is_null": true,
+				},
+				FormTrigger: true,
+			},
+		}
+		rows = append(rows,
+			ct.Row{Columns: []ct.RowColumn{
+				{
+					Label: transTypeLabel(labels, trans.TransType.String(), "trans_place_code"),
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "place_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelect, Value: cu.IM{
+							"name":    "place_code",
+							"options": placeOpt(md.PlaceTypeCash),
+							"is_null": false,
+							"value":   trans.PlaceCode,
+						},
+					}},
+				{Label: labels["payment_paid_date"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "payment_paid_date_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeDate, Value: cu.IM{
+							"name":    "payment_paid_date",
+							"is_null": false,
+							"value":   cashPayment["paid_date"],
+						},
+					}},
+				{
+					Label: labels["payment_amount"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "payment_amount_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeNumber, Value: cu.IM{
+							"name":  "payment_amount",
+							"value": cashAmount(),
+						},
+					}},
+			},
+				Full: true, BorderBottom: true})
+	}
+	rows = append(rows, transMainFooterRow(trans, labels, data)...)
+	return rows
+}
+
+func transRowItemsTotal(_ string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	items := cu.ToIMA(data["items"], []cu.IM{})
+	itemTotal := func() (netAmount, vatAmount, amount float64) {
+		for _, item := range items {
+			netAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["net_amount"], 0)
+			vatAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["vat_amount"], 0)
+			amount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["amount"], 0)
+		}
+		return netAmount, vatAmount, amount
+	}
+	netAmount, vatAmount, amount := itemTotal()
+	return []ct.Row{
+		{Columns: []ct.RowColumn{
+			{
+				Label: labels["item_net_amount"],
+				Value: ct.Field{
+					Type: ct.FieldTypeNumber, Value: cu.IM{
+						"name":     "net_amount",
+						"value":    netAmount,
+						"disabled": true,
+						"style": cu.SM{
+							"opacity": "1",
+						},
+					},
+				}},
+			{
+				Label: labels["item_vat_amount"],
+				Value: ct.Field{
+					Type: ct.FieldTypeNumber, Value: cu.IM{
+						"name":     "vat_amount",
+						"value":    vatAmount,
+						"disabled": true,
+						"style": cu.SM{
+							"opacity": "1",
+						},
+					},
+				}},
+			{
+				Label: labels["item_amount"],
+				Value: ct.Field{
+					Type: ct.FieldTypeNumber, Value: cu.IM{
+						"name":     "amount",
+						"value":    amount,
+						"disabled": true,
+						"style": cu.SM{
+							"opacity": "1",
+						},
+					},
+				}},
+		}, Full: false},
+	}
+}
+
+func transRowPaymentTotal(_ string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	payments := cu.ToIMA(data["payments"], []cu.IM{})
+	itemTotal := func() (expense, income, balance float64) {
+		for _, payment := range payments {
+			amount := cu.ToFloat(cu.ToIM(payment["payment_meta"], cu.IM{})["amount"], 0)
+			if amount > 0 {
+				income += amount
+			} else {
+				expense += amount
+			}
+			balance += amount
+		}
+		return expense, income, balance
+	}
+	expense, income, balance := itemTotal()
+	return []ct.Row{
+		{Columns: []ct.RowColumn{
+			{
+				Label: labels["payment_expense"],
+				Value: ct.Field{
+					Type: ct.FieldTypeNumber, Value: cu.IM{
+						"name":     "expense",
+						"value":    expense,
+						"disabled": true,
+						"style": cu.SM{
+							"opacity": "1",
+						},
+					},
+				}},
+			{
+				Label: labels["payment_income"],
+				Value: ct.Field{
+					Type: ct.FieldTypeNumber, Value: cu.IM{
+						"name":     "income",
+						"value":    income,
+						"disabled": true,
+						"style": cu.SM{
+							"opacity": "1",
+						},
+					},
+				}},
+			{
+				Label: labels["payment_balance"],
+				Value: ct.Field{
+					Type: ct.FieldTypeNumber, Value: cu.IM{
+						"name":     "balance",
+						"value":    balance,
+						"disabled": true,
+						"style": cu.SM{
+							"opacity": "1",
+						},
+					},
+				}},
+		}, Full: false},
+	}
+}
+
 func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
-	if !slices.Contains([]string{"trans", "maps", "items"}, view) {
+	if !slices.Contains([]string{"trans", "maps", "items", "payments"}, view) {
 		return []ct.Row{}
 	}
 
@@ -824,7 +1173,6 @@ func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	ut.ConvertToType(data["trans"], &trans)
 
 	configMap := cu.ToIMA(data["config_map"], []cu.IM{})
-	items := cu.ToIMA(data["items"], []cu.IM{})
 	selectedField := cu.ToString(data["map_field"], "")
 
 	mapFieldOpt := func() (opt []ct.SelectOption) {
@@ -840,15 +1188,6 @@ func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 			}
 		}
 		return opt
-	}
-
-	itemTotal := func() (netAmount, vatAmount, amount float64) {
-		for _, item := range items {
-			netAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["net_amount"], 0)
-			vatAmount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["vat_amount"], 0)
-			amount += cu.ToFloat(cu.ToIM(item["item_meta"], cu.IM{})["amount"], 0)
-		}
-		return netAmount, vatAmount, amount
 	}
 
 	if view == "maps" {
@@ -870,58 +1209,25 @@ func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	}
 
 	if view == "items" {
-		netAmount, vatAmount, amount := itemTotal()
-		return []ct.Row{
-			{Columns: []ct.RowColumn{
-				{
-					Label: labels["item_net_amount"],
-					Value: ct.Field{
-						Type: ct.FieldTypeNumber, Value: cu.IM{
-							"name":     "net_amount",
-							"value":    netAmount,
-							"disabled": true,
-							"style": cu.SM{
-								"opacity": "1",
-							},
-						},
-					}},
-				{
-					Label: labels["item_vat_amount"],
-					Value: ct.Field{
-						Type: ct.FieldTypeNumber, Value: cu.IM{
-							"name":     "vat_amount",
-							"value":    vatAmount,
-							"disabled": true,
-							"style": cu.SM{
-								"opacity": "1",
-							},
-						},
-					}},
-				{
-					Label: labels["item_amount"],
-					Value: ct.Field{
-						Type: ct.FieldTypeNumber, Value: cu.IM{
-							"name":     "amount",
-							"value":    amount,
-							"disabled": true,
-							"style": cu.SM{
-								"opacity": "1",
-							},
-						},
-					}},
-			}, Full: false},
-		}
+		return transRowItemsTotal(view, labels, data)
+	}
+	if view == "payments" {
+		return transRowPaymentTotal(view, labels, data)
 	}
 
-	if transIsItem(trans.TransType.String()) {
+	if TransIsItem(trans.TransType.String()) {
 		return transMainItemRow(trans, labels, data)
+	}
+
+	if TransIsPayment(trans.TransType.String()) {
+		return transMainPaymentRow(trans, labels, data)
 	}
 
 	return rows
 }
 
 func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
-	if !slices.Contains([]string{"maps", "items", "transitem_invoice"}, view) {
+	if !slices.Contains([]string{"maps", "items", "transitem_invoice", "payments", "payment_link"}, view) {
 		return []ct.Table{}
 	}
 
@@ -1023,6 +1329,105 @@ func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 					PageSize:          5,
 					HidePaginatonSize: true,
 					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+				},
+			}
+		},
+		"payments": func() []ct.Table {
+			itemRows := func() []cu.IM {
+				rows := []cu.IM{}
+				payments := cu.ToIMA(data["payments"], []cu.IM{})
+				for _, payment := range payments {
+					paymentMeta := cu.ToIM(payment["payment_meta"], cu.IM{})
+					rows = append(rows, cu.IM{
+						"id":               payment["id"],
+						"code":             payment["code"],
+						"paid_date":        payment["paid_date"],
+						"amount":           paymentMeta["amount"],
+						"notes":            paymentMeta["notes"],
+						"payment_link_add": labels["payment_link_add"],
+						"editor":           "trans",
+						"payment_meta":     paymentMeta,
+					})
+				}
+				return rows
+			}
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "code", Label: labels["payment_code"], ReadOnly: true},
+						{Name: "paid_date", Label: labels["payment_paid_date"], FieldType: ct.TableFieldTypeDate},
+						{Name: "amount", Label: labels["payment_amount"], FieldType: ct.TableFieldTypeNumber},
+						{Name: "notes", Label: labels["payment_notes"]},
+						{Name: "payment_link_add", Label: labels["payment_link_view_bank"], FieldType: ct.TableFieldTypeLink, ReadOnly: true},
+					},
+					Rows:              itemRows(),
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          10,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           !newInput,
+					LabelAdd:          labels["payment_new"],
+				},
+			}
+		},
+		"payment_link": func() []ct.Table {
+			isInvoice := slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, cu.ToString(trans["trans_type"], ""))
+			itemRows := func() []cu.IM {
+				rows := []cu.IM{}
+				items := cu.ToIMA(data["payment_link"], []cu.IM{})
+				for _, item := range items {
+					row := cu.IM{
+						"id":            item["id"],
+						"code":          item["code"],
+						"link_code_1":   item["link_code_1"],
+						"link_code_2":   item["link_code_2"],
+						"trans_code":    item["link_code_2"],
+						"currency_code": cu.ToString(item["currency_code"], "") + "/" + cu.ToString(item["invoice_curr"], ""),
+						"amount":        cu.ToFloat(cu.ToIM(item["link_meta"], cu.IM{})["amount"], 0),
+						"rate":          cu.ToFloat(cu.ToIM(item["link_meta"], cu.IM{})["rate"], 0),
+						"link_meta":     item["link_meta"],
+						"place_name":    item["place_name"],
+						"paid_date":     item["paid_date"],
+					}
+					if isInvoice {
+						row["trans_code"] = item["pt_code"]
+					}
+					rows = append(rows, row)
+				}
+				return rows
+			}
+			fields := []ct.TableField{
+				{Name: "code", Label: labels["link_code"]},
+				{Name: "link_code_1", Label: labels["payment_code"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "amount", Label: labels["payment_amount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "rate", Label: labels["payment_rate"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "trans_code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
+			}
+			if isInvoice {
+				fields = []ct.TableField{
+					//{Name: "code", Label: labels["link_code"]},
+					{Name: "trans_code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
+					{Name: "place_name", Label: labels["place_name_payment"]},
+					{Name: "link_code_1", Label: labels["payment_code"]},
+					{Name: "paid_date", Label: labels["payment_paid_date"]},
+					{Name: "currency_code", Label: labels["currency_code"]},
+					{Name: "amount", Label: labels["payment_amount"], FieldType: ct.TableFieldTypeNumber},
+					{Name: "rate", Label: labels["payment_rate"], FieldType: ct.TableFieldTypeNumber},
+				}
+			}
+			return []ct.Table{
+				{
+					Fields:            fields,
+					Rows:              itemRows(),
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          5,
+					HidePaginatonSize: true,
+					RowSelected:       !isInvoice,
 					TableFilter:       true,
 					FilterPlaceholder: labels["placeholder_filter"],
 				},
@@ -1272,6 +1677,155 @@ func transForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 					}, Full: true},
 				},
 				FooterRows: footerRows(item.ProductCode == ""),
+			}
+		},
+		"payments": func() ct.Form {
+			var payment md.Payment = md.Payment{}
+			ut.ConvertToType(formData, &payment)
+			return ct.Form{
+				Title: labels["payment_view"],
+				Icon:  ct.IconListOl,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["payment_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "payment_code",
+								"value":    payment.Code,
+								"disabled": true,
+							},
+						}},
+						{Label: labels["payment_paid_date"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "paid_date_" + cu.ToString(payment.Id, ""),
+								},
+								Type: ct.FieldTypeDate, Value: cu.IM{
+									"name":    "paid_date",
+									"is_null": false,
+									"value":   payment.PaidDate.String(),
+								},
+							}},
+						{Label: labels["payment_amount"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "amount_" + cu.ToString(payment.Id, ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "amount",
+								"value": payment.PaymentMeta.Amount,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["payment_notes"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes_" + cu.ToString(payment.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "notes",
+								"value": payment.PaymentMeta.Notes,
+							},
+						}},
+					}, Full: true, BorderBottom: true, FieldCol: true},
+				},
+				FooterRows: footerRows(false),
+			}
+		},
+		"payment_link": func() ct.Form {
+			var link md.Link = md.Link{}
+			ut.ConvertToType(formData, &link)
+			invoiceSelectorRows := cu.ToIMA(formData["invoice_selector"], []cu.IM{})
+			var invoiceSelectorFields []ct.TableField = []ct.TableField{
+				{Name: "code", Label: labels["invoice_code"]},
+				//{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "customer_name", Label: labels["customer_name"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "amount", Label: labels["item_amount"], FieldType: ct.TableFieldTypeNumber},
+				//{Name: "trans_type", Label: labels["trans_type"]},
+				//{Name: "direction", Label: labels["trans_direction"]},
+			}
+			return ct.Form{
+				Title: labels["payment_link_add"],
+				Icon:  ct.IconLink,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["link_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "code",
+								"value":    link.Code,
+								"disabled": true,
+							},
+						}},
+						{Label: labels["payment_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "payment_code_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "payment_code",
+								"value":    link.LinkCode1,
+								"disabled": true,
+							},
+						}},
+						{
+							Label: labels["invoice_code"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "trans_code_" + cu.ToString(formData["id"], ""),
+								},
+								Type: ct.FieldTypeSelector, Value: cu.IM{
+									"name":  "invoice_code",
+									"title": labels["view_invoice"],
+									"value": ct.SelectOption{
+										Value: link.LinkCode2,
+										Text:  link.LinkCode2,
+									},
+									"fields":  invoiceSelectorFields,
+									"rows":    invoiceSelectorRows,
+									"link":    true,
+									"is_null": false,
+								},
+								FormTrigger: true,
+							},
+						},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["currency_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "currency_code_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "currency_code",
+								"value":    cu.ToString(formData["currency_code"], ""),
+								"disabled": true,
+							},
+						}},
+						{Label: labels["payment_amount"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "amount_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "link_amount",
+								"value": cu.ToFloat(link.LinkMeta.Amount, link.LinkMeta.Qty),
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["payment_rate"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "rate_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "link_rate",
+								"value": link.LinkMeta.Rate,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+				},
+				FooterRows: footerRows(link.LinkCode2 == ""),
 			}
 		},
 	}

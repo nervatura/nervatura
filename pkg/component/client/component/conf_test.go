@@ -163,7 +163,20 @@ func Test_moduleEditorView(t *testing.T) {
 				data: cu.IM{
 					"trans": cu.IM{
 						"id":         1,
-						"trans_type": "TRANS_ORDER",
+						"trans_type": md.TransTypeOrder.String(),
+					},
+				},
+			},
+		},
+		{
+			name: "trans_bank",
+			args: args{
+				mKey:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": md.TransTypeBank.String(),
 					},
 				},
 			},
@@ -207,6 +220,15 @@ func Test_moduleEditorRow(t *testing.T) {
 		name string
 		args args
 	}{
+		{
+			name: "invalid",
+			args: args{
+				mKey:   "trans",
+				view:   "invalid",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
 		{
 			name: "search",
 			args: args{
@@ -705,13 +727,87 @@ func Test_moduleEditorRow(t *testing.T) {
 							"code": "USD",
 						},
 					},
+					"payments": []cu.IM{
+						{
+							"id": 1,
+							"payment_meta": cu.IM{
+								"amount": 100,
+							},
+						},
+						{
+							"id": 2,
+							"payment_meta": cu.IM{
+								"amount": -100,
+							},
+						},
+					},
 				},
 			},
 		},
 		{
-			name: "invalid",
+			name: "trans_bank",
 			args: args{
-				mKey: "invalid",
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": md.TransTypeBank.String(),
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+					"places": []cu.IM{
+						{
+							"code":       "1",
+							"place_type": md.PlaceTypeBank.String(),
+						},
+					},
+					"payments": []cu.IM{
+						{
+							"id": 1,
+							"payment_meta": cu.IM{
+								"amount": 100,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_cash",
+			args: args{
+				mKey:   "trans",
+				view:   "trans",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": md.TransTypeCash.String(),
+					},
+					"currencies": []cu.IM{
+						{
+							"code": "USD",
+						},
+					},
+					"places": []cu.IM{
+						{
+							"code":       "1",
+							"place_type": md.PlaceTypeCash.String(),
+						},
+					},
+					"payments": []cu.IM{
+						{
+							"id": 1,
+							"payment_meta": cu.IM{
+								"amount": 100,
+							},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -1019,6 +1115,58 @@ func Test_moduleEditorTable(t *testing.T) {
 							"qty":         "1",
 							"amount":      "1",
 							"deposit":     "1",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_payments",
+			args: args{
+				mKey:   "trans",
+				view:   "payments",
+				labels: cu.SM{},
+				data: cu.IM{
+					"payments": []cu.IM{
+						{
+							"id": 1,
+							"payment_meta": cu.IM{
+								"amount": 100,
+							},
+						},
+						{
+							"id": 2,
+							"payment_meta": cu.IM{
+								"amount": -100,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_payment_link",
+			args: args{
+				mKey:   "trans",
+				view:   "payment_link",
+				labels: cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": md.TransTypeInvoice.String(),
+					},
+					"payment_link": []cu.IM{
+						{
+							"id": 1,
+							"link_meta": cu.IM{
+								"amount": 100,
+							},
+						},
+						{
+							"id": 2,
+							"link_meta": cu.IM{
+								"amount": -100,
+							},
 						},
 					},
 				},
@@ -1477,6 +1625,41 @@ func TestClientSideBar(t *testing.T) {
 			},
 		},
 		{
+			name: "trans_cash",
+			args: args{
+				moduleKey: "trans",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": md.TransTypeCash.String(),
+						"direction":  md.DirectionOut.String(),
+						"trans_meta": cu.IM{
+							"status": md.TransStatusNormal.String(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_cash_deleted",
+			args: args{
+				moduleKey: "trans",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":         1,
+						"trans_type": md.TransTypeCash.String(),
+						"direction":  md.DirectionOut.String(),
+						"trans_meta": cu.IM{
+							"status": md.TransStatusNormal.String(),
+						},
+						"deleted": true,
+					},
+				},
+			},
+		},
+		{
 			name: "trans_closed",
 			args: args{
 				moduleKey: "trans",
@@ -1809,6 +1992,54 @@ func TestClientForm(t *testing.T) {
 							"tax_meta": cu.IM{
 								"description": "123",
 								"rate_value":  123,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_payments",
+			args: args{
+				editorKey: "trans",
+				formKey:   "payments",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"payments": []cu.IM{
+						{
+							"id": 1,
+							"payment_meta": cu.IM{
+								"amount": 100,
+							},
+						},
+						{
+							"id": 2,
+							"payment_meta": cu.IM{
+								"amount": -100,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "trans_payment_link",
+			args: args{
+				editorKey: "trans",
+				formKey:   "payment_link",
+				labels:    cu.SM{},
+				data: cu.IM{
+					"payment_link": []cu.IM{
+						{
+							"id": 1,
+							"link_meta": cu.IM{
+								"amount": 100,
+							},
+						},
+						{
+							"id": 2,
+							"link_meta": cu.IM{
+								"amount": -100,
 							},
 						},
 					},

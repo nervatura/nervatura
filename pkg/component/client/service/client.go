@@ -269,7 +269,7 @@ func (cls *ClientService) editorCodeSelector(evt ct.ResponseEvent, codeType stri
 		}
 		return resultUpdate(cu.IM{"event": event, "dirty": false})
 	}
-	if slices.Contains([]string{"transitem", "transmovement", "transpayment"}, codeType) {
+	if slices.Contains([]string{"transitem", "transmovement", "transpayment", "invoice"}, codeType) {
 		codeType = "trans"
 	}
 	if event == ct.SelectorEventSelected {
@@ -862,7 +862,7 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 		ct.TableEventAddItem: func() ct.ResponseEvent {
 			if slices.Contains([]string{"transitem", "transmovement", "transpayment"}, stateKey) {
 				return cls.transCreateModal(evt,
-					cu.IM{"state_key": stateKey, "next": "trans_new"})
+					cu.IM{"state_key": stateKey, "next": stateKey + "_new"})
 			}
 			return cls.setEditor(evt, stateKey, cu.IM{
 				"session_id": client.Ticket.SessionID,
@@ -930,7 +930,7 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 			case "set_bookmark":
 				return cls.mainResponseBookmark(evt)
 
-			case "trans_new":
+			case "trans_new", "transitem_new", "transpayment_new", "transmovement_new":
 				return cls.MainResponseModuleEvent(evt, "trans")
 
 			default:
@@ -939,7 +939,9 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 		},
 
 		ct.FormEventChange: func() ct.ResponseEvent {
-			return cls.MainResponseModuleEvent(evt, "")
+			values := cu.ToIM(evt.Value, cu.IM{})
+			valueData := cu.ToIM(values["data"], cu.IM{})
+			return cls.MainResponseModuleEvent(evt, cu.ToString(valueData["module"], ""))
 		},
 
 		ct.ClientEventForm: func() ct.ResponseEvent {
@@ -957,10 +959,13 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 		ct.EditorEventField: func() ct.ResponseEvent {
 			evtData := cu.ToIM(evt.Value, cu.IM{})
 			fieldName := cu.ToString(evtData["name"], "")
-			if fieldName == ct.TableEventEditCell {
+			values := cu.ToIM(evtData["value"], cu.IM{})
+			row := cu.ToIM(values["row"], cu.IM{})
+			editor := cu.ToString(row["editor"], "")
+			if fieldName == ct.TableEventEditCell && editor == "" {
 				return cls.mainResponseLink(evt, cu.ToIM(evtData["value"], cu.IM{}))
 			}
-			return cls.MainResponseModuleEvent(evt, "")
+			return cls.MainResponseModuleEvent(evt, editor)
 		},
 
 		ct.LoginEventLogin: func() ct.ResponseEvent {

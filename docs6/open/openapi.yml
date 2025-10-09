@@ -3290,6 +3290,12 @@ components:
         place_code:
           type: string
           description: Reference to Place.code
+        item_code:
+          type: string
+          description: Reference to Item.code
+        movement_code:
+          type: string
+          description: Reference to Movement.code
         movement_meta:
           type: object
           properties:

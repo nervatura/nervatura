@@ -520,11 +520,33 @@ left join (
   group by fv.ref_id) fld on fld.ref_id = mv.id
 where mv.deleted = 0;
 
+UPDATE movement 
+INNER JOIN (
+  select l.ref_id_1 as movement_id, i.code
+  from bck_link l
+  inner join item i on l.ref_id_2 = i.id
+  where l.deleted = 0 
+    and l.nervatype_1 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='movement')
+    and l.nervatype_2 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='item')
+) tr ON movement.id = tr.movement_id
+SET movement.item_code = tr.code;
+
+UPDATE movement 
+INNER JOIN (
+  select l.ref_id_2 as movement_id, mv.code
+  from bck_link l
+  inner join movement mv on l.ref_id_1 = mv.id
+  where l.deleted = 0 
+    and l.nervatype_1 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='movement')
+    and l.nervatype_2 = (select id from bck_groups where groupname = 'nervatype' and groupvalue='movement')
+) tr ON movement.id = tr.movement_id
+SET movement.movement_code = tr.code;
+
 INSERT INTO payment(id, code, paid_date, trans_code, payment_meta, payment_map)
 select pm.id, CONCAT('PMT',UNIX_TIMESTAMP(),'N',pm.id) as code,
   pm.paiddate as paid_date, t.code as trans_code,
   json_object(
-	'amount', pm.amount, 'amount', COALESCE(pm.notes, ''),
+	'amount', pm.amount, 'notes', COALESCE(pm.notes, ''),
 	'tags', json_array()
   ) as payment_meta, COALESCE(fld.md, json_object()) as payment_map
 from bck_payment pm
@@ -562,7 +584,7 @@ select l.id, CONCAT('LNK',UNIX_TIMESTAMP(),'N',l.id) as code,
 	when nt2.groupvalue = 'tool' then tl2.code
 	else t2.code end as link_code_2,
   json_object(
-	'qty', CAST(COALESCE(JSON_EXTRACT(COALESCE(fld.md, json_object()),'$.link_qty'),0) as float),
+	'amount', CAST(COALESCE(JSON_EXTRACT(COALESCE(fld.md, json_object()),'$.link_qty'),0) as float),
 	'rate', CAST(COALESCE(JSON_EXTRACT(COALESCE(fld.md, json_object()),'$.link_rate'),0) as float),
 	'tags', json_array()
   ) as link_meta, COALESCE(fld.md, json_object()) as link_map

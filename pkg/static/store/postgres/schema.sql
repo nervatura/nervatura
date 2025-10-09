@@ -1028,7 +1028,7 @@ CREATE TRIGGER update_link_changed BEFORE INSERT OR UPDATE ON link
 CREATE OR REPLACE VIEW link_view AS
   SELECT id, code, 
     link_type_1, link_code_1, link_type_2, link_code_2,
-    cast(link_meta->>'qty' AS FLOAT) AS qty, cast(link_meta->>'rate' AS FLOAT) AS rate,
+    cast(link_meta->>'qty' AS FLOAT) AS qty, cast(link_meta->>'amount' AS FLOAT) AS amount, cast(link_meta->>'rate' AS FLOAT) AS rate,
     link_meta->'tags' AS tags, REGEXP_REPLACE(link_meta->>'tags', '[\[\]"]', '', 'g') as tag_lst, 
     link_map, time_stamp,
     jsonb_build_object(
@@ -1118,7 +1118,9 @@ CREATE TABLE IF NOT EXISTS movement(
   trans_code VARCHAR NOT NULL,
   product_code VARCHAR,
   tool_code VARCHAR,
-  place_code VARCHAR, 
+  place_code VARCHAR,
+  item_code VARCHAR,
+  movement_code VARCHAR,
   movement_meta JSONB NOT NULL DEFAULT '{}'::JSONB,
   movement_map JSONB NOT NULL DEFAULT '{}'::JSONB,
   time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1132,6 +1134,10 @@ CREATE TABLE IF NOT EXISTS movement(
   FOREIGN KEY (tool_code) REFERENCES tool(code)
     ON UPDATE RESTRICT ON DELETE RESTRICT,
   FOREIGN KEY (place_code) REFERENCES place(code)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
+  FOREIGN KEY (item_code) REFERENCES item(code)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
+  FOREIGN KEY (movement_code) REFERENCES movement(code)
     ON UPDATE RESTRICT ON DELETE RESTRICT
 );
 
@@ -1139,6 +1145,8 @@ CREATE INDEX idx_movement_trans_code ON movement (trans_code);
 CREATE INDEX idx_movement_product_code ON movement (product_code);
 CREATE INDEX idx_movement_tool_code ON movement (tool_code);
 CREATE INDEX idx_movement_place_code ON movement (place_code);
+CREATE INDEX idx_movement_item_code ON movement (item_code);
+CREATE INDEX idx_movement_movement_code ON movement (movement_code);
 CREATE INDEX idx_movement_deleted ON movement (deleted);
 CREATE INDEX idx_movement_tags ON movement ((movement_meta->>'tags'));
 
@@ -1150,7 +1158,7 @@ CREATE OR REPLACE TRIGGER movement_default_code
 
 CREATE OR REPLACE VIEW movement_view AS
   SELECT id, code, movement_type, shipping_time,
-    trans_code, product_code, tool_code, place_code,
+    trans_code, product_code, tool_code, place_code, item_code, movement_code,
     cast(movement_meta->>'qty' AS FLOAT) AS qty, cast(movement_meta->>'shared' AS BOOLEAN) AS shared,
     movement_meta->>'notes' AS notes,
     movement_meta->'tags' AS tags, REGEXP_REPLACE(movement_meta->>'tags', '[\[\]"]', '', 'g') as tag_lst, 
@@ -1158,6 +1166,7 @@ CREATE OR REPLACE VIEW movement_view AS
     jsonb_build_object(
       'id', id, 'code', code, 'movement_type', movement_type, 'shipping_time', shipping_time,
       'trans_code', trans_code, 'product_code', product_code, 'tool_code', tool_code, 'place_code', place_code,
+      'item_code', item_code, 'movement_code', movement_code,
       'movement_meta', movement_meta, 'movement_map', movement_map, 'time_stamp', time_stamp
     ) AS movement_object
   FROM movement

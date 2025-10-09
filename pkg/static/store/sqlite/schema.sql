@@ -1086,7 +1086,7 @@ END;
 CREATE VIEW link_view AS
   SELECT id, code, 
     link_type_1, link_code_1, link_type_2, link_code_2, 
-    CAST(link_meta->>'qty' AS FLOAT) AS qty, CAST(link_meta->>'rate' AS FLOAT) AS rate, 
+    CAST(link_meta->>'qty' AS FLOAT) AS qty, CAST(link_meta->>'amount' AS FLOAT) AS amount, CAST(link_meta->>'rate' AS FLOAT) AS rate, 
     link_meta->'tags' AS tags, 
     REPLACE(REPLACE(REPLACE(link_meta->>'tags', '"', ''), '[', ''), ']', '') AS tag_lst, 
     link_map, time_stamp,
@@ -1179,6 +1179,8 @@ CREATE TABLE IF NOT EXISTS movement(
   product_code TEXT,
   tool_code TEXT,
   place_code TEXT, 
+  item_code TEXT,
+  movement_code TEXT,
   movement_meta JSONB NOT NULL DEFAULT (json_object()),
   movement_map JSONB NOT NULL DEFAULT (json_object()),
   time_stamp TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1193,6 +1195,10 @@ CREATE TABLE IF NOT EXISTS movement(
     ON UPDATE RESTRICT ON DELETE RESTRICT,
   FOREIGN KEY (place_code) REFERENCES place(code)
     ON UPDATE RESTRICT ON DELETE RESTRICT,
+  FOREIGN KEY (item_code) REFERENCES item(code)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
+  FOREIGN KEY (movement_code) REFERENCES movement(code)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
   CHECK( movement_type IN ('MOVEMENT_INVENTORY', 'MOVEMENT_TOOL', 'MOVEMENT_PLAN', 'MOVEMENT_HEAD') )
 );
 
@@ -1200,6 +1206,8 @@ CREATE INDEX idx_movement_trans_code ON movement (trans_code);
 CREATE INDEX idx_movement_product_code ON movement (product_code);
 CREATE INDEX idx_movement_tool_code ON movement (tool_code);
 CREATE INDEX idx_movement_place_code ON movement (place_code);
+CREATE INDEX idx_movement_item_code ON movement (item_code);
+CREATE INDEX idx_movement_movement_code ON movement (movement_code);
 CREATE INDEX idx_movement_deleted ON movement (deleted);
 CREATE INDEX idx_movement_tags ON movement (json_extract(movement_meta, '$.tags'));
 
@@ -1213,7 +1221,7 @@ END;
 
 CREATE VIEW movement_view AS
   SELECT id, code, movement_type, shipping_time,
-    trans_code, product_code, tool_code, place_code,
+    trans_code, product_code, tool_code, place_code, item_code, movement_code,
     CAST(movement_meta->>'qty' AS FLOAT) AS qty, movement_meta->>'notes' AS notes, 
     CAST(movement_meta->>'shared' AS BOOLEAN) AS shared,
     movement_meta->'tags' AS tags, 
@@ -1222,6 +1230,7 @@ CREATE VIEW movement_view AS
     json_object(
       'id', id, 'code', code, 'movement_type', movement_type, 'shipping_time', shipping_time,
       'trans_code', trans_code, 'product_code', product_code, 'tool_code', tool_code, 'place_code', place_code,
+      'item_code', item_code, 'movement_code', movement_code,
       'movement_meta', json(movement_meta), 'movement_map', json(movement_map), 
       'time_stamp', time_stamp
     ) AS movement_object

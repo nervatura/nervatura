@@ -216,8 +216,9 @@ type Item struct {
 }
 
 type LinkMeta struct {
-	Qty  float64 `json:"qty"`
-	Rate float64 `json:"rate"`
+	Qty    float64 `json:"qty"`
+	Amount float64 `json:"amount"`
+	Rate   float64 `json:"rate"`
 	// Additional tags for the link
 	Tags []string `json:"tags"`
 }
@@ -288,7 +289,11 @@ type Movement struct {
 	// Reference to [Tool](#tool).code
 	ToolCode string `json:"tool_code"`
 	// Reference to [Place](#place).code
-	PlaceCode    string       `json:"place_code"`
+	PlaceCode string `json:"place_code"`
+	// Reference to [Item](#item).code
+	ItemCode string `json:"item_code"`
+	// Reference to [Movement](#movement).code
+	MovementCode string       `json:"movement_code"`
 	MovementMeta MovementMeta `json:"movement_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
 	MovementMap cu.IM `json:"movement_map"`

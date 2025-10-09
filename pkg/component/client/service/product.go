@@ -525,7 +525,7 @@ func (cls *ClientService) productResponseEditorField(evt ct.ResponseEvent) (re c
 			valueData := cu.ToIM(values["value"], cu.IM{})
 			client.SetForm(cu.ToString(stateData["view"], ""),
 				cu.MergeIM(cu.ToIM(valueData["row"], cu.IM{}),
-					cu.IM{"currencies": stateData["currencies"], "customer_selector": stateData["customer_selector"]}),
+					cu.IM{"currencies": stateData["currencies"]}),
 				cu.ToInteger(valueData["index"], 0), false)
 			return evt, nil
 		},
@@ -569,7 +569,7 @@ func (cls *ClientService) productResponseEditorField(evt ct.ResponseEvent) (re c
 				base[view] = rows
 				client.SetForm(view,
 					cu.MergeIM(typeMap[view](),
-						cu.IM{"currencies": stateData["currencies"], "customer_selector": stateData["customer_selector"]}),
+						cu.IM{"currencies": stateData["currencies"]}),
 					cu.ToInteger(len(rows)-1, 0), false)
 				return evt, nil
 			}

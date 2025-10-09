@@ -765,6 +765,19 @@ func TestClientService_searchFilter(t *testing.T) {
 			want: []string{"and (code like '%123%')"},
 		},
 		{
+			name: "invoice_simple",
+			args: args{
+				view: "invoice_simple",
+				filter: ct.BrowserFilter{
+					Field: "code",
+					Comp:  "==",
+					Value: "123",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (code like '%123%')"},
+		},
+		{
 			name: "transitem_closed",
 			args: args{
 				view: "transitem",
@@ -864,6 +877,140 @@ func TestClientService_searchFilter(t *testing.T) {
 			},
 			want: []string{"and (default  '%%')"},
 		},
+		{
+			name: "transpayment_simple",
+			args: args{
+				view: "transpayment_simple",
+				filter: ct.BrowserFilter{
+					Field: "default",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (default  '%%')"},
+		},
+		{
+			name: "transpayment_closed",
+			args: args{
+				view: "transpayment",
+				filter: ct.BrowserFilter{
+					Field: "closed",
+					Comp:  "==",
+					Value: true,
+				},
+			},
+			want: []string{"and (closed = true)"},
+		},
+		{
+			name: "transpayment_trans_date",
+			args: args{
+				view: "transpayment",
+				filter: ct.BrowserFilter{
+					Field: "trans_date",
+					Comp:  "==",
+					Value: "2021-01-01",
+				},
+			},
+			want: []string{"and (trans_date = '2021-01-01')"},
+		},
+		{
+			name: "transpayment_id",
+			args: args{
+				view: "transpayment",
+				filter: ct.BrowserFilter{
+					Field: "id",
+					Comp:  "==",
+					Value: "456",
+				},
+			},
+			want: []string{"and (id = 456)"},
+		},
+		{
+			name: "transpayment_default",
+			args: args{
+				view: "transpayment",
+				filter: ct.BrowserFilter{
+					Field: "default",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (default  '%%')"},
+		},
+		{
+			name: "transpayment_map",
+			args: args{
+				view: "transpayment_map",
+				filter: ct.BrowserFilter{
+					Field: "demo_number",
+					Comp:  "==",
+					Value: "123",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (demo_number like '%123%')"},
+		},
+		{
+			name: "transpayment_invoice",
+			args: args{
+				view: "transpayment_invoice",
+				filter: ct.BrowserFilter{
+					Field: "invoice_amount",
+					Comp:  "==",
+					Value: "123",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (invoice_amount = 123)"},
+		},
+		{
+			name: "transpayment_invoice_id",
+			args: args{
+				view: "transpayment_invoice",
+				filter: ct.BrowserFilter{
+					Field: "id",
+					Comp:  "==",
+					Value: "456",
+				},
+			},
+			want: []string{"and (id = 456)"},
+		},
+		{
+			name: "transpayment_invoice_trans_date",
+			args: args{
+				view: "transpayment_invoice",
+				filter: ct.BrowserFilter{
+					Field: "trans_date",
+					Comp:  "==",
+					Value: "2021-01-01",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (trans_date = '2021-01-01')"},
+		},
+		{
+			name: "transpayment_invoice_currency_code",
+			args: args{
+				view: "transpayment_invoice",
+				filter: ct.BrowserFilter{
+					Field: "currency_code",
+					Comp:  "==",
+					Value: "USD",
+				},
+			},
+			want: []string{"and (currency_code = 'USD')"},
+		},
+		{
+			name: "transpayment_invoice_default",
+			args: args{
+				view: "transpayment_invoice",
+				filter: ct.BrowserFilter{
+					Field: "default",
+					Comp:  "==",
+					Value: "abc",
+				},
+				queryFilters: []string{},
+			},
+			want: []string{"and (default like '%abc%')"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -925,6 +1072,7 @@ func TestClientService_searchData(t *testing.T) {
 					Filters: []md.Filter{
 						{Field: "id", Comp: "==", Value: 1},
 					},
+					Filter: "field like 'abc'",
 				},
 				filters: []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}},
 			},
@@ -987,7 +1135,7 @@ func TestClientService_searchResponse(t *testing.T) {
 							Data: cu.IM{
 								"search": cu.IM{
 									"view":       "customer",
-									"side_group": "group_value_1",
+									"side_group": "group_customer",
 								},
 							},
 						},
@@ -995,7 +1143,7 @@ func TestClientService_searchResponse(t *testing.T) {
 							User: cu.IM{},
 						},
 					},
-					Value: "group_value_2",
+					Value: "group_product",
 				},
 			},
 		},

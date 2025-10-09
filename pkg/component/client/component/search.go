@@ -10,7 +10,7 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func searchSideBarGroupConfig(labels cu.SM) []md.SideGroup {
+func SearchSideBarGroupConfig(labels cu.SM) []md.SideGroup {
 	return []md.SideGroup{
 		{
 			Name:  "group_transitem",
@@ -21,11 +21,12 @@ func searchSideBarGroupConfig(labels cu.SM) []md.SideGroup {
 			AuthFilter: md.AuthFilterTransItem.String(),
 		},
 		{
-			Name:       "group_transpayment",
-			Label:      labels["transpayment_title"],
-			Views:      []string{},
+			Name:  "group_transpayment",
+			Label: labels["transpayment_title"],
+			Views: []string{
+				"transpayment_simple", "transpayment", "transpayment_map", "transpayment_invoice",
+			},
 			AuthFilter: md.AuthFilterTransPayment.String(),
-			Disabled:   true,
 		},
 		{
 			Name:       "group_transmovement",
@@ -134,7 +135,7 @@ func searchSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	sb := []ct.SideBarItem{
 		&ct.SideBarSeparator{},
 	}
-	for _, group := range searchSideBarGroupConfig(labels) {
+	for _, group := range SearchSideBarGroupConfig(labels) {
 		if visibleGroups(group) {
 			groupElement := sideGroupElement(group)
 			groupElement.Selected = selectedGroup(group)
@@ -149,6 +150,37 @@ func searchSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 func SearchViewConfig(view string, labels cu.SM) (config md.SearchView) {
 	viewMap := map[string]md.SearchView{
 		"transitem_simple": {
+			Title:    labels["quick_search"],
+			Icon:     ct.IconBolt,
+			Simple:   true,
+			ReadOnly: false,
+			LabelAdd: "",
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["trans_code"]},
+				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "customer_name", Label: labels["customer_name"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "amount", Label: labels["item_amount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "trans_type", Label: labels["trans_type"]},
+				{Name: "direction", Label: labels["trans_direction"]},
+			},
+			VisibleColumns: cu.IM{},
+			HideFilters:    cu.IM{},
+			Filters: []any{
+				cu.IM{"or": true, "field": "t.code", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "trans_type", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "direction", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "trans_date", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "customer_name", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "currency_code", "comp": "==", "value": ""},
+			},
+			FilterPlaceholder: strings.Join([]string{
+				labels["trans_code"], labels["trans_date"],
+				labels["customer_name"], labels["currency_code"], labels["trans_type"],
+				labels["trans_direction"],
+			}, ", "),
+		},
+		"invoice_simple": {
 			Title:    labels["quick_search"],
 			Icon:     ct.IconBolt,
 			Simple:   true,
@@ -209,6 +241,7 @@ func SearchViewConfig(view string, labels cu.SM) (config md.SearchView) {
 				{Name: "tax_free", Label: labels["trans_tax_free"], FieldType: ct.TableFieldTypeBool},
 				{Name: "paid", Label: labels["trans_paid"], FieldType: ct.TableFieldTypeBool},
 				{Name: "closed", Label: labels["trans_closed"], FieldType: ct.TableFieldTypeBool},
+				{Name: "deleted", Label: labels["trans_deleted"], FieldType: ct.TableFieldTypeBool},
 				{Name: "tag_lst", Label: labels["trans_tags"]},
 				{Name: "worksheet_distance", Label: labels["trans_worksheet_distance"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "worksheet_repair", Label: labels["trans_worksheet_repair"], FieldType: ct.TableFieldTypeNumber},
@@ -280,6 +313,120 @@ func SearchViewConfig(view string, labels cu.SM) (config md.SearchView) {
 				"amount": true, "deposit": true,
 			},
 			Filters: []any{},
+		},
+		"transpayment_simple": {
+			Title:    labels["quick_search"],
+			Icon:     ct.IconBolt,
+			Simple:   true,
+			ReadOnly: false,
+			LabelAdd: "",
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["trans_code"]},
+				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "place_name", Label: labels["place_name_payment"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "amount", Label: labels["item_amount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "trans_type", Label: labels["trans_type"]},
+				{Name: "direction", Label: labels["trans_direction"]},
+			},
+			VisibleColumns: cu.IM{},
+			HideFilters:    cu.IM{},
+			Filters: []any{
+				cu.IM{"or": true, "field": "t.code", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "trans_type", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "direction", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "trans_date", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "place_name", "comp": "==", "value": ""},
+				cu.IM{"or": true, "field": "p.currency_code", "comp": "==", "value": ""},
+			},
+			FilterPlaceholder: strings.Join([]string{
+				labels["trans_code"], labels["trans_date"],
+				labels["place_name_payment"], labels["currency_code"], labels["trans_type"],
+				labels["trans_direction"],
+			}, ", "),
+		},
+		"transpayment": {
+			Title:    labels["transpayment_view"],
+			Icon:     ct.IconMoney,
+			Simple:   false,
+			ReadOnly: false,
+			LabelAdd: labels["transpayment_new"],
+			Fields: []ct.TableField{
+				{Name: "payment_code", Label: labels["payment_code"]},
+				{Name: "code", Label: labels["trans_code"]},
+				{Name: "trans_type", Label: labels["trans_type"]},
+				{Name: "direction", Label: labels["trans_direction"]},
+				{Name: "status", Label: labels["trans_status"]},
+				{Name: "ref_number", Label: labels["trans_ref_number"]},
+				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "paid_date", Label: labels["payment_paid_date"]},
+				{Name: "place_code", Label: labels["place_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "place_name", Label: labels["place_name_payment"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "amount", Label: labels["payment_amount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "description", Label: labels["payment_notes"]},
+				{Name: "employee_code", Label: labels["employee_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "tag_lst", Label: labels["trans_tags"]},
+				{Name: "trans_state", Label: labels["trans_state"]},
+				{Name: "notes", Label: labels["trans_notes"]},
+				{Name: "internal_notes", Label: labels["trans_internal_notes"]},
+				{Name: "closed", Label: labels["trans_closed"], FieldType: ct.TableFieldTypeBool},
+				{Name: "deleted", Label: labels["trans_deleted"], FieldType: ct.TableFieldTypeBool},
+				{Name: "auth_code", Label: labels["auth_code"]},
+			},
+			VisibleColumns: cu.IM{
+				"code": true, "ref_number": true,
+				"paid_date": true, "place_name": true, "currency_code": true, "amount": true, "description": true,
+			},
+			HideFilters: cu.IM{},
+			Filters:     []any{},
+		},
+		"transpayment_map": {
+			Title:       labels["map_view"],
+			Icon:        ct.IconMoney,
+			Simple:      false,
+			ReadOnly:    true,
+			LabelAdd:    "",
+			HideFilters: cu.IM{},
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "trans_type", Label: labels["trans_type"]},
+				{Name: "direction", Label: labels["trans_direction"]},
+				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "description", Label: labels["map_description"]},
+				{Name: "value", Label: labels["map_value"], FieldType: ct.TableFieldTypeMeta},
+			},
+			VisibleColumns: cu.IM{
+				"code": true, "direction": true, "trans_date": true, "description": true, "value": true,
+			},
+			Filters: []any{},
+		},
+		"transpayment_invoice": {
+			Title:    labels["payment_link_view_bank"],
+			Icon:     ct.IconFileText,
+			Simple:   false,
+			ReadOnly: false,
+			LabelAdd: "",
+			Fields: []ct.TableField{
+				{Name: "payment_code", Label: labels["payment_code"]},
+				{Name: "trans_type", Label: labels["trans_type"]},
+				{Name: "direction", Label: labels["trans_direction"]},
+				{Name: "paid_date", Label: labels["payment_paid_date"]},
+				{Name: "place_name", Label: labels["place_name_payment"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "paid_amount", Label: labels["payment_amount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "paid_rate", Label: labels["payment_rate"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "trans_code", Label: labels["invoice_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "invoice_curr", Label: labels["invoice_curr"]},
+				{Name: "invoice_amount", Label: labels["invoice_amount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "description", Label: labels["payment_notes"]},
+			},
+			VisibleColumns: cu.IM{
+				"payment_code": true, "paid_date": true, "place_name": true, "currency_code": true,
+				"paid_amount": true, "trans_code": true, "description": true,
+			},
+			HideFilters: cu.IM{},
+			Filters:     []any{},
 		},
 		"customer_simple": {
 			Title:    labels["quick_search"],
