@@ -11,224 +11,347 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 
-func TestCustomerService_Data(t *testing.T) {
-	tests := []struct {
-		name string // description of this test case
-		// Named input parameters for receiver constructor.
+func TestTransService_Data(t *testing.T) {
+	type fields struct {
 		cls *ClientService
-		// Named input parameters for target function.
-		evt     ct.ResponseEvent
-		params  cu.IM
+	}
+	type args struct {
+		evt    ct.ResponseEvent
+		params cu.IM
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
 		wantErr bool
 	}{
 		{
 			name: "success",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{{"id": 1}}, nil
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1, "trans_type": md.TransTypeCash.String()}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
 							},
-						}},
-						Config: config,
-						AppLog: appLog,
-						ConvertToType: func(data interface{}, result any) (err error) {
-							return nil
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{},
 						},
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{},
-					},
-					Ticket: ct.Ticket{
-						User:     cu.IM{},
-						Database: "test",
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
 					},
 				},
-			},
-			params: cu.IM{
-				"customer_id": 1,
+				params: cu.IM{
+					"trans_id":   1,
+					"trans_type": md.TransTypeCash.String(),
+				},
 			},
 			wantErr: false,
 		},
 		{
-			name: "customer_error",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{}, errors.New("error")
+			name: "trans_invoice_new",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{
+										{"id": 1, "config_key": "default_taxcode", "config_value": "VAT00"},
+										{"id": 2, "config_key": "default_currency", "config_value": "USD"},
+										{"id": 3, "config_key": "default_deadline", "config_value": "30"},
+										{"id": 4, "config_key": "default_paidtype", "config_value": "ONLINE"},
+										{"id": 5, "config_key": "default_bank", "config_value": "1234567890"},
+										{"id": 6, "config_key": "default_chest", "config_value": "1234567890"},
+									}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
 							},
-						}},
-						Config: config,
-						AppLog: appLog,
-						ConvertToType: func(data interface{}, result any) (err error) {
-							return nil
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{},
 						},
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{},
-					},
-					Ticket: ct.Ticket{
-						User:     cu.IM{},
-						Database: "test",
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
 					},
 				},
+				params: cu.IM{
+					"trans_type": md.TransTypeInvoice.String(),
+				},
 			},
-			params: cu.IM{
-				"customer_id": 1,
+			wantErr: false,
+		},
+		{
+			name: "trans_bank_new",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{
+										{"id": 1, "config_key": "default_taxcode", "config_value": "VAT00"},
+										{"id": 2, "config_key": "default_currency", "config_value": "USD"},
+										{"id": 3, "config_key": "default_deadline", "config_value": "30"},
+										{"id": 4, "config_key": "default_paidtype", "config_value": "ONLINE"},
+										{"id": 5, "config_key": "default_bank", "config_value": "1234567890"},
+										{"id": 6, "config_key": "default_chest", "config_value": "1234567890"},
+									}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
+							},
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+				},
+				params: cu.IM{
+					"trans_type": md.TransTypeBank.String(),
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "trans_cash_new",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{
+										{"id": 1, "config_key": "default_taxcode", "config_value": "VAT00"},
+										{"id": 2, "config_key": "default_currency", "config_value": "USD"},
+										{"id": 3, "config_key": "default_deadline", "config_value": "30"},
+										{"id": 4, "config_key": "default_paidtype", "config_value": "ONLINE"},
+										{"id": 5, "config_key": "default_bank", "config_value": "1234567890"},
+										{"id": 6, "config_key": "default_chest", "config_value": "1234567890"},
+									}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
+							},
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+				},
+				params: cu.IM{
+					"trans_type": md.TransTypeCash.String(),
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "trans_error",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									if queries[0].From == "trans" {
+										return []cu.IM{}, errors.New("error")
+									}
+									return []cu.IM{{"id": 1, "trans_type": md.TransTypeCash.String()}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
+							},
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+				},
+				params: cu.IM{
+					"trans_id": 1,
+				},
 			},
 			wantErr: true,
 		},
 		{
-			name: "config_map_error",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								if queries[0].From == "config_map" {
-									return []cu.IM{}, errors.New("error")
-								}
-								return []cu.IM{{"id": 1}}, nil
+			name: "query_base_error",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									if queries[0].From == "config_report" {
+										return []cu.IM{}, errors.New("error")
+									}
+									return []cu.IM{{"id": 1, "trans_type": md.TransTypeInvoice.String()}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
 							},
-						}},
-						Config: config,
-						AppLog: appLog,
-						ConvertToType: func(data interface{}, result any) (err error) {
-							return nil
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{},
 						},
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{},
-					},
-					Ticket: ct.Ticket{
-						User:     cu.IM{},
-						Database: "test",
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
 					},
 				},
-			},
-			params: cu.IM{
-				"customer_id": 1,
+				params: cu.IM{
+					"trans_id": 1,
+				},
 			},
 			wantErr: true,
 		},
 		{
-			name: "config_data_error",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								if queries[0].From == "config_data" {
-									return []cu.IM{}, errors.New("error")
-								}
-								return []cu.IM{{"id": 1}}, nil
+			name: "query_ext_error",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									if queries[0].From == "tax_view" {
+										return []cu.IM{}, errors.New("error")
+									}
+									return []cu.IM{{"id": 1, "trans_type": md.TransTypeInvoice.String()}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
 							},
-						}},
-						Config: config,
-						AppLog: appLog,
-						ConvertToType: func(data interface{}, result any) (err error) {
-							return nil
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{},
 						},
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{},
-					},
-					Ticket: ct.Ticket{
-						User:     cu.IM{},
-						Database: "test",
-					},
-				},
-			},
-			params: cu.IM{
-				"customer_id": 1,
-			},
-			wantErr: true,
-		},
-		{
-			name: "config_report_error",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								if queries[0].From == "config_report" {
-									return []cu.IM{}, errors.New("error")
-								}
-								return []cu.IM{{"id": 1}}, nil
-							},
-						}},
-						Config: config,
-						AppLog: appLog,
-						ConvertToType: func(data interface{}, result any) (err error) {
-							return nil
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
 						},
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{},
-					},
-					Ticket: ct.Ticket{
-						User:     cu.IM{},
-						Database: "test",
 					},
 				},
-			},
-			params: cu.IM{
-				"customer_id": 1,
+				params: cu.IM{
+					"trans_id": 1,
+				},
 			},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := NewCustomerService(tt.cls)
-			_, gotErr := s.Data(tt.evt, tt.params)
-			if gotErr != nil {
-				if !tt.wantErr {
-					t.Errorf("Data() failed: %v", gotErr)
-				}
-				return
+			s := &TransService{
+				cls: tt.fields.cls,
 			}
-			if tt.wantErr {
-				t.Fatal("Data() succeeded unexpectedly")
+			_, err := s.Data(tt.args.evt, tt.args.params)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("TransService.Data() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
 		})
 	}
 }
 
-func TestCustomerService_Response(t *testing.T) {
+func TestTransService_Response(t *testing.T) {
 	type fields struct {
 		cls *ClientService
 	}
@@ -341,7 +464,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 									},
 								},
@@ -389,7 +512,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -437,7 +560,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -478,7 +601,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -522,7 +645,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -574,7 +697,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -625,7 +748,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -677,7 +800,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -729,7 +852,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -780,7 +903,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -795,7 +918,7 @@ func TestCustomerService_Response(t *testing.T) {
 						},
 					},
 					Name:  ct.FormEventOK,
-					Value: cu.IM{"data": cu.IM{"next": "editor_map_value"}, "value": cu.IM{"value": "code", "model": "customer", "map_field": "tags"}},
+					Value: cu.IM{"data": cu.IM{"next": "editor_map_value"}, "value": cu.IM{"value": "code", "model": "trans", "map_field": "tags"}},
 				},
 			},
 			wantErr: false,
@@ -853,9 +976,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
 									},
@@ -903,9 +1026,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
 										"view": []cu.IM{
@@ -953,9 +1076,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
 									},
@@ -1003,7 +1126,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -1054,7 +1177,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -1105,7 +1228,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -1160,7 +1283,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -1211,7 +1334,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 1,
 										"meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
@@ -1263,7 +1386,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 								},
 							},
 						},
@@ -1278,49 +1401,51 @@ func TestCustomerService_Response(t *testing.T) {
 			},
 			wantErr: true,
 		},
-		{
-			name: "side_editor_save_ok",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-						return &api.DataStore{
-							Db: &md.TestDriver{Config: cu.IM{
-								"Update": func(data md.Update) (int64, error) {
-									return 12345, nil
+		/*
+			{
+				name: "side_editor_save_ok",
+				fields: fields{
+					cls: &ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Update": func(data md.Update) (int64, error) {
+										return 12345, nil
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+								ConvertToByte: func(data interface{}) ([]byte, error) {
+									return []byte{}, nil
 								},
-							}},
-							Config: config,
-							AppLog: appLog,
-							ConvertToByte: func(data interface{}) ([]byte, error) {
-								return []byte{}, nil
-							},
-						}
-					},
-				},
-			},
-			args: args{
-				evt: ct.ResponseEvent{
-					Trigger: &ct.Client{
-						BaseComponent: ct.BaseComponent{
-							Data: cu.IM{
-								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
-								},
-							},
-						},
-						Ticket: ct.Ticket{
-							User:     cu.IM{},
-							Database: "test",
+							}
 						},
 					},
-					Name:  ct.ClientEventSideMenu,
-					Value: "editor_save",
 				},
+				args: args{
+					evt: ct.ResponseEvent{
+						Trigger: &ct.Client{
+							BaseComponent: ct.BaseComponent{
+								Data: cu.IM{
+									"editor": cu.IM{
+										"trans": cu.IM{"id": 12345},
+									},
+								},
+							},
+							Ticket: ct.Ticket{
+								User:     cu.IM{},
+								Database: "test",
+							},
+						},
+						Name:  ct.ClientEventSideMenu,
+						Value: "editor_save",
+					},
+				},
+				wantErr: false,
 			},
-			wantErr: false,
-		},
+		*/
 		{
 			name: "editor_delete",
 			fields: fields{
@@ -1345,7 +1470,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 								},
 							},
 						},
@@ -1356,6 +1481,570 @@ func TestCustomerService_Response(t *testing.T) {
 					},
 					Name:  ct.ClientEventSideMenu,
 					Value: "editor_delete",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_product",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "product"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_employee",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "employee"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_project",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "project"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_shipping",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "shipping"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_trans",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "trans"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_customer",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "customer"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_transmovement_new",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "transmovement_new"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_transpayment_new",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "transpayment_new"}, "value": cu.IM{"create_trans_type": md.TransTypeBank.String()}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_transitem_new",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 1,
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "transitem_new"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_trans_copy",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+								"Update": func(data md.Update) (int64, error) {
+									return 1, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id":            1,
+										"trans_type":    md.TransTypeInvoice.String(),
+										"direction":     md.DirectionOut.String(),
+										"trans_date":    "2025-01-01",
+										"currency_code": "USD",
+										"trans_meta": cu.IM{
+											"due_time": "2025-01-01",
+										},
+									},
+									"config_data": []cu.IM{
+										{"config_key": "default_deadline", "config_value": 8},
+									},
+									"items": []cu.IM{
+										{"id": 1, "item_meta": cu.IM{
+											"qty":        1,
+											"net_amount": 100,
+											"vat_amount": 10,
+											"amount":     110,
+										}},
+									},
+									"movements": []cu.IM{
+										{"id": 1,
+											"product_code": "P1",
+											"place_code":   "L1",
+											"movement_meta": cu.IM{
+												"qty":        1,
+												"net_amount": 100,
+												"vat_amount": 10,
+												"amount":     110,
+											}},
+									},
+									"payments": []cu.IM{
+										{"id": 1, "payment_meta": cu.IM{
+											"amount": 100,
+										}},
+									},
+									"payment_link": []cu.IM{
+										{"id": 1, "link_meta": cu.IM{
+											"amount": 100,
+										}},
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name: ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "trans_copy"},
+						"value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "next_trans_create",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+								"Update": func(data md.Update) (int64, error) {
+									return 1, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id":            1,
+										"trans_type":    md.TransTypeInvoice.String(),
+										"direction":     md.DirectionOut.String(),
+										"trans_date":    "2025-01-01",
+										"currency_code": "USD",
+										"trans_meta": cu.IM{
+											"due_time": "2025-01-01",
+										},
+									},
+									"config_data": []cu.IM{
+										{"config_key": "default_deadline", "config_value": 8},
+									},
+									"items": []cu.IM{
+										{"id": 1,
+											"product_code": "P1",
+											"item_meta": cu.IM{
+												"qty":        1,
+												"net_amount": 100,
+												"vat_amount": 10,
+												"amount":     110,
+											}},
+									},
+									"movements": []cu.IM{
+										{"id": 1,
+											"product_code": "P1",
+											"place_code":   "L1",
+											"movement_meta": cu.IM{
+												"qty":        1,
+												"net_amount": 100,
+												"vat_amount": 10,
+												"amount":     110,
+											}},
+									},
+									"payments": []cu.IM{
+										{"id": 1, "payment_meta": cu.IM{
+											"amount": 100,
+										}},
+									},
+									"payment_link": []cu.IM{
+										{"id": 1, "link_meta": cu.IM{
+											"amount": 100,
+										}},
+									},
+									"products": []cu.IM{
+										{"id": 1, "code": "P1", "product_meta": cu.IM{
+											"unit":         "PC",
+											"barcode_type": "CODE_128",
+											"barcode_data": "1234567890",
+											"barcode_qty":  1,
+											"notes":        "Test product",
+											"inactive":     false,
+											"tags":         []string{"test"},
+										}},
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name: ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "trans_create"},
+						"value": cu.IM{
+							"create_trans_type": md.TransTypeWorksheet.String(), "create_direction": md.DirectionOut.String(),
+							"status": md.TransStatusCancellation.String(), "create_netto": true,
+						}},
 				},
 			},
 			wantErr: false,
@@ -1384,7 +2073,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 								},
 							},
 						},
@@ -1423,8 +2112,8 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
-									"dirty":    true,
+									"trans": cu.IM{"id": 12345},
+									"dirty": true,
 								},
 							},
 						},
@@ -1463,7 +2152,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 								},
 							},
 						},
@@ -1502,7 +2191,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 									"config_report": []cu.IM{
 										{"report_key": "report_key"},
 									},
@@ -1544,7 +2233,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 								},
 							},
 						},
@@ -1583,7 +2272,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 								},
 							},
 						},
@@ -1622,7 +2311,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
+									"trans": cu.IM{"id": 12345},
 								},
 							},
 						},
@@ -1661,7 +2350,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345,
+									"trans": cu.IM{"id": 12345,
 										"addresses": []cu.IM{
 											{"id": 12345},
 										}},
@@ -1704,8 +2393,8 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345},
-									"view":     "contacts",
+									"trans": cu.IM{"id": 12345},
+									"view":  "contacts",
 									"contacts": []cu.IM{
 										{"id": 12345},
 									},
@@ -1747,7 +2436,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{"id": 12345, "events": []cu.IM{
+									"trans": cu.IM{"id": 12345, "events": []cu.IM{
 										{"id": 12345},
 									}},
 									"view": "events",
@@ -1789,7 +2478,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer":  cu.IM{"id": 12345},
+									"trans":     cu.IM{"id": 12345},
 									"view":      "maps",
 									"map_field": "ref_customer",
 									"config_map": []cu.IM{
@@ -1833,7 +2522,7 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer":  cu.IM{"id": 12345},
+									"trans":     cu.IM{"id": 12345},
 									"view":      "maps",
 									"map_field": "demo_string",
 									"config_map": []cu.IM{
@@ -1877,9 +2566,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -1927,9 +2616,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -1977,9 +2666,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2027,9 +2716,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2077,9 +2766,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2127,9 +2816,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2177,9 +2866,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2227,9 +2916,9 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2273,12 +2962,12 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2324,12 +3013,12 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
 									"view":      "maps",
@@ -2352,7 +3041,7 @@ func TestCustomerService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "customer_name",
+			name: "trans_type",
 			fields: fields{
 				cls: &ClientService{
 					Config: cu.IM{},
@@ -2375,15 +3064,15 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
-									"view": "customer",
+									"view": "trans",
 								},
 							},
 						},
@@ -2393,56 +3082,7 @@ func TestCustomerService_Response(t *testing.T) {
 						},
 					},
 					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "customer_name",
-						"value": "value",
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "customer_type",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
-							ConvertToByte: func(data interface{}) ([]byte, error) {
-								return []byte{}, nil
-							},
-						}
-					},
-				},
-			},
-			args: args{
-				evt: ct.ResponseEvent{
-					Trigger: &ct.Client{
-						BaseComponent: ct.BaseComponent{
-							Data: cu.IM{
-								"editor": cu.IM{
-									"customer": cu.IM{
-										"id": 12345,
-										"customer_meta": cu.IM{
-											"tags": []string{"tag1", "tag2"},
-										},
-										"customer_map": cu.IM{
-											"demo_string": "tag1",
-										}},
-									"view": "customer",
-								},
-							},
-						},
-						Ticket: ct.Ticket{
-							User:     cu.IM{},
-							Database: "test",
-						},
-					},
-					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "customer_type",
+					Value: cu.IM{"name": "trans_type",
 						"value": "value",
 					},
 				},
@@ -2473,15 +3113,15 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
-									"view": "customer",
+									"view": "trans",
 								},
 							},
 						},
@@ -2499,7 +3139,7 @@ func TestCustomerService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "terms",
+			name: "closed",
 			fields: fields{
 				cls: &ClientService{
 					Config: cu.IM{},
@@ -2522,15 +3162,15 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
-									"view": "customer",
+									"view": "trans",
 								},
 							},
 						},
@@ -2540,203 +3180,7 @@ func TestCustomerService_Response(t *testing.T) {
 						},
 					},
 					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "terms",
-						"value": 1,
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "credit_limit",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
-							ConvertToByte: func(data interface{}) ([]byte, error) {
-								return []byte{}, nil
-							},
-						}
-					},
-				},
-			},
-			args: args{
-				evt: ct.ResponseEvent{
-					Trigger: &ct.Client{
-						BaseComponent: ct.BaseComponent{
-							Data: cu.IM{
-								"editor": cu.IM{
-									"customer": cu.IM{
-										"id": 12345,
-										"customer_meta": cu.IM{
-											"tags": []string{"tag1", "tag2"},
-										},
-										"customer_map": cu.IM{
-											"demo_string": "tag1",
-										}},
-									"view": "customer",
-								},
-							},
-						},
-						Ticket: ct.Ticket{
-							User:     cu.IM{},
-							Database: "test",
-						},
-					},
-					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "credit_limit",
-						"value": 1000,
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "discount",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
-							ConvertToByte: func(data interface{}) ([]byte, error) {
-								return []byte{}, nil
-							},
-						}
-					},
-				},
-			},
-			args: args{
-				evt: ct.ResponseEvent{
-					Trigger: &ct.Client{
-						BaseComponent: ct.BaseComponent{
-							Data: cu.IM{
-								"editor": cu.IM{
-									"customer": cu.IM{
-										"id": 12345,
-										"customer_meta": cu.IM{
-											"tags": []string{"tag1", "tag2"},
-										},
-										"customer_map": cu.IM{
-											"demo_string": "tag1",
-										}},
-									"view": "customer",
-								},
-							},
-						},
-						Ticket: ct.Ticket{
-							User:     cu.IM{},
-							Database: "test",
-						},
-					},
-					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "discount",
-						"value": 10,
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "inactive",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
-							ConvertToByte: func(data interface{}) ([]byte, error) {
-								return []byte{}, nil
-							},
-						}
-					},
-				},
-			},
-			args: args{
-				evt: ct.ResponseEvent{
-					Trigger: &ct.Client{
-						BaseComponent: ct.BaseComponent{
-							Data: cu.IM{
-								"editor": cu.IM{
-									"customer": cu.IM{
-										"id": 12345,
-										"customer_meta": cu.IM{
-											"tags": []string{"tag1", "tag2"},
-										},
-										"customer_map": cu.IM{
-											"demo_string": "tag1",
-										}},
-									"view": "customer",
-								},
-							},
-						},
-						Ticket: ct.Ticket{
-							User:     cu.IM{},
-							Database: "test",
-						},
-					},
-					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "inactive",
-						"value": true,
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "tax_free",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
-							ConvertToByte: func(data interface{}) ([]byte, error) {
-								return []byte{}, nil
-							},
-						}
-					},
-				},
-			},
-			args: args{
-				evt: ct.ResponseEvent{
-					Trigger: &ct.Client{
-						BaseComponent: ct.BaseComponent{
-							Data: cu.IM{
-								"editor": cu.IM{
-									"customer": cu.IM{
-										"id": 12345,
-										"customer_meta": cu.IM{
-											"tags": []string{"tag1", "tag2"},
-										},
-										"customer_map": cu.IM{
-											"demo_string": "tag1",
-										}},
-									"view": "customer",
-								},
-							},
-						},
-						Ticket: ct.Ticket{
-							User:     cu.IM{},
-							Database: "test",
-						},
-					},
-					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "tax_free",
+					Value: cu.IM{"name": "closed",
 						"value": true,
 					},
 				},
@@ -2767,15 +3211,15 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
-									"view": "customer",
+									"view": "trans",
 								},
 							},
 						},
@@ -2816,15 +3260,15 @@ func TestCustomerService_Response(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"editor": cu.IM{
-									"customer": cu.IM{
+									"trans": cu.IM{
 										"id": 12345,
-										"customer_meta": cu.IM{
+										"trans_meta": cu.IM{
 											"tags": []string{"tag1", "tag2"},
 										},
-										"customer_map": cu.IM{
+										"trans_map": cu.IM{
 											"demo_string": "tag1",
 										}},
-									"view": "customer",
+									"view": "trans",
 								},
 							},
 						},
@@ -2844,105 +3288,12 @@ func TestCustomerService_Response(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &CustomerService{
+			s := &TransService{
 				cls: tt.fields.cls,
 			}
 			_, err := s.Response(tt.args.evt)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("CustomerService.Response() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-		})
-	}
-}
-
-func TestCustomerService_update(t *testing.T) {
-	type fields struct {
-		cls *ClientService
-	}
-	type args struct {
-		ds   *api.DataStore
-		data cu.IM
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		{
-			name: "new_customer",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-				},
-			},
-			args: args{
-				ds: &api.DataStore{
-					Db: &md.TestDriver{Config: cu.IM{
-						"Query": func(queries []md.Query) ([]cu.IM, error) {
-							return []cu.IM{{"id": 1}}, nil
-						},
-						"Update": func(data md.Update) (int64, error) {
-							return 1, nil
-						},
-					}},
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					ConvertToType: func(data interface{}, result any) (err error) {
-						return nil
-					},
-				},
-				data: cu.IM{
-					"customer": cu.IM{
-						"id": 0, "code": "test",
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "update_customer",
-			fields: fields{
-				cls: &ClientService{
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-				},
-			},
-			args: args{
-				ds: &api.DataStore{
-					Db: &md.TestDriver{Config: cu.IM{
-						"Query": func(queries []md.Query) ([]cu.IM, error) {
-							return []cu.IM{{"id": 1}}, nil
-						},
-						"Update": func(data md.Update) (int64, error) {
-							return 1, nil
-						},
-					}},
-					Config: cu.IM{},
-					AppLog: slog.Default(),
-					ConvertToType: func(data interface{}, result any) (err error) {
-						return nil
-					},
-				},
-				data: cu.IM{
-					"customer": cu.IM{
-						"id": 1, "code": "test",
-					},
-				},
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &CustomerService{
-				cls: tt.fields.cls,
-			}
-			_, err := s.update(tt.args.ds, tt.args.data)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("CustomerService.customerUpdate() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TransService.Response() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

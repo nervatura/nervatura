@@ -10,7 +10,9 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
-func employeeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+type EmployeeEditor struct{}
+
+func (e *EmployeeEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var employee cu.IM = cu.ToIM(data["employee"], cu.IM{"employee_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})
 
@@ -101,7 +103,7 @@ func employeeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	}
 }
 
-func employeeEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+func (e *EmployeeEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	var employee cu.IM = cu.ToIM(data["employee"], cu.IM{})
 	employeeMap := cu.ToIM(employee["employee_map"], cu.IM{})
 	event := cu.ToIMA(employee["events"], []cu.IM{})
@@ -135,7 +137,7 @@ func employeeEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
-			Icon:  ct.IconClock,
+			Icon:  ct.IconDatabase,
 			Badge: cu.ToString(int64(len(employeeMap)), "0"),
 		},
 		{
@@ -147,7 +149,7 @@ func employeeEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	}
 }
 
-func employeeRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+func (e *EmployeeEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	if !slices.Contains([]string{"employee", "maps", "address", "contact"}, view) {
 		return []ct.Row{}
 	}
@@ -415,7 +417,7 @@ func employeeRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	}
 }
 
-func employeeTable(view string, labels cu.SM, data cu.IM) []ct.Table {
+func (e *EmployeeEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 	if !slices.Contains([]string{"maps", "events"}, view) {
 		return []ct.Table{}
 	}
@@ -474,7 +476,7 @@ func employeeTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 	return tblMap[view]()
 }
 
-func employeeForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *EmployeeEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := []ct.Row{
 		{

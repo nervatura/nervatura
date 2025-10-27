@@ -669,7 +669,9 @@ func modalTransCreate(labels cu.SM, data cu.IM) (form ct.Form) {
 			},
 		},
 	}
-	if !slices.Contains([]string{md.TransTypeBank.String()}, transType) {
+	if !slices.Contains([]string{
+		md.TransTypeBank.String(), md.TransTypeDelivery.String(), md.TransTypeInventory.String(), md.TransTypeProduction.String(),
+	}, transType) {
 		frm.BodyRows[0].Columns = append(frm.BodyRows[0].Columns,
 			ct.RowColumn{
 				Label: labels["trans_direction"],

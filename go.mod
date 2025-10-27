@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/lib/pq v1.10.9
-	github.com/nervatura/component v1.7.46
+	github.com/nervatura/component v1.7.47
 	golang.org/x/crypto v0.43.0
 	google.golang.org/grpc v1.76.0
 	google.golang.org/protobuf v1.36.10
@@ -24,8 +24,8 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/signintech/gopdf v0.33.0 // indirect
-	golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9 // indirect
-	golang.org/x/net v0.45.0 // indirect
+	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b // indirect
+	golang.org/x/net v0.46.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251007200510-49b9836ed3ff // indirect
@@ -42,5 +42,5 @@ require (
 	github.com/nervatura/report v1.5.1
 	golang.org/x/oauth2 v0.32.0
 	golang.org/x/sync v0.17.0
-	modernc.org/sqlite v1.39.0
+	modernc.org/sqlite v1.39.1
 )

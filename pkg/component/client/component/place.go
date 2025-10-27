@@ -10,7 +10,9 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
-func placeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+type PlaceEditor struct{}
+
+func (e *PlaceEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var place cu.IM = cu.ToIM(data["place"], cu.IM{"place_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})
 
@@ -97,7 +99,7 @@ func placeSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	}
 }
 
-func placeEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+func (e *PlaceEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	var place cu.IM = cu.ToIM(data["place"], cu.IM{})
 	contact := cu.ToIMA(place["contacts"], []cu.IM{})
 	placeMap := cu.ToIM(place["place_map"], cu.IM{})
@@ -121,7 +123,7 @@ func placeEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
-			Icon:  ct.IconHome,
+			Icon:  ct.IconDatabase,
 			Badge: cu.ToString(int64(len(placeMap)), "0"),
 		},
 		{
@@ -133,7 +135,7 @@ func placeEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	}
 }
 
-func placeRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+func (e *PlaceEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	if !slices.Contains([]string{"place", "maps"}, view) {
 		return []ct.Row{}
 	}
@@ -351,7 +353,7 @@ func placeRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	return rows
 }
 
-func placeTable(view string, labels cu.SM, data cu.IM) []ct.Table {
+func (e *PlaceEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 	if !slices.Contains([]string{"contacts", "maps"}, view) {
 		return []ct.Table{}
 	}
@@ -412,7 +414,7 @@ func placeTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 	return tblMap[view]()
 }
 
-func placeForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *PlaceEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := []ct.Row{
 		{

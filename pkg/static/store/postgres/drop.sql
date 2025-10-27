@@ -1,18 +1,23 @@
 DROP VIEW IF EXISTS link_view;
 DROP VIEW IF EXISTS link_map;
 DROP VIEW IF EXISTS link_tags;
-DROP TABLE IF EXISTS link;
 
 DROP VIEW IF EXISTS movement_view;
 DROP VIEW IF EXISTS movement_map;
 DROP VIEW IF EXISTS movement_tags;
-UPDATE movement SET movement_code = NULL;
+DROP VIEW IF EXISTS movement_stock;
+DROP VIEW IF EXISTS movement_inventory;
+DROP VIEW IF EXISTS movement_waybill;
+DROP VIEW IF EXISTS movement_formula;
 DROP TABLE IF EXISTS movement;
 
 DROP VIEW IF EXISTS payment_view;
 DROP VIEW IF EXISTS payment_map;
+DROP VIEW IF EXISTS payment_invoice;
 DROP VIEW IF EXISTS payment_tags;
 DROP TABLE IF EXISTS payment;
+
+DROP TABLE IF EXISTS link;
 
 DROP VIEW IF EXISTS item_view;
 DROP VIEW IF EXISTS item_map;

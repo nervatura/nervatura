@@ -425,7 +425,10 @@ SELECT setval('tool_id_seq', (select max(id) from tool), true);
 
 INSERT INTO trans(id, code, trans_type, trans_date, direction, customer_code, 
   employee_code, project_code, place_code, currency_code, auth_code, trans_meta, trans_map)
-select t.id, CASE WHEN upper(tt.groupvalue) = 'INVENTORY' then 'INE' else substr(upper(tt.groupvalue),1,3)end||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||t.id as code, 
+select t.id, 
+  CASE WHEN upper(tt.groupvalue) = 'INVENTORY' then 'COR'
+  WHEN upper(tt.groupvalue) = 'DELIVERY' and upper(gd.groupvalue) = 'TRANSFER' then 'TRF'
+  else substr(upper(tt.groupvalue),1,3)end||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||t.id as code, 
   ('TRANS_'||upper(tt.groupvalue))::trans_type as trans_type, t.transdate as trans_date,
   ('DIRECTION_'||upper(gd.groupvalue))::direction as direction, c.code as customer_code,
   e.code as employee_code, p.code as project_code, pl.code as place_code, t.curr as currency_code, a.code as auth_code,

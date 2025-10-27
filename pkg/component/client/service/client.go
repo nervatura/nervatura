@@ -20,13 +20,50 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-// ClientService implements the Nervatura Client GUI
+// ClientService implements the Nervatura Client GUI Service.
 type ClientService struct {
 	Config       cu.IM
 	AuthConfigs  map[string]*oauth2.Config
 	AppLog       *slog.Logger
 	Session      *api.SessionService
 	NewDataStore func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore
+	Modules      map[string]func(cls *ClientService) ServiceModule
+	UI           *cp.ClientComponent
+}
+
+// ServiceModule is an interface that defines the methods for a module in the ClientService.
+type ServiceModule interface {
+	// Data is the method that returns the data for the module.
+	Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err error)
+	// Response is the method that returns the response for the module.
+	Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err error)
+}
+
+var moduleMap = map[string]func(cls *ClientService) ServiceModule{
+	"search": func(cls *ClientService) ServiceModule {
+		return NewSearchService(cls)
+	},
+	"customer": func(cls *ClientService) ServiceModule {
+		return NewCustomerService(cls)
+	},
+	"employee": func(cls *ClientService) ServiceModule {
+		return NewEmployeeService(cls)
+	},
+	"place": func(cls *ClientService) ServiceModule {
+		return NewPlaceService(cls)
+	},
+	"product": func(cls *ClientService) ServiceModule {
+		return NewProductService(cls)
+	},
+	"project": func(cls *ClientService) ServiceModule {
+		return NewProjectService(cls)
+	},
+	"tool": func(cls *ClientService) ServiceModule {
+		return NewToolService(cls)
+	},
+	"trans": func(cls *ClientService) ServiceModule {
+		return NewTransService(cls)
+	},
 }
 
 func NewClientService(config cu.IM, appLog *slog.Logger) *ClientService {
@@ -35,6 +72,8 @@ func NewClientService(config cu.IM, appLog *slog.Logger) *ClientService {
 		AppLog:       appLog,
 		Session:      api.NewSession(config, "", cu.ToString(config["NT_SESSION_ALIAS"], "")),
 		NewDataStore: api.NewDataStore,
+		Modules:      moduleMap,
+		UI:           cp.NewClientComponent(),
 	}
 	cls.AuthConfigs = cls.getAuthConfig()
 	return cls
@@ -104,15 +143,15 @@ func (cls *ClientService) GetClient(host, sessionID, eventURL, lang, theme strin
 		//HideMenu:        false,
 		Lang:            lang,
 		Theme:           theme,
-		ClientLabels:    ut.GetLangMessages,
-		ClientMenu:      cp.ClientMenu,
-		ClientSideBar:   cp.ClientSideBar,
-		ClientLogin:     cp.ClientLogin,
-		ClientSearch:    cp.ClientSearch,
-		ClientBrowser:   cp.ClientBrowser,
-		ClientEditor:    cp.ClientEditor,
-		ClientModalForm: cp.ClientModalForm,
-		ClientForm:      cp.ClientForm,
+		ClientLabels:    cls.UI.Labels,
+		ClientMenu:      cls.UI.Menu,
+		ClientSideBar:   cls.UI.SideBar,
+		ClientLogin:     cls.UI.Login,
+		ClientSearch:    cls.UI.Search,
+		ClientBrowser:   cls.UI.Browser,
+		ClientEditor:    cls.UI.Editor,
+		ClientModalForm: cls.UI.ModalForm,
+		ClientForm:      cls.UI.Form,
 	}
 	//cli.SetConfigValue("hide_exit", false)
 	return cli
@@ -125,15 +164,16 @@ func (cls *ClientService) LoadSession(sessionID string) (client *ct.Client, err 
 			client = memClient
 		} else {
 			client.OnResponse = cls.MainResponse
-			client.ClientLabels = ut.GetLangMessages
-			client.ClientMenu = cp.ClientMenu
-			client.ClientSideBar = cp.ClientSideBar
-			client.ClientLogin = cp.ClientLogin
-			client.ClientSearch = cp.ClientSearch
-			client.ClientBrowser = cp.ClientBrowser
-			client.ClientEditor = cp.ClientEditor
-			client.ClientModalForm = cp.ClientModalForm
-			client.ClientForm = cp.ClientForm
+
+			client.ClientLabels = cls.UI.Labels
+			client.ClientMenu = cls.UI.Menu
+			client.ClientSideBar = cls.UI.SideBar
+			client.ClientLogin = cls.UI.Login
+			client.ClientSearch = cls.UI.Search
+			client.ClientBrowser = cls.UI.Browser
+			client.ClientEditor = cls.UI.Editor
+			client.ClientModalForm = cls.UI.ModalForm
+			client.ClientForm = cls.UI.Form
 			_, err = client.Render()
 		}
 	}
@@ -162,74 +202,111 @@ func (cls *ClientService) userLogin(database, username, password string) (user c
 	return user, err
 }
 
-func (cls *ClientService) moduleData(ds *api.DataStore, mKey string, user cu.IM, params cu.IM) (cu.IM, error) {
+func (cls *ClientService) codeName(ds *api.DataStore, code, model string) (name string) {
+	if code != "" {
+		if rows, err := ds.StoreDataQuery(md.Query{
+			Fields: []string{"*"}, From: model,
+			Filters: []md.Filter{
+				{Field: "code", Comp: "==", Value: code},
+			},
+		}, true); err == nil {
+			name = cu.ToString(rows[0][model+"_name"], "")
+		}
+	}
+	return name
+}
+
+/*
+func (cls *ClientService) moduleData(evt ct.ResponseEvent, ds *api.DataStore, mKey string, user cu.IM, params cu.IM) (cu.IM, error) {
 	modelMap := map[string]func() (data cu.IM, err error){
-		"customer": func() (cu.IM, error) {
-			return cls.customerData(ds, user, params)
-		},
-		"product": func() (cu.IM, error) {
-			return cls.productData(ds, user, params)
-		},
-		"tool": func() (cu.IM, error) {
-			return cls.toolData(ds, user, params)
-		},
-		"project": func() (cu.IM, error) {
-			return cls.projectData(ds, user, params)
-		},
-		"employee": func() (cu.IM, error) {
-			return cls.employeeData(ds, user, params)
-		},
-		"setting": func() (cu.IM, error) {
-			return cls.settingData(ds, user, params)
-		},
-		"trans": func() (cu.IM, error) {
-			return cls.transData(ds, user, params)
-		},
-		"place": func() (cu.IM, error) {
-			return cls.placeData(ds, user, params)
-		},
+		/*
+						"customer": func() (cu.IM, error) {
+							//return cls.customerData(ds, user, params)
+							return NewCustomerService(cls).Data(evt, params)
+						},
+
+					"product": func() (cu.IM, error) {
+						return cls.productData(ds, user, params)
+					},
+				"tool": func() (cu.IM, error) {
+					return cls.toolData(ds, user, params)
+				},
+					"project": func() (cu.IM, error) {
+						return cls.projectData(ds, user, params)
+					},
+
+						"employee": func() (cu.IM, error) {
+							return cls.employeeData(ds, user, params)
+						},
+			"setting": func() (cu.IM, error) {
+				return cls.settingData(ds, user, params)
+			},
+					"trans": func() (cu.IM, error) {
+						//return cls.transData(ds, user, params)
+						return NewTransService(cls).Data(evt, params)
+					},
+				"place": func() (cu.IM, error) {
+					return cls.placeData(ds, user, params)
+				},
+
+	}
+	if sm, found := cls.Modules[mKey]; found {
+		return sm(cls).Data(evt, params)
 	}
 	if rm, found := modelMap[mKey]; found {
 		return rm()
 	}
 	return cu.IM{}, nil
 }
+*/
 
+/*
 func (cls *ClientService) moduleResponse(mKey string, evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	modelMap := map[string]func() (re ct.ResponseEvent, err error){
-		"search": func() (re ct.ResponseEvent, err error) {
-			return cls.searchResponse(evt)
-		},
-		"customer": func() (re ct.ResponseEvent, err error) {
-			return cls.customerResponse(evt)
-		},
-		"product": func() (re ct.ResponseEvent, err error) {
-			return cls.productResponse(evt)
-		},
-		"tool": func() (re ct.ResponseEvent, err error) {
-			return cls.toolResponse(evt)
-		},
-		"project": func() (re ct.ResponseEvent, err error) {
-			return cls.projectResponse(evt)
-		},
-		"employee": func() (re ct.ResponseEvent, err error) {
-			return cls.employeeResponse(evt)
-		},
-		"setting": func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponse(evt)
-		},
-		"trans": func() (re ct.ResponseEvent, err error) {
-			return cls.transResponse(evt)
-		},
-		"place": func() (re ct.ResponseEvent, err error) {
-			return cls.placeResponse(evt)
-		},
+
+			"search": func() (re ct.ResponseEvent, err error) {
+				return cls.searchResponse(evt)
+			},
+
+							"customer": func() (re ct.ResponseEvent, err error) {
+								//return cls.customerResponse(evt)
+								return NewCustomerService(cls).Response(evt)
+							},
+
+						"product": func() (re ct.ResponseEvent, err error) {
+							return cls.productResponse(evt)
+						},
+					"tool": func() (re ct.ResponseEvent, err error) {
+						return cls.toolResponse(evt)
+					},
+
+						"project": func() (re ct.ResponseEvent, err error) {
+							return cls.projectResponse(evt)
+						},
+
+							"employee": func() (re ct.ResponseEvent, err error) {
+								return cls.employeeResponse(evt)
+							},
+				"setting": func() (re ct.ResponseEvent, err error) {
+					return cls.settingResponse(evt)
+				},
+						"trans": func() (re ct.ResponseEvent, err error) {
+							return NewTransService(cls).Response(evt)
+						},
+					"place": func() (re ct.ResponseEvent, err error) {
+						return cls.placeResponse(evt)
+					},
+
+	}
+	if sm, found := cls.Modules[mKey]; found {
+		return sm(cls).Response(evt)
 	}
 	if rm, found := modelMap[mKey]; found {
 		return rm()
 	}
 	return evt, nil
 }
+*/
 
 func (cls *ClientService) evtMsg(name, triggerName, value, toastType string, timeout int64) ct.ResponseEvent {
 	return ct.ResponseEvent{
@@ -247,11 +324,11 @@ func (cls *ClientService) evtMsg(name, triggerName, value, toastType string, tim
 	}
 }
 
-func (cls *ClientService) editorCodeSelector(evt ct.ResponseEvent, codeType string, editorData cu.IM,
+func (cls *ClientService) editorCodeSelector(evt ct.ResponseEvent, editor, codeType string, editorData cu.IM,
 	resultUpdate func(params cu.IM) (re ct.ResponseEvent, err error)) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	//ds := cls.getDataStore(client.Ticket.Database)
 
 	values := cu.ToIM(evt.Value, cu.IM{})
 	value := cu.ToString(values["value"], "")
@@ -261,12 +338,23 @@ func (cls *ClientService) editorCodeSelector(evt ct.ResponseEvent, codeType stri
 	}
 
 	if event == ct.SelectorEventSearch {
-		sConf := cp.SearchViewConfig(codeType+"_simple", client.Labels())
+		sConf := cls.UI.SearchConfig.View(codeType+"_simple", client.Labels())
 		filters := client.ToFilters(cu.ToString(value, ""), sConf.Filters)
-		if stateData[codeType+"_selector"], err = cls.searchData(
-			ds, codeType+"_simple", searchQuery[codeType+"_simple"], filters); err != nil {
+		var resultData cu.IM
+		if resultData, err = cls.Modules["search"](cls).Data(evt, cu.IM{
+			"view":    codeType + "_simple",
+			"query":   cls.UI.SearchConfig.Query(codeType+"_simple", cu.IM{"editor": editor}),
+			"filters": filters,
+		}); err != nil {
 			return evt, err
 		}
+		/*
+			if stateData[codeType+"_selector"], err = cls.searchData(
+				ds, codeType+"_simple", searchQuery[codeType+"_simple"](editor), filters); err != nil {
+				return evt, err
+			}
+		*/
+		stateData[codeType+"_selector"] = cu.ToIMA(resultData["result"], []cu.IM{})
 		return resultUpdate(cu.IM{"event": event, "dirty": false})
 	}
 	if slices.Contains([]string{"transitem", "transmovement", "transpayment", "invoice"}, codeType) {
@@ -601,12 +689,12 @@ func (cls *ClientService) setBookmark(evt ct.ResponseEvent) ct.ResponseEvent {
 
 func (cls *ClientService) setEditor(evt ct.ResponseEvent, module string, params cu.IM) ct.ResponseEvent {
 	client := evt.Trigger.(*ct.Client)
-	ds := cls.getDataStore(client.Ticket.Database)
-	user := cu.ToIM(client.Ticket.User, cu.IM{})
-	var moData cu.IM
+	var moData cu.IM = cu.IM{}
 	var err error
-	if moData, err = cls.moduleData(ds, module, user, params); err != nil {
-		return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+	if sm, found := cls.Modules[module]; found {
+		if moData, err = sm(cls).Data(evt, params); err != nil {
+			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+		}
 	}
 	client.SetEditor(module, cu.ToString(params["editor_view"], module), moData)
 	return evt
@@ -616,14 +704,25 @@ func (cls *ClientService) searchEvent(evt ct.ResponseEvent) (re ct.ResponseEvent
 	var err error
 	client := evt.Trigger.(*ct.Client)
 	_, stateKey, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
-	var result []cu.IM
+	//ds := cls.getDataStore(client.Ticket.Database)
+	//var result []cu.IM
 	var filter string = cu.ToString(evt.Value, "")
-	sConf := cp.SearchViewConfig(stateKey, client.Labels())
-	if result, err = cls.searchData(ds, stateKey, searchQuery[stateKey], client.GetSearchFilters(filter, sConf.Filters)); err != nil {
+	sConf := cls.UI.SearchConfig.View(stateKey, client.Labels())
+	var resultData cu.IM
+	if resultData, err = cls.Modules["search"](cls).Data(evt, cu.IM{
+		"view":    stateKey,
+		"query":   cls.UI.SearchConfig.Query(stateKey, cu.IM{"editor": ""}),
+		"filters": client.GetSearchFilters(filter, sConf.Filters),
+	}); err != nil {
 		return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
 	}
-	stateData["rows"] = result
+	stateData["rows"] = cu.ToIMA(resultData["result"], []cu.IM{})
+	/*
+		if result, err = cls.searchData(ds, stateKey, searchQuery[stateKey](""), client.GetSearchFilters(filter, sConf.Filters)); err != nil {
+			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+		}
+	*/
+	//stateData["rows"] = result
 	stateData["filter_value"] = filter
 	client.SetSearch(stateKey, stateData, cu.ToBoolean(stateData["simple"], false))
 	return evt
@@ -694,7 +793,7 @@ func (cls *ClientService) mainResponseLink(evt ct.ResponseEvent, evtData cu.IM) 
 	row := cu.ToIM(evtData["row"], cu.IM{})
 	fieldName := cu.ToString(evtData["fieldname"], "")
 	fieldType := cu.ToString(row["field_type"], "")
-	module := strings.Split(fieldName, "_")[0]
+	module := strings.Split(strings.TrimPrefix(fieldName, "ref_"), "_")[0]
 	rowId := cu.ToString(row[module+"_id"], "")
 	if fieldName == "value" && fieldType == "FIELD_URL" {
 		return cpu.EvtRedirect(evt.Name, evt.TriggerName, cu.ToString(row["value"], ""))
@@ -711,9 +810,9 @@ func (cls *ClientService) mainResponseLink(evt ct.ResponseEvent, evtData cu.IM) 
 	}
 	if strings.HasSuffix(fieldName, "_code") {
 		return cls.setEditor(evt, module, cu.IM{
-			"editor_view": module,
-			fieldName:     cu.ToString(row[fieldName], ""),
-			"session_id":  client.Ticket.SessionID,
+			"editor_view":                         module,
+			strings.TrimPrefix(fieldName, "ref_"): cu.ToString(row[fieldName], ""),
+			"session_id":                          client.Ticket.SessionID,
 		})
 	}
 	if fieldName == "code" {
@@ -790,7 +889,7 @@ func (cls *ClientService) mainResponseModule(evt ct.ResponseEvent) (re ct.Respon
 	return evt
 }
 
-func (cls *ClientService) MainResponseModuleEvent(evt ct.ResponseEvent, nextKey string) (re ct.ResponseEvent) {
+func (cls *ClientService) mainResponseModuleEvent(evt ct.ResponseEvent, nextKey string) (re ct.ResponseEvent) {
 	var err error
 	client := evt.Trigger.(*ct.Client)
 	state, stateKey, stateData := client.GetStateData()
@@ -811,9 +910,16 @@ func (cls *ClientService) MainResponseModuleEvent(evt ct.ResponseEvent, nextKey 
 	if state == "form" {
 		moduleKey = cu.ToString(stateData["key"], "")
 	}
-	if evt, err = cls.moduleResponse(moduleKey, evt); err != nil {
-		return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+	if sm, found := cls.Modules[moduleKey]; found {
+		if evt, err = sm(cls).Response(evt); err != nil {
+			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+		}
 	}
+	/*
+		if evt, err = cls.moduleResponse(moduleKey, evt); err != nil {
+			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
+		}
+	*/
 	return evt
 }
 
@@ -861,12 +967,36 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 
 		ct.TableEventAddItem: func() ct.ResponseEvent {
 			if slices.Contains([]string{"transitem", "transmovement", "transpayment"}, stateKey) {
-				return cls.transCreateModal(evt,
+				return NewTransService(cls).createModal(evt,
 					cu.IM{"state_key": stateKey, "next": stateKey + "_new"})
 			}
-			return cls.setEditor(evt, stateKey, cu.IM{
+			module := stateKey
+			params := cu.IM{
 				"session_id": client.Ticket.SessionID,
-			})
+			}
+			prmMap := map[string]cu.IM{
+				"transmovement_formula": {
+					"module":       "trans",
+					"session_id":   client.Ticket.SessionID,
+					"trans_type":   md.TransTypeFormula.String(),
+					"direction":    md.DirectionTransfer.String(),
+					"editor_title": client.Msg("trans_formula_new"),
+					"editor_icon":  cp.TransTypeIcon("TRANS_FORMULA"),
+				},
+				"transmovement_waybill": {
+					"module":       "trans",
+					"session_id":   client.Ticket.SessionID,
+					"trans_type":   md.TransTypeWaybill.String(),
+					"direction":    md.DirectionOut.String(),
+					"editor_title": client.Msg("trans_waybill_new"),
+					"editor_icon":  cp.TransTypeIcon("TRANS_WAYBILL"),
+				},
+			}
+			if prm, found := prmMap[module]; found {
+				module = cu.ToString(prm["module"], "")
+				params = prm
+			}
+			return cls.setEditor(evt, module, params)
 		},
 
 		ct.BrowserEventEditRow: func() ct.ResponseEvent {
@@ -931,29 +1061,29 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 				return cls.mainResponseBookmark(evt)
 
 			case "trans_new", "transitem_new", "transpayment_new", "transmovement_new":
-				return cls.MainResponseModuleEvent(evt, "trans")
+				return cls.mainResponseModuleEvent(evt, "trans")
 
 			default:
-				return cls.MainResponseModuleEvent(evt, "")
+				return cls.mainResponseModuleEvent(evt, "")
 			}
 		},
 
 		ct.FormEventChange: func() ct.ResponseEvent {
 			values := cu.ToIM(evt.Value, cu.IM{})
 			valueData := cu.ToIM(values["data"], cu.IM{})
-			return cls.MainResponseModuleEvent(evt, cu.ToString(valueData["module"], ""))
+			return cls.mainResponseModuleEvent(evt, cu.ToString(valueData["module"], ""))
 		},
 
 		ct.ClientEventForm: func() ct.ResponseEvent {
-			return cls.MainResponseModuleEvent(evt, "")
+			return cls.mainResponseModuleEvent(evt, "")
 		},
 
 		ct.ClientEventSideMenu: func() ct.ResponseEvent {
-			return cls.MainResponseModuleEvent(evt, "")
+			return cls.mainResponseModuleEvent(evt, "")
 		},
 
 		ct.BrowserEventBookmark: func() ct.ResponseEvent {
-			return cls.MainResponseModuleEvent(evt, "")
+			return cls.mainResponseModuleEvent(evt, "")
 		},
 
 		ct.EditorEventField: func() ct.ResponseEvent {
@@ -965,7 +1095,7 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 			if fieldName == ct.TableEventEditCell && editor == "" {
 				return cls.mainResponseLink(evt, cu.ToIM(evtData["value"], cu.IM{}))
 			}
-			return cls.MainResponseModuleEvent(evt, editor)
+			return cls.mainResponseModuleEvent(evt, editor)
 		},
 
 		ct.LoginEventLogin: func() ct.ResponseEvent {

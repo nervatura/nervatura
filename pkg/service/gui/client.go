@@ -16,7 +16,6 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	cpu "github.com/nervatura/nervatura/v6/pkg/component"
-	cp "github.com/nervatura/nervatura/v6/pkg/component/client/component"
 	cls "github.com/nervatura/nervatura/v6/pkg/component/client/service"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
@@ -288,7 +287,7 @@ func ClientExportBrowser(w http.ResponseWriter, r *http.Request) {
 
 	_, stateKey, stateData := client.GetStateData()
 
-	sConf := cp.SearchViewConfig(stateKey, client.ClientLabels(client.Lang))
+	sConf := cs.UI.SearchConfig.View(stateKey, client.ClientLabels(client.Lang))
 	browserFields := sConf.Fields
 	visibleColumns := client.GetSearchVisibleColumns(ut.ToBoolMap(sConf.VisibleColumns, map[string]bool{}))
 	fileName := fmt.Sprintf("%s.csv", stateKey)

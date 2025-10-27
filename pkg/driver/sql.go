@@ -214,7 +214,7 @@ func initQueryCols(engine string, cols []*sql.ColumnType) ([]interface{}, []stri
 		//println(dbType)
 		values[i] = new(sql.NullString)
 		switch dbType {
-		case "BOOL", "BOOLEAN", "BIT":
+		case "BOOL", "BOOLEAN", "BIT", "TINYINT":
 			values[i] = new(sql.NullBool)
 		case "INTEGER", "SERIAL", "INT", "INT4", "INT8":
 			values[i] = new(sql.NullInt64)

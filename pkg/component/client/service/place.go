@@ -12,7 +12,21 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func (cls *ClientService) placeData(ds *api.DataStore, user, params cu.IM) (data cu.IM, err error) {
+type PlaceService struct {
+	cls *ClientService
+}
+
+func NewPlaceService(cls *ClientService) *PlaceService {
+	return &PlaceService{
+		cls: cls,
+	}
+}
+
+func (s *PlaceService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err error) {
+	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
+	user := cu.ToIM(client.Ticket.User, cu.IM{})
+
 	data = cu.IM{
 		"place": cu.IM{
 			"place_type": md.PlaceType(0),
@@ -76,7 +90,7 @@ func (cls *ClientService) placeData(ds *api.DataStore, user, params cu.IM) (data
 	return data, err
 }
 
-func (cls *ClientService) placeUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *PlaceService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var place md.Place = md.Place{}
 	ut.ConvertToType(data["place"], &place)
 	values := cu.IM{
@@ -108,14 +122,14 @@ func (cls *ClientService) placeUpdate(ds *api.DataStore, data cu.IM) (editor cu.
 	return data, err
 }
 
-func (cls *ClientService) placeDelete(ds *api.DataStore, placeID int64) (err error) {
+func (s *PlaceService) delete(ds *api.DataStore, placeID int64) (err error) {
 	return ds.DataDelete("place", placeID, "")
 }
 
-func (cls *ClientService) placeResponseFormNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *PlaceService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	place := cu.ToIM(stateData["place"], cu.IM{})
 	placeMeta := cu.ToIM(place["place_meta"], cu.IM{})
 	placeMap := cu.ToIM(place["place_map"], cu.IM{})
@@ -142,7 +156,7 @@ func (cls *ClientService) placeResponseFormNext(evt ct.ResponseEvent) (re ct.Res
 		},
 
 		"editor_delete": func() (re ct.ResponseEvent, err error) {
-			if err = cls.placeDelete(ds, cu.ToInteger(place["id"], 0)); err != nil {
+			if err = s.delete(ds, cu.ToInteger(place["id"], 0)); err != nil {
 				return evt, err
 			}
 			client.ResetEditor()
@@ -199,7 +213,7 @@ func (cls *ClientService) placeResponseFormNext(evt ct.ResponseEvent) (re ct.Res
 				Columns:      map[string]bool{},
 				TimeStamp:    md.TimeDateTime{Time: time.Now()},
 			}
-			return cls.addBookmark(evt, bookmark), nil
+			return s.cls.addBookmark(evt, bookmark), nil
 		},
 
 		"editor_map_value": func() (re ct.ResponseEvent, err error) {
@@ -225,7 +239,7 @@ func (cls *ClientService) placeResponseFormNext(evt ct.ResponseEvent) (re ct.Res
 	return evt, err
 }
 
-func (cls *ClientService) placeResponseFormEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *PlaceService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	place := cu.ToIM(stateData["place"], cu.IM{})
@@ -263,7 +277,7 @@ func (cls *ClientService) placeResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 					rows[frmIndex]["tags"] = value
 				},
 			}
-			return cls.editorFormOK(evt, rows, customValues)
+			return s.cls.editorFormOK(evt, rows, customValues)
 		},
 
 		ct.FormEventCancel: func() (re ct.ResponseEvent, err error) {
@@ -283,7 +297,7 @@ func (cls *ClientService) placeResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 			fieldName := cu.ToString(frmValues["name"], "")
 			switch fieldName {
 			case "tags":
-				return cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
+				return s.cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
 			default:
 				frmBaseValues[fieldName] = frmValues["value"]
 				cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
@@ -301,14 +315,14 @@ func (cls *ClientService) placeResponseFormEvent(evt ct.ResponseEvent) (re ct.Re
 	return evt, err
 }
 
-func (cls *ClientService) placeResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *PlaceService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	menuMap := map[string]func() (re ct.ResponseEvent, err error){
 		"editor_save": func() (re ct.ResponseEvent, err error) {
-			if stateData, err = cls.placeUpdate(ds, stateData); err != nil {
+			if stateData, err = s.update(ds, stateData); err != nil {
 				return evt, err
 			}
 			stateData["dirty"] = false
@@ -341,7 +355,7 @@ func (cls *ClientService) placeResponseSideMenu(evt ct.ResponseEvent) (re ct.Res
 		},
 
 		"editor_new": func() (re ct.ResponseEvent, err error) {
-			return cls.setEditor(evt, "place",
+			return s.cls.setEditor(evt, "place",
 				cu.IM{
 					"session_id": client.Ticket.SessionID,
 				}), nil
@@ -370,7 +384,7 @@ func (cls *ClientService) placeResponseSideMenu(evt ct.ResponseEvent) (re ct.Res
 	return evt, err
 }
 
-func (cls *ClientService) placeResponseEditorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *PlaceService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	place := cu.ToIM(stateData["place"], cu.IM{})
@@ -427,7 +441,7 @@ func (cls *ClientService) placeResponseEditorField(evt ct.ResponseEvent) (re ct.
 				client.SetForm(view, cu.MergeIM(typeMap[view](), cu.IM{}), cu.ToInteger(len(rows)-1, 0), false)
 				return evt, nil
 			}
-			return cls.addMapField(evt, placeMap, resultUpdate)
+			return s.cls.addMapField(evt, placeMap, resultUpdate)
 		},
 
 		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
@@ -439,7 +453,7 @@ func (cls *ClientService) placeResponseEditorField(evt ct.ResponseEvent) (re ct.
 		},
 
 		ct.TableEventFormUpdate: func() (re ct.ResponseEvent, err error) {
-			return cls.updateMapField(evt, placeMap, resultUpdate)
+			return s.cls.updateMapField(evt, placeMap, resultUpdate)
 		},
 
 		ct.TableEventFormChange: func() (re ct.ResponseEvent, err error) {
@@ -456,7 +470,7 @@ func (cls *ClientService) placeResponseEditorField(evt ct.ResponseEvent) (re ct.
 		},
 
 		"tags": func() (re ct.ResponseEvent, err error) {
-			return cls.editorTags(evt, placeMeta, resultUpdate)
+			return s.cls.editorTags(evt, placeMeta, resultUpdate)
 		},
 
 		"place_name": func() (re ct.ResponseEvent, err error) {
@@ -516,18 +530,18 @@ func (cls *ClientService) placeResponseEditorField(evt ct.ResponseEvent) (re ct.
 	return evt, nil
 }
 
-func (cls *ClientService) placeResponse(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *PlaceService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	switch evt.Name {
 	case ct.FormEventOK:
-		return cls.placeResponseFormNext(evt)
+		return s.formNext(evt)
 
 	case ct.ClientEventForm:
-		return cls.placeResponseFormEvent(evt)
+		return s.formEvent(evt)
 
 	case ct.ClientEventSideMenu:
-		return cls.placeResponseSideMenu(evt)
+		return s.sideMenu(evt)
 
 	default:
-		return cls.placeResponseEditorField(evt)
+		return s.editorField(evt)
 	}
 }

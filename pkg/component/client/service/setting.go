@@ -12,7 +12,21 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
-func (cls *ClientService) settingData(ds *api.DataStore, user, _ cu.IM) (data cu.IM, err error) {
+type SettingService struct {
+	cls *ClientService
+}
+
+func NewSettingService(cls *ClientService) *SettingService {
+	return &SettingService{
+		cls: cls,
+	}
+}
+
+func (s *SettingService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err error) {
+	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
+	user := cu.ToIM(client.Ticket.User, cu.IM{})
+
 	userConfig := cu.ToIM(user["auth_map"], cu.IM{})
 	data = cu.IM{
 		"setting": cu.IM{
@@ -91,7 +105,7 @@ func (cls *ClientService) settingData(ds *api.DataStore, user, _ cu.IM) (data cu
 	return data, err
 }
 
-func (cls *ClientService) settingUpdate(ds *api.DataStore, user, data cu.IM) (err error) {
+func (s *SettingService) update(ds *api.DataStore, user, data cu.IM) (err error) {
 	values := cu.IM{}
 	config, err := ds.ConvertToByte(data)
 	if err == nil {
@@ -102,7 +116,7 @@ func (cls *ClientService) settingUpdate(ds *api.DataStore, user, data cu.IM) (er
 	return err
 }
 
-func (cls *ClientService) configUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *SettingService) configUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var configData md.Config = md.Config{}
 	ut.ConvertToType(data, &configData)
 	values := cu.IM{
@@ -129,7 +143,7 @@ func (cls *ClientService) configUpdate(ds *api.DataStore, data cu.IM) (editor cu
 	return data, err
 }
 
-func (cls *ClientService) currencyUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *SettingService) currencyUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var currencyData md.Currency = md.Currency{
 		CurrencyMeta: md.CurrencyMeta{
 			Tags: []string{},
@@ -160,10 +174,10 @@ func (cls *ClientService) currencyUpdate(ds *api.DataStore, data cu.IM) (editor 
 	return data, err
 }
 
-func (cls *ClientService) currencyAdd(evt ct.ResponseEvent, code string) (re ct.ResponseEvent, err error) {
+func (s *SettingService) currencyAdd(evt ct.ResponseEvent, code string) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	errorModal := func(msg string) {
 		modal := cu.IM{
@@ -186,7 +200,7 @@ func (cls *ClientService) currencyAdd(evt ct.ResponseEvent, code string) (re ct.
 	}
 
 	var currencyData cu.IM
-	if currencyData, err = cls.currencyUpdate(ds, cu.IM{"code": code}); err == nil {
+	if currencyData, err = s.currencyUpdate(ds, cu.IM{"code": code}); err == nil {
 		currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
 		currencies = append(currencies, currencyData)
 		stateData["currency"] = currencies
@@ -198,7 +212,7 @@ func (cls *ClientService) currencyAdd(evt ct.ResponseEvent, code string) (re ct.
 	return evt, nil
 }
 
-func (cls *ClientService) taxUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *SettingService) taxUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var taxData md.Tax = md.Tax{
 		TaxMeta: md.TaxMeta{
 			Tags: []string{},
@@ -229,10 +243,10 @@ func (cls *ClientService) taxUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM
 	return data, err
 }
 
-func (cls *ClientService) taxAdd(evt ct.ResponseEvent, code string) (re ct.ResponseEvent, err error) {
+func (s *SettingService) taxAdd(evt ct.ResponseEvent, code string) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	errorModal := func(msg string) {
 		modal := cu.IM{
@@ -250,7 +264,7 @@ func (cls *ClientService) taxAdd(evt ct.ResponseEvent, code string) (re ct.Respo
 	}
 
 	var taxData cu.IM
-	if taxData, err = cls.taxUpdate(ds, cu.IM{"code": code}); err == nil {
+	if taxData, err = s.taxUpdate(ds, cu.IM{"code": code}); err == nil {
 		taxes := cu.ToIMA(stateData["tax"], []cu.IM{})
 		taxes = append(taxes, taxData)
 		stateData["tax"] = taxes
@@ -262,7 +276,7 @@ func (cls *ClientService) taxAdd(evt ct.ResponseEvent, code string) (re ct.Respo
 	return evt, nil
 }
 
-func (cls *ClientService) authUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *SettingService) authUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var authData md.Auth = md.Auth{
 		UserGroup: md.UserGroup(md.UserGroupUser),
 		AuthMeta: md.AuthMeta{
@@ -300,10 +314,10 @@ func (cls *ClientService) authUpdate(ds *api.DataStore, data cu.IM) (editor cu.I
 	return data, err
 }
 
-func (cls *ClientService) authAdd(evt ct.ResponseEvent, userName string) (re ct.ResponseEvent, err error) {
+func (s *SettingService) authAdd(evt ct.ResponseEvent, userName string) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	errorModal := func(msg string) {
 		modal := cu.IM{
@@ -321,7 +335,7 @@ func (cls *ClientService) authAdd(evt ct.ResponseEvent, userName string) (re ct.
 	}
 
 	var authData cu.IM
-	if authData, err = cls.authUpdate(ds,
+	if authData, err = s.authUpdate(ds,
 		cu.IM{"user_name": userName, "user_group": md.UserGroupUser.String()}); err == nil {
 		auths := cu.ToIMA(stateData["auth"], []cu.IM{})
 		auths = append(auths, authData)
@@ -334,13 +348,13 @@ func (cls *ClientService) authAdd(evt ct.ResponseEvent, userName string) (re ct.
 	return evt, nil
 }
 
-func (cls *ClientService) settingPassword(ds *api.DataStore, user, data cu.IM) (err error) {
+func (s *SettingService) password(ds *api.DataStore, user, data cu.IM) (err error) {
 	return ds.UserPassword(
 		cu.ToString(user["code"], ""), cu.ToString(data["password"], ""), cu.ToString(data["confirm"], ""),
 	)
 }
 
-func (cls *ClientService) settingResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	state, _, stateData := client.GetStateData()
 	if state != "form" {
@@ -363,7 +377,7 @@ func (cls *ClientService) settingResponseSideMenu(evt ct.ResponseEvent) (re ct.R
 	return evt, err
 }
 
-func (cls *ClientService) settingResponseFormNextTags(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) formNextTags(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 
 	frmValues := cu.ToIM(evt.Value, cu.IM{})
@@ -395,10 +409,10 @@ func (cls *ClientService) settingResponseFormNextTags(evt ct.ResponseEvent) (re 
 	return evt, nil
 }
 
-func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
 	currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
 	taxes := cu.ToIMA(stateData["tax"], []cu.IM{})
@@ -422,11 +436,11 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 
 	nextMap := map[string]func() (re ct.ResponseEvent, err error){
 		"form_add_tag": func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponseFormNextTags(evt)
+			return s.formNextTags(evt)
 		},
 
 		"form_update_shortcut_field": func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponseFormEventChangeShortcutField(evt)
+			return s.formEventChangeShortcutField(evt)
 		},
 
 		"config_delete": func() (re ct.ResponseEvent, err error) {
@@ -467,7 +481,7 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"password_reset": func() (re ct.ResponseEvent, err error) {
-			if err = cls.settingPassword(ds,
+			if err = s.password(ds,
 				cu.IM{"code": cu.ToString(frmData["code"], "")},
 				cu.IM{"password": cu.ToString(frmValue["value"], ""), "confirm": cu.ToString(frmValue["value"], "")}); err == nil {
 				modal := cu.IM{
@@ -494,7 +508,7 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"currency_add": func() (re ct.ResponseEvent, err error) {
-			return cls.currencyAdd(evt, cu.ToString(frmValue["value"], ""))
+			return s.currencyAdd(evt, cu.ToString(frmValue["value"], ""))
 		},
 
 		"tax_delete": func() (re ct.ResponseEvent, err error) {
@@ -511,11 +525,11 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"tax_add": func() (re ct.ResponseEvent, err error) {
-			return cls.taxAdd(evt, cu.ToString(frmValue["value"], ""))
+			return s.taxAdd(evt, cu.ToString(frmValue["value"], ""))
 		},
 
 		"auth_add": func() (re ct.ResponseEvent, err error) {
-			return cls.authAdd(evt, cu.ToString(frmValue["value"], ""))
+			return s.authAdd(evt, cu.ToString(frmValue["value"], ""))
 		},
 	}
 
@@ -525,7 +539,7 @@ func (cls *ClientService) settingResponseFormNext(evt ct.ResponseEvent) (re ct.R
 	return evt, err
 }
 
-func (cls *ClientService) settingResponseFormEventChangeAuth(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) formEventChangeAuth(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 
@@ -540,7 +554,7 @@ func (cls *ClientService) settingResponseFormEventChangeAuth(evt ct.ResponseEven
 
 	switch fieldName {
 	case "tags":
-		return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta"}, evt)
+		return s.cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta"}, evt)
 	case "filter":
 		opt := []ct.SelectOption{}
 		ft := md.AuthFilter(0)
@@ -549,7 +563,7 @@ func (cls *ClientService) settingResponseFormEventChangeAuth(evt ct.ResponseEven
 				Value: ftKey, Text: ftKey,
 			})
 		}
-		return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta",
+		return s.cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "auth_meta",
 			"options": opt, "value": opt[0].Value, "is_null": false, "form_key": "select",
 			"icon": ct.IconFilter, "title": client.Msg("inputbox_new_filter"),
 			"label": client.Msg("inputbox_enter_filter")}, evt)
@@ -583,7 +597,7 @@ func (cls *ClientService) settingResponseFormEventChangeAuth(evt ct.ResponseEven
 	return evt, err
 }
 
-func (cls *ClientService) settingResponseFormEventChangeShortcutField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) formEventChangeShortcutField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 
 	frmValues := cu.ToIM(evt.Value, cu.IM{})
@@ -641,7 +655,7 @@ func (cls *ClientService) settingResponseFormEventChangeShortcutField(evt ct.Res
 	return evt, nil
 }
 
-func (cls *ClientService) settingResponseFormEventChange(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) formEventChange(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 
@@ -657,7 +671,7 @@ func (cls *ClientService) settingResponseFormEventChange(evt ct.ResponseEvent) (
 	case "config_map":
 		switch fieldName {
 		case "tags":
-			return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "data"}, evt)
+			return s.cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "data"}, evt)
 		case "filter":
 			opt := []ct.SelectOption{}
 			ft := md.MapFilter(0)
@@ -666,7 +680,7 @@ func (cls *ClientService) settingResponseFormEventChange(evt ct.ResponseEvent) (
 					Value: ftKey, Text: ftKey,
 				})
 			}
-			return cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "data",
+			return s.cls.editorFormTags(cu.IM{"row_field": fieldName, "meta_name": "data",
 				"options": opt, "value": opt[0].Value, "is_null": false, "form_key": "select",
 				"icon": ct.IconFilter, "title": client.Msg("inputbox_new_filter"),
 				"label": client.Msg("inputbox_enter_filter")}, evt)
@@ -679,23 +693,23 @@ func (cls *ClientService) settingResponseFormEventChange(evt ct.ResponseEvent) (
 	case "shortcut":
 		switch fieldName {
 		case "fields":
-			return cls.settingResponseFormEventChangeShortcutField(evt)
+			return s.formEventChangeShortcutField(evt)
 		default:
 			configMeta[fieldName] = frmValues["value"]
 			client.SetForm(cu.ToString(stateData["view"], ""), configValue, frmIndex, false)
 		}
 
 	case "auth":
-		return cls.settingResponseFormEventChangeAuth(evt)
+		return s.formEventChangeAuth(evt)
 	}
 
 	return evt, err
 }
 
-func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
 	authValues := cu.ToIMA(stateData["auth"], []cu.IM{})
 
@@ -716,7 +730,7 @@ func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.
 			if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
 				return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
 			}); idx > int(-1) {
-				if configValue, err = cls.configUpdate(ds, configValue); err == nil {
+				if configValue, err = s.configUpdate(ds, configValue); err == nil {
 					configValues[idx] = configValue
 					stateData["config_values"] = configValues
 				}
@@ -733,7 +747,7 @@ func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.
 			if idx := slices.IndexFunc(configValues, func(c cu.IM) bool {
 				return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
 			}); idx > int(-1) {
-				if configValue, err = cls.configUpdate(ds, configValue); err == nil {
+				if configValue, err = s.configUpdate(ds, configValue); err == nil {
 					configValues[idx] = configValue
 					stateData["config_values"] = configValues
 				}
@@ -743,7 +757,7 @@ func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.
 			if idx := slices.IndexFunc(authValues, func(c cu.IM) bool {
 				return cu.ToString(c["code"], "") == cu.ToString(configValue["code"], "")
 			}); idx > int(-1) {
-				if configValue, err = cls.authUpdate(ds, configValue); err == nil {
+				if configValue, err = s.authUpdate(ds, configValue); err == nil {
 					authValues[idx] = configValue
 					stateData["auth"] = authValues
 				}
@@ -796,7 +810,7 @@ func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.
 		},
 
 		ct.FormEventChange: func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponseFormEventChange(evt)
+			return s.formEventChange(evt)
 		},
 	}
 
@@ -808,10 +822,10 @@ func (cls *ClientService) settingResponseFormEvent(evt ct.ResponseEvent) (re ct.
 
 }
 
-func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) editorFieldTable(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	view := cu.ToString(stateData["view"], "")
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
 	currencies := cu.ToIMA(stateData["currency"], []cu.IM{})
@@ -831,7 +845,7 @@ func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) 
 				configData := cu.ToIM(configValues[idx]["data"], cu.IM{})
 				configData[fieldName] = row["config_value"]
 				configValues[idx]["data"] = configData
-				if configValues[idx], err = cls.configUpdate(ds, configValues[idx]); err == nil {
+				if configValues[idx], err = s.configUpdate(ds, configValues[idx]); err == nil {
 					stateData["config_values"] = configValues
 				}
 			}
@@ -846,7 +860,7 @@ func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) 
 				currencyMeta["digit"] = cu.ToInteger(row["digit"], 0)
 				currencyMeta["cash_round"] = cu.ToInteger(row["cash_round"], 0)
 				currencies[idx]["currency_meta"] = currencyMeta
-				if currencies[idx], err = cls.currencyUpdate(ds, currencies[idx]); err == nil {
+				if currencies[idx], err = s.currencyUpdate(ds, currencies[idx]); err == nil {
 					stateData["currency"] = currencies
 				}
 			}
@@ -860,7 +874,7 @@ func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) 
 				taxMeta["description"] = row["description"]
 				taxMeta["rate_value"] = cu.ToFloat(row["rate_value"], 0)
 				taxes[idx]["tax_meta"] = taxMeta
-				if taxes[idx], err = cls.taxUpdate(ds, taxes[idx]); err == nil {
+				if taxes[idx], err = s.taxUpdate(ds, taxes[idx]); err == nil {
 					stateData["tax"] = taxes
 				}
 			}
@@ -960,10 +974,10 @@ func (cls *ClientService) settingResponseEditorFieldTable(evt ct.ResponseEvent) 
 	return fieldMap[fieldName]()
 }
 
-func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, stateKey, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	user := client.Ticket.User
 	setting := cu.ToIM(stateData["setting"], cu.IM{})
 	configValues := cu.ToIMA(stateData["config_values"], []cu.IM{})
@@ -976,7 +990,7 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 		setting[fieldName] = value
 		userConfig := cu.ToIM(user["auth_map"], cu.IM{})
 		userConfig[fieldName] = value
-		if err = cls.settingUpdate(ds, user, userConfig); err != nil {
+		if err = s.update(ds, user, userConfig); err != nil {
 			return evt, err
 		}
 		client.Ticket.User["auth_map"] = userConfig
@@ -1025,7 +1039,7 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 			return resultUpdate(true)
 		},
 		"change_password": func() (re ct.ResponseEvent, err error) {
-			if err = cls.settingPassword(ds, user, setting); err != nil {
+			if err = s.password(ds, user, setting); err != nil {
 				return evt, err
 			}
 			setting["password"] = ""
@@ -1033,7 +1047,7 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 			stateData["setting"] = setting
 			stateData["dirty"] = false
 			client.SetEditor(stateKey, cu.ToString(stateData["view"], ""), stateData)
-			return cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("setting_password_ok"), ct.ToastTypeSuccess, 5), nil
+			return s.cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("setting_password_ok"), ct.ToastTypeSuccess, 5), nil
 		},
 		"config_map": func() (re ct.ResponseEvent, err error) {
 			event := cu.ToString(cu.ToIM(evt.Value, cu.IM{})["event"], "")
@@ -1139,19 +1153,19 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 		},
 
 		ct.TableEventRowSelected: func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponseEditorFieldTable(evt)
+			return s.editorFieldTable(evt)
 		},
 
 		ct.TableEventFormUpdate: func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponseEditorFieldTable(evt)
+			return s.editorFieldTable(evt)
 		},
 
 		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponseEditorFieldTable(evt)
+			return s.editorFieldTable(evt)
 		},
 
 		ct.TableEventAddItem: func() (re ct.ResponseEvent, err error) {
-			return cls.settingResponseEditorFieldTable(evt)
+			return s.editorFieldTable(evt)
 		},
 	}
 
@@ -1161,18 +1175,18 @@ func (cls *ClientService) settingResponseEditorField(evt ct.ResponseEvent) (re c
 	return evt, err
 }
 
-func (cls *ClientService) settingResponse(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *SettingService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	switch evt.Name {
 	case ct.FormEventOK:
-		return cls.settingResponseFormNext(evt)
+		return s.formNext(evt)
 
 	case ct.ClientEventForm:
-		return cls.settingResponseFormEvent(evt)
+		return s.formEvent(evt)
 
 	case ct.ClientEventSideMenu:
-		return cls.settingResponseSideMenu(evt)
+		return s.sideMenu(evt)
 
 	default:
-		return cls.settingResponseEditorField(evt)
+		return s.editorField(evt)
 	}
 }

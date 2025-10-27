@@ -1066,7 +1066,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [MOVEMENT_INVENTORY, MOVEMENT_TOOL, MOVEMENT_PLAN, MOVEMENT_HEAD]
+            enum: [MOVEMENT_STOCK, MOVEMENT_TOOL, MOVEMENT_PLAN, MOVEMENT_HEAD]
         - name: trans_code
           in: query
           schema:
@@ -2468,8 +2468,8 @@ paths:
          - VIEW_EMPLOYEE_EVENTS, VIEW_EMPLOYEE_MAP, VIEW_EMPLOYEE_TAGS, VIEW_EMPLOYEE_VIEW, 
          - VIEW_ITEM_MAP, VIEW_ITEM_TAGS, VIEW_ITEM_VIEW, 
          - VIEW_LINK_MAP, VIEW_LINK_TAGS, VIEW_LINK_VIEW, 
-         - VIEW_MOVEMENT_MAP, VIEW_MOVEMENT_TAGS, VIEW_MOVEMENT_VIEW, 
-         - VIEW_PAYMENT_MAP, VIEW_PAYMENT_TAGS, VIEW_PAYMENT_VIEW, 
+         - VIEW_MOVEMENT_MAP, VIEW_MOVEMENT_TAGS, VIEW_MOVEMENT_STOCK, VIEW_MOVEMENT_INVENTORY, VIEW_MOVEMENT_WAYBILL, VIEW_MOVEMENT_FORMULA, VIEW_MOVEMENT_VIEW, 
+         - VIEW_PAYMENT_MAP, VIEW_PAYMENT_INVOICE, VIEW_PAYMENT_TAGS, VIEW_PAYMENT_VIEW, 
          - VIEW_PLACE_CONTACTS, VIEW_PLACE_MAP, VIEW_PLACE_TAGS, VIEW_PLACE_VIEW, 
          - VIEW_PRICE_MAP, VIEW_PRICE_TAGS, VIEW_PRICE_VIEW, 
          - VIEW_PRODUCT_EVENTS, VIEW_PRODUCT_MAP, VIEW_PRODUCT_TAGS, VIEW_PRODUCT_VIEW, 
@@ -3272,7 +3272,7 @@ components:
       properties:
         movement_type:
           type: string
-          enum: [MOVEMENT_INVENTORY, MOVEMENT_TOOL, MOVEMENT_PLAN, MOVEMENT_HEAD]
+          enum: [MOVEMENT_STOCK, MOVEMENT_TOOL, MOVEMENT_PLAN, MOVEMENT_HEAD]
           description: ENUM field for movement type
         shipping_time:
           type: string
@@ -4026,8 +4026,13 @@ components:
             - "VIEW_LINK_VIEW"
             - "VIEW_MOVEMENT_MAP"
             - "VIEW_MOVEMENT_TAGS"
+            - "VIEW_MOVEMENT_STOCK"
+            - "VIEW_MOVEMENT_INVENTORY"
+            - "VIEW_MOVEMENT_WAYBILL"
+            - "VIEW_MOVEMENT_FORMULA"
             - "VIEW_MOVEMENT_VIEW"
             - "VIEW_PAYMENT_MAP"
+            - "VIEW_PAYMENT_INVOICE"
             - "VIEW_PAYMENT_TAGS"
             - "VIEW_PAYMENT_VIEW"
             - "VIEW_PLACE_CONTACTS"

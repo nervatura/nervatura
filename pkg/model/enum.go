@@ -1151,8 +1151,13 @@ const (
 	ViewLinkView
 	ViewMovementMap
 	ViewMovementTags
+	ViewMovementStock
+	ViewMovementInventory
+	ViewMovementWaybill
+	ViewMovementFormula
 	ViewMovementView
 	ViewPaymentMap
+	ViewPaymentInvoice
 	ViewPaymentTags
 	ViewPaymentView
 	ViewPlaceContacts
@@ -1216,8 +1221,13 @@ var viewNameMap = map[string]ViewName{
 	"VIEW_LINK_VIEW":          ViewLinkView,
 	"VIEW_MOVEMENT_MAP":       ViewMovementMap,
 	"VIEW_MOVEMENT_TAGS":      ViewMovementTags,
+	"VIEW_MOVEMENT_STOCK":     ViewMovementStock,
+	"VIEW_MOVEMENT_INVENTORY": ViewMovementInventory,
+	"VIEW_MOVEMENT_WAYBILL":   ViewMovementWaybill,
+	"VIEW_MOVEMENT_FORMULA":   ViewMovementFormula,
 	"VIEW_MOVEMENT_VIEW":      ViewMovementView,
 	"VIEW_PAYMENT_MAP":        ViewPaymentMap,
+	"VIEW_PAYMENT_INVOICE":    ViewPaymentInvoice,
 	"VIEW_PAYMENT_TAGS":       ViewPaymentTags,
 	"VIEW_PAYMENT_VIEW":       ViewPaymentView,
 	"VIEW_PLACE_CONTACTS":     ViewPlaceContacts,

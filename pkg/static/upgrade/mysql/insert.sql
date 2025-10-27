@@ -408,7 +408,10 @@ where t.deleted = 0;
 
 INSERT INTO trans(id, code, trans_type, trans_date, direction, customer_code, 
   employee_code, project_code, place_code, currency_code, auth_code, trans_meta, trans_map)
-select t.id, CASE WHEN upper(tt.groupvalue) = 'INVENTORY' then CONCAT('INE',UNIX_TIMESTAMP(),'N',t.id) else CONCAT(SUBSTR(upper(tt.groupvalue),1,3),UNIX_TIMESTAMP(),'N',t.id) end as code, 
+select t.id, 
+  CASE WHEN upper(tt.groupvalue) = 'INVENTORY' then CONCAT('COR',UNIX_TIMESTAMP(),'N',t.id)
+  WHEN upper(tt.groupvalue) = 'DELIVERY' and upper(gd.groupvalue) = 'TRANSFER' then CONCAT('TRF',UNIX_TIMESTAMP(),'N',t.id) 
+  else CONCAT(SUBSTR(upper(tt.groupvalue),1,3),UNIX_TIMESTAMP(),'N',t.id) end as code, 
   CONCAT('TRANS_',upper(tt.groupvalue)) as trans_type, t.transdate as trans_date,
   CONCAT('DIRECTION_',upper(gd.groupvalue)) as direction, c.code as customer_code,
   e.code as employee_code, p.code as project_code, pl.code as place_code, t.curr as currency_code, a.code as auth_code,

@@ -13,7 +13,21 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func (cls *ClientService) toolData(ds *api.DataStore, user, params cu.IM) (data cu.IM, err error) {
+type ToolService struct {
+	cls *ClientService
+}
+
+func NewToolService(cls *ClientService) *ToolService {
+	return &ToolService{
+		cls: cls,
+	}
+}
+
+func (s *ToolService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err error) {
+	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
+	user := cu.ToIM(client.Ticket.User, cu.IM{})
+
 	data = cu.IM{
 		"tool":          cu.IM{},
 		"config_map":    cu.IM{},
@@ -71,7 +85,7 @@ func (cls *ClientService) toolData(ds *api.DataStore, user, params cu.IM) (data 
 	return data, err
 }
 
-func (cls *ClientService) toolUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *ToolService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var tool md.Tool = md.Tool{}
 	ut.ConvertToType(data["tool"], &tool)
 	values := cu.IM{
@@ -102,14 +116,14 @@ func (cls *ClientService) toolUpdate(ds *api.DataStore, data cu.IM) (editor cu.I
 	return data, err
 }
 
-func (cls *ClientService) toolDelete(ds *api.DataStore, toolID int64) (err error) {
+func (s *ToolService) delete(ds *api.DataStore, toolID int64) (err error) {
 	return ds.DataDelete("tool", toolID, "")
 }
 
-func (cls *ClientService) toolResponseFormNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ToolService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	tool := cu.ToIM(stateData["tool"], cu.IM{})
 	toolMeta := cu.ToIM(tool["tool_meta"], cu.IM{})
 	toolMap := cu.ToIM(tool["tool_map"], cu.IM{})
@@ -136,7 +150,7 @@ func (cls *ClientService) toolResponseFormNext(evt ct.ResponseEvent) (re ct.Resp
 		},
 
 		"editor_delete": func() (re ct.ResponseEvent, err error) {
-			if err = cls.toolDelete(ds, cu.ToInteger(tool["id"], 0)); err != nil {
+			if err = s.delete(ds, cu.ToInteger(tool["id"], 0)); err != nil {
 				return evt, err
 			}
 			client.ResetEditor()
@@ -145,7 +159,7 @@ func (cls *ClientService) toolResponseFormNext(evt ct.ResponseEvent) (re ct.Resp
 
 		"product": func() (re ct.ResponseEvent, err error) {
 			params := cu.ToIM(stateData["params"], cu.IM{})
-			return cls.setEditor(evt, "product", params), nil
+			return s.cls.setEditor(evt, "product", params), nil
 		},
 
 		"editor_add_tag": func() (re ct.ResponseEvent, err error) {
@@ -198,7 +212,7 @@ func (cls *ClientService) toolResponseFormNext(evt ct.ResponseEvent) (re ct.Resp
 				Columns:      map[string]bool{},
 				TimeStamp:    md.TimeDateTime{Time: time.Now()},
 			}
-			return cls.addBookmark(evt, bookmark), nil
+			return s.cls.addBookmark(evt, bookmark), nil
 		},
 
 		"editor_map_value": func() (re ct.ResponseEvent, err error) {
@@ -224,7 +238,7 @@ func (cls *ClientService) toolResponseFormNext(evt ct.ResponseEvent) (re ct.Resp
 	return evt, err
 }
 
-func (cls *ClientService) toolResponseFormEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ToolService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	tool := cu.ToIM(stateData["tool"], cu.IM{})
@@ -262,7 +276,7 @@ func (cls *ClientService) toolResponseFormEvent(evt ct.ResponseEvent) (re ct.Res
 					rows[frmIndex]["tags"] = value
 				},
 			}
-			return cls.editorFormOK(evt, rows, customValues)
+			return s.cls.editorFormOK(evt, rows, customValues)
 		},
 
 		ct.FormEventCancel: func() (re ct.ResponseEvent, err error) {
@@ -282,7 +296,7 @@ func (cls *ClientService) toolResponseFormEvent(evt ct.ResponseEvent) (re ct.Res
 			fieldName := cu.ToString(frmValues["name"], "")
 			switch fieldName {
 			case "tags":
-				return cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
+				return s.cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
 			default:
 				frmBaseValues[fieldName] = frmValues["value"]
 				cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
@@ -300,15 +314,15 @@ func (cls *ClientService) toolResponseFormEvent(evt ct.ResponseEvent) (re ct.Res
 	return evt, err
 }
 
-func (cls *ClientService) toolResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ToolService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	tool := cu.ToIM(stateData["tool"], cu.IM{})
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	menuMap := map[string]func() (re ct.ResponseEvent, err error){
 		"editor_save": func() (re ct.ResponseEvent, err error) {
-			if stateData, err = cls.toolUpdate(ds, stateData); err != nil {
+			if stateData, err = s.update(ds, stateData); err != nil {
 				return evt, err
 			}
 			stateData["dirty"] = false
@@ -341,14 +355,14 @@ func (cls *ClientService) toolResponseSideMenu(evt ct.ResponseEvent) (re ct.Resp
 		},
 
 		"editor_new": func() (re ct.ResponseEvent, err error) {
-			return cls.setEditor(evt, "tool",
+			return s.cls.setEditor(evt, "tool",
 				cu.IM{
 					"session_id": client.Ticket.SessionID,
 				}), nil
 		},
 
 		"editor_report": func() (re ct.ResponseEvent, err error) {
-			return cls.showReportSelector(evt, "TOOL", cu.ToString(tool["code"], ""))
+			return s.cls.showReportSelector(evt, "TOOL", cu.ToString(tool["code"], ""))
 		},
 
 		"editor_bookmark": func() (re ct.ResponseEvent, err error) {
@@ -374,10 +388,10 @@ func (cls *ClientService) toolResponseSideMenu(evt ct.ResponseEvent) (re ct.Resp
 	return evt, err
 }
 
-func (cls *ClientService) toolResponseEditorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ToolService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	tool := cu.ToIM(stateData["tool"], cu.IM{})
 	toolMeta := cu.ToIM(tool["tool_meta"], cu.IM{})
 	toolMap := cu.ToIM(tool["tool_map"], cu.IM{})
@@ -431,7 +445,7 @@ func (cls *ClientService) toolResponseEditorField(evt ct.ResponseEvent) (re ct.R
 				client.SetForm(view, cu.MergeIM(typeMap[view](), cu.IM{}), cu.ToInteger(len(rows)-1, 0), false)
 				return evt, nil
 			}
-			return cls.addMapField(evt, toolMap, resultUpdate)
+			return s.cls.addMapField(evt, toolMap, resultUpdate)
 		},
 
 		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
@@ -443,7 +457,7 @@ func (cls *ClientService) toolResponseEditorField(evt ct.ResponseEvent) (re ct.R
 		},
 
 		ct.TableEventFormUpdate: func() (re ct.ResponseEvent, err error) {
-			return cls.updateMapField(evt, toolMap, resultUpdate)
+			return s.cls.updateMapField(evt, toolMap, resultUpdate)
 		},
 
 		ct.TableEventFormChange: func() (re ct.ResponseEvent, err error) {
@@ -462,14 +476,14 @@ func (cls *ClientService) toolResponseEditorField(evt ct.ResponseEvent) (re ct.R
 		"queue": func() (re ct.ResponseEvent, err error) {
 			modal := cu.ToIM(client.Data["modal"], cu.IM{})
 			modalData := cu.ToIM(modal["data"], cu.IM{})
-			if err = cls.insertPrintQueue(ds, modalData); err == nil {
-				return cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("report_add_queue"), ct.ToastTypeSuccess, 5), nil
+			if err = s.cls.insertPrintQueue(ds, modalData); err == nil {
+				return s.cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("report_add_queue"), ct.ToastTypeSuccess, 5), nil
 			}
 			return evt, err
 		},
 
 		"tags": func() (re ct.ResponseEvent, err error) {
-			return cls.editorTags(evt, toolMeta, resultUpdate)
+			return s.cls.editorTags(evt, toolMeta, resultUpdate)
 		},
 
 		"description": func() (re ct.ResponseEvent, err error) {
@@ -478,7 +492,7 @@ func (cls *ClientService) toolResponseEditorField(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"product_code": func() (re ct.ResponseEvent, err error) {
-			return cls.editorCodeSelector(evt, strings.Split(fieldName, "_")[0], tool, resultUpdate)
+			return s.cls.editorCodeSelector(evt, "tool", strings.Split(fieldName, "_")[0], tool, resultUpdate)
 		},
 
 		"notes": func() (re ct.ResponseEvent, err error) {
@@ -510,18 +524,18 @@ func (cls *ClientService) toolResponseEditorField(evt ct.ResponseEvent) (re ct.R
 	return evt, nil
 }
 
-func (cls *ClientService) toolResponse(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ToolService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	switch evt.Name {
 	case ct.FormEventOK:
-		return cls.toolResponseFormNext(evt)
+		return s.formNext(evt)
 
 	case ct.ClientEventForm:
-		return cls.toolResponseFormEvent(evt)
+		return s.formEvent(evt)
 
 	case ct.ClientEventSideMenu:
-		return cls.toolResponseSideMenu(evt)
+		return s.sideMenu(evt)
 
 	default:
-		return cls.toolResponseEditorField(evt)
+		return s.editorField(evt)
 	}
 }

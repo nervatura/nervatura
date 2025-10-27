@@ -105,7 +105,7 @@ CREATE VIEW config_report AS
   WHERE config_type = 'CONFIG_REPORT';
 
 CREATE VIEW config_data AS
-  SELECT c.code AS config_code, jt.config_key,
+  SELECT ROW_NUMBER() OVER (ORDER BY c.code, jt.config_key) as id, c.code AS config_code, jt.config_key,
     JSON_UNQUOTE(JSON_EXTRACT(c.data, CONCAT('$.', jt.config_key))) AS config_value,
     JSON_TYPE(JSON_EXTRACT(c.data, CONCAT('$.', jt.config_key))) AS config_type
   FROM config c
@@ -157,14 +157,26 @@ CREATE VIEW auth_view AS
   WHERE deleted = false;
 
 CREATE VIEW auth_map AS
-  SELECT tbl.id AS id, code, user_name, user_group, jt.map_key,
+  SELECT tbl.id AS id, tbl.code, user_name, user_group, jt.map_key,
     JSON_UNQUOTE(JSON_EXTRACT(tbl.auth_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.auth_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.auth_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM auth tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.auth_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE TABLE IF NOT EXISTS currency(
@@ -194,14 +206,26 @@ CREATE VIEW currency_view AS
   WHERE deleted = false;
 
 CREATE VIEW currency_map AS
-  SELECT tbl.id AS id, code, currency_meta->>"$.description" AS currency_description,
+  SELECT tbl.id AS id, tbl.code, currency_meta->>"$.description" AS currency_description,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.currency_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.currency_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.currency_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM currency tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.currency_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW currency_tags AS
@@ -314,14 +338,26 @@ CREATE VIEW customer_events AS
   WHERE c.deleted = false;
 
 CREATE VIEW customer_map AS
-  SELECT tbl.id AS id, code, customer_name,
+  SELECT tbl.id AS id, tbl.code, tbl.customer_name,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.customer_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.customer_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.customer_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM customer tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.customer_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW customer_tags AS
@@ -396,15 +432,27 @@ CREATE VIEW employee_events AS
   WHERE c.deleted = false;
 
 CREATE VIEW employee_map AS
-  SELECT tbl.id AS id, code, 
+  SELECT tbl.id AS id, tbl.code, 
     contact->>"$.first_name" AS first_name, contact->>"$.surname" AS surname,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.employee_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.employee_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.employee_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM employee tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.employee_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW employee_tags AS
@@ -482,14 +530,26 @@ CREATE VIEW place_contacts AS
   WHERE c.deleted = false;
 
 CREATE VIEW place_map AS
-  SELECT tbl.id AS id, code, place_name,
+  SELECT tbl.id AS id, tbl.code, place_name,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.place_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.place_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.place_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM place tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.place_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW place_tags AS
@@ -527,15 +587,27 @@ CREATE VIEW tax_view AS
   WHERE deleted = false;
 
 CREATE VIEW tax_map AS
-  SELECT tbl.id AS id, code, 
+  SELECT tbl.id AS id, tbl.code, 
     tax_meta->>"$.description" AS tax_description, tax_meta->>"$.rate_value" AS rate_value,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.tax_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.tax_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.tax_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM tax tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.tax_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW tax_tags AS
@@ -613,14 +685,26 @@ CREATE VIEW product_events AS
   WHERE c.deleted = false;
 
 CREATE VIEW product_map AS
-  SELECT tbl.id AS id, code, product_name,
+  SELECT tbl.id AS id, tbl.code, product_name,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.product_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.product_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.product_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM product tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.product_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW product_tags AS
@@ -734,14 +818,26 @@ CREATE VIEW project_events AS
   WHERE c.deleted = false;
 
 CREATE VIEW project_map AS
-  SELECT tbl.id AS id, code, project_name,
+  SELECT tbl.id AS id, tbl.code, project_name,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.project_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.project_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.project_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM project tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.project_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW project_tags AS
@@ -802,14 +898,26 @@ CREATE VIEW rate_view AS
   WHERE deleted = false;
 
 CREATE VIEW rate_map AS
-  SELECT tbl.id AS id, code,
+  SELECT tbl.id AS id, tbl.code,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.rate_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.rate_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.rate_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM rate tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.rate_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW rate_tags AS
@@ -882,14 +990,26 @@ CREATE VIEW tool_events AS
   WHERE c.deleted = false;
 
 CREATE VIEW tool_map AS
-  SELECT tbl.id AS id, code, description as tool_description,
+  SELECT tbl.id AS id, tbl.code, tbl.description as tool_description,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.tool_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.tool_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.tool_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM tool tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.tool_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW tool_tags AS
@@ -958,14 +1078,26 @@ CREATE VIEW price_view AS
   WHERE deleted = false;
 
 CREATE VIEW price_map AS
-  SELECT tbl.id AS id, code,
+  SELECT tbl.id AS id, tbl.code,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.price_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.price_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.price_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM price tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.price_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW price_tags AS
@@ -1031,7 +1163,9 @@ BEGIN
   IF NEW.code IS NULL THEN
     SET @A = (SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE MAX(id) + 1 END FROM trans);
     IF NEW.trans_type = 'TRANS_INVENTORY' THEN
-      SET NEW.code = CONCAT('INE', UNIX_TIMESTAMP(), 'N', @A);
+      SET NEW.code = CONCAT('COR', UNIX_TIMESTAMP(), 'N', @A);
+    ELSEIF NEW.trans_type = 'TRANS_DELIVERY' AND NEW.direction = 'DIRECTION_TRANSFER' THEN
+      SET NEW.code = CONCAT('TRF', UNIX_TIMESTAMP(), 'N', @A);
     ELSE
       SET NEW.code = CONCAT(SUBSTR(NEW.trans_type, 1, 3), UNIX_TIMESTAMP(), 'N', @A);
     END IF;
@@ -1145,14 +1279,26 @@ CREATE VIEW trans_view AS
     OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
 
 CREATE VIEW trans_map AS
-  SELECT tbl.id AS id, code, trans_type, direction, trans_date,
+  SELECT tbl.id AS id, tbl.code, trans_type, direction, trans_date,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.trans_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.trans_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.trans_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM trans tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.trans_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
     OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
 
@@ -1381,14 +1527,26 @@ CREATE VIEW link_view AS
   WHERE deleted = false;
 
 CREATE VIEW link_map AS
-  SELECT tbl.id AS id, code, link_type_1, link_code_1, link_type_2, link_code_2,
+  SELECT tbl.id AS id, tbl.code, link_type_1, link_code_1, link_type_2, link_code_2,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.link_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.link_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.link_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM link tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.link_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW link_tags AS
@@ -1452,14 +1610,26 @@ CREATE VIEW item_view AS
   WHERE deleted = false;
 
 CREATE VIEW item_map AS
-  SELECT tbl.id AS id, code, trans_code, product_code,
+  SELECT tbl.id AS id, tbl.code, trans_code, product_code,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.item_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.item_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.item_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM item tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.item_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW item_tags AS
@@ -1498,7 +1668,7 @@ CREATE TABLE IF NOT EXISTS movement(
   FOREIGN KEY (item_code) REFERENCES item(code)
     ON UPDATE RESTRICT ON DELETE RESTRICT,
   FOREIGN KEY (movement_code) REFERENCES movement(code)
-    ON UPDATE RESTRICT ON DELETE RESTRICT
+    ON UPDATE RESTRICT ON DELETE SET NULL
 );
 
 CREATE INDEX idx_movement_trans_code ON movement (trans_code);
@@ -1537,14 +1707,26 @@ CREATE VIEW movement_view AS
   WHERE deleted = false;
 
 CREATE VIEW movement_map AS
-  SELECT tbl.id AS id, code, trans_code,
+  SELECT tbl.id AS id, tbl.code, trans_code,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.movement_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.movement_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.movement_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM movement tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.movement_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
 
 CREATE VIEW movement_tags AS
@@ -1554,6 +1736,59 @@ CREATE VIEW movement_tags AS
     tbl.movement_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
   ) AS jt
   WHERE tbl.deleted = false;
+
+CREATE VIEW movement_stock AS
+  SELECT ROW_NUMBER() OVER (ORDER BY pl.place_name, p.product_name) as id,
+    mv.place_code, pl.place_name, mv.product_code, p.product_name, 
+    p.product_meta->>"$.unit" AS unit, movement_meta->>"$.notes" AS batch_no, 
+    SUM(CAST(movement_meta->>"$.qty" AS FLOAT)) AS qty, 
+    MAX(date(mv.shipping_time)) AS posdate
+  FROM movement mv INNER JOIN place pl ON mv.place_code = pl.code
+  INNER JOIN product p ON mv.product_code = p.code
+  WHERE mv.movement_type = 'MOVEMENT_INVENTORY' AND mv.deleted = false AND p.deleted = false AND pl.deleted = false
+  GROUP BY mv.place_code, pl.place_name, mv.product_code, p.product_name, p.product_meta->>"$.unit", movement_meta->>"$.notes"
+  HAVING SUM(CAST(mv.movement_meta->>"$.qty" AS FLOAT)) <> 0
+  ORDER BY pl.place_name, p.product_name;
+
+CREATE VIEW movement_inventory AS
+  SELECT mt.id, mt.code, mt.trans_code, t.trans_type, t.direction, DATE(mt.shipping_time) AS shipping_date,
+    mt.place_code, pl.place_name, mt.product_code, p.product_name,
+    p.product_meta->>"$.unit" AS unit, mt.movement_meta->>"$.notes" AS batch_no, 
+    CAST(mt.movement_meta->>"$.qty" AS FLOAT) AS qty, 
+    it.customer_code, ci.customer_name, 
+    coalesce(i.trans_code,  mr.trans_code, t.trans_code) AS ref_trans_code
+  FROM movement mt INNER JOIN trans t ON mt.trans_code = t.code
+  INNER JOIN place pl ON mt.place_code = pl.code
+  INNER JOIN product p ON mt.product_code = p.code
+  LEFT JOIN item i ON mt.item_code = i.code AND i.deleted = false
+  LEFT JOIN trans it ON i.trans_code = it.code AND it.deleted = false
+  LEFT JOIN customer ci ON it.customer_code = ci.code AND ci.deleted = false
+  LEFT JOIN movement mr ON mt.movement_code = mr.code AND mr.deleted = false
+  WHERE mt.movement_type = 'MOVEMENT_INVENTORY' AND mt.deleted = false AND t.deleted = false AND pl.deleted = false AND p.deleted = false
+  ORDER BY mt.id;
+
+CREATE VIEW movement_waybill AS
+  SELECT mv.id, mv.code, t.code AS trans_code, t.direction, t.trans_code AS ref_trans_code, mv.shipping_time, 
+    mv.tool_code, tl.tool_meta->>"$.serial_number" as serial_number, tl.description,
+    mv.movement_meta->>"$.notes" as mvnotes,
+    t.employee_code, t.customer_code, c.customer_name, 
+    t.trans_meta->>"$.trans_state" as trans_state, trans_meta->>"$.notes" AS notes, 
+    trans_meta->>"$.internal_notes" AS internal_notes, 
+    (trans_meta->>"$.closed" = 'true') AS closed,t.time_stamp
+  FROM trans t INNER JOIN movement mv ON mv.trans_code = t.code
+  INNER JOIN tool tl ON mv.tool_code = tl.code
+  LEFT JOIN customer c ON t.customer_code = c.code
+  WHERE t.trans_type = 'TRANS_WAYBILL' and mv.deleted = false and t.deleted = false;
+
+CREATE VIEW movement_formula AS
+  SELECT mv.id, mv.code, t.code AS trans_code, CASE WHEN mv.movement_type = 'MOVEMENT_HEAD' THEN 'IN' ELSE 'OUT' END as direction, 
+    mv.product_code, p.product_name, p.product_meta->>"$.unit" as unit,
+    CAST(mv.movement_meta->>"$.qty" AS FLOAT) AS qty, mv.movement_meta->>"$.notes" as batch_no,
+    mv.place_code, pl.place_name, (mv.movement_meta->>"$.shared" = 'true') AS shared
+  FROM trans t INNER JOIN movement mv ON mv.trans_code = t.code
+  INNER JOIN product p ON mv.product_code = p.code
+  LEFT JOIN place pl ON mv.place_code = pl.code
+  WHERE t.trans_type = 'TRANS_FORMULA' and mv.deleted = false and t.deleted = false;
 
 CREATE TABLE IF NOT EXISTS payment(
   id INTEGER AUTO_INCREMENT NOT NULL,
@@ -1597,15 +1832,40 @@ CREATE VIEW payment_view AS
   WHERE deleted = false;
 
 CREATE VIEW payment_map AS
-  SELECT tbl.id AS id, code, paid_date, trans_code,
+  SELECT tbl.id AS id, tbl.code, paid_date, trans_code,
     jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.payment_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.payment_map, CONCAT('$.', jt.map_key))) AS map_type
+    JSON_TYPE(JSON_EXTRACT(tbl.payment_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
   FROM payment tbl
   CROSS JOIN JSON_TABLE(
     JSON_KEYS(tbl.payment_map),
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
   WHERE deleted = false;
+
+CREATE VIEW payment_invoice AS
+  SELECT pm.id, pm.code, pm.trans_code, pt.trans_type, pt.direction, pm.paid_date, pl.place_name, pl.currency_code,
+    cast(l.link_meta->>"$.amount" AS FLOAT) AS paid_amount, cast(l.link_meta->>"$.rate" AS FLOAT) AS paid_rate, 
+    it.code AS ref_trans_code, it.currency_code AS invoice_curr,
+    im.amount AS invoice_amount, pm.payment_meta->>"$.notes" AS description
+  FROM link l 
+  INNER JOIN payment pm ON l.link_code_1 = pm.code
+  INNER JOIN trans pt ON pm.trans_code = pt.code INNER JOIN place pl ON pt.place_code = pl.code
+  INNER JOIN trans it ON l.link_code_2 = it.code
+  INNER JOIN(
+    SELECT trans_code, sum(cast(item_meta->>"$.amount" AS FLOAT)) AS amount FROM item GROUP BY trans_code) im ON it.code = im.trans_code
+  WHERE l.link_type_1 = 'LINK_PAYMENT' AND l.link_type_2 = 'LINK_TRANS' AND it.trans_type IN('TRANS_INVOICE','TRANS_RECEIPT');
 
 CREATE VIEW payment_tags AS
   SELECT tbl.id AS id, tbl.code, jt.value as tag

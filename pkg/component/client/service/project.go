@@ -13,7 +13,21 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func (cls *ClientService) projectData(ds *api.DataStore, user, params cu.IM) (data cu.IM, err error) {
+type ProjectService struct {
+	cls *ClientService
+}
+
+func NewProjectService(cls *ClientService) *ProjectService {
+	return &ProjectService{
+		cls: cls,
+	}
+}
+
+func (s *ProjectService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err error) {
+	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
+	user := cu.ToIM(client.Ticket.User, cu.IM{})
+
 	data = cu.IM{
 		"project": cu.IM{
 			"addresses":   []cu.IM{},
@@ -51,7 +65,7 @@ func (cls *ClientService) projectData(ds *api.DataStore, user, params cu.IM) (da
 		if len(projects) > 0 {
 			data["project"] = projects[0]
 			data["editor_title"] = cu.ToString(projects[0]["code"], "")
-			data["customer_name"] = cls.codeName(ds, cu.ToString(projects[0]["customer_code"], ""), "customer")
+			data["customer_name"] = s.cls.codeName(ds, cu.ToString(projects[0]["customer_code"], ""), "customer")
 		}
 	}
 
@@ -83,7 +97,7 @@ func (cls *ClientService) projectData(ds *api.DataStore, user, params cu.IM) (da
 	return data, err
 }
 
-func (cls *ClientService) projectUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *ProjectService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var project md.Project = md.Project{}
 	ut.ConvertToType(data["project"], &project)
 	values := cu.IM{
@@ -119,14 +133,14 @@ func (cls *ClientService) projectUpdate(ds *api.DataStore, data cu.IM) (editor c
 	return data, err
 }
 
-func (cls *ClientService) projectDelete(ds *api.DataStore, projectID int64) (err error) {
+func (s *ProjectService) delete(ds *api.DataStore, projectID int64) (err error) {
 	return ds.DataDelete("project", projectID, "")
 }
 
-func (cls *ClientService) projectResponseFormNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProjectService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	project := cu.ToIM(stateData["project"], cu.IM{})
 	projectMeta := cu.ToIM(project["project_meta"], cu.IM{})
 	projectMap := cu.ToIM(project["project_map"], cu.IM{})
@@ -153,7 +167,7 @@ func (cls *ClientService) projectResponseFormNext(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"editor_delete": func() (re ct.ResponseEvent, err error) {
-			if err = cls.projectDelete(ds, cu.ToInteger(project["id"], 0)); err != nil {
+			if err = s.delete(ds, cu.ToInteger(project["id"], 0)); err != nil {
 				return evt, err
 			}
 			client.ResetEditor()
@@ -162,7 +176,7 @@ func (cls *ClientService) projectResponseFormNext(evt ct.ResponseEvent) (re ct.R
 
 		"customer": func() (re ct.ResponseEvent, err error) {
 			params := cu.ToIM(stateData["params"], cu.IM{})
-			return cls.setEditor(evt, "customer", params), nil
+			return s.cls.setEditor(evt, "customer", params), nil
 		},
 
 		"editor_add_tag": func() (re ct.ResponseEvent, err error) {
@@ -215,7 +229,7 @@ func (cls *ClientService) projectResponseFormNext(evt ct.ResponseEvent) (re ct.R
 				Columns:      map[string]bool{},
 				TimeStamp:    md.TimeDateTime{Time: time.Now()},
 			}
-			return cls.addBookmark(evt, bookmark), nil
+			return s.cls.addBookmark(evt, bookmark), nil
 		},
 
 		"editor_map_value": func() (re ct.ResponseEvent, err error) {
@@ -241,7 +255,7 @@ func (cls *ClientService) projectResponseFormNext(evt ct.ResponseEvent) (re ct.R
 	return evt, err
 }
 
-func (cls *ClientService) projectResponseFormEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProjectService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	project := cu.ToIM(stateData["project"], cu.IM{})
@@ -279,7 +293,7 @@ func (cls *ClientService) projectResponseFormEvent(evt ct.ResponseEvent) (re ct.
 					rows[frmIndex]["tags"] = value
 				},
 			}
-			return cls.editorFormOK(evt, rows, customValues)
+			return s.cls.editorFormOK(evt, rows, customValues)
 		},
 
 		ct.FormEventCancel: func() (re ct.ResponseEvent, err error) {
@@ -299,7 +313,7 @@ func (cls *ClientService) projectResponseFormEvent(evt ct.ResponseEvent) (re ct.
 			fieldName := cu.ToString(frmValues["name"], "")
 			switch fieldName {
 			case "tags":
-				return cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
+				return s.cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
 			default:
 				frmBaseValues[fieldName] = frmValues["value"]
 				cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
@@ -317,15 +331,15 @@ func (cls *ClientService) projectResponseFormEvent(evt ct.ResponseEvent) (re ct.
 	return evt, err
 }
 
-func (cls *ClientService) projectResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProjectService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	project := cu.ToIM(stateData["project"], cu.IM{})
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	menuMap := map[string]func() (re ct.ResponseEvent, err error){
 		"editor_save": func() (re ct.ResponseEvent, err error) {
-			if stateData, err = cls.projectUpdate(ds, stateData); err != nil {
+			if stateData, err = s.update(ds, stateData); err != nil {
 				return evt, err
 			}
 			stateData["dirty"] = false
@@ -358,14 +372,14 @@ func (cls *ClientService) projectResponseSideMenu(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"editor_new": func() (re ct.ResponseEvent, err error) {
-			return cls.setEditor(evt, "project",
+			return s.cls.setEditor(evt, "project",
 				cu.IM{
 					"session_id": client.Ticket.SessionID,
 				}), nil
 		},
 
 		"editor_report": func() (re ct.ResponseEvent, err error) {
-			return cls.showReportSelector(evt, "PROJECT", cu.ToString(project["code"], ""))
+			return s.cls.showReportSelector(evt, "PROJECT", cu.ToString(project["code"], ""))
 		},
 
 		"editor_bookmark": func() (re ct.ResponseEvent, err error) {
@@ -391,10 +405,10 @@ func (cls *ClientService) projectResponseSideMenu(evt ct.ResponseEvent) (re ct.R
 	return evt, err
 }
 
-func (cls *ClientService) projectResponseEditorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProjectService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	project := cu.ToIM(stateData["project"], cu.IM{})
 	projectMeta := cu.ToIM(project["project_meta"], cu.IM{})
 	projectMap := cu.ToIM(project["project_map"], cu.IM{})
@@ -463,7 +477,7 @@ func (cls *ClientService) projectResponseEditorField(evt ct.ResponseEvent) (re c
 				client.SetForm(view, cu.MergeIM(typeMap[view](), cu.IM{}), cu.ToInteger(len(rows)-1, 0), false)
 				return evt, nil
 			}
-			return cls.addMapField(evt, projectMap, resultUpdate)
+			return s.cls.addMapField(evt, projectMap, resultUpdate)
 		},
 
 		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
@@ -475,7 +489,7 @@ func (cls *ClientService) projectResponseEditorField(evt ct.ResponseEvent) (re c
 		},
 
 		ct.TableEventFormUpdate: func() (re ct.ResponseEvent, err error) {
-			return cls.updateMapField(evt, projectMap, resultUpdate)
+			return s.cls.updateMapField(evt, projectMap, resultUpdate)
 		},
 
 		ct.TableEventFormChange: func() (re ct.ResponseEvent, err error) {
@@ -494,14 +508,14 @@ func (cls *ClientService) projectResponseEditorField(evt ct.ResponseEvent) (re c
 		"queue": func() (re ct.ResponseEvent, err error) {
 			modal := cu.ToIM(client.Data["modal"], cu.IM{})
 			modalData := cu.ToIM(modal["data"], cu.IM{})
-			if err = cls.insertPrintQueue(ds, modalData); err == nil {
-				return cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("report_add_queue"), ct.ToastTypeSuccess, 5), nil
+			if err = s.cls.insertPrintQueue(ds, modalData); err == nil {
+				return s.cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("report_add_queue"), ct.ToastTypeSuccess, 5), nil
 			}
 			return evt, err
 		},
 
 		"tags": func() (re ct.ResponseEvent, err error) {
-			return cls.editorTags(evt, projectMeta, resultUpdate)
+			return s.cls.editorTags(evt, projectMeta, resultUpdate)
 		},
 
 		"project_name": func() (re ct.ResponseEvent, err error) {
@@ -510,7 +524,7 @@ func (cls *ClientService) projectResponseEditorField(evt ct.ResponseEvent) (re c
 		},
 
 		"customer_code": func() (re ct.ResponseEvent, err error) {
-			return cls.editorCodeSelector(evt, strings.Split(fieldName, "_")[0], project, resultUpdate)
+			return s.cls.editorCodeSelector(evt, "project", strings.Split(fieldName, "_")[0], project, resultUpdate)
 		},
 
 		"notes": func() (re ct.ResponseEvent, err error) {
@@ -547,18 +561,18 @@ func (cls *ClientService) projectResponseEditorField(evt ct.ResponseEvent) (re c
 	return evt, nil
 }
 
-func (cls *ClientService) projectResponse(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProjectService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	switch evt.Name {
 	case ct.FormEventOK:
-		return cls.projectResponseFormNext(evt)
+		return s.formNext(evt)
 
 	case ct.ClientEventForm:
-		return cls.projectResponseFormEvent(evt)
+		return s.formEvent(evt)
 
 	case ct.ClientEventSideMenu:
-		return cls.projectResponseSideMenu(evt)
+		return s.sideMenu(evt)
 
 	default:
-		return cls.projectResponseEditorField(evt)
+		return s.editorField(evt)
 	}
 }

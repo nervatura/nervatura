@@ -11,6 +11,8 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
+type SettingEditor struct{}
+
 var settingIconMap = map[string]string{
 	"setting":     ct.IconKeyboard,
 	"config_map":  ct.IconDatabase,
@@ -22,7 +24,7 @@ var settingIconMap = map[string]string{
 	"template":    ct.IconBook,
 }
 
-func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+func (e *SettingEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	viewName := cu.ToString(data["view"], "")
 	user := cu.ToIM(data["user"], cu.IM{})
 
@@ -51,7 +53,7 @@ func settingSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	return sb
 }
 
-func settingEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+func (e *SettingEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	viewName := cu.ToString(data["view"], "")
 	return []ct.EditorView{
 		{
@@ -62,7 +64,7 @@ func settingEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	}
 }
 
-func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+func (e *SettingEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	var setting cu.IM = cu.ToIM(data["setting"], cu.IM{})
 	configData := cu.ToIMA(data["config_data"], []cu.IM{})
 	configValues := cu.ToIMA(data["config_values"], []cu.IM{})
@@ -322,7 +324,7 @@ func settingRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	return []ct.Row{}
 }
 
-func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
+func (e *SettingEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 	if !slices.Contains([]string{"config_data", "currency", "tax", "template"}, view) {
 		return []ct.Table{}
 	}
@@ -460,7 +462,7 @@ func settingTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 	return tblMap[view]()
 }
 
-func settingForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *SettingEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := func(updateDisabled, deleteDisabled bool) []ct.Row {
 		rows := []ct.Row{

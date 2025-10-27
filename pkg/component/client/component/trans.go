@@ -11,10 +11,20 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
+type TransEditor struct{}
+
 func TransTypeIcon(transType string) string {
 	switch transType {
 	case md.TransTypeBank.String(), md.TransTypeCash.String():
 		return ct.IconMoney
+	case md.TransTypeWaybill.String():
+		return ct.IconBriefcase
+	case md.TransTypeProduction.String():
+		return ct.IconFlask
+	case md.TransTypeFormula.String():
+		return ct.IconMagic
+	case md.TransTypeDelivery.String(), md.TransTypeInventory.String():
+		return ct.IconTruck
 	}
 	return ct.IconFileText
 }
@@ -34,10 +44,19 @@ func TransIsPayment(transType string) bool {
 	)
 }
 
+func TransIsMovement(transType string) bool {
+	return slices.Contains([]string{
+		md.TransTypeDelivery.String(), md.TransTypeInventory.String(), md.TransTypeWaybill.String(),
+		md.TransTypeProduction.String(), md.TransTypeFormula.String()},
+		transType,
+	)
+}
+
 func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (items []ct.SideBarItem) {
 	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{"trans_meta": cu.IM{}})
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
 	enabled := !stateOptions["newInput"] && !stateOptions["dirty"] && !stateOptions["readonly"]
+	transType := cu.ToString(trans["trans_type"], "")
 
 	items = []ct.SideBarItem{}
 	optionalItems := []func() (bool, func()){
@@ -49,7 +68,7 @@ func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (i
 						&ct.SideBarElement{
 							Name:  "transitem_new",
 							Value: "transitem_new",
-							Label: labels["transitem_new"],
+							Label: labels[strings.ToLower(transType+"_new")],
 							Icon:  ct.IconFileText,
 						})
 				}
@@ -66,7 +85,7 @@ func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (i
 			}
 		},
 		func() (bool, func()) {
-			return cu.ToString(trans["trans_type"], "") != md.TransTypeReceipt.String() &&
+			return transType != md.TransTypeReceipt.String() &&
 					enabled, func() {
 					items = append(items,
 						&ct.SideBarElement{
@@ -78,7 +97,7 @@ func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (i
 				}
 		},
 		func() (bool, func()) {
-			return slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, cu.ToString(trans["trans_type"], "")) &&
+			return slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) &&
 					enabled, func() {
 					items = append(items,
 						&ct.SideBarElement{
@@ -90,7 +109,7 @@ func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (i
 				}
 		},
 		func() (bool, func()) {
-			return slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, cu.ToString(trans["trans_type"], "")) &&
+			return slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) &&
 					cu.ToString(trans["direction"], "") == md.DirectionOut.String() && cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
 					stateOptions["deleted"] && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
 					items = append(items,
@@ -115,6 +134,7 @@ func transSideBarPayment(labels cu.SM, data cu.IM, stateOptions map[string]bool)
 	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{"trans_meta": cu.IM{}})
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
 	enabled := !stateOptions["newInput"] && !stateOptions["dirty"] && !stateOptions["readonly"]
+	transType := cu.ToString(trans["trans_type"], "")
 
 	items = []ct.SideBarItem{}
 	optionalItems := []func() (bool, func()){
@@ -126,7 +146,7 @@ func transSideBarPayment(labels cu.SM, data cu.IM, stateOptions map[string]bool)
 						&ct.SideBarElement{
 							Name:  "transpayment_new",
 							Value: "transpayment_new",
-							Label: labels["transpayment_new"],
+							Label: labels[strings.ToLower(transType+"_new")],
 							Icon:  ct.IconMoney,
 						})
 				}
@@ -143,7 +163,7 @@ func transSideBarPayment(labels cu.SM, data cu.IM, stateOptions map[string]bool)
 			}
 		},
 		func() (bool, func()) {
-			return slices.Contains([]string{md.TransTypeCash.String()}, cu.ToString(trans["trans_type"], "")) &&
+			return slices.Contains([]string{md.TransTypeCash.String()}, transType) &&
 					enabled, func() {
 					items = append(items,
 						&ct.SideBarElement{
@@ -155,9 +175,77 @@ func transSideBarPayment(labels cu.SM, data cu.IM, stateOptions map[string]bool)
 				}
 		},
 		func() (bool, func()) {
-			return slices.Contains([]string{md.TransTypeCash.String()}, cu.ToString(trans["trans_type"], "")) &&
-					cu.ToString(trans["direction"], "") == md.DirectionOut.String() && cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
+			return slices.Contains([]string{md.TransTypeCash.String()}, transType) &&
+					cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
 					stateOptions["deleted"] && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
+					items = append(items,
+						&ct.SideBarElement{
+							Name:  "trans_cancellation",
+							Value: "trans_cancellation",
+							Label: labels["trans_cancellation"],
+							Icon:  ct.IconUndo,
+						})
+				}
+		},
+	}
+	for _, fn := range optionalItems {
+		if ok, fn := fn(); ok {
+			fn()
+		}
+	}
+	return items
+}
+
+func transSideBarMovement(labels cu.SM, data cu.IM, stateOptions map[string]bool) (items []ct.SideBarItem) {
+	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{"trans_meta": cu.IM{}})
+	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
+	enabled := !stateOptions["newInput"] && !stateOptions["dirty"] && !stateOptions["readonly"]
+	transType := cu.ToString(trans["trans_type"], "")
+	direction := cu.ToString(trans["direction"], "")
+	isDelivery := (transType == md.TransTypeDelivery.String() && direction != md.DirectionTransfer.String())
+
+	items = []ct.SideBarItem{}
+	optionalItems := []func() (bool, func()){
+		func() (bool, func()) {
+			return cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
+					enabled && !isDelivery, func() {
+					items = append(items,
+						&ct.SideBarSeparator{},
+						&ct.SideBarElement{
+							Name:  "transmovement_new",
+							Value: "transmovement_new",
+							Label: labels[strings.ToLower(transType+"_new")],
+							Icon:  TransTypeIcon(transType),
+						})
+				}
+		},
+		func() (bool, func()) {
+			return enabled && !isDelivery, func() {
+				items = append(items,
+					&ct.SideBarElement{
+						Name:  "trans_copy",
+						Value: "trans_copy",
+						Label: labels["trans_copy"],
+						Icon:  ct.IconCopy,
+					})
+			}
+		},
+		func() (bool, func()) {
+			return slices.Contains([]string{md.TransTypeProduction.String()}, transType) &&
+					enabled, func() {
+					items = append(items,
+						&ct.SideBarElement{
+							Name:  "load_formula",
+							Value: "load_formula",
+							Label: strings.ToUpper(labels["trans_load_formula"]),
+							Icon:  ct.IconMagic,
+						})
+				}
+		},
+		func() (bool, func()) {
+			return slices.Contains([]string{md.TransTypeDelivery.String(), md.TransTypeInventory.String()}, transType) &&
+					cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
+					enabled && !stateOptions["transCancellations"], func() {
 					items = append(items,
 						&ct.SideBarElement{
 							Name:  "trans_cancellation",
@@ -216,11 +304,12 @@ func transSideBarState(labels cu.SM, data cu.IM, stateOptions map[string]bool) (
 	return sb
 }
 
-func transSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+func (e *TransEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{"trans_meta": cu.IM{}})
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})
 	user := cu.ToIM(data["user"], cu.IM{})
 	transCancellations := cu.ToIMA(data["trans_cancellation"], []cu.IM{})
+	transType := cu.ToString(trans["trans_type"], "")
 
 	stateOptions := map[string]bool{
 		"newInput": (cu.ToInteger(trans["id"], 0) == 0),
@@ -265,6 +354,7 @@ func transSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	}
 
 	if !cu.ToBoolean(trans["deleted"], false) &&
+		!slices.Contains([]string{md.TransTypeDelivery.String(), md.TransTypeInventory.String()}, transType) &&
 		(cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String()) &&
 		!stateOptions["newInput"] && !stateOptions["readonly"] {
 		items = append(items, &ct.SideBarElement{
@@ -275,12 +365,16 @@ func transSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 		})
 	}
 
-	if TransIsItem(cu.ToString(trans["trans_type"], "")) {
+	if TransIsItem(transType) {
 		items = append(items, transSideBarItem(labels, data, stateOptions)...)
 	}
 
-	if TransIsPayment(cu.ToString(trans["trans_type"], "")) {
+	if TransIsPayment(transType) {
 		items = append(items, transSideBarPayment(labels, data, stateOptions)...)
+	}
+
+	if TransIsMovement(transType) {
+		items = append(items, transSideBarMovement(labels, data, stateOptions)...)
 	}
 
 	items = append(items,
@@ -313,22 +407,27 @@ func transSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	return items
 }
 
-func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+func (e *TransEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{})
 	transMap := cu.ToIM(trans["trans_map"], cu.IM{})
 	items := cu.ToIMA(data["items"], []cu.IM{})
 	invoiceItems := cu.ToIMA(data["transitem_invoice"], []cu.IM{})
 	payments := cu.ToIMA(data["payments"], []cu.IM{})
 	paymentLink := cu.ToIMA(data["payment_link"], []cu.IM{})
+	movements := transMovementRows(data)
+	shippingItems := cu.ToIMA(data["transitem_shipping"], []cu.IM{})
+	toolMovement := cu.ToIMA(data["tool_movement"], []cu.IM{})
 
 	newInput := (cu.ToInteger(trans["id"], 0) == 0)
 	transType := cu.ToString(trans["trans_type"], "")
+	direction := strings.TrimPrefix(cu.ToString(trans["direction"], ""), "DIRECTION_")
+	transLabel := cu.ToString(labels[strings.ToLower(transType+"_"+direction)], labels[strings.ToLower(transType)])
 
 	if newInput {
 		return []ct.EditorView{
 			{
 				Key:   "trans",
-				Label: labels[strings.ToLower(transType)],
+				Label: transLabel,
 				Icon:  TransTypeIcon(transType),
 			},
 		}
@@ -336,31 +435,44 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	views = []ct.EditorView{
 		{
 			Key:   "trans",
-			Label: labels[strings.ToLower(transType)],
+			Label: transLabel,
 			Icon:  TransTypeIcon(transType),
 		},
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
-			Icon:  TransTypeIcon(transType),
+			Icon:  ct.IconDatabase,
 			Badge: cu.ToString(int64(len(transMap)), "0"),
 		},
 	}
 	if TransIsItem(transType) {
-		views = append(views, ct.EditorView{
-			Key:   "items",
-			Label: labels["items_view"],
-			Icon:  ct.IconListOl,
-			Badge: cu.ToString(int64(len(items)), "0"),
-		})
+		views = append(views,
+			ct.EditorView{
+				Key:   "items",
+				Label: labels["items_view"],
+				Icon:  ct.IconListOl,
+				Badge: cu.ToString(int64(len(items)), "0"),
+			}, ct.EditorView{
+				Key:   "tool_movement",
+				Label: labels["tool_movement_view"],
+				Icon:  ct.IconBriefcase,
+				Badge: cu.ToString(int64(len(toolMovement)), "0"),
+			})
 	}
 	if slices.Contains([]string{md.TransTypeOrder.String(), md.TransTypeRent.String(), md.TransTypeWorksheet.String()}, transType) {
-		views = append(views, ct.EditorView{
-			Key:   "transitem_invoice",
-			Label: labels["transitem_invoice_view"],
-			Icon:  ct.IconListOl,
-			Badge: cu.ToString(int64(len(invoiceItems)), "0"),
-		})
+		views = append(views,
+			ct.EditorView{
+				Key:   "transitem_invoice",
+				Label: labels["transitem_invoice_view"],
+				Icon:  ct.IconListOl,
+				Badge: cu.ToString(int64(len(invoiceItems)), "0"),
+			},
+			ct.EditorView{
+				Key:   "transitem_shipping",
+				Label: labels["transitem_shipping_view"],
+				Icon:  ct.IconTruck,
+				Badge: cu.ToString(int64(len(shippingItems)), "0"),
+			})
 	}
 	if transType == md.TransTypeBank.String() {
 		views = append(views, ct.EditorView{
@@ -377,6 +489,14 @@ func transEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 			Label: transTypeLabel(labels, transType, "payment_link_view"),
 			Icon:  ct.IconFileText,
 			Badge: cu.ToString(int64(len(paymentLink)), "0"),
+		})
+	}
+	if TransIsMovement(transType) {
+		views = append(views, ct.EditorView{
+			Key:   "movements",
+			Label: labels["movements_view"],
+			Icon:  ct.IconListOl,
+			Badge: cu.ToString(int64(len(movements)), "0"),
 		})
 	}
 	return views
@@ -408,7 +528,9 @@ func transMainHeadRow(trans md.Trans, labels cu.SM, _ cu.IM) (rows []ct.Row) {
 				Value: direction.String(), Text: direction.String(),
 			})
 		}
-		if slices.Contains([]string{md.TransTypeBank.String()}, trans.TransType.String()) {
+		if slices.Contains([]string{
+			md.TransTypeBank.String(), md.TransTypeInventory.String(), md.TransTypeFormula.String(), md.TransTypeProduction.String()}, trans.TransType.String()) ||
+			(trans.TransType == md.TransTypeDelivery && trans.Direction == md.DirectionTransfer) {
 			opt = []ct.SelectOption{{
 				Value: md.DirectionTransfer.String(), Text: md.DirectionTransfer.String(),
 			}}
@@ -656,7 +778,7 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 				},
 			}},
 			{
-				Label: labels["trans_code"],
+				Label: labels["trans_trans_code"],
 				Value: transCodeValue(),
 			},
 		},
@@ -727,7 +849,7 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 				},
 			},
 			{
-				Label: labels["trans_code"],
+				Label: labels["trans_trans_code"],
 				Value: transCodeValue(),
 			},
 		},
@@ -984,7 +1106,7 @@ func transMainPaymentRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Ro
 				Type: ct.FieldTypeSelect, Value: cu.IM{
 					"name":    "place_code",
 					"options": placeOpt(md.PlaceTypeBank),
-					"is_null": false,
+					"is_null": true,
 					"value":   trans.PlaceCode,
 				},
 			}}
@@ -1021,7 +1143,7 @@ func transMainPaymentRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Ro
 						Type: ct.FieldTypeSelect, Value: cu.IM{
 							"name":    "place_code",
 							"options": placeOpt(md.PlaceTypeCash),
-							"is_null": false,
+							"is_null": true,
 							"value":   trans.PlaceCode,
 						},
 					}},
@@ -1049,6 +1171,410 @@ func transMainPaymentRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Ro
 					}},
 			},
 				Full: true, BorderBottom: true})
+	}
+	rows = append(rows, transMainFooterRow(trans, labels, data)...)
+	return rows
+}
+
+func transMainMovementRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	movements := cu.ToIMA(data["movements"], []cu.IM{})
+	newInput := (trans.Id == 0)
+	movementInventory := cu.ToIMA(data["movement_inventory"], []cu.IM{})
+	places := cu.ToIMA(data["places"], []cu.IM{})
+
+	transitemSelectorRows := cu.ToIMA(data["transitem_selector"], []cu.IM{})
+	employeeSelectorRows := cu.ToIMA(data["employee_selector"], []cu.IM{})
+	productSelectorRows := cu.ToIMA(data["product_selector"], []cu.IM{})
+	customerSelectorRows := cu.ToIMA(data["customer_selector"], []cu.IM{})
+	customerName := cu.ToString(data["customer_name"], "")
+
+	refTransCode := func() (refTransCode string) {
+		if len(movementInventory) > 0 {
+			refTransCode = cu.ToString(movementInventory[0]["ref_trans_code"], "")
+		}
+		return refTransCode
+	}
+
+	targetPlaceCode := func() (targetPlaceCode string) {
+		for _, movement := range movements {
+			if cu.ToString(movement["movement_code"], "") != "" || cu.ToInteger(movement["id"], 0) < 0 {
+				targetPlaceCode = cu.ToString(movement["place_code"], "")
+				break
+			}
+		}
+		return targetPlaceCode
+	}
+
+	productionHeadRow := func() (productCode, batchNo string, qty float64) {
+		if idx := slices.IndexFunc(movements, func(movement cu.IM) bool {
+			movementMeta := cu.ToIM(movement["movement_meta"], cu.IM{})
+			return cu.ToBoolean(movementMeta["shared"], false)
+		}); idx > -1 {
+			movementMeta := cu.ToIM(movements[idx]["movement_meta"], cu.IM{})
+			productCode = cu.ToString(movements[idx]["product_code"], "")
+			batchNo = cu.ToString(movementMeta["notes"], "")
+			qty = cu.ToFloat(movementMeta["qty"], 0)
+			return productCode, batchNo, qty
+		}
+		return productCode, batchNo, qty
+	}
+
+	formulaHeadRow := func() (productCode, batchNo string, qty float64) {
+		if idx := slices.IndexFunc(movements, func(movement cu.IM) bool {
+			return cu.ToString(movement["movement_type"], "") == md.MovementTypeHead.String()
+		}); idx > -1 {
+			movementMeta := cu.ToIM(movements[idx]["movement_meta"], cu.IM{})
+			productCode = cu.ToString(movements[idx]["product_code"], "")
+			batchNo = cu.ToString(movementMeta["notes"], "")
+			qty = cu.ToFloat(movementMeta["qty"], 0)
+			return productCode, batchNo, qty
+		}
+		return productCode, batchNo, qty
+	}
+
+	placeOpt := func() (opt []ct.SelectOption) {
+		opt = []ct.SelectOption{}
+		for _, place := range places {
+			if cu.ToString(place["place_type"], "") == md.PlaceTypeWarehouse.String() {
+				opt = append(opt, ct.SelectOption{
+					Value: cu.ToString(place["code"], ""), Text: cu.ToString(place["place_name"], ""),
+				})
+			}
+		}
+		return opt
+	}
+
+	var transitemSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["trans_code"]},
+		{Name: "trans_date", Label: labels["trans_date"]},
+		{Name: "trans_type", Label: labels["trans_type"]},
+		{Name: "direction", Label: labels["trans_direction"]},
+	}
+
+	var customerSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["customer_code"]},
+		{Name: "customer_name", Label: labels["customer_name"]},
+		{Name: "tax_number", Label: labels["customer_tax_number"]},
+	}
+
+	var employeeSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["employee_code"]},
+		{Name: "first_name", Label: labels["contact_first_name"]},
+		{Name: "surname", Label: labels["contact_surname"]},
+		{Name: "status", Label: labels["contact_status"]},
+	}
+
+	var productSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["product_code"]},
+		{Name: "product_name", Label: labels["product_name"]},
+		{Name: "product_type", Label: labels["product_type"]},
+		{Name: "tag_lst", Label: labels["product_tags"]},
+	}
+
+	var rowMap = map[md.TransType]func(){
+		md.TransTypeDelivery: func() {
+			if trans.Direction != md.DirectionTransfer {
+				rows[0].Columns[1] = ct.RowColumn{
+					Label: labels["trans_trans_code"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "trans_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeLink,
+						Value: cu.IM{
+							"name":  "trans_code",
+							"value": refTransCode(),
+						},
+					}}
+				rows[1].Columns[2].Value.Value["disabled"] = true
+				rows[1].Columns = append(rows[1].Columns, ct.RowColumn{
+					Label: labels["place_name_movement"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "place_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelect, Value: cu.IM{
+							"name":     "place_code",
+							"options":  placeOpt(),
+							"is_null":  true,
+							"value":    trans.PlaceCode,
+							"disabled": true,
+						},
+					}})
+				return
+			}
+			rows[1].Columns[0].Value.Value["disabled"] = true
+			rows[1].Columns = append(rows[1].Columns, ct.RowColumn{
+				Label: labels["trans_closed"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "closed_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeBool, Value: cu.IM{
+						"name":  "closed",
+						"value": cu.ToBoolean(trans.TransMeta.Closed, false),
+					},
+				}})
+			rows = append(rows, ct.Row{Columns: []ct.RowColumn{
+				{
+					Label: labels["place_name_movement"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "place_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelect, Value: cu.IM{
+							"name":     "place_code",
+							"options":  placeOpt(),
+							"is_null":  true,
+							"value":    trans.PlaceCode,
+							"disabled": !newInput,
+						},
+					}},
+				{
+					Label: labels["place_name_target"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "target_place_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelect, Value: cu.IM{
+							"name":     "target_place_code",
+							"options":  placeOpt(),
+							"is_null":  true,
+							"value":    targetPlaceCode(),
+							"disabled": len(movements) == 0,
+						},
+					}},
+			}, Full: true, BorderBottom: true})
+		},
+		md.TransTypeInventory: func() {
+			rows[1].Columns[0].Value.Value["disabled"] = true
+			rows[0].Columns = append(rows[0].Columns, ct.RowColumn{
+				Label: labels["place_name_movement"],
+				Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "place_code_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeSelect, Value: cu.IM{
+						"name":    "place_code",
+						"options": placeOpt(),
+						"is_null": true,
+						"value":   trans.PlaceCode,
+					},
+				}})
+			rows[1].Columns = append(rows[1].Columns, ct.RowColumn{
+				Label: labels["trans_closed"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "closed_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeBool, Value: cu.IM{
+						"name":  "closed",
+						"value": cu.ToBoolean(trans.TransMeta.Closed, false),
+					},
+				}})
+		},
+		md.TransTypeWaybill: func() {
+			rows[1].Columns[2] = ct.RowColumn{
+				Label: labels["trans_closed"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "closed_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeBool, Value: cu.IM{
+						"name":  "closed",
+						"value": cu.ToBoolean(trans.TransMeta.Closed, false),
+					},
+				}}
+			rows = append(rows, ct.Row{Columns: []ct.RowColumn{
+				{
+					Label: labels["trans_trans_code"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "trans_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelector, Value: cu.IM{
+							"name":  "transitem_code",
+							"title": labels["view_transitem"],
+							"value": ct.SelectOption{
+								Value: trans.TransCode,
+								Text:  trans.TransCode,
+							},
+							"fields":  transitemSelectorFields,
+							"rows":    transitemSelectorRows,
+							"link":    true,
+							"is_null": true,
+						},
+					},
+				},
+				{
+					Label: labels["customer_name"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "customer_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelector, Value: cu.IM{
+							"name":  "customer_code",
+							"title": labels["view_customer"],
+							"value": ct.SelectOption{
+								Value: trans.CustomerCode,
+								Text:  customerName,
+							},
+							"fields":  customerSelectorFields,
+							"rows":    customerSelectorRows,
+							"link":    true,
+							"is_null": true,
+						},
+					},
+				},
+				{
+					Label: labels["employee_code"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "employee_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelector, Value: cu.IM{
+							"name":  "employee_code",
+							"title": labels["employee_view"],
+							"value": ct.SelectOption{
+								Value: trans.EmployeeCode,
+								Text:  trans.EmployeeCode,
+							},
+							"fields":  employeeSelectorFields,
+							"rows":    employeeSelectorRows,
+							"link":    true,
+							"is_null": true,
+						},
+					},
+				},
+			}, Full: true, BorderBottom: true})
+		},
+		md.TransTypeProduction: func() {
+			rows[1].Columns[0].Value.Value["disabled"] = true
+			rows[0].Columns = append(rows[0].Columns, ct.RowColumn{
+				Label: labels["place_name_movement"],
+				Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "place_code_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeSelect, Value: cu.IM{
+						"name":    "place_code",
+						"options": placeOpt(),
+						"is_null": true,
+						"value":   trans.PlaceCode,
+					},
+				}})
+			rows[1].Columns = append(rows[1].Columns,
+				ct.RowColumn{
+					Label: transTypeLabel(labels, trans.TransType.String(), "trans_due_time"),
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "due_time_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeDate, Value: cu.IM{
+							"name":    "due_time",
+							"is_null": false,
+							"value":   trans.TransMeta.DueTime.String(),
+						},
+					}})
+			productCode, batchNo, qty := productionHeadRow()
+			rows = append(rows, ct.Row{Columns: []ct.RowColumn{
+				{
+					Label: labels["product_code"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "product_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelector, Value: cu.IM{
+							"name":  "movement_product_code",
+							"title": labels["product_view"],
+							"value": ct.SelectOption{
+								Value: productCode,
+								Text:  productCode,
+							},
+							"fields":  productSelectorFields,
+							"rows":    productSelectorRows,
+							"link":    true,
+							"is_null": false,
+						},
+					},
+				},
+				{Label: labels["movement_batchnumber"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "movement_notes_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeString, Value: cu.IM{
+						"name":  "movement_notes",
+						"value": batchNo,
+					},
+				}},
+				{
+					Label: labels["movement_qty"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "movement_qty_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeNumber, Value: cu.IM{
+							"name":  "movement_qty",
+							"value": qty,
+						},
+					}},
+			},
+				Full: true, BorderBottom: true})
+		},
+		md.TransTypeFormula: func() {
+			rows[1].Columns[0].Value.Value["disabled"] = true
+			rows[1].Columns[2] = ct.RowColumn{
+				Label: labels["trans_closed"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "closed_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeBool, Value: cu.IM{
+						"name":  "closed",
+						"value": cu.ToBoolean(trans.TransMeta.Closed, false),
+					},
+				}}
+			productCode, batchNo, qty := formulaHeadRow()
+			rows = append(rows, ct.Row{Columns: []ct.RowColumn{
+				{
+					Label: labels["product_code"], Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "product_code_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeSelector, Value: cu.IM{
+							"name":  "movement_product_code",
+							"title": labels["product_view"],
+							"value": ct.SelectOption{
+								Value: productCode,
+								Text:  productCode,
+							},
+							"fields":  productSelectorFields,
+							"rows":    productSelectorRows,
+							"link":    true,
+							"is_null": false,
+						},
+					},
+				},
+				{Label: labels["movement_batchnumber"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "movement_notes_" + cu.ToString(trans.Id, ""),
+					},
+					Type: ct.FieldTypeString, Value: cu.IM{
+						"name":  "movement_notes",
+						"value": batchNo,
+					},
+				}},
+				{
+					Label: labels["movement_qty"],
+					Value: ct.Field{
+						BaseComponent: ct.BaseComponent{
+							Name: "movement_qty_" + cu.ToString(trans.Id, ""),
+						},
+						Type: ct.FieldTypeNumber, Value: cu.IM{
+							"name":  "movement_qty",
+							"value": qty,
+						},
+					}},
+			},
+				Full: true, BorderBottom: true})
+		},
+	}
+
+	rows = transMainHeadRow(trans, labels, data)
+	if fn, ok := rowMap[trans.TransType]; ok {
+		fn()
 	}
 	rows = append(rows, transMainFooterRow(trans, labels, data)...)
 	return rows
@@ -1164,7 +1690,7 @@ func transRowPaymentTotal(_ string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	}
 }
 
-func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+func (e *TransEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	if !slices.Contains([]string{"trans", "maps", "items", "payments"}, view) {
 		return []ct.Row{}
 	}
@@ -1223,15 +1749,110 @@ func transRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 		return transMainPaymentRow(trans, labels, data)
 	}
 
+	//if TransIsMovement(trans.TransType.String()) {
+	return transMainMovementRow(trans, labels, data)
+	//}
+
+	//return rows
+}
+
+func transMovementRows(data cu.IM) (rows []cu.IM) {
+	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{})
+	transType := cu.ToString(trans["trans_type"], "")
+	direction := cu.ToString(trans["direction"], "")
+	isTransfer := (transType == md.TransTypeDelivery.String() && direction == md.DirectionTransfer.String())
+
+	validMap := map[string]func(movement cu.IM) bool{
+		md.TransTypeDelivery.String(): func(movement cu.IM) bool {
+			return (isTransfer && cu.ToString(movement["movement_code"], "") != "") || !isTransfer || cu.ToInteger(movement["id"], 0) < 0
+		},
+		md.TransTypeInventory.String(): func(movement cu.IM) bool {
+			return true
+		},
+		md.TransTypeProduction.String(): func(movement cu.IM) bool {
+			movementMeta := cu.ToIM(movement["movement_meta"], cu.IM{})
+			return !cu.ToBoolean(movementMeta["shared"], false) || cu.ToInteger(movement["id"], 0) < 0
+		},
+		md.TransTypeWaybill.String(): func(movement cu.IM) bool {
+			return true
+		},
+		md.TransTypeFormula.String(): func(movement cu.IM) bool {
+			return cu.ToString(movement["movement_type"], "") != md.MovementTypeHead.String() || cu.ToInteger(movement["id"], 0) < 0
+		},
+	}
+
+	viewMap := cu.SM{
+		md.TransTypeDelivery.String():   "movement_inventory",
+		md.TransTypeInventory.String():  "movement_inventory",
+		md.TransTypeProduction.String(): "movement_inventory",
+		md.TransTypeWaybill.String():    "movement_waybill",
+		md.TransTypeFormula.String():    "movement_formula",
+	}
+
+	rows = []cu.IM{}
+	movements := cu.ToIMA(data["movements"], []cu.IM{})
+	for idx, movement := range movements {
+		if validMap[transType](movement) {
+			movementMeta := cu.ToIM(movement["movement_meta"], cu.IM{})
+			row := cu.IM{
+				"id":               movement["id"],
+				"index":            idx,
+				"trans_type":       transType,
+				"code":             movement["code"],
+				"shipping_time":    movement["shipping_time"],
+				"movement_type":    movement["movement_type"],
+				"product_code":     movement["product_code"],
+				"product_name":     movement["product_name"],
+				"product_unit":     movement["product_unit"],
+				"tool_code":        movement["tool_code"],
+				"tool_description": movement["tool_description"],
+				"serial_number":    movement["serial_number"],
+				"place_code":       movement["place_code"],
+				"item_code":        movement["item_code"],
+				"movement_code":    movement["movement_code"],
+				"qty":              movementMeta["qty"],
+				"notes":            movementMeta["notes"],
+				"shared":           movementMeta["shared"],
+				"tags":             movementMeta["tags"],
+				"movement_meta":    movement["movement_meta"],
+				"movement_map":     movement["movement_map"],
+				"editor":           "trans",
+			}
+			if row["movement_code"] != "" {
+				if idx := slices.IndexFunc(movements, func(refMovement cu.IM) bool {
+					return cu.ToString(refMovement["code"], "") == cu.ToString(row["movement_code"], "")
+				}); idx > -1 {
+					row["ref_index"] = idx
+					row["ref_id"] = cu.ToInteger(movements[idx]["id"], 0)
+				}
+			}
+			if view, ok := viewMap[transType]; ok {
+				inventories := cu.ToIMA(data[view], []cu.IM{})
+				if idx := slices.IndexFunc(inventories, func(inventory cu.IM) bool {
+					return cu.ToString(inventory["code"], "") == cu.ToString(movement["code"], "")
+				}); idx > -1 {
+					row["product_name"] = cu.ToString(movement["product_name"], cu.ToString(inventories[idx]["product_name"], ""))
+					row["place_name"] = cu.ToString(movement["place_name"], cu.ToString(inventories[idx]["place_name"], ""))
+					row["product_unit"] = cu.ToString(movement["product_unit"], cu.ToString(inventories[idx]["unit"], ""))
+					row["serial_number"] = cu.ToString(movement["serial_number"], cu.ToString(inventories[idx]["serial_number"], ""))
+					row["tool_description"] = cu.ToString(movement["tool_description"], cu.ToString(inventories[idx]["description"], ""))
+				}
+			}
+			rows = append(rows, row)
+		}
+	}
 	return rows
 }
 
-func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
-	if !slices.Contains([]string{"maps", "items", "transitem_invoice", "payments", "payment_link"}, view) {
+func (e *TransEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
+	if !slices.Contains([]string{"maps", "items", "transitem_invoice", "payments", "payment_link", "movements",
+		"transitem_shipping", "tool_movement"}, view) {
 		return []ct.Table{}
 	}
 
 	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{})
+	transType := cu.ToString(trans["trans_type"], "")
+	direction := cu.ToString(trans["direction"], "")
 	newInput := (cu.ToInteger(trans["id"], 0) == 0)
 	tblMap := map[string]func() []ct.Table{
 		"maps": func() []ct.Table {
@@ -1263,6 +1884,7 @@ func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 				items := cu.ToIMA(data["items"], []cu.IM{})
 				for _, item := range items {
 					rows = append(rows, cu.IM{
+						"id":           item["id"],
 						"product_code": item["product_code"],
 						"tax_code":     item["tax_code"],
 						"description":  cu.ToIM(item["item_meta"], cu.IM{})["description"],
@@ -1374,6 +1996,63 @@ func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 				},
 			}
 		},
+		"movements": func() []ct.Table {
+			isDelivery := (transType == md.TransTypeDelivery.String() && direction != md.DirectionTransfer.String())
+			fields := []ct.TableField{
+				{Name: "code", Label: labels["movement_code"], ReadOnly: true},
+				{Name: "product_code", Label: labels["product_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "product_name", Label: labels["product_name"]},
+				{Name: "product_unit", Label: labels["product_unit"]},
+				{Name: "notes", Label: labels["movement_batchnumber"]},
+				{Name: "qty", Label: labels["movement_qty"], FieldType: ct.TableFieldTypeNumber},
+			}
+			fieldMap := map[string][]ct.TableField{
+				md.TransTypeDelivery.String() + "_" + md.DirectionTransfer.String(): {
+					{Name: "code", Label: labels["movement_code"], ReadOnly: true},
+					{Name: "movement_code", Label: labels["movement_movement_code"]},
+					{Name: "product_name", Label: labels["product_name"]},
+					{Name: "product_unit", Label: labels["product_unit"]},
+					{Name: "notes", Label: labels["movement_batchnumber"]},
+					{Name: "qty", Label: labels["movement_qty"], FieldType: ct.TableFieldTypeNumber},
+				},
+				md.TransTypeFormula.String() + "_" + md.DirectionTransfer.String(): {
+					{Name: "code", Label: labels["movement_code"], ReadOnly: true},
+					{Name: "product_name", Label: labels["product_name"]},
+					{Name: "product_unit", Label: labels["product_unit"]},
+					{Name: "shared", Label: labels["movement_shared"], FieldType: ct.TableFieldTypeBool},
+					{Name: "qty", Label: labels["movement_qty"], FieldType: ct.TableFieldTypeNumber},
+				},
+				md.TransTypeWaybill.String() + "_" + md.DirectionIn.String(): {
+					{Name: "code", Label: labels["movement_code"], ReadOnly: true},
+					{Name: "shipping_time", Label: labels["movement_shipping_time"], FieldType: ct.TableFieldTypeDateTime},
+					{Name: "serial_number", Label: labels["tool_serial_number"]},
+					{Name: "tool_description", Label: labels["tool_description"]},
+				},
+				md.TransTypeWaybill.String() + "_" + md.DirectionOut.String(): {
+					{Name: "code", Label: labels["movement_code"], ReadOnly: true},
+					{Name: "shipping_time", Label: labels["movement_shipping_time"], FieldType: ct.TableFieldTypeDateTime},
+					{Name: "serial_number", Label: labels["tool_serial_number"]},
+					{Name: "tool_description", Label: labels["tool_description"]},
+				},
+			}
+			if field, ok := fieldMap[transType+"_"+direction]; ok {
+				fields = field
+			}
+			return []ct.Table{
+				{
+					Fields:            fields,
+					Rows:              transMovementRows(data),
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          10,
+					HidePaginatonSize: true,
+					RowSelected:       !isDelivery,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           !isDelivery,
+					LabelAdd:          labels["item_new"],
+				},
+			}
+		},
 		"payment_link": func() []ct.Table {
 			isInvoice := slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, cu.ToString(trans["trans_type"], ""))
 			itemRows := func() []cu.IM {
@@ -1392,6 +2071,7 @@ func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 						"link_meta":     item["link_meta"],
 						"place_name":    item["place_name"],
 						"paid_date":     item["paid_date"],
+						"editor":        "trans",
 					}
 					if isInvoice {
 						row["trans_code"] = item["pt_code"]
@@ -1433,11 +2113,74 @@ func transTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 				},
 			}
 		},
+		"transitem_shipping": func() []ct.Table {
+			items := cu.ToIMA(data["transitem_shipping"], []cu.IM{})
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						//{Name: "code", Label: labels["item_code"]},
+						{Name: "description", Label: labels["shipping_item_product"]},
+						{Name: "qty", Label: labels["shipping_qty"], FieldType: ct.TableFieldTypeNumber},
+						{Name: "trans_code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
+						{Name: "product_name", Label: labels["shipping_movement_product"]},
+						//{Name: "shipping_date", Label: labels["shipping_date"], FieldType: ct.TableFieldTypeDate},
+						{Name: "shipping_qty", Label: labels["shipping_sqty"], FieldType: ct.TableFieldTypeNumber},
+					},
+					Rows:              items,
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          5,
+					HidePaginatonSize: true,
+					RowSelected:       false,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           true,
+					LabelAdd:          labels["transitem_shipping_view"],
+					AddIcon:           ct.IconTruck,
+				},
+			}
+		},
+		"tool_movement": func() []ct.Table {
+			items := cu.ToIMA(data["tool_movement"], []cu.IM{})
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "trans_code", Label: labels["trans_code"], ReadOnly: true, FieldType: ct.TableFieldTypeLink},
+						{Name: "direction", Label: labels["movement_direction"], ReadOnly: true},
+						{Name: "shipping_time", Label: labels["movement_shipping_time"], FieldType: ct.TableFieldTypeDateTime},
+						{Name: "serial_number", Label: labels["tool_serial_number"]},
+						{Name: "description", Label: labels["tool_description"]},
+					},
+					Rows:              items,
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          5,
+					HidePaginatonSize: true,
+					RowSelected:       false,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           true,
+					LabelAdd:          labels["trans_waybill_new"],
+					AddIcon:           ct.IconBriefcase,
+				},
+			}
+		},
 	}
 	return tblMap[view]()
 }
 
-func transForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *TransEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+	var productSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["product_code"]},
+		{Name: "product_name", Label: labels["product_name"]},
+		{Name: "product_type", Label: labels["product_type"]},
+		{Name: "tag_lst", Label: labels["product_tags"]},
+	}
+	var toolSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["tool_code"]},
+		{Name: "description", Label: labels["tool_description"]},
+		{Name: "product_code", Label: labels["product_code"]},
+		{Name: "serial_number", Label: labels["tool_serial_number"]},
+		{Name: "tag_lst", Label: labels["tool_tags"]},
+	}
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := func(disabled bool) []ct.Row {
 		rows := []ct.Row{
@@ -1464,6 +2207,7 @@ func transForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 							"button_style": ct.ButtonStyleDefault,
 							"icon":         ct.IconReply,
 							"label":        labels["editor_back"],
+							"disabled":     cu.ToInteger(formData["id"], 0) < 0,
 						},
 					}},
 					{Value: ct.Field{
@@ -1505,12 +2249,6 @@ func transForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 				}
 				return opt
 			}
-			var productSelectorFields []ct.TableField = []ct.TableField{
-				{Name: "code", Label: labels["product_code"]},
-				{Name: "product_name", Label: labels["product_name"]},
-				{Name: "product_type", Label: labels["product_type"]},
-				{Name: "tag_lst", Label: labels["product_tags"]},
-			}
 			return ct.Form{
 				Title: labels["item_view"],
 				Icon:  ct.IconListOl,
@@ -1531,7 +2269,7 @@ func transForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 									"fields":  productSelectorFields,
 									"rows":    productSelectorRows,
 									"link":    true,
-									"is_null": true,
+									"is_null": false,
 								},
 								FormTrigger: true,
 							},
@@ -1827,6 +2565,464 @@ func transForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 				},
 				FooterRows: footerRows(link.LinkCode2 == ""),
 			}
+		},
+		"movements": func() ct.Form {
+			var movement md.Movement = md.Movement{}
+			ut.ConvertToType(formData, &movement)
+			transType := cu.ToString(formData["trans_type"], "")
+			productSelectorRows := cu.ToIMA(data["product_selector"], []cu.IM{})
+			toolSelectorRows := cu.ToIMA(data["tool_selector"], []cu.IM{})
+			places := cu.ToIMA(formData["places"], []cu.IM{})
+			placeOpt := func() (opt []ct.SelectOption) {
+				opt = []ct.SelectOption{}
+				for _, place := range places {
+					if cu.ToString(place["place_type"], "") == md.PlaceTypeWarehouse.String() {
+						opt = append(opt, ct.SelectOption{
+							Value: cu.ToString(place["code"], ""), Text: cu.ToString(place["place_name"], ""),
+						})
+					}
+				}
+				return opt
+			}
+			rowMap := map[string][]ct.Row{
+				md.TransTypeDelivery.String(): {
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "movement_code",
+								"value":    movement.Code,
+								"disabled": true,
+							},
+						}},
+						{Label: labels["movement_movement_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "movement_code_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "movement_reference_code",
+								"value":    movement.MovementCode,
+								"disabled": true,
+							},
+						}},
+						{
+							Label: labels["place_name_target"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "place_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelect, Value: cu.IM{
+									"name":    "place_code",
+									"options": placeOpt(),
+									"is_null": true,
+									"value":   movement.PlaceCode,
+								},
+								FormTrigger: true,
+							}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{
+							Label: labels["product_code"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "product_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelector, Value: cu.IM{
+									"name":  "product_code",
+									"title": labels["view_product"],
+									"value": ct.SelectOption{
+										Value: movement.ProductCode,
+										Text:  movement.ProductCode,
+									},
+									"fields":  productSelectorFields,
+									"rows":    productSelectorRows,
+									"link":    true,
+									"is_null": true,
+								},
+								FormTrigger: true,
+							},
+						},
+						{Label: labels["product_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "product_name_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "product_name",
+								"value":    cu.ToString(formData["product_name"], ""),
+								"disabled": true,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_shipping_date"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "shipping_time_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeDate, Value: cu.IM{
+									"name":    "shipping_time",
+									"is_null": false,
+									"value":   movement.ShippingTime.String(),
+								},
+							}},
+						{Label: labels["movement_batchnumber"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "notes",
+								"value": movement.MovementMeta.Notes,
+							},
+						}},
+						{Label: labels["movement_qty"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "qty_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "qty",
+								"value": movement.MovementMeta.Qty,
+							},
+						}},
+					}, Full: true, BorderBottom: false},
+				},
+				md.TransTypeInventory.String(): {
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "movement_code",
+								"value":    movement.Code,
+								"disabled": true,
+							},
+						}},
+						{
+							Label: labels["product_code"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "product_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelector, Value: cu.IM{
+									"name":  "product_code",
+									"title": labels["view_product"],
+									"value": ct.SelectOption{
+										Value: movement.ProductCode,
+										Text:  movement.ProductCode,
+									},
+									"fields":  productSelectorFields,
+									"rows":    productSelectorRows,
+									"link":    true,
+									"is_null": false,
+								},
+								FormTrigger: true,
+							},
+						},
+						{Label: labels["product_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "product_name_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "product_name",
+								"value":    cu.ToString(formData["product_name"], ""),
+								"disabled": true,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_shipping_date"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "shipping_time_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeDate, Value: cu.IM{
+									"name":     "shipping_time",
+									"is_null":  false,
+									"value":    movement.ShippingTime.String(),
+									"disabled": true,
+								},
+							}},
+						{Label: labels["movement_batchnumber"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "notes",
+								"value": movement.MovementMeta.Notes,
+							},
+						}},
+						{Label: labels["movement_qty"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "qty_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "qty",
+								"value": movement.MovementMeta.Qty,
+							},
+						}},
+					}, Full: true, BorderBottom: false},
+				},
+				md.TransTypeProduction.String(): {
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "movement_code",
+								"value":    movement.Code,
+								"disabled": true,
+							},
+						}},
+						{
+							Label: labels["product_code"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "product_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelector, Value: cu.IM{
+									"name":  "product_code",
+									"title": labels["view_product"],
+									"value": ct.SelectOption{
+										Value: movement.ProductCode,
+										Text:  movement.ProductCode,
+									},
+									"fields":  productSelectorFields,
+									"rows":    productSelectorRows,
+									"link":    true,
+									"is_null": false,
+								},
+								FormTrigger: true,
+							},
+						},
+						{Label: labels["product_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "product_name_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "product_name",
+								"value":    cu.ToString(formData["product_name"], ""),
+								"disabled": true,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_shipping_time"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "shipping_time_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeDateTime, Value: cu.IM{
+									"name":    "shipping_time",
+									"is_null": false,
+									"value":   movement.ShippingTime.String(),
+								},
+							}},
+						{
+							Label: labels["place_name_movement"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "place_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelect, Value: cu.IM{
+									"name":    "place_code",
+									"options": placeOpt(),
+									"is_null": true,
+									"value":   movement.PlaceCode,
+								},
+								FormTrigger: true,
+							}},
+						{Label: labels["movement_batchnumber"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "notes",
+								"value": movement.MovementMeta.Notes,
+							},
+						}},
+						{Label: labels["movement_qty"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "qty_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "qty",
+								"value": movement.MovementMeta.Qty,
+							},
+						}},
+					}, Full: true, BorderBottom: false},
+				},
+				md.TransTypeFormula.String(): {
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "movement_code",
+								"value":    movement.Code,
+								"disabled": true,
+							},
+						}},
+						{
+							Label: labels["product_code"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "product_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelector, Value: cu.IM{
+									"name":  "product_code",
+									"title": labels["view_product"],
+									"value": ct.SelectOption{
+										Value: movement.ProductCode,
+										Text:  movement.ProductCode,
+									},
+									"fields":  productSelectorFields,
+									"rows":    productSelectorRows,
+									"link":    true,
+									"is_null": false,
+								},
+								FormTrigger: true,
+							},
+						},
+						{Label: labels["product_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "product_name_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "product_name",
+								"value":    cu.ToString(formData["product_name"], ""),
+								"disabled": true,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{
+							Label: labels["place_name_movement"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "place_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelect, Value: cu.IM{
+									"name":    "place_code",
+									"options": placeOpt(),
+									"is_null": true,
+									"value":   movement.PlaceCode,
+								},
+								FormTrigger: true,
+							}},
+						{Label: labels["movement_qty"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "qty_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "qty",
+								"value": movement.MovementMeta.Qty,
+							},
+						}},
+						{Label: labels["movement_shared"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "shared_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeBool, Value: cu.IM{
+									"name":  "shared",
+									"value": movement.MovementMeta.Shared,
+								},
+								FormTrigger: true,
+							}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_notes"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "notes",
+								"value": movement.MovementMeta.Notes,
+							},
+						}},
+					}, Full: true, BorderBottom: false, FieldCol: true},
+				},
+				md.TransTypeWaybill.String(): {
+					{Columns: []ct.RowColumn{
+						{Label: labels["movement_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "movement_code",
+								"value":    movement.Code,
+								"disabled": true,
+							},
+						}},
+						{
+							Label: labels["tool_code"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "tool_code_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeSelector, Value: cu.IM{
+									"name":  "tool_code",
+									"title": labels["view_tool"],
+									"value": ct.SelectOption{
+										Value: movement.ToolCode,
+										Text:  movement.ToolCode,
+									},
+									"fields":  toolSelectorFields,
+									"rows":    toolSelectorRows,
+									"link":    true,
+									"is_null": false,
+								},
+								FormTrigger: true,
+							},
+						},
+						{Label: labels["movement_shipping_time"],
+							Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "shipping_time_" + cu.ToString(movement.Id, ""),
+								},
+								Type: ct.FieldTypeDateTime, Value: cu.IM{
+									"name":    "shipping_time",
+									"is_null": false,
+									"value":   movement.ShippingTime.String(),
+								},
+							}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["tool_description"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "tool_description_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "tool_description",
+								"value":    cu.ToString(formData["tool_description"], ""),
+								"disabled": true,
+							},
+						}},
+						{Label: labels["movement_notes"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes_" + cu.ToString(movement.Id, ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "notes",
+								"value": movement.MovementMeta.Notes,
+							},
+						}},
+					}, Full: true, BorderBottom: false},
+				},
+			}
+			diasbledMap := map[string]bool{
+				md.TransTypeDelivery.String():   movement.PlaceCode == "" || movement.ProductCode == "",
+				md.TransTypeInventory.String():  movement.ProductCode == "",
+				md.TransTypeProduction.String(): movement.PlaceCode == "" || movement.ProductCode == "",
+				md.TransTypeFormula.String():    movement.ProductCode == "",
+				md.TransTypeWaybill.String():    movement.ToolCode == "",
+			}
+			frm := ct.Form{
+				Title:      labels["movement_view"],
+				Icon:       ct.IconListOl,
+				BodyRows:   rowMap[transType],
+				FooterRows: footerRows(diasbledMap[transType]),
+			}
+			return frm
 		},
 	}
 

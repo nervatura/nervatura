@@ -10,7 +10,9 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
-func toolSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+type ToolEditor struct{}
+
+func (e *ToolEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var tool cu.IM = cu.ToIM(data["tool"], cu.IM{"tool_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})
 
@@ -105,7 +107,7 @@ func toolSideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	}
 }
 
-func toolEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+func (e *ToolEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	var tool cu.IM = cu.ToIM(data["tool"], cu.IM{})
 	toolMap := cu.ToIM(tool["tool_map"], cu.IM{})
 	event := cu.ToIMA(tool["events"], []cu.IM{})
@@ -129,7 +131,7 @@ func toolEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
-			Icon:  ct.IconWrench,
+			Icon:  ct.IconDatabase,
 			Badge: cu.ToString(int64(len(toolMap)), "0"),
 		},
 		{
@@ -141,7 +143,7 @@ func toolEditorView(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	}
 }
 
-func toolRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+func (e *ToolEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	if !slices.Contains([]string{"tool", "maps"}, view) {
 		return []ct.Row{}
 	}
@@ -294,7 +296,7 @@ func toolRow(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
 	}
 }
 
-func toolTable(view string, labels cu.SM, data cu.IM) []ct.Table {
+func (e *ToolEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 	if !slices.Contains([]string{"maps", "events"}, view) {
 		return []ct.Table{}
 	}
@@ -353,7 +355,7 @@ func toolTable(view string, labels cu.SM, data cu.IM) []ct.Table {
 	return tblMap[view]()
 }
 
-func toolForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *ToolEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := []ct.Row{
 		{

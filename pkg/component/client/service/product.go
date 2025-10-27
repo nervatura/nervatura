@@ -13,7 +13,21 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func (cls *ClientService) productData(ds *api.DataStore, user, params cu.IM) (data cu.IM, err error) {
+type ProductService struct {
+	cls *ClientService
+}
+
+func NewProductService(cls *ClientService) *ProductService {
+	return &ProductService{
+		cls: cls,
+	}
+}
+
+func (s *ProductService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err error) {
+	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
+	user := cu.ToIM(client.Ticket.User, cu.IM{})
+
 	data = cu.IM{
 		"product": cu.IM{
 			"product_type": md.ProductType(0),
@@ -121,7 +135,7 @@ func (cls *ClientService) productData(ds *api.DataStore, user, params cu.IM) (da
 	return data, err
 }
 
-func (cls *ClientService) productUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
+func (s *ProductService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var product md.Product = md.Product{}
 	ut.ConvertToType(data["product"], &product)
 	values := cu.IM{
@@ -199,14 +213,14 @@ func (cls *ClientService) productUpdate(ds *api.DataStore, data cu.IM) (editor c
 	return data, err
 }
 
-func (cls *ClientService) productDelete(ds *api.DataStore, productID int64) (err error) {
+func (s *ProductService) delete(ds *api.DataStore, productID int64) (err error) {
 	return ds.DataDelete("product", productID, "")
 }
 
-func (cls *ClientService) productResponseFormNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProductService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	product := cu.ToIM(stateData["product"], cu.IM{})
 	productMeta := cu.ToIM(product["product_meta"], cu.IM{})
 	productMap := cu.ToIM(product["product_map"], cu.IM{})
@@ -233,7 +247,7 @@ func (cls *ClientService) productResponseFormNext(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"editor_delete": func() (re ct.ResponseEvent, err error) {
-			if err = cls.productDelete(ds, cu.ToInteger(product["id"], 0)); err != nil {
+			if err = s.delete(ds, cu.ToInteger(product["id"], 0)); err != nil {
 				return evt, err
 			}
 			client.ResetEditor()
@@ -242,7 +256,7 @@ func (cls *ClientService) productResponseFormNext(evt ct.ResponseEvent) (re ct.R
 
 		"customer": func() (re ct.ResponseEvent, err error) {
 			params := cu.ToIM(stateData["params"], cu.IM{})
-			return cls.setEditor(evt, "customer", params), nil
+			return s.cls.setEditor(evt, "customer", params), nil
 		},
 
 		"editor_add_tag": func() (re ct.ResponseEvent, err error) {
@@ -295,7 +309,7 @@ func (cls *ClientService) productResponseFormNext(evt ct.ResponseEvent) (re ct.R
 				Columns:      map[string]bool{},
 				TimeStamp:    md.TimeDateTime{Time: time.Now()},
 			}
-			return cls.addBookmark(evt, bookmark), nil
+			return s.cls.addBookmark(evt, bookmark), nil
 		},
 
 		"editor_map_value": func() (re ct.ResponseEvent, err error) {
@@ -321,7 +335,7 @@ func (cls *ClientService) productResponseFormNext(evt ct.ResponseEvent) (re ct.R
 	return evt, err
 }
 
-func (cls *ClientService) productResponseFormEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProductService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	product := cu.ToIM(stateData["product"], cu.IM{})
@@ -371,7 +385,7 @@ func (cls *ClientService) productResponseFormEvent(evt ct.ResponseEvent) (re ct.
 					rows[frmIndex]["tags"] = value
 				},
 			}
-			return cls.editorFormOK(evt, rows, customValues)
+			return s.cls.editorFormOK(evt, rows, customValues)
 		},
 
 		ct.FormEventCancel: func() (re ct.ResponseEvent, err error) {
@@ -391,11 +405,11 @@ func (cls *ClientService) productResponseFormEvent(evt ct.ResponseEvent) (re ct.
 			fieldName := cu.ToString(frmValues["name"], "")
 			switch fieldName {
 			case "tags":
-				return cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
+				return s.cls.editorFormTags(cu.IM{"row_field": fieldName}, evt)
 			case "customer_code":
 				form := cu.ToIM(stateData["form"], cu.IM{})
 				formRow := cu.ToIM(form["data"], cu.IM{})
-				return cls.editorCodeSelector(evt, strings.Split(fieldName, "_")[0], formRow,
+				return s.cls.editorCodeSelector(evt, "product", strings.Split(fieldName, "_")[0], formRow,
 					func(params cu.IM) (re ct.ResponseEvent, err error) {
 						client.SetForm(cu.ToString(form["key"], ""),
 							cu.MergeIM(formRow,
@@ -423,15 +437,15 @@ func (cls *ClientService) productResponseFormEvent(evt ct.ResponseEvent) (re ct.
 	return evt, err
 }
 
-func (cls *ClientService) productResponseSideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProductService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	product := cu.ToIM(stateData["product"], cu.IM{})
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	menuMap := map[string]func() (re ct.ResponseEvent, err error){
 		"editor_save": func() (re ct.ResponseEvent, err error) {
-			if stateData, err = cls.productUpdate(ds, stateData); err != nil {
+			if stateData, err = s.update(ds, stateData); err != nil {
 				return evt, err
 			}
 			stateData["dirty"] = false
@@ -464,14 +478,14 @@ func (cls *ClientService) productResponseSideMenu(evt ct.ResponseEvent) (re ct.R
 		},
 
 		"editor_new": func() (re ct.ResponseEvent, err error) {
-			return cls.setEditor(evt, "product",
+			return s.cls.setEditor(evt, "product",
 				cu.IM{
 					"session_id": client.Ticket.SessionID,
 				}), nil
 		},
 
 		"editor_report": func() (re ct.ResponseEvent, err error) {
-			return cls.showReportSelector(evt, "PRODUCT", cu.ToString(product["code"], ""))
+			return s.cls.showReportSelector(evt, "PRODUCT", cu.ToString(product["code"], ""))
 		},
 
 		"editor_bookmark": func() (re ct.ResponseEvent, err error) {
@@ -497,10 +511,10 @@ func (cls *ClientService) productResponseSideMenu(evt ct.ResponseEvent) (re ct.R
 	return evt, err
 }
 
-func (cls *ClientService) productResponseEditorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	ds := cls.getDataStore(client.Ticket.Database)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	product := cu.ToIM(stateData["product"], cu.IM{})
 	productMeta := cu.ToIM(product["product_meta"], cu.IM{})
 	productMap := cu.ToIM(product["product_map"], cu.IM{})
@@ -573,7 +587,7 @@ func (cls *ClientService) productResponseEditorField(evt ct.ResponseEvent) (re c
 					cu.ToInteger(len(rows)-1, 0), false)
 				return evt, nil
 			}
-			return cls.addMapField(evt, productMap, resultUpdate)
+			return s.cls.addMapField(evt, productMap, resultUpdate)
 		},
 
 		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
@@ -585,7 +599,7 @@ func (cls *ClientService) productResponseEditorField(evt ct.ResponseEvent) (re c
 		},
 
 		ct.TableEventFormUpdate: func() (re ct.ResponseEvent, err error) {
-			return cls.updateMapField(evt, productMap, resultUpdate)
+			return s.cls.updateMapField(evt, productMap, resultUpdate)
 		},
 
 		ct.TableEventFormChange: func() (re ct.ResponseEvent, err error) {
@@ -604,14 +618,14 @@ func (cls *ClientService) productResponseEditorField(evt ct.ResponseEvent) (re c
 		"queue": func() (re ct.ResponseEvent, err error) {
 			modal := cu.ToIM(client.Data["modal"], cu.IM{})
 			modalData := cu.ToIM(modal["data"], cu.IM{})
-			if err = cls.insertPrintQueue(ds, modalData); err == nil {
-				return cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("report_add_queue"), ct.ToastTypeSuccess, 5), nil
+			if err = s.cls.insertPrintQueue(ds, modalData); err == nil {
+				return s.cls.evtMsg(evt.Name, evt.TriggerName, client.Msg("report_add_queue"), ct.ToastTypeSuccess, 5), nil
 			}
 			return evt, err
 		},
 
 		"tags": func() (re ct.ResponseEvent, err error) {
-			return cls.editorTags(evt, productMeta, resultUpdate)
+			return s.cls.editorTags(evt, productMeta, resultUpdate)
 		},
 
 		"barcode_qty": func() (re ct.ResponseEvent, err error) {
@@ -678,18 +692,18 @@ func (cls *ClientService) productResponseEditorField(evt ct.ResponseEvent) (re c
 	return evt, nil
 }
 
-func (cls *ClientService) productResponse(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ProductService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	switch evt.Name {
 	case ct.FormEventOK:
-		return cls.productResponseFormNext(evt)
+		return s.formNext(evt)
 
 	case ct.ClientEventForm:
-		return cls.productResponseFormEvent(evt)
+		return s.formEvent(evt)
 
 	case ct.ClientEventSideMenu:
-		return cls.productResponseSideMenu(evt)
+		return s.sideMenu(evt)
 
 	default:
-		return cls.productResponseEditorField(evt)
+		return s.editorField(evt)
 	}
 }
