@@ -27,7 +27,7 @@ type ClientService struct {
 	AppLog       *slog.Logger
 	Session      *api.SessionService
 	NewDataStore func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore
-	Modules      map[string]func(cls *ClientService) ServiceModule
+	Modules      map[string]ServiceModule
 	UI           *cp.ClientComponent
 }
 
@@ -72,8 +72,11 @@ func NewClientService(config cu.IM, appLog *slog.Logger) *ClientService {
 		AppLog:       appLog,
 		Session:      api.NewSession(config, "", cu.ToString(config["NT_SESSION_ALIAS"], "")),
 		NewDataStore: api.NewDataStore,
-		Modules:      moduleMap,
+		Modules:      map[string]ServiceModule{},
 		UI:           cp.NewClientComponent(),
+	}
+	for key, fn := range moduleMap {
+		cls.Modules[key] = fn(cls)
 	}
 	cls.AuthConfigs = cls.getAuthConfig()
 	return cls
@@ -216,98 +219,6 @@ func (cls *ClientService) codeName(ds *api.DataStore, code, model string) (name 
 	return name
 }
 
-/*
-func (cls *ClientService) moduleData(evt ct.ResponseEvent, ds *api.DataStore, mKey string, user cu.IM, params cu.IM) (cu.IM, error) {
-	modelMap := map[string]func() (data cu.IM, err error){
-		/*
-						"customer": func() (cu.IM, error) {
-							//return cls.customerData(ds, user, params)
-							return NewCustomerService(cls).Data(evt, params)
-						},
-
-					"product": func() (cu.IM, error) {
-						return cls.productData(ds, user, params)
-					},
-				"tool": func() (cu.IM, error) {
-					return cls.toolData(ds, user, params)
-				},
-					"project": func() (cu.IM, error) {
-						return cls.projectData(ds, user, params)
-					},
-
-						"employee": func() (cu.IM, error) {
-							return cls.employeeData(ds, user, params)
-						},
-			"setting": func() (cu.IM, error) {
-				return cls.settingData(ds, user, params)
-			},
-					"trans": func() (cu.IM, error) {
-						//return cls.transData(ds, user, params)
-						return NewTransService(cls).Data(evt, params)
-					},
-				"place": func() (cu.IM, error) {
-					return cls.placeData(ds, user, params)
-				},
-
-	}
-	if sm, found := cls.Modules[mKey]; found {
-		return sm(cls).Data(evt, params)
-	}
-	if rm, found := modelMap[mKey]; found {
-		return rm()
-	}
-	return cu.IM{}, nil
-}
-*/
-
-/*
-func (cls *ClientService) moduleResponse(mKey string, evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
-	modelMap := map[string]func() (re ct.ResponseEvent, err error){
-
-			"search": func() (re ct.ResponseEvent, err error) {
-				return cls.searchResponse(evt)
-			},
-
-							"customer": func() (re ct.ResponseEvent, err error) {
-								//return cls.customerResponse(evt)
-								return NewCustomerService(cls).Response(evt)
-							},
-
-						"product": func() (re ct.ResponseEvent, err error) {
-							return cls.productResponse(evt)
-						},
-					"tool": func() (re ct.ResponseEvent, err error) {
-						return cls.toolResponse(evt)
-					},
-
-						"project": func() (re ct.ResponseEvent, err error) {
-							return cls.projectResponse(evt)
-						},
-
-							"employee": func() (re ct.ResponseEvent, err error) {
-								return cls.employeeResponse(evt)
-							},
-				"setting": func() (re ct.ResponseEvent, err error) {
-					return cls.settingResponse(evt)
-				},
-						"trans": func() (re ct.ResponseEvent, err error) {
-							return NewTransService(cls).Response(evt)
-						},
-					"place": func() (re ct.ResponseEvent, err error) {
-						return cls.placeResponse(evt)
-					},
-
-	}
-	if sm, found := cls.Modules[mKey]; found {
-		return sm(cls).Response(evt)
-	}
-	if rm, found := modelMap[mKey]; found {
-		return rm()
-	}
-	return evt, nil
-}
-*/
-
 func (cls *ClientService) evtMsg(name, triggerName, value, toastType string, timeout int64) ct.ResponseEvent {
 	return ct.ResponseEvent{
 		Trigger: &ct.Toast{
@@ -328,7 +239,6 @@ func (cls *ClientService) editorCodeSelector(evt ct.ResponseEvent, editor, codeT
 	resultUpdate func(params cu.IM) (re ct.ResponseEvent, err error)) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	//ds := cls.getDataStore(client.Ticket.Database)
 
 	values := cu.ToIM(evt.Value, cu.IM{})
 	value := cu.ToString(values["value"], "")
@@ -341,19 +251,13 @@ func (cls *ClientService) editorCodeSelector(evt ct.ResponseEvent, editor, codeT
 		sConf := cls.UI.SearchConfig.View(codeType+"_simple", client.Labels())
 		filters := client.ToFilters(cu.ToString(value, ""), sConf.Filters)
 		var resultData cu.IM
-		if resultData, err = cls.Modules["search"](cls).Data(evt, cu.IM{
+		if resultData, err = cls.Modules["search"].Data(evt, cu.IM{
 			"view":    codeType + "_simple",
 			"query":   cls.UI.SearchConfig.Query(codeType+"_simple", cu.IM{"editor": editor}),
 			"filters": filters,
 		}); err != nil {
 			return evt, err
 		}
-		/*
-			if stateData[codeType+"_selector"], err = cls.searchData(
-				ds, codeType+"_simple", searchQuery[codeType+"_simple"](editor), filters); err != nil {
-				return evt, err
-			}
-		*/
 		stateData[codeType+"_selector"] = cu.ToIMA(resultData["result"], []cu.IM{})
 		return resultUpdate(cu.IM{"event": event, "dirty": false})
 	}
@@ -692,7 +596,7 @@ func (cls *ClientService) setEditor(evt ct.ResponseEvent, module string, params 
 	var moData cu.IM = cu.IM{}
 	var err error
 	if sm, found := cls.Modules[module]; found {
-		if moData, err = sm(cls).Data(evt, params); err != nil {
+		if moData, err = sm.Data(evt, params); err != nil {
 			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
 		}
 	}
@@ -704,12 +608,10 @@ func (cls *ClientService) searchEvent(evt ct.ResponseEvent) (re ct.ResponseEvent
 	var err error
 	client := evt.Trigger.(*ct.Client)
 	_, stateKey, stateData := client.GetStateData()
-	//ds := cls.getDataStore(client.Ticket.Database)
-	//var result []cu.IM
 	var filter string = cu.ToString(evt.Value, "")
 	sConf := cls.UI.SearchConfig.View(stateKey, client.Labels())
 	var resultData cu.IM
-	if resultData, err = cls.Modules["search"](cls).Data(evt, cu.IM{
+	if resultData, err = cls.Modules["search"].Data(evt, cu.IM{
 		"view":    stateKey,
 		"query":   cls.UI.SearchConfig.Query(stateKey, cu.IM{"editor": ""}),
 		"filters": client.GetSearchFilters(filter, sConf.Filters),
@@ -717,12 +619,6 @@ func (cls *ClientService) searchEvent(evt ct.ResponseEvent) (re ct.ResponseEvent
 		return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
 	}
 	stateData["rows"] = cu.ToIMA(resultData["result"], []cu.IM{})
-	/*
-		if result, err = cls.searchData(ds, stateKey, searchQuery[stateKey](""), client.GetSearchFilters(filter, sConf.Filters)); err != nil {
-			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
-		}
-	*/
-	//stateData["rows"] = result
 	stateData["filter_value"] = filter
 	client.SetSearch(stateKey, stateData, cu.ToBoolean(stateData["simple"], false))
 	return evt
@@ -911,46 +807,16 @@ func (cls *ClientService) mainResponseModuleEvent(evt ct.ResponseEvent, nextKey 
 		moduleKey = cu.ToString(stateData["key"], "")
 	}
 	if sm, found := cls.Modules[moduleKey]; found {
-		if evt, err = sm(cls).Response(evt); err != nil {
+		if evt, err = sm.Response(evt); err != nil {
 			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
 		}
 	}
-	/*
-		if evt, err = cls.moduleResponse(moduleKey, evt); err != nil {
-			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
-		}
-	*/
 	return evt
 }
 
 func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 	client := evt.Trigger.(*ct.Client)
 	_, stateKey, _ := client.GetStateData()
-
-	/*
-		moduleEvent := func(nextKey string) ct.ResponseEvent {
-			moduleKey := cu.ToString(nextKey, stateKey)
-			if values, ok := evt.Value.(cu.IM); ok && cu.ToString(values["name"], "") == "bookmark" {
-				if cu.ToString(values["event"], "") == "list_delete" {
-					return cls.deleteBookmark(evt)
-				}
-				if cu.ToString(values["event"], "") == "list_filter_change" {
-					return evt
-				}
-				return cls.setBookmark(evt)
-			}
-			if (state == "search" || state == "browser") && nextKey == "" {
-				moduleKey = "search"
-			}
-			if state == "form" {
-				moduleKey = cu.ToString(stateData["key"], "")
-			}
-			if evt, err = cls.moduleResponse(moduleKey, evt); err != nil {
-				return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
-			}
-			return evt
-		}
-	*/
 
 	reMap := map[string]func() ct.ResponseEvent{
 		ct.BrowserEventSearch: func() ct.ResponseEvent {

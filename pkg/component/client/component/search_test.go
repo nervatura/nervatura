@@ -783,6 +783,16 @@ func TestSearchConfig_Filter(t *testing.T) {
 			want: []string{"and (id = 456)"},
 		},
 		{
+			name: "transpayment_code",
+			view: "transpayment",
+			filter: ct.BrowserFilter{
+				Field: "code",
+				Comp:  "==",
+				Value: "123",
+			},
+			want: []string{"and (CAST(t.code as CHAR(255)) like '%123%')"},
+		},
+		{
 			name: "transpayment_default",
 			view: "transpayment",
 			filter: ct.BrowserFilter{

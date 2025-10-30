@@ -2211,6 +2211,9 @@ func (s *SearchConfig) filterTransPayment(view string, filter ct.BrowserFilter, 
 			case "id", "amount":
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			case "code":
+				return append(queryFilters,
+					fmt.Sprintf("%s (CAST(t.%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
 			default:
 				return append(queryFilters,
 					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))

@@ -812,7 +812,7 @@ func TestClientService_searchEvent(t *testing.T) {
 		AppLog       *slog.Logger
 		Session      *api.SessionService
 		NewDataStore func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore
-		Modules      map[string]func(cls *ClientService) ServiceModule
+		Modules      map[string]ServiceModule
 		UI           *cp.ClientComponent
 	}
 	type args struct {
@@ -830,19 +830,28 @@ func TestClientService_searchEvent(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{}, errors.New("error")
-							},
-						}},
+						Db:     &md.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
 				},
-				Modules: map[string]func(cls *ClientService) ServiceModule{
-					"search": func(cls *ClientService) ServiceModule {
-						return NewSearchService(cls)
-					},
+				Modules: map[string]ServiceModule{
+					"search": NewSearchService(&ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Query": func(queries []md.Query) ([]cu.IM, error) {
+										return []cu.IM{}, errors.New("error")
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+							}
+						},
+						UI: cp.NewClientComponent(),
+					}),
 				},
 				UI: cp.NewClientComponent(),
 			},
@@ -872,19 +881,28 @@ func TestClientService_searchEvent(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{{"id": 1}}, nil
-							},
-						}},
+						Db:     &md.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
 				},
-				Modules: map[string]func(cls *ClientService) ServiceModule{
-					"search": func(cls *ClientService) ServiceModule {
-						return NewSearchService(cls)
-					},
+				Modules: map[string]ServiceModule{
+					"search": NewSearchService(&ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Query": func(queries []md.Query) ([]cu.IM, error) {
+										return []cu.IM{{"id": 1}}, nil
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+							}
+						},
+						UI: cp.NewClientComponent(),
+					}),
 				},
 				UI: cp.NewClientComponent(),
 			},
@@ -989,7 +1007,7 @@ func TestClientService_MainResponse(t *testing.T) {
 		AppLog       *slog.Logger
 		Session      *api.SessionService
 		NewDataStore func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore
-		Modules      map[string]func(cls *ClientService) ServiceModule
+		Modules      map[string]ServiceModule
 		UI           *cp.ClientComponent
 	}
 	type args struct {
@@ -1007,19 +1025,28 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{}, errors.New("error")
-							},
-						}},
+						Db:     &md.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
 				},
-				Modules: map[string]func(cls *ClientService) ServiceModule{
-					"search": func(cls *ClientService) ServiceModule {
-						return NewSearchService(cls)
-					},
+				Modules: map[string]ServiceModule{
+					"search": NewSearchService(&ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Query": func(queries []md.Query) ([]cu.IM, error) {
+										return []cu.IM{}, errors.New("error")
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+							}
+						},
+						UI: cp.NewClientComponent(),
+					}),
 				},
 				UI: cp.NewClientComponent(),
 			},
@@ -1048,19 +1075,28 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{}, nil
-							},
-						}},
+						Db:     &md.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
 				},
-				Modules: map[string]func(cls *ClientService) ServiceModule{
-					"search": func(cls *ClientService) ServiceModule {
-						return NewSearchService(cls)
-					},
+				Modules: map[string]ServiceModule{
+					"search": NewSearchService(&ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Query": func(queries []md.Query) ([]cu.IM, error) {
+										return []cu.IM{}, nil
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+							}
+						},
+						UI: cp.NewClientComponent(),
+					}),
 				},
 				UI: cp.NewClientComponent(),
 			},
@@ -1089,19 +1125,28 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{}, nil
-							},
-						}},
+						Db:     &md.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
 				},
-				Modules: map[string]func(cls *ClientService) ServiceModule{
-					"search": func(cls *ClientService) ServiceModule {
-						return NewSearchService(cls)
-					},
+				Modules: map[string]ServiceModule{
+					"search": NewSearchService(&ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Query": func(queries []md.Query) ([]cu.IM, error) {
+										return []cu.IM{}, nil
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+							}
+						},
+						UI: cp.NewClientComponent(),
+					}),
 				},
 				UI: cp.NewClientComponent(),
 			},
@@ -1156,6 +1201,61 @@ func TestClientService_MainResponse(t *testing.T) {
 						},
 					},
 					Value: cu.IM{"fieldname": "code", "row": cu.IM{"id": 1234, "editor": "customer"}},
+				},
+			},
+		},
+		{
+			name: "table_edit_cell_ref_code",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{}, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+				Modules: map[string]ServiceModule{
+					"customer": &CustomerService{
+						cls: &ClientService{
+							Config: cu.IM{},
+							AppLog: slog.Default(),
+							NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+								return &api.DataStore{
+									Db: &md.TestDriver{Config: cu.IM{
+										"Query": func(queries []md.Query) ([]cu.IM, error) {
+											return []cu.IM{}, errors.New("error")
+										},
+									}},
+									Config: config,
+									AppLog: appLog,
+								}
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Name: ct.TableEventEditCell,
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"search": cu.IM{
+									"view": "customer",
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{},
+						},
+					},
+					Value: cu.IM{"fieldname": "customer_code", "row": cu.IM{"id": 1234, "editor": "customer"}},
 				},
 			},
 		},
@@ -1255,7 +1355,43 @@ func TestClientService_MainResponse(t *testing.T) {
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
 								"search": cu.IM{
-									"view": "missing",
+									"view": "transmovement_formula",
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{},
+						},
+					},
+					Value: cu.IM{"fieldname": "customer", "row": cu.IM{"id": 1234}},
+				},
+			},
+		},
+		{
+			name: "table_add_transitem",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{}, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Name: ct.TableEventAddItem,
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"search": cu.IM{
+									"view": "transitem",
 								},
 							},
 						},
@@ -1637,6 +1773,53 @@ func TestClientService_MainResponse(t *testing.T) {
 			},
 		},
 		{
+			name: "form_ok_trans_new",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{}, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+				Modules: map[string]ServiceModule{
+					"trans": &TransService{
+						cls: &ClientService{
+							Config: cu.IM{},
+							AppLog: slog.Default(),
+							NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+								return &api.DataStore{
+									Db: &md.TestDriver{Config: cu.IM{}},
+								}
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Name: ct.FormEventOK,
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{},
+						},
+					},
+					Value: cu.IM{"data": cu.IM{"next": "transitem_new"}, "value": cu.IM{}},
+				},
+			},
+		},
+		{
 			name: "form_ok_default",
 			fields: fields{
 				Config: cu.IM{},
@@ -1711,6 +1894,75 @@ func TestClientService_MainResponse(t *testing.T) {
 						},
 					},
 					Value: cu.IM{"data": cu.IM{"next": "editor_delete"}, "value": cu.IM{}},
+				},
+			},
+		},
+		{
+			name: "form_change_bookmark_filter",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "user_name": "test", "auth_meta": cu.IM{
+									"tags": []string{"test"},
+									"bookmarks": []cu.IM{
+										{
+											"label": "test",
+										},
+									},
+								}}}, nil
+							},
+							"Update": func(update md.Update) (int64, error) {
+								return 1, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToType: func(data interface{}, result any) (err error) {
+							return ut.ConvertToType(data, result)
+						},
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Name: ct.FormEventChange,
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"key": "missing",
+									"form": cu.IM{
+										"key": "contacts",
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{
+								"bookmarks": []cu.IM{
+									{
+										"label":         "test",
+										"code":          "test",
+										"bookmark_type": "browser",
+									},
+								},
+							},
+						},
+					},
+					Value: cu.IM{"data": cu.IM{},
+						"name":  "bookmark",
+						"event": "list_filter_change",
+						"value": cu.IM{
+							"value": cu.IM{
+								"value": cu.IM{
+									"index": 0,
+								},
+							},
+						}},
 				},
 			},
 		},
@@ -2042,6 +2294,19 @@ func TestClientService_MainResponse(t *testing.T) {
 						AppLog: appLog,
 					}
 				},
+				Modules: map[string]ServiceModule{
+					"customer": &CustomerService{
+						cls: &ClientService{
+							Config: cu.IM{},
+							AppLog: slog.Default(),
+							NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+								return &api.DataStore{
+									Db: &md.TestDriver{Config: cu.IM{}},
+								}
+							},
+						},
+					},
+				},
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -2049,8 +2314,14 @@ func TestClientService_MainResponse(t *testing.T) {
 					Trigger: &ct.Client{
 						BaseComponent: ct.BaseComponent{
 							Data: cu.IM{
-								"search": cu.IM{
-									"view": "customer",
+								"editor": cu.IM{
+									"key": "customer",
+									"customer": cu.IM{
+										"id": 12345,
+										"meta": cu.IM{
+											"tags": []string{"tag1", "tag2"},
+										},
+									},
 								},
 							},
 						},
@@ -2528,8 +2799,11 @@ func TestClientService_editorFormTags(t *testing.T) {
 					},
 					Name: ct.ClientEventForm,
 					Value: cu.IM{
-						"data":  cu.IM{"form": cu.IM{"index": 0, "key": "contacts", "data": cu.IM{"tags": []string{"tag1", "tag2"}}}, "data": cu.IM{"name": "contact2"}},
-						"value": cu.IM{},
+						"data": cu.IM{"form": cu.IM{"index": 0, "key": "contacts", "data": cu.IM{"tags": []string{"tag1", "tag2"}}}, "data": cu.IM{"name": "contact2"}},
+						"value": cu.IM{
+							"row":   cu.IM{"tag": "tag1"},
+							"index": 0,
+						},
 						"event": ct.FormEventChange, "name": "tags", "form_event": ct.ListEventDelete},
 				},
 			},
@@ -2579,7 +2853,10 @@ func TestClientService_editorFormTags(t *testing.T) {
 						"data": cu.IM{
 							"form": cu.IM{"index": 0, "key": "view",
 								"data": cu.IM{"view_meta": cu.IM{"tags": []string{"tag1", "tag2"}}}}, "data": cu.IM{"name": "contact2"}},
-						"value": cu.IM{},
+						"value": cu.IM{
+							"row":   cu.IM{"tag": "tag1"},
+							"index": 0,
+						},
 						"event": ct.FormEventChange, "name": "tags", "form_event": ct.ListEventDelete},
 				},
 			},
@@ -3237,7 +3514,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 		AppLog       *slog.Logger
 		Session      *api.SessionService
 		NewDataStore func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore
-		Modules      map[string]func(cls *ClientService) ServiceModule
+		Modules      map[string]ServiceModule
 		UI           *cp.ClientComponent
 	}
 	type args struct {
@@ -3260,11 +3537,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{{}}, errors.New("error")
-							},
-						}},
+						Db:     &md.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3272,10 +3545,23 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 						},
 					}
 				},
-				Modules: map[string]func(cls *ClientService) ServiceModule{
-					"search": func(cls *ClientService) ServiceModule {
-						return NewSearchService(cls)
-					},
+				Modules: map[string]ServiceModule{
+					"search": NewSearchService(&ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Query": func(queries []md.Query) ([]cu.IM, error) {
+										return []cu.IM{}, errors.New("error")
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+							}
+						},
+						UI: cp.NewClientComponent(),
+					}),
 				},
 				UI: cp.NewClientComponent(),
 			},
@@ -3319,11 +3605,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
-							"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{{"code": "value"}}, nil
-							},
-						}},
+						Db:     &md.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3331,10 +3613,23 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 						},
 					}
 				},
-				Modules: map[string]func(cls *ClientService) ServiceModule{
-					"search": func(cls *ClientService) ServiceModule {
-						return NewSearchService(cls)
-					},
+				Modules: map[string]ServiceModule{
+					"search": NewSearchService(&ClientService{
+						Config: cu.IM{},
+						AppLog: slog.Default(),
+						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+							return &api.DataStore{
+								Db: &md.TestDriver{Config: cu.IM{
+									"Query": func(queries []md.Query) ([]cu.IM, error) {
+										return []cu.IM{{"code": "value"}}, nil
+									},
+								}},
+								Config: config,
+								AppLog: appLog,
+							}
+						},
+						UI: cp.NewClientComponent(),
+					}),
 				},
 				UI: cp.NewClientComponent(),
 			},
@@ -3638,6 +3933,43 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ClientService.editorCodeSelector() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+		})
+	}
+}
+
+func TestClientService_codeName(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		config cu.IM
+		appLog *slog.Logger
+		// Named input parameters for target function.
+		ds    *api.DataStore
+		code  string
+		model string
+		want  string
+	}{
+		{
+			name: "success",
+			ds: &api.DataStore{
+				Db: &md.TestDriver{Config: cu.IM{
+					"Query": func(queries []md.Query) ([]cu.IM, error) {
+						return []cu.IM{{"customer_name": "name"}}, nil
+					},
+				}},
+			},
+			code:  "value",
+			model: "customer",
+			want:  "name",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cls := NewClientService(tt.config, tt.appLog)
+			got := cls.codeName(tt.ds, tt.code, tt.model)
+			if got != tt.want {
+				t.Errorf("codeName() = %v, want %v", got, tt.want)
 			}
 		})
 	}

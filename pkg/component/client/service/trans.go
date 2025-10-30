@@ -29,9 +29,14 @@ func NewTransService(cls *ClientService) *TransService {
 var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
 	"items": func(stateData cu.IM) cu.IM {
 		var item cu.IM
+		defaultTax := cu.IM{}
+		taxCodes := cu.ToIMA(stateData["tax_codes"], []cu.IM{})
+		if len(taxCodes) > 0 {
+			defaultTax = cu.ToIM(taxCodes[0], cu.IM{})
+		}
 		ut.ConvertToType(md.Item{
 			//TransCode: cu.ToString(trans["code"], ""),
-			TaxCode: cu.ToString(cu.ToIMA(stateData["tax_codes"], []cu.IM{})[0]["code"], ""),
+			TaxCode: cu.ToString(defaultTax["code"], ""),
 			ItemMeta: md.ItemMeta{
 				Qty:  1,
 				Tags: []string{},
@@ -758,7 +763,10 @@ func (s *TransService) update(ds *api.DataStore, data cu.IM, msgFunc func(labelI
 	} else {
 		values["auth_code"] = user["code"]
 	}
-	if transID, err = ds.StoreDataUpdate(update); err == nil && newTrans {
+	if transID, err = ds.StoreDataUpdate(update); err != nil {
+		return 0, err
+	}
+	if newTrans {
 		var rows []cu.IM = []cu.IM{}
 		if rows, err = ds.StoreDataGet(cu.IM{"id": transID, "model": "trans"}, true); err == nil {
 			data["trans"] = rows[0]
@@ -1131,7 +1139,8 @@ func (s *TransService) formEventChangeSelector(evt ct.ResponseEvent) (re ct.Resp
 				return evt, nil
 			})
 
-	case "invoice_code":
+	//case "invoice_code":
+	default:
 		return s.cls.editorCodeSelector(evt, "trans", strings.Split(fieldName, "_")[0], frmBaseValues,
 			func(params cu.IM) (re ct.ResponseEvent, err error) {
 				if cu.ToString(params["event"], "") == ct.SelectorEventSelected {
@@ -1147,7 +1156,7 @@ func (s *TransService) formEventChangeSelector(evt ct.ResponseEvent) (re ct.Resp
 				return evt, nil
 			})
 	}
-	return evt, nil
+	//return evt, nil
 }
 
 func (s *TransService) formEventChange(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
@@ -1404,9 +1413,6 @@ func (s *TransService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 			if transID, err = s.update(ds, stateData, client.Msg); err != nil {
 				return evt, err
 			}
-			//stateData["dirty"] = false
-			//client.SetEditor("trans", view, stateData)
-			//return evt, err
 			return s.cls.setEditor(evt, "trans", cu.IM{
 				"editor_view": view,
 				"trans_id":    transID,
@@ -1687,21 +1693,12 @@ func (s *TransService) editorFieldViewAdd(evt ct.ResponseEvent, transMap cu.IM,
 	trans := cu.ToIM(stateData["trans"], cu.IM{})
 	transType := cu.ToString(trans["trans_type"], "")
 
-	movements := cu.ToIMA(stateData["movements"], []cu.IM{})
-
-	getBase := func() (base cu.IM) {
-		if _, found := trans[view]; found {
-			return trans
-		}
-		return stateData
-	}
 	appendRow := func() (row cu.IM, index int64) {
-		base := getBase()
-		rows := cu.ToIMA(base[view], []cu.IM{})
+		rows := cu.ToIMA(stateData[view], []cu.IM{})
 		row = transRowTypeMap[view](stateData)
 		row["id"] = -(len(rows) + 1)
 		rows = append(rows, row)
-		base[view] = rows
+		stateData[view] = rows
 		return row, int64(len(rows) - 1)
 	}
 
@@ -1719,6 +1716,7 @@ func (s *TransService) editorFieldViewAdd(evt ct.ResponseEvent, transMap cu.IM,
 			// transfer movement
 			row["movement_type"] = md.MovementTypeInventory.String()
 			row["shipping_time"] = cu.ToString(trans["trans_date"], time.Now().Format("2006-01-02"))[:10] + "T00:00:00"
+			movements := cu.ToIMA(stateData["movements"], []cu.IM{})
 			if len(movements) > 1 {
 				row["place_code"] = cu.ToString(movements[1]["place_code"], "")
 			}
@@ -2110,28 +2108,27 @@ func (s *TransService) createError(evt ct.ResponseEvent, msg string) (re ct.Resp
 	return evt, nil
 }
 
-func (s *TransService) createCheck(options cu.IM, trans md.Trans) (errMsg string) {
-	transType := cu.ToString(options["create_trans_type"], trans.TransType.String())
-	direction := cu.ToString(options["create_direction"], trans.Direction.String())
-	status := cu.ToString(options["status"], md.TransStatusNormal.String())
-
-	if (transType == md.TransTypeReceipt.String() || transType == md.TransTypeWorksheet.String()) && direction == md.DirectionIn.String() {
-		return "invalid_trans"
-	}
-	if trans.TransMeta.Status.String() == md.TransStatusCancellation.String() {
-		return "trans_create_cancellation_err1"
-	}
-	if status == md.TransStatusCancellation.String() &&
-		slices.Contains([]string{md.TransTypeReceipt.String(), md.TransTypeInvoice.String()}, transType) && !trans.Deleted {
-		return "trans_create_cancellation_err2"
-	}
-	//if status == md.TransStatusCancellation.String() && trans.TransCode != "" {
-	//	return "trans_create_cancellation_err3"
-	//	}
-	if status == md.TransStatusAmendment.String() && trans.Deleted {
-		return "trans_create_amendment_err"
-	}
-	return ""
+var createValidate = []func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string){
+	func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string) {
+		return (transType == md.TransTypeReceipt.String() || transType == md.TransTypeWorksheet.String()) && direction == md.DirectionIn.String(),
+			"invalid_trans"
+	},
+	func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string) {
+		return trans.TransMeta.Status.String() == md.TransStatusCancellation.String(), "trans_create_cancellation_err1"
+	},
+	func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string) {
+		return status == md.TransStatusCancellation.String() &&
+				slices.Contains([]string{md.TransTypeReceipt.String(), md.TransTypeInvoice.String()}, transType) && !trans.Deleted,
+			"trans_create_cancellation_err2"
+	},
+	/*
+		func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string) {
+			return status == md.TransStatusCancellation.String() && trans.TransCode != "", "trans_create_cancellation_err3"
+		},
+	*/
+	func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string) {
+		return status == md.TransStatusAmendment.String() && trans.Deleted, "trans_create_amendment_err"
+	},
 }
 
 func (s *TransService) createProductQty(items []cu.IM, productCode string, deposit bool) (tqty float64) {
@@ -2217,7 +2214,8 @@ func (s *TransService) createInvoiceItems(evt ct.ResponseEvent, options cu.IM) (
 
 	// put to deposit rows
 	for _, it := range items {
-		if cu.ToBoolean(it["deposit"], false) {
+		itMeta := cu.ToIM(it["item_meta"], cu.IM{})
+		if cu.ToBoolean(itMeta["deposit"], false) {
 			dqty := s.createProductQty(transitemInvoice, cu.ToString(it["product_code"], ""), true)
 			if dqty != 0 {
 				item := cu.MergeIM(cu.IM{}, it)
@@ -2531,18 +2529,18 @@ func (s *TransService) createTrans(evt ct.ResponseEvent, options cu.IM, trans md
 func (s *TransService) createData(evt ct.ResponseEvent, options cu.IM) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
-	//ds := cls.getDataStore(client.Ticket.Database)
 
 	var trans md.Trans = md.Trans{}
 	ut.ConvertToType(stateData["trans"], &trans)
 
-	//transType := cu.ToString(options["trans_type"], trans.TransType.String())
-	//direction := cu.ToString(options["direction"], trans.Direction.String())
-	//status := cu.ToString(options["status"], md.TransStatusNormal.String())
-
 	// to check some things...
-	if errMsg := s.createCheck(options, trans); errMsg != "" {
-		return s.createError(evt, client.Msg(errMsg))
+	transType := cu.ToString(options["create_trans_type"], trans.TransType.String())
+	direction := cu.ToString(options["create_direction"], trans.Direction.String())
+	status := cu.ToString(options["status"], md.TransStatusNormal.String())
+	for _, validate := range createValidate {
+		if invalid, errMsg := validate(transType, direction, status, trans, client.Msg); invalid {
+			return s.createError(evt, client.Msg(errMsg))
+		}
 	}
 
 	var transCode string
