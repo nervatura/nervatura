@@ -3,6 +3,8 @@ DROP VIEW IF EXISTS link_map;
 DROP VIEW IF EXISTS link_tags;
 DROP TABLE IF EXISTS link;
 
+DROP VIEW IF EXISTS item_shipping;
+
 DROP VIEW IF EXISTS movement_view;
 DROP VIEW IF EXISTS movement_map;
 DROP VIEW IF EXISTS movement_tags;

@@ -505,6 +505,23 @@ func TestClientComponent_SideBar(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:      "shipping",
+			moduleKey: "shipping",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"shipping": cu.IM{
+					"id": 1,
+				},
+				"items": []cu.IM{
+					{
+						"id":  1,
+						"qty": 100,
+					},
+				},
+				"dirty": true,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -944,6 +961,17 @@ func TestClientComponent_Form(t *testing.T) {
 			},
 		},
 		{
+			name:      "shipping",
+			editorKey: "shipping",
+			formKey:   "shipping",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"shipping": cu.IM{
+					"id": 1,
+				},
+			},
+		},
+		{
 			name:      "invalid",
 			editorKey: "invalid",
 		},
@@ -1250,6 +1278,29 @@ func Test_moduleEditorView(t *testing.T) {
 					"setting": cu.IM{
 						"id": 1,
 					},
+				},
+			},
+		},
+		{
+			name: "shipping",
+			args: args{
+				mKey:   "shipping",
+				labels: cu.SM{},
+				data: cu.IM{
+					"shipping": cu.IM{
+						"id": 1,
+					},
+					"items": []cu.IM{
+						{
+							"id":         1,
+							"difference": 100,
+						},
+						{
+							"id":         1,
+							"difference": 0,
+						},
+					},
+					"dirty": false,
 				},
 			},
 		},
@@ -2217,6 +2268,56 @@ func Test_moduleEditorRow(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "shipping",
+			args: args{
+				mKey:   "shipping",
+				view:   "shipping",
+				labels: cu.SM{},
+				data: cu.IM{
+					"shipping": cu.IM{
+						"id": 1,
+					},
+					"items": []cu.IM{
+						{
+							"id":         1,
+							"difference": 100,
+						},
+					},
+					"places": []cu.IM{
+						{
+							"code":       "1",
+							"place_name": "Place 1",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "shipping",
+			args: args{
+				mKey:   "shipping",
+				view:   "items",
+				labels: cu.SM{},
+				data: cu.IM{
+					"shipping": cu.IM{
+						"id": 1,
+					},
+					"items": []cu.IM{
+						{
+							"id":         1,
+							"difference": 100,
+						},
+					},
+					"places": []cu.IM{
+						{
+							"code":       "1",
+							"place_name": "Place 1",
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -2942,6 +3043,33 @@ func Test_moduleEditorTable(t *testing.T) {
 						},
 					},
 				},
+			},
+		},
+		{
+			name: "shipping_movements",
+			args: args{
+				mKey:   "shipping",
+				view:   "movements",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "shipping_items",
+			args: args{
+				mKey:   "shipping",
+				view:   "items",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "shipping_shipping",
+			args: args{
+				mKey:   "shipping",
+				view:   "shipping",
+				labels: cu.SM{},
+				data:   cu.IM{},
 			},
 		},
 		{

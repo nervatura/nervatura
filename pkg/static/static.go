@@ -83,6 +83,7 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"table":    "session",
 		"file_dir": "",
 		"exp":      "1",
+		"method":   "0",
 	},
 	"sql": {
 		"max_open_conns":    "10",

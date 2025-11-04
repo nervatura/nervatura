@@ -2152,7 +2152,7 @@ func (e *TransEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 					},
 					Rows:              items,
 					Pagination:        ct.PaginationTypeTop,
-					PageSize:          5,
+					PageSize:          10,
 					HidePaginatonSize: true,
 					RowSelected:       false,
 					TableFilter:       true,

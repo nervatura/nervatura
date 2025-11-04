@@ -35,6 +35,7 @@ type httpServer struct {
 	server     *http.Server
 	tlsEnabled bool
 	result     string
+	memSession map[string]md.MemoryStore
 }
 
 func init() {
@@ -44,6 +45,7 @@ func init() {
 func (s *httpServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal) error {
 	s.config = config
 	s.appLog = slog.New(slog.NewJSONHandler(appLogOut, nil))
+	s.memSession = make(map[string]md.MemoryStore)
 	s.mux = http.NewServeMux()
 
 	s.setRoutes()
@@ -162,7 +164,7 @@ func (s *httpServer) configRoute(w http.ResponseWriter, r *http.Request) {
 
 func (s *httpServer) headerClient(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		client := cl.NewClientService(s.config, s.appLog)
+		client := cl.NewClientService(s.config, s.appLog, s.memSession)
 		ctx := context.WithValue(r.Context(), md.ClientServiceCtxKey, client)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

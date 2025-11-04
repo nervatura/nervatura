@@ -1346,3 +1346,43 @@ func (ft *AuthFilter) UnmarshalJSON(b []byte) error {
 func (ft AuthFilter) MarshalJSON() ([]byte, error) {
 	return json.Marshal(ft.String())
 }
+
+type SessionMethod int
+
+const (
+	SessionMethodAuto SessionMethod = iota
+	SessionMethodMemory
+	SessionMethodFile
+	SessionMethodDatabase
+)
+
+var sessionMethodMap = map[string]SessionMethod{
+	"SESSION_AUTO":     SessionMethodAuto,
+	"SESSION_MEMORY":   SessionMethodMemory,
+	"SESSION_FILE":     SessionMethodFile,
+	"SESSION_DATABASE": SessionMethodDatabase,
+}
+
+func (sm SessionMethod) String() string {
+	for k, v := range sessionMethodMap {
+		if v == sm {
+			return k
+		}
+	}
+	return ""
+}
+
+func (sm *SessionMethod) UnmarshalJSON(b []byte) error {
+	s := JSONString(b)
+
+	if result, found := sessionMethodMap[s]; found {
+		*sm = result
+	} else {
+		return fmt.Errorf("invalid session method")
+	}
+	return nil
+}
+
+func (sm SessionMethod) MarshalJSON() ([]byte, error) {
+	return json.Marshal(sm.String())
+}

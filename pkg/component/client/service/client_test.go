@@ -19,8 +19,9 @@ import (
 
 func TestNewClientService(t *testing.T) {
 	type args struct {
-		config cu.IM
-		appLog *slog.Logger
+		config     cu.IM
+		appLog     *slog.Logger
+		memSession map[string]md.MemoryStore
 	}
 	tests := []struct {
 		name string
@@ -33,13 +34,14 @@ func TestNewClientService(t *testing.T) {
 					"NT_GOOGLE_CLIENT_ID":     "1234567890",
 					"NT_GOOGLE_CLIENT_SECRET": "1234567890",
 				},
-				appLog: slog.Default(),
+				appLog:     slog.Default(),
+				memSession: map[string]md.MemoryStore{},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			NewClientService(tt.args.config, tt.args.appLog)
+			NewClientService(tt.args.config, tt.args.appLog, tt.args.memSession)
 		})
 	}
 }
@@ -117,7 +119,7 @@ func TestClientService_LoadSession(t *testing.T) {
 	}
 	ses := api.SessionService{
 		Config: api.SessionConfig{
-			Method: api.SessionMethodMemory,
+			Method: md.SessionMethodMemory,
 		},
 		Conn: &md.TestDriver{Config: cu.IM{}},
 	}
@@ -144,7 +146,7 @@ func TestClientService_LoadSession(t *testing.T) {
 			fields: fields{
 				Session: &api.SessionService{
 					Config: api.SessionConfig{
-						Method: api.SessionMethodFile,
+						Method: md.SessionMethodFile,
 					},
 					ReadFile: func(name string) ([]byte, error) {
 						app, _ := json.Marshal(client)
@@ -3945,10 +3947,11 @@ func TestClientService_codeName(t *testing.T) {
 		config cu.IM
 		appLog *slog.Logger
 		// Named input parameters for target function.
-		ds    *api.DataStore
-		code  string
-		model string
-		want  string
+		ds         *api.DataStore
+		code       string
+		model      string
+		want       string
+		memSession map[string]md.MemoryStore
 	}{
 		{
 			name: "success",
@@ -3959,14 +3962,15 @@ func TestClientService_codeName(t *testing.T) {
 					},
 				}},
 			},
-			code:  "value",
-			model: "customer",
-			want:  "name",
+			code:       "value",
+			model:      "customer",
+			want:       "name",
+			memSession: map[string]md.MemoryStore{},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cls := NewClientService(tt.config, tt.appLog)
+			cls := NewClientService(tt.config, tt.appLog, tt.memSession)
 			got := cls.codeName(tt.ds, tt.code, tt.model)
 			if got != tt.want {
 				t.Errorf("codeName() = %v, want %v", got, tt.want)

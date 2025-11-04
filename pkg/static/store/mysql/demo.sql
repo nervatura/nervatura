@@ -1175,7 +1175,7 @@ JSON_OBJECT(
 JSON_OBJECT());
 INSERT INTO movement(
   code, movement_type, shipping_time, trans_code, product_code, tool_code, place_code, item_code, movement_code, movement_meta, movement_map) 
-VALUES('MOV0000000000N15', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1', 'PRD0000000000N1', NULL,
+VALUES('MOV0000000000N15', 'MOVEMENT_INVENTORY', '2024-12-10T00:00:00', 'DEL0000000000N14', 'PRD0000000000N11', NULL, 'PLA0000000000N1', 'ITM0000000000N11', NULL,
 JSON_OBJECT(
   'qty', -3, 'notes', 'demo', 'shared', false, 'tags', JSON_ARRAY()
 ), 

@@ -909,9 +909,8 @@ func (s *TransService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 		},
 
 		"shipping": func() (re ct.ResponseEvent, err error) {
-			//params := cu.ToIM(stateData["params"], cu.IM{})
-			//return s.cls.setEditor(evt, "shipping", params), nil
-			return evt, nil
+			params := cu.ToIM(stateData["params"], cu.IM{})
+			return s.cls.setEditor(evt, "shipping", params), nil
 		},
 
 		"employee": func() (re ct.ResponseEvent, err error) {
@@ -1770,8 +1769,7 @@ func (s *TransService) editorFieldViewAdd(evt ct.ResponseEvent, transMap cu.IM,
 			}
 			client.SetForm("warning", modal, 0, true)
 		} else {
-			//return s.cls.setEditor(evt, "shipping", stateData["params"].(cu.IM)), nil
-			return evt, nil
+			return s.cls.setEditor(evt, "shipping", stateData["params"].(cu.IM)), nil
 		}
 
 	case "maps":
@@ -2094,17 +2092,6 @@ func (s *TransService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 		client.SetForm(cu.ToString(modal["key"], ""), modalData, 0, true)
 		return evt, nil
 	}
-	return evt, nil
-}
-
-func (s *TransService) createError(evt ct.ResponseEvent, msg string) (re ct.ResponseEvent, err error) {
-	client := evt.Trigger.(*ct.Client)
-	modal := cu.IM{
-		"title":      client.Msg("trans_create_title"),
-		"info_label": msg,
-		"icon":       ct.IconExclamationTriangle,
-	}
-	client.SetForm("info", modal, 0, true)
 	return evt, nil
 }
 
@@ -2539,25 +2526,25 @@ func (s *TransService) createData(evt ct.ResponseEvent, options cu.IM) (re ct.Re
 	status := cu.ToString(options["status"], md.TransStatusNormal.String())
 	for _, validate := range createValidate {
 		if invalid, errMsg := validate(transType, direction, status, trans, client.Msg); invalid {
-			return s.createError(evt, client.Msg(errMsg))
+			return s.cls.errorModal(evt, client.Msg("trans_create_title"), client.Msg(errMsg))
 		}
 	}
 
 	var transCode string
 	if transCode, err = s.createTrans(evt, options, trans); err != nil {
-		return s.createError(evt, client.Msg(err.Error()))
+		return s.cls.errorModal(evt, client.Msg("trans_create_title"), client.Msg(err.Error()))
 	}
 
 	if err = s.createItems(evt, options, transCode); err != nil {
-		return s.createError(evt, client.Msg(err.Error()))
+		return s.cls.errorModal(evt, client.Msg("trans_create_title"), client.Msg(err.Error()))
 	}
 
 	if err = s.createPayments(evt, options, transCode); err != nil {
-		return s.createError(evt, client.Msg(err.Error()))
+		return s.cls.errorModal(evt, client.Msg("trans_create_title"), client.Msg(err.Error()))
 	}
 
 	if err = s.createMovements(evt, options, transCode); err != nil {
-		return s.createError(evt, client.Msg(err.Error()))
+		return s.cls.errorModal(evt, client.Msg("trans_create_title"), client.Msg(err.Error()))
 	}
 
 	return s.cls.setEditor(evt, "trans", cu.IM{

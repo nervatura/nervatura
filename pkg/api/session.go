@@ -11,22 +11,14 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	drv "github.com/nervatura/nervatura/v6/pkg/driver"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 const (
-	SessionMethodMemory   = "mem"
-	SessionMethodFile     = "file"
-	SessionMethodDatabase = "db"
-
 	SessionErrorDriver = "missing_driver"
 	SessionErrorData   = "nodata"
 )
-
-type memStore struct {
-	Session any
-	Stamp   time.Time
-}
 
 type SessionConfig struct {
 	FileDir     string
@@ -35,13 +27,13 @@ type SessionConfig struct {
 	Cleaning    bool
 	CleanExp    int64
 	CleanPeriod int64
-	Method      string
+	Method      md.SessionMethod
 }
 
 // SessionService implements the session service
 type SessionService struct {
-	memSession      map[string]memStore
-	method          string
+	memSession      map[string]md.MemoryStore
+	method          md.SessionMethod
 	cleaningStamp   time.Time
 	Config          SessionConfig
 	Conn            DataDriver
@@ -56,8 +48,9 @@ type SessionService struct {
 	RemoveFile      func(name string) error
 }
 
-func NewSession(config cu.IM, method, alias string) *SessionService {
+func NewSession(config cu.IM, alias string, method md.SessionMethod, memSession map[string]md.MemoryStore) *SessionService {
 	return &SessionService{
+		memSession: memSession,
 		Config: SessionConfig{
 			FileDir:     cu.ToString(config["NT_SESSION_DIR"], ""),
 			DbConn:      cu.ToString(config["NT_ALIAS_"+strings.ToUpper(alias)], os.Getenv("NT_ALIAS_"+strings.ToUpper(alias))),
@@ -80,15 +73,15 @@ func NewSession(config cu.IM, method, alias string) *SessionService {
 	}
 }
 
-func (ses *SessionService) sessionMethod() string {
-	ses.method = cu.ToString(ses.method, ses.Config.Method)
-	if ses.method == "" {
-		ses.method = SessionMethodMemory
+func (ses *SessionService) sessionMethod() md.SessionMethod {
+	ses.method = ses.Config.Method
+	if ses.method == md.SessionMethodAuto {
+		ses.method = md.SessionMethodMemory
 		if ses.Config.DbConn != "" {
-			ses.method = SessionMethodDatabase
+			ses.method = md.SessionMethodDatabase
 		}
 		if ses.Config.FileDir != "" {
-			ses.method = SessionMethodFile
+			ses.method = md.SessionMethodFile
 		}
 	}
 	return ses.method
@@ -270,9 +263,9 @@ func (ses *SessionService) loadMemSession(sessionID string) (result any, err err
 
 func (ses *SessionService) saveMemSession(sessionID string, data any) (err error) {
 	if ses.memSession == nil {
-		ses.memSession = make(map[string]memStore)
+		ses.memSession = make(map[string]md.MemoryStore)
 	}
-	ses.memSession[sessionID] = memStore{Session: data, Stamp: time.Now()}
+	ses.memSession[sessionID] = md.MemoryStore{Session: data, Stamp: time.Now()}
 	return nil
 }
 
@@ -292,36 +285,36 @@ func (ses *SessionService) cleaningMemSession(exp time.Time) (err error) {
 
 func (ses *SessionService) SaveSession(sessionID string, data any) {
 	save := map[string]func(){
-		SessionMethodFile: func() {
+		md.SessionMethodFile.String(): func() {
 			if err := ses.saveFileSession(sessionID, data); err != nil {
-				ses.method = SessionMethodMemory
+				ses.method = md.SessionMethodMemory
 				ses.saveMemSession(sessionID, data)
 			}
 		},
-		SessionMethodDatabase: func() {
+		md.SessionMethodDatabase.String(): func() {
 			var err error
 			if err = ses.checkSessionTable(); err == nil {
 				err = ses.saveDbSession(sessionID, data)
 			}
 			if err != nil {
-				ses.method = SessionMethodMemory
+				ses.method = md.SessionMethodMemory
 				ses.saveMemSession(sessionID, data)
 			}
 		},
-		SessionMethodMemory: func() {
+		md.SessionMethodMemory.String(): func() {
 			ses.saveMemSession(sessionID, data)
 		},
 	}
-	save[ses.sessionMethod()]()
+	save[ses.sessionMethod().String()]()
 	ses.CleaningSession()
 }
 
 func (ses *SessionService) LoadSession(sessionID string, data any) (result any, err error) {
 	switch ses.sessionMethod() {
-	case SessionMethodFile:
+	case md.SessionMethodFile:
 		err = ses.loadFileSession(sessionID, data)
 		return data, err
-	case SessionMethodDatabase:
+	case md.SessionMethodDatabase:
 		err = ses.loadDbSession(sessionID, &data)
 		return data, err
 	default:
@@ -331,9 +324,9 @@ func (ses *SessionService) LoadSession(sessionID string, data any) (result any, 
 
 func (ses *SessionService) DeleteSession(sessionID string) (err error) {
 	switch ses.sessionMethod() {
-	case SessionMethodFile:
+	case md.SessionMethodFile:
 		return ses.deleteFileSession(sessionID)
-	case SessionMethodDatabase:
+	case md.SessionMethodDatabase:
 		return ses.deleteDbSession(sessionID)
 	default:
 		return ses.deleteMemSession(sessionID)
@@ -346,17 +339,17 @@ func (ses *SessionService) CleaningSession() (err error) {
 		if ses.cleaningStamp.IsZero() || time.Now().Before(ses.cleaningStamp.Add(time.Duration(period)*time.Hour)) {
 			exp := time.Now().Add((-time.Duration(cu.ToFloat(ses.Config.CleanExp, 1))*time.Hour + 1))
 			methodCl := map[string]func() error{
-				SessionMethodFile: func() error {
+				md.SessionMethodFile.String(): func() error {
 					return ses.cleaningFileSession(exp)
 				},
-				SessionMethodDatabase: func() error {
+				md.SessionMethodDatabase.String(): func() error {
 					return ses.cleaningDbSession(exp)
 				},
-				SessionMethodMemory: func() error {
+				md.SessionMethodMemory.String(): func() error {
 					return ses.cleaningMemSession(exp)
 				},
 			}
-			if err = methodCl[ses.sessionMethod()](); err == nil {
+			if err = methodCl[ses.sessionMethod().String()](); err == nil {
 				ses.cleaningStamp = time.Now()
 			}
 		}

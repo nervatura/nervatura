@@ -64,13 +64,20 @@ var moduleMap = map[string]func(cls *ClientService) ServiceModule{
 	"trans": func(cls *ClientService) ServiceModule {
 		return NewTransService(cls)
 	},
+	"shipping": func(cls *ClientService) ServiceModule {
+		return NewShippingService(cls)
+	},
+	"setting": func(cls *ClientService) ServiceModule {
+		return NewSettingService(cls)
+	},
 }
 
-func NewClientService(config cu.IM, appLog *slog.Logger) *ClientService {
+func NewClientService(config cu.IM, appLog *slog.Logger, memSession map[string]md.MemoryStore) *ClientService {
+	method := md.SessionMethod(cu.ToInteger(config["NT_SESSION_METHOD"], 0))
 	cls := &ClientService{
 		Config:       config,
 		AppLog:       appLog,
-		Session:      api.NewSession(config, "", cu.ToString(config["NT_SESSION_ALIAS"], "")),
+		Session:      api.NewSession(config, cu.ToString(config["NT_SESSION_ALIAS"], ""), method, memSession),
 		NewDataStore: api.NewDataStore,
 		Modules:      map[string]ServiceModule{},
 		UI:           cp.NewClientComponent(),
@@ -217,6 +224,17 @@ func (cls *ClientService) codeName(ds *api.DataStore, code, model string) (name 
 		}
 	}
 	return name
+}
+
+func (cls *ClientService) errorModal(evt ct.ResponseEvent, title, msg string) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	modal := cu.IM{
+		"title":      title,
+		"info_label": msg,
+		"icon":       ct.IconExclamationTriangle,
+	}
+	client.SetForm("info", modal, 0, true)
+	return evt, nil
 }
 
 func (cls *ClientService) evtMsg(name, triggerName, value, toastType string, timeout int64) ct.ResponseEvent {
@@ -600,6 +618,7 @@ func (cls *ClientService) setEditor(evt ct.ResponseEvent, module string, params 
 			return cls.evtMsg(evt.Name, evt.TriggerName, err.Error(), ct.ToastTypeError, 0)
 		}
 	}
+	client.ResetEditor()
 	client.SetEditor(module, cu.ToString(params["editor_view"], module), moData)
 	return evt
 }

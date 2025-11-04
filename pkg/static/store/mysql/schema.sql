@@ -1790,6 +1790,18 @@ CREATE VIEW movement_formula AS
   LEFT JOIN place pl ON mv.place_code = pl.code
   WHERE t.trans_type = 'TRANS_FORMULA' and mv.deleted = false and t.deleted = false;
 
+CREATE VIEW item_shipping AS
+  SELECT i.id, i.code, i.trans_code, i.product_code, p.product_name, 
+    cast(COALESCE(item_meta->>"$.qty",'0') AS FLOAT) item_qty, 
+    sum(cast(COALESCE(movement_meta->>"$.qty",'0') AS FLOAT)) movement_qty
+  FROM item i
+  INNER JOIN trans t ON i.trans_code = t.code
+  INNER JOIN product p ON i.product_code = p.code
+  LEFT JOIN movement mv ON mv.item_code = i.code
+  WHERE t.deleted = false AND i.deleted = false AND mv.deleted = false AND
+    p.product_type = 'PRODUCT_ITEM' AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
+  GROUP BY i.id, i.code, i.trans_code, i.product_code, p.product_name;
+
 CREATE TABLE IF NOT EXISTS payment(
   id INTEGER AUTO_INCREMENT NOT NULL,
   code VARCHAR(255) NOT NULL,

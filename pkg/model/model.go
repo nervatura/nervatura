@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/smtp"
+	"time"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -24,6 +25,11 @@ var AuthOptionsCtxKey = &ContextKey{Name: "auth_options"}
 var AuthUserCtxKey = &ContextKey{Name: "auth_user"}
 var DataStoreCtxKey = &ContextKey{Name: "data_store"}
 var ClientServiceCtxKey = &ContextKey{Name: "client_service"}
+
+type MemoryStore struct {
+	Session any
+	Stamp   time.Time
+}
 
 // Filter query filter type
 type Filter struct {

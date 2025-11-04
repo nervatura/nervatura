@@ -192,6 +192,7 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_RSA_PUBLIC"] = cu.ToString(app.getEnv("NT_RSA_PUBLIC"), "")
 
 	app.config["NT_SESSION_EXP"] = cu.ToInteger(app.getEnv("NT_SESSION_EXP"), cu.ToInteger(st.DefaultConfig["session"]["exp"], 1))
+	app.config["NT_SESSION_METHOD"] = cu.ToInteger(app.getEnv("NT_SESSION_METHOD"), cu.ToInteger(st.DefaultConfig["session"]["method"], 0))
 
 	app.config["NT_TLS_CERT_FILE"] = cu.ToString(app.getEnv("NT_TLS_CERT_FILE"), cu.ToString(st.DefaultConfig["connection"]["tls_cert_file"], ""))
 	app.config["NT_TLS_KEY_FILE"] = cu.ToString(app.getEnv("NT_TLS_KEY_FILE"), cu.ToString(st.DefaultConfig["connection"]["tls_key_file"], ""))

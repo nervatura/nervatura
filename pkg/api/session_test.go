@@ -14,8 +14,8 @@ import (
 
 func TestSessionService_saveFileSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -112,8 +112,8 @@ func TestSessionService_saveFileSession(t *testing.T) {
 
 func TestSessionService_loadFileSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -183,8 +183,8 @@ func TestSessionService_loadFileSession(t *testing.T) {
 
 func TestSessionService_checkSessionTable(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -294,8 +294,8 @@ func TestSessionService_checkSessionTable(t *testing.T) {
 
 func TestSessionService_saveDbSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -383,8 +383,8 @@ func TestSessionService_saveDbSession(t *testing.T) {
 
 func TestSessionService_loadDbSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -469,8 +469,8 @@ func TestSessionService_loadDbSession(t *testing.T) {
 
 func TestSessionService_SaveSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -541,7 +541,7 @@ func TestSessionService_SaveSession(t *testing.T) {
 			name: "mem2",
 			fields: fields{
 				Config: SessionConfig{
-					Method: SessionMethodMemory,
+					Method: md.SessionMethodMemory,
 				},
 			},
 			args: args{
@@ -575,8 +575,8 @@ func TestSessionService_SaveSession(t *testing.T) {
 
 func TestSessionService_LoadSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -617,7 +617,7 @@ func TestSessionService_LoadSession(t *testing.T) {
 		{
 			name: "mem",
 			fields: fields{
-				memSession: map[string]memStore{
+				memSession: map[string]md.MemoryStore{
 					"key": {},
 				},
 			},
@@ -632,7 +632,7 @@ func TestSessionService_LoadSession(t *testing.T) {
 			fields: fields{
 				Config: SessionConfig{
 					FileDir: "dir",
-					Method:  SessionMethodFile,
+					Method:  md.SessionMethodFile,
 				},
 				ReadFile: func(name string) ([]byte, error) {
 					return []byte{}, nil
@@ -651,7 +651,7 @@ func TestSessionService_LoadSession(t *testing.T) {
 			name: "db",
 			fields: fields{
 				Config: SessionConfig{
-					Method: SessionMethodDatabase,
+					Method: md.SessionMethodDatabase,
 				},
 				Conn: &md.TestDriver{Config: cu.IM{
 					"QuerySQL": func(sqlString string) ([]cu.IM, error) {
@@ -700,8 +700,8 @@ func TestSessionService_LoadSession(t *testing.T) {
 
 func TestSessionService_deleteFileSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -764,8 +764,8 @@ func TestSessionService_deleteFileSession(t *testing.T) {
 
 func TestSessionService_deleteDbSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -836,8 +836,8 @@ func TestSessionService_deleteDbSession(t *testing.T) {
 
 func TestSessionService_DeleteSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -864,7 +864,7 @@ func TestSessionService_DeleteSession(t *testing.T) {
 			name: "file",
 			fields: fields{
 				Config: SessionConfig{
-					Method: SessionMethodFile,
+					Method: md.SessionMethodFile,
 				},
 				RemoveFile: func(name string) error {
 					return nil
@@ -879,7 +879,7 @@ func TestSessionService_DeleteSession(t *testing.T) {
 			name: "db",
 			fields: fields{
 				Config: SessionConfig{
-					Method: SessionMethodDatabase,
+					Method: md.SessionMethodDatabase,
 				},
 				Conn: &md.TestDriver{Config: cu.IM{
 					"QuerySQL": func(sqlString string) ([]cu.IM, error) {
@@ -901,9 +901,9 @@ func TestSessionService_DeleteSession(t *testing.T) {
 			name: "mem",
 			fields: fields{
 				Config: SessionConfig{
-					Method: SessionMethodMemory,
+					Method: md.SessionMethodMemory,
 				},
-				memSession: map[string]memStore{
+				memSession: map[string]md.MemoryStore{
 					"key": {},
 				},
 			},
@@ -940,8 +940,8 @@ func TestSessionService_DeleteSession(t *testing.T) {
 
 func TestSessionService_cleaningFileSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -1010,8 +1010,8 @@ func TestSessionService_cleaningFileSession(t *testing.T) {
 
 func TestSessionService_cleaningDbSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -1072,8 +1072,8 @@ func TestSessionService_cleaningDbSession(t *testing.T) {
 
 func TestSessionService_cleaningMemSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -1099,7 +1099,7 @@ func TestSessionService_cleaningMemSession(t *testing.T) {
 		{
 			name: "clean",
 			fields: fields{
-				memSession: map[string]memStore{
+				memSession: map[string]md.MemoryStore{
 					"SES0123": {},
 				},
 			},
@@ -1136,8 +1136,8 @@ func TestSessionService_cleaningMemSession(t *testing.T) {
 
 func TestSessionService_CleaningSession(t *testing.T) {
 	type fields struct {
-		memSession      map[string]memStore
-		method          string
+		memSession      map[string]md.MemoryStore
+		method          md.SessionMethod
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
@@ -1170,7 +1170,7 @@ func TestSessionService_CleaningSession(t *testing.T) {
 			fields: fields{
 				Config: SessionConfig{
 					Cleaning: true,
-					Method:   SessionMethodFile,
+					Method:   md.SessionMethodFile,
 				},
 			},
 			wantErr: false,
@@ -1180,7 +1180,7 @@ func TestSessionService_CleaningSession(t *testing.T) {
 			fields: fields{
 				Config: SessionConfig{
 					Cleaning: true,
-					Method:   SessionMethodDatabase,
+					Method:   md.SessionMethodDatabase,
 				},
 				Conn: &md.TestDriver{Config: cu.IM{}},
 			},
@@ -1214,9 +1214,10 @@ func TestSessionService_CleaningSession(t *testing.T) {
 
 func TestNewSession(t *testing.T) {
 	type args struct {
-		config cu.IM
-		method string
-		alias  string
+		config     cu.IM
+		method     md.SessionMethod
+		alias      string
+		memSession map[string]md.MemoryStore
 	}
 	tests := []struct {
 		name string
@@ -1225,15 +1226,16 @@ func TestNewSession(t *testing.T) {
 		{
 			name: "success",
 			args: args{
-				config: cu.IM{},
-				method: SessionMethodFile,
-				alias:  "test",
+				config:     cu.IM{},
+				method:     md.SessionMethodFile,
+				alias:      "test",
+				memSession: map[string]md.MemoryStore{},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			NewSession(tt.args.config, tt.args.method, tt.args.alias)
+			NewSession(tt.args.config, tt.args.alias, tt.args.method, tt.args.memSession)
 		})
 	}
 }

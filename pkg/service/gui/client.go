@@ -69,6 +69,8 @@ func ClientAuthEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
+		w.Header().Set(ct.HeaderRetarget, "#toast-msg")
+		w.Header().Set(ct.HeaderReswap, "innerHTML")
 		html, _ = (&ct.Toast{
 			Type: ct.ToastTypeError, Value: err.Error(),
 		}).Render()
@@ -148,6 +150,8 @@ func ClientSessionEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
+		w.Header().Set(ct.HeaderRetarget, "#toast-msg")
+		w.Header().Set(ct.HeaderReswap, "innerHTML")
 		html, _ = (&ct.Toast{
 			Type: ct.ToastTypeError, Value: err.Error(),
 		}).Render()
