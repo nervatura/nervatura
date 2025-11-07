@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/lib/pq v1.10.9
-	github.com/nervatura/component v1.7.47
+	github.com/nervatura/component v1.7.48
 	golang.org/x/crypto v0.43.0
 	google.golang.org/grpc v1.76.0
 	google.golang.org/protobuf v1.36.10

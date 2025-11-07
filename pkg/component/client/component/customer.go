@@ -12,6 +12,11 @@ import (
 
 type CustomerEditor struct{}
 
+func (e *CustomerEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["customer_title"]),
+		cu.ToString(data["editor_icon"], ct.IconUser)
+}
+
 func (e *CustomerEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var customer cu.IM = cu.ToIM(data["customer"], cu.IM{"customer_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})

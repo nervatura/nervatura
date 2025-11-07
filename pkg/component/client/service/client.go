@@ -153,15 +153,7 @@ func (cls *ClientService) GetClient(host, sessionID, eventURL, lang, theme strin
 		//HideMenu:        false,
 		Lang:            lang,
 		Theme:           theme,
-		ClientLabels:    cls.UI.Labels,
-		ClientMenu:      cls.UI.Menu,
-		ClientSideBar:   cls.UI.SideBar,
-		ClientLogin:     cls.UI.Login,
-		ClientSearch:    cls.UI.Search,
-		ClientBrowser:   cls.UI.Browser,
-		ClientEditor:    cls.UI.Editor,
-		ClientModalForm: cls.UI.ModalForm,
-		ClientForm:      cls.UI.Form,
+		CustomFunctions: cls.UI,
 	}
 	//cli.SetConfigValue("hide_exit", false)
 	return cli
@@ -174,16 +166,7 @@ func (cls *ClientService) LoadSession(sessionID string) (client *ct.Client, err 
 			client = memClient
 		} else {
 			client.OnResponse = cls.MainResponse
-
-			client.ClientLabels = cls.UI.Labels
-			client.ClientMenu = cls.UI.Menu
-			client.ClientSideBar = cls.UI.SideBar
-			client.ClientLogin = cls.UI.Login
-			client.ClientSearch = cls.UI.Search
-			client.ClientBrowser = cls.UI.Browser
-			client.ClientEditor = cls.UI.Editor
-			client.ClientModalForm = cls.UI.ModalForm
-			client.ClientForm = cls.UI.Form
+			client.CustomFunctions = cls.UI
 			_, err = client.Render()
 		}
 	}

@@ -164,6 +164,7 @@ func (s *SearchConfig) SideGroups(labels cu.SM) []md.SideGroup {
 				"office_report", "office_report_queue", "office_report_editor", "office_rate", "office_shortcut", "office_log",
 			},
 			AuthFilter: md.AuthFilterOffice.String(),
+			Disabled:   true,
 		},
 	}
 }

@@ -12,6 +12,11 @@ import (
 
 type ToolEditor struct{}
 
+func (e *ToolEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["tool_title"]),
+		cu.ToString(data["editor_icon"], ct.IconWrench)
+}
+
 func (e *ToolEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var tool cu.IM = cu.ToIM(data["tool"], cu.IM{"tool_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})

@@ -52,6 +52,11 @@ func TransIsMovement(transType string) bool {
 	)
 }
 
+func (e *TransEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["trans_title"]),
+		cu.ToString(data["editor_icon"], ct.IconFileText)
+}
+
 func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (items []ct.SideBarItem) {
 	var trans cu.IM = cu.ToIM(data["trans"], cu.IM{"trans_meta": cu.IM{}})
 	transMeta := cu.ToIM(trans["trans_meta"], cu.IM{})

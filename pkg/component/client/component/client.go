@@ -15,6 +15,7 @@ import (
 
 // EditorInterface is an interface that defines the methods for a Nervatura Client UI editor components.
 type EditorInterface interface {
+	Frame(labels cu.SM, data cu.IM) (title, icon string)
 	SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 	View(labels cu.SM, data cu.IM) (views []ct.EditorView)
 	Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row)
@@ -29,17 +30,6 @@ type SearchInterface interface {
 	View(view string, labels cu.SM) md.SearchView
 	Query(key string, params cu.IM) md.Query
 	Filter(view string, filter ct.BrowserFilter, queryFilters []string) []string
-}
-
-type ClientInterface interface {
-	Login(labels cu.SM, config cu.IM) ct.Login
-	Menu(labels cu.SM, config cu.IM) ct.MenuBar
-	Search(view string, labels cu.SM, searchData cu.IM) ct.Search
-	Browser(view string, labels cu.SM, searchData cu.IM) ct.Browser
-	Editor(editorKey, viewName string, labels cu.SM, editorData cu.IM) ct.Editor
-	Form(editorKey, formKey string, labels cu.SM, data cu.IM) (form ct.Form)
-	Modal(formKey string, labels cu.SM, data cu.IM) (form ct.Form)
-	Labels(lang string) cu.SM
 }
 
 var editorMap = map[string]EditorInterface{
@@ -86,7 +76,6 @@ type ClientComponent struct {
 	helpURL       string
 	clientHelpURL string
 	exportURL     string
-	Labels        func(lang string) map[string]string
 	SearchConfig  *SearchConfig
 	editorMap     map[string]EditorInterface
 	modalMap      map[string]func(labels cu.SM, data cu.IM) ct.Form
@@ -101,8 +90,11 @@ func NewClientComponent() *ClientComponent {
 		SearchConfig:  &SearchConfig{},
 		editorMap:     editorMap,
 		modalMap:      modalMap,
-		Labels:        ut.GetLangMessages,
 	}
+}
+
+func (cc *ClientComponent) Labels(lang string) cu.SM {
+	return ut.GetLangMessages(lang)
 }
 
 func (cc *ClientComponent) Menu(labels cu.SM, config cu.IM) ct.MenuBar {
@@ -233,6 +225,7 @@ func (cc *ClientComponent) Editor(editorKey, viewName string, labels cu.SM, edit
 		Tables: []ct.Table{},
 	}
 	if em, found := cc.editorMap[editorKey]; found {
+		edi.Title, edi.Icon = em.Frame(labels, editorData)
 		edi.Views = em.View(labels, editorData)
 		edi.Rows = em.Row(viewName, labels, editorData)
 		edi.Tables = em.Table(viewName, labels, editorData)
@@ -248,7 +241,7 @@ func (cc *ClientComponent) Form(editorKey, formKey string, labels cu.SM, data cu
 	return ct.Form{}
 }
 
-func (cc *ClientComponent) ModalForm(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (cc *ClientComponent) Modal(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	if frm, found := cc.modalMap[formKey]; found {
 		return frm(labels, data)
 	}

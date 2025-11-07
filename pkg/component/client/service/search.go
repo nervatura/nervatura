@@ -111,7 +111,7 @@ func (s *SearchService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err
 		client.SetForm("input_string", modal, 0, true)
 
 	case ct.FormEventOK:
-		sConf := s.cls.UI.SearchConfig.View(stateKey, client.ClientLabels(client.Lang))
+		sConf := s.cls.UI.SearchConfig.View(stateKey, client.CustomFunctions.Labels(client.Lang))
 		visibleColumns := client.GetSearchVisibleColumns(ut.ToBoolMap(sConf.VisibleColumns, map[string]bool{}))
 		viewData := cu.ToIM(stateData[stateKey], cu.IM{})
 		frmValues := cu.ToIM(evt.Value, cu.IM{})

@@ -226,10 +226,8 @@ func TestSearchService_Response(t *testing.T) {
 							"id": 1,
 						},
 					},
-					Lang: "en",
-					ClientLabels: func(lang string) cu.SM {
-						return cu.SM{}
-					},
+					Lang:            "en",
+					CustomFunctions: &cp.ClientComponent{},
 				},
 				Name:  ct.FormEventOK,
 				Value: cu.IM{"data": cu.IM{"next": "bookmark_add"}, "value": cu.IM{"value": "label"}},
@@ -275,10 +273,8 @@ func TestSearchService_Response(t *testing.T) {
 							"id": 1,
 						},
 					},
-					Lang: "en",
-					ClientLabels: func(lang string) cu.SM {
-						return cu.SM{}
-					},
+					Lang:            "en",
+					CustomFunctions: &cp.ClientComponent{},
 				},
 				Name:  ct.BrowserEventBookmark,
 				Value: cu.IM{"data": cu.IM{"next": "bookmark_add"}, "value": cu.IM{"value": "label"}},

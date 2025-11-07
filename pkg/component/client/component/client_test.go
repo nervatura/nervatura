@@ -656,6 +656,13 @@ func TestClientComponent_Editor(t *testing.T) {
 			editorData: cu.IM{},
 		},
 		{
+			name:       "shipping",
+			editorKey:  "shipping",
+			viewName:   "shipping",
+			labels:     cu.SM{},
+			editorData: cu.IM{},
+		},
+		{
 			name:      "invalid",
 			editorKey: "invalid",
 		},
@@ -1002,7 +1009,7 @@ func TestClientComponent_Form(t *testing.T) {
 	}
 }
 
-func TestClientComponent_ModalForm(t *testing.T) {
+func TestClientComponent_Modal(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -1097,7 +1104,7 @@ func TestClientComponent_ModalForm(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cc := NewClientComponent()
-			cc.ModalForm(tt.formKey, tt.labels, tt.data)
+			cc.Modal(tt.formKey, tt.labels, tt.data)
 		})
 	}
 }
@@ -3125,6 +3132,50 @@ func Test_moduleEditorTable(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			moduleEditorTable(tt.args.mKey, tt.args.view, tt.args.labels, tt.args.data)
+		})
+	}
+}
+
+func TestClientComponent_Labels(t *testing.T) {
+	type fields struct {
+		languages     []string
+		helpURL       string
+		clientHelpURL string
+		exportURL     string
+		SearchConfig  *SearchConfig
+		editorMap     map[string]EditorInterface
+		modalMap      map[string]func(labels cu.SM, data cu.IM) ct.Form
+	}
+	type args struct {
+		lang string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{
+			name: "en",
+			fields: fields{
+				languages: []string{"en"},
+			},
+			args: args{
+				lang: "en",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cc := &ClientComponent{
+				languages:     tt.fields.languages,
+				helpURL:       tt.fields.helpURL,
+				clientHelpURL: tt.fields.clientHelpURL,
+				exportURL:     tt.fields.exportURL,
+				SearchConfig:  tt.fields.SearchConfig,
+				editorMap:     tt.fields.editorMap,
+				modalMap:      tt.fields.modalMap,
+			}
+			cc.Labels(tt.args.lang)
 		})
 	}
 }

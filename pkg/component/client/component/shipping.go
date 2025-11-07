@@ -12,6 +12,11 @@ import (
 
 type ShippingEditor struct{}
 
+func (e *ShippingEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["shipping_title"]),
+		cu.ToString(data["editor_icon"], ct.IconTruck)
+}
+
 func (e *ShippingEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	user := cu.ToIM(data["user"], cu.IM{})
 	shipping := cu.ToIM(data["shipping"], cu.IM{})

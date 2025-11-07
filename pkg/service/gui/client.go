@@ -291,7 +291,7 @@ func ClientExportBrowser(w http.ResponseWriter, r *http.Request) {
 
 	_, stateKey, stateData := client.GetStateData()
 
-	sConf := cs.UI.SearchConfig.View(stateKey, client.ClientLabels(client.Lang))
+	sConf := cs.UI.SearchConfig.View(stateKey, client.CustomFunctions.Labels(client.Lang))
 	browserFields := sConf.Fields
 	visibleColumns := client.GetSearchVisibleColumns(ut.ToBoolMap(sConf.VisibleColumns, map[string]bool{}))
 	fileName := fmt.Sprintf("%s.csv", stateKey)

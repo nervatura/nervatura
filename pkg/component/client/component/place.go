@@ -12,6 +12,11 @@ import (
 
 type PlaceEditor struct{}
 
+func (e *PlaceEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["place_title"]),
+		cu.ToString(data["editor_icon"], ct.IconHome)
+}
+
 func (e *PlaceEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var place cu.IM = cu.ToIM(data["place"], cu.IM{"place_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})

@@ -24,6 +24,11 @@ var settingIconMap = map[string]string{
 	"template":    ct.IconBook,
 }
 
+func (e *SettingEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["setting_title"]),
+		cu.ToString(data["editor_icon"], ct.IconCog)
+}
+
 func (e *SettingEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	viewName := cu.ToString(data["view"], "")
 	user := cu.ToIM(data["user"], cu.IM{})

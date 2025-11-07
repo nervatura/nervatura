@@ -12,6 +12,11 @@ import (
 
 type ProjectEditor struct{}
 
+func (e *ProjectEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["project_title"]),
+		cu.ToString(data["editor_icon"], ct.IconClock)
+}
+
 func (e *ProjectEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var project cu.IM = cu.ToIM(data["project"], cu.IM{"project_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})

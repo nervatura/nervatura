@@ -40,6 +40,8 @@ github.com/nervatura/component v1.7.46 h1:d2d4zbHJclkLDszzOdCm57bWs0Emenq6uYkcTh
 github.com/nervatura/component v1.7.46/go.mod h1:9xkb/QOQ6sMqfB8Q7IFROfZslHpFGNU+5GtA0rBYSpQ=
 github.com/nervatura/component v1.7.47 h1:fXb/lmQnSxjSGfcSjAQ10tPiLzSUci/DCB5qLWR00cw=
 github.com/nervatura/component v1.7.47/go.mod h1:9xkb/QOQ6sMqfB8Q7IFROfZslHpFGNU+5GtA0rBYSpQ=
+github.com/nervatura/component v1.7.48 h1:swn68F4/6bxG3fQVkhj4JbO+MuPFQouQDDqOJd9j+tQ=
+github.com/nervatura/component v1.7.48/go.mod h1:9xkb/QOQ6sMqfB8Q7IFROfZslHpFGNU+5GtA0rBYSpQ=
 github.com/nervatura/report v1.5.1 h1:C6T52X4ylRyLGqUbykA0oTEMaZmJXoDMVlv135/M1v0=
 github.com/nervatura/report v1.5.1/go.mod h1:tgxmk7RqAa5UbFRiXoqAkrGB37rFRHQKN8upJ/hHwH0=
 github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=

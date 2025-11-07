@@ -12,6 +12,11 @@ import (
 
 type ProductEditor struct{}
 
+func (e *ProductEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["product_title"]),
+		cu.ToString(data["editor_icon"], ct.IconShoppingCart)
+}
+
 func (e *ProductEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
 	var product cu.IM = cu.ToIM(data["product"], cu.IM{"product_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})
