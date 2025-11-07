@@ -250,6 +250,28 @@ func TestSearchConfig_Filter(t *testing.T) {
 			want:         []string{"and (CAST(default as CHAR(255)) like '%123%')"},
 		},
 		{
+			name: "product_components_qty",
+			view: "product_components",
+			filter: ct.BrowserFilter{
+				Field: "qty",
+				Comp:  "==",
+				Value: "123",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (qty = 123)"},
+		},
+		{
+			name: "product_components_default",
+			view: "product_components",
+			filter: ct.BrowserFilter{
+				Field: "notes",
+				Comp:  "==",
+				Value: "abc",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (CAST(notes as CHAR(255)) like '%abc%')"},
+		},
+		{
 			name: "tool_simple",
 			view: "tool_simple",
 			filter: ct.BrowserFilter{
@@ -1385,6 +1407,17 @@ func TestSearchConfig_Query(t *testing.T) {
 					},
 				},
 				"filters": []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}},
+			},
+		},
+		{
+			name: "product_components",
+			key:  "product_components",
+			params: cu.IM{
+				"view": "product_components",
+				"query": md.Query{
+					Filters: []md.Filter{},
+				},
+				"filters": []ct.BrowserFilter{},
 			},
 		},
 		{

@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS product_components;
+
 DROP VIEW IF EXISTS link_view;
 DROP VIEW IF EXISTS link_map;
 DROP VIEW IF EXISTS link_tags;

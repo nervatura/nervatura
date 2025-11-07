@@ -509,11 +509,13 @@ type ProductType int
 const (
 	ProductTypeItem ProductType = iota
 	ProductTypeService
+	ProductTypeVirtual
 )
 
 var productTypeMap = map[string]ProductType{
 	"PRODUCT_ITEM":    ProductTypeItem,
 	"PRODUCT_SERVICE": ProductTypeService,
+	"PRODUCT_VIRTUAL": ProductTypeVirtual,
 }
 
 func (pt ProductType) String() string {
@@ -1171,6 +1173,7 @@ const (
 	ViewProductMap
 	ViewProductTags
 	ViewProductView
+	ViewProductComponents
 	ViewProjectAddresse
 	ViewProjectContacts
 	ViewProjectEvents
@@ -1241,6 +1244,7 @@ var viewNameMap = map[string]ViewName{
 	"VIEW_PRODUCT_MAP":        ViewProductMap,
 	"VIEW_PRODUCT_TAGS":       ViewProductTags,
 	"VIEW_PRODUCT_VIEW":       ViewProductView,
+	"VIEW_PRODUCT_COMPONENTS": ViewProductComponents,
 	"VIEW_PROJECT_ADDRESSES":  ViewProjectAddresse,
 	"VIEW_PROJECT_CONTACTS":   ViewProjectContacts,
 	"VIEW_PROJECT_EVENTS":     ViewProjectEvents,

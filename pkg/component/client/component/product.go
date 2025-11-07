@@ -109,6 +109,8 @@ func (e *ProductEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIte
 
 func (e *ProductEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	var product cu.IM = cu.ToIM(data["product"], cu.IM{})
+	productType := cu.ToString(product["product_type"], "")
+	components := cu.ToIMA(data["components"], []cu.IM{})
 	productMap := cu.ToIM(product["product_map"], cu.IM{})
 	events := cu.ToIMA(product["events"], []cu.IM{})
 	prices := cu.ToIMA(data["prices"], []cu.IM{})
@@ -123,7 +125,7 @@ func (e *ProductEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 			},
 		}
 	}
-	return []ct.EditorView{
+	views = []ct.EditorView{
 		{
 			Key:   "product",
 			Label: labels["product_view"],
@@ -148,6 +150,15 @@ func (e *ProductEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 			Badge: cu.ToString(int64(len(prices)), "0"),
 		},
 	}
+	if productType == md.ProductTypeVirtual.String() {
+		views = append(views, ct.EditorView{
+			Key:   "components",
+			Label: labels["product_component_view"],
+			Icon:  ct.IconFlask,
+			Badge: cu.ToString(int64(len(components)), "0"),
+		})
+	}
+	return views
 }
 
 func (e *ProductEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
@@ -180,7 +191,7 @@ func (e *ProductEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Ro
 	productTypeOpt := func() (opt []ct.SelectOption) {
 		opt = []ct.SelectOption{}
 		for _, ptype := range []md.ProductType{
-			md.ProductTypeItem, md.ProductTypeService,
+			md.ProductTypeItem, md.ProductTypeService, md.ProductTypeVirtual,
 		} {
 			opt = append(opt, ct.SelectOption{
 				Value: ptype.String(), Text: ptype.String(),
@@ -364,7 +375,7 @@ func (e *ProductEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Ro
 }
 
 func (e *ProductEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
-	if !slices.Contains([]string{"maps", "events", "prices"}, view) {
+	if !slices.Contains([]string{"maps", "events", "prices", "components"}, view) {
 		return []ct.Table{}
 	}
 
@@ -459,58 +470,98 @@ func (e *ProductEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table 
 				},
 			}
 		},
+		"components": func() []ct.Table {
+			itemRows := func() []cu.IM {
+				rows := []cu.IM{}
+				components := cu.ToIMA(data["components"], []cu.IM{})
+				for _, component := range components {
+					linkMeta := cu.ToIM(component["link_meta"], cu.IM{})
+					rows = append(rows, cu.MergeIM(component, cu.IM{
+						"product_code": cu.ToString(component["link_code_2"], ""),
+						"qty":          cu.ToFloat(linkMeta["qty"], 0),
+						"notes":        cu.ToString(linkMeta["notes"], ""),
+						"editor":       "product",
+					}))
+				}
+				return rows
+			}
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "product_code", Label: labels["product_code"], FieldType: ct.TableFieldTypeLink},
+						{Name: "product_name", Label: labels["product_name"]},
+						{Name: "unit", Label: labels["product_unit"]},
+						{Name: "qty", Label: labels["product_component_qty"], FieldType: ct.TableFieldTypeNumber},
+						{Name: "notes", Label: labels["product_component_notes"]},
+					},
+					Rows:              itemRows(),
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          5,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           true,
+					LabelAdd:          labels["product_component_add"],
+				},
+			}
+		},
 	}
 	return tblMap[view]()
 }
 
 func (e *ProductEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
-	footerRows := []ct.Row{
-		{
-			Columns: []ct.RowColumn{
-				{Value: ct.Field{
-					Type: ct.FieldTypeButton,
-					Value: cu.IM{
-						"name":         ct.FormEventOK,
-						"type":         ct.ButtonTypeSubmit,
-						"button_style": ct.ButtonStylePrimary,
-						"icon":         ct.IconCheck,
-						"label":        labels["editor_save"],
-						"auto_focus":   true,
-						"selected":     true,
-					},
-				}},
-				{Value: ct.Field{
-					Type: ct.FieldTypeButton,
-					Value: cu.IM{
-						"name":         ct.FormEventCancel,
-						"type":         ct.ButtonTypeSubmit,
-						"button_style": ct.ButtonStyleDefault,
-						"icon":         ct.IconReply,
-						"label":        labels["editor_back"],
-					},
-				}},
-				{Value: ct.Field{
-					Type:  ct.FieldTypeLabel,
-					Value: cu.IM{},
-				}},
-				{Value: ct.Field{
-					Type: ct.FieldTypeButton,
-					Value: cu.IM{
-						"name":         "form_delete",
-						"type":         ct.ButtonTypeSubmit,
-						"button_style": ct.ButtonStyleBorder,
-						"icon":         ct.IconTimes,
-						"label":        labels["editor_delete"],
-						"style":        cu.SM{"color": "red", "fill": "red"},
-					},
-				}},
+	footerRows := func(disabled bool) []ct.Row {
+		return []ct.Row{
+			{
+				Columns: []ct.RowColumn{
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventOK,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStylePrimary,
+							"icon":         ct.IconCheck,
+							"label":        labels["editor_save"],
+							"auto_focus":   true,
+							"selected":     true,
+							"disabled":     disabled,
+						},
+					}},
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         ct.FormEventCancel,
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStyleDefault,
+							"icon":         ct.IconReply,
+							"label":        labels["editor_back"],
+							"disabled":     cu.ToInteger(formData["id"], 0) < 0,
+						},
+					}},
+					{Value: ct.Field{
+						Type:  ct.FieldTypeLabel,
+						Value: cu.IM{},
+					}},
+					{Value: ct.Field{
+						Type: ct.FieldTypeButton,
+						Value: cu.IM{
+							"name":         "form_delete",
+							"type":         ct.ButtonTypeSubmit,
+							"button_style": ct.ButtonStyleBorder,
+							"icon":         ct.IconTimes,
+							"label":        labels["editor_delete"],
+							"style":        cu.SM{"color": "red", "fill": "red"},
+						},
+					}},
+				},
+				Full:         true,
+				FieldCol:     false,
+				BorderTop:    false,
+				BorderBottom: false,
 			},
-			Full:         true,
-			FieldCol:     false,
-			BorderTop:    false,
-			BorderBottom: false,
-		},
+		}
 	}
 	frmMap := map[string]func() ct.Form{
 		"prices": func() ct.Form {
@@ -663,7 +714,7 @@ func (e *ProductEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.
 						},
 					}, Full: true, BorderBottom: true},
 				},
-				FooterRows: footerRows,
+				FooterRows: footerRows(false),
 			}
 		},
 		"events": func() ct.Form {
@@ -756,7 +807,99 @@ func (e *ProductEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.
 						},
 					}, Full: true, BorderBottom: true},
 				},
-				FooterRows: footerRows,
+				FooterRows: footerRows(false),
+			}
+		},
+		"components": func() ct.Form {
+			var link md.Link = md.Link{}
+			ut.ConvertToType(formData, &link)
+			productSelectorRows := cu.ToIMA(formData["product_selector"], []cu.IM{})
+			var productSelectorFields []ct.TableField = []ct.TableField{
+				{Name: "code", Label: labels["product_code"]},
+				{Name: "product_name", Label: labels["product_name"]},
+				{Name: "product_type", Label: labels["product_type"]},
+				{Name: "tag_lst", Label: labels["product_tags"]},
+			}
+			return ct.Form{
+				Title: labels["product_component"],
+				Icon:  ct.IconFlask,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["link_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "code_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "code",
+								"value":    link.Code,
+								"disabled": true,
+							},
+						}},
+						{
+							Label: labels["product_code"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "product_code_" + cu.ToString(formData["id"], ""),
+								},
+								Type: ct.FieldTypeSelector, Value: cu.IM{
+									"name":  "product_code",
+									"title": labels["view_product"],
+									"value": ct.SelectOption{
+										Value: link.LinkCode2,
+										Text:  link.LinkCode2,
+									},
+									"fields":  productSelectorFields,
+									"rows":    productSelectorRows,
+									"link":    true,
+									"is_null": false,
+								},
+								FormTrigger: true,
+							},
+						},
+						{Label: labels["product_name"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "product_name_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "product_name",
+								"value":    cu.ToString(formData["product_name"], ""),
+								"disabled": true,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["product_unit"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "unit_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":     "unit",
+								"value":    cu.ToString(formData["unit"], ""),
+								"disabled": true,
+							},
+						}},
+						{Label: labels["product_component_qty"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "qty_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeNumber, Value: cu.IM{
+								"name":  "component_qty",
+								"value": link.LinkMeta.Qty,
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["product_component_notes"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes_" + cu.ToString(formData["id"], ""),
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "component_notes",
+								"value": link.LinkMeta.Notes,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+				},
+				FooterRows: footerRows(link.LinkCode2 == ""),
 			}
 		},
 	}

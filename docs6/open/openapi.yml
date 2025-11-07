@@ -1588,7 +1588,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [PRODUCT_ITEM, PRODUCT_SERVICE]
+            enum: [PRODUCT_ITEM, PRODUCT_SERVICE, PRODUCT_VIRTUAL]
         - name: product_name
           in: query
           schema:
@@ -2472,7 +2472,7 @@ paths:
          - VIEW_PAYMENT_MAP, VIEW_PAYMENT_INVOICE, VIEW_PAYMENT_TAGS, VIEW_PAYMENT_VIEW, 
          - VIEW_PLACE_CONTACTS, VIEW_PLACE_MAP, VIEW_PLACE_TAGS, VIEW_PLACE_VIEW, 
          - VIEW_PRICE_MAP, VIEW_PRICE_TAGS, VIEW_PRICE_VIEW, 
-         - VIEW_PRODUCT_EVENTS, VIEW_PRODUCT_MAP, VIEW_PRODUCT_TAGS, VIEW_PRODUCT_VIEW, 
+         - VIEW_PRODUCT_EVENTS, VIEW_PRODUCT_MAP, VIEW_PRODUCT_TAGS, VIEW_PRODUCT_VIEW, VIEW_PRODUCT_COMPONENTS,
          - VIEW_PROJECT_ADDRESSES, VIEW_PROJECT_CONTACTS, VIEW_PROJECT_EVENTS, VIEW_PROJECT_MAP, VIEW_PROJECT_TAGS, VIEW_PROJECT_VIEW, 
          - VIEW_RATE_MAP, VIEW_RATE_TAGS, VIEW_RATE_VIEW, 
          - VIEW_TAX_MAP, VIEW_TAX_TAGS, VIEW_TAX_VIEW, 
@@ -3525,7 +3525,7 @@ components:
       properties:
         product_type:
           type: string
-          enum: [PRODUCT_ITEM, PRODUCT_SERVICE]
+          enum: [PRODUCT_ITEM, PRODUCT_SERVICE, PRODUCT_VIRTUAL]
         product_name:
           type: string
           description: The full name of the product or short description.
@@ -4046,6 +4046,7 @@ components:
             - "VIEW_PRODUCT_MAP"
             - "VIEW_PRODUCT_TAGS"
             - "VIEW_PRODUCT_VIEW"
+            - "VIEW_PRODUCT_COMPONENTS"
             - "VIEW_PROJECT_ADDRESSES"
             - "VIEW_PROJECT_CONTACTS"
             - "VIEW_PROJECT_EVENTS"

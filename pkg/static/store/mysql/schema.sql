@@ -618,10 +618,257 @@ CREATE VIEW tax_tags AS
   ) AS jt
   WHERE tbl.deleted = false;
 
+CREATE TABLE IF NOT EXISTS link(
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  code VARCHAR(255) NOT NULL,
+  link_type_1 ENUM ('LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS') 
+    NOT NULL DEFAULT 'LINK_TRANS',
+  link_code_1 VARCHAR(255) NOT NULL,
+  link_type_2 ENUM ('LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS') 
+    NOT NULL DEFAULT 'LINK_TRANS',
+  link_code_2 VARCHAR(255) NOT NULL, 
+  link_meta JSON NOT NULL,
+  link_map JSON NOT NULL,
+  time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted BOOLEAN NOT NULL DEFAULT false,
+  CONSTRAINT link_pkey PRIMARY KEY (id),
+  CONSTRAINT link_code_key UNIQUE (code)
+);
+
+CREATE INDEX idx_link_link_code_1 ON link (link_type_1, link_code_1);
+CREATE INDEX idx_link_link_code_2 ON link (link_type_2, link_code_2);
+CREATE INDEX idx_link_deleted ON link (deleted);
+
+CREATE TRIGGER link_default_code 
+  BEFORE INSERT ON link
+  FOR EACH ROW
+BEGIN
+  IF NEW.code IS NULL THEN
+    SET @A = (SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE MAX(id) + 1 END FROM link);
+    SET NEW.code = CONCAT('LNK', UNIX_TIMESTAMP(), 'N', @A);
+  END IF;
+END;
+
+CREATE TRIGGER link_insert 
+BEFORE INSERT ON link
+FOR EACH ROW
+BEGIN
+  -- Check customer codes
+  IF NEW.link_type_1 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
+  END IF;
+  IF NEW.link_type_2 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
+  END IF;
+  
+  -- Check employee codes
+  IF NEW.link_type_1 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
+  END IF;
+  IF NEW.link_type_2 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
+  END IF;
+  
+  -- Check item codes
+  IF NEW.link_type_1 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
+  END IF;
+  IF NEW.link_type_2 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
+  END IF;
+  
+  -- Check movement codes
+  IF NEW.link_type_1 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
+  END IF;
+  IF NEW.link_type_2 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
+  END IF;
+  
+  -- Check payment codes
+  IF NEW.link_type_1 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
+  END IF;
+  IF NEW.link_type_2 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
+  END IF;
+  
+  -- Check place codes
+  IF NEW.link_type_1 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
+  END IF;
+  IF NEW.link_type_2 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
+  END IF;
+  
+  -- Check product codes
+  IF NEW.link_type_1 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
+  END IF;
+  IF NEW.link_type_2 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
+  END IF;
+  
+  -- Check project codes
+  IF NEW.link_type_1 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
+  END IF;
+  IF NEW.link_type_2 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
+  END IF;
+  
+  -- Check tool codes
+  IF NEW.link_type_1 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
+  END IF;
+  IF NEW.link_type_2 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
+  END IF;
+  
+  -- Check trans codes
+  IF NEW.link_type_1 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
+  END IF;
+  IF NEW.link_type_2 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
+  END IF;
+END;
+
+CREATE TRIGGER link_update 
+BEFORE UPDATE ON link
+FOR EACH ROW
+BEGIN
+  -- Check customer codes
+  IF NEW.link_type_1 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
+  END IF;
+  IF NEW.link_type_2 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
+  END IF;
+  
+  -- Check employee codes
+  IF NEW.link_type_1 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
+  END IF;
+  IF NEW.link_type_2 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
+  END IF;
+  
+  -- Check item codes
+  IF NEW.link_type_1 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
+  END IF;
+  IF NEW.link_type_2 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
+  END IF;
+  
+  -- Check movement codes
+  IF NEW.link_type_1 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
+  END IF;
+  IF NEW.link_type_2 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
+  END IF;
+  
+  -- Check payment codes
+  IF NEW.link_type_1 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
+  END IF;
+  IF NEW.link_type_2 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
+  END IF;
+  
+  -- Check place codes
+  IF NEW.link_type_1 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
+  END IF;
+  IF NEW.link_type_2 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
+  END IF;
+  
+  -- Check product codes
+  IF NEW.link_type_1 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
+  END IF;
+  IF NEW.link_type_2 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
+  END IF;
+  
+  -- Check project codes
+  IF NEW.link_type_1 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
+  END IF;
+  IF NEW.link_type_2 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
+  END IF;
+  
+  -- Check tool codes
+  IF NEW.link_type_1 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
+  END IF;
+  IF NEW.link_type_2 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
+  END IF;
+  
+  -- Check trans codes
+  IF NEW.link_type_1 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_1) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
+  END IF;
+  IF NEW.link_type_2 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_2) THEN
+    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
+  END IF;
+END;
+
+CREATE VIEW link_view AS
+  SELECT id, code, 
+    link_type_1, link_code_1, link_type_2, link_code_2,
+    CAST(link_meta->>"$.qty" AS FLOAT) AS qty, CAST(link_meta->>"$.amount" AS FLOAT) AS amount, CAST(link_meta->>"$.rate" AS FLOAT) AS rate,
+    COALESCE(link_meta->>"$.notes", '') AS notes,
+    link_meta->"$.tags" AS tags, 
+    REPLACE(REPLACE(REPLACE(link_meta->>"$.tags", '"', ''), '[', ''), ']', '') as tag_lst,
+    link_map, time_stamp,
+    JSON_OBJECT(
+      'id', id, 'code', code, 'link_type_1', link_type_1, 'link_code_1', link_code_1,
+      'link_type_2', link_type_2, 'link_code_2', link_code_2, 'link_meta', link_meta, 'link_map', link_map, 'time_stamp', time_stamp
+    ) AS link_object
+  FROM link
+  WHERE deleted = false;
+
+CREATE VIEW link_map AS
+  SELECT tbl.id AS id, tbl.code, link_type_1, link_code_1, link_type_2, link_code_2,
+    jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.link_map, CONCAT('$.', jt.map_key))) AS map_value,
+    JSON_TYPE(JSON_EXTRACT(tbl.link_map, CONCAT('$.', jt.map_key))) AS map_type,
+    COALESCE(cf.description, jt.map_key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
+  FROM link tbl
+  CROSS JOIN JSON_TABLE(
+    JSON_KEYS(tbl.link_map),
+    '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
+  ) AS jt
+  LEFT JOIN config_map cf on jt.map_key = cf.field_name
+  WHERE deleted = false;
+
+CREATE VIEW link_tags AS
+  SELECT tbl.id AS id, tbl.code, jt.value as tag
+  FROM link tbl
+  CROSS JOIN JSON_TABLE(
+    tbl.link_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
+  ) AS jt
+  WHERE tbl.deleted = false;
+
 CREATE TABLE IF NOT EXISTS product(
   id INTEGER AUTO_INCREMENT NOT NULL,
   code VARCHAR(255) NOT NULL,
-  product_type ENUM ('PRODUCT_ITEM', 'PRODUCT_SERVICE') NOT NULL DEFAULT 'PRODUCT_ITEM',
+  product_type ENUM ('PRODUCT_ITEM', 'PRODUCT_SERVICE', 'PRODUCT_VIRTUAL') NOT NULL DEFAULT 'PRODUCT_ITEM',
   product_name VARCHAR(255) NOT NULL,
   tax_code VARCHAR(255) NOT NULL,
   events JSON NOT NULL,
@@ -714,6 +961,16 @@ CREATE VIEW product_tags AS
     tbl.product_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
   ) AS jt
   WHERE tbl.deleted = false;
+
+CREATE OR REPLACE VIEW product_components AS
+  SELECT p.id, p.code AS product_code, p.product_name, COALESCE(p.product_meta->>"$.unit",'') as unit, 
+  c.code as ref_product_code, c.product_name as component_name, COALESCE(c.product_meta->>"$.unit",'') as component_unit, 
+  c.product_type as component_type,
+  CAST(l.link_meta->>"$.qty" AS FLOAT) AS qty, COALESCE(l.link_meta->>"$.notes", '') AS notes
+  FROM product p INNER JOIN link l ON l.link_code_1 = p.code
+  INNER JOIN product c ON l.link_code_2 = c.code
+  WHERE p.product_type = 'PRODUCT_VIRTUAL' AND link_type_1 = 'LINK_PRODUCT' AND link_type_2 = 'LINK_PRODUCT' 
+  AND p.deleted = false AND l.deleted = false AND c.deleted = false;
 
 CREATE TABLE IF NOT EXISTS project(
   id INTEGER AUTO_INCREMENT NOT NULL,
@@ -1311,252 +1568,6 @@ CREATE VIEW trans_tags AS
   WHERE tbl.deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
     OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
 
-CREATE TABLE IF NOT EXISTS link(
-  id INTEGER AUTO_INCREMENT NOT NULL,
-  code VARCHAR(255) NOT NULL,
-  link_type_1 ENUM ('LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS') 
-    NOT NULL DEFAULT 'LINK_TRANS',
-  link_code_1 VARCHAR(255) NOT NULL,
-  link_type_2 ENUM ('LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS') 
-    NOT NULL DEFAULT 'LINK_TRANS',
-  link_code_2 VARCHAR(255) NOT NULL, 
-  link_meta JSON NOT NULL,
-  link_map JSON NOT NULL,
-  time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted BOOLEAN NOT NULL DEFAULT false,
-  CONSTRAINT link_pkey PRIMARY KEY (id),
-  CONSTRAINT link_code_key UNIQUE (code)
-);
-
-CREATE INDEX idx_link_link_code_1 ON link (link_type_1, link_code_1);
-CREATE INDEX idx_link_link_code_2 ON link (link_type_2, link_code_2);
-CREATE INDEX idx_link_deleted ON link (deleted);
-
-CREATE TRIGGER link_default_code 
-  BEFORE INSERT ON link
-  FOR EACH ROW
-BEGIN
-  IF NEW.code IS NULL THEN
-    SET @A = (SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE MAX(id) + 1 END FROM link);
-    SET NEW.code = CONCAT('LNK', UNIX_TIMESTAMP(), 'N', @A);
-  END IF;
-END;
-
-CREATE TRIGGER link_insert 
-BEFORE INSERT ON link
-FOR EACH ROW
-BEGIN
-  -- Check customer codes
-  IF NEW.link_type_1 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
-  END IF;
-  IF NEW.link_type_2 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
-  END IF;
-  
-  -- Check employee codes
-  IF NEW.link_type_1 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
-  END IF;
-  IF NEW.link_type_2 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
-  END IF;
-  
-  -- Check item codes
-  IF NEW.link_type_1 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
-  END IF;
-  IF NEW.link_type_2 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
-  END IF;
-  
-  -- Check movement codes
-  IF NEW.link_type_1 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
-  END IF;
-  IF NEW.link_type_2 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
-  END IF;
-  
-  -- Check payment codes
-  IF NEW.link_type_1 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
-  END IF;
-  IF NEW.link_type_2 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
-  END IF;
-  
-  -- Check place codes
-  IF NEW.link_type_1 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
-  END IF;
-  IF NEW.link_type_2 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
-  END IF;
-  
-  -- Check product codes
-  IF NEW.link_type_1 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
-  END IF;
-  IF NEW.link_type_2 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
-  END IF;
-  
-  -- Check project codes
-  IF NEW.link_type_1 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
-  END IF;
-  IF NEW.link_type_2 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
-  END IF;
-  
-  -- Check tool codes
-  IF NEW.link_type_1 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
-  END IF;
-  IF NEW.link_type_2 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
-  END IF;
-  
-  -- Check trans codes
-  IF NEW.link_type_1 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
-  END IF;
-  IF NEW.link_type_2 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
-  END IF;
-END;
-
-CREATE TRIGGER link_update 
-BEFORE UPDATE ON link
-FOR EACH ROW
-BEGIN
-  -- Check customer codes
-  IF NEW.link_type_1 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
-  END IF;
-  IF NEW.link_type_2 = "CUSTOMER" AND NOT EXISTS (SELECT 1 FROM customer WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid customer code";
-  END IF;
-  
-  -- Check employee codes
-  IF NEW.link_type_1 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
-  END IF;
-  IF NEW.link_type_2 = "EMPLOYEE" AND NOT EXISTS (SELECT 1 FROM employee WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid employee code";
-  END IF;
-  
-  -- Check item codes
-  IF NEW.link_type_1 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
-  END IF;
-  IF NEW.link_type_2 = "ITEM" AND NOT EXISTS (SELECT 1 FROM item WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid item code";
-  END IF;
-  
-  -- Check movement codes
-  IF NEW.link_type_1 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
-  END IF;
-  IF NEW.link_type_2 = "MOVEMENT" AND NOT EXISTS (SELECT 1 FROM movement WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid movement code";
-  END IF;
-  
-  -- Check payment codes
-  IF NEW.link_type_1 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
-  END IF;
-  IF NEW.link_type_2 = "PAYMENT" AND NOT EXISTS (SELECT 1 FROM payment WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid payment code";
-  END IF;
-  
-  -- Check place codes
-  IF NEW.link_type_1 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
-  END IF;
-  IF NEW.link_type_2 = "PLACE" AND NOT EXISTS (SELECT 1 FROM place WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid place code";
-  END IF;
-  
-  -- Check product codes
-  IF NEW.link_type_1 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
-  END IF;
-  IF NEW.link_type_2 = "PRODUCT" AND NOT EXISTS (SELECT 1 FROM product WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid product code";
-  END IF;
-  
-  -- Check project codes
-  IF NEW.link_type_1 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
-  END IF;
-  IF NEW.link_type_2 = "PROJECT" AND NOT EXISTS (SELECT 1 FROM project WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid project code";
-  END IF;
-  
-  -- Check tool codes
-  IF NEW.link_type_1 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
-  END IF;
-  IF NEW.link_type_2 = "TOOL" AND NOT EXISTS (SELECT 1 FROM tool WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid tool code";
-  END IF;
-  
-  -- Check trans codes
-  IF NEW.link_type_1 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_1) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
-  END IF;
-  IF NEW.link_type_2 = "TRANS" AND NOT EXISTS (SELECT 1 FROM trans WHERE code = NEW.link_code_2) THEN
-    SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Invalid trans code";
-  END IF;
-END;
-
-CREATE VIEW link_view AS
-  SELECT id, code, 
-    link_type_1, link_code_1, link_type_2, link_code_2,
-    CAST(link_meta->>"$.qty" AS FLOAT) AS qty, CAST(link_meta->>"$.amount" AS FLOAT) AS amount, CAST(link_meta->>"$.rate" AS FLOAT) AS rate,
-    link_meta->"$.tags" AS tags, 
-    REPLACE(REPLACE(REPLACE(link_meta->>"$.tags", '"', ''), '[', ''), ']', '') as tag_lst,
-    link_map, time_stamp,
-    JSON_OBJECT(
-      'id', id, 'code', code, 'link_type_1', link_type_1, 'link_code_1', link_code_1,
-      'link_type_2', link_type_2, 'link_code_2', link_code_2, 'link_meta', link_meta, 'link_map', link_map, 'time_stamp', time_stamp
-    ) AS link_object
-  FROM link
-  WHERE deleted = false;
-
-CREATE VIEW link_map AS
-  SELECT tbl.id AS id, tbl.code, link_type_1, link_code_1, link_type_2, link_code_2,
-    jt.map_key, JSON_UNQUOTE(JSON_EXTRACT(tbl.link_map, CONCAT('$.', jt.map_key))) AS map_value,
-    JSON_TYPE(JSON_EXTRACT(tbl.link_map, CONCAT('$.', jt.map_key))) AS map_type,
-    COALESCE(cf.description, jt.map_key) AS description,
-    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
-    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
-			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
-			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
-			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
-			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
-			WHEN cf.field_type IN (
-				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
-				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
-			ELSE 'string' END AS value_meta
-  FROM link tbl
-  CROSS JOIN JSON_TABLE(
-    JSON_KEYS(tbl.link_map),
-    '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
-  ) AS jt
-  LEFT JOIN config_map cf on jt.map_key = cf.field_name
-  WHERE deleted = false;
-
-CREATE VIEW link_tags AS
-  SELECT tbl.id AS id, tbl.code, jt.value as tag
-  FROM link tbl
-  CROSS JOIN JSON_TABLE(
-    tbl.link_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
-  ) AS jt
-  WHERE tbl.deleted = false;
-
 CREATE TABLE IF NOT EXISTS item(
   id INTEGER AUTO_INCREMENT NOT NULL,
   code VARCHAR(255) NOT NULL,
@@ -1791,16 +1802,29 @@ CREATE VIEW movement_formula AS
   WHERE t.trans_type = 'TRANS_FORMULA' and mv.deleted = false and t.deleted = false;
 
 CREATE VIEW item_shipping AS
-  SELECT i.id, i.code, i.trans_code, i.product_code, p.product_name, 
-    cast(COALESCE(item_meta->>"$.qty",'0') AS FLOAT) item_qty, 
-    sum(cast(COALESCE(movement_meta->>"$.qty",'0') AS FLOAT)) movement_qty
+  SELECT iv.id, iv.code, iv.trans_code, iv.direction, iv.product_code, iv.product_name, iv.unit, iv.item_qty,
+    SUM(cast(COALESCE(movement_meta->>"$.qty",'0') AS FLOAT)) as movement_qty
+  FROM (
+  SELECT i.id, i.code, i.trans_code, t.direction, i.product_code, p.product_name, 
+    COALESCE(p.product_meta->>"$.unit",'') as unit, 
+    cast(COALESCE(item_meta->>"$.qty",'0') AS FLOAT) item_qty
   FROM item i
   INNER JOIN trans t ON i.trans_code = t.code
   INNER JOIN product p ON i.product_code = p.code
-  LEFT JOIN movement mv ON mv.item_code = i.code
-  WHERE t.deleted = false AND i.deleted = false AND mv.deleted = false AND
-    p.product_type = 'PRODUCT_ITEM' AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
-  GROUP BY i.id, i.code, i.trans_code, i.product_code, p.product_name;
+  WHERE t.deleted = false AND i.deleted = false AND p.product_type = 'PRODUCT_ITEM' 
+    AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
+  UNION 
+  SELECT i.id, i.code, i.trans_code, t.direction, pc.ref_product_code as product_code, pc.component_name as product_name, 
+    pc.component_unit as unit, 
+    cast(COALESCE(item_meta->>"$.qty",'0') AS FLOAT)*pc.qty item_qty
+  FROM item i
+  INNER JOIN trans t ON i.trans_code = t.code
+  INNER JOIN product_components pc ON i.product_code = pc.product_code AND pc.component_type = 'PRODUCT_ITEM'
+  WHERE t.deleted = false AND i.deleted = false 
+    AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
+  ) iv
+  LEFT JOIN movement mv ON mv.item_code = iv.code AND mv.product_code = iv.product_code
+  GROUP BY iv.id, iv.code, iv.trans_code, iv.direction, iv.product_code, iv.product_name, iv.unit, iv.item_qty;
 
 CREATE TABLE IF NOT EXISTS payment(
   id INTEGER AUTO_INCREMENT NOT NULL,

@@ -270,6 +270,14 @@
     "product_tags": "Tags",
     "product_inactive": "Inactive",
 
+    "product_component_view": "Components",
+    "product_component": "Component Data",
+    "product_component_code": "Component Code",
+    "product_component_name": "Component Name",
+    "product_component_qty": "Qty",
+    "product_component_notes": "Comment",
+    "product_component_add": "Add Component",
+
     "price_view": "Price Data",
     "price_new": "New Price",
     "price_code": "Price No.",

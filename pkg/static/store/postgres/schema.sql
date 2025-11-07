@@ -2,7 +2,7 @@ CREATE TYPE config_type AS ENUM ('CONFIG_MAP', 'CONFIG_SHORTCUT', 'CONFIG_MESSAG
 CREATE TYPE user_group AS ENUM ('GROUP_ADMIN', 'GROUP_USER', 'GROUP_GUEST');
 CREATE TYPE customer_type AS ENUM ('CUSTOMER_OWN', 'CUSTOMER_COMPANY', 'CUSTOMER_PRIVATE', 'CUSTOMER_OTHER');
 CREATE TYPE place_type AS ENUM ('PLACE_BANK', 'PLACE_CASH', 'PLACE_WAREHOUSE', 'PLACE_OTHER');
-CREATE TYPE product_type AS ENUM ('PRODUCT_ITEM', 'PRODUCT_SERVICE');
+CREATE TYPE product_type AS ENUM ('PRODUCT_ITEM', 'PRODUCT_SERVICE', 'PRODUCT_VIRTUAL');
 CREATE TYPE rate_type AS ENUM ('RATE_RATE', 'RATE_BUY', 'RATE_SELL', 'RATE_AVERAGE');
 CREATE TYPE price_type AS ENUM ('PRICE_CUSTOMER', 'PRICE_VENDOR');
 CREATE TYPE trans_type AS ENUM (
@@ -599,6 +599,73 @@ CREATE OR REPLACE VIEW tax_tags AS
   FROM tax, jsonb_array_elements_text(tax.tax_meta->'tags')
   WHERE deleted = false;
 
+CREATE TABLE IF NOT EXISTS link(
+  id SERIAL NOT NULL,
+  code VARCHAR NOT NULL,
+  link_type_1 link_type NOT NULL DEFAULT 'LINK_TRANS'::link_type,
+  link_code_1 VARCHAR NOT NULL,
+  link_type_2 link_type NOT NULL DEFAULT 'LINK_TRANS'::link_type,
+  link_code_2 VARCHAR NOT NULL, 
+  link_meta JSONB NOT NULL DEFAULT '{}'::JSONB,
+  link_map JSONB NOT NULL DEFAULT '{}'::JSONB,
+  time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted BOOLEAN NOT NULL DEFAULT false,
+  CONSTRAINT link_pkey PRIMARY KEY (id),
+  CONSTRAINT link_code_key UNIQUE (code)
+);
+
+CREATE INDEX idx_link_link_code_1 ON link (link_type_1, link_code_1);
+CREATE INDEX idx_link_link_code_2 ON link (link_type_2, link_code_2);
+CREATE INDEX idx_link_deleted ON link (deleted);
+CREATE INDEX idx_link_tags ON link ((link_meta->>'tags'));
+
+CREATE OR REPLACE TRIGGER link_default_code
+  BEFORE INSERT ON link
+  FOR EACH ROW
+  WHEN (NEW.code IS NULL)
+  EXECUTE FUNCTION set_new_code('LNK');
+
+CREATE TRIGGER update_link_changed BEFORE INSERT OR UPDATE ON link
+  FOR EACH ROW EXECUTE FUNCTION link_changed();
+
+CREATE OR REPLACE VIEW link_view AS
+  SELECT id, code, 
+    link_type_1, link_code_1, link_type_2, link_code_2,
+    cast(link_meta->>'qty' AS FLOAT) AS qty, cast(link_meta->>'amount' AS FLOAT) AS amount, cast(link_meta->>'rate' AS FLOAT) AS rate,
+    COALESCE(link_meta->>'notes', '') AS notes,
+    link_meta->'tags' AS tags, REGEXP_REPLACE(link_meta->>'tags', '[\[\]"]', '', 'g') as tag_lst, 
+    link_map, time_stamp,
+    jsonb_build_object(
+      'id', id, 'code', code, 'link_type_1', link_type_1, 'link_code_1', link_code_1,
+      'link_type_2', link_type_2, 'link_code_2', link_code_2, 'link_meta', link_meta,
+      'link_map', link_map, 'time_stamp', time_stamp
+    ) AS link_object
+  FROM link
+  WHERE deleted = false;
+
+CREATE OR REPLACE VIEW link_map AS
+  SELECT link.id AS id, link.code, 
+    link_type_1, link_code_1, link_type_2, link_code_2,
+    key as map_key, value as map_value, jsonb_typeof(value) as map_type,
+    COALESCE(cf.description, key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
+  FROM link, jsonb_each(link.link_map) LEFT JOIN config_map cf on key = cf.field_name
+  WHERE deleted = false;
+
+CREATE OR REPLACE VIEW link_tags AS
+  SELECT link.id AS id, code, value as tag
+  FROM link, jsonb_array_elements_text(link.link_meta->'tags')
+  WHERE deleted = false;
+
 CREATE TABLE IF NOT EXISTS product(
   id SERIAL NOT NULL,
   code VARCHAR NOT NULL,
@@ -678,6 +745,16 @@ CREATE OR REPLACE VIEW product_tags AS
   SELECT product.id AS id, code, value as tag
   FROM product, jsonb_array_elements_text(product.product_meta->'tags')
   WHERE deleted = false;
+
+CREATE OR REPLACE VIEW product_components AS
+  SELECT p.id, p.code AS product_code, p.product_name, COALESCE(p.product_meta->>'unit','') as unit, 
+  c.code as ref_product_code, c.product_name as component_name, COALESCE(c.product_meta->>'unit','') as component_unit, 
+  c.product_type as component_type,
+  CAST(l.link_meta->>'qty' AS FLOAT) AS qty, COALESCE(l.link_meta->>'notes', '') AS notes
+  FROM product p INNER JOIN link l ON l.link_code_1 = p.code
+  INNER JOIN product c ON l.link_code_2 = c.code
+  WHERE p.product_type = 'PRODUCT_VIRTUAL' AND link_type_1 = 'LINK_PRODUCT' AND link_type_2 = 'LINK_PRODUCT' 
+  AND p.deleted = false AND l.deleted = false AND c.deleted = false;
 
 CREATE TABLE IF NOT EXISTS project(
   id SERIAL NOT NULL,
@@ -1130,72 +1207,6 @@ CREATE OR REPLACE VIEW trans_tags AS
   WHERE deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
     OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
 
-CREATE TABLE IF NOT EXISTS link(
-  id SERIAL NOT NULL,
-  code VARCHAR NOT NULL,
-  link_type_1 link_type NOT NULL DEFAULT 'LINK_TRANS'::link_type,
-  link_code_1 VARCHAR NOT NULL,
-  link_type_2 link_type NOT NULL DEFAULT 'LINK_TRANS'::link_type,
-  link_code_2 VARCHAR NOT NULL, 
-  link_meta JSONB NOT NULL DEFAULT '{}'::JSONB,
-  link_map JSONB NOT NULL DEFAULT '{}'::JSONB,
-  time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted BOOLEAN NOT NULL DEFAULT false,
-  CONSTRAINT link_pkey PRIMARY KEY (id),
-  CONSTRAINT link_code_key UNIQUE (code)
-);
-
-CREATE INDEX idx_link_link_code_1 ON link (link_type_1, link_code_1);
-CREATE INDEX idx_link_link_code_2 ON link (link_type_2, link_code_2);
-CREATE INDEX idx_link_deleted ON link (deleted);
-CREATE INDEX idx_link_tags ON link ((link_meta->>'tags'));
-
-CREATE OR REPLACE TRIGGER link_default_code
-  BEFORE INSERT ON link
-  FOR EACH ROW
-  WHEN (NEW.code IS NULL)
-  EXECUTE FUNCTION set_new_code('LNK');
-
-CREATE TRIGGER update_link_changed BEFORE INSERT OR UPDATE ON link
-  FOR EACH ROW EXECUTE FUNCTION link_changed();
-
-CREATE OR REPLACE VIEW link_view AS
-  SELECT id, code, 
-    link_type_1, link_code_1, link_type_2, link_code_2,
-    cast(link_meta->>'qty' AS FLOAT) AS qty, cast(link_meta->>'amount' AS FLOAT) AS amount, cast(link_meta->>'rate' AS FLOAT) AS rate,
-    link_meta->'tags' AS tags, REGEXP_REPLACE(link_meta->>'tags', '[\[\]"]', '', 'g') as tag_lst, 
-    link_map, time_stamp,
-    jsonb_build_object(
-      'id', id, 'code', code, 'link_type_1', link_type_1, 'link_code_1', link_code_1,
-      'link_type_2', link_type_2, 'link_code_2', link_code_2, 'link_meta', link_meta,
-      'link_map', link_map, 'time_stamp', time_stamp
-    ) AS link_object
-  FROM link
-  WHERE deleted = false;
-
-CREATE OR REPLACE VIEW link_map AS
-  SELECT link.id AS id, link.code, 
-    link_type_1, link_code_1, link_type_2, link_code_2,
-    key as map_key, value as map_value, jsonb_typeof(value) as map_type,
-    COALESCE(cf.description, key) AS description,
-    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
-    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
-			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
-			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
-			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
-			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
-			WHEN cf.field_type IN (
-				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
-				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
-			ELSE 'string' END AS value_meta
-  FROM link, jsonb_each(link.link_map) LEFT JOIN config_map cf on key = cf.field_name
-  WHERE deleted = false;
-
-CREATE OR REPLACE VIEW link_tags AS
-  SELECT link.id AS id, code, value as tag
-  FROM link, jsonb_array_elements_text(link.link_meta->'tags')
-  WHERE deleted = false;
-
 CREATE TABLE IF NOT EXISTS item(
   id SERIAL NOT NULL,
   code VARCHAR NOT NULL,
@@ -1404,16 +1415,29 @@ CREATE OR REPLACE VIEW movement_formula AS
   WHERE t.trans_type = 'TRANS_FORMULA' and mv.deleted = false and t.deleted = false;
 
 CREATE OR REPLACE VIEW item_shipping AS
-  SELECT i.id, i.code, i.trans_code, i.product_code, p.product_name, 
-    cast(COALESCE(item_meta->>'qty','0') AS FLOAT) item_qty, 
-    sum(cast(COALESCE(movement_meta->>'qty','0') AS FLOAT)) movement_qty
+  SELECT iv.id, iv.code, iv.trans_code, iv.direction, iv.product_code, iv.product_name, iv.unit, iv.item_qty,
+    SUM(cast(COALESCE(movement_meta->>'qty','0') AS FLOAT)) as movement_qty
+  FROM (
+  SELECT i.id, i.code, i.trans_code, t.direction, i.product_code, p.product_name, 
+    COALESCE(p.product_meta->>'unit','') as unit, 
+    cast(COALESCE(item_meta->>'qty','0') AS FLOAT) item_qty
   FROM item i
   INNER JOIN trans t ON i.trans_code = t.code
   INNER JOIN product p ON i.product_code = p.code
-  LEFT JOIN movement mv ON mv.item_code = i.code
-  WHERE t.deleted = false AND i.deleted = false AND mv.deleted = false AND
-    p.product_type = 'PRODUCT_ITEM' AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
-  GROUP BY i.id, i.code, i.trans_code, i.product_code, p.product_name;
+  WHERE t.deleted = false AND i.deleted = false AND p.product_type = 'PRODUCT_ITEM' 
+    AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
+  UNION 
+  SELECT i.id, i.code, i.trans_code, t.direction, pc.ref_product_code as product_code, pc.component_name as product_name, 
+    pc.component_unit as unit, 
+    cast(COALESCE(item_meta->>'qty','0') AS FLOAT)*pc.qty item_qty
+  FROM item i
+  INNER JOIN trans t ON i.trans_code = t.code
+  INNER JOIN product_components pc ON i.product_code = pc.product_code AND pc.component_type = 'PRODUCT_ITEM'
+  WHERE t.deleted = false AND i.deleted = false 
+    AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
+  ) iv
+  LEFT JOIN movement mv ON mv.item_code = iv.code AND mv.product_code = iv.product_code
+  GROUP BY iv.id, iv.code, iv.trans_code, iv.direction, iv.product_code, iv.product_name, iv.unit, iv.item_qty;
 
 CREATE TABLE IF NOT EXISTS payment(
   id SERIAL NOT NULL,

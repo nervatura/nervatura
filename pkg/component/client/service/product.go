@@ -36,6 +36,7 @@ func (s *ProductService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, e
 			},
 		},
 		"prices":        cu.IM{},
+		"components":    cu.IM{},
 		"config_map":    cu.IM{},
 		"config_data":   cu.IM{},
 		"config_report": cu.IM{},
@@ -75,6 +76,21 @@ func (s *ProductService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, e
 			return data, err
 		}
 		data["prices"] = rows
+
+		if rows, err = ds.StoreDataQuery(md.Query{
+			Fields: []string{"l.*", "p.product_type", "p.product_name", "p.unit"},
+			From:   "link l inner join product_view p on l.link_code_2 = p.code",
+			Filters: []md.Filter{
+				{Field: "l.link_type_1", Comp: "==", Value: "LINK_PRODUCT"},
+				{Field: "l.link_type_2", Comp: "==", Value: "LINK_PRODUCT"},
+				{Field: "l.link_code_1", Comp: "==", Value: cu.ToString(products[0]["code"], "")},
+				{Field: "l.deleted", Comp: "==", Value: false},
+			},
+			OrderBy: []string{"l.id"},
+		}, false); err != nil {
+			return data, err
+		}
+		data["components"] = rows
 	}
 	product := cu.ToIM(data["product"], cu.IM{})
 
@@ -135,36 +151,7 @@ func (s *ProductService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, e
 	return data, err
 }
 
-func (s *ProductService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
-	var product md.Product = md.Product{}
-	ut.ConvertToType(data["product"], &product)
-	values := cu.IM{
-		"product_type": product.ProductType.String(),
-		"product_name": product.ProductName,
-		"tax_code":     product.TaxCode,
-	}
-	if product.Code != "" {
-		values["code"] = product.Code
-	}
-
-	ut.ConvertByteToIMData(product.Events, values, "events")
-	ut.ConvertByteToIMData(product.ProductMeta, values, "product_meta")
-	ut.ConvertByteToIMData(product.ProductMap, values, "product_map")
-
-	var productID int64
-	newProduct := (product.Id == 0)
-	update := md.Update{Values: values, Model: "product"}
-	if !newProduct {
-		update.IDKey = product.Id
-	}
-	if productID, err = ds.StoreDataUpdate(update); err == nil && newProduct {
-		var products []cu.IM = []cu.IM{}
-		if products, err = ds.StoreDataGet(cu.IM{"id": productID, "model": "product"}, true); err == nil {
-			data["product"] = products[0]
-			data["editor_title"] = cu.ToString(cu.ToIM(products[0], cu.IM{})["code"], "")
-		}
-	}
-
+func (s *ProductService) updatePrices(ds *api.DataStore, data cu.IM) (err error) {
 	for _, pr := range cu.ToIMA(data["prices"], []cu.IM{}) {
 		var price md.Price = md.Price{
 			PriceType: md.PriceType(md.PriceTypeCustomer),
@@ -174,7 +161,7 @@ func (s *ProductService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, er
 			PriceMap: cu.IM{},
 		}
 		if err = ut.ConvertToType(pr, &price); err == nil {
-			values = cu.IM{
+			values := cu.IM{
 				"valid_from":    price.ValidFrom.Format(time.DateOnly),
 				"valid_to":      "",
 				"product_code":  price.ProductCode,
@@ -198,19 +185,115 @@ func (s *ProductService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, er
 				update.IDKey = priceID
 			}
 			if priceID, err = ds.StoreDataUpdate(update); err != nil {
-				return data, err
+				return err
 			}
 			pr["id"] = priceID
 		}
 	}
+	return err
+}
 
-	for _, pr := range cu.ToIMA(data["prices_delete"], []cu.IM{}) {
-		if err = ds.DataDelete("price", cu.ToInteger(pr["id"], 0), ""); err != nil {
-			return data, err
+func (s *ProductService) updateLinks(ds *api.DataStore, data cu.IM) (err error) {
+	for _, ln := range cu.ToIMA(data["components"], []cu.IM{}) {
+		var link md.Link = md.Link{
+			LinkType1: md.LinkType(md.LinkTypeProduct),
+			LinkType2: md.LinkType(md.LinkTypeProduct),
+			LinkMeta: md.LinkMeta{
+				Tags: []string{},
+			},
+			LinkMap: cu.IM{},
+		}
+		if err = ut.ConvertToType(ln, &link); err == nil {
+			values := cu.IM{
+				"link_type_1": link.LinkType1.String(),
+				"link_code_1": link.LinkCode1,
+				"link_type_2": link.LinkType2.String(),
+				"link_code_2": link.LinkCode2,
+			}
+			ut.ConvertByteToIMData(link.LinkMeta, values, "link_meta")
+			ut.ConvertByteToIMData(link.LinkMap, values, "link_map")
+
+			linkID := link.Id
+			update := md.Update{Values: values, Model: "link"}
+			if linkID > 0 {
+				update.IDKey = linkID
+			}
+			if linkID, err = ds.StoreDataUpdate(update); err != nil {
+				return err
+			}
+			ln["id"] = linkID
+		}
+	}
+	return err
+}
+
+func (s *ProductService) updateDeleteRows(ds *api.DataStore, data cu.IM) (err error) {
+	deleteRows := func(model, deleteKey string) (err error) {
+		for _, it := range cu.ToIMA(data[deleteKey], []cu.IM{}) {
+			if err = ds.DataDelete(model, cu.ToInteger(it["id"], 0), ""); err != nil {
+				return err
+			}
+		}
+		return err
+	}
+
+	deleteMap := cu.SM{
+		"prices_delete":     "price",
+		"components_delete": "link",
+	}
+
+	for deleteKey, model := range deleteMap {
+		if err = deleteRows(model, deleteKey); err != nil {
+			return err
+		}
+	}
+	return err
+}
+
+func (s *ProductService) update(ds *api.DataStore, data cu.IM) (productID int64, err error) {
+	var product md.Product = md.Product{}
+	ut.ConvertToType(data["product"], &product)
+	values := cu.IM{
+		"product_type": product.ProductType.String(),
+		"product_name": product.ProductName,
+		"tax_code":     product.TaxCode,
+	}
+	if product.Code != "" {
+		values["code"] = product.Code
+	}
+
+	ut.ConvertByteToIMData(product.Events, values, "events")
+	ut.ConvertByteToIMData(product.ProductMeta, values, "product_meta")
+	ut.ConvertByteToIMData(product.ProductMap, values, "product_map")
+
+	newProduct := (product.Id == 0)
+	update := md.Update{Values: values, Model: "product"}
+	if !newProduct {
+		update.IDKey = product.Id
+	}
+	if productID, err = ds.StoreDataUpdate(update); err == nil && newProduct {
+		var products []cu.IM = []cu.IM{}
+		if products, err = ds.StoreDataGet(cu.IM{"id": productID, "model": "product"}, true); err == nil {
+			data["product"] = products[0]
+			data["editor_title"] = cu.ToString(cu.ToIM(products[0], cu.IM{})["code"], "")
 		}
 	}
 
-	return data, err
+	if err != nil {
+		return productID, err
+	}
+
+	if err = s.updatePrices(ds, data); err != nil {
+		return productID, err
+	}
+
+	if err = s.updateLinks(ds, data); err != nil {
+		return productID, err
+	}
+
+	err = s.updateDeleteRows(ds, data)
+
+	return productID, err
 }
 
 func (s *ProductService) delete(ds *api.DataStore, productID int64) (err error) {
@@ -257,6 +340,11 @@ func (s *ProductService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, er
 		"customer": func() (re ct.ResponseEvent, err error) {
 			params := cu.ToIM(stateData["params"], cu.IM{})
 			return s.cls.setEditor(evt, "customer", params), nil
+		},
+
+		"product": func() (re ct.ResponseEvent, err error) {
+			params := cu.ToIM(stateData["params"], cu.IM{})
+			return s.cls.setEditor(evt, "product", params), nil
 		},
 
 		"editor_add_tag": func() (re ct.ResponseEvent, err error) {
@@ -375,6 +463,12 @@ func (s *ProductService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 				"frm_qty": func(value any) {
 					rows[frmIndex]["qty"] = cu.ToFloat(value, 0)
 				},
+				"frm_component_qty": func(value any) {
+					rowMeta["qty"] = cu.ToFloat(value, 0)
+				},
+				"frm_component_notes": func(value any) {
+					rowMeta["notes"] = value
+				},
 				"base_price_meta": func(value any) {
 					rowMeta["tags"] = cu.ToIM(value, cu.IM{})["tags"]
 				},
@@ -383,6 +477,15 @@ func (s *ProductService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 				},
 				"base_tags": func(value any) {
 					rows[frmIndex]["tags"] = value
+				},
+				"base_link_code_2": func(value any) {
+					rows[frmIndex]["link_code_2"] = value
+				},
+				"base_product_name": func(value any) {
+					rows[frmIndex]["product_name"] = value
+				},
+				"base_unit": func(value any) {
+					rows[frmIndex]["unit"] = value
 				},
 			}
 			return s.cls.editorFormOK(evt, rows, customValues)
@@ -417,6 +520,26 @@ func (s *ProductService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 							cu.ToInteger(form["index"], 0), false)
 						return evt, nil
 					})
+			case "product_code":
+				form := cu.ToIM(stateData["form"], cu.IM{})
+				formRow := cu.ToIM(form["data"], cu.IM{})
+				return s.cls.editorCodeSelector(evt, "product", strings.Split(fieldName, "_")[0], formRow,
+					func(params cu.IM) (re ct.ResponseEvent, err error) {
+						if cu.ToString(params["event"], "") == ct.SelectorEventSelected {
+							selectedValues := cu.ToIM(params["values"], cu.IM{})
+							frmBaseValues["link_code_2"] = selectedValues["code"]
+							frmBaseValues["product_name"] = selectedValues["product_name"]
+							frmBaseValues["unit"] = selectedValues["unit"]
+						}
+						client.SetForm(cu.ToString(form["key"], ""),
+							cu.MergeIM(frmBaseValues,
+								cu.IM{"product_selector": stateData["product_selector"]}),
+							cu.ToInteger(form["index"], 0), false)
+						return evt, nil
+					})
+			case "component_qty", "component_notes":
+				cu.ToIM(frmBaseValues["link_meta"], cu.IM{})[strings.Split(fieldName, "_")[1]] = frmValues["value"]
+				cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
 			case "price_value":
 				cu.ToIM(frmBaseValues["price_meta"], cu.IM{})["price_value"] = frmValues["value"]
 				cu.ToSM(evt.Header, cu.SM{})[ct.HeaderReswap] = ct.SwapNone
@@ -440,17 +563,21 @@ func (s *ProductService) formEvent(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 func (s *ProductService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
+	view := cu.ToString(stateData["view"], "")
 	product := cu.ToIM(stateData["product"], cu.IM{})
 	ds := s.cls.getDataStore(client.Ticket.Database)
 
 	menuMap := map[string]func() (re ct.ResponseEvent, err error){
 		"editor_save": func() (re ct.ResponseEvent, err error) {
-			if stateData, err = s.update(ds, stateData); err != nil {
+			var productID int64
+			if productID, err = s.update(ds, stateData); err != nil {
 				return evt, err
 			}
-			stateData["dirty"] = false
-			client.SetEditor("product", cu.ToString(stateData["view"], ""), stateData)
-			return evt, err
+			return s.cls.setEditor(evt, "product", cu.IM{
+				"editor_view": view,
+				"product_id":  productID,
+				"session_id":  client.Ticket.SessionID,
+			}), nil
 		},
 
 		"editor_delete": func() (re ct.ResponseEvent, err error) {
@@ -533,23 +660,23 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 	values := cu.ToIM(evt.Value, cu.IM{})
 	fieldName := cu.ToString(values["name"], "")
 	value := cu.ToString(values["value"], "")
+	valueData := cu.ToIM(values["value"], cu.IM{})
 
 	fieldMap := map[string]func() (re ct.ResponseEvent, err error){
 		ct.TableEventRowSelected: func() (re ct.ResponseEvent, err error) {
-			valueData := cu.ToIM(values["value"], cu.IM{})
 			client.SetForm(cu.ToString(stateData["view"], ""),
-				cu.MergeIM(cu.ToIM(valueData["row"], cu.IM{}),
-					cu.IM{"currencies": stateData["currencies"]}),
+				cu.MergeIM(cu.ToIM(valueData["row"], cu.IM{}), cu.IM{"currencies": stateData["currencies"]}),
 				cu.ToInteger(valueData["index"], 0), false)
 			return evt, nil
 		},
 
 		ct.TableEventAddItem: func() (re ct.ResponseEvent, err error) {
 			view := cu.ToString(stateData["view"], "")
-			typeMap := map[string]func() cu.IM{
-				"prices": func() cu.IM {
+			typeMap := map[string]func(rc int) cu.IM{
+				"prices": func(rc int) cu.IM {
 					var price cu.IM
 					ut.ConvertToType(md.Price{
+						Id:           -int64(rc + 1),
 						ProductCode:  cu.ToString(product["code"], ""),
 						PriceType:    md.PriceTypeCustomer,
 						CurrencyCode: cu.ToString(cu.ToIMA(stateData["currencies"], []cu.IM{})[0]["code"], ""),
@@ -561,7 +688,7 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 					}, &price)
 					return price
 				},
-				"events": func() cu.IM {
+				"events": func(rc int) cu.IM {
 					var event cu.IM
 					ut.ConvertToType(md.Event{
 						Tags:     []string{},
@@ -569,8 +696,25 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 					}, &event)
 					return event
 				},
+				"components": func(rc int) cu.IM {
+					var link cu.IM
+					ut.ConvertToType(md.Link{
+						Id:        -int64(rc + 1),
+						LinkType1: md.LinkTypeProduct,
+						LinkType2: md.LinkTypeProduct,
+						LinkCode1: cu.ToString(product["code"], ""),
+						LinkCode2: "",
+						LinkMeta: md.LinkMeta{
+							Qty:   1,
+							Notes: "",
+							Tags:  []string{},
+						},
+						LinkMap: cu.IM{},
+					}, &link)
+					return link
+				},
 			}
-			if slices.Contains([]string{"prices", "events"}, view) {
+			if slices.Contains([]string{"prices", "events", "components"}, view) {
 				getBase := func() (base cu.IM) {
 					if _, found := product[view]; found {
 						return product
@@ -579,10 +723,10 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 				}
 				base := getBase()
 				rows := cu.ToIMA(base[view], []cu.IM{})
-				rows = append(rows, typeMap[view]())
+				rows = append(rows, typeMap[view](len(rows)))
 				base[view] = rows
 				client.SetForm(view,
-					cu.MergeIM(typeMap[view](),
+					cu.MergeIM(typeMap[view](len(rows)),
 						cu.IM{"currencies": stateData["currencies"]}),
 					cu.ToInteger(len(rows)-1, 0), false)
 				return evt, nil
@@ -591,7 +735,6 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 		},
 
 		ct.TableEventFormDelete: func() (re ct.ResponseEvent, err error) {
-			valueData := cu.ToIM(values["value"], cu.IM{})
 			row := cu.ToIM(valueData["row"], cu.IM{})
 			fieldName := cu.ToString(row["field_name"], "")
 			delete(productMap, fieldName)
@@ -608,6 +751,27 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 
 		ct.TableEventFormCancel: func() (re ct.ResponseEvent, err error) {
 			return evt, nil
+		},
+
+		ct.TableEventEditCell: func() (re ct.ResponseEvent, err error) {
+			fieldName := cu.ToString(valueData["fieldname"], "")
+			module := strings.Split(strings.TrimPrefix(fieldName, "ref_"), "_")[0]
+			fieldValue := cu.ToString(valueData["value"], "")
+			stateData["params"] = cu.IM{
+				"editor_view":    module,
+				module + "_code": fieldValue,
+				"session_id":     client.Ticket.SessionID,
+			}
+			if cu.ToBoolean(stateData["dirty"], false) {
+				modal := cu.IM{
+					"warning_label":   client.Msg("inputbox_dirty"),
+					"warning_message": client.Msg("inputbox_drop"),
+					"next":            module,
+				}
+				client.SetForm("warning", modal, 0, true)
+				return evt, nil
+			}
+			return s.cls.setEditor(evt, module, stateData["params"].(cu.IM)), nil
 		},
 
 		"map_field": func() (re ct.ResponseEvent, err error) {

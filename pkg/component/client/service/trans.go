@@ -775,6 +775,10 @@ func (s *TransService) update(ds *api.DataStore, data cu.IM, msgFunc func(labelI
 		}
 	}
 
+	if err != nil {
+		return transID, err
+	}
+
 	if err = s.updateItems(ds, data, trans.Code); err != nil {
 		return transID, err
 	}

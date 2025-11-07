@@ -240,7 +240,7 @@ json_array(
 json_object(
   'unit', 'hour', 'inactive', json('false'), 'notes', '',
   'barcode_type', 'BARCODE_CODE_39', 'barcode', '', 'barcode_qty', 0,
-  'tags', json_array('SOUVENIR')
+  'tags', json_array()
 ), 
 json_object(
   'demo_integer', 100000, 'demo_product_reference', 'PRD0000000000N12'
@@ -313,11 +313,9 @@ json_object(
   'unit', 'piece', 'inactive', json('false'), 
   'notes', 'Souvenir component', 
   'barcode_type', 'BARCODE_CODE_39', 'barcode', '', 'barcode_qty', 0,
-  'tags', json_array('COMPONENT','SOUVENIR')
+  'tags', json_array('COMPONENT')
 ), 
-json_object(
-  'demo_product_reference', 'PRD0000000000N12'
-));
+json_object());
 INSERT INTO product(code, product_type, product_name, tax_code, events, product_meta, product_map) 
 VALUES('PRD0000000000N10', 'PRODUCT_ITEM', 'Wine', 'VAT05',
 json_array(),
@@ -325,11 +323,9 @@ json_object(
   'unit', 'piece', 'inactive', json('false'), 
   'notes', 'Souvenir component', 
   'barcode_type', 'BARCODE_CODE_39', 'barcode', '', 'barcode_qty', 0,
-  'tags', json_array('COMPONENT','SOUVENIR')
+  'tags', json_array('COMPONENT')
 ), 
-json_object(
-  'demo_product_reference', 'PRD0000000000N12'
-));
+json_object());
 INSERT INTO product(code, product_type, product_name, tax_code, events, product_meta, product_map) 
 VALUES('PRD0000000000N11', 'PRODUCT_ITEM', 'Chocolate', 'VAT20',
 json_array(),
@@ -337,13 +333,11 @@ json_object(
   'unit', 'piece', 'inactive', json('false'), 
   'notes', 'Souvenir component', 
   'barcode_type', 'BARCODE_CODE_39', 'barcode', '', 'barcode_qty', 0,
-  'tags', json_array('COMPONENT','SOUVENIR')
+  'tags', json_array('COMPONENT')
 ), 
-json_object(
-  'demo_product_reference', 'PRD0000000000N12'
-));
+json_object());
 INSERT INTO product(code, product_type, product_name, tax_code, events, product_meta, product_map) 
-VALUES('PRD0000000000N12', 'PRODUCT_ITEM', 'Souvenir - virtual product', 'VAT15',
+VALUES('PRD0000000000N12', 'PRODUCT_VIRTUAL', 'Souvenir - virtual product', 'VAT15',
 json_array(),
 json_object(
   'unit', 'piece', 'inactive', json('false'), 
@@ -360,6 +354,35 @@ json_object(
   'notes', 'for tool movement...', 
   'barcode_type', 'BARCODE_CODE_39', 'barcode', '', 'barcode_qty', 0,
   'tags', json_array()
+), 
+json_object());
+
+INSERT INTO link(
+  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
+VALUES('LINK_PRODUCT', 'PRD0000000000N12', 'LINK_PRODUCT', 'PRD0000000000N9',
+json_object(
+  'amount', 0, 'qty', 1, 'rate', 0, 'tags', json_array()
+), 
+json_object());
+INSERT INTO link(
+  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
+VALUES('LINK_PRODUCT', 'PRD0000000000N12', 'LINK_PRODUCT', 'PRD0000000000N10',
+json_object(
+  'amount', 0, 'qty', 1, 'rate', 0, 'tags', json_array()
+), 
+json_object());
+INSERT INTO link(
+  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
+VALUES('LINK_PRODUCT', 'PRD0000000000N12', 'LINK_PRODUCT', 'PRD0000000000N11',
+json_object(
+  'amount', 0, 'qty', 1, 'rate', 0, 'tags', json_array()
+), 
+json_object());
+INSERT INTO link(
+  link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
+VALUES('LINK_PRODUCT', 'PRD0000000000N12', 'LINK_PRODUCT', 'PRD0000000000N2',
+json_object(
+  'amount', 0, 'qty', 1, 'rate', 0, 'tags', json_array()
 ), 
 json_object());
 
@@ -1057,28 +1080,28 @@ INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N1', 'LINK_TRANS', 'INV0000000000N7',
 json_object(
-  'amount', 4000, 'rate', 1, 'tags', json_array()
+  'amount', 4000, 'qty', 0, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N2', 'LINK_TRANS', 'INV0000000000N5',
 json_object(
-  'amount', 849, 'rate', 1, 'tags', json_array()
+  'amount', 849, 'qty', 0, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N3', 'LINK_TRANS', 'INV0000000000N6',
 json_object(
-  'amount', 228, 'rate', 1, 'tags', json_array()
+  'amount', 228, 'qty', 0, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 INSERT INTO link(
   link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map) 
 VALUES('LINK_PAYMENT', 'PMT0000000000N4', 'LINK_TRANS', 'INV0000000000N7',
 json_object(
-  'amount', 488, 'rate', 1, 'tags', json_array()
+  'amount', 488, 'qty', 0, 'rate', 1, 'tags', json_array()
 ), 
 json_object());
 

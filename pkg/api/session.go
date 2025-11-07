@@ -284,57 +284,68 @@ func (ses *SessionService) cleaningMemSession(exp time.Time) (err error) {
 }
 
 func (ses *SessionService) SaveSession(sessionID string, data any) {
-	save := map[string]func(){
-		md.SessionMethodFile.String(): func() {
+	method := ses.sessionMethod()
+	save := func() {
+		switch method {
+		case md.SessionMethodFile:
 			if err := ses.saveFileSession(sessionID, data); err != nil {
-				ses.method = md.SessionMethodMemory
+				ses.Config.Method = md.SessionMethodMemory
 				ses.saveMemSession(sessionID, data)
 			}
-		},
-		md.SessionMethodDatabase.String(): func() {
-			var err error
-			if err = ses.checkSessionTable(); err == nil {
-				err = ses.saveDbSession(sessionID, data)
-			}
-			if err != nil {
-				ses.method = md.SessionMethodMemory
+		case md.SessionMethodDatabase:
+			if err := ses.saveDbSession(sessionID, data); err != nil {
+				ses.Config.Method = md.SessionMethodMemory
 				ses.saveMemSession(sessionID, data)
 			}
-		},
-		md.SessionMethodMemory.String(): func() {
+		default:
 			ses.saveMemSession(sessionID, data)
-		},
+		}
 	}
-	save[ses.sessionMethod().String()]()
-	ses.CleaningSession()
+	if ses.Config.Method == md.SessionMethodAuto && method != md.SessionMethodMemory {
+		go func() {
+			save()
+		}()
+		ses.saveMemSession(sessionID, data)
+	} else {
+		save()
+	}
+	go func() {
+		ses.CleaningSession()
+	}()
 }
 
 func (ses *SessionService) LoadSession(sessionID string, data any) (result any, err error) {
-	switch ses.sessionMethod() {
-	case md.SessionMethodFile:
-		err = ses.loadFileSession(sessionID, data)
-		return data, err
-	case md.SessionMethodDatabase:
-		err = ses.loadDbSession(sessionID, &data)
-		return data, err
-	default:
-		return ses.loadMemSession(sessionID)
+	if result, err = ses.loadMemSession(sessionID); err != nil {
+		switch ses.sessionMethod() {
+		case md.SessionMethodFile:
+			err = ses.loadFileSession(sessionID, data)
+			return data, err
+		case md.SessionMethodDatabase:
+			err = ses.loadDbSession(sessionID, &data)
+			return data, err
+		}
 	}
+	return result, err
 }
 
 func (ses *SessionService) DeleteSession(sessionID string) (err error) {
-	switch ses.sessionMethod() {
+	method := ses.sessionMethod()
+	switch method {
 	case md.SessionMethodFile:
-		return ses.deleteFileSession(sessionID)
+		err = ses.deleteFileSession(sessionID)
 	case md.SessionMethodDatabase:
-		return ses.deleteDbSession(sessionID)
-	default:
-		return ses.deleteMemSession(sessionID)
+		err = ses.deleteDbSession(sessionID)
 	}
+	if err == nil && (method == md.SessionMethodMemory ||
+		(ses.Config.Method == md.SessionMethodAuto && method != md.SessionMethodMemory)) {
+		err = ses.deleteMemSession(sessionID)
+	}
+	return err
 }
 
 func (ses *SessionService) CleaningSession() (err error) {
 	if ses.Config.Cleaning {
+		method := ses.sessionMethod()
 		period := cu.ToFloat(ses.Config.CleanPeriod, 6)
 		if ses.cleaningStamp.IsZero() || time.Now().Before(ses.cleaningStamp.Add(time.Duration(period)*time.Hour)) {
 			exp := time.Now().Add((-time.Duration(cu.ToFloat(ses.Config.CleanExp, 1))*time.Hour + 1))
@@ -349,9 +360,13 @@ func (ses *SessionService) CleaningSession() (err error) {
 					return ses.cleaningMemSession(exp)
 				},
 			}
-			if err = methodCl[ses.sessionMethod().String()](); err == nil {
+			if err = methodCl[method.String()](); err == nil {
 				ses.cleaningStamp = time.Now()
 			}
+		}
+		if ses.Config.Method == md.SessionMethodAuto && method != md.SessionMethodMemory {
+			exp := time.Now().Add(-time.Duration(10 * time.Minute))
+			return ses.cleaningMemSession(exp)
 		}
 	}
 	return nil

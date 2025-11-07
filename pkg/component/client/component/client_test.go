@@ -726,6 +726,24 @@ func TestClientComponent_Form(t *testing.T) {
 			},
 		},
 		{
+			name:      "product_components",
+			editorKey: "product",
+			formKey:   "components",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"components": []cu.IM{
+					{
+						"id": 1,
+					},
+				},
+				"product_selector": []cu.IM{
+					{
+						"id": 1,
+					},
+				},
+			},
+		},
+		{
 			name:      "product_product",
 			editorKey: "product",
 			formKey:   "product",
@@ -1137,7 +1155,13 @@ func Test_moduleEditorView(t *testing.T) {
 				labels: cu.SM{},
 				data: cu.IM{
 					"product": cu.IM{
-						"id": 1,
+						"id":           1,
+						"product_type": md.ProductTypeVirtual.String(),
+						"components": []cu.IM{
+							{
+								"id": 1,
+							},
+						},
 					},
 				},
 			},
@@ -2446,6 +2470,25 @@ func Test_moduleEditorTable(t *testing.T) {
 					"prices": []cu.IM{
 						{
 							"price": "123",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "product_components",
+			args: args{
+				mKey:   "product",
+				view:   "components",
+				labels: cu.SM{},
+				data: cu.IM{
+					"components": []cu.IM{
+						{
+							"id": 1,
+							"link_meta": cu.IM{
+								"qty":   1,
+								"notes": "123",
+							},
 						},
 					},
 				},

@@ -121,7 +121,7 @@ func (s *SearchConfig) SideGroups(labels cu.SM) []md.SideGroup {
 			Name:  "group_product",
 			Label: labels["product_title"],
 			Views: []string{
-				"product_simple", "product", "product_map", "product_events", "product_prices",
+				"product_simple", "product", "product_map", "product_events", "product_prices", "product_components",
 			},
 			AuthFilter: md.AuthFilterProduct.String(),
 		},
@@ -855,6 +855,29 @@ func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
 			},
 			Filters: []any{},
 		},
+		"product_components": {
+			Title:       labels["product_component_view"],
+			Icon:        ct.IconFlask,
+			Simple:      false,
+			ReadOnly:    true,
+			LabelAdd:    "",
+			HideFilters: cu.IM{},
+			Fields: []ct.TableField{
+				{Name: "product_code", Label: labels["product_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "product_name", Label: labels["product_name"]},
+				{Name: "ref_product_code", Label: labels["product_component_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "component_name", Label: labels["product_component_name"]},
+				{Name: "component_unit", Label: labels["product_unit"]},
+				{Name: "component_type", Label: labels["product_type"]},
+				{Name: "qty", Label: labels["product_component_qty"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "notes", Label: labels["product_component_notes"]},
+			},
+			VisibleColumns: cu.IM{
+				"product_code": true, "product_name": true, "ref_product_code": true, "component_name": true,
+				"component_unit": true, "component_type": true, "qty": true,
+			},
+			Filters: []any{},
+		},
 		"tool_simple": {
 			Title:    labels["quick_search"],
 			Icon:     ct.IconBolt,
@@ -1566,6 +1589,15 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 				Limit:   st.BrowserRowLimit,
 			}
 		},
+		"product_components": func(editor string) md.Query {
+			return md.Query{
+				Fields: []string{"*",
+					"'" + cu.ToString(editor, "product") + "' as editor", "'components' as editor_view"},
+				From:    "product_components",
+				OrderBy: []string{"id"},
+				Limit:   st.BrowserRowLimit,
+			}
+		},
 		"tool_simple": func(editor string) md.Query {
 			return md.Query{
 				Fields: []string{
@@ -1769,6 +1801,9 @@ func (s *SearchConfig) Filter(view string, filter ct.BrowserFilter, queryFilters
 		"product_prices": func() []string {
 			return s.filterProduct(view, filter, queryFilters)
 		},
+		"product_components": func() []string {
+			return s.filterProduct(view, filter, queryFilters)
+		},
 		"tool_simple": func() []string {
 			return s.filterTool(view, filter, queryFilters)
 		},
@@ -1966,6 +2001,16 @@ func (s *SearchConfig) filterProduct(view string, filter ct.BrowserFilter, query
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
 			case "id", "qty", "price_value":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			default:
+				return append(queryFilters,
+					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+			}
+		},
+		"product_components": func() []string {
+			switch filter.Field {
+			case "id", "qty":
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
 			default:

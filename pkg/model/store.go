@@ -219,6 +219,7 @@ type LinkMeta struct {
 	Qty    float64 `json:"qty"`
 	Amount float64 `json:"amount"`
 	Rate   float64 `json:"rate"`
+	Notes  string  `json:"notes"`
 	// Additional tags for the link
 	Tags []string `json:"tags"`
 }

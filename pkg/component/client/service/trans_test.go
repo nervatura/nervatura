@@ -6070,6 +6070,60 @@ func TestTransService_update(t *testing.T) {
 			wantErr:     true,
 		},
 		{
+			name: "update_error_get",
+			fields: fields{
+				cls: &ClientService{},
+			},
+			args: args{
+				ds: &api.DataStore{
+					Db: &md.TestDriver{Config: cu.IM{
+						"Update": func(data md.Update) (int64, error) {
+							return 12345, nil
+						},
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{}, errors.New("query error")
+						},
+					}},
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					ConvertToByte: func(data interface{}) ([]byte, error) {
+						return []byte{}, nil
+					},
+				},
+				data: cu.IM{
+					"trans": cu.IM{
+						"id":            int64(0),
+						"trans_type":    md.TransTypeInvoice.String(),
+						"direction":     md.DirectionOut.String(),
+						"trans_date":    "2025-01-01",
+						"customer_code": "C001",
+						"trans_meta":    cu.IM{},
+						"trans_map":     cu.IM{},
+					},
+					"items": []cu.IM{
+						{
+							"id":           int64(0),
+							"product_code": "P1",
+							"tax_code":     "VAT01",
+							"item_meta":    cu.IM{"qty": 1, "tags": []string{}},
+							"item_map":     cu.IM{},
+						},
+					},
+					"payments":            []cu.IM{},
+					"movements":           []cu.IM{},
+					"payment_link":        []cu.IM{},
+					"items_delete":        []cu.IM{},
+					"payments_delete":     []cu.IM{},
+					"movements_delete":    []cu.IM{},
+					"payment_link_delete": []cu.IM{},
+					"user":                cu.IM{"code": "admin"},
+				},
+				msgFunc: func(labelID string) string { return labelID },
+			},
+			wantTransID: 12345,
+			wantErr:     true,
+		},
+		{
 			name: "update_error_item",
 			fields: fields{
 				cls: &ClientService{},

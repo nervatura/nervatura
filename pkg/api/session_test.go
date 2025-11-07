@@ -1186,6 +1186,18 @@ func TestSessionService_CleaningSession(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "auto",
+			fields: fields{
+				Config: SessionConfig{
+					Cleaning: true,
+					Method:   md.SessionMethodAuto,
+					DbConn:   "test",
+				},
+				Conn: &md.TestDriver{Config: cu.IM{}},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

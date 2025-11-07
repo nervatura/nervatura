@@ -501,6 +501,174 @@ CREATE VIEW tax_tags AS
   FROM tax, json_each(tax.tax_meta->'tags')
   WHERE deleted = 0;
 
+CREATE TABLE IF NOT EXISTS link(
+  id INTEGER,
+  code TEXT NOT NULL DEFAULT 'NULL',
+  link_type_1 TEXT NOT NULL DEFAULT 'LINK_TRANS',
+  link_code_1 TEXT NOT NULL,
+  link_type_2 TEXT NOT NULL DEFAULT 'LINK_TRANS',
+  link_code_2 TEXT NOT NULL, 
+  link_meta JSONB NOT NULL DEFAULT (json_object()),
+  link_map JSONB NOT NULL DEFAULT (json_object()),
+  time_stamp TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted BOOLEAN NOT NULL DEFAULT 0,
+  PRIMARY KEY("id" AUTOINCREMENT),
+  CONSTRAINT link_code_key UNIQUE (code),
+  CHECK( link_type_1 IN (
+    'LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS'
+  ) ),
+  CHECK( link_type_2 IN (
+    'LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS'
+  ) )
+);
+
+CREATE INDEX idx_link_link_code_1 ON link (link_type_1, link_code_1);
+CREATE INDEX idx_link_link_code_2 ON link (link_type_2, link_code_2);
+CREATE INDEX idx_link_deleted ON link (deleted);
+CREATE INDEX idx_link_tags ON link (json_extract(link_meta, '$.tags'));
+
+CREATE TRIGGER link_default_code
+AFTER INSERT ON link
+FOR EACH ROW
+WHEN NEW.code = 'NULL'
+BEGIN
+  UPDATE link SET code = 'LNK'||unixepoch()||'N'||NEW.id WHERE id = NEW.id;
+END;
+
+CREATE TRIGGER link_insert
+BEFORE INSERT ON link
+FOR EACH ROW
+BEGIN
+  SELECT CASE 
+    WHEN NEW.link_type_1 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid customer code')
+    WHEN NEW.link_type_2 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid customer code')
+    WHEN NEW.link_type_1 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid employee code')
+    WHEN NEW.link_type_2 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid employee code')
+    WHEN NEW.link_type_1 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid item code')
+    WHEN NEW.link_type_2 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid item code')
+    WHEN NEW.link_type_1 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid movement code')
+    WHEN NEW.link_type_2 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid movement code')
+    WHEN NEW.link_type_1 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid payment code')
+    WHEN NEW.link_type_2 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid payment code')
+    WHEN NEW.link_type_1 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid place code')
+    WHEN NEW.link_type_2 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid place code')
+    WHEN NEW.link_type_1 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid product code')
+    WHEN NEW.link_type_2 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid product code')
+    WHEN NEW.link_type_1 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid project code')
+    WHEN NEW.link_type_2 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid project code')
+    WHEN NEW.link_type_1 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid tool code')
+    WHEN NEW.link_type_2 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid tool code')
+    WHEN NEW.link_type_1 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid trans code')
+    WHEN NEW.link_type_2 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid trans code')
+  END;
+END;
+
+CREATE TRIGGER link_update
+BEFORE UPDATE ON link
+FOR EACH ROW
+BEGIN
+  SELECT CASE 
+    WHEN NEW.link_type_1 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid customer code')
+    WHEN NEW.link_type_2 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid customer code')
+    WHEN NEW.link_type_1 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid employee code')
+    WHEN NEW.link_type_2 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid employee code')
+    WHEN NEW.link_type_1 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid item code')
+    WHEN NEW.link_type_2 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid item code')
+    WHEN NEW.link_type_1 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid movement code')
+    WHEN NEW.link_type_2 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid movement code')
+    WHEN NEW.link_type_1 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid payment code')
+    WHEN NEW.link_type_2 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid payment code')
+    WHEN NEW.link_type_1 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid place code')
+    WHEN NEW.link_type_2 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid place code')
+    WHEN NEW.link_type_1 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid product code')
+    WHEN NEW.link_type_2 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid product code')
+    WHEN NEW.link_type_1 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid project code')
+    WHEN NEW.link_type_2 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid project code')
+    WHEN NEW.link_type_1 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid tool code')
+    WHEN NEW.link_type_2 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid tool code')
+    WHEN NEW.link_type_1 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_1) IS NULL THEN
+      RAISE(ABORT, 'Invalid trans code')
+    WHEN NEW.link_type_2 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_2) IS NULL THEN
+      RAISE(ABORT, 'Invalid trans code')
+  END;
+END;
+
+CREATE VIEW link_view AS
+  SELECT id, code, 
+    link_type_1, link_code_1, link_type_2, link_code_2, 
+    CAST(link_meta->>'qty' AS FLOAT) AS qty, CAST(link_meta->>'amount' AS FLOAT) AS amount, CAST(link_meta->>'rate' AS FLOAT) AS rate,
+    COALESCE(link_meta->>'notes', '') AS notes,
+    link_meta->'tags' AS tags, 
+    REPLACE(REPLACE(REPLACE(link_meta->>'tags', '"', ''), '[', ''), ']', '') AS tag_lst, 
+    link_map, time_stamp,
+    json_object(
+      'id', id, 'code', code, 'link_type_1', link_type_1, 'link_code_1', link_code_1, 'link_type_2', link_type_2,
+      'link_code_2', link_code_2, 'link_meta', json(link_meta), 'link_map', json(link_map), 'time_stamp', time_stamp
+    ) AS link_object
+  FROM link
+  WHERE deleted = 0;
+
+CREATE VIEW link_map AS
+  SELECT link.id AS id, link.code, 
+    link_type_1, link_code_1, link_type_2, link_code_2,
+    key as map_key, value as map_value, type as map_type,
+    COALESCE(cf.description, key) AS description,
+    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
+    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
+			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
+			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
+			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
+			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
+			WHEN cf.field_type IN (
+				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
+				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
+			ELSE 'string' END AS value_meta
+  FROM link, json_each(link.link_map) LEFT JOIN config_map cf on key = cf.field_name
+  WHERE deleted = 0;
+
+CREATE VIEW link_tags AS
+  SELECT link.id AS id, code, value as tag
+  FROM link, json_each(link.link_meta->'tags')
+  WHERE deleted = 0;
+
 CREATE TABLE IF NOT EXISTS product(
   id INTEGER,
   code TEXT NOT NULL DEFAULT 'NULL',
@@ -516,7 +684,7 @@ CREATE TABLE IF NOT EXISTS product(
   CONSTRAINT product_code_key UNIQUE (code),
   FOREIGN KEY (tax_code) REFERENCES tax(code)
     ON UPDATE RESTRICT ON DELETE RESTRICT,
-  CHECK( product_type IN ('PRODUCT_ITEM', 'PRODUCT_SERVICE') )
+  CHECK( product_type IN ('PRODUCT_ITEM', 'PRODUCT_SERVICE', 'PRODUCT_VIRTUAL') )
 );
 
 CREATE INDEX idx_product_product_type ON product (product_type);
@@ -581,6 +749,16 @@ CREATE VIEW product_tags AS
   SELECT product.id AS id, code, value as tag
   FROM product, json_each(product.product_meta->'tags')
   WHERE deleted = 0;
+
+CREATE VIEW product_components AS
+  SELECT p.id, p.code AS product_code, p.product_name, COALESCE(p.product_meta->>'unit','') as unit, 
+  c.code as ref_product_code, c.product_name as component_name, COALESCE(c.product_meta->>'unit','') as component_unit, 
+  c.product_type as component_type,
+  CAST(l.link_meta->>'qty' AS FLOAT) AS qty, COALESCE(l.link_meta->>'notes', '') AS notes
+  FROM product p INNER JOIN link l ON l.link_code_1 = p.code
+  INNER JOIN product c ON l.link_code_2 = c.code
+  WHERE p.product_type = 'PRODUCT_VIRTUAL' AND link_type_1 = 'LINK_PRODUCT' AND link_type_2 = 'LINK_PRODUCT' 
+  AND p.deleted = false AND l.deleted = false AND c.deleted = false;
 
 CREATE TABLE IF NOT EXISTS project(
   id INTEGER,
@@ -1093,173 +1271,6 @@ CREATE VIEW trans_tags AS
   WHERE deleted = 0 OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
     OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
 
-CREATE TABLE IF NOT EXISTS link(
-  id INTEGER,
-  code TEXT NOT NULL DEFAULT 'NULL',
-  link_type_1 TEXT NOT NULL DEFAULT 'LINK_TRANS',
-  link_code_1 TEXT NOT NULL,
-  link_type_2 TEXT NOT NULL DEFAULT 'LINK_TRANS',
-  link_code_2 TEXT NOT NULL, 
-  link_meta JSONB NOT NULL DEFAULT (json_object()),
-  link_map JSONB NOT NULL DEFAULT (json_object()),
-  time_stamp TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted BOOLEAN NOT NULL DEFAULT 0,
-  PRIMARY KEY("id" AUTOINCREMENT),
-  CONSTRAINT link_code_key UNIQUE (code),
-  CHECK( link_type_1 IN (
-    'LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS'
-  ) ),
-  CHECK( link_type_2 IN (
-    'LINK_CUSTOMER', 'LINK_EMPLOYEE', 'LINK_ITEM', 'LINK_MOVEMENT', 'LINK_PAYMENT', 'LINK_PLACE', 'LINK_PRODUCT', 'LINK_PROJECT', 'LINK_TOOL', 'LINK_TRANS'
-  ) )
-);
-
-CREATE INDEX idx_link_link_code_1 ON link (link_type_1, link_code_1);
-CREATE INDEX idx_link_link_code_2 ON link (link_type_2, link_code_2);
-CREATE INDEX idx_link_deleted ON link (deleted);
-CREATE INDEX idx_link_tags ON link (json_extract(link_meta, '$.tags'));
-
-CREATE TRIGGER link_default_code
-AFTER INSERT ON link
-FOR EACH ROW
-WHEN NEW.code = 'NULL'
-BEGIN
-  UPDATE link SET code = 'LNK'||unixepoch()||'N'||NEW.id WHERE id = NEW.id;
-END;
-
-CREATE TRIGGER link_insert
-BEFORE INSERT ON link
-FOR EACH ROW
-BEGIN
-  SELECT CASE 
-    WHEN NEW.link_type_1 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid customer code')
-    WHEN NEW.link_type_2 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid customer code')
-    WHEN NEW.link_type_1 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid employee code')
-    WHEN NEW.link_type_2 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid employee code')
-    WHEN NEW.link_type_1 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid item code')
-    WHEN NEW.link_type_2 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid item code')
-    WHEN NEW.link_type_1 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid movement code')
-    WHEN NEW.link_type_2 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid movement code')
-    WHEN NEW.link_type_1 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid payment code')
-    WHEN NEW.link_type_2 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid payment code')
-    WHEN NEW.link_type_1 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid place code')
-    WHEN NEW.link_type_2 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid place code')
-    WHEN NEW.link_type_1 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid product code')
-    WHEN NEW.link_type_2 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid product code')
-    WHEN NEW.link_type_1 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid project code')
-    WHEN NEW.link_type_2 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid project code')
-    WHEN NEW.link_type_1 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid tool code')
-    WHEN NEW.link_type_2 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid tool code')
-    WHEN NEW.link_type_1 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid trans code')
-    WHEN NEW.link_type_2 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid trans code')
-  END;
-END;
-
-CREATE TRIGGER link_update
-BEFORE UPDATE ON link
-FOR EACH ROW
-BEGIN
-  SELECT CASE 
-    WHEN NEW.link_type_1 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid customer code')
-    WHEN NEW.link_type_2 = 'LINK_CUSTOMER' AND (SELECT id FROM customer WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid customer code')
-    WHEN NEW.link_type_1 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid employee code')
-    WHEN NEW.link_type_2 = 'LINK_EMPLOYEE' AND (SELECT id FROM employee WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid employee code')
-    WHEN NEW.link_type_1 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid item code')
-    WHEN NEW.link_type_2 = 'LINK_ITEM' AND (SELECT id FROM item WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid item code')
-    WHEN NEW.link_type_1 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid movement code')
-    WHEN NEW.link_type_2 = 'LINK_MOVEMENT' AND (SELECT id FROM movement WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid movement code')
-    WHEN NEW.link_type_1 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid payment code')
-    WHEN NEW.link_type_2 = 'LINK_PAYMENT' AND (SELECT id FROM payment WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid payment code')
-    WHEN NEW.link_type_1 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid place code')
-    WHEN NEW.link_type_2 = 'LINK_PLACE' AND (SELECT id FROM place WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid place code')
-    WHEN NEW.link_type_1 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid product code')
-    WHEN NEW.link_type_2 = 'LINK_PRODUCT' AND (SELECT id FROM product WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid product code')
-    WHEN NEW.link_type_1 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid project code')
-    WHEN NEW.link_type_2 = 'LINK_PROJECT' AND (SELECT id FROM project WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid project code')
-    WHEN NEW.link_type_1 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid tool code')
-    WHEN NEW.link_type_2 = 'LINK_TOOL' AND (SELECT id FROM tool WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid tool code')
-    WHEN NEW.link_type_1 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_1) IS NULL THEN
-      RAISE(ABORT, 'Invalid trans code')
-    WHEN NEW.link_type_2 = 'LINK_TRANS' AND (SELECT id FROM trans WHERE code = NEW.link_code_2) IS NULL THEN
-      RAISE(ABORT, 'Invalid trans code')
-  END;
-END;
-
-CREATE VIEW link_view AS
-  SELECT id, code, 
-    link_type_1, link_code_1, link_type_2, link_code_2, 
-    CAST(link_meta->>'qty' AS FLOAT) AS qty, CAST(link_meta->>'amount' AS FLOAT) AS amount, CAST(link_meta->>'rate' AS FLOAT) AS rate, 
-    link_meta->'tags' AS tags, 
-    REPLACE(REPLACE(REPLACE(link_meta->>'tags', '"', ''), '[', ''), ']', '') AS tag_lst, 
-    link_map, time_stamp,
-    json_object(
-      'id', id, 'code', code, 'link_type_1', link_type_1, 'link_code_1', link_code_1, 'link_type_2', link_type_2,
-      'link_code_2', link_code_2, 'link_meta', json(link_meta), 'link_map', json(link_map), 'time_stamp', time_stamp
-    ) AS link_object
-  FROM link
-  WHERE deleted = 0;
-
-CREATE VIEW link_map AS
-  SELECT link.id AS id, link.code, 
-    link_type_1, link_code_1, link_type_2, link_code_2,
-    key as map_key, value as map_value, type as map_type,
-    COALESCE(cf.description, key) AS description,
-    COALESCE(cf.field_type, 'FIELD_STRING') AS field_type,
-    CASE WHEN cf.field_type = 'FIELD_BOOL' THEN 'bool'
-			WHEN cf.field_type = 'FIELD_INTEGER' THEN 'integer'
-			WHEN cf.field_type = 'FIELD_NUMBER' THEN 'float'
-			WHEN cf.field_type = 'FIELD_DATE' THEN 'date'
-			WHEN cf.field_type = 'FIELD_DATETIME' THEN 'datetime'
-			WHEN cf.field_type IN (
-				'FIELD_URL', 'FIELD_CUSTOMER','FIELD_EMPLOYEE','FIELD_PLACE','FIELD_PRODUCT','FIELD_PROJECT',
-				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
-			ELSE 'string' END AS value_meta
-  FROM link, json_each(link.link_map) LEFT JOIN config_map cf on key = cf.field_name
-  WHERE deleted = 0;
-
-CREATE VIEW link_tags AS
-  SELECT link.id AS id, code, value as tag
-  FROM link, json_each(link.link_meta->'tags')
-  WHERE deleted = 0;
-
 CREATE TABLE IF NOT EXISTS item(
   id INTEGER,
   code TEXT NOT NULL DEFAULT 'NULL',
@@ -1475,16 +1486,29 @@ CREATE VIEW movement_formula AS
   WHERE t.trans_type = 'TRANS_FORMULA' and mv.deleted = false and t.deleted = false;
 
 CREATE VIEW item_shipping AS
-  SELECT i.id, i.code, i.trans_code, i.product_code, p.product_name, 
-    cast(COALESCE(item_meta->>'qty','0') AS FLOAT) item_qty, 
-    sum(cast(COALESCE(movement_meta->>'qty','0') AS FLOAT)) movement_qty
+  SELECT iv.id, iv.code, iv.trans_code, iv.direction, iv.product_code, iv.product_name, iv.unit, iv.item_qty,
+    SUM(cast(COALESCE(movement_meta->>'qty','0') AS FLOAT)) as movement_qty
+  FROM (
+  SELECT i.id, i.code, i.trans_code, t.direction, i.product_code, p.product_name, 
+    COALESCE(p.product_meta->>'unit','') as unit, 
+    cast(COALESCE(item_meta->>'qty','0') AS FLOAT) item_qty
   FROM item i
   INNER JOIN trans t ON i.trans_code = t.code
   INNER JOIN product p ON i.product_code = p.code
-  LEFT JOIN movement mv ON mv.item_code = i.code
-  WHERE t.deleted = false AND i.deleted = false AND mv.deleted = false AND
-    p.product_type = 'PRODUCT_ITEM' AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
-  GROUP BY i.id, i.code, i.trans_code, i.product_code, p.product_name;
+  WHERE t.deleted = false AND i.deleted = false AND p.product_type = 'PRODUCT_ITEM' 
+    AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
+  UNION 
+  SELECT i.id, i.code, i.trans_code, t.direction, pc.ref_product_code as product_code, pc.component_name as product_name, 
+    pc.component_unit as unit, 
+    cast(COALESCE(item_meta->>'qty','0') AS FLOAT)*pc.qty item_qty
+  FROM item i
+  INNER JOIN trans t ON i.trans_code = t.code
+  INNER JOIN product_components pc ON i.product_code = pc.product_code AND pc.component_type = 'PRODUCT_ITEM'
+  WHERE t.deleted = false AND i.deleted = false 
+    AND t.trans_type IN('TRANS_ORDER', 'TRANS_WORKSHEET', 'TRANS_RENT')
+  ) iv
+  LEFT JOIN movement mv ON mv.item_code = iv.code AND mv.product_code = iv.product_code
+  GROUP BY iv.id, iv.code, iv.trans_code, iv.direction, iv.product_code, iv.product_name, iv.unit, iv.item_qty;
 
 CREATE TABLE IF NOT EXISTS payment(
   id INTEGER,
