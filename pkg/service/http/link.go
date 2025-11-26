@@ -71,7 +71,7 @@ func LinkPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("link", r.Body, &link); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "link", IDKey: linkID, Code: linkCode,
 			Data: link, Meta: link.LinkMeta, Fields: inputFields, MetaFields: metaFields,
 		})

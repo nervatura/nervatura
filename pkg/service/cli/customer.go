@@ -75,7 +75,7 @@ func (cli *CLIService) CustomerUpdate(options cu.IM, requestData string) string 
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("customer", reader, &customer); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "customer", IDKey: customerID, Code: customerCode,
 			Data: customer, Meta: customer.CustomerMeta, Fields: inputFields, MetaFields: metaFields,
 		})

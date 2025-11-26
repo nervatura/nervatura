@@ -203,3 +203,7 @@ func MetaName(mp cu.IM, key string) string {
 	}
 	return ""
 }
+
+func AnyPointer[T any](v T) *T {
+	return &v
+}

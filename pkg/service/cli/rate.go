@@ -72,7 +72,7 @@ func (cli *CLIService) RateUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("rate", reader, &rate); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "rate", IDKey: rateID, Code: rateCode,
 			Data: rate, Meta: rate.RateMeta, Fields: inputFields, MetaFields: metaFields,
 		})

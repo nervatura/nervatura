@@ -22,6 +22,7 @@ func Test_cliHost_StartServer(t *testing.T) {
 	type args struct {
 		config    cu.IM
 		interrupt chan os.Signal
+		ctx       context.Context
 	}
 	tests := []struct {
 		name    string
@@ -105,7 +106,7 @@ func Test_cliHost_StartServer(t *testing.T) {
 				os.Args = append(os.Args, "-d", "{}")
 				os.Args = append(os.Args, "-m", "customer")
 			}
-			if err := h.StartServer(tt.args.config, appLogOut, httpLogOut, tt.args.interrupt); (err != nil) != tt.wantErr {
+			if err := h.StartServer(tt.args.config, appLogOut, httpLogOut, tt.args.interrupt, tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("cliHost.StartServer() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}

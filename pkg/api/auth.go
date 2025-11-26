@@ -32,7 +32,11 @@ func (ds *DataStore) AuthUser(uid, username string) (user md.Auth, err error) {
 		query.Filters = append(query.Filters, md.Filter{Field: "code", Comp: "==", Value: uid})
 	}
 	if username != "" {
-		query.Filters = append(query.Filters, md.Filter{Field: "user_name", Comp: "==", Value: username})
+		filter := md.Filter{Field: "user_name", Comp: "==", Value: username}
+		if len(query.Filters) > 0 {
+			filter.Or = true
+		}
+		query.Filters = append(query.Filters, filter)
 	}
 	var rows []cu.IM
 	if rows, err = ds.StoreDataQuery(query, true); err == nil {

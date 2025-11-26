@@ -1,4 +1,4 @@
-package client
+package web
 
 import (
 	"bytes"
@@ -14,9 +14,8 @@ import (
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
-	"github.com/nervatura/nervatura/v6/pkg/api"
-	cpu "github.com/nervatura/nervatura/v6/pkg/component"
-	cls "github.com/nervatura/nervatura/v6/pkg/component/client/service"
+	cpu "github.com/nervatura/nervatura/v6/pkg/client/web"
+	cls "github.com/nervatura/nervatura/v6/pkg/client/web/service"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
@@ -33,7 +32,6 @@ func ClientAuth(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := ut.GetSessionID()
 	client := cs.GetClient(r.Host, sessionID, st.ClientPath+"/auth/event", lang, theme)
-	client.Data["auth_configs"] = cs.AuthConfigs
 	ccApp := cpu.Application(sessionID, client)
 
 	if html, err = ccApp.Render(); err == nil {
@@ -51,7 +49,7 @@ func ClientAuthEvent(w http.ResponseWriter, r *http.Request) {
 
 	cs := r.Context().Value(md.ClientServiceCtxKey).(*cls.ClientService)
 	sessionID := r.Header.Get("X-Session-Token")
-	te, err = cpu.TriggerEvent(r)
+	te, err = cs.TriggerEvent(r)
 
 	if err == nil {
 		if client, err = cs.LoadSession(sessionID); err == nil {
@@ -130,13 +128,13 @@ func ClientSessionEvent(w http.ResponseWriter, r *http.Request) {
 
 	cs := r.Context().Value(md.ClientServiceCtxKey).(*cls.ClientService)
 	sessionID := r.Header.Get("X-Session-Token")
-	te, err = cpu.TriggerEvent(r)
+	te, err = cs.TriggerEvent(r)
 
 	if err == nil {
 		if client, err = cs.LoadSession(sessionID); err == nil && client.Ticket.Valid() {
 			evt = client.OnRequest(te)
 		} else {
-			evt = cpu.EvtRedirect(ct.LoginEventAuth, evt.Name, "/")
+			evt = cs.EvtRedirect(ct.LoginEventAuth, evt.Name, "/")
 		}
 
 		for key, value := range evt.Header {
@@ -235,24 +233,21 @@ func ClientAuthCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authConfig := cu.ToString(appLogin.Data["auth_config"], "")
 	verifier := cu.ToString(appLogin.Data["verifier"], "")
-	errMsg = fmt.Sprintf("%s: %s", errMsg, authConfig)
-
-	token, err = cs.AuthConfigs[authConfig].Exchange(context.Background(), code, oauth2.VerifierOption(verifier))
+	token, err = cs.AuthConfig.Exchange(context.Background(), code, oauth2.VerifierOption(verifier))
 	if err != nil {
 		cpu.ErrorPage(w, errTitle, errMsg)
 		return
 	}
 
 	var email string
-	idToken := cu.ToString(token.Extra("id_token"), "")
-	if idToken != "" && len(strings.Split(idToken, ".")) > 0 {
+	idToken := cu.ToString(token.Extra("id_token"), token.AccessToken)
+	if idToken != "" && len(strings.Split(idToken, ".")) > 1 {
 		var uDec []byte
 		if uDec, err = base64.StdEncoding.WithPadding(-1).DecodeString(strings.Split(idToken, ".")[1]); err == nil {
 			var data cu.IM
 			if err = cu.ConvertFromByte(uDec, &data); err == nil {
-				email = cu.ToString(data["email"], "")
+				email = cu.ToString(data["email"], cu.ToString(data["preferred_username"], ""))
 			}
 		}
 	}
@@ -268,9 +263,18 @@ func ClientAuthCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	appLogin.Ticket.AuthMethod = authConfig
+	appLogin.Ticket.AuthMethod = "oauth_login"
 	appLogin.Ticket.User = user
 	appLogin.Ticket.Expiry = time.Now().Add(time.Duration(cu.ToFloat(cs.Config["NT_SESSION_EXP"], 1)) * time.Hour)
+	userConfig := cu.ToIM(user["auth_map"], cu.IM{})
+	appLogin.Lang = cu.ToString(userConfig["lang"], st.DefaultLang)
+	appLogin.Theme = cu.ToString(userConfig["theme"], st.DefaultTheme)
+	appLogin.SetSearch(st.DefaultSearchView, cu.IM{
+		"user_config": userConfig,
+		"auth_filter": user["auth_filter"],
+		"user_group":  user["user_group"],
+	}, true)
+
 	cs.Session.SaveSession(loginID, appLogin)
 
 	url := fmt.Sprintf(st.ClientPath+"/session/%s", loginID)
@@ -291,7 +295,8 @@ func ClientExportBrowser(w http.ResponseWriter, r *http.Request) {
 
 	_, stateKey, stateData := client.GetStateData()
 
-	sConf := cs.UI.SearchConfig.View(stateKey, client.CustomFunctions.Labels(client.Lang))
+	labels := client.CustomFunctions.Labels(client.Lang)
+	sConf := cs.UI.SearchConfig.View(stateKey, labels)
 	browserFields := sConf.Fields
 	visibleColumns := client.GetSearchVisibleColumns(ut.ToBoolMap(sConf.VisibleColumns, map[string]bool{}))
 	fileName := fmt.Sprintf("%s.csv", stateKey)
@@ -361,7 +366,7 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 	modal := cu.ToIM(client.Data["modal"], cu.IM{})
 	modalData := cu.ToIM(modal["data"], cu.IM{})
 
-	ds := api.NewDataStore(cs.Config, client.Ticket.Database, cs.AppLog)
+	ds := cs.NewDataStore(cs.Config, client.Ticket.Database, cs.AppLog)
 	options := cu.IM{
 		"report_key":  modalData["template"],
 		"orientation": modalData["orientation"],

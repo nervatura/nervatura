@@ -32,6 +32,7 @@ func Test_grpcServer_StartServer(t *testing.T) {
 	type args struct {
 		config    cu.IM
 		interrupt chan os.Signal
+		ctx       context.Context
 	}
 	tests := []struct {
 		name    string
@@ -81,7 +82,7 @@ func Test_grpcServer_StartServer(t *testing.T) {
 			}
 			appLogOut := &bytes.Buffer{}
 			httpLogOut := &bytes.Buffer{}
-			if err := s.StartServer(tt.args.config, appLogOut, httpLogOut, tt.args.interrupt); (err != nil) != tt.wantErr {
+			if err := s.StartServer(tt.args.config, appLogOut, httpLogOut, tt.args.interrupt, tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("grpcServer.StartServer() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
@@ -92,15 +93,16 @@ func Test_grpcServer_StartServer(t *testing.T) {
 func Test_grpcServer_StopServer(t *testing.T) {
 	s := &grpcServer{}
 	interrupt := make(chan os.Signal)
+	ctx := context.Background()
 	go func() {
 		s.StartServer(cu.IM{
 			"version":             "test",
 			"NT_GRPC_TLS_ENABLED": true,
 			"NT_GRPC_PORT":        9200,
-		}, &bytes.Buffer{}, &bytes.Buffer{}, interrupt)
+		}, &bytes.Buffer{}, &bytes.Buffer{}, interrupt, ctx)
 	}()
 	time.Sleep(1 * time.Second)
-	s.StopServer(context.Background())
+	s.StopServer(ctx)
 }
 
 func Test_grpcServer_Results(t *testing.T) {

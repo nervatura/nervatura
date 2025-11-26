@@ -21,8 +21,9 @@ const (
 	AdminPath      = "/admin"
 	DocsPath       = "/docs6"
 
-	AuthRedirectURL = "http://%s/api/auth/callback"
-	BrowserRowLimit = 100
+	ClientAuthRedirectURL = "/client/api/auth/callback"
+	OAuthAuthRedirectURL  = "/oauth/callback"
+	BrowserRowLimit       = 100
 
 	DefaultModule      = "search"
 	DefaultSearchView  = "transitem_simple"
@@ -42,9 +43,9 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 	"cors": {
 		"allow_origins":   "*",
 		"allow_methods":   "GET,POST,PUT,DELETE,OPTIONS",
-		"allow_headers":   "Accept,Authorization,Content-Type,X-CSRF-Token,X-Api-Key,x-payload-digest,Stripe-Signature",
+		"allow_headers":   "Accept,Authorization,Content-Type,X-CSRF-Token,X-Api-Key,x-payload-digest,Stripe-Signature,Mcp-Session-Id,Mcp-Protocol-Version",
 		"expose_headers":  "",
-		"trusted_origins": "localhost:5000",
+		"trusted_origins": "http://localhost:5000,http://localhost:5500",
 	},
 	"http": {
 		"http_enabled":  "true",
@@ -58,6 +59,9 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"enabled":     "true",
 		"port":        "9200",
 		"tls_enabled": "false",
+	},
+	"mcp": {
+		"enabled": "false",
 	},
 	"report": {
 		"font_family": "",

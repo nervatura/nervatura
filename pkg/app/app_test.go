@@ -9,7 +9,9 @@ import (
 	"errors"
 	"io"
 	"log/slog"
+	"net/http"
 	"os"
+	"strings"
 	"testing"
 
 	cu "github.com/nervatura/component/pkg/util"
@@ -23,7 +25,7 @@ type testHost struct {
 	result   string
 }
 
-func (ts *testHost) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal) error {
+func (ts *testHost) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal, ctx context.Context) error {
 	if ts.startErr {
 		return errors.New("error")
 	}
@@ -105,9 +107,11 @@ func TestNew(t *testing.T) {
 			args: args{
 				version: "test",
 				args: cu.SM{
-					"cmd":             "server",
-					"NT_HTTP_ENABLED": "false",
-					"NT_GRPC_ENABLED": "false",
+					"cmd":              "server",
+					"NT_HTTP_ENABLED":  "false",
+					"NT_GRPC_ENABLED":  "false",
+					"NT_MCP_ENABLED":   "false",
+					"NT_MCP_TRANSPORT": "STDIO",
 				},
 			},
 			wantErr: false,
@@ -370,6 +374,7 @@ func TestApp_setPublicTokenURLKeys(t *testing.T) {
 		getEnv     func(key string) string
 		readFile   func(name string) ([]byte, error)
 		readAll    func(r io.Reader) ([]byte, error)
+		httpGet    func(url string) (*http.Response, error)
 	}
 	tests := []struct {
 		name   string
@@ -379,25 +384,37 @@ func TestApp_setPublicTokenURLKeys(t *testing.T) {
 			name: "url_error",
 			fields: fields{
 				config: cu.IM{
-					"version":                 "test",
-					"NT_TOKEN_PUBLIC_KEY_URL": "httpsx://www.googleapis.coma",
-					"tokenKeys":               []cu.SM{},
+					"version":        "test",
+					"NT_AUTH_SERVER": "httpsx://www.googleapis.coma",
+					"tokenKeys":      []cu.SM{},
 				},
 				appLog:  slog.New(slog.NewTextHandler(os.Stdout, nil)),
 				readAll: io.ReadAll,
+				httpGet: func(url string) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusNotFound,
+						Body:       io.NopCloser(strings.NewReader("")),
+					}, errors.New("url error")
+				},
 			},
 		},
 		{
 			name: "body_error",
 			fields: fields{
 				config: cu.IM{
-					"version":                 "test",
-					"NT_TOKEN_PUBLIC_KEY_URL": "https://www.google.com",
-					"tokenKeys":               []cu.SM{},
+					"version":        "test",
+					"NT_AUTH_SERVER": "https://www.google.com",
+					"tokenKeys":      []cu.SM{},
 				},
 				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
 				readAll: func(r io.Reader) ([]byte, error) {
 					return nil, errors.New("body error")
+				},
+				httpGet: func(url string) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusOK,
+						Body:       io.NopCloser(strings.NewReader(`{"jwks_uri": "https://www.google.com/jwks.json"}`)),
+					}, nil
 				},
 			},
 		},
@@ -405,12 +422,18 @@ func TestApp_setPublicTokenURLKeys(t *testing.T) {
 			name: "ok",
 			fields: fields{
 				config: cu.IM{
-					"version":                 "test",
-					"NT_TOKEN_PUBLIC_KEY_URL": "https://www.google.com",
-					"tokenKeys":               []cu.SM{},
+					"version":        "test",
+					"NT_AUTH_SERVER": "https://www.google.com",
+					"tokenKeys":      []cu.SM{},
 				},
 				appLog:  slog.New(slog.NewTextHandler(os.Stdout, nil)),
 				readAll: io.ReadAll,
+				httpGet: func(url string) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusOK,
+						Body:       io.NopCloser(strings.NewReader(`{"jwks_uri": "https://www.google.com/jwks.json"}`)),
+					}, nil
+				},
 			},
 		},
 	}
@@ -427,6 +450,7 @@ func TestApp_setPublicTokenURLKeys(t *testing.T) {
 				getEnv:     tt.fields.getEnv,
 				readFile:   tt.fields.readFile,
 				readAll:    tt.fields.readAll,
+				httpGet:    tt.fields.httpGet,
 			}
 			app.setPublicTokenURLKeys()
 		})
@@ -657,6 +681,7 @@ func TestApp_startServer(t *testing.T) {
 	type args struct {
 		name      string
 		interrupt chan os.Signal
+		ctx       context.Context
 	}
 	tests := []struct {
 		name    string
@@ -694,7 +719,7 @@ func TestApp_startServer(t *testing.T) {
 				readFile:   tt.fields.readFile,
 				readAll:    tt.fields.readAll,
 			}
-			if err := app.startServer(tt.args.name, tt.args.interrupt); (err != nil) != tt.wantErr {
+			if err := app.startServer(tt.args.name, tt.args.interrupt, tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("App.startServer() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -741,14 +766,19 @@ func TestApp_backgroundServer(t *testing.T) {
 					"tokenKeys":       []cu.SM{},
 					"NT_HTTP_ENABLED": "true",
 					"NT_GRPC_ENABLED": "true",
+					"NT_MCP_ENABLED":  "true",
 					"NT_HTTP_PORT":    5000,
 					"NT_GRPC_PORT":    9200,
+					"NT_MCP_PORT":     8000,
 				},
 				hosts: map[string]ht.APIHost{
 					"http": &testHost{
 						raiseErr: true,
 					},
 					"grpc": &testHost{
+						startErr: false,
+					},
+					"mcp": &testHost{
 						startErr: false,
 					},
 				},
@@ -763,14 +793,19 @@ func TestApp_backgroundServer(t *testing.T) {
 					"tokenKeys":       []cu.SM{},
 					"NT_HTTP_ENABLED": "true",
 					"NT_GRPC_ENABLED": "true",
+					"NT_MCP_ENABLED":  "true",
 					"NT_HTTP_PORT":    5000,
 					"NT_GRPC_PORT":    9200,
+					"NT_MCP_PORT":     8000,
 				},
 				hosts: map[string]ht.APIHost{
 					"http": &testHost{
 						startErr: true,
 					},
 					"grpc": &testHost{
+						startErr: true,
+					},
+					"mcp": &testHost{
 						startErr: true,
 					},
 				},
@@ -785,14 +820,19 @@ func TestApp_backgroundServer(t *testing.T) {
 					"tokenKeys":       []cu.SM{},
 					"NT_HTTP_ENABLED": "false",
 					"NT_GRPC_ENABLED": "true",
+					"NT_MCP_ENABLED":  "false",
 					"NT_HTTP_PORT":    5000,
 					"NT_GRPC_PORT":    9200,
+					"NT_MCP_PORT":     8000,
 				},
 				hosts: map[string]ht.APIHost{
 					"http": &testHost{
 						startErr: true,
 					},
 					"grpc": &testHost{
+						startErr: true,
+					},
+					"mcp": &testHost{
 						startErr: true,
 					},
 				},

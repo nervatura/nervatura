@@ -78,7 +78,7 @@ func PricePut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("price", r.Body, &price); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "price", IDKey: priceID, Code: priceCode,
 			Data: price, Meta: price.PriceMeta, Fields: inputFields, MetaFields: metaFields,
 		})

@@ -41,7 +41,7 @@ func init() {
 	registerHost("grpc", &grpcServer{})
 }
 
-func (s *grpcServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal) error {
+func (s *grpcServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal, ctx context.Context) error {
 	s.config = config
 	s.appLog = slog.New(slog.NewJSONHandler(appLogOut, nil))
 	s.service = srv.GService{

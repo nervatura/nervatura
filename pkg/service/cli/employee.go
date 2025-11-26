@@ -65,7 +65,7 @@ func (cli *CLIService) EmployeeUpdate(options cu.IM, requestData string) string 
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("employee", reader, &employee); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "employee", IDKey: employeeID, Code: employeeCode,
 			Data: employee, Meta: employee.EmployeeMeta, Fields: inputFields, MetaFields: metaFields,
 		})

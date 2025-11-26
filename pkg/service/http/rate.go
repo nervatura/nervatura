@@ -71,7 +71,7 @@ func RatePut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("rate", r.Body, &rate); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "rate", IDKey: rateID, Code: rateCode,
 			Data: rate, Meta: rate.RateMeta, Fields: inputFields, MetaFields: metaFields,
 		})

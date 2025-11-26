@@ -3,7 +3,9 @@ package service
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
+	"net/http"
 	"slices"
 	"strings"
 	"time"
@@ -11,24 +13,23 @@ import (
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
-	cpu "github.com/nervatura/nervatura/v6/pkg/component"
-	cp "github.com/nervatura/nervatura/v6/pkg/component/client/component"
+	cp "github.com/nervatura/nervatura/v6/pkg/client/web/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 )
 
 // ClientService implements the Nervatura Client GUI Service.
 type ClientService struct {
 	Config       cu.IM
-	AuthConfigs  map[string]*oauth2.Config
+	AuthConfig   *oauth2.Config
 	AppLog       *slog.Logger
 	Session      *api.SessionService
 	NewDataStore func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore
 	Modules      map[string]ServiceModule
 	UI           *cp.ClientComponent
+	ReadAll      func(r io.Reader) (data []byte, err error)
 }
 
 // ServiceModule is an interface that defines the methods for a module in the ClientService.
@@ -72,20 +73,20 @@ var moduleMap = map[string]func(cls *ClientService) ServiceModule{
 	},
 }
 
-func NewClientService(config cu.IM, appLog *slog.Logger, memSession map[string]md.MemoryStore) *ClientService {
-	method := md.SessionMethod(cu.ToInteger(config["NT_SESSION_METHOD"], 0))
+func NewClientService(config cu.IM, appLog *slog.Logger, session *api.SessionService) *ClientService {
 	cls := &ClientService{
 		Config:       config,
 		AppLog:       appLog,
-		Session:      api.NewSession(config, cu.ToString(config["NT_SESSION_ALIAS"], ""), method, memSession),
+		Session:      session,
 		NewDataStore: api.NewDataStore,
 		Modules:      map[string]ServiceModule{},
 		UI:           cp.NewClientComponent(),
+		ReadAll:      io.ReadAll,
 	}
 	for key, fn := range moduleMap {
 		cls.Modules[key] = fn(cls)
 	}
-	cls.AuthConfigs = cls.getAuthConfig()
+	cls.AuthConfig = cls.getAuthConfig()
 	return cls
 }
 
@@ -93,39 +94,29 @@ func (cls *ClientService) getDataStore(alias string) *api.DataStore {
 	return cls.NewDataStore(cls.Config, alias, cls.AppLog)
 }
 
-func (cls *ClientService) getAuthConfig() (authMap map[string]*oauth2.Config) {
-	cfMap := map[string]*oauth2.Config{
-		"NT_GOOGLE_CLIENT": {
-			ClientID:     cu.ToString(cls.Config["NT_GOOGLE_CLIENT_ID"], ""),
-			ClientSecret: cu.ToString(cls.Config["NT_GOOGLE_CLIENT_SECRET"], ""),
-			RedirectURL:  st.AuthRedirectURL,
-			Scopes:       []string{"email"},
-			Endpoint:     google.Endpoint,
+func (cls *ClientService) getAuthConfig() *oauth2.Config {
+	return &oauth2.Config{
+		ClientID:     cu.ToString(cls.Config["NT_AUTH_CLIENT_ID"], ""),
+		ClientSecret: cu.ToString(cls.Config["NT_AUTH_CLIENT_SECRET"], ""),
+		RedirectURL:  cu.ToString(cls.Config["NT_CLIENT_AUTH_REDIRECT_URL"], ""),
+		Scopes:       []string{"email"},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:       cu.ToString(cls.Config["NT_AUTH_AUTHORIZATION_ENDPOINT"], ""),
+			TokenURL:      cu.ToString(cls.Config["NT_AUTH_TOKEN_ENDPOINT"], ""),
+			DeviceAuthURL: cu.ToString(cls.Config["NT_AUTH_DEVICE_ENDPOINT"], ""),
+			AuthStyle:     oauth2.AuthStyleInParams,
 		},
 	}
-	authMap = map[string]*oauth2.Config{}
-	for _, key := range []string{"NT_GOOGLE_CLIENT", "NT_FACEBOOK_CLIENT", "NT_GITHUB_CLIENT", "NT_MICROSOFT_CLIENT"} {
-		if cu.ToString(cls.Config[key+"_ID"], "") != "" && cu.ToString(cls.Config[key+"_SECRET"], "") != "" {
-			authMap[key] = cfMap[key]
-		}
-	}
-	return authMap
 }
 
 func (cls *ClientService) GetClient(host, sessionID, eventURL, lang, theme string) (client *ct.Client) {
 	authButtons := func() (authBtn []ct.LoginAuthButton) {
-		btnValue := cu.SM{
-			"NT_GOOGLE_CLIENT":    "google,Google,Google",
-			"NT_FACEBOOK_CLIENT":  "facebook,Facebook,Facebook",
-			"NT_GITHUB_CLIENT":    "github,Github,Github",
-			"NT_MICROSOFT_CLIENT": "microsoft,Microsoft,Microsoft",
-		}
 		authBtn = []ct.LoginAuthButton{}
-		for key := range cls.AuthConfigs {
+		if cu.ToString(cls.Config["NT_AUTH_SERVER"], "") != "" {
 			authBtn = append(authBtn, ct.LoginAuthButton{
-				Id:    strings.Split(btnValue[key], ",")[0],
-				Label: strings.Split(btnValue[key], ",")[1],
-				Icon:  strings.Split(btnValue[key], ",")[2],
+				Id:    "oauth_login",
+				Label: " OAuth Login",
+				Icon:  ct.IconUserLock,
 			})
 		}
 		return authBtn
@@ -175,7 +166,8 @@ func (cls *ClientService) LoadSession(sessionID string) (client *ct.Client, err 
 
 func (cls *ClientService) AuthUser(database, username string) (user cu.IM, err error) {
 	ds := cls.getDataStore(database)
-	if authUser, err := ds.AuthUser("", username); err == nil {
+	var authUser md.Auth
+	if authUser, err = ds.AuthUser("", username); err == nil {
 		user = cu.IM{
 			"id": authUser.Id, "code": authUser.Code,
 			"user_name": authUser.UserName, "user_group": authUser.UserGroup.String(),
@@ -193,6 +185,58 @@ func (cls *ClientService) userLogin(database, username, password string) (user c
 		_, err = ds.UserLogin(username, password, false)
 	}
 	return user, err
+}
+
+func (cls *ClientService) TriggerEvent(r *http.Request) (te ct.TriggerEvent, err error) {
+	te = ct.TriggerEvent{
+		Id:     r.Header.Get("HX-Trigger"),
+		Name:   r.Header.Get("HX-Trigger-Name"),
+		Target: r.Header.Get("HX-Target"),
+	}
+
+	switch strings.Split(r.Header.Get("Content-Type"), ";")[0] {
+	case "multipart/form-data":
+		// File upload handling
+		//var file multipart.File
+		//var handler *multipart.FileHeader
+		//var dst *os.File
+		// Parse request body as multipart form data with 32MB max memory
+		if err = r.ParseMultipartForm(32 << 20); err == nil {
+			// Get file from Form
+			_, _, err = r.FormFile("file")
+			/*
+				if file, _, err = r.FormFile("file"); err == nil {
+					// Create file locally
+					if dst, err = os.Create(handler.Filename); err == nil {
+						// Copy the uploaded file data to the newly created file on the filesystem
+						_, err = io.Copy(dst, file)
+					}
+					defer dst.Close()
+				}
+				defer file.Close()
+			*/
+		}
+	case "application/x-www-form-urlencoded":
+		if err = r.ParseForm(); err == nil {
+			te.Values = r.Form
+		}
+	default:
+		// text/plain, application/json
+		te.Data, err = cls.ReadAll(r.Body)
+	}
+	return te, err
+}
+
+func (cls *ClientService) EvtRedirect(name, triggerName, url string) ct.ResponseEvent {
+	return ct.ResponseEvent{
+		Trigger:     &ct.BaseComponent{},
+		TriggerName: name,
+		Name:        triggerName,
+		Header: cu.SM{
+			ct.HeaderReswap:   ct.SwapNone,
+			ct.HeaderRedirect: url,
+		},
+	}
 }
 
 func (cls *ClientService) codeName(ds *api.DataStore, code, model string) (name string) {
@@ -669,21 +713,15 @@ func (cls *ClientService) mainResponseLogin(evt ct.ResponseEvent) (re ct.Respons
 	}, true)
 
 	url := fmt.Sprintf(st.ClientPath+"/session/%s", client.Ticket.SessionID)
-	return cpu.EvtRedirect(ct.LoginEventLogin, evt.Name, url)
+	return cls.EvtRedirect(ct.LoginEventLogin, evt.Name, url)
 }
 
 func (cls *ClientService) mainResponseAuth(evt ct.ResponseEvent) (re ct.ResponseEvent) {
 	client := evt.Trigger.(*ct.Client)
-	authConfig := cu.ToString(evt.Value, "")
-	if config, found := cls.AuthConfigs[cu.ToString(evt.Value, "")]; found {
-		config.RedirectURL = fmt.Sprintf(config.RedirectURL, client.Ticket.Host)
-		verifier := oauth2.GenerateVerifier()
-		url := config.AuthCodeURL(client.Ticket.SessionID, oauth2.AccessTypeOffline, oauth2.S256ChallengeOption(verifier))
-		client.Data["verifier"] = verifier
-		client.Data["auth_config"] = authConfig
-		return cpu.EvtRedirect(ct.LoginEventAuth, evt.Name, url)
-	}
-	return cls.evtMsg(evt.Name, evt.TriggerName, "Invalid oAuth provider", ct.ToastTypeError, 0)
+	verifier := oauth2.GenerateVerifier()
+	url := cls.AuthConfig.AuthCodeURL(client.Ticket.SessionID, oauth2.AccessTypeOffline, oauth2.S256ChallengeOption(verifier))
+	client.Data["verifier"] = verifier
+	return cls.EvtRedirect(ct.LoginEventAuth, evt.Name, url)
 }
 
 func (cls *ClientService) mainResponseLink(evt ct.ResponseEvent, evtData cu.IM) (re ct.ResponseEvent) {
@@ -694,7 +732,7 @@ func (cls *ClientService) mainResponseLink(evt ct.ResponseEvent, evtData cu.IM) 
 	module := strings.Split(strings.TrimPrefix(fieldName, "ref_"), "_")[0]
 	rowId := cu.ToString(row[module+"_id"], "")
 	if fieldName == "value" && fieldType == "FIELD_URL" {
-		return cpu.EvtRedirect(evt.Name, evt.TriggerName, cu.ToString(row["value"], ""))
+		return cls.EvtRedirect(evt.Name, evt.TriggerName, cu.ToString(row["value"], ""))
 	}
 	if fieldName == "value" && slices.Contains([]string{
 		"FIELD_CUSTOMER", "FIELD_EMPLOYEE", "FIELD_PLACE", "FIELD_PRODUCT", "FIELD_PROJECT",
@@ -977,7 +1015,7 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 		ct.ClientEventLogOut: func() ct.ResponseEvent {
 			client.Ticket.User = nil
 			client.Ticket.Expiry = time.Now()
-			return cpu.EvtRedirect(ct.LoginEventAuth, evt.Name, client.LoginURL)
+			return cls.EvtRedirect(ct.LoginEventAuth, evt.Name, client.LoginURL)
 		},
 	}
 

@@ -2,6 +2,10 @@ package app
 
 import (
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"io"
 	"log"
@@ -38,6 +42,7 @@ type App struct {
 	getEnv     func(key string) string
 	readFile   func(name string) ([]byte, error)
 	readAll    func(r io.Reader) ([]byte, error)
+	httpGet    func(url string) (*http.Response, error)
 }
 
 // trayService - interface for tray service
@@ -63,6 +68,7 @@ func New(version string, args cu.SM) (app *App, err error) {
 		getEnv:     os.Getenv,
 		readFile:   os.ReadFile,
 		readAll:    io.ReadAll,
+		httpGet:    http.Get,
 	}
 	app.setEnv("./.env")
 
@@ -98,7 +104,7 @@ func New(version string, args cu.SM) (app *App, err error) {
 		}()
 	}
 
-	if err = app.startServer("cli", nil); err != nil {
+	if err = app.startServer("cli", nil, nil); err != nil {
 		return nil, err
 	}
 
@@ -178,18 +184,12 @@ func (app *App) setErrorLog(message string, args ...any) {
 func (app *App) setConfig(isSnap bool) {
 	args := cu.ToSM(app.config["args"], cu.SM{})
 
-	app.config["NT_GOOGLE_CLIENT_ID"] = cu.ToString(app.getEnv("NT_GOOGLE_CLIENT_ID"), "")
-	app.config["NT_GOOGLE_CLIENT_SECRET"] = cu.ToString(app.getEnv("NT_GOOGLE_CLIENT_SECRET"), "")
-	app.config["NT_FACEBOOK_CLIENT_ID"] = cu.ToString(app.getEnv("NT_FACEBOOK_CLIENT_ID"), "")
-	app.config["NT_FACEBOOK_CLIENT_SECRET"] = cu.ToString(app.getEnv("NT_FACEBOOK_CLIENT_SECRET"), "")
-	app.config["NT_GITHUB_CLIENT_ID"] = cu.ToString(app.getEnv("NT_GITHUB_CLIENT_ID"), "")
-	app.config["NT_GITHUB_CLIENT_SECRET"] = cu.ToString(app.getEnv("NT_GITHUB_CLIENT_SECRET"), "")
-	app.config["NT_MICROSOFT_CLIENT_ID"] = cu.ToString(app.getEnv("NT_MICROSOFT_CLIENT_ID"), "")
-	app.config["NT_MICROSOFT_CLIENT_SECRET"] = cu.ToString(app.getEnv("NT_MICROSOFT_CLIENT_SECRET"), "")
+	app.config["NT_PUBLIC_HOST"] = cu.ToString(app.getEnv("NT_PUBLIC_HOST"), "")
+	app.config["NT_AUTH_SERVER"] = cu.ToString(app.getEnv("NT_AUTH_SERVER"), "")
+	app.config["NT_AUTH_CLIENT_ID"] = cu.ToString(app.getEnv("NT_AUTH_CLIENT_ID"), "")
+	app.config["NT_AUTH_CLIENT_SECRET"] = cu.ToString(app.getEnv("NT_AUTH_CLIENT_SECRET"), "")
 
 	app.config["NT_API_KEY"] = cu.ToString(app.getEnv("NT_API_KEY"), cu.RandString(32))
-	app.config["NT_AUTH_KEY"] = cu.ToString(app.getEnv("NT_AUTH_KEY"), cu.RandString(32))
-	app.config["NT_RSA_PUBLIC"] = cu.ToString(app.getEnv("NT_RSA_PUBLIC"), "")
 
 	app.config["NT_SESSION_EXP"] = cu.ToInteger(app.getEnv("NT_SESSION_EXP"), cu.ToInteger(st.DefaultConfig["session"]["exp"], 1))
 	app.config["NT_SESSION_METHOD"] = cu.ToInteger(app.getEnv("NT_SESSION_METHOD"), cu.ToInteger(st.DefaultConfig["session"]["method"], 0))
@@ -206,6 +206,8 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_HTTP_WRITE_TIMEOUT"] = cu.ToFloat(app.getEnv("NT_HTTP_WRITE_TIMEOUT"), cu.ToFloat(st.DefaultConfig["http"]["write_timeout"], 30))
 	app.config["NT_HTTP_HOME"] = cu.ToString(app.getEnv("NT_HTTP_HOME"), cu.ToString(st.DefaultConfig["http"]["home"], "/"))
 	app.config["NT_HTTP_LOG_FILE"] = cu.ToString(args["NT_HTTP_LOG_FILE"], app.getEnv("NT_HTTP_LOG_FILE"))
+
+	app.config["NT_MCP_ENABLED"] = cu.ToBoolean(args["NT_MCP_ENABLED"], cu.ToBoolean(app.getEnv("NT_MCP_ENABLED"), cu.ToBoolean(st.DefaultConfig["mcp"]["enabled"], true)))
 
 	dataDir := "data"
 	if isSnap {
@@ -240,23 +242,12 @@ func (app *App) setConfig(isSnap bool) {
 
 	app.config["NT_TOKEN_ISS"] = cu.ToString(app.getEnv("NT_TOKEN_ISS"), cu.ToString(st.DefaultConfig["token"]["iss"], "nervatura"))
 	app.config["NT_TOKEN_PRIVATE_KID"] = cu.ToString(app.getEnv("NT_TOKEN_PRIVATE_KID"), ut.GetHash("nervatura", "sha256"))
-	isServer := func() bool {
-		if _, found := args["cmd"]; found {
-			if args["cmd"] != "server" {
-				return true
-			}
-		}
-		return (slices.Contains(os.Args, "-c") && !slices.Contains(os.Args, "server"))
-	}
-	if isServer() {
-		app.config["NT_TOKEN_PRIVATE_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PRIVATE_KEY"), ut.GetHash(cu.RandString(16), "sha256"))
-	} else {
-		app.config["NT_TOKEN_PRIVATE_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PRIVATE_KEY"), cu.RandString(32))
+	app.config["NT_TOKEN_PUBLIC_KID"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KID"), ut.GetHash("nervatura", "sha256"))
+	app.config["NT_TOKEN_PUBLIC_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KEY"), "")
+	if app.getEnv("NT_TOKEN_PRIVATE_KEY") == "" {
+		app.config["NT_TOKEN_PRIVATE_KEY"], app.config["NT_TOKEN_PUBLIC_KEY"] = app.generateRSAKeys()
 	}
 	app.config["NT_TOKEN_EXP"] = cu.ToFloat(app.getEnv("NT_TOKEN_EXP"), cu.ToFloat(st.DefaultConfig["token"]["exp"], 6))
-
-	app.config["NT_TOKEN_PUBLIC_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KEY"), "")
-	app.config["NT_TOKEN_PUBLIC_KEY_URL"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KEY_URL"), cu.ToString(st.DefaultConfig["token"]["public_key_url"], ""))
 
 	app.config["NT_CORS_ENABLED"] = cu.ToBoolean(app.getEnv("NT_CORS_ENABLED"), true)
 	app.config["NT_CORS_ALLOW_ORIGINS"] = strings.Split(cu.ToString(app.getEnv("NT_CORS_ALLOW_ORIGINS"), st.DefaultConfig["cors"]["allow_origins"]), ",")
@@ -265,6 +256,7 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_CORS_EXPOSE_HEADERS"] = strings.Split(cu.ToString(app.getEnv("NT_CORS_EXPOSE_HEADERS"), st.DefaultConfig["cors"]["expose_headers"]), ",")
 	app.config["NT_CORS_ALLOW_CREDENTIALS"] = cu.ToBoolean(app.getEnv("NT_CORS_ALLOW_CREDENTIALS"), false)
 	app.config["NT_CORS_MAX_AGE"] = cu.ToInteger(app.getEnv("NT_CORS_MAX_AGE"), 0)
+
 	app.config["NT_CSRF_TRUSTED_ORIGINS"] = strings.Split(cu.ToString(app.getEnv("NT_CSRF_TRUSTED_ORIGINS"), st.DefaultConfig["cors"]["trusted_origins"]), ",")
 
 	app.config["NT_SMTP_HOST"] = cu.ToString(app.getEnv("NT_SMTP_HOST"), cu.ToString(st.DefaultConfig["smtp"]["host"], ""))
@@ -273,7 +265,7 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_SMTP_USER"] = cu.ToString(app.getEnv("NT_SMTP_USER"), cu.ToString(st.DefaultConfig["smtp"]["user"], ""))
 	app.config["NT_SMTP_PASSWORD"] = cu.ToString(app.getEnv("NT_SMTP_PASSWORD"), "")
 
-	info := []string{"NT_API_KEY", "NT_TOKEN_PRIVATE_KID", "NT_TOKEN_PRIVATE_KEY"}
+	info := []string{"NT_API_KEY"}
 	for i := 0; i < len(info); i++ {
 		if app.getEnv(info[i]) == "" && len(args) == 0 {
 			log.Println(info[i] + ": " + app.config[info[i]].(string))
@@ -321,23 +313,34 @@ func (app *App) setTokenKeys(keyType string) error {
 
 // setPublicTokenURLKeys - set/load public token keys from URL
 func (app *App) setPublicTokenURLKeys() {
-	publicUrl := cu.ToString(app.config["NT_TOKEN_PUBLIC_KEY_URL"], "")
-	if publicUrl != "" {
-		res, err := http.Get(publicUrl)
+	authServer := cu.ToString(app.config["NT_AUTH_SERVER"], "")
+	var err error
+	if authServer != "" {
+		configUrl := authServer + "/.well-known/openid-configuration"
+		var res *http.Response
+		if res, err = app.httpGet(configUrl); err == nil {
+			var config cu.IM
+			if err = cu.ConvertFromReader(res.Body, &config); err == nil {
+				app.config["NT_AUTH_AUTHORIZATION_ENDPOINT"] = cu.ToString(config["authorization_endpoint"], "")
+				app.config["NT_AUTH_TOKEN_ENDPOINT"] = cu.ToString(config["token_endpoint"], "")
+				app.config["NT_AUTH_DEVICE_ENDPOINT"] = cu.ToString(config["device_authorization_endpoint"], "")
+				jwksUri := cu.ToString(config["jwks_uri"], "")
+				if res, err = app.httpGet(jwksUri); err == nil {
+					var data []byte
+					if data, err = app.readAll(res.Body); err == nil {
+						app.config["tokenKeys"] = append(app.config["tokenKeys"].([]cu.SM), cu.SM{
+							"type":  "jwks",
+							"value": string(data),
+						})
+					}
+				}
+				defer res.Body.Close()
+			}
+		}
 		if err != nil {
 			app.setErrorLog("reading external token", err)
 			return
 		}
-		defer res.Body.Close()
-		data, err := app.readAll(res.Body)
-		if err != nil {
-			app.setErrorLog("reading external token", err)
-			return
-		}
-		app.config["tokenKeys"] = append(app.config["tokenKeys"].([]cu.SM), cu.SM{
-			"type":  "public",
-			"value": string(data),
-		})
 	}
 }
 
@@ -350,6 +353,29 @@ func (app *App) setTokenKeyRing() (err error) {
 	}
 	app.setPublicTokenURLKeys()
 	return nil
+}
+
+func (app *App) generateRSAKeys() (privateKey, publicKey string) {
+	privkey, _ := rsa.GenerateKey(rand.Reader, 4096)
+	privkey_bytes := x509.MarshalPKCS1PrivateKey(privkey)
+	privkey_pem := pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: privkey_bytes,
+		},
+	)
+	//os.WriteFile("../../data/private.pem", privkey_pem, 0644)
+
+	pubkey_bytes, _ := x509.MarshalPKIXPublicKey(&privkey.PublicKey)
+	pubkey_pem := pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "RSA PUBLIC KEY",
+			Bytes: pubkey_bytes,
+		},
+	)
+	//os.WriteFile("../../data/public.pem", pubkey_pem, 0644)
+
+	return string(privkey_pem), string(pubkey_pem)
 }
 
 // GetResults - get results
@@ -390,8 +416,8 @@ func (app *App) onTrayMenu(mKey string) {
 }
 
 // startServer - start server
-func (app *App) startServer(name string, interrupt chan os.Signal) error {
-	return app.hosts[name].StartServer(app.config, app.appLogOut, app.httpLogOut, interrupt)
+func (app *App) startServer(name string, interrupt chan os.Signal, ctx context.Context) error {
+	return app.hosts[name].StartServer(app.config, app.appLogOut, app.httpLogOut, interrupt, ctx)
 }
 
 // backgroundServer - start background http and/or grpc server
@@ -414,10 +440,10 @@ func (app *App) backgroundServer() error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	// Setup HTTP server
-	httpDisabled, configURL := app.setupHTTPServer(g, interrupt)
+	httpDisabled, configURL := app.setupHTTPServer(g, interrupt, ctx)
 
 	// Setup gRPC server
-	grpcDisabled := app.setupGRPCServer(g, interrupt)
+	grpcDisabled := app.setupGRPCServer(g, interrupt, ctx)
 
 	if httpDisabled && grpcDisabled {
 		return nil
@@ -428,13 +454,13 @@ func (app *App) backgroundServer() error {
 	return app.runServer(httpDisabled, configURL, interrupt, ctx, onExit)
 }
 
-func (app *App) setupHTTPServer(g *errgroup.Group, interrupt chan os.Signal) (bool, string) {
+func (app *App) setupHTTPServer(g *errgroup.Group, interrupt chan os.Signal, ctx context.Context) (bool, string) {
 	httpDisabled := false
 	configURL := "http://localhost:" + cu.ToString(app.config["NT_HTTP_PORT"], "") + "/admin/task/config/" + app.taskSecKey
 
 	if _, found := app.hosts["http"]; found && cu.ToBoolean(app.config["NT_HTTP_ENABLED"], false) {
 		g.Go(func() error {
-			return app.startServer("http", interrupt)
+			return app.startServer("http", interrupt, ctx)
 		})
 	} else {
 		httpDisabled = true
@@ -444,11 +470,11 @@ func (app *App) setupHTTPServer(g *errgroup.Group, interrupt chan os.Signal) (bo
 	return httpDisabled, configURL
 }
 
-func (app *App) setupGRPCServer(g *errgroup.Group, interrupt chan os.Signal) bool {
+func (app *App) setupGRPCServer(g *errgroup.Group, interrupt chan os.Signal, ctx context.Context) bool {
 	grpcDisabled := false
 	if _, found := app.hosts["grpc"]; found && cu.ToBoolean(app.config["NT_GRPC_ENABLED"], false) {
 		g.Go(func() error {
-			return app.startServer("grpc", interrupt)
+			return app.startServer("grpc", interrupt, ctx)
 		})
 	} else {
 		grpcDisabled = true

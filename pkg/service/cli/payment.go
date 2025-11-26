@@ -69,7 +69,7 @@ func (cli *CLIService) PaymentUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("payment", reader, &payment); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "payment", IDKey: paymentID, Code: paymentCode,
 			Data: payment, Meta: payment.PaymentMeta, Fields: inputFields, MetaFields: metaFields,
 		})

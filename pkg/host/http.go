@@ -17,14 +17,18 @@ import (
 	"time"
 
 	"github.com/gorilla/handlers"
+	"github.com/modelcontextprotocol/go-sdk/auth"
+	mcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	cst "github.com/nervatura/component/pkg/static"
 	cu "github.com/nervatura/component/pkg/util"
 	docs "github.com/nervatura/nervatura/v6/docs6"
-	cl "github.com/nervatura/nervatura/v6/pkg/component/client/service"
+	"github.com/nervatura/nervatura/v6/pkg/api"
+	cl "github.com/nervatura/nervatura/v6/pkg/client/web/service"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
-	src "github.com/nervatura/nervatura/v6/pkg/service/gui"
 	srv "github.com/nervatura/nervatura/v6/pkg/service/http"
+	msrv "github.com/nervatura/nervatura/v6/pkg/service/mcp"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	src "github.com/nervatura/nervatura/v6/pkg/service/web"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
@@ -33,6 +37,7 @@ type httpServer struct {
 	appLog     *slog.Logger
 	mux        *http.ServeMux
 	server     *http.Server
+	session    *api.SessionService
 	tlsEnabled bool
 	result     string
 	memSession map[string]md.MemoryStore
@@ -42,15 +47,26 @@ func init() {
 	registerHost("http", &httpServer{})
 }
 
-func (s *httpServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal) error {
+func (s *httpServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal, ctx context.Context) error {
 	s.config = config
 	s.appLog = slog.New(slog.NewJSONHandler(appLogOut, nil))
 	s.memSession = make(map[string]md.MemoryStore)
+	method := md.SessionMethod(cu.ToInteger(config["NT_SESSION_METHOD"], 0))
+	s.session = api.NewSession(config, cu.ToString(config["NT_SESSION_ALIAS"], ""), method, s.memSession)
 	s.mux = http.NewServeMux()
+
+	CORS := handlers.CORS(
+		handlers.AllowedOrigins(s.config["NT_CORS_ALLOW_ORIGINS"].([]string)),
+		handlers.AllowedMethods(s.config["NT_CORS_ALLOW_METHODS"].([]string)),
+		handlers.AllowedHeaders(s.config["NT_CORS_ALLOW_HEADERS"].([]string)),
+		handlers.ExposedHeaders(s.config["NT_CORS_EXPOSE_HEADERS"].([]string)),
+		handlers.AllowCredentials(),
+		handlers.MaxAge(int(cu.ToInteger(s.config["NT_CORS_MAX_AGE"], 0))),
+	)
 
 	s.setRoutes()
 
-	rootHandler := handlers.CompressHandler(handlers.RecoveryHandler()(handlers.CombinedLoggingHandler(httpLogOut, s.mux)))
+	rootHandler := handlers.CompressHandler(handlers.RecoveryHandler()(handlers.CombinedLoggingHandler(httpLogOut, CORS(s.mux))))
 	s.server = &http.Server{
 		Handler:      rootHandler,
 		Addr:         fmt.Sprintf(":%d", cu.ToInteger(s.config["NT_HTTP_PORT"], 0)),
@@ -89,22 +105,23 @@ func (s *httpServer) setRoutes() {
 	for _, origin := range trustedOrigins {
 		antiCSRF.AddTrustedOrigin(origin)
 	}
-	CORS := handlers.CORS(
-		handlers.AllowedOrigins(s.config["NT_CORS_ALLOW_ORIGINS"].([]string)),
-		handlers.AllowedMethods(s.config["NT_CORS_ALLOW_METHODS"].([]string)),
-		handlers.AllowedHeaders(s.config["NT_CORS_ALLOW_HEADERS"].([]string)),
-		handlers.ExposedHeaders(s.config["NT_CORS_EXPOSE_HEADERS"].([]string)),
-		handlers.AllowCredentials(),
-		handlers.MaxAge(int(cu.ToInteger(s.config["NT_CORS_MAX_AGE"], 0))),
-	)
 
 	s.mux.HandleFunc("/", s.homeRoute)
 	s.mux.HandleFunc("/config/{secKey}", s.configRoute)
+	s.mux.HandleFunc("GET /health", srv.Health)
+	s.mux.Handle("/.well-known/", s.headerSession(s.wellKnownRoutes()))
+	s.mux.Handle("/oauth/", s.headerSession(s.oauthRoutes()))
 
 	s.mux.Handle(st.ClientPath+"/", antiCSRF.Handler(s.headerClient(s.clientUIRoutes())))
-	s.mux.Handle(st.ClientPath+"/api/", CORS(s.headerClient(s.clientAPIRoutes())))
+	s.mux.Handle(st.ClientPath+"/api/", s.headerClient(s.clientAPIRoutes()))
 
-	s.mux.Handle(st.ApiPath+"/", CORS(s.headerAPI(s.apiRoutes())))
+	s.mux.Handle(st.ApiPath+"/", s.headerAuth(s.apiRoutes()))
+
+	if cu.ToBoolean(s.config["NT_MCP_ENABLED"], false) {
+		s.appLog.Info("MCP server enabled")
+		mcpHandler := mcp.NewStreamableHTTPHandler(msrv.GetServer(s.config), &mcp.StreamableHTTPOptions{})
+		s.mux.Handle("/mcp", s.headerMcp(mcpHandler))
+	}
 
 	// Register static dirs.
 	// app css files
@@ -162,15 +179,41 @@ func (s *httpServer) configRoute(w http.ResponseWriter, r *http.Request) {
 	_ = tmp.ExecuteTemplate(w, "task", data)
 }
 
+func (s *httpServer) mcpVerify(ctx context.Context, token string, req *http.Request) (*auth.TokenInfo, error) {
+	return msrv.TokenAuth(md.AuthOptions{
+		Request: req, Config: s.config, AppLog: s.appLog,
+		ParseToken: ut.ParseToken, ConvertFromReader: cu.ConvertFromReader, TokenString: token,
+	})
+}
+
+func (s *httpServer) headerMcp(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		jwtAuth := auth.RequireBearerToken(s.mcpVerify,
+			&auth.RequireBearerTokenOptions{Scopes: []string{}})
+		jwtAuth(next).ServeHTTP(w, r)
+	})
+}
+
 func (s *httpServer) headerClient(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		client := cl.NewClientService(s.config, s.appLog, s.memSession)
+		localServer := fmt.Sprintf("http://%s", r.Host)
+		publicHost := cu.ToString(s.config["NT_PUBLIC_HOST"], localServer)
+		s.config["NT_CLIENT_AUTH_REDIRECT_URL"] = fmt.Sprintf("%s%s", publicHost, st.ClientAuthRedirectURL)
+		client := cl.NewClientService(s.config, s.appLog, s.session)
 		ctx := context.WithValue(r.Context(), md.ClientServiceCtxKey, client)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func (s *httpServer) headerAPI(next http.Handler) http.Handler {
+func (s *httpServer) headerSession(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), md.SessionServiceCtxKey, s.session)
+		ctx = context.WithValue(ctx, md.ConfigCtxKey, s.config)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (s *httpServer) headerAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		state := func() string {
 			if strings.Contains(r.URL.Path, "/auth/login") {
@@ -204,6 +247,25 @@ func (s *httpServer) headerAPI(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func (s *httpServer) wellKnownRoutes() http.Handler {
+	oauthMux := http.NewServeMux()
+	oauthMux.HandleFunc("GET /oauth-protected-resource", srv.ProtectedResource)
+	oauthMux.HandleFunc("GET /oauth-protected-resource/mcp", srv.ProtectedResource)
+	oauthMux.HandleFunc("GET /oauth-authorization-server", srv.AuthorizationServer)
+	oauthMux.HandleFunc("GET /openid-configuration", srv.OpenIDConfiguration)
+	oauthMux.HandleFunc("GET /jwks.json", srv.Jwks)
+	return http.StripPrefix("/.well-known", oauthMux)
+}
+
+func (s *httpServer) oauthRoutes() http.Handler {
+	oauthMux := http.NewServeMux()
+	oauthMux.HandleFunc("GET /authorization", srv.OAuthAuthorization)
+	oauthMux.HandleFunc("POST /token", srv.OAuthToken)
+	oauthMux.HandleFunc("POST /registration", srv.OAuthRegistration)
+	oauthMux.HandleFunc("GET /callback", srv.OAuthCallback)
+	return http.StripPrefix("/oauth", oauthMux)
 }
 
 func (s *httpServer) apiRoutes() http.Handler {

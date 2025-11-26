@@ -80,7 +80,7 @@ func AuthPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("auth", r.Body, &auth); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "auth", IDKey: authID, Code: authCode,
 			Data: auth, Meta: auth.AuthMeta, Fields: inputFields, MetaFields: metaFields,
 		})

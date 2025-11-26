@@ -28,7 +28,7 @@ func init() {
 	registerHost("cli", &cliHost{})
 }
 
-func (h *cliHost) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal) error {
+func (h *cliHost) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, interrupt chan os.Signal, ctx context.Context) error {
 	h.config = config
 	h.appLog = slog.New(slog.NewJSONHandler(appLogOut, nil))
 	appArgs := cu.ToSM(config["args"], cu.SM{})

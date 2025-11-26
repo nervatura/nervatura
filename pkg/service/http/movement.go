@@ -87,7 +87,7 @@ func MovementPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("movement", r.Body, &movement); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "movement", IDKey: movementID, Code: movementCode,
 			Data: movement, Meta: movement.MovementMeta, Fields: inputFields, MetaFields: metaFields,
 		})

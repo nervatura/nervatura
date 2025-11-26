@@ -16,6 +16,8 @@ import (
 	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
+	"github.com/nervatura/nervatura/v6/pkg/api"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 
 func Test_httpServer_StartServer(t *testing.T) {
@@ -30,6 +32,7 @@ func Test_httpServer_StartServer(t *testing.T) {
 	type args struct {
 		config    cu.IM
 		interrupt chan os.Signal
+		ctx       context.Context
 	}
 	tests := []struct {
 		name    string
@@ -49,6 +52,7 @@ func Test_httpServer_StartServer(t *testing.T) {
 					"NT_HTTP_WRITE_TIMEOUT": float64(30),
 					"NT_TLS_CERT_FILE":      "../../data/test_server_cert.pem",
 					"NT_TLS_KEY_FILE":       "../../data/test_server_key.pem",
+					"NT_MCP_ENABLED":        true,
 
 					"NT_CORS_ENABLED":           true,
 					"NT_CORS_ALLOW_ORIGINS":     strings.Split("*", ","),
@@ -76,7 +80,7 @@ func Test_httpServer_StartServer(t *testing.T) {
 			}
 			appLogOut := &bytes.Buffer{}
 			httpLogOut := &bytes.Buffer{}
-			if err := s.StartServer(tt.args.config, appLogOut, httpLogOut, tt.args.interrupt); (err != nil) != tt.wantErr {
+			if err := s.StartServer(tt.args.config, appLogOut, httpLogOut, tt.args.interrupt, tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("httpServer.StartServer() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
@@ -87,6 +91,7 @@ func Test_httpServer_StartServer(t *testing.T) {
 func Test_httpServer_StopServer(t *testing.T) {
 	s := &httpServer{}
 	interrupt := make(chan os.Signal)
+	ctx := context.Background()
 	go func() {
 		s.StartServer(cu.IM{
 			"version":                   "test",
@@ -99,13 +104,13 @@ func Test_httpServer_StopServer(t *testing.T) {
 			"NT_CORS_ALLOW_CREDENTIALS": false,
 			"NT_CORS_MAX_AGE":           int64(0),
 			"NT_CSRF_TRUSTED_ORIGINS":   strings.Split("", ","),
-		}, &bytes.Buffer{}, &bytes.Buffer{}, interrupt)
+		}, &bytes.Buffer{}, &bytes.Buffer{}, interrupt, ctx)
 	}()
 	time.Sleep(1 * time.Second)
-	s.StopServer(context.Background())
+	s.StopServer(ctx)
 
 	s = &httpServer{}
-	s.StopServer(context.Background())
+	s.StopServer(ctx)
 }
 
 func Test_httpServer_Results(t *testing.T) {
@@ -346,7 +351,7 @@ func Test_httpServer_headerClient(t *testing.T) {
 	}
 }
 
-func Test_httpServer_headerAPI(t *testing.T) {
+func Test_httpServer_headerAuth(t *testing.T) {
 	type fields struct {
 		config     cu.IM
 		appLog     *slog.Logger
@@ -418,7 +423,107 @@ func Test_httpServer_headerAPI(t *testing.T) {
 				tlsEnabled: tt.fields.tlsEnabled,
 				result:     tt.fields.result,
 			}
-			s.headerAPI(tt.args.next).ServeHTTP(httptest.NewRecorder(), tt.args.req)
+			s.headerAuth(tt.args.next).ServeHTTP(httptest.NewRecorder(), tt.args.req)
+		})
+	}
+}
+
+func Test_httpServer_headerMcp(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		next http.Handler
+	}{
+		{
+			name: "ok",
+			next: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+			}),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// TODO: construct the receiver type.
+			var s httpServer
+			s.headerMcp(tt.next).ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("GET", "/", nil))
+		})
+	}
+}
+
+func Test_httpServer_headerSession(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		next http.Handler
+	}{
+		{
+			name: "ok",
+			next: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+			}),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// TODO: construct the receiver type.
+			var s httpServer
+			s.headerSession(tt.next).ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("GET", "/", nil))
+		})
+	}
+}
+
+func Test_httpServer_mcpVerify(t *testing.T) {
+	type fields struct {
+		config     cu.IM
+		appLog     *slog.Logger
+		mux        *http.ServeMux
+		server     *http.Server
+		session    *api.SessionService
+		tlsEnabled bool
+		result     string
+		memSession map[string]md.MemoryStore
+	}
+	type args struct {
+		ctx   context.Context
+		token string
+		req   *http.Request
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				config: cu.IM{"NT_API_KEY": "EXAMPLE_API_KEY"},
+				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+			},
+			args: args{
+				ctx:   context.Background(),
+				token: "EXAMPLE_API_KEY",
+				req:   httptest.NewRequest("GET", "/", nil),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &httpServer{
+				config:     tt.fields.config,
+				appLog:     tt.fields.appLog,
+				mux:        tt.fields.mux,
+				server:     tt.fields.server,
+				session:    tt.fields.session,
+				tlsEnabled: tt.fields.tlsEnabled,
+				result:     tt.fields.result,
+				memSession: tt.fields.memSession,
+			}
+			_, err := s.mcpVerify(tt.args.ctx, tt.args.token, tt.args.req)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("httpServer.mcpVerify() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 		})
 	}
 }

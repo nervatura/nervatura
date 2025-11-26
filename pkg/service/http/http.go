@@ -7,10 +7,12 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
 func RespondMessage(w http.ResponseWriter, code int, payload interface{}, errCode int, err error) {
@@ -71,7 +73,7 @@ func TokenAuth(opt md.AuthOptions) (ctx context.Context, errCode int) {
 	}
 	alias := cu.ToString(tokenData["alias"], "")
 	userCode := cu.ToString(tokenData["user_code"], "")
-	userName := cu.ToString(tokenData["user_name"], "")
+	userName := cu.ToString(tokenData["user_name"], cu.ToString(tokenData["email"], ""))
 
 	if userCode == "" && userName == "" {
 		opt.AppLog.Error("Missing API key or bearer token")
@@ -85,7 +87,7 @@ func TokenAuth(opt md.AuthOptions) (ctx context.Context, errCode int) {
 		return ctx, http.StatusUnauthorized
 	}
 	if opt.Request.Method == http.MethodPost || opt.Request.Method == http.MethodPut || opt.Request.Method == http.MethodDelete {
-		if user.UserGroup == md.UserGroupGuest {
+		if user.UserGroup == md.UserGroupGuest && strings.Contains(opt.Request.URL.Path, st.ApiPath) {
 			return ctx, http.StatusMethodNotAllowed
 		}
 	}
@@ -140,4 +142,12 @@ func View(w http.ResponseWriter, r *http.Request) {
 	}
 
 	RespondMessage(w, http.StatusOK, response, http.StatusUnprocessableEntity, err)
+}
+
+func Health(w http.ResponseWriter, r *http.Request) {
+	response := cu.IM{
+		"status": "ok",
+		"time":   time.Now().Format(time.RFC3339),
+	}
+	RespondMessage(w, http.StatusOK, response, http.StatusInternalServerError, nil)
 }

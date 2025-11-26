@@ -1,10 +1,8 @@
-package component
+package web
 
 import (
 	"html/template"
-	"io"
 	"net/http"
-	"strings"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -64,57 +62,5 @@ func Application(sessionID string, mainComponent ct.ClientComponent) (ccApp *ct.
 			{Rel: "stylesheet", Href: "/static/css/index.css"},
 		},
 		MainComponent: mainComponent,
-	}
-}
-
-func TriggerEvent(r *http.Request) (te ct.TriggerEvent, err error) {
-	te = ct.TriggerEvent{
-		Id:     r.Header.Get("HX-Trigger"),
-		Name:   r.Header.Get("HX-Trigger-Name"),
-		Target: r.Header.Get("HX-Target"),
-	}
-
-	switch strings.Split(r.Header.Get("Content-Type"), ";")[0] {
-	case "multipart/form-data":
-		// File upload handling
-		//var file multipart.File
-		//var handler *multipart.FileHeader
-		//var dst *os.File
-		// Parse request body as multipart form data with 32MB max memory
-		if err = r.ParseMultipartForm(32 << 20); err == nil {
-			// Get file from Form
-			_, _, err = r.FormFile("file")
-			/*
-				if file, _, err = r.FormFile("file"); err == nil {
-					// Create file locally
-					if dst, err = os.Create(handler.Filename); err == nil {
-						// Copy the uploaded file data to the newly created file on the filesystem
-						_, err = io.Copy(dst, file)
-					}
-					defer dst.Close()
-				}
-				defer file.Close()
-			*/
-		}
-	case "application/x-www-form-urlencoded":
-		if err = r.ParseForm(); err == nil {
-			te.Values = r.Form
-		}
-	default:
-		// text/plain, application/json
-		te.Data, err = io.ReadAll(r.Body)
-	}
-	return te, err
-}
-
-func EvtRedirect(name, triggerName, url string) ct.ResponseEvent {
-	return ct.ResponseEvent{
-		Trigger:     &ct.BaseComponent{},
-		TriggerName: name,
-		Name:        triggerName,
-		Header: cu.SM{
-			ct.HeaderReswap:   ct.SwapNone,
-			ct.HeaderRedirect: url,
-		},
 	}
 }

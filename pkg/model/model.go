@@ -25,6 +25,8 @@ var AuthOptionsCtxKey = &ContextKey{Name: "auth_options"}
 var AuthUserCtxKey = &ContextKey{Name: "auth_user"}
 var DataStoreCtxKey = &ContextKey{Name: "data_store"}
 var ClientServiceCtxKey = &ContextKey{Name: "client_service"}
+var SessionServiceCtxKey = &ContextKey{Name: "session_service"}
+var ConfigCtxKey = &ContextKey{Name: "config"}
 
 type MemoryStore struct {
 	Session any
@@ -75,6 +77,7 @@ type AuthOptions struct {
 	AppLog            *slog.Logger
 	ParseToken        func(tokenString string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 	ConvertFromReader func(data io.Reader, result interface{}) error
+	TokenString       string
 }
 
 type View struct {

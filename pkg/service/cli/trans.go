@@ -102,7 +102,7 @@ func (cli *CLIService) TransUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("trans", reader, &trans); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "trans", IDKey: transID, Code: transCode,
 			Data: trans, Meta: trans.TransMeta, Fields: inputFields, MetaFields: metaFields,
 		})

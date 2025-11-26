@@ -63,7 +63,7 @@ func (cli *CLIService) CurrencyUpdate(options cu.IM, requestData string) string 
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("currency", reader, &currency); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "currency", IDKey: currencyID, Code: currencyCode,
 			Data: currency, Meta: currency.CurrencyMeta, Fields: inputFields, MetaFields: metaFields,
 		})

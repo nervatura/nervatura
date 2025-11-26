@@ -62,7 +62,7 @@ func CurrencyPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("currency", r.Body, &currency); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "currency", IDKey: currencyID, Code: currencyCode,
 			Data: currency, Meta: currency.CurrencyMeta, Fields: inputFields, MetaFields: metaFields,
 		})

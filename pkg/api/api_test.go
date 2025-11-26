@@ -1330,7 +1330,7 @@ func TestDataStore_UpdateData(t *testing.T) {
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
 				ComparePasswordAndHash: tt.fields.ComparePasswordAndHash,
 			}
-			if err := ds.UpdateData(tt.args.options); (err != nil) != tt.wantErr {
+			if _, err := ds.UpdateData(tt.args.options); (err != nil) != tt.wantErr {
 				t.Errorf("DataStore.UpdateData() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

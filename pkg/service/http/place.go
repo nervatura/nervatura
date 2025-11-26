@@ -75,7 +75,7 @@ func PlacePut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("place", r.Body, &place); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "place", IDKey: placeID, Code: placeCode,
 			Data: place, Meta: place.PlaceMeta, Fields: inputFields, MetaFields: metaFields,
 		})

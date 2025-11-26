@@ -63,7 +63,7 @@ func TaxPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("tax", r.Body, &tax); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "tax", IDKey: taxID, Code: taxCode,
 			Data: tax, Meta: tax.TaxMeta, Fields: inputFields, MetaFields: metaFields,
 		})

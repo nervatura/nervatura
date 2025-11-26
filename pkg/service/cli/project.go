@@ -76,7 +76,7 @@ func (cli *CLIService) ProjectUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("project", reader, &project); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "project", IDKey: projectID, Code: projectCode,
 			Data: project, Meta: project.ProjectMeta, Fields: inputFields, MetaFields: metaFields,
 		})

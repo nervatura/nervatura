@@ -68,7 +68,7 @@ func ItemPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("item", r.Body, &item); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "item", IDKey: itemID, Code: itemCode,
 			Data: item, Meta: item.ItemMeta, Fields: inputFields, MetaFields: metaFields,
 		})

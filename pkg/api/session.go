@@ -318,7 +318,7 @@ func (ses *SessionService) LoadSession(sessionID string, data any) (result any, 
 	if result, err = ses.loadMemSession(sessionID); err != nil {
 		switch ses.sessionMethod() {
 		case md.SessionMethodFile:
-			err = ses.loadFileSession(sessionID, data)
+			err = ses.loadFileSession(sessionID, &data)
 			return data, err
 		case md.SessionMethodDatabase:
 			err = ses.loadDbSession(sessionID, &data)

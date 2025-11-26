@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
 func TestApiKeyAuth(t *testing.T) {
@@ -68,7 +69,7 @@ func TestTokenAuth(t *testing.T) {
 	type args struct {
 		opt md.AuthOptions
 	}
-	req := httptest.NewRequest("POST", "/", nil)
+	req := httptest.NewRequest("POST", st.ApiPath, nil)
 	req.Header.Set("Authorization", "Bearer test")
 	tests := []struct {
 		name        string
@@ -355,6 +356,26 @@ func TestRespondMessage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			RespondMessage(tt.args.w, tt.args.code, tt.args.payload, tt.args.errCode, tt.args.err)
+		})
+	}
+}
+
+func TestHealth(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		w http.ResponseWriter
+		r *http.Request
+	}{
+		{
+			name: "success",
+			w:    httptest.NewRecorder(),
+			r:    httptest.NewRequest("GET", "/health", nil),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			Health(tt.w, tt.r)
 		})
 	}
 }

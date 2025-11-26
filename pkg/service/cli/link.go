@@ -72,7 +72,7 @@ func (cli *CLIService) LinkUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("link", reader, &link); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "link", IDKey: linkID, Code: linkCode,
 			Data: link, Meta: link.LinkMeta, Fields: inputFields, MetaFields: metaFields,
 		})

@@ -5,43 +5,43 @@ import (
 )
 
 type Address struct {
-	Country string `json:"country"`
-	State   string `json:"state"`
-	ZipCode string `json:"zip_code"`
-	City    string `json:"city"`
-	Street  string `json:"street"`
-	Notes   string `json:"notes"`
+	Country string `json:"country,omitempty"`
+	State   string `json:"state,omitempty"`
+	ZipCode string `json:"zip_code,omitempty"`
+	City    string `json:"city,omitempty"`
+	Street  string `json:"street,omitempty"`
+	Notes   string `json:"notes,omitempty"`
 	// Additional tags for the address
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	AddressMap cu.IM `json:"address_map"`
+	AddressMap cu.IM `json:"address_map,omitempty"`
 }
 
 type Contact struct {
-	FirstName string `json:"first_name"`
-	Surname   string `json:"surname"`
-	Status    string `json:"status"`
-	Phone     string `json:"phone"`
-	Mobile    string `json:"mobile"`
-	Email     string `json:"email"`
-	Notes     string `json:"notes"`
+	FirstName string `json:"first_name,omitempty"`
+	Surname   string `json:"surname,omitempty"`
+	Status    string `json:"status,omitempty"`
+	Phone     string `json:"phone,omitempty"`
+	Mobile    string `json:"mobile,omitempty"`
+	Email     string `json:"email,omitempty"`
+	Notes     string `json:"notes,omitempty"`
 	// Additional tags for the contact
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	ContactMap cu.IM `json:"contact_map"`
+	ContactMap cu.IM `json:"contact_map,omitempty"`
 }
 
 type Event struct {
-	Uid         string       `json:"uid"`
-	Subject     string       `json:"subject"`
-	StartTime   TimeDateTime `json:"start_time"`
-	EndTime     TimeDateTime `json:"end_time"`
-	Place       string       `json:"place"`
-	Description string       `json:"description"`
+	Uid         string       `json:"uid,omitempty"`
+	Subject     string       `json:"subject,omitempty"`
+	StartTime   TimeDateTime `json:"start_time,omitempty" type:"string"`
+	EndTime     TimeDateTime `json:"end_time,omitempty" type:"string"`
+	Place       string       `json:"place,omitempty"`
+	Description string       `json:"description,omitempty"`
 	// Additional tags for the event
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	EventMap cu.IM `json:"event_map"`
+	EventMap cu.IM `json:"event_map,omitempty"`
 }
 
 type Bookmark struct {
@@ -116,41 +116,42 @@ type Currency struct {
 }
 
 type CustomerMeta struct {
-	TaxNumber string `json:"tax_number"`
-	Account   string `json:"account"`
+	TaxNumber string `json:"tax_number,omitempty" jsonschema:"Tax number"`
+	Account   string `json:"account,omitempty" jsonschema:"Account number"`
 	// Tax-free
-	TaxFree bool `json:"tax_free"`
+	TaxFree bool `json:"tax_free,omitempty" jsonschema:"Tax-free customer."`
 	// Payment per.
-	Terms int64 `json:"terms"`
+	Terms int64 `json:"terms,omitempty" jsonschema:"Payment period in days"`
 	// Customer's credit limit. Data is used by financial reports.
-	CreditLimit float64 `json:"credit_limit"`
+	CreditLimit float64 `json:"credit_limit,omitempty" jsonschema:"Customer's credit limit. Data is used by financial reports."`
 	// If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field. If the product has a separate customer price, the value specified here will not be considered by the program.
-	Discount float64 `json:"discount"`
-	Notes    string  `json:"notes"`
-	Inactive bool    `json:"inactive"`
+	Discount float64 `json:"discount,omitempty" jsonschema:"If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field."`
+	Notes    string  `json:"notes,omitempty" jsonschema:"Additional notes for the customer."`
+	Inactive bool    `json:"inactive,omitempty" jsonschema:"Inactive"`
 	// Additional tags for the customer
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty" jsonschema:"Additional tags for the customer. The value is an array of strings."`
 }
 
 type Customer struct {
+	_ struct{} `jsonschema:"Customer data"`
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: CUS1731101982N123 ("CUS" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. It cannot be modified after creation."`
 	// ENUM field. Valid values: OWN, COMPANY, PRIVATE, OTHER
-	CustomerType CustomerType `json:"customer_type"`
+	CustomerType CustomerType `json:"customer_type" jsonschema:"Customer type. Enum values."`
 	// Full name of the customer
-	CustomerName string       `json:"customer_name"`
-	Addresses    []Address    `json:"addresses"`
-	Contacts     []Contact    `json:"contacts"`
-	Events       []Event      `json:"events"`
-	CustomerMeta CustomerMeta `json:"customer_meta"`
+	CustomerName string       `json:"customer_name" jsonschema:"Full name of the customer. Required when creating a new customer."`
+	Addresses    []Address    `json:"addresses" jsonschema:"Customer address data"`
+	Contacts     []Contact    `json:"contacts" jsonschema:"Customer contact data"`
+	Events       []Event      `json:"events" jsonschema:"Customer event data"`
+	CustomerMeta CustomerMeta `json:"customer_meta" jsonschema:"Customer additional data"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	CustomerMap cu.IM `json:"customer_map"`
+	CustomerMap cu.IM `json:"customer_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type EmployeeMeta struct {
@@ -392,39 +393,39 @@ type Price struct {
 }
 
 type ProductMeta struct {
-	Unit string `json:"unit"`
+	Unit string `json:"unit,omitempty" jsonschema:"Unit of measurement."`
 	// ENUM field. Valid values: CODE_128, CODE_39, EAN_13, EAN_8, QR_CODE
-	BarcodeType BarcodeType `json:"barcode_type"`
+	BarcodeType BarcodeType `json:"barcode_type,omitempty" jsonschema:"Barcode type. Enum values."`
 	// Any barcode or QR code data
-	Barcode string `json:"barcode"`
+	Barcode string `json:"barcode,omitempty" jsonschema:"Barcode or QR code data."`
 	// The actual amount of the products identified by the barcode. For example can be used for packaged goods, tray packaging.
-	BarcodeQty float64 `json:"barcode_qty"`
-	Notes      string  `json:"notes"`
-	Inactive   bool    `json:"inactive"`
+	BarcodeQty float64 `json:"barcode_qty,omitempty" jsonschema:"Barcode quantity."`
+	Notes      string  `json:"notes,omitempty" jsonschema:"Notes."`
+	Inactive   bool    `json:"inactive,omitempty" jsonschema:"Inactive."`
 	// Additional tags for the product
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty" jsonschema:"Tags."`
 }
 
 type Product struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: PRD1731101982N123 ("PRD" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation."`
 	// ENUM field. Valid values: ITEM, SERVICE
-	ProductType ProductType `json:"product_type"`
+	ProductType ProductType `json:"product_type" jsonschema:"Product type. Enum values."`
 	// The full name of the product or short description.
-	ProductName string `json:"product_name"`
+	ProductName string `json:"product_name" jsonschema:"Product name. Required when creating a new product."`
 	// Reference to [Tax](#tax).code
-	TaxCode     string      `json:"tax_code"`
-	Events      []Event     `json:"events"`
-	ProductMeta ProductMeta `json:"product_meta"`
+	TaxCode     string      `json:"tax_code" jsonschema:"Tax code."`
+	Events      []Event     `json:"events" jsonschema:"Product events"`
+	ProductMeta ProductMeta `json:"product_meta" jsonschema:"Product metadata"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	ProductMap cu.IM `json:"product_map"`
+	ProductMap cu.IM `json:"product_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
-	Deleted   bool         `json:"deleted"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	//Deleted   bool         `json:"deleted"`
 }
 
 type ProjectMeta struct {
@@ -697,19 +698,19 @@ type ConfigPrintQueue struct {
 }
 
 type ConfigReport struct {
-	ReportKey string `json:"report_key"`
+	ReportKey string `json:"report_key" jsonschema:"Report key."`
 	// Required
-	ReportType string `json:"report_type"`
+	ReportType string `json:"report_type" jsonschema:"Report type."`
 	// Optional. Valid values:
 	// INVOICE, RECEIPT, ORDER, OFFER, WORKSHEET, RENT, DELIVERY,
 	// INVENTORY, WAYBILL, PRODUCTION, FORMULA, BANK, CASH
-	TransType string `json:"trans_type"`
+	TransType string `json:"trans_type" jsonschema:"Trans type."`
 	// Optional. Valid values: OUT, IN, TRANSFER
-	Direction   string `json:"direction"`
-	ReportName  string `json:"report_name"`
-	Description string `json:"description"`
-	Label       string `json:"label"`
+	Direction   string `json:"direction" jsonschema:"Direction."`
+	ReportName  string `json:"report_name" jsonschema:"Report name."`
+	Description string `json:"description" jsonschema:"Description."`
+	Label       string `json:"label" jsonschema:"Label."`
 	// ENUM field. Valid values: PDF, CSV
-	FileType FileType `json:"file_type"`
-	Template string   `json:"template"`
+	FileType FileType `json:"file_type" jsonschema:"File type."`
+	Template string   `json:"template" jsonschema:"Template."`
 }

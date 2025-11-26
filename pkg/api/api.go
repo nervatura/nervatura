@@ -365,24 +365,24 @@ func (ds *DataStore) GetDataByID(model string, id int64, code string, foundErr b
 	return ds.StoreDataQuery(query, foundErr)
 }
 
-func (ds *DataStore) UpdateData(options md.UpdateDataOptions) (err error) {
+func (ds *DataStore) UpdateData(options md.UpdateDataOptions) (storeID int64, err error) {
 	var rows []cu.IM
 	if rows, err = ds.GetDataByID(options.Model, options.IDKey, options.Code, true); err != nil {
-		return err
+		return storeID, err
 	}
 
 	var values cu.IM
 	if values, err = ds.SetUpdateValue(options.Model, options.Data, options.Fields, options.SetValue); err == nil {
 		if len(options.MetaFields) > 0 {
 			if values[options.Model+"_meta"], err = ds.MergeMetaData(options.Model, rows[0], options.Meta, options.MetaFields); err != nil {
-				return err
+				return storeID, err
 			}
 		}
 		modelID := cu.ToInteger(rows[0]["id"], 0)
-		_, err = ds.StoreDataUpdate(md.Update{Values: values, Model: options.Model, IDKey: modelID})
+		storeID, err = ds.StoreDataUpdate(md.Update{Values: values, Model: options.Model, IDKey: modelID})
 	}
 
-	return err
+	return storeID, err
 }
 
 func (ds *DataStore) DataDelete(model string, id int64, code string) (err error) {

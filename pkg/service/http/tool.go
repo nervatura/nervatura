@@ -69,7 +69,7 @@ func ToolPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("tool", r.Body, &tool); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "tool", IDKey: toolID, Code: toolCode,
 			Data: tool, Meta: tool.ToolMeta, Fields: inputFields, MetaFields: metaFields,
 		})

@@ -70,7 +70,7 @@ func (cli *CLIService) AuthUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("auth", reader, &auth); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "auth", IDKey: authID, Code: authCode,
 			Data: auth, Meta: auth.AuthMeta, Fields: inputFields, MetaFields: metaFields,
 		})

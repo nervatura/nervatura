@@ -263,6 +263,16 @@ func TestParseToken(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "token_jwks_ok",
+			args: args{
+				tokenString: validToken,
+				keyMap: []map[string]string{
+					{"type": "jwks", "value": `{"keys": [{"kid": "TEST", "kty": "RSA", "alg": "RS256", "use": "sig", "n": "SECRET_KEY", "e": "AQAB"}]}`},
+				},
+			},
+			wantErr: true,
+		},
+		{
 			name: "token_expired",
 			args: args{
 				tokenString: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJJRDAxMjMiLCJlbWFpbCI6InVzZXJAbWFpbC5jb20iLCJpc3MiOiJlb25leCIsImV4cCI6MTY5MTY4OTk1Nn0.hUyXG_mFWlx_cuLJk1McsyN-1ddJHJ7iD8VM3-fnvA4",

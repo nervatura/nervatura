@@ -1,11 +1,14 @@
 package utils
 
 import (
+	"encoding/json"
 	"errors"
 	"slices"
+	"strings"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/MicahParks/keyfunc/v3"
+	"github.com/golang-jwt/jwt/v5"
 	cu "github.com/nervatura/component/pkg/util"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
@@ -104,12 +107,19 @@ func validKeys(tokenString string, keyMap []map[string]string) (keys map[string]
 		return keys, errors.New("Unexpected signing method: " + alg)
 	}
 	for _, tokenKey := range keyMap {
-		if algType == "HMAC" {
+		isJWKS := (cu.ToString(tokenKey["type"], "") == "jwks")
+		if algType == "HMAC" && !isJWKS {
 			keys[cu.ToString(tokenKey["kid"], cu.RandString(16))] = []byte(tokenKey["value"])
 		}
-		if slices.Contains([]string{"RSA", "ECDSA", "EdDSA"}, algType) {
+		if slices.Contains([]string{"RSA", "ECDSA", "EdDSA"}, algType) && !isJWKS {
 			if tokenData, err := parsePEM(algType, tokenKey["type"], []byte(tokenKey["value"])); err == nil {
 				keys[cu.ToString(tokenKey["kid"], cu.RandString(16))] = tokenData
+			}
+		}
+		if isJWKS {
+			jwksJSON := json.RawMessage(tokenKey["value"])
+			if jwks, err := keyfunc.NewJWKSetJSON(jwksJSON); err == nil {
+				keys["jwks"] = jwks
 			}
 		}
 	}
@@ -133,10 +143,14 @@ func ParseToken(tokenString string, keyMap []cu.SM, config cu.IM) (data cu.IM, e
 		return data, err
 	}
 	parseToken := func() (tk *jwt.Token, err error) {
-		for _, key := range keys {
-			if tk, err = jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
+		for kid, key := range keys {
+			keyFunc := func(token *jwt.Token) (any, error) {
 				return key, nil
-			}); err == nil {
+			}
+			if kid == "jwks" {
+				keyFunc = key.(keyfunc.Keyfunc).Keyfunc
+			}
+			if tk, err = jwt.Parse(tokenString, keyFunc); err == nil {
 				return tk, nil
 			}
 		}
@@ -144,20 +158,20 @@ func ParseToken(tokenString string, keyMap []cu.SM, config cu.IM) (data cu.IM, e
 	}
 	token, err = parseToken()
 	if err != nil {
-		if ve, ok := err.(*jwt.ValidationError); ok {
-			if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-				return data, errors.New("token is either expired or not active yet")
-			}
+		if errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet) {
+			return data, errors.New("token is either expired or not active yet")
 		}
 		return data, err
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		data["user_code"] = cu.ToString(claims["sub"], "")
-		data["user_name"] = cu.ToString(claims["user_name"], "")
+		data["user_name"] = cu.ToString(claims["user_name"], cu.ToString(claims["username"], cu.ToString(claims["preferred_username"], "")))
+		data["scopes"] = strings.Split(cu.ToString(claims["scope"], ""), " ")
 		data["alias"] = cu.ToString(claims["alias"], "")
 		data["email"] = cu.ToString(claims["email"], "")
 		data["email_verified"] = cu.ToBoolean(claims["email_verified"], false)
 		data["picture"] = cu.ToString(claims["picture"], "")
+		data["exp"] = claims["exp"]
 	}
 
 	return data, err

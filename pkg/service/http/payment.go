@@ -68,7 +68,7 @@ func PaymentPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("payment", r.Body, &payment); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "payment", IDKey: paymentID, Code: paymentCode,
 			Data: payment, Meta: payment.PaymentMeta, Fields: inputFields, MetaFields: metaFields,
 		})

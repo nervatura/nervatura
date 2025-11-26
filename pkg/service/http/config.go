@@ -105,7 +105,7 @@ func ConfigPut(w http.ResponseWriter, r *http.Request) {
 				// schema validation
 				err = ds.ConvertFromByte(configDataByte, configMap[config.ConfigType])
 				if err == nil {
-					err = ds.UpdateData(md.UpdateDataOptions{
+					_, err = ds.UpdateData(md.UpdateDataOptions{
 						Model: "config", IDKey: configID, Code: configCode,
 						Data: config, Fields: inputFields, MetaFields: metaFields,
 					})

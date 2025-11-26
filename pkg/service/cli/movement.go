@@ -87,7 +87,7 @@ func (cli *CLIService) MovementUpdate(options cu.IM, requestData string) string 
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("movement", reader, &movement); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "movement", IDKey: movementID, Code: movementCode,
 			Data: movement, Meta: movement.MovementMeta, Fields: inputFields, MetaFields: metaFields,
 		})

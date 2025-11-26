@@ -71,7 +71,7 @@ func ProductPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("product", r.Body, &product); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "product", IDKey: productID, Code: productCode,
 			Data: product, Meta: product.ProductMeta, Fields: inputFields, MetaFields: metaFields,
 		})

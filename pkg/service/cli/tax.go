@@ -64,7 +64,7 @@ func (cli *CLIService) TaxUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("tax", reader, &tax); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "tax", IDKey: taxID, Code: taxCode,
 			Data: tax, Meta: tax.TaxMeta, Fields: inputFields, MetaFields: metaFields,
 		})

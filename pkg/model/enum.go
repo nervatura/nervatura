@@ -227,6 +227,22 @@ func (ct CustomerType) String() string {
 	return ""
 }
 
+func (ct CustomerType) Keys() []string {
+	keys := []string{}
+	for k := range customerTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func (ct CustomerType) Get(value string) CustomerType {
+	if result, found := customerTypeMap[value]; found {
+		return result
+	}
+	return CustomerTypeCompany
+}
+
 func (ct *CustomerType) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 

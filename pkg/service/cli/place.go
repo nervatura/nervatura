@@ -76,7 +76,7 @@ func (cli *CLIService) PlaceUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("place", reader, &place); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "place", IDKey: placeID, Code: placeCode,
 			Data: place, Meta: place.PlaceMeta, Fields: inputFields, MetaFields: metaFields,
 		})

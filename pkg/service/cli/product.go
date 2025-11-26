@@ -72,7 +72,7 @@ func (cli *CLIService) ProductUpdate(options cu.IM, requestData string) string {
 	var err error
 	reader := io.NopCloser(bytes.NewReader([]byte(requestData)))
 	if _, inputFields, metaFields, err = ds.GetBodyData("product", reader, &product); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "product", IDKey: productID, Code: productCode,
 			Data: product, Meta: product.ProductMeta, Fields: inputFields, MetaFields: metaFields,
 		})

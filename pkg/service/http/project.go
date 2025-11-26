@@ -75,7 +75,7 @@ func ProjectPut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("project", r.Body, &project); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "project", IDKey: projectID, Code: projectCode,
 			Data: project, Meta: project.ProjectMeta, Fields: inputFields, MetaFields: metaFields,
 		})

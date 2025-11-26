@@ -63,7 +63,7 @@ func EmployeePut(w http.ResponseWriter, r *http.Request) {
 	var inputFields, metaFields []string
 	var err error
 	if _, inputFields, metaFields, err = ds.GetBodyData("employee", r.Body, &employee); err == nil {
-		err = ds.UpdateData(md.UpdateDataOptions{
+		_, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: "employee", IDKey: employeeID, Code: employeeCode,
 			Data: employee, Meta: employee.EmployeeMeta, Fields: inputFields, MetaFields: metaFields,
 		})
