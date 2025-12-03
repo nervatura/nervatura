@@ -467,9 +467,8 @@ func TestClientComponent_SideBar(t *testing.T) {
 					"trans_type": md.TransTypeCash.String(),
 					"direction":  md.DirectionOut.String(),
 					"trans_meta": cu.IM{
-						"status": md.TransStatusNormal.String(),
+						"status": md.TransStatusDeleted.String(),
 					},
-					"deleted": true,
 				},
 			},
 		},
@@ -499,9 +498,8 @@ func TestClientComponent_SideBar(t *testing.T) {
 					"trans_type": md.TransTypeInvoice.String(),
 					"direction":  md.DirectionOut.String(),
 					"trans_meta": cu.IM{
-						"status": md.TransStatusNormal.String(),
+						"status": md.TransStatusDeleted.String(),
 					},
-					"deleted": true,
 				},
 			},
 		},

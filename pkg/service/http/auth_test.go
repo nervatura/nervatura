@@ -528,7 +528,7 @@ func TestAuthToken(t *testing.T) {
 				Config: cu.IM{},
 				Db:     &md.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-				CreateLoginToken: func(code string, username string, alias string, config cu.IM) (string, error) {
+				CreateLoginToken: func(params cu.SM, config cu.IM) (string, error) {
 					return "token", nil
 				},
 			},

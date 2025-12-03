@@ -33,14 +33,17 @@ import (
 )
 
 type httpServer struct {
-	config     cu.IM
-	appLog     *slog.Logger
-	mux        *http.ServeMux
-	server     *http.Server
-	session    *api.SessionService
-	tlsEnabled bool
-	result     string
-	memSession map[string]md.MemoryStore
+	config          cu.IM
+	appLog          *slog.Logger
+	mux             *http.ServeMux
+	server          *http.Server
+	session         *api.SessionService
+	tlsEnabled      bool
+	result          string
+	memSession      map[string]md.MemoryStore
+	ReadFile        func(name string) ([]byte, error)
+	StaticReadFile  func(name string) ([]byte, error)
+	ConvertFromByte func(data []byte, result any) error
 }
 
 func init() {
@@ -51,6 +54,10 @@ func (s *httpServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, 
 	s.config = config
 	s.appLog = slog.New(slog.NewJSONHandler(appLogOut, nil))
 	s.memSession = make(map[string]md.MemoryStore)
+	s.ReadFile = os.ReadFile
+	s.ConvertFromByte = cu.ConvertFromByte
+	s.StaticReadFile = st.Static.ReadFile
+
 	method := md.SessionMethod(cu.ToInteger(config["NT_SESSION_METHOD"], 0))
 	s.session = api.NewSession(config, cu.ToString(config["NT_SESSION_ALIAS"], ""), method, s.memSession)
 	s.mux = http.NewServeMux()
@@ -98,6 +105,33 @@ func (s *httpServer) Results() string {
 	return s.result
 }
 
+func (s *httpServer) loadPrompts() {
+	var prompts []msrv.PromptData = []msrv.PromptData{}
+	promptMap := make(map[string]msrv.PromptData)
+	var err error
+	loadPromptFile := func() (jsonPrompts []byte, err error) {
+		if cu.ToString(s.config["NT_MCP_PROMPT"], "") != "" {
+			if jsonPrompts, err = s.ReadFile(cu.ToString(s.config["NT_MCP_PROMPT"], "")); err == nil {
+				return jsonPrompts, nil
+			}
+			s.appLog.Error("error loading prompts file", "error", err)
+		}
+		if jsonPrompts, err = s.StaticReadFile("prompt.json"); err != nil {
+			s.appLog.Error("error loading resource prompts", "error", err)
+		}
+		return jsonPrompts, err
+	}
+	var jsonPrompts []byte
+	if jsonPrompts, err = loadPromptFile(); err == nil {
+		if err = s.ConvertFromByte(jsonPrompts, &prompts); err == nil {
+			for _, prompt := range prompts {
+				promptMap[prompt.Name] = prompt
+			}
+		}
+	}
+	s.config["prompts"] = promptMap
+}
+
 // Register API routes.
 func (s *httpServer) setRoutes() {
 	antiCSRF := http.NewCrossOriginProtection()
@@ -119,6 +153,7 @@ func (s *httpServer) setRoutes() {
 
 	if cu.ToBoolean(s.config["NT_MCP_ENABLED"], false) {
 		s.appLog.Info("MCP server enabled")
+		s.loadPrompts()
 		mcpHandler := mcp.NewStreamableHTTPHandler(msrv.GetServer(s.config), &mcp.StreamableHTTPOptions{})
 		s.mux.Handle("/mcp", s.headerMcp(mcpHandler))
 	}
@@ -209,6 +244,8 @@ func (s *httpServer) headerSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), md.SessionServiceCtxKey, s.session)
 		ctx = context.WithValue(ctx, md.ConfigCtxKey, s.config)
+		ds := api.NewDataStore(s.config, cu.ToString(s.config["NT_DEFAULT_ALIAS"], ""), s.appLog)
+		ctx = context.WithValue(ctx, md.DataStoreCtxKey, ds)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -262,6 +299,8 @@ func (s *httpServer) wellKnownRoutes() http.Handler {
 func (s *httpServer) oauthRoutes() http.Handler {
 	oauthMux := http.NewServeMux()
 	oauthMux.HandleFunc("GET /authorization", srv.OAuthAuthorization)
+	oauthMux.HandleFunc("POST /authorization", srv.OAuthValidate)
+	oauthMux.HandleFunc("GET /login", srv.OAuthLogin)
 	oauthMux.HandleFunc("POST /token", srv.OAuthToken)
 	oauthMux.HandleFunc("POST /registration", srv.OAuthRegistration)
 	oauthMux.HandleFunc("GET /callback", srv.OAuthCallback)

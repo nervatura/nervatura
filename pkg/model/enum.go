@@ -758,12 +758,14 @@ const (
 	TransStatusNormal TransStatus = iota
 	TransStatusCancellation
 	TransStatusAmendment
+	TransStatusDeleted
 )
 
 var transStatusMap = map[string]TransStatus{
 	"STATUS_NORMAL":       TransStatusNormal,
 	"STATUS_CANCELLATION": TransStatusCancellation,
 	"STATUS_AMENDMENT":    TransStatusAmendment,
+	"STATUS_DELETED":      TransStatusDeleted,
 }
 
 func (tc TransStatus) String() string {

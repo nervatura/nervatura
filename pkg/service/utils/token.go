@@ -24,16 +24,17 @@ var TokenAlg cu.SM = cu.SM{
 /*
 CreateLoginToken - create/refresh a login JWT token
 */
-func CreateLoginToken(code, userName, alias string, config cu.IM) (result string, err error) {
-	if userName == "" || code == "" || alias == "" {
+func CreateLoginToken(params cu.SM, config cu.IM) (result string, err error) {
+	if cu.ToString(params["user_name"], "") == "" || cu.ToString(params["code"], "") == "" || cu.ToString(params["alias"], "") == "" {
 		return result, errors.New("missing fieldname: username, code or alias")
 	}
 	var claims = cu.IM{
-		"user_name": userName,
-		"alias":     alias,
-		"version":   cu.ToString(config["version"], ""),
+		"user_name": params["user_name"],
+		"alias":     params["alias"],
+		"scope":     cu.ToString(params["scope"], "GROUP_GUEST"),
+		"version":   config["version"],
 	}
-	return CreateToken(code, claims, config)
+	return CreateToken(cu.ToString(params["code"], ""), claims, config)
 }
 
 /*

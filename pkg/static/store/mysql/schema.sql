@@ -22,11 +22,13 @@ CREATE TABLE IF NOT EXISTS config(
     NOT NULL DEFAULT 'CONFIG_MAP', 
   data JSON NOT NULL,
   time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted BOOLEAN NOT NULL DEFAULT false,
   CONSTRAINT config_pkey PRIMARY KEY (id),
   CONSTRAINT config_code_key UNIQUE (code)
 );
 
 CREATE INDEX idx_config_type ON config (config_type);
+CREATE INDEX idx_config_deleted ON config (deleted);
 
 CREATE TRIGGER config_default_code 
   BEFORE INSERT ON config
@@ -46,7 +48,7 @@ CREATE VIEW config_map AS
     data->"$.tags" AS tags,
     data->"$.filter" AS filter
   FROM config
-  WHERE config_type = 'CONFIG_MAP';
+  WHERE config_type = 'CONFIG_MAP' AND deleted = false;
 
 CREATE VIEW config_shortcut AS
   SELECT id, code,
@@ -58,7 +60,7 @@ CREATE VIEW config_shortcut AS
     data->>"$.address" AS address,
     data->"$.fields" AS fields
   FROM config
-  WHERE config_type = 'CONFIG_SHORTCUT';
+  WHERE config_type = 'CONFIG_SHORTCUT' AND deleted = false;
 
 CREATE VIEW config_message AS
   SELECT id, code,
@@ -66,7 +68,7 @@ CREATE VIEW config_message AS
     data->>"$.lang" AS lang,
     data->>"$.value" AS message_value
   FROM config
-  WHERE config_type = 'CONFIG_MESSAGE';
+  WHERE config_type = 'CONFIG_MESSAGE' AND deleted = false;
 
 CREATE VIEW config_pattern AS
   SELECT id, code,
@@ -75,7 +77,7 @@ CREATE VIEW config_pattern AS
     data->>"$.notes" AS notes,
     data->"$.default_pattern" AS default_pattern
   FROM config
-  WHERE config_type = 'CONFIG_PATTERN';
+  WHERE config_type = 'CONFIG_PATTERN' AND deleted = false;
 
 CREATE VIEW config_print_queue AS
   SELECT id, code,
@@ -88,7 +90,7 @@ CREATE VIEW config_print_queue AS
     data->>"$.auth_code" AS auth_code,
     data->>"$.time_stamp" AS time_stamp
   FROM config
-  WHERE config_type = 'CONFIG_PRINT_QUEUE';
+  WHERE config_type = 'CONFIG_PRINT_QUEUE' AND deleted = false;
 
 CREATE VIEW config_report AS
   SELECT id, code,
@@ -102,7 +104,7 @@ CREATE VIEW config_report AS
     data->>"$.file_type" AS file_type,
     data->"$.template" AS template
   FROM config
-  WHERE config_type = 'CONFIG_REPORT';
+  WHERE config_type = 'CONFIG_REPORT' AND deleted = false;
 
 CREATE VIEW config_data AS
   SELECT ROW_NUMBER() OVER (ORDER BY c.code, jt.config_key) as id, c.code AS config_code, jt.config_key,
@@ -114,7 +116,7 @@ CREATE VIEW config_data AS
       '$[*]' COLUMNS (config_key VARCHAR(255) PATH '$')
   ) AS jt
   WHERE c.config_type = 'CONFIG_DATA' 
-  AND JSON_TYPE(c.data) = 'OBJECT';
+  AND JSON_TYPE(c.data) = 'OBJECT' AND c.deleted = false;
 
 CREATE TABLE IF NOT EXISTS auth(
   id INTEGER AUTO_INCREMENT NOT NULL,
@@ -1524,7 +1526,7 @@ CREATE VIEW trans_view AS
     CASE WHEN json_type(trans_meta->"$.invoice") = 'OBJECT' THEN JSON_UNQUOTE(JSON_EXTRACT(JSON_EXTRACT(trans_meta,"$.invoice"),"$.customer_tax_number")) ELSE '' END AS invoice_customer_tax_number,
     trans_meta->"$.tags" AS tags, 
     REPLACE(REPLACE(REPLACE(trans_meta->>"$.tags", '"', ''), '[', ''), ']', '') as tag_lst,
-    trans_map, time_stamp, deleted,
+    trans_map, time_stamp,
     JSON_OBJECT(
       'id', id, 'code', code, 'trans_type', trans_type, 'direction', direction, 'trans_date', trans_date,
       'trans_code', trans_code, 'customer_code', customer_code, 'employee_code', employee_code,
@@ -1532,8 +1534,7 @@ CREATE VIEW trans_view AS
       'trans_meta', trans_meta, 'trans_map', trans_map, 'time_stamp', time_stamp
     ) AS trans_object
   FROM trans
-  WHERE deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
-    OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
+  WHERE deleted = false;
 
 CREATE VIEW trans_map AS
   SELECT tbl.id AS id, tbl.code, trans_type, direction, trans_date,
@@ -1556,8 +1557,7 @@ CREATE VIEW trans_map AS
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
   LEFT JOIN config_map cf on jt.map_key = cf.field_name
-  WHERE deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
-    OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
+  WHERE deleted = false;
 
 CREATE VIEW trans_tags AS
   SELECT tbl.id AS id, tbl.code, jt.value as tag
@@ -1565,8 +1565,7 @@ CREATE VIEW trans_tags AS
   CROSS JOIN JSON_TABLE(
     tbl.trans_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
   ) AS jt
-  WHERE tbl.deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
-    OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
+  WHERE tbl.deleted = false;
 
 CREATE TABLE IF NOT EXISTS item(
   id INTEGER AUTO_INCREMENT NOT NULL,
@@ -1920,6 +1919,7 @@ CREATE TABLE IF NOT EXISTS log(
   auth_code VARCHAR(255) NOT NULL,
   data JSON NOT NULL,
   time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted BOOLEAN NOT NULL DEFAULT false,
   CONSTRAINT log_pkey PRIMARY KEY (id),
   CONSTRAINT log_code_key UNIQUE (code)
 );
@@ -1928,6 +1928,7 @@ CREATE INDEX idx_log_ref_type ON log (ref_type);
 CREATE INDEX idx_log_ref_code ON log (ref_code);
 CREATE INDEX idx_log_auth_code ON log (auth_code);
 CREATE INDEX idx_log_time_stamp ON log (time_stamp);
+CREATE INDEX idx_log_deleted ON log (deleted);
 
 CREATE TRIGGER log_default_code 
   BEFORE INSERT ON log

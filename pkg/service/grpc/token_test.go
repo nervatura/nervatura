@@ -139,7 +139,7 @@ func TestGService_TokenRefresh(t *testing.T) {
 					ConvertFromByte: func(data []byte, v any) error {
 						return cu.ConvertFromByte(data, v)
 					},
-					CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+					CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 						return "new_token", nil
 					},
 					Config: cu.IM{},

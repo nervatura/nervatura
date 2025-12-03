@@ -115,8 +115,8 @@ func transSideBarItem(labels cu.SM, data cu.IM, stateOptions map[string]bool) (i
 		},
 		func() (bool, func()) {
 			return slices.Contains([]string{md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) &&
-					cu.ToString(trans["direction"], "") == md.DirectionOut.String() && cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
-					stateOptions["deleted"] && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
+					cu.ToString(trans["direction"], "") == md.DirectionOut.String() &&
+					cu.ToBoolean(stateOptions["deleted"], false) && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
 					items = append(items,
 						&ct.SideBarElement{
 							Name:  "trans_cancellation",
@@ -181,8 +181,7 @@ func transSideBarPayment(labels cu.SM, data cu.IM, stateOptions map[string]bool)
 		},
 		func() (bool, func()) {
 			return slices.Contains([]string{md.TransTypeCash.String()}, transType) &&
-					cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String() &&
-					stateOptions["deleted"] && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
+					cu.ToBoolean(stateOptions["deleted"], false) && !stateOptions["guest"] && !stateOptions["transCancellations"], func() {
 					items = append(items,
 						&ct.SideBarElement{
 							Name:  "trans_cancellation",
@@ -276,9 +275,7 @@ func transSideBarState(labels cu.SM, data cu.IM, stateOptions map[string]bool) (
 	if stateOptions["newInput"] {
 		state = "NEW"
 	}
-	if state == "NORMAL" && cu.ToBoolean(trans["deleted"], false) {
-		state = "DELETED"
-	} else if cu.ToBoolean(transMeta["closed"], false) {
+	if cu.ToBoolean(transMeta["closed"], false) {
 		state = "CLOSED"
 	}
 	stateMap := map[string]*ct.SideBarStatic{
@@ -315,14 +312,14 @@ func (e *TransEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 	user := cu.ToIM(data["user"], cu.IM{})
 	transCancellations := cu.ToIMA(data["trans_cancellation"], []cu.IM{})
 	transType := cu.ToString(trans["trans_type"], "")
+	isDeleted := (cu.ToString(transMeta["status"], "") == md.TransStatusDeleted.String())
 
 	stateOptions := map[string]bool{
 		"newInput": (cu.ToInteger(trans["id"], 0) == 0),
 		"dirty":    cu.ToBoolean(data["dirty"], false),
-		"deleted":  cu.ToBoolean(trans["deleted"], false),
+		"deleted":  isDeleted,
 		"closed":   cu.ToBoolean(transMeta["closed"], false),
-		"readonly": (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String()) ||
-			cu.ToBoolean(trans["deleted"], false) ||
+		"readonly": (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String()) || isDeleted ||
 			(cu.ToBoolean(transMeta["closed"], false) && !cu.ToBoolean(data["dirty"], false)),
 		"guest":              cu.ToString(user["user_group"], "") == md.UserGroupGuest.String(),
 		"transCancellations": len(transCancellations) > 0,
@@ -358,7 +355,7 @@ func (e *TransEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 			})
 	}
 
-	if !cu.ToBoolean(trans["deleted"], false) &&
+	if !isDeleted &&
 		!slices.Contains([]string{md.TransTypeDelivery.String(), md.TransTypeInventory.String()}, transType) &&
 		(cu.ToString(transMeta["status"], "") == md.TransStatusNormal.String()) &&
 		!stateOptions["newInput"] && !stateOptions["readonly"] {

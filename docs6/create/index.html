@@ -118,7 +118,7 @@
         <div class="relative overflow-x-auto">
           <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
             docker exec -i nervatura /nervatura \ <br />
-            &nbsp;&nbsp;-c create -o "{\"alias\":\"demo\",\"demo\":true}"
+            &nbsp;&nbsp;-c database -o "{\"alias\":\"demo\",\"demo\":true}"
           </code>
         </div>
 
@@ -128,7 +128,7 @@
 
         <div class="relative overflow-x-auto">
           <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
-            sudo /snap/nervatura/current/nervatura -c create \ <br />
+            sudo /snap/nervatura/current/nervatura -c database \ <br />
             &nbsp;&nbsp;-o "{\"alias\":\"demo\",\"demo\":true}"
           </code>
         </div>
@@ -144,7 +144,7 @@
 
         <div class="relative overflow-x-auto">
           <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
-            & "C:\Program Files\Nervatura\nervatura.exe" -c create -o '{\"alias\":\"demo\",\"demo\":true}'
+            & "C:\Program Files\Nervatura\nervatura.exe" -c database -o '{\"alias\":\"demo\",\"demo\":true}'
           </code>
         </div>
 
@@ -165,7 +165,7 @@
 
         <div class="relative overflow-x-auto">
           <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
-            ./node_modules/nervatura/bin/nervatura -c create \ <br />
+            ./node_modules/nervatura/bin/nervatura -c database \ <br />
             &nbsp;&nbsp;-o '{\"alias\":\"demo\",\"demo\":true, \"NT_ALIAS_DEMO\": \"sqlite://file:data/demo.db?cache=shared&mode=rwc\"}'
           </code>
         </div>
@@ -231,7 +231,7 @@
 
         <div class="relative overflow-x-auto">
           <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
-            ./nervatura -c create -k [YOUR_API_KEY] \ <br />
+            ./nervatura -c database \ <br />
             &nbsp;&nbsp;-o "{\"alias\":\"[your_lowercase_alias_name]\",\"demo\":false}"
           </code>
         </div>

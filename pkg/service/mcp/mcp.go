@@ -30,8 +30,10 @@ func NewMCPServer(config cu.IM) (server *mcp.Server) {
 	}, opts)
 
 	// Add tools that exercise different features of the protocol.
-	mcp.AddTool(server, &customerUpdateTool, customerUpdate)
-	mcp.AddTool(server, &customerQueryTool, customerQuery)
+	mcp.AddTool(server, &customerUpdateTool, modelUpdate)
+	mcp.AddTool(server, &customerQueryTool, modelQuery)
+	mcp.AddTool(server, &productUpdateTool, modelUpdate)
+	mcp.AddTool(server, &productQueryTool, modelQuery)
 
 	mcp.AddTool(server, &reportDataCodeTool, reportDataCode)
 
@@ -41,6 +43,17 @@ func NewMCPServer(config cu.IM) (server *mcp.Server) {
 	mcp.AddTool(server, &deleteCodeTool, deleteCode)
 
 	server.AddResource(&ntrCustomerEnResource, templateResource)
+
+	if prompts, ok := config["prompts"].(map[string]PromptData); ok {
+		for _, prompt := range prompts {
+			server.AddPrompt(&mcp.Prompt{
+				Name:        prompt.Name,
+				Title:       prompt.Title,
+				Description: prompt.Description,
+				Arguments:   prompt.Arguments,
+			}, promptHandler)
+		}
+	}
 
 	server.AddReceivingMiddleware(receivingHandler)
 	server.AddSendingMiddleware(sendingHandler)
@@ -56,9 +69,9 @@ func NewMCPServer(config cu.IM) (server *mcp.Server) {
 func receivingHandler(next mcp.MethodHandler) mcp.MethodHandler {
 	return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 		extra := req.GetExtra()
-		user := extra.TokenInfo.Extra["user"].(md.Auth)
 		result, err := next(ctx, method, req)
-		if method == "tools/call" && user.UserGroup == md.UserGroupGuest {
+		if method == "tools/call" &&
+			slices.Contains(extra.TokenInfo.Scopes, md.UserGroupGuest.String()) {
 			return nil, errors.New(http.StatusText(http.StatusUnauthorized))
 		}
 		return result, err
@@ -188,3 +201,23 @@ func TokenAuth(opt md.AuthOptions) (*auth.TokenInfo, error) {
 		},
 	}, nil
 }
+
+/*
+func greetingPrompt(ctx context.Context, req *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+
+
+	return &mcp.GetPromptResult{
+		Description: "Hi prompt",
+		Messages: []*mcp.PromptMessage{
+			{
+				Role:    "user",
+				Content: &mcp.TextContent{Text: "Say hi to " + req.Params.Arguments["name"]},
+			},
+			{
+				Role:    "user",
+				Content: &mcp.ResourceLink{},
+			},
+		},
+	}, nil
+}
+*/

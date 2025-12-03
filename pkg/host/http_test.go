@@ -6,6 +6,7 @@ package server
 import (
 	"bytes"
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -524,6 +525,89 @@ func Test_httpServer_mcpVerify(t *testing.T) {
 				t.Errorf("httpServer.mcpVerify() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+		})
+	}
+}
+
+func Test_httpServer_loadPrompts(t *testing.T) {
+	type fields struct {
+		config          cu.IM
+		appLog          *slog.Logger
+		mux             *http.ServeMux
+		server          *http.Server
+		session         *api.SessionService
+		tlsEnabled      bool
+		result          string
+		memSession      map[string]md.MemoryStore
+		ReadFile        func(name string) ([]byte, error)
+		ConvertFromByte func(data []byte, result interface{}) error
+		StaticReadFile  func(name string) ([]byte, error)
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		{
+			name: "file_not_found",
+			fields: fields{
+				config: cu.IM{"NT_MCP_PROMPT": "../../data/not_found.json"},
+				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				ReadFile: func(name string) ([]byte, error) {
+					return nil, errors.New("file not found")
+				},
+				ConvertFromByte: cu.ConvertFromByte,
+				StaticReadFile: func(name string) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+		},
+		{
+			name: "convert_error",
+			fields: fields{
+				config: cu.IM{"NT_MCP_PROMPT": "../../data/prompt.json"},
+				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				ReadFile: func(name string) ([]byte, error) {
+					return []byte(`{"prompts": [{"name": "test", "description": "test", "prompt": "test"}]}`), nil
+				},
+				ConvertFromByte: func(data []byte, result interface{}) error {
+					return errors.New("convert error")
+				},
+				StaticReadFile: func(name string) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+		},
+		{
+			name: "static_file_not_found",
+			fields: fields{
+				config: cu.IM{"NT_MCP_PROMPT": "../../data/prompt.json"},
+				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				ReadFile: func(name string) ([]byte, error) {
+					return nil, errors.New("file not found")
+				},
+				ConvertFromByte: cu.ConvertFromByte,
+				StaticReadFile: func(name string) ([]byte, error) {
+					return nil, errors.New("file not found")
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &httpServer{
+				config:          tt.fields.config,
+				appLog:          tt.fields.appLog,
+				mux:             tt.fields.mux,
+				server:          tt.fields.server,
+				session:         tt.fields.session,
+				tlsEnabled:      tt.fields.tlsEnabled,
+				result:          tt.fields.result,
+				memSession:      tt.fields.memSession,
+				ReadFile:        tt.fields.ReadFile,
+				ConvertFromByte: tt.fields.ConvertFromByte,
+				StaticReadFile:  tt.fields.StaticReadFile,
+			}
+			s.loadPrompts()
 		})
 	}
 }

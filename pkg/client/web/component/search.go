@@ -263,7 +263,6 @@ func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
 				{Name: "tax_free", Label: labels["trans_tax_free"], FieldType: ct.TableFieldTypeBool},
 				{Name: "paid", Label: labels["trans_paid"], FieldType: ct.TableFieldTypeBool},
 				{Name: "closed", Label: labels["trans_closed"], FieldType: ct.TableFieldTypeBool},
-				{Name: "deleted", Label: labels["trans_deleted"], FieldType: ct.TableFieldTypeBool},
 				{Name: "tag_lst", Label: labels["trans_tags"]},
 				{Name: "worksheet_distance", Label: labels["trans_worksheet_distance"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "worksheet_repair", Label: labels["trans_worksheet_repair"], FieldType: ct.TableFieldTypeNumber},
@@ -393,7 +392,6 @@ func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
 				{Name: "notes", Label: labels["trans_notes"]},
 				{Name: "internal_notes", Label: labels["trans_internal_notes"]},
 				{Name: "closed", Label: labels["trans_closed"], FieldType: ct.TableFieldTypeBool},
-				{Name: "deleted", Label: labels["trans_deleted"], FieldType: ct.TableFieldTypeBool},
 				{Name: "auth_code", Label: labels["auth_code"]},
 			},
 			VisibleColumns: cu.IM{
@@ -1408,7 +1406,7 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"pm.id", "pm.code", "pm.trans_code", "t.trans_type", "t.direction", "t.status", "t.ref_number", "t.trans_date", "pm.paid_date",
 					"t.place_code", "p.place_name", "p.currency_code", "pm.amount", "pm.notes as description",
 					"t.employee_code", "t.tag_lst", "t.trans_state", "t.notes", "t.internal_notes", "t.auth_code",
-					"t.closed", "t.deleted", "'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
+					"t.closed", "'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t inner join place p on t.place_code = p.code  
 			inner join payment_view pm on t.code = pm.trans_code`,
 				Filter: fmt.Sprintf("trans_type in('%s','%s')",
@@ -2202,7 +2200,7 @@ func (s *SearchConfig) filterTransItem(view string, filter ct.BrowserFilter, que
 		},
 		"transitem": func() []string {
 			switch filter.Field {
-			case "tax_free", "paid", "closed", "deleted":
+			case "tax_free", "paid", "closed":
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
 			case "trans_date", "due_time":
@@ -2248,7 +2246,7 @@ func (s *SearchConfig) filterTransPayment(view string, filter ct.BrowserFilter, 
 		},
 		"transpayment": func() []string {
 			switch filter.Field {
-			case "closed", "deleted":
+			case "closed":
 				return append(queryFilters,
 					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
 			case "trans_date", "paid_date":

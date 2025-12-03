@@ -8,10 +8,8 @@ import (
 
 func TestCreateLoginToken(t *testing.T) {
 	type args struct {
-		code     string
-		userName string
-		alias    string
-		config   cu.IM
+		params cu.SM
+		config cu.IM
 	}
 	tests := []struct {
 		name    string
@@ -21,27 +19,23 @@ func TestCreateLoginToken(t *testing.T) {
 		{
 			name: "missing_fieldname",
 			args: args{
-				code:     "",
-				userName: "",
-				alias:    "",
-				config:   cu.IM{},
+				params: cu.SM{},
+				config: cu.IM{},
 			},
 			wantErr: true,
 		},
 		{
 			name: "create",
 			args: args{
-				code:     "code",
-				userName: "user",
-				alias:    "alias",
-				config:   cu.IM{},
+				params: cu.SM{"code": "code", "user_name": "user", "alias": "alias"},
+				config: cu.IM{},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := CreateLoginToken(tt.args.code, tt.args.userName, tt.args.alias, tt.args.config)
+			_, err := CreateLoginToken(tt.args.params, tt.args.config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CreateLoginToken() error = %v, wantErr %v", err, tt.wantErr)
 				return

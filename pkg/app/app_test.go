@@ -140,6 +140,7 @@ func TestApp_setConfig(t *testing.T) {
 		getEnv     func(key string) string
 		readFile   func(name string) ([]byte, error)
 		readAll    func(r io.Reader) ([]byte, error)
+		stat       func(name string) (fi os.FileInfo, err error)
 	}
 	type args struct {
 		isSnap bool
@@ -159,6 +160,9 @@ func TestApp_setConfig(t *testing.T) {
 				getEnv: func(key string) string {
 					return ""
 				},
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, nil
+				},
 			},
 		},
 		{
@@ -170,6 +174,9 @@ func TestApp_setConfig(t *testing.T) {
 				config: cu.IM{},
 				getEnv: func(key string) string {
 					return ""
+				},
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, nil
 				},
 			},
 		},
@@ -187,6 +194,7 @@ func TestApp_setConfig(t *testing.T) {
 				getEnv:     tt.fields.getEnv,
 				readFile:   tt.fields.readFile,
 				readAll:    tt.fields.readAll,
+				stat:       tt.fields.stat,
 			}
 			app.setConfig(tt.args.isSnap)
 		})
@@ -299,6 +307,7 @@ func TestApp_setTokenKeys(t *testing.T) {
 		getEnv     func(key string) string
 		readFile   func(name string) ([]byte, error)
 		readAll    func(r io.Reader) ([]byte, error)
+		stat       func(name string) (fi os.FileInfo, err error)
 	}
 	type args struct {
 		keyType string
@@ -317,6 +326,9 @@ func TestApp_setTokenKeys(t *testing.T) {
 					"NT_TOKEN_PRIVATE_KEY": "../../data/private.pem",
 				},
 				readFile: os.ReadFile,
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, nil
+				},
 			},
 			args: args{
 				keyType: "private",
@@ -333,6 +345,9 @@ func TestApp_setTokenKeys(t *testing.T) {
 				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
 				readFile: func(name string) ([]byte, error) {
 					return nil, errors.New("file not found")
+				},
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, nil
 				},
 			},
 			args: args{
@@ -354,6 +369,7 @@ func TestApp_setTokenKeys(t *testing.T) {
 				getEnv:     tt.fields.getEnv,
 				readFile:   tt.fields.readFile,
 				readAll:    tt.fields.readAll,
+				stat:       tt.fields.stat,
 			}
 			if err := app.setTokenKeys(tt.args.keyType); (err != nil) != tt.wantErr {
 				t.Errorf("App.setTokenKeys() error = %v, wantErr %v", err, tt.wantErr)
@@ -739,6 +755,7 @@ func TestApp_backgroundServer(t *testing.T) {
 		getEnv     func(key string) string
 		readFile   func(name string) ([]byte, error)
 		readAll    func(r io.Reader) ([]byte, error)
+		stat       func(name string) (fi os.FileInfo, err error)
 	}
 	tests := []struct {
 		name    string
@@ -755,6 +772,9 @@ func TestApp_backgroundServer(t *testing.T) {
 				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
 				readFile: func(name string) ([]byte, error) {
 					return nil, errors.New("file not found")
+				},
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, nil
 				},
 			},
 			wantErr: true,
@@ -783,6 +803,9 @@ func TestApp_backgroundServer(t *testing.T) {
 					},
 				},
 				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, nil
+				},
 			},
 			wantErr: false,
 		},
@@ -810,6 +833,9 @@ func TestApp_backgroundServer(t *testing.T) {
 					},
 				},
 				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, nil
+				},
 			},
 			wantErr: false,
 		},
@@ -844,6 +870,9 @@ func TestApp_backgroundServer(t *testing.T) {
 				},
 				appLog:   slog.New(slog.NewTextHandler(os.Stdout, nil)),
 				showTray: true,
+				stat: func(name string) (fi os.FileInfo, err error) {
+					return nil, errors.New("error")
+				},
 			},
 			wantErr: false,
 		},
@@ -862,6 +891,7 @@ func TestApp_backgroundServer(t *testing.T) {
 				getEnv:     tt.fields.getEnv,
 				readFile:   tt.fields.readFile,
 				readAll:    tt.fields.readAll,
+				stat:       tt.fields.stat,
 			}
 			if err := app.backgroundServer(); (err != nil) != tt.wantErr {
 				t.Errorf("App.backgroundServer() error = %v, wantErr %v", err, tt.wantErr)

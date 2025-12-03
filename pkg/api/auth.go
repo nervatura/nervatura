@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	cu "github.com/nervatura/component/pkg/util"
@@ -14,7 +15,7 @@ import (
 TokenRefresh - create/refresh a JWT token
 */
 func (ds *DataStore) TokenRefresh(user md.Auth) (token string, err error) {
-	if token, err = ds.CreateLoginToken(user.Code, user.UserName, ds.Alias, ds.Config); err != nil {
+	if token, err = ds.CreateLoginToken(cu.SM{"code": user.Code, "user_name": user.UserName, "scope": user.UserGroup.String(), "alias": ds.Alias}, ds.Config); err != nil {
 		err = ds.SetError(err, errors.New(http.StatusText(http.StatusInternalServerError)))
 	}
 	return token, err
@@ -27,16 +28,7 @@ func (ds *DataStore) AuthUser(uid, username string) (user md.Auth, err error) {
 			{Field: "deleted", Comp: "==", Value: false},
 			{Field: "disabled", Comp: "==", Value: false},
 		},
-	}
-	if uid != "" {
-		query.Filters = append(query.Filters, md.Filter{Field: "code", Comp: "==", Value: uid})
-	}
-	if username != "" {
-		filter := md.Filter{Field: "user_name", Comp: "==", Value: username}
-		if len(query.Filters) > 0 {
-			filter.Or = true
-		}
-		query.Filters = append(query.Filters, filter)
+		Filter: fmt.Sprintf("and (code='%s' or user_name='%s')", uid, username),
 	}
 	var rows []cu.IM
 	if rows, err = ds.StoreDataQuery(query, true); err == nil {

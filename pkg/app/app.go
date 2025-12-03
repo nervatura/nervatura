@@ -43,6 +43,7 @@ type App struct {
 	readFile   func(name string) ([]byte, error)
 	readAll    func(r io.Reader) ([]byte, error)
 	httpGet    func(url string) (*http.Response, error)
+	stat       func(name string) (fi os.FileInfo, err error)
 }
 
 // trayService - interface for tray service
@@ -69,6 +70,7 @@ func New(version string, args cu.SM) (app *App, err error) {
 		readFile:   os.ReadFile,
 		readAll:    io.ReadAll,
 		httpGet:    http.Get,
+		stat:       os.Stat,
 	}
 	app.setEnv("./.env")
 
@@ -186,7 +188,7 @@ func (app *App) setConfig(isSnap bool) {
 
 	app.config["NT_PUBLIC_HOST"] = cu.ToString(app.getEnv("NT_PUBLIC_HOST"), "")
 	app.config["NT_AUTH_SERVER"] = cu.ToString(app.getEnv("NT_AUTH_SERVER"), "")
-	app.config["NT_AUTH_CLIENT_ID"] = cu.ToString(app.getEnv("NT_AUTH_CLIENT_ID"), "")
+	app.config["NT_AUTH_CLIENT_ID"] = cu.ToString(app.getEnv("NT_AUTH_CLIENT_ID"), "nervatura")
 	app.config["NT_AUTH_CLIENT_SECRET"] = cu.ToString(app.getEnv("NT_AUTH_CLIENT_SECRET"), "")
 
 	app.config["NT_API_KEY"] = cu.ToString(app.getEnv("NT_API_KEY"), cu.RandString(32))
@@ -207,13 +209,19 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_HTTP_HOME"] = cu.ToString(app.getEnv("NT_HTTP_HOME"), cu.ToString(st.DefaultConfig["http"]["home"], "/"))
 	app.config["NT_HTTP_LOG_FILE"] = cu.ToString(args["NT_HTTP_LOG_FILE"], app.getEnv("NT_HTTP_LOG_FILE"))
 
-	app.config["NT_MCP_ENABLED"] = cu.ToBoolean(args["NT_MCP_ENABLED"], cu.ToBoolean(app.getEnv("NT_MCP_ENABLED"), cu.ToBoolean(st.DefaultConfig["mcp"]["enabled"], true)))
-
 	dataDir := "data"
 	if isSnap {
 		dataDir = "/var/snap/nervatura/common"
 		if app.config["NT_HTTP_LOG_FILE"] == "" {
 			app.config["NT_HTTP_LOG_FILE"] = dataDir + "/http.log"
+		}
+	}
+
+	app.config["NT_MCP_ENABLED"] = cu.ToBoolean(args["NT_MCP_ENABLED"], cu.ToBoolean(app.getEnv("NT_MCP_ENABLED"), cu.ToBoolean(st.DefaultConfig["mcp"]["enabled"], true)))
+	app.config["NT_MCP_PROMPT"] = cu.ToString(args["NT_MCP_PROMPT"], app.getEnv("NT_MCP_PROMPT"))
+	if cu.ToString(app.config["NT_MCP_PROMPT"], "") == "" {
+		if _, err := app.stat(dataDir + "/prompt.json"); err == nil {
+			app.config["NT_MCP_PROMPT"] = dataDir + "/prompt.json"
 		}
 	}
 
@@ -235,7 +243,7 @@ func (app *App) setConfig(isSnap bool) {
 
 	app.config["NT_ALIAS_DEMO"] = cu.ToString(app.getEnv("NT_ALIAS_DEMO"), "")
 	if app.config["NT_ALIAS_DEMO"] == "" && slices.Contains(db.Drivers, "sqlite") {
-		if _, err := os.Stat("data"); err == nil || isSnap {
+		if _, err := app.stat("data"); err == nil || isSnap {
 			app.config["NT_ALIAS_DEMO"] = "sqlite://file:" + dataDir + "/demo.db?cache=shared&mode=rwc"
 		}
 	}
@@ -243,6 +251,7 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_TOKEN_ISS"] = cu.ToString(app.getEnv("NT_TOKEN_ISS"), cu.ToString(st.DefaultConfig["token"]["iss"], "nervatura"))
 	app.config["NT_TOKEN_PRIVATE_KID"] = cu.ToString(app.getEnv("NT_TOKEN_PRIVATE_KID"), ut.GetHash("nervatura", "sha256"))
 	app.config["NT_TOKEN_PUBLIC_KID"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KID"), ut.GetHash("nervatura", "sha256"))
+	app.config["NT_TOKEN_PRIVATE_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PRIVATE_KEY"), "")
 	app.config["NT_TOKEN_PUBLIC_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KEY"), "")
 	if app.getEnv("NT_TOKEN_PRIVATE_KEY") == "" {
 		app.config["NT_TOKEN_PRIVATE_KEY"], app.config["NT_TOKEN_PUBLIC_KEY"] = app.generateRSAKeys()
@@ -275,7 +284,7 @@ func (app *App) setConfig(isSnap bool) {
 
 // isDocker - check if running in docker
 func (app *App) isDocker() bool {
-	_, err := os.Stat("/.dockerenv")
+	_, err := app.stat("/.dockerenv")
 	return (err == nil)
 }
 
@@ -292,7 +301,7 @@ func (app *App) setTokenKeys(keyType string) error {
 	algType := ut.TokenAlg[alg]
 	if pkey != "" {
 		//file or key?
-		if _, err := os.Stat(pkey); err == nil {
+		if _, err := app.stat(pkey); err == nil {
 			content, err := app.readFile(filepath.Clean(pkey))
 			if err != nil {
 				app.setErrorLog("reading token key file", err)
@@ -356,7 +365,7 @@ func (app *App) setTokenKeyRing() (err error) {
 }
 
 func (app *App) generateRSAKeys() (privateKey, publicKey string) {
-	privkey, _ := rsa.GenerateKey(rand.Reader, 4096)
+	privkey, _ := rsa.GenerateKey(rand.Reader, 2048)
 	privkey_bytes := x509.MarshalPKCS1PrivateKey(privkey)
 	privkey_pem := pem.EncodeToMemory(
 		&pem.Block{

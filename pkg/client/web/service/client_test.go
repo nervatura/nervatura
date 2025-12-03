@@ -2536,7 +2536,7 @@ func TestClientService_MainResponse(t *testing.T) {
 						ConvertToType: func(data interface{}, result any) (err error) {
 							return nil
 						},
-						CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+						CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 							return "test", nil
 						},
 					}

@@ -8,7 +8,7 @@ var Public embed.FS
 //go:embed store/mysql store/postgres store/sqlite upgrade/mysql upgrade/postgres upgrade/sqlite
 var Store embed.FS
 
-//go:embed message.json
+//go:embed message.json prompt.json
 var Static embed.FS
 
 //go:embed template
@@ -61,7 +61,7 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"tls_enabled": "false",
 	},
 	"mcp": {
-		"enabled": "false",
+		"enabled": "true",
 	},
 	"report": {
 		"font_family": "",
@@ -163,4 +163,73 @@ const TaskPage = `<!DOCTYPE html>
 	</div>
 	{{end}}
 	</div></body>
+</html>`
+
+const AuthPage = `<!doctype html>
+<html lang="en" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ .title }}</title>
+	<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="h-full">
+  <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <img src="/public/images/logo_leaf.svg" alt="Nervatura" class="mx-auto h-24 w-auto" />
+      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">{{ .subtitle }}</h2>
+    </div>
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+		  {{if eq .code ""}}
+      <form action="/oauth/authorization" method="POST" class="space-y-6">
+				<input type="hidden" name="session_id" value="{{ .session_id }}" />
+        <div>
+          <label for="username" class="block text-sm/6 font-medium text-gray-100">{{ .username_label }}</label>
+          <div class="mt-2">
+            <input id="username" type="username" name="username" value="{{ .username }}" required autofocus autocomplete="username" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" />
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between">
+            <label for="password" class="block text-sm/6 font-medium text-gray-100">{{ .password_label }}</label>
+          </div>
+          <div class="mt-2">
+            <input id="password" type="password" name="password" required autocomplete="current-password" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" />
+          </div>
+        </div>
+				{{if .error_msg}}
+				<div class="mt-2">
+					<div class="flex items-center justify-between">
+						<label class="block font-bold text-sm/6 font-medium text-red-500">{{ .error_msg }}</label>
+					</div>
+				</div>
+				{{end}}
+        <div>
+          <button type="submit" class="cursor-pointer flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">{{ .login_button }}</button>
+        </div>
+      </form>
+			{{else}}
+			<div class="space-y-6">
+				<div>
+					<div class="flex items-center justify-between">
+						<label class="block font-bold text-sm/6 font-medium text-gray-100">{{ .code_label }}</label>
+					</div>
+					<div>
+						<label class="block text-sm/6 font-medium text-green-500">{{ .code }}</label>
+					</div>
+				</div>
+				<div>
+					<div class="flex items-center justify-between">
+						<label class="block font-bold text-sm/6 font-medium text-gray-100">{{ .state_label }}</label>
+					</div>
+					<div>
+						<label class="block text-sm/6 font-medium text-orange-500">{{ .state }}</label>
+					</div>
+				</div>
+			</div>
+			{{end}}
+    </div>
+  </div>
+</body>
 </html>`

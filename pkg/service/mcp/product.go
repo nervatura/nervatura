@@ -2,8 +2,10 @@ package mcp
 
 import (
 	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 type productInput struct {
@@ -12,7 +14,6 @@ type productInput struct {
 	ProductName string `json:"product_name,omitempty" jsonschema:"Product name. Required when creating a new product."`
 	TaxCode     string `json:"tax_code,omitempty" jsonschema:"Tax code."`
 	md.ProductMeta
-	ProductMap cu.IM `json:"product_map,omitempty" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
 type productParameter struct {
@@ -45,7 +46,7 @@ func ProductSchema() (ms *ModelSchema) {
 				schema.Properties["product_type"].Default = []byte(`"` + md.ProductTypeItem.String() + `"`)
 				schema.Properties["product_map"].Default = []byte(`{}`)
 				schema.Properties["product_map"].AdditionalProperties = &jsonschema.Schema{}
-				schema.Properties["product_meta"].Default = []byte(`{}`)
+				schema.Properties["product_meta"].Required = []string{}
 				schema.Properties["product_meta"].Properties["barcode_type"].Type = "string"
 				schema.Properties["product_meta"].Properties["barcode_type"].Enum = []any{
 					md.BarcodeTypeCode128.String(), md.BarcodeTypeCode39.String(), md.BarcodeTypeEan13.String(), md.BarcodeTypeEan8.String(),
@@ -56,7 +57,35 @@ func ProductSchema() (ms *ModelSchema) {
 				schema.Properties["events"].Items.Properties["end_time"].Type = "string"
 			case SchemaTypeInput, SchemaTypeParameter:
 				schema.Properties["product_type"].Enum = []any{md.ProductTypeItem.String(), md.ProductTypeService.String(), md.ProductTypeVirtual.String()}
+				schema.Required = []string{}
 			}
+		},
+		LoadData: func(data any) (modelData, metaData any, err error) {
+			var product md.Product = md.Product{
+				ProductType: md.ProductTypeItem,
+				Events:      []md.Event{},
+				ProductMeta: md.ProductMeta{
+					Tags: []string{},
+				},
+				ProductMap: cu.IM{},
+			}
+			if err = cu.ConvertToType(data, &product); err != nil {
+				return product, product.ProductMeta, err
+			}
+			return product, product.ProductMeta, err
+		},
+		InsertValues: func(data any) (values cu.IM) {
+			values = cu.IM{}
+			if product, ok := data.(md.Product); ok {
+				values["product_type"] = product.ProductType.String()
+				values["product_name"] = product.ProductName
+				values["tax_code"] = product.TaxCode
+
+				ut.ConvertByteToIMData(product.Events, values, "events")
+				ut.ConvertByteToIMData(product.ProductMeta, values, "product_meta")
+				ut.ConvertByteToIMData(product.ProductMap, values, "product_map")
+			}
+			return values
 		},
 		Examples: map[string][]any{
 			"id":           {12345},
@@ -69,4 +98,22 @@ func ProductSchema() (ms *ModelSchema) {
 		PrimaryFields: []string{"id", "code", "product_type", "product_name", "tax_code"},
 		Required:      []string{"product_name"},
 	}
+}
+
+var productQueryTool = mcp.Tool{
+	Name:        "nervatura_product_query",
+	Title:       "Product Data Query",
+	Description: "Query products by parameters. The result is all products that match the filter criteria.",
+	InputSchema: makeModelSchema("product", SchemaTypeParameter),
+	OutputSchema: &jsonschema.Schema{
+		Type:  "object",
+		Items: makeModelSchema("product", SchemaTypeResultList),
+	},
+}
+
+var productUpdateTool = mcp.Tool{
+	Name:        "nervatura_product_update",
+	Title:       "Product Data Update",
+	Description: "Update a product by code or insert new product data. When modifying, only the specified values change. Related tools: event.",
+	InputSchema: makeModelSchema("product", SchemaTypeInput),
 }

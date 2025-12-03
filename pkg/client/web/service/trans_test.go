@@ -483,6 +483,109 @@ func TestTransService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "editor_delete_error_invoice",
+			fields: fields{
+				cls: &ClientService{Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db:     &md.TestDriver{Config: cu.IM{}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
+							},
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id":         1,
+										"trans_type": md.TransTypeInvoice.String(),
+										"direction":  md.DirectionOut.String(),
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "editor_delete"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "editor_delete_invoice",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db: &md.TestDriver{Config: cu.IM{
+								"Update": func(data md.Update) (int64, error) {
+									return 1, nil
+								},
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1}}, nil
+								},
+							}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToType: func(data interface{}, result any) (err error) {
+								return nil
+							},
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id":            1,
+										"trans_type":    md.TransTypeInvoice.String(),
+										"direction":     md.DirectionOut.String(),
+										"customer_code": "C001",
+										"trans_meta": cu.IM{
+											"status":     md.TransStatusNormal.String(),
+											"paid":       true,
+											"closed":     true,
+											"due_time":   "2025-01-01",
+											"ref_number": "1234567890",
+											"paid_type":  md.PaidTypeOnline.String(),
+											"rate":       1.0,
+											"tax_free":   false,
+										},
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name:  ct.FormEventOK,
+					Value: cu.IM{"data": cu.IM{"next": "editor_delete"}, "value": cu.IM{}},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "editor_add_tag_ok",
 			fields: fields{
 				cls: &ClientService{

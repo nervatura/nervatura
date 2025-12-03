@@ -130,7 +130,6 @@ var transDataQueryBase = map[string]func(trans cu.IM) ([]string, md.Query){
 				{Field: "l.link_type_2", Comp: "==", Value: md.LinkTypeTrans.String()},
 				{Field: "it.trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
 					md.TransTypeInvoice.String(), md.TransTypeReceipt.String())},
-				{Field: "it.deleted", Comp: "==", Value: false},
 				{Field: "l.deleted", Comp: "==", Value: false},
 			},
 			OrderBy: []string{"pm.id"},
@@ -150,7 +149,6 @@ var transDataQueryBase = map[string]func(trans cu.IM) ([]string, md.Query){
 			Filters: []md.Filter{
 				{Field: "status", Comp: "==", Value: md.TransStatusCancellation.String()},
 				{Field: "trans_code", Comp: "==", Value: cu.ToString(trans["code"], "")},
-				{Field: "deleted", Comp: "==", Value: true},
 			},
 		}
 	},
@@ -378,7 +376,7 @@ func (s *TransService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err
 		if trans, err = ds.StoreDataQuery(md.Query{
 			Fields: []string{"*"}, From: "trans",
 			Filters: []md.Filter{
-				//{Field: "deleted", Comp: "==", Value: false},
+				{Field: "deleted", Comp: "==", Value: false},
 				{Field: "id", Comp: "==", Value: cu.ToInteger(params["trans_id"], 0)},
 				{Or: true, Field: "code", Comp: "==", Value: cu.ToString(params["trans_code"], "")},
 			},
@@ -836,7 +834,24 @@ func (s *TransService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 		},
 
 		"editor_delete": func() (re ct.ResponseEvent, err error) {
-			if err = s.delete(ds, cu.ToInteger(trans["id"], 0)); err != nil {
+			transType := cu.ToString(trans["trans_type"], "")
+			direction := cu.ToString(trans["direction"], "")
+			transID := cu.ToInteger(trans["id"], 0)
+			if (slices.Contains([]string{md.TransTypeReceipt.String(), md.TransTypeInvoice.String()}, transType) &&
+				direction == md.DirectionOut.String()) || transType == md.TransTypeCash.String() {
+				transMeta["status"] = md.TransStatusDeleted.String()
+				trans["trans_meta"] = transMeta
+				stateData["trans"] = trans
+				if transID, err = s.update(ds, stateData, client.Msg); err != nil {
+					return evt, err
+				}
+				return s.cls.setEditor(evt, "trans", cu.IM{
+					"editor_view": view,
+					"trans_id":    transID,
+					"session_id":  client.Ticket.SessionID,
+				}), nil
+			}
+			if err = s.delete(ds, transID); err != nil {
 				return evt, err
 			}
 			client.ResetEditor()
@@ -1435,8 +1450,9 @@ func (s *TransService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 
 		"editor_cancel": func() (re ct.ResponseEvent, err error) {
 			dirty := cu.ToBoolean(stateData["dirty"], false)
+			isDeleted := (cu.ToString(transMeta["status"], "") == md.TransStatusDeleted.String())
 			readonly := (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String()) ||
-				cu.ToBoolean(trans["deleted"], false) ||
+				isDeleted ||
 				(cu.ToBoolean(transMeta["closed"], false) && !dirty)
 			if dirty && !readonly {
 				modal := cu.IM{
@@ -2108,8 +2124,9 @@ var createValidate = []func(transType, direction, status string, trans md.Trans,
 		return trans.TransMeta.Status.String() == md.TransStatusCancellation.String(), "trans_create_cancellation_err1"
 	},
 	func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string) {
+		isDeleted := (trans.TransMeta.Status == md.TransStatusDeleted)
 		return status == md.TransStatusCancellation.String() &&
-				slices.Contains([]string{md.TransTypeReceipt.String(), md.TransTypeInvoice.String()}, transType) && !trans.Deleted,
+				slices.Contains([]string{md.TransTypeReceipt.String(), md.TransTypeInvoice.String()}, transType) && !isDeleted,
 			"trans_create_cancellation_err2"
 	},
 	/*
@@ -2118,7 +2135,7 @@ var createValidate = []func(transType, direction, status string, trans md.Trans,
 		},
 	*/
 	func(transType, direction, status string, trans md.Trans, msgFunc func(labelID string) string) (bool, string) {
-		return status == md.TransStatusAmendment.String() && trans.Deleted, "trans_create_amendment_err"
+		return status == md.TransStatusAmendment.String() && (trans.TransMeta.Status == md.TransStatusDeleted), "trans_create_amendment_err"
 	},
 }
 
@@ -2431,10 +2448,6 @@ func (s *TransService) createTrans(evt ct.ResponseEvent, options cu.IM, trans md
 		},
 		"trans_date": func() (bool, any) {
 			return status == md.TransStatusCancellation.String(), trans.TransDate.Format(time.DateOnly)
-		},
-		"deleted": func() (bool, any) {
-			return status == md.TransStatusCancellation.String() &&
-				transType != md.TransTypeDelivery.String() && transType != md.TransTypeInventory.String(), true
 		},
 	}
 

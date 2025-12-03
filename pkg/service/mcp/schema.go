@@ -28,6 +28,8 @@ type ModelSchema struct {
 	ResultSchema     func() (*jsonschema.Schema, error)
 	ResultListSchema func() (*jsonschema.Schema, error)
 	SchemaModify     func(schemaType SchemaType, schema *jsonschema.Schema)
+	LoadData         func(data any) (modelData, metaData any, err error)
+	InsertValues     func(data any) (values cu.IM)
 	Examples         map[string][]any
 	PrimaryFields    []string
 	Required         []string
@@ -121,38 +123,35 @@ func getModelSchemaByPrefix(prefix string) (ms *ModelSchema, err error) {
 	return nil, fmt.Errorf("invalid model prefix: %s", prefix)
 }
 
-func getSchemaData(bodyBytes []byte, ms *ModelSchema, inputData, baseData any) (data cu.IM, inputFields []string, metaFields []string, err error) {
-	data = cu.IM{}
+func getSchemaData(data cu.IM, ms *ModelSchema) (modelData, metaData any, inputFields []string, metaFields []string, err error) {
+
 	inputFields = []string{}
 	metaFields = []string{}
 
-	// convert body bytes to map struct
-	if err = cu.ConvertFromByte(bodyBytes, &data); err != nil {
-		return data, inputFields, metaFields, err
-	}
-
-	if err = cu.ConvertToType(inputData, baseData); err != nil {
-		return data, inputFields, metaFields, err
-	}
-
 	// get input fields
-	for key := range data {
+	modelMeta := cu.IM{}
+	for key, value := range data {
 		if slices.Contains(ms.PrimaryFields, key) {
 			inputFields = append(inputFields, key)
 		} else {
 			metaFields = append(metaFields, key)
+			modelMeta[key] = value
 		}
 	}
+	data[ms.Name+"_meta"] = modelMeta
 	if len(metaFields) > 0 {
 		inputFields = append(inputFields, ms.Name+"_meta")
 	}
-	if cu.ToString(data["code"], "") == "" {
-		for _, field := range ms.Required {
-			if !slices.Contains(inputFields, field) {
-				return data, inputFields, metaFields, errors.New(field + " is required")
+
+	if modelData, metaData, err = ms.LoadData(data); err == nil {
+		if cu.ToString(data["code"], "") == "" {
+			for _, field := range ms.Required {
+				if !slices.Contains(inputFields, field) {
+					return modelData, metaData, inputFields, metaFields, errors.New(field + " is required")
+				}
 			}
 		}
 	}
 
-	return data, inputFields, metaFields, err
+	return modelData, metaData, inputFields, metaFields, err
 }

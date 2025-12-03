@@ -5,43 +5,43 @@ import (
 )
 
 type Address struct {
-	Country string `json:"country,omitempty"`
-	State   string `json:"state,omitempty"`
-	ZipCode string `json:"zip_code,omitempty"`
-	City    string `json:"city,omitempty"`
-	Street  string `json:"street,omitempty"`
-	Notes   string `json:"notes,omitempty"`
+	Country string `json:"country"`
+	State   string `json:"state"`
+	ZipCode string `json:"zip_code"`
+	City    string `json:"city"`
+	Street  string `json:"street"`
+	Notes   string `json:"notes"`
 	// Additional tags for the address
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	AddressMap cu.IM `json:"address_map,omitempty"`
+	AddressMap cu.IM `json:"address_map"`
 }
 
 type Contact struct {
-	FirstName string `json:"first_name,omitempty"`
-	Surname   string `json:"surname,omitempty"`
-	Status    string `json:"status,omitempty"`
-	Phone     string `json:"phone,omitempty"`
-	Mobile    string `json:"mobile,omitempty"`
-	Email     string `json:"email,omitempty"`
-	Notes     string `json:"notes,omitempty"`
+	FirstName string `json:"first_name"`
+	Surname   string `json:"surname"`
+	Status    string `json:"status"`
+	Phone     string `json:"phone"`
+	Mobile    string `json:"mobile"`
+	Email     string `json:"email"`
+	Notes     string `json:"notes"`
 	// Additional tags for the contact
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	ContactMap cu.IM `json:"contact_map,omitempty"`
+	ContactMap cu.IM `json:"contact_map"`
 }
 
 type Event struct {
-	Uid         string       `json:"uid,omitempty"`
-	Subject     string       `json:"subject,omitempty"`
-	StartTime   TimeDateTime `json:"start_time,omitempty" type:"string"`
-	EndTime     TimeDateTime `json:"end_time,omitempty" type:"string"`
-	Place       string       `json:"place,omitempty"`
-	Description string       `json:"description,omitempty"`
+	Uid         string       `json:"uid"`
+	Subject     string       `json:"subject"`
+	StartTime   TimeDateTime `json:"start_time" type:"string"`
+	EndTime     TimeDateTime `json:"end_time" type:"string"`
+	Place       string       `json:"place"`
+	Description string       `json:"description"`
 	// Additional tags for the event
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	EventMap cu.IM `json:"event_map,omitempty"`
+	EventMap cu.IM `json:"event_map"`
 }
 
 type Bookmark struct {
@@ -116,20 +116,20 @@ type Currency struct {
 }
 
 type CustomerMeta struct {
-	TaxNumber string `json:"tax_number,omitempty" jsonschema:"Tax number"`
-	Account   string `json:"account,omitempty" jsonschema:"Account number"`
+	TaxNumber string `json:"tax_number" jsonschema:"Tax number"`
+	Account   string `json:"account" jsonschema:"Account number"`
 	// Tax-free
-	TaxFree bool `json:"tax_free,omitempty" jsonschema:"Tax-free customer."`
+	TaxFree bool `json:"tax_free" jsonschema:"Tax-free customer."`
 	// Payment per.
-	Terms int64 `json:"terms,omitempty" jsonschema:"Payment period in days"`
+	Terms int64 `json:"terms" jsonschema:"Payment period in days"`
 	// Customer's credit limit. Data is used by financial reports.
-	CreditLimit float64 `json:"credit_limit,omitempty" jsonschema:"Customer's credit limit. Data is used by financial reports."`
+	CreditLimit float64 `json:"credit_limit" jsonschema:"Customer's credit limit. Data is used by financial reports."`
 	// If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field. If the product has a separate customer price, the value specified here will not be considered by the program.
-	Discount float64 `json:"discount,omitempty" jsonschema:"If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field."`
-	Notes    string  `json:"notes,omitempty" jsonschema:"Additional notes for the customer."`
-	Inactive bool    `json:"inactive,omitempty" jsonschema:"Inactive"`
+	Discount float64 `json:"discount" jsonschema:"If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field."`
+	Notes    string  `json:"notes" jsonschema:"Additional notes for the customer."`
+	Inactive bool    `json:"inactive" jsonschema:"Inactive"`
 	// Additional tags for the customer
-	Tags []string `json:"tags,omitempty" jsonschema:"Additional tags for the customer. The value is an array of strings."`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the customer. The value is an array of strings."`
 }
 
 type Customer struct {
@@ -393,17 +393,17 @@ type Price struct {
 }
 
 type ProductMeta struct {
-	Unit string `json:"unit,omitempty" jsonschema:"Unit of measurement."`
+	Unit string `json:"unit" jsonschema:"Unit of measurement."`
 	// ENUM field. Valid values: CODE_128, CODE_39, EAN_13, EAN_8, QR_CODE
-	BarcodeType BarcodeType `json:"barcode_type,omitempty" jsonschema:"Barcode type. Enum values."`
+	BarcodeType BarcodeType `json:"barcode_type" jsonschema:"Barcode type. Enum values."`
 	// Any barcode or QR code data
-	Barcode string `json:"barcode,omitempty" jsonschema:"Barcode or QR code data."`
+	Barcode string `json:"barcode" jsonschema:"Barcode or QR code data."`
 	// The actual amount of the products identified by the barcode. For example can be used for packaged goods, tray packaging.
-	BarcodeQty float64 `json:"barcode_qty,omitempty" jsonschema:"Barcode quantity."`
-	Notes      string  `json:"notes,omitempty" jsonschema:"Notes."`
-	Inactive   bool    `json:"inactive,omitempty" jsonschema:"Inactive."`
+	BarcodeQty float64 `json:"barcode_qty" jsonschema:"Barcode quantity."`
+	Notes      string  `json:"notes" jsonschema:"Notes."`
+	Inactive   bool    `json:"inactive" jsonschema:"Inactive."`
 	// Additional tags for the product
-	Tags []string `json:"tags,omitempty" jsonschema:"Tags."`
+	Tags []string `json:"tags" jsonschema:"Tags."`
 }
 
 type Product struct {
@@ -425,7 +425,6 @@ type Product struct {
 	ProductMap cu.IM `json:"product_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
 	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
-	//Deleted   bool         `json:"deleted"`
 }
 
 type ProjectMeta struct {
@@ -622,7 +621,6 @@ type Trans struct {
 	TransMap cu.IM `json:"trans_map"`
 	// Timestamp of data creation
 	TimeStamp TimeDateTime `json:"time_stamp"`
-	Deleted   bool         `json:"deleted"`
 }
 
 type Config struct {

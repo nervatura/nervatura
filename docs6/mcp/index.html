@@ -54,20 +54,49 @@
       <article>
         <header class="">
           <p class="text-base font-medium text-slate-500">
-            Nervatura MCP
+            Nervatura Service
           </p>
 
           <h1 class="text-3xl font-bold tracking-tight text-slate-900">
-            Nervatura Admin
+            Nervatura MCP
           </h1>
         </header>
 
-        <h3 id="overview" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
-          Overview
+        <p class="mt-6 mb-3">The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.</p>
+
+        <h3 id="cli-examples" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          CLI examples
         </h3>
 
-        <p class="mb-2 text-base text-slate-600">
-          ...
+        <p class="mb-2">
+          Start the Nervatura service with the MCP server enabled.
+        </p>
+        
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            NT_API_KEY=TEST_API_KEY ./nervatura -tray
+          </code>
+        </div>
+
+        <p class="mb-2">
+          Query customers by query parameters.
+        </p>
+        
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            npx @modelcontextprotocol/inspector --cli http://localhost:5000/mcp \ <br />
+            &nbsp;&nbsp;--transport http --method tools/call \ <br />
+            &nbsp;&nbsp;--tool-name nervatura_customer_query --tool-arg customer_type=CUSTOMER_COMPANY \ <br />
+            &nbsp;&nbsp;--header "Authorization: Bearer TEST_API_KEY"
+          </code>
+        </div>
+
+        <h3 id="cli-examples" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          MCP Inspector
+        </h3>
+
+        <p class="mb-2">
+          The MCP Inspector is an interactive developer tool for testing and debugging MCP servers.
         </p>
 
         <dl class="flex pt-6 mt-6 border-t border-slate-200">
@@ -89,8 +118,8 @@
             </dt>
 
             <dd class="mt-1">
-              <a href="../client/" class="text-base font-semibold text-slate-900 hover:underline">
-                Nervatura Client
+              <a href="../web/" class="text-base font-semibold text-slate-900 hover:underline">
+                Nervatura Web Client
               </a>
             </dd>
           </div>

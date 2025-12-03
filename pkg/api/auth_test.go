@@ -28,7 +28,7 @@ func TestDataStore_TokenRefresh(t *testing.T) {
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
 		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
 		RequestDo              func(req *http.Request) (*http.Response, error)
-		CreateLoginToken       func(code, userName, database string, config cu.IM) (result string, err error)
+		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
 		ComparePasswordAndHash func(password string, hash string) (err error)
@@ -49,7 +49,7 @@ func TestDataStore_TokenRefresh(t *testing.T) {
 				Alias:  "test",
 				Config: cu.IM{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-				CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+				CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 					return "test", nil
 				},
 			},
@@ -68,7 +68,7 @@ func TestDataStore_TokenRefresh(t *testing.T) {
 				Alias:  "test",
 				Config: cu.IM{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-				CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+				CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 					return "", errors.New("test")
 				},
 			},
@@ -124,7 +124,7 @@ func TestDataStore_AuthUser(t *testing.T) {
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
 		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
 		RequestDo              func(req *http.Request) (*http.Response, error)
-		CreateLoginToken       func(code, userName, database string, config cu.IM) (result string, err error)
+		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
 		ComparePasswordAndHash func(password string, hash string) (err error)
@@ -206,7 +206,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
 		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
 		RequestDo              func(req *http.Request) (*http.Response, error)
-		CreateLoginToken       func(code, userName, database string, config cu.IM) (result string, err error)
+		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
 		ComparePasswordAndHash func(password string, hash string) (err error)
@@ -243,7 +243,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 				ConvertToType: func(data interface{}, result any) (err error) {
 					return nil
 				},
-				CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+				CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 					return "test", nil
 				},
 			},
@@ -331,7 +331,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 				ConvertToType: func(data interface{}, result any) (err error) {
 					return nil
 				},
-				CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+				CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 					return "test", nil
 				},
 			},
@@ -364,7 +364,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 				ConvertToType: func(data interface{}, result any) (err error) {
 					return nil
 				},
-				CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+				CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 					return "test", nil
 				},
 			},
@@ -400,7 +400,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 				ConvertToType: func(data interface{}, result any) (err error) {
 					return nil
 				},
-				CreateLoginToken: func(code, userName, database string, config cu.IM) (result string, err error) {
+				CreateLoginToken: func(params cu.SM, config cu.IM) (result string, err error) {
 					return "test", nil
 				},
 			},
@@ -459,7 +459,7 @@ func TestDataStore_TokenLogin(t *testing.T) {
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
 		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
 		RequestDo              func(req *http.Request) (*http.Response, error)
-		CreateLoginToken       func(code, userName, database string, config cu.IM) (result string, err error)
+		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
 		ComparePasswordAndHash func(password string, hash string) (err error)
@@ -570,7 +570,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
 		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
 		RequestDo              func(req *http.Request) (*http.Response, error)
-		CreateLoginToken       func(code, userName, database string, config cu.IM) (result string, err error)
+		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
 		ComparePasswordAndHash func(password string, hash string) (err error)

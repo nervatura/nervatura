@@ -135,11 +135,13 @@ CREATE TABLE IF NOT EXISTS config(
   config_type config_type NOT NULL DEFAULT 'CONFIG_MAP'::config_type, 
   data JSONB NOT NULL,
   time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted BOOLEAN NOT NULL DEFAULT false,
   CONSTRAINT config_pkey PRIMARY KEY (id),
   CONSTRAINT config_code_key UNIQUE (code)
 );
 
 CREATE INDEX idx_config_type ON config (config_type);
+CREATE INDEX idx_config_deleted ON config (deleted);
 
 CREATE OR REPLACE TRIGGER config_default_code
   BEFORE INSERT ON config
@@ -152,7 +154,7 @@ CREATE OR REPLACE VIEW config_map AS
     data->>'field_name' AS field_name, data->>'field_type' AS field_type, 
 	  data->>'description' AS description, data->'tags' AS tags, data->'filter' AS filter
   FROM config
-  WHERE config_type = 'CONFIG_MAP';
+  WHERE config_type = 'CONFIG_MAP' AND deleted = false;
 
 CREATE OR REPLACE VIEW config_shortcut AS
   SELECT id, code,
@@ -160,21 +162,21 @@ CREATE OR REPLACE VIEW config_shortcut AS
 	  data->>'modul' AS modul, data->>'method' AS method, data->>'func_name' AS func_name,
     data->>'address' AS address, data->'fields' AS fields
   FROM config
-  WHERE config_type = 'CONFIG_SHORTCUT';
+  WHERE config_type = 'CONFIG_SHORTCUT' AND deleted = false;
 
 CREATE OR REPLACE VIEW config_message AS
   SELECT id, code,
     data->>'section' AS section, data->>'key' AS message_key, 
 	  data->>'lang' AS lang, data->>'value' AS message_value
   FROM config
-  WHERE config_type = 'CONFIG_MESSAGE';
+  WHERE config_type = 'CONFIG_MESSAGE' AND deleted = false;
 
 CREATE OR REPLACE VIEW config_pattern AS
   SELECT id, code,
     data->>'trans_type' AS trans_type, data->>'description' AS description, 
 	  data->>'notes' AS notes, data->>'default_pattern' AS default_pattern
   FROM config
-  WHERE config_type = 'CONFIG_PATTERN';
+  WHERE config_type = 'CONFIG_PATTERN' AND deleted = false;
 
 CREATE OR REPLACE VIEW config_print_queue AS
   SELECT id, code,
@@ -183,7 +185,7 @@ CREATE OR REPLACE VIEW config_print_queue AS
     data->>'orientation' AS orientation, data->>'paper_size' AS paper_size,
 	  data->>'auth_code' AS auth_code, data->>'time_stamp' AS time_stamp
   FROM config
-  WHERE config_type = 'CONFIG_PRINT_QUEUE';
+  WHERE config_type = 'CONFIG_PRINT_QUEUE' AND deleted = false;
 
 CREATE OR REPLACE VIEW config_report AS
   SELECT id, code,
@@ -193,13 +195,13 @@ CREATE OR REPLACE VIEW config_report AS
 	  data->>'label' AS label, data->>'file_type' AS file_type,
 	  data->'template' AS template
   FROM config
-  WHERE config_type = 'CONFIG_REPORT';
+  WHERE config_type = 'CONFIG_REPORT' AND deleted = false;
   
 CREATE OR REPLACE VIEW config_data AS
   SELECT ROW_NUMBER() OVER (ORDER BY code, key) as id, code AS config_code,
     key as config_key, value as config_value, jsonb_typeof(value) as config_type
   FROM config, jsonb_each(config.data)
-  WHERE config_type = 'CONFIG_DATA' AND jsonb_typeof(data) = 'object';
+  WHERE config_type = 'CONFIG_DATA' AND jsonb_typeof(data) = 'object' AND deleted = false;
 
 CREATE TABLE IF NOT EXISTS auth(
   id SERIAL NOT NULL,
@@ -1171,7 +1173,7 @@ CREATE OR REPLACE VIEW trans_view AS
     CASE WHEN jsonb_typeof(trans_meta->'invoice') = 'object' THEN trans_meta->'invoice'->>'customer_address' ELSE '' END AS invoice_customer_address,
     CASE WHEN jsonb_typeof(trans_meta->'invoice') = 'object' THEN trans_meta->'invoice'->>'customer_tax_number' ELSE '' END AS invoice_customer_tax_number,
     trans_meta->'tags' AS tags, REGEXP_REPLACE(trans_meta->>'tags', '[\[\]"]', '', 'g') as tag_lst, 
-    trans_map, time_stamp, deleted,
+    trans_map, time_stamp,
     jsonb_build_object(
       'id', id, 'code', code, 'trans_type', trans_type, 'direction', direction,
       'trans_date', trans_date, 'trans_code', trans_code, 'customer_code', customer_code,
@@ -1180,8 +1182,7 @@ CREATE OR REPLACE VIEW trans_view AS
       'trans_map', trans_map, 'time_stamp', time_stamp
     ) AS trans_object
   FROM trans
-  WHERE deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
-    OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
+  WHERE deleted = false;
 
 CREATE OR REPLACE VIEW trans_map AS
   SELECT trans.id AS id, trans.code, trans.trans_type, trans.direction, trans.trans_date,
@@ -1198,14 +1199,12 @@ CREATE OR REPLACE VIEW trans_map AS
 				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
 			ELSE 'string' END AS value_meta
   FROM trans, jsonb_each(trans.trans_map) LEFT JOIN config_map cf on key = cf.field_name
-  WHERE deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
-    OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
+  WHERE deleted = false;
 
 CREATE OR REPLACE VIEW trans_tags AS
   SELECT trans.id AS id, code, value as tag
   FROM trans, jsonb_array_elements_text(trans.trans_meta->'tags')
-  WHERE deleted = false OR (trans_type = 'TRANS_INVOICE' AND direction = 'DIRECTION_OUT') 
-    OR (trans_type = 'TRANS_RECEIPT' AND direction = 'DIRECTION_OUT') OR (trans_type = 'TRANS_CASH');
+  WHERE deleted = false;
 
 CREATE TABLE IF NOT EXISTS item(
   id SERIAL NOT NULL,
@@ -1520,6 +1519,7 @@ CREATE TABLE IF NOT EXISTS log(
   auth_code VARCHAR NOT NULL,
   data JSONB NOT NULL DEFAULT '{}'::JSONB,
   time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted BOOLEAN NOT NULL DEFAULT false,
   CONSTRAINT log_pkey PRIMARY KEY (id),
   CONSTRAINT log_code_key UNIQUE (code)
 );
@@ -1528,6 +1528,7 @@ CREATE INDEX idx_log_ref_type ON log (ref_type);
 CREATE INDEX idx_log_ref_code ON log (ref_code);
 CREATE INDEX idx_log_auth_code ON log (auth_code);
 CREATE INDEX idx_log_time_stamp ON log (time_stamp);
+CREATE INDEX idx_log_deleted ON log (deleted);
 
 CREATE OR REPLACE TRIGGER log_default_code
   BEFORE INSERT ON log

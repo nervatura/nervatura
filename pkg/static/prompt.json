@@ -1,0 +1,67 @@
+[
+  {
+    "name": "test_prompt",
+    "title": "Test Prompt",
+    "description": "This is a test prompt.",
+    "arguments": [
+      {
+        "name": "name",
+        "title": "Name",
+        "description": "Please enter the name of the person to greet.",
+        "required": true
+      },
+      {
+        "name": "age",
+        "title": "Age",
+        "description": "Please enter the age of the person to greet."
+      }
+    ],
+    "prompt_description": "This is a test prompt.",
+    "prompt_messages": [
+      {
+        "content": {
+          "type": "text",
+          "text": "Hello, {{name}}! You are {{age}} years old."
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "resource_link",
+          "mimeType": "image/png",
+          "uri": "http://localhost:5000/public/images/logo.png",
+          "name": "test_link",
+          "title": "Test Link",
+          "description": "This is a test link."
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "resource",
+          "resource": {
+            "uri": "template:ntr_customer_en.json",
+            "mimeType": "application/json"
+          }
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "image",
+          "mimeType": "image/jpg",
+          "data": "SGVsbG8sIHdvcmxkIQ=="
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "audio",
+          "mimeType": "audio/mpeg",
+          "data": "SGVsbG8sIHdvcmxkIQ=="
+        },
+        "role": "user"
+      }
+    ]
+  }
+]

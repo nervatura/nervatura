@@ -53,7 +53,7 @@ type DataStore struct {
 	GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
 	NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
 	RequestDo              func(req *http.Request) (*http.Response, error)
-	CreateLoginToken       func(code, userName, database string, config cu.IM) (result string, err error)
+	CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 	ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 	CreatePasswordHash     func(password string) (hash string, err error)
 	ComparePasswordAndHash func(password string, hash string) (err error)
@@ -202,7 +202,7 @@ func (ds *DataStore) StoreDataGet(params cu.IM, foundErr bool) (result []cu.IM, 
 	if offset := cu.ToInteger(params["offset"], 0); offset > 0 {
 		query.Offset = offset
 	}
-	if !strings.Contains(query.From, "_") && !slices.Contains([]string{"log", "config"}, query.From) {
+	if !strings.Contains(query.From, "_") {
 		query.Filters = append(query.Filters, md.Filter{Field: "deleted", Comp: "==", Value: false})
 	}
 	if fields, found := params["fields"].([]string); found {
@@ -359,7 +359,7 @@ func (ds *DataStore) GetDataByID(model string, id int64, code string, foundErr b
 	if id == 0 && code != "" {
 		query.Filters = append(query.Filters, md.Filter{Field: "code", Comp: "==", Value: code})
 	}
-	if !strings.Contains(model, "_") && !slices.Contains([]string{"log", "config"}, model) {
+	if !strings.Contains(model, "_") {
 		query.Filters = append(query.Filters, md.Filter{Field: "deleted", Comp: "==", Value: false})
 	}
 	return ds.StoreDataQuery(query, foundErr)

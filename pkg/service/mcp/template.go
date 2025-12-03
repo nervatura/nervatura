@@ -18,22 +18,31 @@ var ntrCustomerEnResource = mcp.Resource{
 	URI:         "template:ntr_customer_en.json",
 }
 
-func templateResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
-	u, err := url.Parse(req.Params.URI)
-	if err != nil {
-		return nil, err
+func loadTemplate(uri string) (result *mcp.ResourceContents, err error) {
+	var u *url.URL
+	if u, err = url.Parse(uri); err == nil {
+		if u.Scheme != "template" {
+			return nil, fmt.Errorf("wrong scheme: %q", u.Scheme)
+		}
+		var file []byte
+		if file, err = st.Report.ReadFile(path.Join("template", u.Opaque)); err == nil {
+			result = &mcp.ResourceContents{
+				URI:      uri,
+				MIMEType: "application/json",
+				Text:     string(file),
+			}
+		}
 	}
-	if u.Scheme != "template" {
-		return nil, fmt.Errorf("wrong scheme: %q", u.Scheme)
+	return result, err
+}
+
+func templateResource(ctx context.Context, req *mcp.ReadResourceRequest) (result *mcp.ReadResourceResult, err error) {
+	result = &mcp.ReadResourceResult{
+		Contents: []*mcp.ResourceContents{},
 	}
-	key := u.Opaque
-	file, err := st.Report.ReadFile(path.Join("template", key))
-	if err != nil {
-		return nil, err
+	var content *mcp.ResourceContents
+	if content, err = loadTemplate(req.Params.URI); err == nil {
+		result.Contents = append(result.Contents, content)
 	}
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{URI: req.Params.URI, MIMEType: "application/json", Text: string(file)},
-		},
-	}, nil
+	return result, err
 }
