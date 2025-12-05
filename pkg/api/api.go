@@ -263,7 +263,7 @@ func (ds *DataStore) GetBodyData(modelName string, body io.ReadCloser, modelData
 
 // SetUpdateValue - default set update value function
 func (ds *DataStore) SetUpdateValue(
-	modelName string, inputData any, inputFields []string,
+	modelName string, item cu.IM, inputData any, inputFields []string,
 	setValue func(modelName string, values cu.IM, inputName string, fieldValue interface{}) cu.IM,
 ) (values cu.IM, err error) {
 	values = cu.IM{}
@@ -272,8 +272,16 @@ func (ds *DataStore) SetUpdateValue(
 		setValue = func(modelName string, values cu.IM, inputName string, fieldValue interface{}) cu.IM {
 			switch inputName {
 			case "id", "code", modelName + "_meta", "time_stamp":
-				// protected fields
-			case modelName + "_map", "addresses", "contacts", "events", "address", "contact", "data":
+			// protected fields
+			case modelName + "_map":
+				if mapValue, found := fieldValue.(cu.IM); found {
+					value := cu.MergeIM(cu.ToIM(item[inputName], cu.IM{}), mapValue)
+					jvalue, err := ds.ConvertToByte(value)
+					if err == nil {
+						values[inputName] = string(jvalue[:])
+					}
+				}
+			case "addresses", "contacts", "events", "address", "contact", "data":
 				// json fields
 				jvalue, err := ds.ConvertToByte(fieldValue)
 				if err == nil {
@@ -372,7 +380,7 @@ func (ds *DataStore) UpdateData(options md.UpdateDataOptions) (storeID int64, er
 	}
 
 	var values cu.IM
-	if values, err = ds.SetUpdateValue(options.Model, options.Data, options.Fields, options.SetValue); err == nil {
+	if values, err = ds.SetUpdateValue(options.Model, rows[0], options.Data, options.Fields, options.SetValue); err == nil {
 		if len(options.MetaFields) > 0 {
 			if values[options.Model+"_meta"], err = ds.MergeMetaData(options.Model, rows[0], options.Meta, options.MetaFields); err != nil {
 				return storeID, err

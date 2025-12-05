@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
 )
 
@@ -19,20 +21,29 @@ const (
 )
 
 type ModelSchema struct {
-	Name             string
-	Prefix           string
-	ResultType       func() any
-	ResultListType   func() any
-	InputSchema      func() (*jsonschema.Schema, error)
-	ParameterSchema  func() (*jsonschema.Schema, error)
-	ResultSchema     func() (*jsonschema.Schema, error)
-	ResultListSchema func() (*jsonschema.Schema, error)
-	SchemaModify     func(schemaType SchemaType, schema *jsonschema.Schema)
-	LoadData         func(data any) (modelData, metaData any, err error)
-	InsertValues     func(data any) (values cu.IM)
-	Examples         map[string][]any
-	PrimaryFields    []string
-	Required         []string
+	Name              string
+	Prefix            string
+	CreateInputSchema func(scope string) *jsonschema.Schema
+	UpdateInputSchema func(scope string) *jsonschema.Schema
+	QueryInputSchema  func(scope string) *jsonschema.Schema
+	QueryOutputSchema func(scope string) *jsonschema.Schema
+	LoadData          func(data any) (modelData, metaData any, err error)
+	LoadList          func(rows []cu.IM) (items any, err error)
+	Examples          map[string][]any
+	PrimaryFields     []string
+	Required          []string
+}
+
+type ModelExtendSchema struct {
+	Model             string
+	ViewName          cu.SM
+	ModelFromCode     func(code string) (model, field string, err error)
+	CreateInputSchema func(scope string) *jsonschema.Schema
+	UpdateInputSchema func(scope string) *jsonschema.Schema
+	QueryInputSchema  func(scope string) *jsonschema.Schema
+	QueryOutputSchema func(scope string) *jsonschema.Schema
+	LoadData          func(data any) (modelData any, err error)
+	LoadList          func(model string, rows []cu.IM) (items any, err error)
 }
 
 type UpdateResponseData struct {
@@ -44,78 +55,17 @@ type UpdateResponseData struct {
 func getSchemaMap() (schemaMap map[string]*ModelSchema) {
 	return map[string]*ModelSchema{
 		"customer": CustomerSchema(),
-		"product":  ProductSchema(),
 	}
 }
 
-func makeModelSchema(model string, schemaType SchemaType) (schema *jsonschema.Schema) {
-	schema = &jsonschema.Schema{}
-	var sm *ModelSchema = getSchemaMap()[model]
-	switch schemaType {
-
-	case SchemaTypeInput:
-		if inputType, err := sm.InputSchema(); err == nil {
-			schema = inputType
-		}
-		sm.SchemaModify(schemaType, schema)
-
-	case SchemaTypeParameter:
-		if parameterType, err := sm.ParameterSchema(); err == nil {
-			schema = parameterType
-		}
-		sm.SchemaModify(schemaType, schema)
-
-	case SchemaTypeResult:
-		if baseType, err := sm.ResultSchema(); err == nil {
-			schema = baseType
-		}
-		sm.SchemaModify(schemaType, schema)
-
-	case SchemaTypeResultList:
-		if listType, err := sm.ResultListSchema(); err == nil {
-			schema = listType
-		}
-		sm.SchemaModify(schemaType, schema.Items)
-
+func getExtendSchemaMap() (schemaMap map[string]*ModelExtendSchema) {
+	return map[string]*ModelExtendSchema{
+		"contact": ContactSchema(),
 	}
-
-	for property, examples := range sm.Examples {
-		if _, found := schema.Properties[property]; found {
-			schema.Properties[property].Examples = examples
-		}
-	}
-	return schema
-}
-
-func makeModelSchemaList(schemaType SchemaType) (schemaList []*jsonschema.Schema) {
-	schemaList = []*jsonschema.Schema{}
-	for _, model := range getModelNames(schemaType) {
-		schemaList = append(schemaList, makeModelSchema(model, schemaType))
-	}
-	return schemaList
-}
-
-func getModelNames(schemaType SchemaType) (models []string) {
-	models = []string{}
-	for model := range getSchemaMap() {
-		if schemaType == SchemaTypeInput ||
-			(schemaType != SchemaTypeInput && !slices.Contains([]string{"contact", "address", "event"}, model)) {
-			models = append(models, model)
-		}
-	}
-	return models
-}
-
-func getModelEnum(schemaType SchemaType) (models []any) {
-	models = []any{}
-	for _, model := range getModelNames(schemaType) {
-		models = append(models, model)
-	}
-	return models
 }
 
 func getModelSchemaByPrefix(prefix string) (ms *ModelSchema, err error) {
-	for _, model := range getModelNames(SchemaTypeResult) {
+	for model := range getSchemaMap() {
 		if prefix == getSchemaMap()[model].Prefix {
 			return getSchemaMap()[model], nil
 		}
@@ -123,7 +73,17 @@ func getModelSchemaByPrefix(prefix string) (ms *ModelSchema, err error) {
 	return nil, fmt.Errorf("invalid model prefix: %s", prefix)
 }
 
-func getSchemaData(data cu.IM, ms *ModelSchema) (modelData, metaData any, inputFields []string, metaFields []string, err error) {
+func getParamsMeta(req *mcp.CallToolRequest) (meta cu.IM) {
+	meta = cu.IM{}
+	for key, value := range req.Params.Meta {
+		if !strings.Contains(strings.ToLower(key), "token") {
+			meta[key] = value
+		}
+	}
+	return meta
+}
+
+func getSchemaData(data cu.IM, ms *ModelSchema, paramsMeta cu.IM) (modelData, metaData any, inputFields []string, metaFields []string, err error) {
 
 	inputFields = []string{}
 	metaFields = []string{}
@@ -141,6 +101,10 @@ func getSchemaData(data cu.IM, ms *ModelSchema) (modelData, metaData any, inputF
 	data[ms.Name+"_meta"] = modelMeta
 	if len(metaFields) > 0 {
 		inputFields = append(inputFields, ms.Name+"_meta")
+	}
+	if len(paramsMeta) > 0 {
+		inputFields = append(inputFields, ms.Name+"_map")
+		data[ms.Name+"_map"] = paramsMeta
 	}
 
 	if modelData, metaData, err = ms.LoadData(data); err == nil {

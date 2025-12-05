@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"slices"
 	"strings"
@@ -19,66 +20,142 @@ import (
 	"golang.org/x/time/rate"
 )
 
-func NewMCPServer(config cu.IM) (server *mcp.Server) {
+type McpServer struct {
+	scope  string
+	config cu.IM
+	appLog *slog.Logger
+	scopes []string
+}
+
+var scopeInstructions map[string]string = map[string]string{
+	"all":      "This scope is used for access to all models. It allows you to query, create, update and delete data for all models.",
+	"public":   "This scope is used for public access to the API. Additional endpoints: /mcp/customer, /mcp/all.",
+	"customer": "This tools are used for access to the customer data. It allows you to query, create, update and delete customers. Related tools: contact, address, event.",
+}
+
+var toolScopes map[string][]string = map[string][]string{
+	"public": {"nervatura_report_query"},
+	"customer": {
+		"nervatura_customer_create",
+		"nervatura_customer_update",
+		"nervatura_customer_query",
+		"nervatura_customer_delete",
+		"nervatura_contact_create",
+		"nervatura_contact_update",
+		"nervatura_contact_query",
+		"nervatura_contact_delete",
+		"nervatura_report_query",
+	},
+}
+
+var ToolMap map[string]func(server *mcp.Server, scope string) = map[string]func(server *mcp.Server, scope string){
+	"nervatura_customer_create": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, customerCreateTool(scope), customerCreateHandler)
+	},
+	"nervatura_customer_query": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, customerQueryTool(scope), modelQuery)
+	},
+	"nervatura_customer_update": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, customerUpdateTool(scope), modelUpdate)
+	},
+	"nervatura_customer_delete": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, deleteTool("nervatura_customer_delete", scope), modelDelete)
+	},
+	"nervatura_contact_create": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, contactCreateTool(scope), extendCreate)
+	},
+	"nervatura_contact_update": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, contactUpdateTool(scope), extendUpdate)
+	},
+	"nervatura_contact_query": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, contactQueryTool(scope), extendQuery)
+	},
+	"nervatura_contact_delete": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, deleteExtendTool("nervatura_contact_delete", scope), extendDelete)
+	},
+	"nervatura_report_query": func(server *mcp.Server, scope string) {
+		mcp.AddTool(server, reportQueryTool(scope), reportQueryHandler)
+	},
+}
+
+func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	opts := &mcp.ServerOptions{
-		Instructions: "Nervatura MCP Server",
+		Instructions: cu.ToString(scopeInstructions[scope], "Nervatura MCP Server"),
 		GetSessionID: cu.GetComponentID,
 	}
 	server = mcp.NewServer(&mcp.Implementation{
 		Name: "nervatura", Title: "Nervatura MCP Server",
-		Version: cu.ToString(config["version"], "0.0.0"),
+		Version: cu.ToString(ms.config["version"], "0.0.0"),
 	}, opts)
 
-	// Add tools that exercise different features of the protocol.
-	mcp.AddTool(server, &customerUpdateTool, modelUpdate)
-	mcp.AddTool(server, &customerQueryTool, modelQuery)
-	mcp.AddTool(server, &productUpdateTool, modelUpdate)
-	mcp.AddTool(server, &productQueryTool, modelQuery)
-
-	mcp.AddTool(server, &reportDataCodeTool, reportDataCode)
-
-	mcp.AddTool(server, &queryCodeTool, queryCode)
-	mcp.AddTool(server, &queryElicitingTool, queryEliciting)
-	mcp.AddTool(server, &queryParametersTool, queryParameters)
-	mcp.AddTool(server, &deleteCodeTool, deleteCode)
-
-	server.AddResource(&ntrCustomerEnResource, templateResource)
-
-	if prompts, ok := config["prompts"].(map[string]PromptData); ok {
-		for _, prompt := range prompts {
-			server.AddPrompt(&mcp.Prompt{
-				Name:        prompt.Name,
-				Title:       prompt.Title,
-				Description: prompt.Description,
-				Arguments:   prompt.Arguments,
-			}, promptHandler)
+	if scope == "all" {
+		for key := range ToolMap {
+			ToolMap[key](server, scope)
+		}
+	} else if tools, found := toolScopes[scope]; found {
+		for _, tool := range tools {
+			ToolMap[tool](server, scope)
 		}
 	}
 
-	server.AddReceivingMiddleware(receivingHandler)
-	server.AddSendingMiddleware(sendingHandler)
-	server.AddReceivingMiddleware(globalRateLimiterMiddleware(rate.NewLimiter(rate.Every(time.Second/5), 10)))
-	server.AddReceivingMiddleware(perSessionRateLimiterMiddleware(rate.Every(time.Second/5), 10))
-	server.AddReceivingMiddleware(perMethodRateLimiterMiddleware(map[string]*rate.Limiter{
+	server.AddResource(&ntrCustomerEnResource, templateResource)
+
+	if prompts, ok := ms.config["prompts"].(map[string]PromptData); ok {
+		for _, prompt := range prompts {
+			if slices.Contains(prompt.Scopes, scope) || scope == "all" {
+				server.AddPrompt(&mcp.Prompt{
+					Name:        prompt.Name,
+					Title:       prompt.Title,
+					Description: prompt.Description,
+					Arguments:   prompt.Arguments,
+				}, promptHandler)
+			}
+		}
+	}
+
+	server.AddReceivingMiddleware(ms.receivingHandler)
+	server.AddSendingMiddleware(ms.sendingHandler)
+	server.AddReceivingMiddleware(ms.globalRateLimiterMiddleware(rate.NewLimiter(rate.Every(time.Second/5), 10)))
+	server.AddReceivingMiddleware(ms.perSessionRateLimiterMiddleware(rate.Every(time.Second/5), 10))
+	server.AddReceivingMiddleware(ms.perMethodRateLimiterMiddleware(map[string]*rate.Limiter{
 		//"tools/call":  rate.NewLimiter(rate.Every(time.Second), 5),  // once a second with a burst up to 5
 		//"listTools": rate.NewLimiter(rate.Every(time.Minute), 10), // once a minute with a burst up to 20
 	}))
 	return server
 }
 
-func receivingHandler(next mcp.MethodHandler) mcp.MethodHandler {
+func (ms *McpServer) receivingHandler(next mcp.MethodHandler) mcp.MethodHandler {
 	return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 		extra := req.GetExtra()
-		result, err := next(ctx, method, req)
-		if method == "tools/call" &&
+		if method == "tools/call" && extra.TokenInfo != nil &&
 			slices.Contains(extra.TokenInfo.Scopes, md.UserGroupGuest.String()) {
 			return nil, errors.New(http.StatusText(http.StatusUnauthorized))
 		}
+
+		if extra.TokenInfo != nil {
+			for _, scope := range extra.TokenInfo.Scopes {
+				if slices.Contains(ms.scopes, scope) {
+					if !slices.Contains(extra.TokenInfo.Scopes, scope) {
+						return nil, errors.New(http.StatusText(http.StatusUnauthorized))
+					}
+				}
+			}
+		}
+
+		ms.config["MCP_SCOPE"] = ms.scope
+		alias := cu.ToString(ms.config["NT_DEFAULT_ALIAS"], "")
+		if extra.TokenInfo != nil {
+			alias = cu.ToString(extra.TokenInfo.Extra["alias"], alias)
+		}
+		ds := api.NewDataStore(ms.config, alias, ms.appLog)
+		ctx = context.WithValue(ctx, md.DataStoreCtxKey, ds)
+		ctx = context.WithValue(ctx, md.ConfigCtxKey, ms.config)
+		result, err := next(ctx, method, req)
 		return result, err
 	}
 }
 
-func sendingHandler(next mcp.MethodHandler) mcp.MethodHandler {
+func (ms *McpServer) sendingHandler(next mcp.MethodHandler) mcp.MethodHandler {
 	return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 		return next(ctx, method, req)
 	}
@@ -87,7 +164,7 @@ func sendingHandler(next mcp.MethodHandler) mcp.MethodHandler {
 // GlobalRateLimiterMiddleware creates a middleware that applies a global rate limit.
 // Every request attempting to pass through will try to acquire a token.
 // If a token cannot be acquired immediately, the request will be rejected.
-func globalRateLimiterMiddleware(limiter *rate.Limiter) mcp.Middleware {
+func (ms *McpServer) globalRateLimiterMiddleware(limiter *rate.Limiter) mcp.Middleware {
 	return func(next mcp.MethodHandler) mcp.MethodHandler {
 		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			if !limiter.Allow() {
@@ -101,7 +178,7 @@ func globalRateLimiterMiddleware(limiter *rate.Limiter) mcp.Middleware {
 // PerMethodRateLimiterMiddleware creates a middleware that applies rate limiting
 // on a per-method basis.
 // Methods not specified in limiters will not be rate limited by this middleware.
-func perMethodRateLimiterMiddleware(limiters map[string]*rate.Limiter) mcp.Middleware {
+func (ms *McpServer) perMethodRateLimiterMiddleware(limiters map[string]*rate.Limiter) mcp.Middleware {
 	return func(next mcp.MethodHandler) mcp.MethodHandler {
 		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			if limiter, ok := limiters[method]; ok {
@@ -116,7 +193,7 @@ func perMethodRateLimiterMiddleware(limiters map[string]*rate.Limiter) mcp.Middl
 
 // PerSessionRateLimiterMiddleware creates a middleware that applies rate limiting
 // on a per-session basis for receiving requests.
-func perSessionRateLimiterMiddleware(limit rate.Limit, burst int) mcp.Middleware {
+func (ms *McpServer) perSessionRateLimiterMiddleware(limit rate.Limit, burst int) mcp.Middleware {
 	// A map to store limiters, keyed by the session ID.
 	var (
 		sessionLimiters = make(map[string]*rate.Limiter)
@@ -151,9 +228,18 @@ func perSessionRateLimiterMiddleware(limit rate.Limit, burst int) mcp.Middleware
 	}
 }
 
-func GetServer(config cu.IM) func(*http.Request) *mcp.Server {
+func GetServer(scope string, config cu.IM, appLog *slog.Logger) func(*http.Request) *mcp.Server {
 	return func(req *http.Request) *mcp.Server {
-		return NewMCPServer(config)
+		ms := &McpServer{
+			scope:  scope,
+			config: config,
+			appLog: appLog,
+			scopes: []string{},
+		}
+		for key := range toolScopes {
+			ms.scopes = append(ms.scopes, key)
+		}
+		return ms.NewMCPServer(scope)
 	}
 }
 
@@ -166,14 +252,12 @@ func TokenAuth(opt md.AuthOptions) (*auth.TokenInfo, error) {
 		UserName:  "admin",
 	}
 	if slices.Contains(strings.Split(cu.ToString(opt.Config["NT_API_KEY"], ""), ","), opt.TokenString) {
-		ds := api.NewDataStore(opt.Config, alias, opt.AppLog)
 		return &auth.TokenInfo{
 			Scopes:     []string{md.UserGroupAdmin.String()}, // User permissions
 			Expiration: time.Now().Add(24 * time.Hour),       // 24 hour expiration
 			Extra: cu.IM{
-				"user":   user,
-				"config": opt.Config,
-				"ds":     ds,
+				"alias": alias,
+				"user":  user,
 			},
 		}, nil
 	}
@@ -194,30 +278,9 @@ func TokenAuth(opt md.AuthOptions) (*auth.TokenInfo, error) {
 		Scopes:     []string{user.UserGroup.String()},               // User permissions
 		Expiration: time.Unix(cu.ToInteger(tokenData["exp"], 0), 0), // Token expiration time
 		Extra: cu.IM{
-			"user":   user,
-			"token":  tokenData,
-			"config": opt.Config,
-			"ds":     ds,
+			"alias": alias,
+			"user":  user,
+			"token": tokenData,
 		},
 	}, nil
 }
-
-/*
-func greetingPrompt(ctx context.Context, req *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
-
-
-	return &mcp.GetPromptResult{
-		Description: "Hi prompt",
-		Messages: []*mcp.PromptMessage{
-			{
-				Role:    "user",
-				Content: &mcp.TextContent{Text: "Say hi to " + req.Params.Arguments["name"]},
-			},
-			{
-				Role:    "user",
-				Content: &mcp.ResourceLink{},
-			},
-		},
-	}, nil
-}
-*/

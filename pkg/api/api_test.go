@@ -885,6 +885,7 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 	}
 	type args struct {
 		modelName   string
+		item        cu.IM
 		inputData   any
 		inputFields []string
 		setValue    func(modelName string, values cu.IM, inputName string, fieldValue interface{}) cu.IM
@@ -917,7 +918,7 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 				Config: cu.IM{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertToByte: func(data interface{}) ([]byte, error) {
-					return []byte(`{"id": 1, "name": "test"}`), nil
+					return []byte(`{"id": 1, "name": "test", "customer_map": {"value2": "test"}}`), nil
 				},
 				GetDataField: func(data any, JSONName string) (fieldName string, fieldValue interface{}) {
 					return JSONName, data.(cu.IM)[JSONName]
@@ -936,9 +937,10 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 					"paid_date":     "2024-01-01",
 					"valid_from":    md.TimeDate{},
 					"default":       "value",
+					"customer_map":  cu.IM{"value1": "test"},
 				},
 				inputFields: []string{"code", "addresses", "customer_type", "barcode_type", "link_type_1",
-					"link_type_2", "shipping_time", "paid_date", "valid_from", "default"},
+					"link_type_2", "shipping_time", "paid_date", "valid_from", "default", "customer_map"},
 				setValue: nil,
 			},
 			wantErr: false,
@@ -980,7 +982,7 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
 				ComparePasswordAndHash: tt.fields.ComparePasswordAndHash,
 			}
-			_, err := ds.SetUpdateValue(tt.args.modelName, tt.args.inputData, tt.args.inputFields, tt.args.setValue)
+			_, err := ds.SetUpdateValue(tt.args.modelName, tt.args.item, tt.args.inputData, tt.args.inputFields, tt.args.setValue)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DataStore.SetUpdateValue() error = %v, wantErr %v", err, tt.wantErr)
 				return

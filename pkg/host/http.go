@@ -18,7 +18,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/modelcontextprotocol/go-sdk/auth"
-	mcp "github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cst "github.com/nervatura/component/pkg/static"
 	cu "github.com/nervatura/component/pkg/util"
 	docs "github.com/nervatura/nervatura/v6/docs6"
@@ -153,9 +153,10 @@ func (s *httpServer) setRoutes() {
 
 	if cu.ToBoolean(s.config["NT_MCP_ENABLED"], false) {
 		s.appLog.Info("MCP server enabled")
-		s.loadPrompts()
-		mcpHandler := mcp.NewStreamableHTTPHandler(msrv.GetServer(s.config), &mcp.StreamableHTTPOptions{})
-		s.mux.Handle("/mcp", s.headerMcp(mcpHandler))
+		//s.loadPrompts()
+		//mcpHandler := mcp.NewStreamableHTTPHandler(msrv.GetServer(s.config, msrv.ResourceTools), &mcp.StreamableHTTPOptions{})
+		//s.mux.Handle("/mcp/", s.mcpRoutes())
+		s.mcpRoutes()
 	}
 
 	// Register static dirs.
@@ -221,7 +222,7 @@ func (s *httpServer) mcpVerify(ctx context.Context, token string, req *http.Requ
 	})
 }
 
-func (s *httpServer) headerMcp(next http.Handler) http.Handler {
+func (s *httpServer) headerMcpToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		jwtAuth := auth.RequireBearerToken(s.mcpVerify,
 			&auth.RequireBearerTokenOptions{Scopes: []string{}})
@@ -305,6 +306,17 @@ func (s *httpServer) oauthRoutes() http.Handler {
 	oauthMux.HandleFunc("POST /registration", srv.OAuthRegistration)
 	oauthMux.HandleFunc("GET /callback", srv.OAuthCallback)
 	return http.StripPrefix("/oauth", oauthMux)
+}
+
+func (s *httpServer) mcpRoutes() {
+	opt := &mcp.StreamableHTTPOptions{}
+	s.loadPrompts()
+	publicTools := mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog), opt)
+	s.mux.Handle("/mcp", publicTools)
+	resourceTools := mcp.NewStreamableHTTPHandler(msrv.GetServer("customer", s.config, s.appLog), opt)
+	s.mux.Handle("/mcp/customer", s.headerMcpToken(resourceTools))
+	allTools := mcp.NewStreamableHTTPHandler(msrv.GetServer("all", s.config, s.appLog), opt)
+	s.mux.Handle("/mcp/all", s.headerMcpToken(allTools))
 }
 
 func (s *httpServer) apiRoutes() http.Handler {

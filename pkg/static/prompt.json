@@ -3,6 +3,7 @@
     "name": "test_prompt",
     "title": "Test Prompt",
     "description": "This is a test prompt.",
+    "scopes": ["customer"],
     "arguments": [
       {
         "name": "name",

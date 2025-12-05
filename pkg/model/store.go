@@ -18,17 +18,17 @@ type Address struct {
 }
 
 type Contact struct {
-	FirstName string `json:"first_name"`
-	Surname   string `json:"surname"`
-	Status    string `json:"status"`
-	Phone     string `json:"phone"`
-	Mobile    string `json:"mobile"`
-	Email     string `json:"email"`
-	Notes     string `json:"notes"`
+	FirstName string `json:"first_name" jsonschema:"First name."`
+	Surname   string `json:"surname" jsonschema:"Surname."`
+	Status    string `json:"status" jsonschema:"Status."`
+	Phone     string `json:"phone" jsonschema:"Phone."`
+	Mobile    string `json:"mobile" jsonschema:"Mobile."`
+	Email     string `json:"email" jsonschema:"Email."`
+	Notes     string `json:"notes" jsonschema:"Notes."`
 	// Additional tags for the contact
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the contact. The value is an array of strings."`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	ContactMap cu.IM `json:"contact_map"`
+	ContactMap cu.IM `json:"contact_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
 type Event struct {
