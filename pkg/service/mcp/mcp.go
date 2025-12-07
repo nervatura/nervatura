@@ -27,60 +27,11 @@ type McpServer struct {
 	scopes []string
 }
 
-var scopeInstructions map[string]string = map[string]string{
-	"all":      "This scope is used for access to all models. It allows you to query, create, update and delete data for all models.",
-	"public":   "This scope is used for public access to the API. Additional endpoints: /mcp/customer, /mcp/all.",
-	"customer": "This tools are used for access to the customer data. It allows you to query, create, update and delete customers. Related tools: contact, address, event.",
-}
-
-var toolScopes map[string][]string = map[string][]string{
-	"public": {"nervatura_report_query"},
-	"customer": {
-		"nervatura_customer_create",
-		"nervatura_customer_update",
-		"nervatura_customer_query",
-		"nervatura_customer_delete",
-		"nervatura_contact_create",
-		"nervatura_contact_update",
-		"nervatura_contact_query",
-		"nervatura_contact_delete",
-		"nervatura_report_query",
-	},
-}
-
-var ToolMap map[string]func(server *mcp.Server, scope string) = map[string]func(server *mcp.Server, scope string){
-	"nervatura_customer_create": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, customerCreateTool(scope), customerCreateHandler)
-	},
-	"nervatura_customer_query": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, customerQueryTool(scope), modelQuery)
-	},
-	"nervatura_customer_update": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, customerUpdateTool(scope), modelUpdate)
-	},
-	"nervatura_customer_delete": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, deleteTool("nervatura_customer_delete", scope), modelDelete)
-	},
-	"nervatura_contact_create": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, contactCreateTool(scope), extendCreate)
-	},
-	"nervatura_contact_update": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, contactUpdateTool(scope), extendUpdate)
-	},
-	"nervatura_contact_query": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, contactQueryTool(scope), extendQuery)
-	},
-	"nervatura_contact_delete": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, deleteExtendTool("nervatura_contact_delete", scope), extendDelete)
-	},
-	"nervatura_report_query": func(server *mcp.Server, scope string) {
-		mcp.AddTool(server, reportQueryTool(scope), reportQueryHandler)
-	},
-}
+var toolDataMap map[string]ToolData = map[string]ToolData{}
 
 func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	opts := &mcp.ServerOptions{
-		Instructions: cu.ToString(scopeInstructions[scope], "Nervatura MCP Server"),
+		Instructions: cu.ToString(ScopeInstruction[scope], ScopeInstruction["root"]),
 		GetSessionID: cu.GetComponentID,
 	}
 	server = mcp.NewServer(&mcp.Implementation{
@@ -88,21 +39,29 @@ func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 		Version: cu.ToString(ms.config["version"], "0.0.0"),
 	}, opts)
 
-	if scope == "all" {
-		for key := range ToolMap {
-			ToolMap[key](server, scope)
-		}
-	} else if tools, found := toolScopes[scope]; found {
-		for _, tool := range tools {
-			ToolMap[tool](server, scope)
+	for key, td := range toolDataMap {
+		if slices.Contains(td.Scopes, scope) || len(td.Scopes) == 0 || scope == "all" {
+			addTool(key, server, scope)
 		}
 	}
 
-	server.AddResource(&ntrCustomerEnResource, templateResource)
+	if resources, ok := ms.config["resources"].(map[string]ResourceData); ok {
+		for _, resource := range resources {
+			if slices.Contains(resource.Scopes, scope) || len(resource.Scopes) == 0 || scope == "all" {
+				server.AddResource(&mcp.Resource{
+					Name:        resource.Name,
+					Title:       resource.Title,
+					Description: resource.Description,
+					MIMEType:    resource.MIMEType,
+					URI:         resource.URI,
+				}, resourceHandler)
+			}
+		}
+	}
 
 	if prompts, ok := ms.config["prompts"].(map[string]PromptData); ok {
 		for _, prompt := range prompts {
-			if slices.Contains(prompt.Scopes, scope) || scope == "all" {
+			if slices.Contains(prompt.Scopes, scope) || len(prompt.Scopes) == 0 || scope == "all" {
 				server.AddPrompt(&mcp.Prompt{
 					Name:        prompt.Name,
 					Title:       prompt.Title,
@@ -135,7 +94,7 @@ func (ms *McpServer) receivingHandler(next mcp.MethodHandler) mcp.MethodHandler 
 		if extra.TokenInfo != nil {
 			for _, scope := range extra.TokenInfo.Scopes {
 				if slices.Contains(ms.scopes, scope) {
-					if !slices.Contains(extra.TokenInfo.Scopes, scope) {
+					if !slices.Contains(extra.TokenInfo.Scopes, ms.scope) {
 						return nil, errors.New(http.StatusText(http.StatusUnauthorized))
 					}
 				}
@@ -236,7 +195,7 @@ func GetServer(scope string, config cu.IM, appLog *slog.Logger) func(*http.Reque
 			appLog: appLog,
 			scopes: []string{},
 		}
-		for key := range toolScopes {
+		for key := range ScopeInstruction {
 			ms.scopes = append(ms.scopes, key)
 		}
 		return ms.NewMCPServer(scope)

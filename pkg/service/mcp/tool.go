@@ -14,15 +14,62 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
+type ToolData struct {
+	mcp.Tool
+	Extend            bool
+	ModelSchema       *ModelSchema
+	ModelExtendSchema *ModelExtendSchema
+	ConnectHandler    func(server *mcp.Server, tool *mcp.Tool)
+	Scopes            []string
+}
+
+func addTool(toolName string, server *mcp.Server, scope string) {
+	if mt, found := toolDataMap[toolName]; found {
+		stool := &mcp.Tool{
+			Name:        mt.Name,
+			Title:       mt.Title,
+			Description: strings.ReplaceAll(mt.Description, "%s", scope),
+		}
+		if strings.HasSuffix(toolName, "_query") {
+			if toolDataMap[toolName].Extend {
+				stool.InputSchema = mt.ModelExtendSchema.QueryInputSchema(scope)
+				stool.OutputSchema = mt.ModelExtendSchema.QueryOutputSchema(scope)
+			} else {
+				stool.InputSchema = mt.ModelSchema.QueryInputSchema(scope)
+				stool.OutputSchema = mt.ModelSchema.QueryOutputSchema(scope)
+			}
+		}
+		if strings.HasSuffix(toolName, "_update") {
+			if toolDataMap[toolName].Extend {
+				stool.InputSchema = mt.ModelExtendSchema.UpdateInputSchema(scope)
+			} else {
+				stool.InputSchema = mt.ModelSchema.UpdateInputSchema(scope)
+			}
+		}
+		if strings.HasSuffix(toolName, "_create") {
+			if toolDataMap[toolName].Extend {
+				stool.InputSchema = mt.ModelExtendSchema.CreateInputSchema(scope)
+			} else {
+				stool.InputSchema = mt.ModelSchema.CreateInputSchema(scope)
+			}
+		}
+		if strings.HasSuffix(toolName, "_delete") {
+			stool.InputSchema = mt.Tool.InputSchema
+			stool.OutputSchema = mt.Tool.OutputSchema
+		}
+		mt.ConnectHandler(server, stool)
+	}
+}
+
 func modelQuery(ctx context.Context, req *mcp.CallToolRequest, parameters cu.IM) (result *mcp.CallToolResult, response any, err error) {
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
 
-	model := strings.TrimSuffix(strings.TrimPrefix(req.Params.Name, "nervatura_"), "_query")
-	var ms *ModelSchema
+	var mt ToolData
 	var found bool
-	if ms, found = getSchemaMap()[model]; !found {
-		return nil, nil, fmt.Errorf("invalid model: %s", model)
+	if mt, found = toolDataMap[req.Params.Name]; !found {
+		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
+	var ms *ModelSchema = mt.ModelSchema
 
 	var params cu.IM = cu.IM{
 		"fields": []string{"*"},
@@ -59,14 +106,15 @@ func modelUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM)
 	if code == "" {
 		return nil, UpdateResponseData{}, fmt.Errorf("code is required")
 	}
-	model := strings.TrimSuffix(strings.TrimPrefix(req.Params.Name, "nervatura_"), "_update")
-	var ms *ModelSchema
-	var found bool
-	if ms, found = getSchemaMap()[model]; !found {
-		return nil, UpdateResponseData{}, fmt.Errorf("invalid model: %s", model)
-	}
 
-	if modelData, metaData, inputFields, metaFields, err = getSchemaData(inputData, ms, getParamsMeta(req)); err == nil {
+	var mt ToolData
+	var found bool
+	if mt, found = toolDataMap[req.Params.Name]; !found {
+		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
+	}
+	var ms *ModelSchema = mt.ModelSchema
+
+	if modelData, metaData, inputFields, metaFields, err = getSchemaData(inputData, ms); err == nil {
 		updateID, err = ds.UpdateData(md.UpdateDataOptions{
 			Model: ms.Name, IDKey: 0, Code: code,
 			Data: modelData, Meta: metaData, Fields: inputFields, MetaFields: metaFields,
@@ -85,12 +133,12 @@ func extendQuery(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM)
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
 	baseModel := cu.ToString(inputData["model"], "")
 
-	model := strings.TrimSuffix(strings.TrimPrefix(req.Params.Name, "nervatura_"), "_query")
-	var ms *ModelExtendSchema
+	var mt ToolData
 	var found bool
-	if ms, found = getExtendSchemaMap()[model]; !found {
-		return nil, nil, fmt.Errorf("invalid model: %s", model)
+	if mt, found = toolDataMap[req.Params.Name]; !found {
+		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
+	var ms *ModelExtendSchema = mt.ModelExtendSchema
 
 	var params cu.IM = cu.IM{
 		"fields": []string{"*"},
@@ -125,12 +173,12 @@ func extendUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 		return nil, UpdateResponseData{}, fmt.Errorf("code is required")
 	}
 
-	model := strings.TrimSuffix(strings.TrimPrefix(req.Params.Name, "nervatura_"), "_update")
-	var ms *ModelExtendSchema
+	var mt ToolData
 	var found bool
-	if ms, found = getExtendSchemaMap()[model]; !found {
-		return nil, UpdateResponseData{}, fmt.Errorf("invalid model: %s", model)
+	if mt, found = toolDataMap[req.Params.Name]; !found {
+		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
+	var ms *ModelExtendSchema = mt.ModelExtendSchema
 
 	var baseModel, fieldName string
 	if baseModel, fieldName, err = ms.ModelFromCode(code); err != nil {
@@ -152,9 +200,14 @@ func extendUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 			fieldValues[index][field] = value
 		}
 	}
-	mapValues := getParamsMeta(req)
+	mapValues := cu.ToIM(inputData[ms.Model+"_map"], cu.IM{})
+	/*
+		if len(mapValues) == 0 {
+			mapValues = getParamsMeta(req)
+		}
+	*/
 	if len(mapValues) > 0 {
-		fieldValues[index][model+"_map"] = cu.MergeIM(cu.ToIM(fieldValues[index][model+"_map"], cu.IM{}), mapValues)
+		fieldValues[index][ms.Model+"_map"] = cu.MergeIM(cu.ToIM(fieldValues[index][ms.Model+"_map"], cu.IM{}), mapValues)
 	}
 	var modelData any
 	if modelData, err = ms.LoadData(fieldValues); err != nil {
@@ -179,12 +232,12 @@ func extendCreate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 		return nil, UpdateResponseData{}, fmt.Errorf("code is required")
 	}
 
-	model := strings.TrimSuffix(strings.TrimPrefix(req.Params.Name, "nervatura_"), "_create")
-	var ms *ModelExtendSchema
+	var mt ToolData
 	var found bool
-	if ms, found = getExtendSchemaMap()[model]; !found {
-		return nil, UpdateResponseData{}, fmt.Errorf("invalid model: %s", model)
+	if mt, found = toolDataMap[req.Params.Name]; !found {
+		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
+	var ms *ModelExtendSchema = mt.ModelExtendSchema
 
 	var baseModel, fieldName string
 	if baseModel, fieldName, err = ms.ModelFromCode(code); err != nil {
@@ -202,7 +255,13 @@ func extendCreate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 	if _, found := inputData["tags"]; !found {
 		inputData["tags"] = []string{}
 	}
-	inputData[model+"_map"] = getParamsMeta(req)
+	modelMap := cu.ToIM(inputData[ms.Model+"_map"], cu.IM{})
+	/*
+		if len(modelMap) == 0 {
+			modelMap = getParamsMeta(req)
+		}
+	*/
+	inputData[ms.Model+"_map"] = modelMap
 	fieldValues = append(fieldValues, inputData)
 
 	var modelData any

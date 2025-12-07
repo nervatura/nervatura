@@ -1,0 +1,18 @@
+[
+  {
+    "name": "mcp_readme",
+    "title": "Nervatura MCP README.md",
+    "description": "Nervatura MCP README.md file. This file contains information on how to use the MCP tools, resources and prompts.",
+    "mimeType": "text/markdown",
+    "uri": "mcp:README.md",
+    "scopes": []
+  },
+  {
+    "name": "ntr_customer_en",
+    "title": "Customer Sheet",
+    "description": "Customer Information Sheet in English",
+    "mimeType": "application/json",
+    "uri": "template:ntr_customer_en.json",
+    "scopes": ["customer"]
+  }
+]

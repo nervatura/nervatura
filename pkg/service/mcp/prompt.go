@@ -55,7 +55,8 @@ func promptHandler(ctx context.Context, req *mcp.GetPromptRequest) (result *mcp.
 					})
 				case *mcp.EmbeddedResource:
 					var content *mcp.ResourceContents
-					if content, err = loadTemplate(message.Content.(*mcp.EmbeddedResource).Resource.URI); err == nil {
+					var uri string = message.Content.(*mcp.EmbeddedResource).Resource.URI
+					if content, err = getResourceContent(ctx, uri); err == nil {
 						result.Messages = append(result.Messages, &mcp.PromptMessage{
 							Role:    message.Role,
 							Content: &mcp.EmbeddedResource{Resource: content},

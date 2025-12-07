@@ -21,6 +21,14 @@ func JSONString(value []byte) string {
 	*/
 }
 
+type ZipCode string
+
+func (z *ZipCode) UnmarshalJSON(b []byte) error {
+	s := JSONString(b)
+	*z = ZipCode(s)
+	return nil
+}
+
 type TimeDate struct {
 	time.Time
 }

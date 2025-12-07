@@ -14,51 +14,65 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func reportQueryTool(scope string) (tool *mcp.Tool) {
-	if scope == "all" || scope == "public" {
-		scope = ""
-	}
-	return &mcp.Tool{
-		Name:        "nervatura_report_query",
-		Title:       fmt.Sprintf("Get a %s PDF report or XML data by parameters", scope),
-		Description: fmt.Sprintf("Get a %s PDF report or XML data by parameters. The result is the report data in the selected output format.", scope),
-		InputSchema: &jsonschema.Schema{
-			Type: "object",
-			Properties: map[string]*jsonschema.Schema{
-				"code": {Type: "string", MinLength: ut.AnyPointer(12),
-					Description: "The unique key of the result model data. Required. Example: CUS1731101982N123",
-					Examples:    []any{`CUS1731101982N123`, `PRD1731101982N123`}},
-				"report_key": {Type: "string",
-					Description: fmt.Sprintf("The unique key of the %s report template. If not specified, the default report template will be used. Example: ntr_invoice_en", scope),
-					Examples:    []any{`ntr_invoice_en`, `ntr_customer_en`}},
-				"output": {Type: "string", Enum: []any{"base64", "xml", "pdf"},
-					Description: "The output format",
-					Examples:    []any{`base64`, `xml`, `pdf`},
-					Default:     []byte(`"base64"`)},
-				"orientation": {Type: "string", Enum: []any{"p", "l"},
-					Description: "The orientation of the report",
-					Examples:    []any{`p`, `l`},
-					Default:     []byte(`"p"`)},
-				"size": {Type: "string", Enum: []any{"a3", "a4", "a5", "letter", "legal"},
-					Description: "The size of the report",
-					Examples:    []any{`a3`, `a4`, `a5`, `letter`, `legal`},
-					Default:     []byte(`"a4"`)},
-			},
-			Required: []string{"report_key"},
+func init() {
+	toolDataMap["nervatura_report_query"] = ToolData{
+		Tool: mcp.Tool{
+			Name:        "nervatura_report_query",
+			Title:       "Get a PDF report or XML data by parameters",
+			Description: "Get a %s PDF report or XML data by parameters. The result is the report data in the selected output format.",
 		},
-		OutputSchema: &jsonschema.Schema{
-			Type: "object",
-			Properties: map[string]*jsonschema.Schema{
-				"content_type": {Type: "string",
-					Description: "The content type of the report",
-					Examples:    []any{`application/pdf`, `application/xml`, `text/csv`},
-					Default:     []byte(`"application/pdf"`),
+		ModelSchema: ReportSchema(),
+		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
+			mcp.AddTool(server, tool, reportQueryHandler)
+		},
+		Scopes: []string{"customer"},
+	}
+}
+
+func ReportSchema() (ms *ModelSchema) {
+	return &ModelSchema{
+		Name: "report",
+		QueryInputSchema: func(scope string) (schema *jsonschema.Schema) {
+			return &jsonschema.Schema{
+				Type: "object",
+				Properties: map[string]*jsonschema.Schema{
+					"code": {Type: "string", MinLength: ut.AnyPointer(12),
+						Description: "The unique key of the result model data. Required. Example: CUS1731101982N123",
+						Examples:    []any{`CUS1731101982N123`, `PRD1731101982N123`}},
+					"report_key": {Type: "string",
+						Description: fmt.Sprintf("The unique key of the %s report template. If not specified, the default report template will be used. Example: ntr_invoice_en", scope),
+						Examples:    []any{`ntr_invoice_en`, `ntr_customer_en`}},
+					"output": {Type: "string", Enum: []any{"base64", "xml", "pdf"},
+						Description: "The output format",
+						Examples:    []any{`base64`, `xml`, `pdf`},
+						Default:     []byte(`"base64"`)},
+					"orientation": {Type: "string", Enum: []any{"p", "l"},
+						Description: "The orientation of the report",
+						Examples:    []any{`p`, `l`},
+						Default:     []byte(`"p"`)},
+					"size": {Type: "string", Enum: []any{"a3", "a4", "a5", "letter", "legal"},
+						Description: "The size of the report",
+						Examples:    []any{`a3`, `a4`, `a5`, `letter`, `legal`},
+						Default:     []byte(`"a4"`)},
 				},
-				"data": {Type: "string",
-					Description: "The report data in the selected output format",
-					Examples:    []any{`iVBORw0KGgoAAAANSUhEUgAA...`},
+				Required: []string{"code"},
+			}
+		},
+		QueryOutputSchema: func(scope string) (schema *jsonschema.Schema) {
+			return &jsonschema.Schema{
+				Type: "object",
+				Properties: map[string]*jsonschema.Schema{
+					"content_type": {Type: "string",
+						Description: "The content type of the report",
+						Examples:    []any{`application/pdf`, `application/xml`, `text/csv`},
+						Default:     []byte(`"application/pdf"`),
+					},
+					"data": {Type: "string",
+						Description: "The report data in the selected output format",
+						Examples:    []any{`iVBORw0KGgoAAAANSUhEUgAA...`},
+					},
 				},
-			},
+			}
 		},
 	}
 }

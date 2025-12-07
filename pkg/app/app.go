@@ -220,8 +220,14 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_MCP_ENABLED"] = cu.ToBoolean(args["NT_MCP_ENABLED"], cu.ToBoolean(app.getEnv("NT_MCP_ENABLED"), cu.ToBoolean(st.DefaultConfig["mcp"]["enabled"], true)))
 	app.config["NT_MCP_PROMPT"] = cu.ToString(args["NT_MCP_PROMPT"], app.getEnv("NT_MCP_PROMPT"))
 	if cu.ToString(app.config["NT_MCP_PROMPT"], "") == "" {
-		if _, err := app.stat(dataDir + "/prompt.json"); err == nil {
-			app.config["NT_MCP_PROMPT"] = dataDir + "/prompt.json"
+		if _, err := app.stat(dataDir + "/mcp/prompt.json"); err == nil {
+			app.config["NT_MCP_PROMPT"] = dataDir + "/mcp/prompt.json"
+		}
+	}
+	app.config["NT_MCP_RESOURCE"] = cu.ToString(args["NT_MCP_RESOURCE"], app.getEnv("NT_MCP_RESOURCE"))
+	if cu.ToString(app.config["NT_MCP_RESOURCE"], "") == "" {
+		if _, err := app.stat(dataDir + "/mcp/resource.json"); err == nil {
+			app.config["NT_MCP_RESOURCE"] = dataDir + "/mcp/resource.json"
 		}
 	}
 

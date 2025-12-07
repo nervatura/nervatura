@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -14,14 +13,11 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func deleteTool(name, scope string) (tool *mcp.Tool) {
-	if scope == "all" || scope == "public" {
-		scope = ""
-	}
-	return &mcp.Tool{
+func createDeleteTool(name, model string) (tool mcp.Tool) {
+	return mcp.Tool{
 		Name:        name,
-		Title:       fmt.Sprintf("Delete %s data by code", name),
-		Description: fmt.Sprintf("Delete data by %s model code. It returns the success of the operation or an error message.", scope),
+		Title:       fmt.Sprintf("Delete %s data by code", model),
+		Description: fmt.Sprintf("Delete data by %s model code. It returns the success of the operation or an error message.", model),
 		InputSchema: &jsonschema.Schema{
 			Type: "object",
 			Properties: map[string]*jsonschema.Schema{
@@ -40,14 +36,11 @@ func deleteTool(name, scope string) (tool *mcp.Tool) {
 	}
 }
 
-func deleteExtendTool(name, scope string) (tool *mcp.Tool) {
-	if scope == "all" || scope == "public" {
-		scope = ""
-	}
-	return &mcp.Tool{
+func createExtendDeleteTool(name, model string) (tool mcp.Tool) {
+	return mcp.Tool{
 		Name:        name,
-		Title:       fmt.Sprintf("Delete %s data by code", name),
-		Description: fmt.Sprintf("Delete data by %s model code. It returns the success of the operation or an error message.", scope),
+		Title:       fmt.Sprintf("Delete %s data by code", model),
+		Description: fmt.Sprintf("Delete data by %s model code. It returns the success of the operation or an error message.", model),
 		InputSchema: &jsonschema.Schema{
 			Type: "object",
 			Properties: map[string]*jsonschema.Schema{
@@ -110,12 +103,12 @@ func extendDelete(ctx context.Context, req *mcp.CallToolRequest, inputData map[s
 	code := cu.ToString(inputData["code"], "???")
 	index := int(cu.ToInteger(inputData["index"], 0))
 
-	model := strings.TrimSuffix(strings.TrimPrefix(req.Params.Name, "nervatura_"), "_delete")
-	var ms *ModelExtendSchema
+	var mt ToolData
 	var found bool
-	if ms, found = getExtendSchemaMap()[model]; !found {
-		return nil, UpdateResponseData{}, fmt.Errorf("invalid model: %s", model)
+	if mt, found = toolDataMap[req.Params.Name]; !found {
+		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
+	var ms *ModelExtendSchema = mt.ModelExtendSchema
 
 	var baseModel, fieldName string
 	if baseModel, fieldName, err = ms.ModelFromCode(code); err != nil {

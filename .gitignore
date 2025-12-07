@@ -101,6 +101,7 @@ data/test/*.pdf
 data/test/*.xml
 data/test/*.txt
 data/prompt.json
+data/resource.json
 service/data/session
 service/data/session.db
 demo*.db

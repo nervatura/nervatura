@@ -8,7 +8,7 @@ var Public embed.FS
 //go:embed store/mysql store/postgres store/sqlite upgrade/mysql upgrade/postgres upgrade/sqlite
 var Store embed.FS
 
-//go:embed message.json prompt.json
+//go:embed message.json template mcp
 var Static embed.FS
 
 //go:embed template

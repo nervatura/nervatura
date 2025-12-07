@@ -5,12 +5,12 @@ import (
 )
 
 type Address struct {
-	Country string `json:"country"`
-	State   string `json:"state"`
-	ZipCode string `json:"zip_code"`
-	City    string `json:"city"`
-	Street  string `json:"street"`
-	Notes   string `json:"notes"`
+	Country string  `json:"country"`
+	State   string  `json:"state"`
+	ZipCode ZipCode `json:"zip_code"`
+	City    string  `json:"city"`
+	Street  string  `json:"street"`
+	Notes   string  `json:"notes"`
 	// Additional tags for the address
 	Tags []string `json:"tags"`
 	// Flexible key-value map for additional metadata. The value is any json type.

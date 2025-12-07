@@ -2,12 +2,9 @@ package mcp
 
 import (
 	"errors"
-	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/google/jsonschema-go/jsonschema"
-	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
 )
 
@@ -19,6 +16,13 @@ const (
 	SchemaTypeResult
 	SchemaTypeResultList
 )
+
+type ModelSchemaInterface interface {
+	CreateInputSchema(scope string) *jsonschema.Schema
+	UpdateInputSchema(scope string) *jsonschema.Schema
+	QueryInputSchema(scope string) *jsonschema.Schema
+	QueryOutputSchema(scope string) *jsonschema.Schema
+}
 
 type ModelSchema struct {
 	Name              string
@@ -52,38 +56,16 @@ type UpdateResponseData struct {
 	ID    int64  `json:"id" jsonschema:"The database primary key of the model data."`
 }
 
-func getSchemaMap() (schemaMap map[string]*ModelSchema) {
-	return map[string]*ModelSchema{
-		"customer": CustomerSchema(),
-	}
-}
-
-func getExtendSchemaMap() (schemaMap map[string]*ModelExtendSchema) {
-	return map[string]*ModelExtendSchema{
-		"contact": ContactSchema(),
-	}
-}
-
 func getModelSchemaByPrefix(prefix string) (ms *ModelSchema, err error) {
-	for model := range getSchemaMap() {
-		if prefix == getSchemaMap()[model].Prefix {
-			return getSchemaMap()[model], nil
+	for _, td := range toolDataMap {
+		if !td.Extend && td.ModelSchema != nil && prefix == td.ModelSchema.Prefix {
+			return td.ModelSchema, nil
 		}
 	}
-	return nil, fmt.Errorf("invalid model prefix: %s", prefix)
+	return nil, errors.New("invalid model prefix: " + prefix)
 }
 
-func getParamsMeta(req *mcp.CallToolRequest) (meta cu.IM) {
-	meta = cu.IM{}
-	for key, value := range req.Params.Meta {
-		if !strings.Contains(strings.ToLower(key), "token") {
-			meta[key] = value
-		}
-	}
-	return meta
-}
-
-func getSchemaData(data cu.IM, ms *ModelSchema, paramsMeta cu.IM) (modelData, metaData any, inputFields []string, metaFields []string, err error) {
+func getSchemaData(data cu.IM, ms *ModelSchema) (modelData, metaData any, inputFields []string, metaFields []string, err error) {
 
 	inputFields = []string{}
 	metaFields = []string{}
@@ -102,10 +84,12 @@ func getSchemaData(data cu.IM, ms *ModelSchema, paramsMeta cu.IM) (modelData, me
 	if len(metaFields) > 0 {
 		inputFields = append(inputFields, ms.Name+"_meta")
 	}
-	if len(paramsMeta) > 0 {
-		inputFields = append(inputFields, ms.Name+"_map")
-		data[ms.Name+"_map"] = paramsMeta
-	}
+	/*
+		if len(paramsMeta) > 0 {
+			inputFields = append(inputFields, ms.Name+"_map")
+			data[ms.Name+"_map"] = paramsMeta
+		}
+	*/
 
 	if modelData, metaData, err = ms.LoadData(data); err == nil {
 		if cu.ToString(data["code"], "") == "" {

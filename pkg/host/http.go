@@ -116,7 +116,7 @@ func (s *httpServer) loadPrompts() {
 			}
 			s.appLog.Error("error loading prompts file", "error", err)
 		}
-		if jsonPrompts, err = s.StaticReadFile("prompt.json"); err != nil {
+		if jsonPrompts, err = s.StaticReadFile("mcp/prompt.json"); err != nil {
 			s.appLog.Error("error loading resource prompts", "error", err)
 		}
 		return jsonPrompts, err
@@ -130,6 +130,33 @@ func (s *httpServer) loadPrompts() {
 		}
 	}
 	s.config["prompts"] = promptMap
+}
+
+func (s *httpServer) loadResources() {
+	var resources []msrv.ResourceData = []msrv.ResourceData{}
+	resourceMap := make(map[string]msrv.ResourceData)
+	var err error
+	loadResourceFile := func() (jsonResources []byte, err error) {
+		if cu.ToString(s.config["NT_MCP_RESOURCE"], "") != "" {
+			if jsonResources, err = s.ReadFile(cu.ToString(s.config["NT_MCP_RESOURCE"], "")); err == nil {
+				return jsonResources, nil
+			}
+			s.appLog.Error("error loading resources file", "error", err)
+		}
+		if jsonResources, err = s.StaticReadFile("mcp/resource.json"); err != nil {
+			s.appLog.Error("error loading resource prompts", "error", err)
+		}
+		return jsonResources, err
+	}
+	var jsonResources []byte
+	if jsonResources, err = loadResourceFile(); err == nil {
+		if err = s.ConvertFromByte(jsonResources, &resources); err == nil {
+			for _, resource := range resources {
+				resourceMap[resource.Name] = resource
+			}
+		}
+	}
+	s.config["resources"] = resourceMap
 }
 
 // Register API routes.
@@ -311,12 +338,11 @@ func (s *httpServer) oauthRoutes() http.Handler {
 func (s *httpServer) mcpRoutes() {
 	opt := &mcp.StreamableHTTPOptions{}
 	s.loadPrompts()
-	publicTools := mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog), opt)
-	s.mux.Handle("/mcp", publicTools)
-	resourceTools := mcp.NewStreamableHTTPHandler(msrv.GetServer("customer", s.config, s.appLog), opt)
-	s.mux.Handle("/mcp/customer", s.headerMcpToken(resourceTools))
-	allTools := mcp.NewStreamableHTTPHandler(msrv.GetServer("all", s.config, s.appLog), opt)
-	s.mux.Handle("/mcp/all", s.headerMcpToken(allTools))
+	s.loadResources()
+	s.mux.Handle("/mcp", mcp.NewStreamableHTTPHandler(msrv.GetServer("root", s.config, s.appLog), opt))
+	s.mux.Handle("/mcp/all", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("all", s.config, s.appLog), opt)))
+	s.mux.Handle("/mcp/public", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog), opt)))
+	s.mux.Handle("/mcp/customer", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("customer", s.config, s.appLog), opt)))
 }
 
 func (s *httpServer) apiRoutes() http.Handler {

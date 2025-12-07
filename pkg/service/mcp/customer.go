@@ -13,10 +13,57 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
+func init() {
+	toolDataMap["nervatura_customer_create"] = ToolData{
+		Tool: mcp.Tool{
+			Name:        "nervatura_customer_create",
+			Title:       "Customer Data Create",
+			Description: "Create a new customer. Related tools: contact, address, event.",
+		},
+		ModelSchema: CustomerSchema(),
+		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
+			mcp.AddTool(server, tool, customerCreateHandler)
+		},
+		Scopes: []string{"customer"},
+	}
+	toolDataMap["nervatura_customer_query"] = ToolData{
+		Tool: mcp.Tool{
+			Name:        "nervatura_customer_query",
+			Title:       "Customer Data Query",
+			Description: "Query customers by parameters. The result is all customers that match the filter criteria.",
+		},
+		ModelSchema: CustomerSchema(),
+		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
+			mcp.AddTool(server, tool, modelQuery)
+		},
+		Scopes: []string{"customer"},
+	}
+	toolDataMap["nervatura_customer_update"] = ToolData{
+		Tool: mcp.Tool{
+			Name:        "nervatura_customer_update",
+			Title:       "Customer Data Update",
+			Description: "Update a customer by code. When modifying, only the specified values change. Related tools: contact, address, event.",
+		},
+		ModelSchema: CustomerSchema(),
+		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
+			mcp.AddTool(server, tool, modelUpdate)
+		},
+		Scopes: []string{"customer"},
+	}
+	toolDataMap["nervatura_customer_delete"] = ToolData{
+		Tool: createDeleteTool("nervatura_customer_delete", "customer"),
+		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
+			mcp.AddTool(server, tool, modelDelete)
+		},
+		Scopes: []string{"customer"},
+	}
+}
+
 type customerCreate struct {
 	CustomerType string `json:"customer_type" jsonschema:"Customer type. Enum values. Required when creating a new customer."`
 	CustomerName string `json:"customer_name" jsonschema:"Full name of the customer. Required when creating a new customer."`
 	md.CustomerMeta
+	CustomerMap cu.IM `json:"customer_map,omitempty" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
 type customerUpdate struct {
@@ -24,6 +71,7 @@ type customerUpdate struct {
 	CustomerType string `json:"customer_type,omitempty" jsonschema:"Customer type. Enum values."`
 	CustomerName string `json:"customer_name,omitempty" jsonschema:"Full name of the customer."`
 	md.CustomerMeta
+	CustomerMap cu.IM `json:"customer_map,omitempty" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
 type customerParameter struct {
@@ -43,11 +91,12 @@ func CustomerSchema() (ms *ModelSchema) {
 			schema = &jsonschema.Schema{}
 			var err error
 			if schema, err = jsonschema.For[customerCreate](nil); err == nil {
-				schema.Description = "Create a new customer."
 				schema.Properties["customer_type"].Type = "string"
 				schema.Properties["customer_type"].Enum = []any{md.CustomerTypeCompany.String(), md.CustomerTypePrivate.String(), md.CustomerTypeOther.String(),
 					md.CustomerTypeOwn.String()}
 				schema.Properties["customer_type"].Default = []byte(`"` + md.CustomerTypeCompany.String() + `"`)
+				schema.Properties["customer_map"].Default = []byte(`{}`)
+				schema.Properties["tags"].Default = []byte(`[]`)
 				schema.Required = []string{"customer_type", "customer_name"}
 			}
 			return schema
@@ -56,20 +105,17 @@ func CustomerSchema() (ms *ModelSchema) {
 			schema = &jsonschema.Schema{}
 			var err error
 			if schema, err = jsonschema.For[customerUpdate](nil); err == nil {
-				schema.Description = "Update an existing customer."
 				schema.Properties["customer_type"].Type = "string"
 				schema.Properties["customer_type"].Enum = []any{md.CustomerTypeCompany.String(), md.CustomerTypePrivate.String(), md.CustomerTypeOther.String(),
 					md.CustomerTypeOwn.String()}
+				schema.Properties["customer_map"].Default = []byte(`{}`)
 				schema.Required = []string{"code"}
 			}
 			return schema
 		},
 		QueryInputSchema: func(scope string) (schema *jsonschema.Schema) {
 			schema = &jsonschema.Schema{}
-			var err error
-			if schema, err = jsonschema.For[customerParameter](nil); err == nil {
-				schema.Description = "Query customers by parameters. The result is all customers that match the filter criteria."
-			}
+			schema, _ = jsonschema.For[customerParameter](nil)
 			return schema
 		},
 		QueryOutputSchema: func(scope string) (schema *jsonschema.Schema) {
@@ -111,36 +157,8 @@ func CustomerSchema() (ms *ModelSchema) {
 			"customer_type": {md.CustomerTypeCompany.String()},
 			"customer_name": {`First Customer LTD`},
 		},
-		PrimaryFields: []string{"id", "code", "customer_type", "customer_name"},
+		PrimaryFields: []string{"id", "code", "customer_type", "customer_name", "customer_map"},
 		Required:      []string{"customer_name", "customer_type"},
-	}
-}
-
-func customerQueryTool(scope string) (tool *mcp.Tool) {
-	return &mcp.Tool{
-		Name:         "nervatura_customer_query",
-		Title:        "Customer Data Query",
-		Description:  "Query customers by parameters. The result is all customers that match the filter criteria.",
-		InputSchema:  getSchemaMap()["customer"].QueryInputSchema(scope),
-		OutputSchema: getSchemaMap()["customer"].QueryOutputSchema(scope),
-	}
-}
-
-func customerUpdateTool(scope string) (tool *mcp.Tool) {
-	return &mcp.Tool{
-		Name:        "nervatura_customer_update",
-		Title:       "Customer Data Update",
-		Description: "Update a customer by code. When modifying, only the specified values change. Related tools: contact, address, event.",
-		InputSchema: getSchemaMap()["customer"].UpdateInputSchema(scope),
-	}
-}
-
-func customerCreateTool(scope string) (tool *mcp.Tool) {
-	return &mcp.Tool{
-		Name:        "nervatura_customer_create",
-		Title:       "Customer Data Create",
-		Description: "Create a new customer. Related tools: contact, address, event.",
-		InputSchema: getSchemaMap()["customer"].CreateInputSchema(scope),
 	}
 }
 
@@ -159,13 +177,11 @@ func customerCreateHandler(ctx context.Context, req *mcp.CallToolRequest, inputD
 		inputData.CustomerMeta.Tags = []string{}
 	}
 
-	customerMap := getParamsMeta(req)
-
 	ut.ConvertByteToIMData([]md.Contact{}, values, "contacts")
 	ut.ConvertByteToIMData([]md.Address{}, values, "addresses")
 	ut.ConvertByteToIMData([]md.Event{}, values, "events")
 	ut.ConvertByteToIMData(inputData.CustomerMeta, values, "customer_meta")
-	ut.ConvertByteToIMData(customerMap, values, "customer_map")
+	ut.ConvertByteToIMData(inputData.CustomerMap, values, "customer_map")
 
 	var rows []cu.IM
 	var customerID int64
