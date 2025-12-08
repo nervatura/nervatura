@@ -66,7 +66,8 @@ func modelQuery(ctx context.Context, req *mcp.CallToolRequest, parameters cu.IM)
 
 	var mt ToolData
 	var found bool
-	if mt, found = toolDataMap[req.Params.Name]; !found {
+	dm := toolDataMap
+	if mt, found = dm[req.Params.Name]; !found || mt.Extend {
 		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
 	var ms *ModelSchema = mt.ModelSchema
@@ -109,7 +110,7 @@ func modelUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM)
 
 	var mt ToolData
 	var found bool
-	if mt, found = toolDataMap[req.Params.Name]; !found {
+	if mt, found = toolDataMap[req.Params.Name]; !found || mt.Extend {
 		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
 	var ms *ModelSchema = mt.ModelSchema
@@ -135,7 +136,7 @@ func extendQuery(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM)
 
 	var mt ToolData
 	var found bool
-	if mt, found = toolDataMap[req.Params.Name]; !found {
+	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
 	var ms *ModelExtendSchema = mt.ModelExtendSchema
@@ -175,7 +176,7 @@ func extendUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 
 	var mt ToolData
 	var found bool
-	if mt, found = toolDataMap[req.Params.Name]; !found {
+	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
 	var ms *ModelExtendSchema = mt.ModelExtendSchema
@@ -196,9 +197,7 @@ func extendUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 		return nil, UpdateResponseData{}, fmt.Errorf("index out of range: %d", index)
 	}
 	for field, value := range inputData {
-		if _, found := fieldValues[index][field]; found {
-			fieldValues[index][field] = value
-		}
+		fieldValues[index][field] = value
 	}
 	mapValues := cu.ToIM(inputData[ms.Model+"_map"], cu.IM{})
 	/*
@@ -210,12 +209,11 @@ func extendUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 		fieldValues[index][ms.Model+"_map"] = cu.MergeIM(cu.ToIM(fieldValues[index][ms.Model+"_map"], cu.IM{}), mapValues)
 	}
 	var modelData any
-	if modelData, err = ms.LoadData(fieldValues); err != nil {
-		return nil, UpdateResponseData{}, fmt.Errorf("invalid data: %s", err.Error())
+	if modelData, err = ms.LoadData(fieldValues); err == nil {
+		values := cu.IM{}
+		ut.ConvertByteToIMData(modelData, values, fieldName)
+		_, err = ds.StoreDataUpdate(md.Update{Values: values, Model: baseModel, IDKey: updateID})
 	}
-	values := cu.IM{}
-	ut.ConvertByteToIMData(modelData, values, fieldName)
-	_, err = ds.StoreDataUpdate(md.Update{Values: values, Model: baseModel, IDKey: updateID})
 
 	return result, UpdateResponseData{
 		Model: baseModel,
@@ -234,7 +232,7 @@ func extendCreate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 
 	var mt ToolData
 	var found bool
-	if mt, found = toolDataMap[req.Params.Name]; !found {
+	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
 	var ms *ModelExtendSchema = mt.ModelExtendSchema
@@ -265,12 +263,11 @@ func extendCreate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 	fieldValues = append(fieldValues, inputData)
 
 	var modelData any
-	if modelData, err = ms.LoadData(fieldValues); err != nil {
-		return nil, UpdateResponseData{}, fmt.Errorf("invalid data: %s", err.Error())
+	if modelData, err = ms.LoadData(fieldValues); err == nil {
+		values := cu.IM{}
+		ut.ConvertByteToIMData(modelData, values, fieldName)
+		_, err = ds.StoreDataUpdate(md.Update{Values: values, Model: baseModel, IDKey: updateID})
 	}
-	values := cu.IM{}
-	ut.ConvertByteToIMData(modelData, values, fieldName)
-	_, err = ds.StoreDataUpdate(md.Update{Values: values, Model: baseModel, IDKey: updateID})
 
 	response = UpdateResponseData{
 		Model: baseModel,

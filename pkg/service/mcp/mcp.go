@@ -4,12 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"slices"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/auth"
@@ -75,7 +73,7 @@ func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	server.AddReceivingMiddleware(ms.receivingHandler)
 	server.AddSendingMiddleware(ms.sendingHandler)
 	server.AddReceivingMiddleware(ms.globalRateLimiterMiddleware(rate.NewLimiter(rate.Every(time.Second/5), 10)))
-	server.AddReceivingMiddleware(ms.perSessionRateLimiterMiddleware(rate.Every(time.Second/5), 10))
+	//server.AddReceivingMiddleware(ms.perSessionRateLimiterMiddleware(rate.Every(time.Second/5), 10))
 	server.AddReceivingMiddleware(ms.perMethodRateLimiterMiddleware(map[string]*rate.Limiter{
 		//"tools/call":  rate.NewLimiter(rate.Every(time.Second), 5),  // once a second with a burst up to 5
 		//"listTools": rate.NewLimiter(rate.Every(time.Minute), 10), // once a minute with a burst up to 20
@@ -150,6 +148,7 @@ func (ms *McpServer) perMethodRateLimiterMiddleware(limiters map[string]*rate.Li
 	}
 }
 
+/*
 // PerSessionRateLimiterMiddleware creates a middleware that applies rate limiting
 // on a per-session basis for receiving requests.
 func (ms *McpServer) perSessionRateLimiterMiddleware(limit rate.Limit, burst int) mcp.Middleware {
@@ -186,6 +185,7 @@ func (ms *McpServer) perSessionRateLimiterMiddleware(limit rate.Limit, burst int
 		}
 	}
 }
+*/
 
 func GetServer(scope string, config cu.IM, appLog *slog.Logger) func(*http.Request) *mcp.Server {
 	return func(req *http.Request) *mcp.Server {

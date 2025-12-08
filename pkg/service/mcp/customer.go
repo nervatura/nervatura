@@ -51,7 +51,8 @@ func init() {
 		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_customer_delete"] = ToolData{
-		Tool: createDeleteTool("nervatura_customer_delete", "customer"),
+		Tool:        createDeleteTool("nervatura_customer_delete", "customer"),
+		ModelSchema: CustomerSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
@@ -141,9 +142,7 @@ func CustomerSchema() (ms *ModelSchema) {
 				},
 				CustomerMap: cu.IM{},
 			}
-			if err = cu.ConvertToType(data, &customer); err != nil {
-				return customer, customer.CustomerMeta, err
-			}
+			err = cu.ConvertToType(data, &customer)
 			return customer, customer.CustomerMeta, err
 		},
 		LoadList: func(rows []cu.IM) (items any, err error) {

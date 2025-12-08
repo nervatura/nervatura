@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/auth"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	"golang.org/x/time/rate"
 )
 
 func TestTokenAuth(t *testing.T) {
@@ -272,6 +274,75 @@ func TestMcpServer_receivingHandler(t *testing.T) {
 					TokenInfo: tt.tokenInfo,
 					Header:    http.Header{},
 				},
+			})
+		})
+	}
+}
+
+func TestMcpServer_globalRateLimiterMiddleware(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		limiter *rate.Limiter
+	}{
+		{
+			name:    "allow",
+			limiter: rate.NewLimiter(rate.Every(time.Second), 1),
+		},
+		{
+			name:    "deny",
+			limiter: rate.NewLimiter(rate.Every(time.Second), 0),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// TODO: construct the receiver type.
+			var ms McpServer
+			got := ms.globalRateLimiterMiddleware(tt.limiter)
+			got2 := got(func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
+				return nil, nil
+			})
+			got2(context.Background(), "tools/call", &mcp.ServerRequest[*mcp.CallToolParams]{
+				Session: &mcp.ServerSession{},
+				Params:  &mcp.CallToolParams{},
+				Extra:   &mcp.RequestExtra{},
+			})
+
+		})
+	}
+}
+
+func TestMcpServer_perMethodRateLimiterMiddleware(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		limiters map[string]*rate.Limiter
+	}{
+		{
+			name: "success",
+			limiters: map[string]*rate.Limiter{
+				"tools/call": rate.NewLimiter(rate.Every(time.Second), 1),
+			},
+		},
+		{
+			name: "deny",
+			limiters: map[string]*rate.Limiter{
+				"tools/call": rate.NewLimiter(rate.Every(time.Second), 0),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// TODO: construct the receiver type.
+			var ms McpServer
+			got := ms.perMethodRateLimiterMiddleware(tt.limiters)
+			got2 := got(func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
+				return nil, nil
+			})
+			got2(context.Background(), "tools/call", &mcp.ServerRequest[*mcp.CallToolParams]{
+				Session: &mcp.ServerSession{},
+				Params:  &mcp.CallToolParams{},
+				Extra:   &mcp.RequestExtra{},
 			})
 		})
 	}

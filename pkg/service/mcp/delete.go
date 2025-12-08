@@ -105,7 +105,7 @@ func extendDelete(ctx context.Context, req *mcp.CallToolRequest, inputData map[s
 
 	var mt ToolData
 	var found bool
-	if mt, found = toolDataMap[req.Params.Name]; !found {
+	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
 	var ms *ModelExtendSchema = mt.ModelExtendSchema
@@ -146,13 +146,11 @@ func extendDelete(ctx context.Context, req *mcp.CallToolRequest, inputData map[s
 		fieldValues = append(fieldValues[:index], fieldValues[index+1:]...)
 
 		var modelData any
-		if modelData, err = ms.LoadData(fieldValues); err != nil {
-			return nil, UpdateResponseData{}, fmt.Errorf("invalid data: %s", err.Error())
+		if modelData, err = ms.LoadData(fieldValues); err == nil {
+			values := cu.IM{}
+			ut.ConvertByteToIMData(modelData, values, fieldName)
+			_, err = ds.StoreDataUpdate(md.Update{Values: values, Model: baseModel, IDKey: updateID})
 		}
-
-		values := cu.IM{}
-		ut.ConvertByteToIMData(modelData, values, fieldName)
-		_, err = ds.StoreDataUpdate(md.Update{Values: values, Model: baseModel, IDKey: updateID})
 	}
 
 	return &mcp.CallToolResult{

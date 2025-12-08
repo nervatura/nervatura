@@ -888,7 +888,7 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 		item        cu.IM
 		inputData   any
 		inputFields []string
-		setValue    func(modelName string, values cu.IM, inputName string, fieldValue interface{}) cu.IM
+		setValue    func(modelName string, itemRow cu.IM, values cu.IM, inputName string, fieldValue interface{}) cu.IM
 	}
 	tests := []struct {
 		name    string

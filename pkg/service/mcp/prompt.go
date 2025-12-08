@@ -7,6 +7,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 
 type PromptData struct {
@@ -20,7 +21,7 @@ type PromptData struct {
 }
 
 func promptHandler(ctx context.Context, req *mcp.GetPromptRequest) (result *mcp.GetPromptResult, err error) {
-	config := cu.ToIM(req.Extra.TokenInfo.Extra["config"], cu.IM{})
+	config := ctx.Value(md.ConfigCtxKey).(cu.IM)
 	texReplace := func(text string) string {
 		for key, value := range req.Params.Arguments {
 			text = strings.ReplaceAll(text, "{{"+key+"}}", value)

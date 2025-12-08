@@ -68,7 +68,7 @@ type UpdateDataOptions struct {
 	Meta       any
 	Fields     []string
 	MetaFields []string
-	SetValue   func(modelName string, values cu.IM, inputName string, fieldValue interface{}) cu.IM
+	SetValue   func(modelName string, itemRow cu.IM, values cu.IM, inputName string, fieldValue interface{}) cu.IM
 }
 
 type AuthOptions struct {

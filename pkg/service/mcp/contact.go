@@ -51,8 +51,9 @@ func init() {
 		Scopes: []string{"customer", "project", "place"},
 	}
 	toolDataMap["nervatura_contact_delete"] = ToolData{
-		Tool:   createExtendDeleteTool("nervatura_contact_delete", "contact"),
-		Extend: true,
+		Tool:              createExtendDeleteTool("nervatura_contact_delete", "contact"),
+		Extend:            true,
+		ModelExtendSchema: ContactSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendDelete)
 		},

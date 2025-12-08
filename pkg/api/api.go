@@ -261,66 +261,68 @@ func (ds *DataStore) GetBodyData(modelName string, body io.ReadCloser, modelData
 	return data, inputFields, metaFields, err
 }
 
+func (ds *DataStore) defaultSetValue(modelName string, itemRow cu.IM, values cu.IM, inputName string, fieldValue interface{}) cu.IM {
+	switch inputName {
+	case "id", "code", modelName + "_meta", "time_stamp":
+	// protected fields
+	case modelName + "_map":
+		if mapValue, found := fieldValue.(cu.IM); found {
+			value := cu.MergeIM(cu.ToIM(itemRow[inputName], cu.IM{}), mapValue)
+			jvalue, err := ds.ConvertToByte(value)
+			if err == nil {
+				values[inputName] = string(jvalue[:])
+			}
+		}
+	case "addresses", "contacts", "events", "address", "contact", "data":
+		// json fields
+		jvalue, err := ds.ConvertToByte(fieldValue)
+		if err == nil {
+			values[inputName] = string(jvalue[:])
+		}
+	case "user_group", "barcode_type", "customer_type", "log_type", "movement_type", "place_type", "price_type",
+		"product_type", "rate_type", "trans_type", "direction", "config_type":
+		if _, found := fieldValue.(string); !found {
+			values[inputName] = md.GetEnumString(inputName, fieldValue)
+		} else {
+			values[inputName] = fieldValue
+		}
+	case "link_type_1", "link_type_2":
+		if _, found := fieldValue.(string); !found {
+			values[inputName] = md.GetEnumString("link_type", fieldValue)
+		} else {
+			values[inputName] = fieldValue
+		}
+	case "shipping_time":
+		if timeValue, found := fieldValue.(md.TimeDateTime); !found {
+			values[inputName] = timeValue.Format(time.RFC3339)
+		} else {
+			values[inputName] = cu.ToString(fieldValue, "")
+		}
+	case "paid_date", "valid_from", "valid_to", "rate_date", "trans_date":
+		if timeValue, found := fieldValue.(md.TimeDate); found {
+			values[inputName] = timeValue.Format(time.DateOnly)
+		} else {
+			values[inputName] = cu.ToString(fieldValue, "")
+		}
+	default:
+		values[inputName] = fieldValue
+	}
+	return values
+}
+
 // SetUpdateValue - default set update value function
 func (ds *DataStore) SetUpdateValue(
 	modelName string, item cu.IM, inputData any, inputFields []string,
-	setValue func(modelName string, values cu.IM, inputName string, fieldValue interface{}) cu.IM,
+	setValue func(modelName string, itemRow cu.IM, values cu.IM, inputName string, fieldValue interface{}) cu.IM,
 ) (values cu.IM, err error) {
 	values = cu.IM{}
 	if setValue == nil {
 		// default
-		setValue = func(modelName string, values cu.IM, inputName string, fieldValue interface{}) cu.IM {
-			switch inputName {
-			case "id", "code", modelName + "_meta", "time_stamp":
-			// protected fields
-			case modelName + "_map":
-				if mapValue, found := fieldValue.(cu.IM); found {
-					value := cu.MergeIM(cu.ToIM(item[inputName], cu.IM{}), mapValue)
-					jvalue, err := ds.ConvertToByte(value)
-					if err == nil {
-						values[inputName] = string(jvalue[:])
-					}
-				}
-			case "addresses", "contacts", "events", "address", "contact", "data":
-				// json fields
-				jvalue, err := ds.ConvertToByte(fieldValue)
-				if err == nil {
-					values[inputName] = string(jvalue[:])
-				}
-			case "user_group", "barcode_type", "customer_type", "log_type", "movement_type", "place_type", "price_type",
-				"product_type", "rate_type", "trans_type", "direction", "config_type":
-				if _, found := fieldValue.(string); !found {
-					values[inputName] = md.GetEnumString(inputName, fieldValue)
-				} else {
-					values[inputName] = fieldValue
-				}
-			case "link_type_1", "link_type_2":
-				if _, found := fieldValue.(string); !found {
-					values[inputName] = md.GetEnumString("link_type", fieldValue)
-				} else {
-					values[inputName] = fieldValue
-				}
-			case "shipping_time":
-				if timeValue, found := fieldValue.(md.TimeDateTime); !found {
-					values[inputName] = timeValue.Format(time.RFC3339)
-				} else {
-					values[inputName] = cu.ToString(fieldValue, "")
-				}
-			case "paid_date", "valid_from", "valid_to", "rate_date", "trans_date":
-				if timeValue, found := fieldValue.(md.TimeDate); found {
-					values[inputName] = timeValue.Format(time.DateOnly)
-				} else {
-					values[inputName] = cu.ToString(fieldValue, "")
-				}
-			default:
-				values[inputName] = fieldValue
-			}
-			return values
-		}
+		setValue = ds.defaultSetValue
 	}
 	for _, inputName := range inputFields {
 		if fieldName, fieldValue := ds.GetDataField(inputData, inputName); fieldName != "" {
-			values = setValue(modelName, values, inputName, fieldValue)
+			values = setValue(modelName, item, values, inputName, fieldValue)
 		} else {
 			return values, errors.New(http.StatusText(http.StatusUnprocessableEntity) + ": " + inputName)
 		}
