@@ -91,6 +91,7 @@ type contactPlace struct {
 }
 
 type contactParameter struct {
+	Code    string `json:"code,omitempty" jsonschema:"Database independent unique external key. Example: CUS1731101982N123"`
 	Model   string `json:"model" jsonschema:"Model. Enum values. Required."`
 	Surname string `json:"surname,omitempty" jsonschema:"Surname."`
 	Email   string `json:"email,omitempty" jsonschema:"Email."`

@@ -180,9 +180,6 @@ func (s *httpServer) setRoutes() {
 
 	if cu.ToBoolean(s.config["NT_MCP_ENABLED"], false) {
 		s.appLog.Info("MCP server enabled")
-		//s.loadPrompts()
-		//mcpHandler := mcp.NewStreamableHTTPHandler(msrv.GetServer(s.config, msrv.ResourceTools), &mcp.StreamableHTTPOptions{})
-		//s.mux.Handle("/mcp/", s.mcpRoutes())
 		s.mcpRoutes()
 	}
 
@@ -339,10 +336,11 @@ func (s *httpServer) mcpRoutes() {
 	opt := &mcp.StreamableHTTPOptions{}
 	s.loadPrompts()
 	s.loadResources()
-	s.mux.Handle("/mcp", mcp.NewStreamableHTTPHandler(msrv.GetServer("root", s.config, s.appLog), opt))
-	s.mux.Handle("/mcp/all", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("all", s.config, s.appLog), opt)))
-	s.mux.Handle("/mcp/public", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog), opt)))
-	s.mux.Handle("/mcp/customer", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("customer", s.config, s.appLog), opt)))
+	s.mux.Handle("/mcp", mcp.NewStreamableHTTPHandler(msrv.GetServer("root", s.config, s.appLog, s.session), opt))
+	s.mux.Handle("/mcp/all", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("all", s.config, s.appLog, s.session), opt)))
+	s.mux.Handle("/mcp/public", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog, s.session), opt)))
+	s.mux.Handle("/mcp/customer", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("customer", s.config, s.appLog, s.session), opt)))
+	s.mux.Handle("/mcp/product", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("product", s.config, s.appLog, s.session), opt)))
 }
 
 func (s *httpServer) apiRoutes() http.Handler {

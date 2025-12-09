@@ -104,6 +104,7 @@ type eventTool struct {
 }
 
 type eventParameter struct {
+	Code    string `json:"code,omitempty" jsonschema:"Database independent unique external key. Example: CUS1731101982N123"`
 	Model   string `json:"model" jsonschema:"Model. Enum values. Required."`
 	Subject string `json:"subject,omitempty" jsonschema:"Subject."`
 	Place   string `json:"place,omitempty" jsonschema:"Place."`

@@ -27,17 +27,19 @@ func Test_getSchemaData(t *testing.T) {
 					"key2": "value2",
 				},
 			},
-			ms: &ModelSchema{
-				Name:          "customer",
-				PrimaryFields: []string{"code"},
-				Required:      []string{"code"},
-				LoadData: func(data any) (modelData, metaData any, err error) {
-					return data, nil, nil
-				},
-				LoadList: func(rows []cu.IM) (items any, err error) {
-					return rows, nil
+			ms:      CustomerSchema(),
+			wantErr: false,
+		},
+		{
+			name: "product",
+			data: cu.IM{
+				"code": "PRD1731101982N123", "product_name": "Big product", "product_type": "PRODUCT_ITEM", "tax_code": "VAT20",
+				"product_map": cu.IM{
+					"key1": "value1",
+					"key2": "value2",
 				},
 			},
+			ms:      ProductSchema(),
 			wantErr: false,
 		},
 		{

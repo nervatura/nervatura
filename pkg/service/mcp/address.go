@@ -85,6 +85,7 @@ type addressProject struct {
 }
 
 type addressParameter struct {
+	Code    string `json:"code,omitempty" jsonschema:"Database independent unique external key. Example: CUS1731101982N123"`
 	Model   string `json:"model" jsonschema:"Model. Enum values. Required."`
 	City    string `json:"city,omitempty" jsonschema:"City."`
 	State   string `json:"state,omitempty" jsonschema:"State."`

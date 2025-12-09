@@ -8,10 +8,12 @@ import (
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
 func init() {
@@ -25,7 +27,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, reportQueryHandler)
 		},
-		Scopes: []string{"customer"},
+		Scopes: []string{"customer", "product"},
 	}
 }
 
@@ -54,6 +56,12 @@ func ReportSchema() (ms *ModelSchema) {
 						Description: "The size of the report",
 						Examples:    []any{`a3`, `a4`, `a5`, `letter`, `legal`},
 						Default:     []byte(`"a4"`)},
+					"url_result": {Type: "boolean",
+						Description: "If true, the result will be a URL to the report result. If false, the result will be the report data in the selected output format",
+						Default:     []byte(`true`)},
+					"inline": {Type: "boolean",
+						Description: "If true, the result will be displayed in the browser or downloaded as a file",
+						Default:     []byte(`true`)},
 				},
 				Required: []string{"code"},
 			}
@@ -68,7 +76,7 @@ func ReportSchema() (ms *ModelSchema) {
 						Default:     []byte(`"application/pdf"`),
 					},
 					"data": {Type: "string",
-						Description: "The report data in the selected output format",
+						Description: "The report data in the selected output format or a URL to the report result",
 						Examples:    []any{`iVBORw0KGgoAAAANSUhEUgAA...`},
 					},
 				},
@@ -78,8 +86,13 @@ func ReportSchema() (ms *ModelSchema) {
 }
 
 func reportQueryHandler(ctx context.Context, req *mcp.CallToolRequest, parameters cu.IM) (result *mcp.CallToolResult, response any, err error) {
+	tokenInfo := req.Extra.TokenInfo
+
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
+	session := ctx.Value(md.SessionServiceCtxKey).(*api.SessionService)
+	config := ctx.Value(md.ConfigCtxKey).(cu.IM)
 	code := cu.ToString(parameters["code"], "XXX")
+	urlResult := cu.ToBoolean(parameters["url_result"], false)
 
 	if cu.ToString(parameters["report_key"], "") == "" {
 		var ms *ModelSchema
@@ -94,6 +107,40 @@ func reportQueryHandler(ctx context.Context, req *mcp.CallToolRequest, parameter
 	}
 
 	var report cu.IM
+	if urlResult {
+		sessionID := req.Session.ID()
+		output := cu.ToString(parameters["output"], "pdf")
+		if output == "base64" {
+			output = "pdf"
+		}
+		baseURL := cu.ToString(config["NT_PUBLIC_HOST"], "")
+		response = cu.IM{
+			"content_type": "application/pdf",
+			"data":         fmt.Sprintf(baseURL+st.ClientPath+"/session/export/report/modal/%s?output=%s&inline=%s", sessionID, output, cu.ToString(parameters["inline"], "true")),
+		}
+		clientData := ct.Client{
+			Ticket: ct.Ticket{
+				SessionID: sessionID,
+				User:      cu.IM{},
+				Expiry:    tokenInfo.Expiration,
+				Database:  cu.ToString(tokenInfo.Extra["alias"], ""),
+			},
+			BaseComponent: ct.BaseComponent{
+				Data: cu.IM{
+					"modal": cu.IM{
+						"data": cu.IM{
+							"code":        code,
+							"template":    cu.ToString(parameters["report_key"], ""),
+							"orientation": cu.ToString(parameters["orientation"], ""),
+							"paper_size":  cu.ToString(parameters["size"], ""),
+						},
+					},
+				},
+			},
+		}
+		session.SaveSession(sessionID, &clientData)
+		return result, response, nil
+	}
 	if report, err = ds.GetReport(parameters); err == nil {
 		response = cu.IM{
 			"content_type": report["content_type"],

@@ -19,10 +19,11 @@ import (
 )
 
 type McpServer struct {
-	scope  string
-	config cu.IM
-	appLog *slog.Logger
-	scopes []string
+	scope   string
+	config  cu.IM
+	appLog  *slog.Logger
+	session *api.SessionService
+	scopes  []string
 }
 
 var toolDataMap map[string]ToolData = map[string]ToolData{}
@@ -107,6 +108,7 @@ func (ms *McpServer) receivingHandler(next mcp.MethodHandler) mcp.MethodHandler 
 		ds := api.NewDataStore(ms.config, alias, ms.appLog)
 		ctx = context.WithValue(ctx, md.DataStoreCtxKey, ds)
 		ctx = context.WithValue(ctx, md.ConfigCtxKey, ms.config)
+		ctx = context.WithValue(ctx, md.SessionServiceCtxKey, ms.session)
 		result, err := next(ctx, method, req)
 		return result, err
 	}
@@ -187,13 +189,14 @@ func (ms *McpServer) perSessionRateLimiterMiddleware(limit rate.Limit, burst int
 }
 */
 
-func GetServer(scope string, config cu.IM, appLog *slog.Logger) func(*http.Request) *mcp.Server {
+func GetServer(scope string, config cu.IM, appLog *slog.Logger, session *api.SessionService) func(*http.Request) *mcp.Server {
 	return func(req *http.Request) *mcp.Server {
 		ms := &McpServer{
-			scope:  scope,
-			config: config,
-			appLog: appLog,
-			scopes: []string{},
+			scope:   scope,
+			config:  config,
+			appLog:  appLog,
+			session: session,
+			scopes:  []string{},
 		}
 		for key := range ScopeInstruction {
 			ms.scopes = append(ms.scopes, key)

@@ -18,7 +18,7 @@ import (
 )
 
 // Mock SMTP Client
-type mockSMTPClient struct {
+type MockSMTPClient struct {
 	auth           smtp.Auth
 	rcptCalls      []string
 	mailCalls      []string
@@ -31,30 +31,30 @@ type mockSMTPClient struct {
 	mockWriteError error
 }
 
-func (c *mockSMTPClient) Auth(a smtp.Auth) error {
+func (c *MockSMTPClient) Auth(a smtp.Auth) error {
 	c.auth = a
 	return c.mockAuthError
 }
 
-func (c *mockSMTPClient) Mail(from string) error {
+func (c *MockSMTPClient) Mail(from string) error {
 	c.mailCalls = append(c.mailCalls, from)
 	return c.mockMailError
 }
 
-func (c *mockSMTPClient) Rcpt(to string) error {
+func (c *MockSMTPClient) Rcpt(to string) error {
 	c.rcptCalls = append(c.rcptCalls, to)
 	return c.mockRcptError
 }
 
-func (c *mockSMTPClient) Data() (io.WriteCloser, error) {
+func (c *MockSMTPClient) Data() (io.WriteCloser, error) {
 	return &mockWriter{mockError: c.mockWriteError}, c.mockDataError
 }
 
-func (c *mockSMTPClient) Close() error {
+func (c *MockSMTPClient) Close() error {
 	return c.mockCloseError
 }
 
-func (c *mockSMTPClient) Quit() error {
+func (c *MockSMTPClient) Quit() error {
 	return c.mockQuitError
 }
 
@@ -121,7 +121,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
-					return &mockSMTPClient{}, nil
+					return &MockSMTPClient{}, nil
 				},
 				Db: &md.TestDriver{
 					Config: cu.IM{
@@ -302,7 +302,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
-					return &mockSMTPClient{mockAuthError: errors.New("auth error")}, nil
+					return &MockSMTPClient{mockAuthError: errors.New("auth error")}, nil
 				},
 			},
 			args: args{
@@ -332,7 +332,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
-					return &mockSMTPClient{mockMailError: errors.New("mail error")}, nil
+					return &MockSMTPClient{mockMailError: errors.New("mail error")}, nil
 				},
 			},
 			args: args{
@@ -362,7 +362,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
-					return &mockSMTPClient{mockRcptError: errors.New("rcpt error")}, nil
+					return &MockSMTPClient{mockRcptError: errors.New("rcpt error")}, nil
 				},
 			},
 			args: args{
@@ -392,7 +392,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
-					return &mockSMTPClient{mockDataError: errors.New("data error")}, nil
+					return &MockSMTPClient{mockDataError: errors.New("data error")}, nil
 				},
 			},
 			args: args{
@@ -422,7 +422,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
-					return &mockSMTPClient{}, nil
+					return &MockSMTPClient{}, nil
 				},
 				Db: &md.TestDriver{
 					Config: cu.IM{
@@ -478,7 +478,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
-					return &mockSMTPClient{mockWriteError: errors.New("write error")}, nil
+					return &MockSMTPClient{mockWriteError: errors.New("write error")}, nil
 				},
 			},
 			args: args{

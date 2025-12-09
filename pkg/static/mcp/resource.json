@@ -14,5 +14,13 @@
     "mimeType": "application/json",
     "uri": "template:ntr_customer_en.json",
     "scopes": ["customer"]
+  },
+  {
+    "name": "ntr_product_en",
+    "title": "Product Sheet",
+    "description": "Product Information Sheet in English",
+    "mimeType": "application/json",
+    "uri": "template:ntr_product_en.json",
+    "scopes": ["product"]
   }
 ]

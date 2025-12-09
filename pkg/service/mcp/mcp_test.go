@@ -13,6 +13,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/auth"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
+	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	"golang.org/x/time/rate"
 )
@@ -122,9 +123,10 @@ func TestTokenAuth(t *testing.T) {
 
 func TestGetServer(t *testing.T) {
 	type args struct {
-		scope  string
-		config cu.IM
-		appLog *slog.Logger
+		scope   string
+		config  cu.IM
+		appLog  *slog.Logger
+		session *api.SessionService
 	}
 	tests := []struct {
 		name string
@@ -154,7 +156,8 @@ func TestGetServer(t *testing.T) {
 						},
 					},
 				},
-				appLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				appLog:  slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				session: &api.SessionService{},
 			},
 		},
 		{
@@ -181,13 +184,14 @@ func TestGetServer(t *testing.T) {
 						},
 					},
 				},
-				appLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				appLog:  slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				session: &api.SessionService{},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			GetServer(tt.args.scope, tt.args.config, tt.args.appLog)(httptest.NewRequest("POST", "/", nil))
+			GetServer(tt.args.scope, tt.args.config, tt.args.appLog, tt.args.session)(httptest.NewRequest("POST", "/", nil))
 		})
 	}
 }

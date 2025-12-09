@@ -30,7 +30,7 @@ func addTool(toolName string, server *mcp.Server, scope string) {
 			Title:       mt.Title,
 			Description: strings.ReplaceAll(mt.Description, "%s", scope),
 		}
-		if strings.HasSuffix(toolName, "_query") {
+		if strings.HasSuffix(toolName, "_query") || strings.HasSuffix(toolName, "_send") {
 			if toolDataMap[toolName].Extend {
 				stool.InputSchema = mt.ModelExtendSchema.QueryInputSchema(scope)
 				stool.OutputSchema = mt.ModelExtendSchema.QueryOutputSchema(scope)

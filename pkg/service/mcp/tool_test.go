@@ -53,6 +53,27 @@ func Test_modelQuery(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "product_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_product_query"}},
+			parameters: cu.IM{
+				"limit":        10,
+				"offset":       0,
+				"product_type": "PRODUCT_ITEM",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -795,6 +816,28 @@ func Test_extendCreate(t *testing.T) {
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"surname": "Doe"}}}}, nil
+						},
+						"Update": func(data md.Update) (int64, error) {
+							return 1, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+		},
+		{
+			name: "event_product",
+			args: args{
+				req:       &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_event_update"}},
+				inputData: cu.IM{"code": "PRD123456", "index": 0, "subject": "Meeting", "event_map": cu.IM{"fiels": "value"}},
+			},
+			wantErr: false,
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "code": "PRD123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
 						},
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil

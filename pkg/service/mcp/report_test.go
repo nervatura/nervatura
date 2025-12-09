@@ -5,7 +5,9 @@ import (
 	"log/slog"
 	"path"
 	"testing"
+	"time"
 
+	"github.com/modelcontextprotocol/go-sdk/auth"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -25,7 +27,10 @@ func Test_reportQueryHandler(t *testing.T) {
 	}{
 		{
 			name: "success",
-			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_report_query"}},
+			req: &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_report_query"},
+				Extra: &mcp.RequestExtra{
+					TokenInfo: &auth.TokenInfo{Expiration: time.Now().Add(time.Duration(1) * time.Hour)},
+				}},
 			parameters: cu.IM{
 				"code": "CUS1731101982N123", "report_key": "",
 			},
@@ -53,8 +58,44 @@ func Test_reportQueryHandler(t *testing.T) {
 			},
 		},
 		{
+			name: "url_result",
+			req: &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_report_query"},
+				Extra: &mcp.RequestExtra{
+					TokenInfo: &auth.TokenInfo{Expiration: time.Now().Add(time.Duration(1) * time.Hour)},
+				},
+				Session: &mcp.ServerSession{}},
+			parameters: cu.IM{
+				"code": "CUS1731101982N123", "report_key": "", "url_result": true, "output": "base64",
+			},
+			wantErr: false,
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "report_key": "ntr_customer_en", "data": cu.IM{"file_type": "FILE_PDF", "template": string(pdf_json)}}}, nil
+						},
+						"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "report_key": "ntr_customer_en", "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
+						},
+					},
+				},
+				Config:          cu.IM{},
+				AppLog:          slog.Default(),
+				ConvertFromByte: cu.ConvertFromByte,
+				ConvertToByte: func(v any) ([]byte, error) {
+					return nil, nil
+				},
+				ConvertToType: func(data interface{}, result any) (err error) {
+					return nil
+				},
+			},
+		},
+		{
 			name: "invalid report",
-			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_report_query"}},
+			req: &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_report_query"},
+				Extra: &mcp.RequestExtra{
+					TokenInfo: &auth.TokenInfo{Expiration: time.Now().Add(time.Duration(1) * time.Hour)},
+				}},
 			parameters: cu.IM{
 				"code": "XXX1731101982N123", "report_key": "",
 			},
@@ -64,6 +105,13 @@ func Test_reportQueryHandler(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.WithValue(context.Background(), md.DataStoreCtxKey, tt.ds)
+			ctx = context.WithValue(ctx, md.SessionServiceCtxKey, &api.SessionService{
+				Config: api.SessionConfig{
+					Method: md.SessionMethodMemory,
+				},
+				Conn: &md.TestDriver{Config: cu.IM{}},
+			})
+			ctx = context.WithValue(ctx, md.ConfigCtxKey, cu.IM{})
 			_, _, gotErr := reportQueryHandler(ctx, tt.req, tt.parameters)
 			if gotErr != nil {
 				if !tt.wantErr {
