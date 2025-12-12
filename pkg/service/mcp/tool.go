@@ -74,9 +74,12 @@ func modelQuery(ctx context.Context, req *mcp.CallToolRequest, parameters cu.IM)
 
 	var params cu.IM = cu.IM{
 		"fields": []string{"*"},
-		"model":  ms.Name,
+		"model":  cu.ToString(ms.CustomFrom, ms.Name),
 		"limit":  cu.ToInteger(parameters["limit"], 0),
 		"offset": cu.ToInteger(parameters["offset"], 0),
+	}
+	if ms.Name == "trans" {
+		params["trans_type"] = ms.TransType
 	}
 	for key, value := range parameters {
 		if !slices.Contains([]string{"limit", "offset"}, key) {
@@ -114,6 +117,12 @@ func modelUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM)
 		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
 	}
 	var ms *ModelSchema = mt.ModelSchema
+
+	if ms.Validate != nil {
+		if inputData, err = ms.Validate(ctx, inputData); err != nil {
+			return nil, UpdateResponseData{}, err
+		}
+	}
 
 	if modelData, metaData, inputFields, metaFields, err = getSchemaData(inputData, ms); err == nil {
 		updateID, err = ds.UpdateData(md.UpdateDataOptions{

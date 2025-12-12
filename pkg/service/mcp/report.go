@@ -27,7 +27,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, reportQueryHandler)
 		},
-		Scopes: []string{"customer", "product"},
+		Scopes: []string{"customer", "product", "invoice"},
 	}
 }
 
@@ -85,6 +85,30 @@ func ReportSchema() (ms *ModelSchema) {
 	}
 }
 
+func getDefaultReportKey(ctx context.Context, code string) (reportKey string, err error) {
+	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
+
+	var ms *ModelSchema
+	if ms, err = getModelSchemaByPrefix(code[:3]); err != nil {
+		return reportKey, err
+	}
+	values := cu.IM{
+		"fields": []string{"report_key"}, "model": "config_report", "report_type": strings.ToUpper(ms.Name)}
+	var rows []cu.IM
+	if ms.Name == "trans" {
+		if rows, err = ds.StoreDataGet(cu.IM{"model": "trans", "code": code}, true); err != nil {
+			return reportKey, err
+		}
+		values["trans_type"] = strings.TrimPrefix(cu.ToString(rows[0]["trans_type"], ""), "TRANS_")
+		values["direction"] = cu.ToString(rows[0]["direction"], "")
+	}
+	if rows, err = ds.StoreDataGet(values, true); err != nil {
+		return reportKey, errors.New("missing report key for " + code)
+	}
+	reportKey = cu.ToString(rows[0]["report_key"], "")
+	return reportKey, nil
+}
+
 func reportQueryHandler(ctx context.Context, req *mcp.CallToolRequest, parameters cu.IM) (result *mcp.CallToolResult, response any, err error) {
 	tokenInfo := req.Extra.TokenInfo
 
@@ -95,14 +119,8 @@ func reportQueryHandler(ctx context.Context, req *mcp.CallToolRequest, parameter
 	urlResult := cu.ToBoolean(parameters["url_result"], false)
 
 	if cu.ToString(parameters["report_key"], "") == "" {
-		var ms *ModelSchema
-		if ms, err = getModelSchemaByPrefix(code[:3]); err != nil {
-			return nil, nil, errors.New("invalid code: " + code)
-		}
-		var rows []cu.IM
-		if rows, err = ds.StoreDataGet(cu.IM{
-			"fields": []string{"report_key"}, "model": "config_report", "report_type": strings.ToUpper(ms.Name)}, true); err == nil {
-			parameters["report_key"] = cu.ToString(rows[0]["report_key"], "")
+		if parameters["report_key"], err = getDefaultReportKey(ctx, code); err != nil {
+			return nil, nil, err
 		}
 	}
 

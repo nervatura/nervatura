@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"context"
 	"errors"
 	"slices"
 
@@ -27,12 +28,15 @@ type ModelSchemaInterface interface {
 type ModelSchema struct {
 	Name              string
 	Prefix            string
+	TransType         string
+	CustomFrom        string
 	CreateInputSchema func(scope string) *jsonschema.Schema
 	UpdateInputSchema func(scope string) *jsonschema.Schema
 	QueryInputSchema  func(scope string) *jsonschema.Schema
 	QueryOutputSchema func(scope string) *jsonschema.Schema
 	LoadData          func(data any) (modelData, metaData any, err error)
 	LoadList          func(rows []cu.IM) (items any, err error)
+	Validate          func(ctx context.Context, input cu.IM) (data cu.IM, err error)
 	Examples          map[string][]any
 	PrimaryFields     []string
 	Required          []string
@@ -84,12 +88,6 @@ func getSchemaData(data cu.IM, ms *ModelSchema) (modelData, metaData any, inputF
 	if len(metaFields) > 0 {
 		inputFields = append(inputFields, ms.Name+"_meta")
 	}
-	/*
-		if len(paramsMeta) > 0 {
-			inputFields = append(inputFields, ms.Name+"_map")
-			data[ms.Name+"_map"] = paramsMeta
-		}
-	*/
 
 	if modelData, metaData, err = ms.LoadData(data); err == nil {
 		if cu.ToString(data["code"], "") == "" {

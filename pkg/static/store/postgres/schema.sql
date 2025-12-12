@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION set_trans_code()
 DECLARE
   _prefix TEXT; 
 BEGIN
-  _prefix := substr(NEW.trans_type::text, 1, 3);
+  _prefix := substr(NEW.trans_type::text, 7, 3);
   IF NEW.trans_type = 'TRANS_INVENTORY'::trans_type THEN
     _prefix = 'COR';
   ELSIF NEW.trans_type = 'TRANS_DELIVERY' AND NEW.direction = 'DIRECTION_TRANSFER' THEN

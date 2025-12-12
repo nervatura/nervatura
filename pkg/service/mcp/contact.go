@@ -14,7 +14,7 @@ func init() {
 	toolDataMap["nervatura_contact_create"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_contact_create",
-			Title:       "Contact Data Create",
+			Title:       "Create a new contact",
 			Description: "Create a new %s contact.",
 		},
 		Extend:            true,
@@ -27,7 +27,7 @@ func init() {
 	toolDataMap["nervatura_contact_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_contact_update",
-			Title:       "Contact Data Update",
+			Title:       "Update a contact by code",
 			Description: "Update a %s contact.",
 		},
 		Extend:            true,
@@ -40,7 +40,7 @@ func init() {
 	toolDataMap["nervatura_contact_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_contact_query",
-			Title:       "Contact Query",
+			Title:       "Query contacts by parameters",
 			Description: "Query %s contacts by parameters. The result is all contacts that match the filter criteria.",
 		},
 		Extend:            true,

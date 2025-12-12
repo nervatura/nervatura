@@ -401,7 +401,19 @@ func (ds *DataStore) DataDelete(model string, id int64, code string) (err error)
 		return err
 	}
 	modelID := cu.ToInteger(rows[0]["id"], 0)
-	_, err = ds.StoreDataUpdate(md.Update{Model: model, Values: cu.IM{"deleted": true}, IDKey: modelID})
+	values := cu.IM{"deleted": true}
+	if model == "trans" {
+		transType := cu.ToString(rows[0]["trans_type"], "")
+		direction := cu.ToString(rows[0]["direction"], "")
+		if (slices.Contains([]string{md.TransTypeReceipt.String(), md.TransTypeInvoice.String()}, transType) &&
+			direction == md.DirectionOut.String()) || transType == md.TransTypeCash.String() {
+			values = cu.IM{}
+			transMeta := cu.ToIM(rows[0]["trans_meta"], cu.IM{})
+			transMeta["status"] = md.TransStatusDeleted.String()
+			ut.ConvertByteToIMData(transMeta, values, "trans_meta")
+		}
+	}
+	_, err = ds.StoreDataUpdate(md.Update{Model: model, Values: values, IDKey: modelID})
 	return err
 }
 

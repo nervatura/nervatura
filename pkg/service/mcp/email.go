@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -25,7 +24,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, emailSendHandler)
 		},
-		Scopes: []string{"customer", "product"},
+		Scopes: []string{"customer", "product", "invoice"},
 	}
 }
 
@@ -101,14 +100,8 @@ func emailSendHandler(ctx context.Context, req *mcp.CallToolRequest, parameters 
 	reportKey := cu.ToString(parameters["report_key"], "")
 
 	if reportKey == "" && code != "XXX" {
-		var ms *ModelSchema
-		if ms, err = getModelSchemaByPrefix(code[:3]); err != nil {
-			return nil, nil, errors.New("invalid code: " + code)
-		}
-		var rows []cu.IM
-		if rows, err = ds.StoreDataGet(cu.IM{
-			"fields": []string{"report_key"}, "model": "config_report", "report_type": strings.ToUpper(ms.Name)}, true); err == nil {
-			reportKey = cu.ToString(rows[0]["report_key"], "")
+		if reportKey, err = getDefaultReportKey(ctx, code); err != nil {
+			return nil, nil, err
 		}
 	}
 

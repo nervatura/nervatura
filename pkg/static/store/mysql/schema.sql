@@ -1426,7 +1426,7 @@ BEGIN
     ELSEIF NEW.trans_type = 'TRANS_DELIVERY' AND NEW.direction = 'DIRECTION_TRANSFER' THEN
       SET NEW.code = CONCAT('TRF', UNIX_TIMESTAMP(), 'N', @A);
     ELSE
-      SET NEW.code = CONCAT(SUBSTR(NEW.trans_type, 1, 3), UNIX_TIMESTAMP(), 'N', @A);
+      SET NEW.code = CONCAT(SUBSTR(NEW.trans_type, 7, 3), UNIX_TIMESTAMP(), 'N', @A);
     END IF;
   END IF;
 END;

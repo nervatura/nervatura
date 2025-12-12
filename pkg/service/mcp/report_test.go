@@ -125,3 +125,80 @@ func Test_reportQueryHandler(t *testing.T) {
 		})
 	}
 }
+
+func Test_getDefaultReportKey(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		code    string
+		wantErr bool
+		ds      *api.DataStore
+	}{
+		{
+			name:    "success",
+			code:    "INV1731101982N123",
+			wantErr: false,
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "report_key": "ntr_invoice_en", "trans_type": "TRANS_INVOICE", "direction": "DIRECTION_OUT"}}, nil
+						},
+					},
+				},
+			},
+		},
+		{
+			name:    "missing default report key",
+			code:    "INV1731101982N123",
+			wantErr: true,
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							if queries[0].From == "config_report" {
+								return []cu.IM{}, nil
+							}
+							return []cu.IM{{"id": 1, "report_key": "ntr_invoice_en", "trans_type": "TRANS_INVOICE", "direction": "DIRECTION_OUT"}}, nil
+						},
+					},
+				},
+			},
+		},
+		{
+			name:    "missing code",
+			code:    "INV1731101982N123",
+			wantErr: true,
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{},
+				},
+			},
+		},
+		{
+			name:    "invalid model",
+			code:    "XXX1731101982N123",
+			wantErr: true,
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.WithValue(context.Background(), md.DataStoreCtxKey, tt.ds)
+			_, gotErr := getDefaultReportKey(ctx, tt.code)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("getDefaultReportKey() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("getDefaultReportKey() succeeded unexpectedly")
+			}
+		})
+	}
+}

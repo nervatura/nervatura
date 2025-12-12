@@ -17,8 +17,8 @@ func init() {
 	toolDataMap["nervatura_product_create"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_product_create",
-			Title:       "Product Data Create",
-			Description: "Create a new product. Related tools: contact, address, event.",
+			Title:       "Create a new product",
+			Description: "Create a new product. Related tools: price, event.",
 		},
 		ModelSchema: ProductSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
@@ -29,7 +29,7 @@ func init() {
 	toolDataMap["nervatura_product_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_product_query",
-			Title:       "Product Data Query",
+			Title:       "Query products by parameters",
 			Description: "Query products by parameters. The result is all products that match the filter criteria.",
 		},
 		ModelSchema: ProductSchema(),
@@ -41,8 +41,8 @@ func init() {
 	toolDataMap["nervatura_product_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_product_update",
-			Title:       "Product Data Update",
-			Description: "Update a product by code. When modifying, only the specified values change. Related tools: contact, address, event.",
+			Title:       "Update a product by code",
+			Description: "Update a product by code. When modifying, only the specified values change. Related tools: price, event.",
 		},
 		ModelSchema: ProductSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {

@@ -5,16 +5,16 @@ import (
 )
 
 type Address struct {
-	Country string  `json:"country"`
-	State   string  `json:"state"`
-	ZipCode ZipCode `json:"zip_code"`
-	City    string  `json:"city"`
-	Street  string  `json:"street"`
-	Notes   string  `json:"notes"`
+	Country string  `json:"country" jsonschema:"Country. Example: Country."`
+	State   string  `json:"state" jsonschema:"State. Example: State."`
+	ZipCode ZipCode `json:"zip_code" jsonschema:"Zip code. Example: 12345"`
+	City    string  `json:"city" jsonschema:"City. Example: City."`
+	Street  string  `json:"street" jsonschema:"Street. Example: Street."`
+	Notes   string  `json:"notes" jsonschema:"Notes. Example: Notes."`
 	// Additional tags for the address
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the contact. The value is an array of strings. Example: [TAG1, TAG2]"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	AddressMap cu.IM `json:"address_map"`
+	AddressMap cu.IM `json:"address_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
 type Contact struct {
@@ -26,22 +26,22 @@ type Contact struct {
 	Email     string `json:"email" jsonschema:"Email."`
 	Notes     string `json:"notes" jsonschema:"Notes."`
 	// Additional tags for the contact
-	Tags []string `json:"tags" jsonschema:"Additional tags for the contact. The value is an array of strings."`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the contact. The value is an array of strings. Example: [TAG1, TAG2]"`
 	// Flexible key-value map for additional metadata. The value is any json type.
 	ContactMap cu.IM `json:"contact_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
 type Event struct {
-	Uid         string       `json:"uid"`
-	Subject     string       `json:"subject"`
-	StartTime   TimeDateTime `json:"start_time" type:"string"`
-	EndTime     TimeDateTime `json:"end_time" type:"string"`
-	Place       string       `json:"place"`
-	Description string       `json:"description"`
+	Uid         string       `json:"uid" jsonschema:"Uid. Example: UID1731101982N123"`
+	Subject     string       `json:"subject" jsonschema:"Subject. Example: Subject."`
+	StartTime   TimeDateTime `json:"start_time" type:"string" jsonschema:"Start time. Example: 2025-01-01T00:00:00Z"`
+	EndTime     TimeDateTime `json:"end_time" type:"string" jsonschema:"End time. Example: 2025-01-01T00:00:00Z"`
+	Place       string       `json:"place" jsonschema:"Place. Example: Place."`
+	Description string       `json:"description" jsonschema:"Description. Example: Description."`
 	// Additional tags for the event
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the event. The value is an array of strings. Example: [TAG1, TAG2]"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	EventMap cu.IM `json:"event_map"`
+	EventMap cu.IM `json:"event_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
 type Bookmark struct {
@@ -116,24 +116,23 @@ type Currency struct {
 }
 
 type CustomerMeta struct {
-	TaxNumber string `json:"tax_number" jsonschema:"Tax number"`
-	Account   string `json:"account" jsonschema:"Account number"`
+	TaxNumber string `json:"tax_number" jsonschema:"Tax number. Example: 1234567890"`
+	Account   string `json:"account" jsonschema:"Account number. Example: 1234567890"`
 	// Tax-free
-	TaxFree bool `json:"tax_free" jsonschema:"Tax-free customer."`
+	TaxFree bool `json:"tax_free" jsonschema:"Tax-free customer"`
 	// Payment per.
-	Terms int64 `json:"terms" jsonschema:"Payment period in days"`
+	Terms int64 `json:"terms" jsonschema:"Payment period in days. Example: 10"`
 	// Customer's credit limit. Data is used by financial reports.
-	CreditLimit float64 `json:"credit_limit" jsonschema:"Customer's credit limit. Data is used by financial reports."`
+	CreditLimit float64 `json:"credit_limit" jsonschema:"Customer's credit limit. Data is used by financial reports. Example: 1000"`
 	// If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field. If the product has a separate customer price, the value specified here will not be considered by the program.
 	Discount float64 `json:"discount" jsonschema:"If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field."`
 	Notes    string  `json:"notes" jsonschema:"Additional notes for the customer."`
-	Inactive bool    `json:"inactive" jsonschema:"Inactive"`
+	Inactive bool    `json:"inactive" jsonschema:"Inactive customer"`
 	// Additional tags for the customer
-	Tags []string `json:"tags" jsonschema:"Additional tags for the customer. The value is an array of strings."`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the customer. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Customer struct {
-	_ struct{} `jsonschema:"Customer data"`
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
 	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
@@ -393,7 +392,7 @@ type Price struct {
 }
 
 type ProductMeta struct {
-	Unit string `json:"unit" jsonschema:"Unit of measurement."`
+	Unit string `json:"unit" jsonschema:"Unit of measurement. Example: piece"`
 	// ENUM field. Valid values: CODE_128, CODE_39, EAN_13, EAN_8, QR_CODE
 	BarcodeType BarcodeType `json:"barcode_type" jsonschema:"Barcode type. Enum values."`
 	// Any barcode or QR code data
@@ -403,7 +402,7 @@ type ProductMeta struct {
 	Notes      string  `json:"notes" jsonschema:"Notes."`
 	Inactive   bool    `json:"inactive" jsonschema:"Inactive."`
 	// Additional tags for the product
-	Tags []string `json:"tags" jsonschema:"Tags."`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the product. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Product struct {
@@ -566,26 +565,26 @@ type TransMetaInvoice struct {
 }
 
 type TransMeta struct {
-	DueTime   TimeDateTime `json:"due_time"`
-	RefNumber string       `json:"ref_number"`
+	DueTime   TimeDateTime `json:"due_time" jsonschema:"Due time. Example: 2025-01-01T00:00:00Z"`
+	RefNumber string       `json:"ref_number" jsonschema:"Ref number. Example: REF1731101982N123"`
 	// ENUM field. Valid values: CASH, TRANSFER, CARD, ONLINE, OTHER
-	PaidType PaidType `json:"paid_type"`
-	TaxFree  bool     `json:"tax_free"`
-	Paid     bool     `json:"paid"`
-	Rate     float64  `json:"rate"`
-	Closed   bool     `json:"closed"`
+	PaidType PaidType `json:"paid_type" jsonschema:"Paid type. Enum values. Example: PAID_TYPE_CASH"`
+	TaxFree  bool     `json:"tax_free" jsonschema:"Tax free invoice"`
+	Paid     bool     `json:"paid" jsonschema:"Paid invoice"`
+	Rate     float64  `json:"rate" jsonschema:"Rate"`
+	Closed   bool     `json:"closed" jsonschema:"Closed invoice"`
 	// ENUM field. Valid values: NORMAL, CANCELLATION, AMENDMENT
-	Status TransStatus `json:"status"`
+	Status TransStatus `json:"status" jsonschema:"Status. Enum values. Example: TRANS_STATUS_NORMAL"`
 	// ENUM field. Valid values: OK, NEW, BACK
-	TransState    TransState         `json:"trans_state"`
-	Notes         string             `json:"notes"`
-	InternalNotes string             `json:"internal_notes"`
-	ReportNotes   string             `json:"report_notes"`
+	TransState    TransState         `json:"trans_state" jsonschema:"Trans state. Enum values. Example: TRANS_STATE_OK"`
+	Notes         string             `json:"notes" jsonschema:"Notes. Example: Notes."`
+	InternalNotes string             `json:"internal_notes" jsonschema:"Internal notes. Example: Internal notes."`
+	ReportNotes   string             `json:"report_notes" jsonschema:"Report notes. Example: Report notes."`
 	Worksheet     TransMetaWorksheet `json:"worksheet,omitempty"`
 	Rent          TransMetaRent      `json:"rent,omitempty"`
 	Invoice       TransMetaInvoice   `json:"invoice,omitempty"`
 	// Additional tags for the trans
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the customer. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Trans struct {
@@ -594,31 +593,31 @@ type Trans struct {
 	Id int64 `json:"id"`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: INV1731101982N123 ("INV"/"REC"/"ORD"/"WOR"... + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation."`
 	// ENUM field. Valid values:
 	// INVOICE, RECEIPT, ORDER, OFFER, WORKSHEET, RENT, DELIVERY,
 	// INVENTORY, WAYBILL, PRODUCTION, FORMULA, BANK, CASH
-	TransType TransType `json:"trans_type"`
-	TransDate TimeDate  `json:"trans_date"`
+	TransType TransType `json:"trans_type" jsonschema:"Trans type. Enum values. Example: TRANS_TYPE_INVOICE"`
+	TransDate TimeDate  `json:"trans_date" jsonschema:"Trans date. Example: 2025-01-01"`
 	// ENUM field. Valid values: OUT, IN, TRANSFER
-	Direction Direction `json:"direction"`
+	Direction Direction `json:"direction" jsonschema:"Direction. Enum values. Example: DIRECTION_OUT"`
 	// Reference to [Trans](#trans).code
-	TransCode string `json:"trans_code"`
+	TransCode string `json:"trans_code" jsonschema:"Other transaction (invoice, receipt, offer, order, worksheet, rent etc.) reference."`
 	// Reference to [Customer](#customer).code
-	CustomerCode string `json:"customer_code"`
+	CustomerCode string `json:"customer_code" jsonschema:"Customer reference. Example: CUS1731101982N123"`
 	// Reference to [Employee](#employee).code
-	EmployeeCode string `json:"employee_code"`
+	EmployeeCode string `json:"employee_code" jsonschema:"Employee reference. Example: EMP1731101982N123"`
 	// Reference to [Project](#project).code
-	ProjectCode string `json:"project_code"`
+	ProjectCode string `json:"project_code" jsonschema:"Project reference. Example: PRJ1731101982N123"`
 	// Reference to [Place](#place).code
-	PlaceCode string `json:"place_code"`
+	PlaceCode string `json:"place_code" jsonschema:"Place reference. Example: PLA1731101982N123"`
 	// Reference to [currency](#currency).code
-	CurrencyCode string `json:"currency_code"`
+	CurrencyCode string `json:"currency_code" jsonschema:"Currency iso code. Example: USD"`
 	// Reference to [Auth](#auth).code
-	AuthCode  string    `json:"auth_code"`
+	AuthCode  string    `json:"auth_code" jsonschema:"Auth reference. Example: AUT1731101982N123"`
 	TransMeta TransMeta `json:"trans_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	TransMap cu.IM `json:"trans_map"`
+	TransMap cu.IM `json:"trans_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
 	TimeStamp TimeDateTime `json:"time_stamp"`
 }

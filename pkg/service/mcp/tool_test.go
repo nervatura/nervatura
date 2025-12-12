@@ -74,6 +74,51 @@ func Test_modelQuery(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "price_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_price_query"}},
+			parameters: cu.IM{
+				"limit":         10,
+				"offset":        0,
+				"price_type":    "PRICE_CUSTOMER",
+				"product_code":  "PRD123456",
+				"currency_code": "USD",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "invoice_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_invoice_query"}},
+			parameters: cu.IM{
+				"limit":         10,
+				"offset":        0,
+				"code":          "INV1731101982N123",
+				"customer_code": "CUS123456",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -150,6 +195,46 @@ func Test_modelUpdate(t *testing.T) {
 				},
 			},
 			wantErr: false,
+		},
+		{
+			name: "validate_error",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_invoice_update"}},
+			inputData: cu.IM{
+				"code":          "INV1731101982N123",
+				"trans_date":    "2025-01-01",
+				"direction":     "DIRECTION_OUT",
+				"customer_code": "CUS123456",
+				"currency_code": "USD",
+				"due_time":      "2025-01-01",
+				"paid_type":     "PAID_TYPE_CASH",
+				"paid":          true,
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "code": "123456", "trans_meta": cu.IM{"status": md.TransStatusDeleted.String()}}}, nil
+						},
+						"Update": func(data md.Update) (int64, error) {
+							return 1, nil
+						},
+					},
+				},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				ReadAll: func(r io.Reader) ([]byte, error) {
+					return []byte(`{"id": 1, "code": "123456"}`), nil
+				},
+				ConvertToByte: func(v any) ([]byte, error) {
+					return cu.ConvertToByte(v)
+				},
+				ConvertFromByte: func(data []byte, v any) error {
+					return cu.ConvertFromByte(data, v)
+				},
+				GetDataField: func(data any, JSONName string) (fieldName string, fieldValue interface{}) {
+					return JSONName, "value"
+				},
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

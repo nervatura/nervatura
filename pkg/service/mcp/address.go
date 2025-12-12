@@ -14,7 +14,7 @@ func init() {
 	toolDataMap["nervatura_address_create"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_create",
-			Title:       "Address Data Create",
+			Title:       "Create a new address",
 			Description: "Create a new %s address.",
 		},
 		Extend:            true,
@@ -27,7 +27,7 @@ func init() {
 	toolDataMap["nervatura_address_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_update",
-			Title:       "Address Data Update",
+			Title:       "Update a address by code",
 			Description: "Update a %s address.",
 		},
 		Extend:            true,
@@ -40,7 +40,7 @@ func init() {
 	toolDataMap["nervatura_address_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_query",
-			Title:       "Address Query",
+			Title:       "Query addresses by parameters",
 			Description: "Query %s addresses by parameters. The result is all addresses that match the filter criteria.",
 		},
 		Extend:            true,

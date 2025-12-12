@@ -1161,7 +1161,7 @@ CREATE TRIGGER trans_default_code
   FOR EACH ROW
 WHEN NEW.code = 'NULL' AND NEW.trans_type <> 'TRANS_INVENTORY' AND NEW.trans_type <> 'TRANS_DELIVERY'
 BEGIN
-  UPDATE trans SET code = substr(NEW.trans_type, 1, 3)||unixepoch()||'N'||NEW.id WHERE id = NEW.id;
+  UPDATE trans SET code = substr(NEW.trans_type, 7, 3)||unixepoch()||'N'||NEW.id WHERE id = NEW.id;
 END;
 
 CREATE TRIGGER trans_invoice_customer_insert

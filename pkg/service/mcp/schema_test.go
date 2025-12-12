@@ -43,6 +43,14 @@ func Test_getSchemaData(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "price",
+			data: cu.IM{
+				"code": "PRC1731101982N123", "price_type": "PRICE_CUSTOMER", "valid_from": "2025-01-01", "product_code": "PRD1731101982N123", "currency_code": "USD", "qty": 1,
+			},
+			ms:      PriceSchema(),
+			wantErr: false,
+		},
+		{
 			name: "missing required field",
 			data: cu.IM{
 				"code": "", "customer_type": "CUSTOMER_COMPANY",

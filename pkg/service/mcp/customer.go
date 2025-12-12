@@ -17,7 +17,7 @@ func init() {
 	toolDataMap["nervatura_customer_create"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_customer_create",
-			Title:       "Customer Data Create",
+			Title:       "Create a new customer",
 			Description: "Create a new customer. Related tools: contact, address, event.",
 		},
 		ModelSchema: CustomerSchema(),
@@ -29,7 +29,7 @@ func init() {
 	toolDataMap["nervatura_customer_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_customer_query",
-			Title:       "Customer Data Query",
+			Title:       "Query customers by parameters",
 			Description: "Query customers by parameters. The result is all customers that match the filter criteria.",
 		},
 		ModelSchema: CustomerSchema(),
@@ -41,7 +41,7 @@ func init() {
 	toolDataMap["nervatura_customer_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_customer_update",
-			Title:       "Customer Data Update",
+			Title:       "Update a customer by code",
 			Description: "Update a customer by code. When modifying, only the specified values change. Related tools: contact, address, event.",
 		},
 		ModelSchema: CustomerSchema(),

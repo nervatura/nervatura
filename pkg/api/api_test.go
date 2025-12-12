@@ -1375,7 +1375,7 @@ func TestDataStore_DataDelete(t *testing.T) {
 				Config: cu.IM{},
 				Db: &md.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
-						return []cu.IM{{"id": 1, "name": "test"}}, nil
+						return []cu.IM{{"id": 1, "trans_type": "TRANS_INVOICE", "direction": "DIRECTION_OUT", "trans_meta": cu.IM{"status": "STATUS_OK"}}}, nil
 					},
 					"Update": func(data md.Update) (int64, error) {
 						return 100, nil
@@ -1384,7 +1384,7 @@ func TestDataStore_DataDelete(t *testing.T) {
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 			},
 			args: args{
-				model: "customer",
+				model: "trans",
 				id:    1,
 				code:  "123456",
 			},
