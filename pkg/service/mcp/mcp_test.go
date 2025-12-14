@@ -351,3 +351,23 @@ func TestMcpServer_perMethodRateLimiterMiddleware(t *testing.T) {
 		})
 	}
 }
+
+func TestCatalog(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		w http.ResponseWriter
+		r *http.Request
+	}{
+		{
+			name: "success",
+			w:    httptest.NewRecorder(),
+			r:    httptest.NewRequest("GET", "/", nil),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			Catalog(tt.w, tt.r)
+		})
+	}
+}

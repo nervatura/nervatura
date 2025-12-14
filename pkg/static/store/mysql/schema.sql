@@ -1617,7 +1617,7 @@ CREATE VIEW item_view AS
       'tax_code', tax_code, 'item_meta', item_meta, 'item_map', item_map, 'time_stamp', time_stamp
     ) AS item_object
   FROM item
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE VIEW item_map AS
   SELECT tbl.id AS id, tbl.code, trans_code, product_code,
@@ -1640,7 +1640,7 @@ CREATE VIEW item_map AS
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
   LEFT JOIN config_map cf on jt.map_key = cf.field_name
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE VIEW item_tags AS
   SELECT tbl.id AS id, tbl.code, jt.value as tag
@@ -1648,7 +1648,7 @@ CREATE VIEW item_tags AS
   CROSS JOIN JSON_TABLE(
     tbl.item_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
   ) AS jt
-  WHERE tbl.deleted = false;
+  WHERE tbl.deleted = false AND tbl.trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE TABLE IF NOT EXISTS movement(
   id INTEGER AUTO_INCREMENT NOT NULL,
@@ -1714,7 +1714,7 @@ CREATE VIEW movement_view AS
       'movement_meta', movement_meta, 'movement_map', movement_map, 'time_stamp', time_stamp
     ) AS movement_object
   FROM movement
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE VIEW movement_map AS
   SELECT tbl.id AS id, tbl.code, trans_code,
@@ -1737,7 +1737,7 @@ CREATE VIEW movement_map AS
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
   LEFT JOIN config_map cf on jt.map_key = cf.field_name
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE VIEW movement_tags AS
   SELECT tbl.id AS id, tbl.code, jt.value as tag
@@ -1745,7 +1745,7 @@ CREATE VIEW movement_tags AS
   CROSS JOIN JSON_TABLE(
     tbl.movement_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
   ) AS jt
-  WHERE tbl.deleted = false;
+  WHERE tbl.deleted = false AND tbl.trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE VIEW movement_stock AS
   SELECT ROW_NUMBER() OVER (ORDER BY pl.place_name, p.product_name) as id,
@@ -1756,6 +1756,7 @@ CREATE VIEW movement_stock AS
   FROM movement mv INNER JOIN place pl ON mv.place_code = pl.code
   INNER JOIN product p ON mv.product_code = p.code
   WHERE mv.movement_type = 'MOVEMENT_INVENTORY' AND mv.deleted = false AND p.deleted = false AND pl.deleted = false
+    AND mv.trans_code IN (SELECT code FROM trans WHERE deleted = false)
   GROUP BY mv.place_code, pl.place_name, mv.product_code, p.product_name, p.product_meta->>"$.unit", movement_meta->>"$.notes"
   HAVING SUM(CAST(mv.movement_meta->>"$.qty" AS FLOAT)) <> 0
   ORDER BY pl.place_name, p.product_name;
@@ -1864,7 +1865,7 @@ CREATE VIEW payment_view AS
       'payment_meta', payment_meta, 'payment_map', payment_map, 'time_stamp', time_stamp
     ) AS payment_object
   FROM payment
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE VIEW payment_map AS
   SELECT tbl.id AS id, tbl.code, paid_date, trans_code,
@@ -1887,7 +1888,7 @@ CREATE VIEW payment_map AS
     '$[*]' COLUMNS (map_key VARCHAR(255) PATH '$')
   ) AS jt
   LEFT JOIN config_map cf on jt.map_key = cf.field_name
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE VIEW payment_invoice AS
   SELECT pm.id, pm.code, pm.trans_code, pt.trans_type, pt.direction, pm.paid_date, pl.place_name, pl.currency_code,
@@ -1908,7 +1909,7 @@ CREATE VIEW payment_tags AS
   CROSS JOIN JSON_TABLE(
     tbl.payment_meta->"$.tags", "$[*]" COLUMNS(value VARCHAR(255) PATH "$")
   ) AS jt
-  WHERE tbl.deleted = false;
+  WHERE tbl.deleted = false AND tbl.trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE TABLE IF NOT EXISTS log(
   id INTEGER AUTO_INCREMENT NOT NULL,

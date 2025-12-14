@@ -337,6 +337,7 @@ func (s *httpServer) mcpRoutes() {
 	s.loadPrompts()
 	s.loadResources()
 	s.mux.Handle("/mcp", mcp.NewStreamableHTTPHandler(msrv.GetServer("root", s.config, s.appLog, s.session), opt))
+	s.mux.HandleFunc("GET /mcp/catalog", msrv.Catalog)
 	s.mux.Handle("/mcp/all", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("all", s.config, s.appLog, s.session), opt)))
 	s.mux.Handle("/mcp/public", mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog, s.session), opt))
 	s.mux.Handle("/mcp/customer", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("customer", s.config, s.appLog, s.session), opt)))

@@ -180,19 +180,19 @@ type Employee struct {
 }
 
 type ItemMeta struct {
-	Unit        string  `json:"unit"`
-	Qty         float64 `json:"qty"`
-	FxPrice     float64 `json:"fx_price"`
-	NetAmount   float64 `json:"net_amount"`
-	Discount    float64 `json:"discount"`
-	VatAmount   float64 `json:"vat_amount"`
-	Amount      float64 `json:"amount"`
-	Description string  `json:"description"`
-	Deposit     bool    `json:"deposit"`
-	OwnStock    float64 `json:"own_stock"`
-	ActionPrice bool    `json:"action_price"`
+	Unit        string  `json:"unit" jsonschema:"Unit. Example: piece"`
+	Qty         float64 `json:"qty" jsonschema:"Quantity."`
+	FxPrice     float64 `json:"fx_price" jsonschema:"Foreign price."`
+	NetAmount   float64 `json:"net_amount" jsonschema:"Net amount."`
+	Discount    float64 `json:"discount" jsonschema:"Discount."`
+	VatAmount   float64 `json:"vat_amount" jsonschema:"Vat amount."`
+	Amount      float64 `json:"amount" jsonschema:"Amount."`
+	Description string  `json:"description" jsonschema:"Description."`
+	Deposit     bool    `json:"deposit" jsonschema:"Deposit."`
+	OwnStock    float64 `json:"own_stock" jsonschema:"Own stock."`
+	ActionPrice bool    `json:"action_price" jsonschema:"Action price."`
 	// Additional tags for the item
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the item. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Item struct {

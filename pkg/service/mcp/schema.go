@@ -28,8 +28,9 @@ type ModelSchemaInterface interface {
 type ModelSchema struct {
 	Name              string
 	Prefix            string
-	TransType         string
 	CustomFrom        string
+	CustomParameters  cu.IM
+	CustomFilter      string
 	CreateInputSchema func(scope string) *jsonschema.Schema
 	UpdateInputSchema func(scope string) *jsonschema.Schema
 	QueryInputSchema  func(scope string) *jsonschema.Schema

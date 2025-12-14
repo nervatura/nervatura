@@ -128,10 +128,10 @@ type invoiceParameter struct {
 
 func InvoiceSchema() (ms *ModelSchema) {
 	return &ModelSchema{
-		Name:       "trans",
-		TransType:  md.TransTypeInvoice.String(),
-		CustomFrom: "trans t left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code",
-		Prefix:     "INV",
+		Name:         "trans",
+		CustomFrom:   "trans t left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code",
+		CustomFilter: "trans_type = '" + md.TransTypeInvoice.String() + "'",
+		Prefix:       "INV",
 		CreateInputSchema: func(scope string) (schema *jsonschema.Schema) {
 			schema = &jsonschema.Schema{}
 			var err error
@@ -300,7 +300,7 @@ func invoiceValidate(ctx context.Context, input cu.IM) (data cu.IM, err error) {
 		return data, err
 	}
 	transMeta := cu.ToIM(rows[0]["trans_meta"], cu.IM{})
-	if transMeta["status"] == md.TransStatusDeleted.String() || cu.ToBoolean(transMeta["closed"], false) {
+	if cu.ToString(transMeta["status"], "") == md.TransStatusDeleted.String() || cu.ToBoolean(transMeta["closed"], false) {
 		return data, errors.New("invoice is not updatable because it is deleted or closed")
 	}
 	return input, nil

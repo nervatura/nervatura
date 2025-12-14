@@ -22,7 +22,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendCreate)
 		},
-		Scopes: []string{"customer", "project"},
+		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_address_update"] = ToolData{
 		Tool: mcp.Tool{
@@ -35,7 +35,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendUpdate)
 		},
-		Scopes: []string{"customer", "project"},
+		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_address_query"] = ToolData{
 		Tool: mcp.Tool{
@@ -48,7 +48,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendQuery)
 		},
-		Scopes: []string{"customer", "project"},
+		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_address_delete"] = ToolData{
 		Tool:              createExtendDeleteTool("nervatura_address_delete", "address"),
@@ -57,7 +57,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendDelete)
 		},
-		Scopes: []string{"customer", "project"},
+		Scopes: []string{"customer"},
 	}
 }
 

@@ -246,3 +246,31 @@ func TokenAuth(opt md.AuthOptions) (*auth.TokenInfo, error) {
 		},
 	}, nil
 }
+
+func Catalog(w http.ResponseWriter, r *http.Request) {
+	tools := cu.IM{
+		"all": cu.IM{},
+	}
+	setTool := func(scope string, td ToolData) {
+		tool := cu.IM{"description": td.Description, "scopes": td.Scopes}
+		if _, ok := tools[scope]; !ok {
+			tools[scope] = cu.IM{}
+		}
+		scopeTools := cu.ToIM(tools[scope], cu.IM{})
+		scopeTools[td.Name] = tool
+		tools[scope] = scopeTools
+	}
+	for _, td := range toolDataMap {
+		setTool("all", td)
+		for _, scope := range td.Scopes {
+			setTool(scope, td)
+		}
+	}
+	catalog := cu.IM{
+		"tools": tools,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response, err := cu.ConvertToByte(catalog); err == nil {
+		w.Write(response)
+	}
+}

@@ -119,6 +119,30 @@ func Test_modelQuery(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "item_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_item_query"}},
+			parameters: cu.IM{
+				"limit":        10,
+				"offset":       0,
+				"code":         "ITM1731101982N123",
+				"trans_code":   "INV1731101982N123",
+				"product_code": "PRD1731101982N123",
+				"tax_code":     "VAT20",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

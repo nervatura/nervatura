@@ -1252,7 +1252,7 @@ CREATE OR REPLACE VIEW item_view AS
       'tax_code', tax_code, 'item_meta', item_meta, 'item_map', item_map, 'time_stamp', time_stamp
     ) AS item_object
   FROM item
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE OR REPLACE VIEW item_map AS
   SELECT item.id AS id, item.code, item.trans_code, item.product_code,
@@ -1269,12 +1269,12 @@ CREATE OR REPLACE VIEW item_map AS
 				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
 			ELSE 'string' END AS value_meta
   FROM item, jsonb_each(item.item_map) LEFT JOIN config_map cf on key = cf.field_name
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE OR REPLACE VIEW item_tags AS
   SELECT item.id AS id, code, value as tag
   FROM item, jsonb_array_elements_text(item.item_meta->'tags')
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE TABLE IF NOT EXISTS movement(
   id SERIAL NOT NULL,
@@ -1336,7 +1336,7 @@ CREATE OR REPLACE VIEW movement_view AS
       'movement_meta', movement_meta, 'movement_map', movement_map, 'time_stamp', time_stamp
     ) AS movement_object
   FROM movement
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE OR REPLACE VIEW movement_map AS
   SELECT movement.id AS id, movement.code, movement.trans_code,
@@ -1353,12 +1353,12 @@ CREATE OR REPLACE VIEW movement_map AS
 				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
 			ELSE 'string' END AS value_meta
   FROM movement, jsonb_each(movement.movement_map) LEFT JOIN config_map cf on key = cf.field_name
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE OR REPLACE VIEW movement_tags AS
   SELECT movement.id AS id, code, value as tag
   FROM movement, jsonb_array_elements_text(movement.movement_meta->'tags')
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE OR REPLACE VIEW movement_stock AS
   SELECT ROW_NUMBER() OVER (ORDER BY pl.place_name, p.product_name) as id,
@@ -1369,6 +1369,7 @@ CREATE OR REPLACE VIEW movement_stock AS
   FROM movement mv INNER JOIN place pl ON mv.place_code = pl.code
   INNER JOIN product p ON mv.product_code = p.code
   WHERE mv.movement_type = 'MOVEMENT_INVENTORY' AND mv.deleted = false AND p.deleted = false AND pl.deleted = false
+    AND mv.trans_code IN (SELECT code FROM trans WHERE deleted = false)
   GROUP BY mv.place_code, pl.place_name, mv.product_code, p.product_name, p.product_meta->>'unit', movement_meta->>'notes'
   HAVING SUM(CAST(mv.movement_meta->>'qty' AS FLOAT)) <> 0
   ORDER BY pl.place_name, p.product_name;
@@ -1473,7 +1474,7 @@ CREATE OR REPLACE VIEW payment_view AS
       'payment_meta', payment_meta, 'payment_map', payment_map, 'time_stamp', time_stamp
     ) AS payment_object
   FROM payment
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE OR REPLACE VIEW payment_map AS
   SELECT payment.id AS id, payment.code, payment.paid_date, payment.trans_code,
@@ -1490,7 +1491,7 @@ CREATE OR REPLACE VIEW payment_map AS
 				'FIELD_TOOL', 'FIELD_TRANS_ITEM', 'FIELD_TRANS_MOVEMENT', 'FIELD_TRANS_PAYMENT') then 'link'
 			ELSE 'string' END AS value_meta
   FROM payment, jsonb_each(payment.payment_map) LEFT JOIN config_map cf on key = cf.field_name
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE OR REPLACE VIEW payment_invoice AS
   SELECT pm.id, pm.code, pm.trans_code, pt.trans_type, pt.direction, pm.paid_date, pl.place_name, pl.currency_code,
@@ -1508,7 +1509,7 @@ CREATE OR REPLACE VIEW payment_invoice AS
 CREATE OR REPLACE VIEW payment_tags AS
   SELECT payment.id AS id, code, value as tag
   FROM payment, jsonb_array_elements_text(payment.payment_meta->'tags')
-  WHERE deleted = false;
+  WHERE deleted = false AND trans_code IN (SELECT code FROM trans WHERE deleted = false);
 
 CREATE TABLE IF NOT EXISTS log(
   id SERIAL NOT NULL,
