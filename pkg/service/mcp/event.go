@@ -216,31 +216,33 @@ func EventSchema() (ms *ModelExtendSchema) {
 			err = cu.ConvertToType(data, &event)
 			return event, err
 		},
-		LoadList: func(model string, rows []cu.IM) (items any, err error) {
-			switch model {
-			case "customer":
-				var customers []eventCustomer = []eventCustomer{}
-				err = cu.ConvertToType(rows, &customers)
-				return customers, err
-			case "project":
-				var projects []eventProject = []eventProject{}
-				err = cu.ConvertToType(rows, &projects)
-				return projects, err
-			case "employee":
-				var employees []eventEmployee = []eventEmployee{}
-				err = cu.ConvertToType(rows, &employees)
-				return employees, err
-			case "product":
-				var products []eventProduct = []eventProduct{}
-				err = cu.ConvertToType(rows, &products)
-				return products, err
-			case "tool":
-				var tools []eventTool = []eventTool{}
-				err = cu.ConvertToType(rows, &tools)
-				return tools, err
-			default:
-				return rows, err
-			}
-		},
+		LoadList: eventLoadList,
+	}
+}
+
+func eventLoadList(model string, rows []cu.IM) (items any, err error) {
+	switch model {
+	case "customer":
+		var customers []eventCustomer = []eventCustomer{}
+		err = cu.ConvertToType(rows, &customers)
+		return customers, err
+	case "project":
+		var projects []eventProject = []eventProject{}
+		err = cu.ConvertToType(rows, &projects)
+		return projects, err
+	case "employee":
+		var employees []eventEmployee = []eventEmployee{}
+		err = cu.ConvertToType(rows, &employees)
+		return employees, err
+	case "product":
+		var products []eventProduct = []eventProduct{}
+		err = cu.ConvertToType(rows, &products)
+		return products, err
+	case "tool":
+		var tools []eventTool = []eventTool{}
+		err = cu.ConvertToType(rows, &tools)
+		return tools, err
+	default:
+		return rows, err
 	}
 }

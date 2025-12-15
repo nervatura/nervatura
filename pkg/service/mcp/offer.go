@@ -15,131 +15,129 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_invoice_create"] = ToolData{
+	toolDataMap["nervatura_offer_create"] = ToolData{
 		Tool: mcp.Tool{
-			Name:        "nervatura_invoice_create",
-			Title:       "Create a new invoice",
-			Description: "Create a new invoice. Related tools: item.",
+			Name:        "nervatura_offer_create",
+			Title:       "Create a new offer",
+			Description: "Create a new offer. Related tools: item.",
 		},
-		ModelSchema: InvoiceSchema(),
+		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
-			mcp.AddTool(server, tool, invoiceCreateHandler)
+			mcp.AddTool(server, tool, offerCreateHandler)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer"},
 	}
-	toolDataMap["nervatura_invoice_query"] = ToolData{
+	toolDataMap["nervatura_offer_query"] = ToolData{
 		Tool: mcp.Tool{
-			Name:        "nervatura_invoice_query",
-			Title:       "Query invoices by parameters",
-			Description: "Query invoices by parameters. The result is all invoices that match the filter criteria.",
+			Name:        "nervatura_offer_query",
+			Title:       "Query offers by parameters",
+			Description: "Query offers by parameters. The result is all offers that match the filter criteria.",
 		},
-		ModelSchema: InvoiceSchema(),
+		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer"},
 	}
-	toolDataMap["nervatura_invoice_update"] = ToolData{
+	toolDataMap["nervatura_offer_update"] = ToolData{
 		Tool: mcp.Tool{
-			Name:        "nervatura_invoice_update",
-			Title:       "Update a invoice by code",
-			Description: "Update a invoice by code. When modifying, only the specified values change. Related tools: item.",
+			Name:        "nervatura_offer_update",
+			Title:       "Update a offer by code",
+			Description: "Update a offer by code. When modifying, only the specified values change. Related tools: item.",
 		},
-		ModelSchema: InvoiceSchema(),
+		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer"},
 	}
-	toolDataMap["nervatura_invoice_delete"] = ToolData{
-		Tool:        createDeleteTool("nervatura_invoice_delete", "invoice"),
-		ModelSchema: InvoiceSchema(),
+	toolDataMap["nervatura_offer_delete"] = ToolData{
+		Tool:        createDeleteTool("nervatura_offer_delete", "offer"),
+		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer"},
 	}
 }
 
-type invoiceCreate struct {
-	TransDate    string `json:"trans_date" jsonschema:"Transaction date. Required when creating a new invoice. Example: 2025-01-01"`
-	Direction    string `json:"direction" jsonschema:"Transaction direction. Enum values. Required when creating a new invoice. Example: DIRECTION_OUT"`
+type offerCreate struct {
+	TransDate    string `json:"trans_date" jsonschema:"Offer date. Required when creating a new offer. Example: 2025-01-01"`
+	Direction    string `json:"direction" jsonschema:"Transaction direction. Enum values. Required when creating a new offer. Example: DIRECTION_OUT"`
 	TransCode    string `json:"trans_code" jsonschema:"Other transaction (invoice, receipt, offer, order, worksheet, rent etc.) reference. Optional. Example: ORD1731101982N123"`
-	CustomerCode string `json:"customer_code" jsonschema:"Customer reference. Required when creating a new invoice. Example: CUS1731101982N123"`
+	CustomerCode string `json:"customer_code" jsonschema:"Customer reference. Required when creating a new offer. Example: CUS1731101982N123"`
 	EmployeeCode string `json:"employee_code" jsonschema:"Employee reference. Optional. Example: EMP1731101982N123"`
 	ProjectCode  string `json:"project_code" jsonschema:"Project reference. Optional. Example: PRJ1731101982N123"`
-	CurrencyCode string `json:"currency_code" jsonschema:"Currency iso code. Required when creating a new invoice. Example: USD"`
-	invoiceMeta
+	CurrencyCode string `json:"currency_code" jsonschema:"Currency iso code. Required when creating a new offer. Example: USD"`
+	offerMeta
 	TransMap cu.IM `json:"trans_map,omitempty" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
-type invoiceUpdate struct {
-	Code         string `json:"code" jsonschema:"Database independent unique key. Required when updating an existing invoice."`
-	TransDate    string `json:"trans_date,omitempty" jsonschema:"Transaction date."`
+type offerUpdate struct {
+	Code         string `json:"code" jsonschema:"Database independent unique key. Required when updating an existing offer."`
+	TransDate    string `json:"trans_date,omitempty" jsonschema:"Offer date."`
 	TransCode    string `json:"trans_code,omitempty" jsonschema:"Other transaction (invoice, receipt, offer, order, worksheet, rent etc.) reference. Optional. Example: ORD1731101982N123"`
 	CustomerCode string `json:"customer_code,omitempty" jsonschema:"Customer reference. Example: CUS1731101982N123"`
 	EmployeeCode string `json:"employee_code,omitempty" jsonschema:"Employee reference. Example: EMP1731101982N123"`
 	ProjectCode  string `json:"project_code,omitempty" jsonschema:"Project reference. Example: PRJ1731101982N123"`
 	CurrencyCode string `json:"currency_code,omitempty" jsonschema:"Currency iso code. Example: USD"`
-	invoiceMeta
+	offerMeta
 	TransMap cu.IM `json:"trans_map,omitempty" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
-type invoiceMeta struct {
-	DueTime       string              `json:"due_time,omitempty" jsonschema:"Due date. Required when creating a new invoice. Example: 2025-01-01"`
-	RefNumber     string              `json:"ref_number,omitempty" jsonschema:"Ref number. Example: REF1731101982N123"`
-	PaidType      string              `json:"paid_type,omitempty" jsonschema:"Paid type. Enum values. Example: PAID_TYPE_CASH"`
-	Paid          bool                `json:"paid,omitempty" jsonschema:"Paid invoice"`
-	Rate          float64             `json:"rate,omitempty" jsonschema:"Rate. Example: 1.0"`
-	Closed        bool                `json:"closed,omitempty" jsonschema:"Closed invoice"`
-	Status        string              `json:"status,omitempty" jsonschema:"Status. Enum values. Example: TRANS_STATUS_NORMAL"`
-	TransState    string              `json:"trans_state,omitempty" jsonschema:"Trans state. Enum values. Example: TRANS_STATE_OK"`
-	Notes         string              `json:"notes" jsonschema:"Notes"`
-	InternalNotes string              `json:"internal_notes,omitempty" jsonschema:"Internal notes"`
-	ReportNotes   string              `json:"report_notes,omitempty" jsonschema:"Report notes."`
-	Invoice       md.TransMetaInvoice `json:"invoice,omitempty"`
-	Tags          []string            `json:"tags,omitempty" jsonschema:"Tags. Example: [TAG1, TAG2]"`
+type offerMeta struct {
+	DueTime       string   `json:"due_time,omitempty" jsonschema:"Validity date. Required when creating a new offer. Example: 2025-01-01"`
+	RefNumber     string   `json:"ref_number,omitempty" jsonschema:"Ref number. Example: REF1731101982N123"`
+	PaidType      string   `json:"paid_type,omitempty" jsonschema:"Paid type. Enum values. Example: PAID_TYPE_CASH"`
+	Paid          bool     `json:"paid,omitempty" jsonschema:"Released"`
+	Rate          float64  `json:"rate,omitempty" jsonschema:"Payment days"`
+	Closed        bool     `json:"closed,omitempty" jsonschema:"Closed offer"`
+	TransState    string   `json:"trans_state,omitempty" jsonschema:"Trans state. Enum values. Example: TRANS_STATE_OK"`
+	Notes         string   `json:"notes" jsonschema:"Notes"`
+	InternalNotes string   `json:"internal_notes,omitempty" jsonschema:"Internal notes"`
+	ReportNotes   string   `json:"report_notes,omitempty" jsonschema:"Report notes."`
+	Tags          []string `json:"tags,omitempty" jsonschema:"Tags. Example: [TAG1, TAG2]"`
 }
 
-type invoiceQuery struct {
-	Id           int64       `json:"id,omitempty" jsonschema:"Database primary key."`
-	Code         string      `json:"code,omitempty" jsonschema:"Database independent unique key."`
-	TransDate    string      `json:"trans_date,omitempty" jsonschema:"Transaction date."`
-	Direction    string      `json:"direction,omitempty" jsonschema:"Transaction direction. Enum values. Example: DIRECTION_OUT"`
-	TransCode    string      `json:"trans_code,omitempty" jsonschema:"Other transaction (invoice, receipt, offer, order, worksheet, rent etc.) reference. Optional. Example: ORD1731101982N123"`
-	CustomerCode string      `json:"customer_code,omitempty" jsonschema:"Customer reference. Example: CUS1731101982N123"`
-	EmployeeCode string      `json:"employee_code,omitempty" jsonschema:"Employee reference. Example: EMP1731101982N123"`
-	ProjectCode  string      `json:"project_code,omitempty" jsonschema:"Project reference. Example: PRJ1731101982N123"`
-	CurrencyCode string      `json:"currency_code,omitempty" jsonschema:"Currency iso code. Example: USD"`
-	Amount       float64     `json:"amount,omitempty" jsonschema:"Total amount."`
-	TransMeta    invoiceMeta `json:"trans_meta,omitempty" jsonschema:"Trans metadata."`
-	TransMap     cu.IM       `json:"trans_map,omitempty" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
+type offerQuery struct {
+	Id           int64     `json:"id,omitempty" jsonschema:"Database primary key."`
+	Code         string    `json:"code,omitempty" jsonschema:"Database independent unique key."`
+	TransDate    string    `json:"trans_date,omitempty" jsonschema:"Offer date."`
+	Direction    string    `json:"direction,omitempty" jsonschema:"Transaction direction. Enum values. Example: DIRECTION_OUT"`
+	TransCode    string    `json:"trans_code,omitempty" jsonschema:"Other transaction (invoice, receipt, offer, order, worksheet, rent etc.) reference. Optional. Example: ORD1731101982N123"`
+	CustomerCode string    `json:"customer_code,omitempty" jsonschema:"Customer reference. Example: CUS1731101982N123"`
+	EmployeeCode string    `json:"employee_code,omitempty" jsonschema:"Employee reference. Example: EMP1731101982N123"`
+	ProjectCode  string    `json:"project_code,omitempty" jsonschema:"Project reference. Example: PRJ1731101982N123"`
+	CurrencyCode string    `json:"currency_code,omitempty" jsonschema:"Currency iso code. Example: USD"`
+	Amount       float64   `json:"amount,omitempty" jsonschema:"Total amount."`
+	TransMeta    offerMeta `json:"trans_meta,omitempty" jsonschema:"Trans metadata."`
+	TransMap     cu.IM     `json:"trans_map,omitempty" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 }
 
-type invoiceParameter struct {
+type offerParameter struct {
 	Code         string `json:"code,omitempty" jsonschema:"Database independent unique key."`
 	TransType    string `json:"trans_type,omitempty" jsonschema:"Transaction type. Enum values."`
 	Direction    string `json:"direction,omitempty" jsonschema:"Transaction direction. Enum values."`
-	TransDate    string `json:"trans_date,omitempty" jsonschema:"Transaction date."`
+	TransDate    string `json:"trans_date,omitempty" jsonschema:"Offer date."`
 	CustomerCode string `json:"customer_code,omitempty" jsonschema:"Customer reference. Example: CUS1731101982N123"`
 	Tag          string `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit        int64  `json:"limit,omitempty" jsonschema:"Limit."`
 	Offset       int64  `json:"offset,omitempty" jsonschema:"Offset."`
 }
 
-func InvoiceSchema() (ms *ModelSchema) {
+func OfferSchema() (ms *ModelSchema) {
 	return &ModelSchema{
 		Name:       "trans",
 		CustomFrom: "trans t left join(select trans_code as invoice_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.invoice_code",
 		CustomParameters: func(params cu.IM) cu.IM {
-			params["filter"] = "trans_type = '" + md.TransTypeInvoice.String() + "'"
+			params["filter"] = "trans_type = '" + md.TransTypeOffer.String() + "'"
 			return params
 		},
-		Prefix: "INV",
+		Prefix: "OFF",
 		CreateInputSchema: func(scope string) (schema *jsonschema.Schema) {
 			schema = &jsonschema.Schema{}
 			var err error
-			if schema, err = jsonschema.For[invoiceCreate](nil); err == nil {
+			if schema, err = jsonschema.For[offerCreate](nil); err == nil {
 				schema.Properties["direction"].Type = "string"
 				schema.Properties["direction"].Enum = []any{md.DirectionOut.String(), md.DirectionIn.String()}
 				schema.Properties["direction"].Default = []byte(`"` + md.DirectionOut.String() + `"`)
@@ -156,8 +154,6 @@ func InvoiceSchema() (ms *ModelSchema) {
 				schema.Properties["trans_state"].Type = "string"
 				schema.Properties["trans_state"].Enum = []any{md.TransStateOK.String(), md.TransStateNew.String(), md.TransStateBack.String()}
 				schema.Properties["trans_state"].Default = []byte(`"` + md.TransStateOK.String() + `"`)
-				delete(schema.Properties, "status")
-				delete(schema.Properties, "invoice")
 				schema.Properties["tags"].Default = []byte(`[]`)
 				schema.Required = []string{"trans_date", "direction", "customer_code", "currency_code", "due_time", "paid_type"}
 			}
@@ -166,7 +162,7 @@ func InvoiceSchema() (ms *ModelSchema) {
 		UpdateInputSchema: func(scope string) (schema *jsonschema.Schema) {
 			schema = &jsonschema.Schema{}
 			var err error
-			if schema, err = jsonschema.For[invoiceUpdate](nil); err == nil {
+			if schema, err = jsonschema.For[offerUpdate](nil); err == nil {
 				schema.Properties["trans_date"].Type = "string"
 				schema.Properties["trans_date"].Format = "date"
 				schema.Properties["trans_map"].Default = []byte(`{}`)
@@ -176,22 +172,20 @@ func InvoiceSchema() (ms *ModelSchema) {
 				schema.Properties["paid_type"].Enum = []any{md.PaidTypeCash.String(), md.PaidTypeTransfer.String(), md.PaidTypeCard.String(), md.PaidTypeOnline.String(), md.PaidTypeOther.String()}
 				schema.Properties["trans_state"].Type = "string"
 				schema.Properties["trans_state"].Enum = []any{md.TransStateOK.String(), md.TransStateNew.String(), md.TransStateBack.String()}
-				delete(schema.Properties, "status")
-				delete(schema.Properties, "invoice")
 				schema.Required = []string{"code"}
 			}
 			return schema
 		},
 		QueryInputSchema: func(scope string) (schema *jsonschema.Schema) {
 			schema = &jsonschema.Schema{}
-			schema, _ = jsonschema.For[invoiceParameter](nil)
+			schema, _ = jsonschema.For[offerParameter](nil)
 			return schema
 		},
 		QueryOutputSchema: func(scope string) (schema *jsonschema.Schema) {
 			schema = &jsonschema.Schema{}
 			var err error
-			if schema, err = jsonschema.For[invoiceQuery](nil); err == nil {
-				schema.Description = "Invoice data"
+			if schema, err = jsonschema.For[offerQuery](nil); err == nil {
+				schema.Description = "Offer data"
 				schema.AdditionalProperties = &jsonschema.Schema{}
 			}
 			return &jsonschema.Schema{
@@ -199,13 +193,13 @@ func InvoiceSchema() (ms *ModelSchema) {
 				Items: schema,
 			}
 		},
-		LoadData: invoiceLoadData,
+		LoadData: offerLoadData,
 		LoadList: func(rows []cu.IM) (items any, err error) {
-			var invoices []invoiceQuery = []invoiceQuery{}
-			err = cu.ConvertToType(rows, &invoices)
-			return invoices, err
+			var offers []offerQuery = []offerQuery{}
+			err = cu.ConvertToType(rows, &offers)
+			return offers, err
 		},
-		Validate: invoiceValidate,
+		Validate: offerValidate,
 		Examples: map[string][]any{
 			"id":         {12345},
 			"code":       {`CUS1731101982N123`},
@@ -217,23 +211,22 @@ func InvoiceSchema() (ms *ModelSchema) {
 	}
 }
 
-func invoiceLoadData(data any) (modelData, metaData any, err error) {
-	var invoice md.Trans = md.Trans{
-		TransType: md.TransTypeInvoice,
+func offerLoadData(data any) (modelData, metaData any, err error) {
+	var offer md.Trans = md.Trans{
+		TransType: md.TransTypeOffer,
 		Direction: md.DirectionOut,
 		TransMeta: md.TransMeta{
 			Status:     md.TransStatusNormal,
 			TransState: md.TransStateOK,
-			Invoice:    md.TransMetaInvoice{},
 			Tags:       []string{},
 		},
 		TransMap: cu.IM{},
 	}
-	err = cu.ConvertToType(data, &invoice)
-	return invoice, invoice.TransMeta, err
+	err = cu.ConvertToType(data, &offer)
+	return offer, offer.TransMeta, err
 }
 
-func invoiceCreateHandler(ctx context.Context, req *mcp.CallToolRequest, inputData invoiceCreate) (result *mcp.CallToolResult, response UpdateResponseData, err error) {
+func offerCreateHandler(ctx context.Context, req *mcp.CallToolRequest, inputData offerCreate) (result *mcp.CallToolResult, response UpdateResponseData, err error) {
 	tokenInfo := req.Extra.TokenInfo
 	user := tokenInfo.Extra["user"].(md.Auth)
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
@@ -243,7 +236,7 @@ func invoiceCreateHandler(ctx context.Context, req *mcp.CallToolRequest, inputDa
 	}
 
 	values := cu.IM{
-		"trans_type": md.TransTypeInvoice.String(),
+		"trans_type": md.TransTypeOffer.String(),
 		"direction":  inputData.Direction,
 		"trans_date": inputData.TransDate,
 		"auth_code":  user.Code,
@@ -273,7 +266,7 @@ func invoiceCreateHandler(ctx context.Context, req *mcp.CallToolRequest, inputDa
 		Invoice:    md.TransMetaInvoice{},
 		Tags:       []string{},
 	}
-	cu.ConvertToType(inputData.invoiceMeta, &transMeta)
+	cu.ConvertToType(inputData.offerMeta, &transMeta)
 
 	ut.ConvertByteToIMData(transMeta, values, "trans_meta")
 	ut.ConvertByteToIMData(inputData.TransMap, values, "trans_map")
@@ -295,7 +288,7 @@ func invoiceCreateHandler(ctx context.Context, req *mcp.CallToolRequest, inputDa
 	return result, response, err
 }
 
-func invoiceValidate(ctx context.Context, input cu.IM) (data cu.IM, err error) {
+func offerValidate(ctx context.Context, input cu.IM) (data cu.IM, err error) {
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
 
 	code := cu.ToString(input["code"], "")
@@ -304,8 +297,8 @@ func invoiceValidate(ctx context.Context, input cu.IM) (data cu.IM, err error) {
 		return data, err
 	}
 	transMeta := cu.ToIM(rows[0]["trans_meta"], cu.IM{})
-	if cu.ToString(transMeta["status"], "") == md.TransStatusDeleted.String() || cu.ToBoolean(transMeta["closed"], false) {
-		return data, errors.New("invoice is not updatable because it is deleted or closed")
+	if cu.ToBoolean(transMeta["closed"], false) {
+		return data, errors.New("offer is not updatable because it is closed")
 	}
 	return input, nil
 }

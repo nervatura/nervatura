@@ -29,8 +29,7 @@ type ModelSchema struct {
 	Name              string
 	Prefix            string
 	CustomFrom        string
-	CustomParameters  cu.IM
-	CustomFilter      string
+	CustomParameters  func(parameters cu.IM) cu.IM
 	CreateInputSchema func(scope string) *jsonschema.Schema
 	UpdateInputSchema func(scope string) *jsonschema.Schema
 	QueryInputSchema  func(scope string) *jsonschema.Schema

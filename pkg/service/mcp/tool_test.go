@@ -125,10 +125,55 @@ func Test_modelQuery(t *testing.T) {
 			parameters: cu.IM{
 				"limit":        10,
 				"offset":       0,
+				"trans_type":   "TRANS_INVOICE",
 				"code":         "ITM1731101982N123",
 				"trans_code":   "INV1731101982N123",
 				"product_code": "PRD1731101982N123",
 				"tax_code":     "VAT20",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "offer_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_offer_query"}},
+			parameters: cu.IM{
+				"limit":         10,
+				"offset":        0,
+				"code":          "OFF1731101982N123",
+				"customer_code": "CUS123456",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "order_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_order_query"}},
+			parameters: cu.IM{
+				"limit":         10,
+				"offset":        0,
+				"code":          "ORD1731101982N123",
+				"customer_code": "CUS123456",
 			},
 			ds: &api.DataStore{
 				Db: &md.TestDriver{

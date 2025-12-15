@@ -802,6 +802,38 @@ func (s *TransService) delete(ds *api.DataStore, transID int64) (err error) {
 	return ds.DataDelete("trans", transID, "")
 }
 
+func (s *TransService) formNextFormAddTag(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+
+	frmValues := cu.ToIM(evt.Value, cu.IM{})
+	frmData := cu.ToIM(frmValues["data"], cu.IM{})
+	frmValue := cu.ToIM(frmValues["value"], cu.IM{})
+
+	tag := cu.ToString(frmValue["value"], "")
+	frmKey := cu.ToString(frmData["frm_key"], "")
+	frmIndex := cu.ToInteger(frmData["frm_index"], 0)
+	row := cu.ToIM(frmData["row"], cu.IM{})
+	metaName := ut.MetaName(row, "_meta")
+	rowField := cu.ToString(frmData["row_field"], "")
+	if tag != "" {
+		tags := ut.ToStringArray(row[rowField])
+		if metaName != "" {
+			tags = ut.ToStringArray(cu.ToIM(row[metaName], cu.IM{})[rowField])
+		}
+		if !slices.Contains(tags, tag) {
+			tags = append(tags, tag)
+			if metaName != "" {
+				cu.ToIM(row[metaName], cu.IM{})[rowField] = tags
+			} else {
+				row[rowField] = tags
+			}
+			client.SetForm(frmKey, row, frmIndex, false)
+			return evt, nil
+		}
+	}
+	return evt, nil
+}
+
 func (s *TransService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
@@ -961,29 +993,7 @@ func (s *TransService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 		},
 
 		"form_add_tag": func() (re ct.ResponseEvent, err error) {
-			tag := cu.ToString(frmValue["value"], "")
-			frmKey := cu.ToString(frmData["frm_key"], "")
-			frmIndex := cu.ToInteger(frmData["frm_index"], 0)
-			row := cu.ToIM(frmData["row"], cu.IM{})
-			metaName := ut.MetaName(row, "_meta")
-			rowField := cu.ToString(frmData["row_field"], "")
-			if tag != "" {
-				tags := ut.ToStringArray(row[rowField])
-				if metaName != "" {
-					tags = ut.ToStringArray(cu.ToIM(row[metaName], cu.IM{})[rowField])
-				}
-				if !slices.Contains(tags, tag) {
-					tags = append(tags, tag)
-					if metaName != "" {
-						cu.ToIM(row[metaName], cu.IM{})[rowField] = tags
-					} else {
-						row[rowField] = tags
-					}
-					client.SetForm(frmKey, row, frmIndex, false)
-					return evt, nil
-				}
-			}
-			return evt, nil
+			return s.formNextFormAddTag(evt)
 		},
 
 		"bookmark_add": func() (re ct.ResponseEvent, err error) {

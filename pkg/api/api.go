@@ -208,7 +208,10 @@ func (ds *DataStore) StoreDataGet(params cu.IM, foundErr bool) (result []cu.IM, 
 	if fields, found := params["fields"].([]string); found {
 		query.Fields = fields
 	}
-	queryFilters := []string{cu.ToString(params["filter"], "")}
+	queryFilters := []string{}
+	if filter, found := params["filter"].(string); found {
+		queryFilters = append(queryFilters, filter)
+	}
 	for key, value := range params {
 		if !slices.Contains([]string{"model", "fields", "tag", "limit", "offset", "filter"}, key) {
 			query.Filters = append(query.Filters, md.Filter{Field: key, Comp: "==", Value: value})

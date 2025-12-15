@@ -658,6 +658,7 @@ func TestDataStore_StoreDataGet(t *testing.T) {
 					"offset":     10,
 					"tag":        "test",
 					"fieldNames": "value",
+					"filter":     "name = 'test'",
 				},
 			},
 			wantErr: false,

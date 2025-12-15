@@ -24,7 +24,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, emailSendHandler)
 		},
-		Scopes: []string{"customer", "product", "invoice"},
+		Scopes: []string{"customer", "product", "offer", "order", "invoice"},
 	}
 }
 

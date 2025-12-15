@@ -188,6 +188,34 @@ func TestGetServer(t *testing.T) {
 				session: &api.SessionService{},
 			},
 		},
+		{
+			name: "invoice scope",
+			args: args{
+				scope: "invoice",
+				config: cu.IM{
+					"resources": map[string]ResourceData{
+						"test": {
+							Resource: mcp.Resource{
+								Name:        "test",
+								Title:       "test",
+								Description: "test",
+							},
+							Scopes: []string{"invoice"},
+						},
+					},
+					"prompts": map[string]PromptData{
+						"test": {
+							Name:        "test",
+							Title:       "test",
+							Description: "test",
+							Scopes:      []string{"invoice"},
+						},
+					},
+				},
+				appLog:  slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				session: &api.SessionService{},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

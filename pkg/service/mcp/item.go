@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"slices"
+	"strings"
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -27,7 +28,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, itemCreateHandler)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer", "invoice"},
 	}
 	toolDataMap["nervatura_item_query"] = ToolData{
 		Tool: mcp.Tool{
@@ -39,7 +40,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer", "invoice"},
 	}
 	toolDataMap["nervatura_item_update"] = ToolData{
 		Tool: mcp.Tool{
@@ -51,7 +52,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer", "invoice"},
 	}
 	toolDataMap["nervatura_item_delete"] = ToolData{
 		Tool:        createDeleteTool("nervatura_item_delete", "item"),
@@ -59,7 +60,7 @@ func init() {
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"invoice"},
+		Scopes: []string{"offer", "invoice"},
 	}
 }
 
@@ -96,6 +97,7 @@ type itemUpdate struct {
 
 type itemParameter struct {
 	Code        string `json:"code,omitempty" jsonschema:"Database independent unique key."`
+	TransType   string `json:"trans_type,omitempty" jsonschema:"Transaction type. Enum values."`
 	TransCode   string `json:"trans_code,omitempty" jsonschema:"Offer, order, invoice, receipt, worksheet, rental reference code. Example: INV1731101982N123"`
 	ProductCode string `json:"product_code,omitempty" jsonschema:"Product code. Example: PRD1731101982N123"`
 	TaxCode     string `json:"tax_code,omitempty" jsonschema:"Tax code. Example: VAT20"`
@@ -106,9 +108,17 @@ type itemParameter struct {
 
 func ItemSchema() (ms *ModelSchema) {
 	return &ModelSchema{
-		Name:         "item",
-		Prefix:       "ITM",
-		CustomFilter: "trans_code in (select code from trans where deleted = false)",
+		Name:   "item",
+		Prefix: "ITM",
+		CustomParameters: func(params cu.IM) cu.IM {
+			filter := "select code from trans where deleted = false"
+			if _, found := params["trans_type"]; found {
+				filter += fmt.Sprintf(" and trans_type = '%s'", cu.ToString(params["trans_type"], ""))
+				delete(params, "trans_type")
+			}
+			params["filter"] = "trans_code in (" + filter + ")"
+			return params
+		},
 		CreateInputSchema: func(scope string) (schema *jsonschema.Schema) {
 			schema = &jsonschema.Schema{}
 			var err error
@@ -142,6 +152,16 @@ func ItemSchema() (ms *ModelSchema) {
 			var err error
 			if schema, err = jsonschema.For[itemParameter](nil); err == nil {
 				schema.Description = "Query items by parameters. The result is all items that match the filter criteria."
+				schema.Properties["trans_type"].Type = "string"
+				schema.Properties["trans_type"].Enum = []any{
+					md.TransTypeOrder.String(), md.TransTypeOffer.String(), md.TransTypeInvoice.String(), md.TransTypeReceipt.String(),
+					md.TransTypeWorksheet.String(), md.TransTypeRent.String(),
+				}
+				if slices.Contains([]string{"invoice", "receipt", "order", "offer", "worksheet", "rent"}, scope) {
+					schema.Properties["trans_type"].Enum = []any{"TRANS_" + strings.ToUpper(scope)}
+					schema.Required = []string{"trans_type"}
+					schema.Properties["trans_type"].Default = []byte(`"` + "TRANS_" + strings.ToUpper(scope) + `"`)
+				}
 			}
 			return schema
 		},
