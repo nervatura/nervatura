@@ -19,6 +19,7 @@ func PlacePost(w http.ResponseWriter, r *http.Request) {
 		PlaceType: md.PlaceType(md.PlaceTypeWarehouse),
 		Address:   md.Address{},
 		Contacts:  []md.Contact{},
+		Events:    []md.Event{},
 		PlaceMeta: md.PlaceMeta{
 			Tags: []string{},
 		},
@@ -50,6 +51,7 @@ func PlacePost(w http.ResponseWriter, r *http.Request) {
 
 	ut.ConvertByteToIMData(data.Contacts, values, "contacts")
 	ut.ConvertByteToIMData(data.Address, values, "address")
+	ut.ConvertByteToIMData(data.Events, values, "events")
 	ut.ConvertByteToIMData(data.PlaceMeta, values, "place_meta")
 	ut.ConvertByteToIMData(data.PlaceMap, values, "place_map")
 

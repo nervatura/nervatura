@@ -484,6 +484,7 @@ CREATE TABLE IF NOT EXISTS place(
   currency_code VARCHAR,
   address JSONB NOT NULL DEFAULT '{}'::JSONB,
   contacts JSONB NOT NULL DEFAULT '[]'::JSONB,
+  events JSONB NOT NULL DEFAULT '[]'::JSONB,
   place_meta JSONB NOT NULL DEFAULT '{}'::JSONB,
   place_map JSONB NOT NULL DEFAULT '{}'::JSONB,
   time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -515,6 +516,7 @@ CREATE OR REPLACE VIEW place_view AS
     jsonb_build_object(
       'id', id, 'code', code, 'place_type', place_type, 'place_name', place_name,
       'currency_code', currency_code, 'address', address, 'contacts', contacts,
+      'events', events,
       'place_meta', place_meta, 'place_map', place_map, 'time_stamp', time_stamp
     ) AS place_object
   FROM place
@@ -528,6 +530,18 @@ CREATE OR REPLACE VIEW place_contacts AS
     REGEXP_REPLACE(value->>'tags', '[\[\]"]', '', 'g') as tag_lst, 
     value->'contact_map' AS contact_map
   FROM place, jsonb_array_elements(place.contacts)
+  WHERE deleted = false;
+
+CREATE OR REPLACE VIEW place_events AS
+  SELECT place.id AS id, code, place_name, 
+    value->>'uid' AS uid, value->>'subject' AS subject, 
+	  CASE WHEN value->>'start_time' = '' THEN NULL ELSE TO_TIMESTAMP(value->>'start_time', 'YYYY-MM-DDTHH24:MI:SS') END AS start_time,
+	  CASE WHEN value->>'end_time' = '' THEN NULL ELSE TO_TIMESTAMP(value->>'end_time', 'YYYY-MM-DDTHH24:MI:SS') END AS end_time,
+	  value->>'place' AS place, 
+    value->>'description' AS description, value->'tags' AS tags, 
+    REGEXP_REPLACE(value->>'tags', '[\[\]"]', '', 'g') as tag_lst, 
+    value->'event_map' AS event_map
+  FROM place, jsonb_array_elements(place.events)
   WHERE deleted = false;
 
 CREATE OR REPLACE VIEW place_map AS

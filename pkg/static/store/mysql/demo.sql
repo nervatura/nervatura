@@ -447,9 +447,9 @@ JSON_OBJECT(
 ), 
 JSON_OBJECT());
 
-INSERT INTO place(code, place_type, place_name, address, contacts,  place_meta, place_map) 
+INSERT INTO place(code, place_type, place_name, address, contacts, events, place_meta, place_map) 
 VALUES('PLA0000000000N4', 'PLACE_WAREHOUSE', 'Raw material', 
-  JSON_OBJECT(), JSON_ARRAY(),
+  JSON_OBJECT(), JSON_ARRAY(), JSON_ARRAY(),
   JSON_OBJECT(
     'notes', '', 'inactive', false, 'tags', JSON_ARRAY()
   ), JSON_OBJECT()

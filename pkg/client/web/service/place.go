@@ -36,6 +36,7 @@ func (s *PlaceService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err
 			"place_map": cu.IM{},
 			"address":   cu.IM{},
 			"contacts":  []cu.IM{},
+			"events":    []cu.IM{},
 		},
 		"config_map":   cu.IM{},
 		"config_data":  cu.IM{},
@@ -103,6 +104,7 @@ func (s *PlaceService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err 
 
 	ut.ConvertByteToIMData(place.Contacts, values, "contacts")
 	ut.ConvertByteToIMData(place.Address, values, "address")
+	ut.ConvertByteToIMData(place.Events, values, "events")
 	ut.ConvertByteToIMData(place.PlaceMeta, values, "place_meta")
 	ut.ConvertByteToIMData(place.PlaceMap, values, "place_map")
 
@@ -426,8 +428,16 @@ func (s *PlaceService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 					}, &contact)
 					return contact
 				},
+				"events": func() cu.IM {
+					var event cu.IM
+					ut.ConvertToType(md.Event{
+						Tags:     []string{},
+						EventMap: cu.IM{},
+					}, &event)
+					return event
+				},
 			}
-			if slices.Contains([]string{"contacts"}, view) {
+			if slices.Contains([]string{"contacts", "events"}, view) {
 				getBase := func() (base cu.IM) {
 					if _, found := place[view]; found {
 						return place

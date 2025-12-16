@@ -23,44 +23,49 @@ func init() {
 			Name:        "nervatura_item_create",
 			Title:       "Create a new document item",
 			Description: "Create a new document item. Related tools: offer, order, invoice, receipt, worksheet, rental.",
+			Meta: mcp.Meta{
+				"scopes": []string{"offer", "invoice"},
+			},
 		},
 		ModelSchema: ItemSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, itemCreateHandler)
 		},
-		Scopes: []string{"offer", "invoice"},
 	}
 	toolDataMap["nervatura_item_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_item_query",
 			Title:       "Query items by parameters",
 			Description: "Query items by parameters. The result is all items that match the filter criteria.",
+			Meta: mcp.Meta{
+				"scopes": []string{"offer", "invoice"},
+			},
 		},
 		ModelSchema: ItemSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"offer", "invoice"},
 	}
 	toolDataMap["nervatura_item_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_item_update",
 			Title:       "Update a document item by code",
 			Description: "Update a document item by code. When modifying, only the specified values change. Related tools: offer, order, invoice, receipt, worksheet, rental.",
+			Meta: mcp.Meta{
+				"scopes": []string{"offer", "invoice"},
+			},
 		},
 		ModelSchema: ItemSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"offer", "invoice"},
 	}
 	toolDataMap["nervatura_item_delete"] = ToolData{
-		Tool:        createDeleteTool("nervatura_item_delete", "item"),
+		Tool:        createDeleteTool("nervatura_item_delete", "item", mcp.Meta{"scopes": []string{"offer", "invoice"}}),
 		ModelSchema: ItemSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"offer", "invoice"},
 	}
 }
 

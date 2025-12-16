@@ -819,6 +819,13 @@ func TestClientComponent_Form(t *testing.T) {
 			data:      cu.IM{},
 		},
 		{
+			name:      "place_events",
+			editorKey: "place",
+			formKey:   "events",
+			labels:    cu.SM{},
+			data:      cu.IM{},
+		},
+		{
 			name:      "place_place",
 			editorKey: "place",
 			formKey:   "place",
@@ -1735,6 +1742,15 @@ func Test_moduleEditorRow(t *testing.T) {
 			},
 		},
 		{
+			name: "place_events",
+			args: args{
+				mKey:   "place",
+				view:   "events",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
 			name: "trans_order",
 			args: args{
 				mKey:   "trans",
@@ -2612,6 +2628,15 @@ func Test_moduleEditorTable(t *testing.T) {
 			args: args{
 				mKey:   "place",
 				view:   "contacts",
+				labels: cu.SM{},
+				data:   cu.IM{},
+			},
+		},
+		{
+			name: "place_events",
+			args: args{
+				mKey:   "place",
+				view:   "events",
 				labels: cu.SM{},
 				data:   cu.IM{},
 			},

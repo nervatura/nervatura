@@ -20,7 +20,7 @@ type ToolData struct {
 	ModelSchema       *ModelSchema
 	ModelExtendSchema *ModelExtendSchema
 	ConnectHandler    func(server *mcp.Server, tool *mcp.Tool)
-	Scopes            []string
+	//Scopes            []string
 }
 
 func addTool(toolName string, server *mcp.Server, scope string) {
@@ -29,6 +29,7 @@ func addTool(toolName string, server *mcp.Server, scope string) {
 			Name:        mt.Name,
 			Title:       mt.Title,
 			Description: strings.ReplaceAll(mt.Description, "%s", scope),
+			Meta:        mt.Meta,
 		}
 		if strings.HasSuffix(toolName, "_query") || strings.HasSuffix(toolName, "_send") {
 			if toolDataMap[toolName].Extend {

@@ -19,12 +19,14 @@ func init() {
 			Name:        "nervatura_email_send",
 			Title:       "Send an email with attachments",
 			Description: "Send an email with attachments to the specified email addresses. The result is the email sent successfully.",
+			Meta: mcp.Meta{
+				"scopes": []string{"customer", "product", "offer", "order", "invoice"},
+			},
 		},
 		ModelSchema: EmailSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, emailSendHandler)
 		},
-		Scopes: []string{"customer", "product", "offer", "order", "invoice"},
 	}
 }
 

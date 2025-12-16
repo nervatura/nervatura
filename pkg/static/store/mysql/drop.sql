@@ -72,6 +72,7 @@ DROP TABLE IF EXISTS employee;
 
 DROP VIEW IF EXISTS place_view;
 DROP VIEW IF EXISTS place_contacts;
+DROP VIEW IF EXISTS place_events;
 DROP VIEW IF EXISTS place_map;
 DROP VIEW IF EXISTS place_tags;
 DROP TABLE IF EXISTS place;

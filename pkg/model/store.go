@@ -348,6 +348,7 @@ type Place struct {
 	CurrencyCode string    `json:"currency_code"`
 	Address      Address   `json:"address"`
 	Contacts     []Contact `json:"contacts"`
+	Events       []Event   `json:"events"`
 	PlaceMeta    PlaceMeta `json:"place_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
 	PlaceMap cu.IM `json:"place_map"`

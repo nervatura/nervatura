@@ -19,44 +19,50 @@ func init() {
 			Name:        "nervatura_customer_create",
 			Title:       "Create a new customer",
 			Description: "Create a new customer. Related tools: contact, address, event.",
+			Meta: mcp.Meta{
+				"scopes": []string{"customer"},
+			},
 		},
 		ModelSchema: CustomerSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, customerCreateHandler)
 		},
-		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_customer_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_customer_query",
 			Title:       "Query customers by parameters",
 			Description: "Query customers by parameters. The result is all customers that match the filter criteria.",
+			Meta: mcp.Meta{
+				"scopes": []string{"customer"},
+			},
 		},
 		ModelSchema: CustomerSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_customer_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_customer_update",
 			Title:       "Update a customer by code",
 			Description: "Update a customer by code. When modifying, only the specified values change. Related tools: contact, address, event.",
+			Meta: mcp.Meta{
+				"scopes": []string{"customer"},
+			},
 		},
 		ModelSchema: CustomerSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_customer_delete"] = ToolData{
-		Tool:        createDeleteTool("nervatura_customer_delete", "customer"),
+		Tool: createDeleteTool("nervatura_customer_delete", "customer",
+			mcp.Meta{"scopes": []string{"customer"}}),
 		ModelSchema: CustomerSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"customer"},
 	}
 }
 

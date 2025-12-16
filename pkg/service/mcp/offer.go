@@ -20,44 +20,49 @@ func init() {
 			Name:        "nervatura_offer_create",
 			Title:       "Create a new offer",
 			Description: "Create a new offer. Related tools: item.",
+			Meta: mcp.Meta{
+				"scopes": []string{"offer"},
+			},
 		},
 		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, offerCreateHandler)
 		},
-		Scopes: []string{"offer"},
 	}
 	toolDataMap["nervatura_offer_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_offer_query",
 			Title:       "Query offers by parameters",
 			Description: "Query offers by parameters. The result is all offers that match the filter criteria.",
+			Meta: mcp.Meta{
+				"scopes": []string{"offer"},
+			},
 		},
 		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"offer"},
 	}
 	toolDataMap["nervatura_offer_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_offer_update",
 			Title:       "Update a offer by code",
 			Description: "Update a offer by code. When modifying, only the specified values change. Related tools: item.",
+			Meta: mcp.Meta{
+				"scopes": []string{"offer"},
+			},
 		},
 		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"offer"},
 	}
 	toolDataMap["nervatura_offer_delete"] = ToolData{
-		Tool:        createDeleteTool("nervatura_offer_delete", "offer"),
+		Tool:        createDeleteTool("nervatura_offer_delete", "offer", mcp.Meta{"scopes": []string{"offer"}}),
 		ModelSchema: OfferSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"offer"},
 	}
 }
 

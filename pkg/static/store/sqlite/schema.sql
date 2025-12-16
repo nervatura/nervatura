@@ -381,6 +381,7 @@ CREATE TABLE IF NOT EXISTS place(
   currency_code TEXT,
   address JSONB NOT NULL DEFAULT (json_object()),
   contacts JSONB NOT NULL DEFAULT (json_array()),
+  events JSONB NOT NULL DEFAULT (json_array()),
   place_meta JSONB NOT NULL DEFAULT (json_object()),
   place_map JSONB NOT NULL DEFAULT (json_object()),
   time_stamp TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -415,7 +416,7 @@ CREATE VIEW place_view AS
     place_map, time_stamp,
     json_object(
       'id', id, 'code', code, 'place_type', place_type, 'place_name', place_name, 'currency_code', currency_code,
-      'address', json(address), 'contacts', json(contacts), 'place_meta', json(place_meta), 
+      'address', json(address), 'contacts', json(contacts), 'events', json(events), 'place_meta', json(place_meta), 
       'place_map', json(place_map), 'time_stamp', time_stamp
     ) AS place_object
   FROM place
@@ -429,6 +430,16 @@ CREATE VIEW place_contacts AS
     REPLACE(REPLACE(REPLACE(value->>'tags', '"', ''), '[', ''), ']', '') AS tag_lst, 
     value->'contact_map' AS contact_map
   FROM place, json_each(place.contacts)
+  WHERE deleted = 0;
+
+CREATE VIEW place_events AS
+  SELECT place.id AS id, code, place_name, 
+    value->>'uid' AS uid, value->>'subject' AS subject, value->>'start_time' AS start_time,
+    value->>'end_time' AS end_time, value->>'place' AS place, 
+    value->>'description' AS description, value->'tags' AS tags, 
+    REPLACE(REPLACE(REPLACE(value->>'tags', '"', ''), '[', ''), ']', '') AS tag_lst, 
+    value->'event_map' AS event_map
+  FROM place, json_each(place.events)
   WHERE deleted = 0;
 
 CREATE VIEW place_map AS

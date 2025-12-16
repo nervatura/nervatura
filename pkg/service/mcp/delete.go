@@ -13,11 +13,12 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-func createDeleteTool(name, model string) (tool mcp.Tool) {
+func createDeleteTool(name, model string, meta mcp.Meta) (tool mcp.Tool) {
 	return mcp.Tool{
 		Name:        name,
 		Title:       fmt.Sprintf("Delete %s data by code", model),
 		Description: fmt.Sprintf("Delete data by %s model code. It returns the success of the operation or an error message.", model),
+		Meta:        meta,
 		InputSchema: &jsonschema.Schema{
 			Type: "object",
 			Properties: map[string]*jsonschema.Schema{
@@ -36,11 +37,12 @@ func createDeleteTool(name, model string) (tool mcp.Tool) {
 	}
 }
 
-func createExtendDeleteTool(name, model string) (tool mcp.Tool) {
+func createExtendDeleteTool(name, model string, meta mcp.Meta) (tool mcp.Tool) {
 	return mcp.Tool{
 		Name:        name,
 		Title:       fmt.Sprintf("Delete %s data by code", model),
 		Description: fmt.Sprintf("Delete data by %s model code. It returns the success of the operation or an error message.", model),
+		Meta:        meta,
 		InputSchema: &jsonschema.Schema{
 			Type: "object",
 			Properties: map[string]*jsonschema.Schema{

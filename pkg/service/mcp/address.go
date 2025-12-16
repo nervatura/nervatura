@@ -16,48 +16,53 @@ func init() {
 			Name:        "nervatura_address_create",
 			Title:       "Create a new address",
 			Description: "Create a new %s address.",
+			Meta: mcp.Meta{
+				"scopes": []string{"customer"},
+			},
 		},
 		Extend:            true,
 		ModelExtendSchema: AddressSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendCreate)
 		},
-		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_address_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_update",
 			Title:       "Update a address by code",
 			Description: "Update a %s address.",
+			Meta: mcp.Meta{
+				"scopes": []string{"customer"},
+			},
 		},
 		Extend:            true,
 		ModelExtendSchema: AddressSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendUpdate)
 		},
-		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_address_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_query",
 			Title:       "Query addresses by parameters",
 			Description: "Query %s addresses by parameters. The result is all addresses that match the filter criteria.",
+			Meta: mcp.Meta{
+				"scopes": []string{"customer"},
+			},
 		},
 		Extend:            true,
 		ModelExtendSchema: AddressSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendQuery)
 		},
-		Scopes: []string{"customer"},
 	}
 	toolDataMap["nervatura_address_delete"] = ToolData{
-		Tool:              createExtendDeleteTool("nervatura_address_delete", "address"),
+		Tool:              createExtendDeleteTool("nervatura_address_delete", "address", mcp.Meta{"scopes": []string{"customer"}}),
 		Extend:            true,
 		ModelExtendSchema: AddressSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, extendDelete)
 		},
-		Scopes: []string{"customer"},
 	}
 }
 

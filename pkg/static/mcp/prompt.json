@@ -3,7 +3,9 @@
     "name": "test_prompt",
     "title": "Test Prompt",
     "description": "This is a test prompt.",
-    "scopes": ["customer"],
+    "_meta": {
+      "scopes": ["customer"]
+    },
     "arguments": [
       {
         "name": "name",
@@ -50,16 +52,16 @@
       {
         "content": {
           "type": "image",
-          "mimeType": "image/jpg",
-          "data": "SGVsbG8sIHdvcmxkIQ=="
+          "mimeType": "image/png",
+          "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg=="
         },
         "role": "user"
       },
       {
         "content": {
           "type": "audio",
-          "mimeType": "audio/mpeg",
-          "data": "SGVsbG8sIHdvcmxkIQ=="
+          "mimeType": "audio/wav",
+          "data": "UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAA="
         },
         "role": "user"
       }

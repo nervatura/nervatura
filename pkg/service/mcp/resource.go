@@ -13,13 +13,8 @@ import (
 	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
-type ResourceData struct {
-	mcp.Resource
-	Scopes []string
-}
-
-func getResource(config cu.IM, uri string) (resource *ResourceData, err error) {
-	resources, ok := config["resources"].(map[string]ResourceData)
+func getResource(config cu.IM, uri string) (resource *mcp.Resource, err error) {
+	resources, ok := config["resources"].(map[string]mcp.Resource)
 	if !ok {
 		return nil, errors.New("resources not found")
 	}
@@ -33,7 +28,7 @@ func getResource(config cu.IM, uri string) (resource *ResourceData, err error) {
 
 func getResourceContent(ctx context.Context, uri string) (result *mcp.ResourceContents, err error) {
 	config := ctx.Value(md.ConfigCtxKey).(cu.IM)
-	var resource *ResourceData
+	var resource *mcp.Resource
 	if resource, err = getResource(config, uri); err != nil {
 		return nil, err
 	}

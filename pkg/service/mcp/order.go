@@ -20,44 +20,49 @@ func init() {
 			Name:        "nervatura_order_create",
 			Title:       "Create a new order",
 			Description: "Create a new order. Related tools: item.",
+			Meta: mcp.Meta{
+				"scopes": []string{"order"},
+			},
 		},
 		ModelSchema: OrderSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, orderCreateHandler)
 		},
-		Scopes: []string{"order"},
 	}
 	toolDataMap["nervatura_order_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_order_query",
 			Title:       "Query orders by parameters",
 			Description: "Query orders by parameters. The result is all orders that match the filter criteria.",
+			Meta: mcp.Meta{
+				"scopes": []string{"order"},
+			},
 		},
 		ModelSchema: OrderSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"order"},
 	}
 	toolDataMap["nervatura_order_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_order_update",
 			Title:       "Update a order by code",
 			Description: "Update a order by code. When modifying, only the specified values change. Related tools: item.",
+			Meta: mcp.Meta{
+				"scopes": []string{"order"},
+			},
 		},
 		ModelSchema: OrderSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"order"},
 	}
 	toolDataMap["nervatura_order_delete"] = ToolData{
-		Tool:        createDeleteTool("nervatura_order_delete", "order"),
+		Tool:        createDeleteTool("nervatura_order_delete", "order", mcp.Meta{"scopes": []string{"order"}}),
 		ModelSchema: OrderSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"order"},
 	}
 }
 

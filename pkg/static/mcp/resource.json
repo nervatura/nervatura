@@ -5,7 +5,9 @@
     "description": "Nervatura MCP README.md file. This file contains information on how to use the MCP tools, resources and prompts.",
     "mimeType": "text/markdown",
     "uri": "mcp:README.md",
-    "scopes": []
+    "_meta": {
+      "scopes": []
+    }
   },
   {
     "name": "ntr_customer_en",
@@ -13,7 +15,9 @@
     "description": "Customer Information Sheet in English",
     "mimeType": "application/json",
     "uri": "template:ntr_customer_en.json",
-    "scopes": ["customer"]
+    "_meta": {
+      "scopes": ["customer"]
+    }
   },
   {
     "name": "ntr_product_en",
@@ -21,6 +25,8 @@
     "description": "Product Information Sheet in English",
     "mimeType": "application/json",
     "uri": "template:ntr_product_en.json",
-    "scopes": ["product"]
+    "_meta": {
+      "scopes": ["product"]
+    }
   }
 ]

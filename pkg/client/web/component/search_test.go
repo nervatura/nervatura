@@ -649,6 +649,28 @@ func TestSearchConfig_Filter(t *testing.T) {
 			want:         []string{"and (name like '%John Doe%')"},
 		},
 		{
+			name: "place_events-start_time",
+			view: "place_events",
+			filter: ct.BrowserFilter{
+				Field: "start_time",
+				Comp:  "==",
+				Value: "2021-01-01",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (start_time = '2021-01-01')"},
+		},
+		{
+			name: "place_events-default",
+			view: "place_events",
+			filter: ct.BrowserFilter{
+				Field: "name",
+				Comp:  "==",
+				Value: "John Doe",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (CAST(name as CHAR(255)) like '%John Doe%')"},
+		},
+		{
 			name: "transitem_simple",
 			view: "transitem_simple",
 			filter: ct.BrowserFilter{
@@ -1646,6 +1668,19 @@ func TestSearchConfig_Query(t *testing.T) {
 			key:  "place_contacts",
 			params: cu.IM{
 				"view": "place_contacts",
+				"query": md.Query{
+					Filters: []md.Filter{
+						{Field: "id", Comp: "==", Value: 1},
+					},
+				},
+				"filters": []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}},
+			},
+		},
+		{
+			name: "place_events",
+			key:  "place_events",
+			params: cu.IM{
+				"view": "place_events",
 				"query": md.Query{
 					Filters: []md.Filter{
 						{Field: "id", Comp: "==", Value: 1},

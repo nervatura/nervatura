@@ -153,7 +153,7 @@ func (s *SearchConfig) SideGroups(labels cu.SM) []md.SideGroup {
 			Name:  "group_place",
 			Label: labels["place_title"],
 			Views: []string{
-				"place_simple", "place", "place_map", "place_contacts",
+				"place_simple", "place", "place_map", "place_contacts", "place_events",
 			},
 			AuthFilter: md.AuthFilterPlace.String(),
 		},
@@ -1287,6 +1287,28 @@ func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
 			},
 			Filters: []any{},
 		},
+		"place_events": {
+			Title:       labels["event_view"],
+			Icon:        ct.IconCalendar,
+			Simple:      false,
+			ReadOnly:    true,
+			LabelAdd:    "",
+			HideFilters: cu.IM{},
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["place_code"], FieldType: ct.TableFieldTypeLink},
+				{Name: "place_name", Label: labels["place_name"], FieldType: ct.TableFieldTypeLink},
+				{Name: "subject", Label: labels["event_subject"]},
+				{Name: "start_time", Label: labels["event_start_time"], FieldType: ct.TableFieldTypeDateTime},
+				{Name: "end_time", Label: labels["event_end_time"], FieldType: ct.TableFieldTypeDateTime},
+				{Name: "place", Label: labels["event_place"]},
+				{Name: "description", Label: labels["event_description"]},
+				{Name: "tag_lst", Label: labels["event_tags"]},
+			},
+			VisibleColumns: cu.IM{
+				"place_name": true, "subject": true, "start_time": true, "end_time": true, "place": true, "tag_lst": true,
+			},
+			Filters: []any{},
+		},
 		"office_report": {
 			Title:    labels["office_report_title"],
 			Icon:     ct.IconChartBar,
@@ -1756,6 +1778,15 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 				Limit:   st.BrowserRowLimit,
 			}
 		},
+		"place_events": func(editor string) md.Query {
+			return md.Query{
+				Fields: []string{"p.*", "p.start_time as start_date", "p.end_time as end_date",
+					"p.id as place_id", "'" + cu.ToString(editor, "place") + "' as editor", "'events' as editor_view"},
+				From:    "place_events p",
+				OrderBy: []string{"p.id"},
+				Limit:   st.BrowserRowLimit,
+			}
+		},
 	}
 	query = md.Query{}
 	editor := cu.ToString(params["editor"], "")
@@ -1900,6 +1931,9 @@ func (s *SearchConfig) Filter(view string, filter ct.BrowserFilter, queryFilters
 			return s.filterPlace(view, filter, queryFilters)
 		},
 		"place_contacts": func() []string {
+			return s.filterPlace(view, filter, queryFilters)
+		},
+		"place_events": func() []string {
 			return s.filterPlace(view, filter, queryFilters)
 		},
 	}
@@ -2183,6 +2217,16 @@ func (s *SearchConfig) filterPlace(view string, filter ct.BrowserFilter, queryFi
 		"place_contacts": func() []string {
 			return append(queryFilters,
 				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+		"place_events": func() []string {
+			switch filter.Field {
+			case "start_time", "end_time":
+				return append(queryFilters,
+					fmt.Sprintf("%s (start_time %s '%s')", pre(filter.Or), compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			default:
+				return append(queryFilters,
+					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+			}
 		},
 	}
 	return result[view]()

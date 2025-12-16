@@ -79,12 +79,10 @@ func Test_promptHandler(t *testing.T) {
 						},
 					},
 				},
-				"resources": map[string]ResourceData{
+				"resources": map[string]mcp.Resource{
 					"ntr_customer_en": {
-						Resource: mcp.Resource{
-							URI:      "template:ntr_customer_en.json",
-							MIMEType: "application/json",
-						},
+						URI:      "template:ntr_customer_en.json",
+						MIMEType: "application/json",
 					},
 				},
 			})

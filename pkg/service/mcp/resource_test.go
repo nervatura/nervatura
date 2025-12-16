@@ -22,10 +22,8 @@ func Test_resourceHandler(t *testing.T) {
 			req:     &mcp.ReadResourceRequest{Params: &mcp.ReadResourceParams{URI: "template:ntr_customer_en.json"}},
 			wantErr: false,
 			config: cu.IM{
-				"resources": map[string]ResourceData{
-					"ntr_customer_en": {
-						Resource: mcp.Resource{URI: "template:ntr_customer_en.json"},
-					},
+				"resources": map[string]mcp.Resource{
+					"ntr_customer_en": {URI: "template:ntr_customer_en.json"},
 				},
 			},
 		},
@@ -40,7 +38,7 @@ func Test_resourceHandler(t *testing.T) {
 			req:     &mcp.ReadResourceRequest{Params: &mcp.ReadResourceParams{URI: "template:ntr_customer_en.json"}},
 			wantErr: true,
 			config: cu.IM{
-				"resources": map[string]ResourceData{},
+				"resources": map[string]mcp.Resource{},
 			},
 		},
 	}

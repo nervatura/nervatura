@@ -48,6 +48,7 @@ func (s *GService) PlaceUpdate(ctx context.Context, req *pb.Place) (pbPlace *pb.
 
 	ut.ConvertByteToIMValue(&req.Contacts, []*pb.Contact{}, values, "contacts")
 	ut.ConvertByteToIMValue(&req.Address, &pb.Address{}, values, "address")
+	ut.ConvertByteToIMValue(&req.Events, []*pb.Event{}, values, "events")
 	ut.ConvertByteToIMValue(&req.PlaceMeta, &pb.PlaceMeta{}, values, "place_meta")
 	ut.ConvertByteToIMValue(&req.PlaceMap, &pb.JsonString{}, values, "place_map")
 

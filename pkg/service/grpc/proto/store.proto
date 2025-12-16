@@ -1008,11 +1008,12 @@ message Place {
   string currency_code = 5;
   Address address = 6;
   repeated Contact contacts = 7;
-  PlaceMeta place_meta = 8;
+  repeated Event events = 8;
+  PlaceMeta place_meta = 9;
   // Flexible key-value map for additional metadata. The value is any json type.
-  JsonString place_map = 9;
+  JsonString place_map = 10;
   // Timestamp of data creation
-  string time_stamp = 10;
+  string time_stamp = 11;
 }
 
 message Places {

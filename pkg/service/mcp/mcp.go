@@ -15,6 +15,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 	"golang.org/x/time/rate"
 )
 
@@ -39,33 +40,31 @@ func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	}, opts)
 
 	for key, td := range toolDataMap {
-		if slices.Contains(td.Scopes, scope) || len(td.Scopes) == 0 || scope == "all" {
+		scopes := ut.ToStringArray(td.Meta["scopes"])
+		if slices.Contains(scopes, scope) || len(scopes) == 0 || scope == "all" {
 			addTool(key, server, scope)
 		}
 	}
 
-	if resources, ok := ms.config["resources"].(map[string]ResourceData); ok {
+	if resources, ok := ms.config["resources"].(map[string]mcp.Resource); ok {
 		for _, resource := range resources {
-			if slices.Contains(resource.Scopes, scope) || len(resource.Scopes) == 0 || scope == "all" {
-				server.AddResource(&mcp.Resource{
-					Name:        resource.Name,
-					Title:       resource.Title,
-					Description: resource.Description,
-					MIMEType:    resource.MIMEType,
-					URI:         resource.URI,
-				}, resourceHandler)
+			scopes := ut.ToStringArray(resource.Meta["scopes"])
+			if slices.Contains(scopes, scope) || len(scopes) == 0 || scope == "all" {
+				server.AddResource(&resource, resourceHandler)
 			}
 		}
 	}
 
 	if prompts, ok := ms.config["prompts"].(map[string]PromptData); ok {
 		for _, prompt := range prompts {
-			if slices.Contains(prompt.Scopes, scope) || len(prompt.Scopes) == 0 || scope == "all" {
+			scopes := ut.ToStringArray(prompt.Meta["scopes"])
+			if slices.Contains(scopes, scope) || len(scopes) == 0 || scope == "all" {
 				server.AddPrompt(&mcp.Prompt{
 					Name:        prompt.Name,
 					Title:       prompt.Title,
 					Description: prompt.Description,
 					Arguments:   prompt.Arguments,
+					Meta:        prompt.Meta,
 				}, promptHandler)
 			}
 		}
@@ -252,7 +251,8 @@ func Catalog(w http.ResponseWriter, r *http.Request) {
 		"all": cu.IM{},
 	}
 	setTool := func(scope string, td ToolData) {
-		tool := cu.IM{"description": td.Description, "scopes": td.Scopes}
+		scopes := ut.ToStringArray(td.Meta["scopes"])
+		tool := cu.IM{"description": td.Description, "scopes": scopes}
 		if _, ok := tools[scope]; !ok {
 			tools[scope] = cu.IM{}
 		}
@@ -262,7 +262,8 @@ func Catalog(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, td := range toolDataMap {
 		setTool("all", td)
-		for _, scope := range td.Scopes {
+		scopes := ut.ToStringArray(td.Meta["scopes"])
+		for _, scope := range scopes {
 			setTool(scope, td)
 		}
 	}

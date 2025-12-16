@@ -133,8 +133,8 @@ func (s *httpServer) loadPrompts() {
 }
 
 func (s *httpServer) loadResources() {
-	var resources []msrv.ResourceData = []msrv.ResourceData{}
-	resourceMap := make(map[string]msrv.ResourceData)
+	var resources []mcp.Resource = []mcp.Resource{}
+	resourceMap := make(map[string]mcp.Resource)
 	var err error
 	loadResourceFile := func() (jsonResources []byte, err error) {
 		if cu.ToString(s.config["NT_MCP_RESOURCE"], "") != "" {

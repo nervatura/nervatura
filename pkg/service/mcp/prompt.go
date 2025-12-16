@@ -14,8 +14,8 @@ type PromptData struct {
 	Name              string                `json:"name,omitempty" jsonschema:"Prompt name."`
 	Title             string                `json:"title,omitempty" jsonschema:"Prompt title."`
 	Description       string                `json:"description,omitempty" jsonschema:"Prompt description."`
-	Scopes            []string              `json:"scopes,omitempty" jsonschema:"Prompt scope."`
 	Arguments         []*mcp.PromptArgument `json:"arguments,omitempty" jsonschema:"Prompt arguments."`
+	Meta              mcp.Meta              `json:"_meta,omitempty" jsonschema:"Prompt meta."`
 	PromptDescription string                `json:"prompt_description,omitempty" jsonschema:"Result description."`
 	PromptMessages    []*mcp.PromptMessage  `json:"prompt_messages,omitempty" jsonschema:"Prompt messages."`
 }

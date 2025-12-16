@@ -137,14 +137,14 @@ func TestGetServer(t *testing.T) {
 			args: args{
 				scope: "all",
 				config: cu.IM{
-					"resources": map[string]ResourceData{
+					"resources": map[string]mcp.Resource{
 						"test": {
-							Resource: mcp.Resource{
-								Name:        "test",
-								Title:       "test",
-								Description: "test",
+							Name:        "test",
+							Title:       "test",
+							Description: "test",
+							Meta: mcp.Meta{
+								"scopes": []string{"customer"},
 							},
-							Scopes: []string{"customer"},
 						},
 					},
 					"prompts": map[string]PromptData{
@@ -152,7 +152,9 @@ func TestGetServer(t *testing.T) {
 							Name:        "test",
 							Title:       "test",
 							Description: "test",
-							Scopes:      []string{"customer"},
+							Meta: mcp.Meta{
+								"scopes": []string{"customer"},
+							},
 						},
 					},
 				},
@@ -165,14 +167,14 @@ func TestGetServer(t *testing.T) {
 			args: args{
 				scope: "customer",
 				config: cu.IM{
-					"resources": map[string]ResourceData{
+					"resources": map[string]mcp.Resource{
 						"test": {
-							Resource: mcp.Resource{
-								Name:        "test",
-								Title:       "test",
-								Description: "test",
+							Name:        "test",
+							Title:       "test",
+							Description: "test",
+							Meta: mcp.Meta{
+								"scopes": []string{"customer"},
 							},
-							Scopes: []string{"customer"},
 						},
 					},
 					"prompts": map[string]PromptData{
@@ -180,7 +182,9 @@ func TestGetServer(t *testing.T) {
 							Name:        "test",
 							Title:       "test",
 							Description: "test",
-							Scopes:      []string{"customer"},
+							Meta: mcp.Meta{
+								"scopes": []string{"customer"},
+							},
 						},
 					},
 				},
@@ -193,14 +197,14 @@ func TestGetServer(t *testing.T) {
 			args: args{
 				scope: "invoice",
 				config: cu.IM{
-					"resources": map[string]ResourceData{
+					"resources": map[string]mcp.Resource{
 						"test": {
-							Resource: mcp.Resource{
-								Name:        "test",
-								Title:       "test",
-								Description: "test",
+							Name:        "test",
+							Title:       "test",
+							Description: "test",
+							Meta: mcp.Meta{
+								"scopes": []string{"invoice"},
 							},
-							Scopes: []string{"invoice"},
 						},
 					},
 					"prompts": map[string]PromptData{
@@ -208,7 +212,9 @@ func TestGetServer(t *testing.T) {
 							Name:        "test",
 							Title:       "test",
 							Description: "test",
-							Scopes:      []string{"invoice"},
+							Meta: mcp.Meta{
+								"scopes": []string{"invoice"},
+							},
 						},
 					},
 				},

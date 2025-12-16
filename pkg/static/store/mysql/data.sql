@@ -44,23 +44,23 @@ VALUES('CUS0000000000N1', 'CUSTOMER_OWN', 'COMPANY NAME',
   ), JSON_OBJECT()
 );
 
-INSERT INTO place(code, place_type, place_name, address, contacts,  place_meta, place_map) 
+INSERT INTO place(code, place_type, place_name, address, contacts, events, place_meta, place_map) 
 VALUES('PLA0000000000N1', 'PLACE_WAREHOUSE', 'Warehouse',
- JSON_OBJECT(), JSON_ARRAY(),
+ JSON_OBJECT(), JSON_ARRAY(), JSON_ARRAY(),
   JSON_OBJECT(
     'notes', '', 'inactive', false, 'tags', JSON_ARRAY()
   ), JSON_OBJECT()
 );
-INSERT INTO place(code, place_type, place_name, currency_code, address, contacts,  place_meta, place_map) 
+INSERT INTO place(code, place_type, place_name, currency_code, address, contacts, events, place_meta, place_map) 
 VALUES('PLA0000000000N2', 'PLACE_BANK', 'Bank', 'EUR',
- JSON_OBJECT(), JSON_ARRAY(),
+ JSON_OBJECT(), JSON_ARRAY(), JSON_ARRAY(),
   JSON_OBJECT(
     'notes', '', 'inactive', false, 'tags', JSON_ARRAY()
   ), JSON_OBJECT()
 );
-INSERT INTO place(code, place_type, place_name, currency_code, address, contacts,  place_meta, place_map) 
+INSERT INTO place(code, place_type, place_name, currency_code, address, contacts, events, place_meta, place_map) 
 VALUES('PLA0000000000N3', 'PLACE_CASH', 'Cash', 'EUR',
- JSON_OBJECT(), JSON_ARRAY(),
+ JSON_OBJECT(), JSON_ARRAY(), JSON_ARRAY(),
   JSON_OBJECT(
     'notes', '', 'inactive', false, 'tags', JSON_ARRAY()
   ), JSON_OBJECT()

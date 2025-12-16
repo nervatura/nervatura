@@ -1189,6 +1189,7 @@ const (
 	ViewPaymentTags
 	ViewPaymentView
 	ViewPlaceContacts
+	ViewPlaceEvents
 	ViewPlaceMap
 	ViewPlaceTags
 	ViewPlaceView
@@ -1260,6 +1261,7 @@ var viewNameMap = map[string]ViewName{
 	"VIEW_PAYMENT_TAGS":       ViewPaymentTags,
 	"VIEW_PAYMENT_VIEW":       ViewPaymentView,
 	"VIEW_PLACE_CONTACTS":     ViewPlaceContacts,
+	"VIEW_PLACE_EVENTS":       ViewPlaceEvents,
 	"VIEW_PLACE_MAP":          ViewPlaceMap,
 	"VIEW_PLACE_TAGS":         ViewPlaceTags,
 	"VIEW_PLACE_VIEW":         ViewPlaceView,

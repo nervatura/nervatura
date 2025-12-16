@@ -20,44 +20,49 @@ func init() {
 			Name:        "nervatura_invoice_create",
 			Title:       "Create a new invoice",
 			Description: "Create a new invoice. Related tools: item.",
+			Meta: mcp.Meta{
+				"scopes": []string{"invoice"},
+			},
 		},
 		ModelSchema: InvoiceSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, invoiceCreateHandler)
 		},
-		Scopes: []string{"invoice"},
 	}
 	toolDataMap["nervatura_invoice_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_invoice_query",
 			Title:       "Query invoices by parameters",
 			Description: "Query invoices by parameters. The result is all invoices that match the filter criteria.",
+			Meta: mcp.Meta{
+				"scopes": []string{"invoice"},
+			},
 		},
 		ModelSchema: InvoiceSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"invoice"},
 	}
 	toolDataMap["nervatura_invoice_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_invoice_update",
 			Title:       "Update a invoice by code",
 			Description: "Update a invoice by code. When modifying, only the specified values change. Related tools: item.",
+			Meta: mcp.Meta{
+				"scopes": []string{"invoice"},
+			},
 		},
 		ModelSchema: InvoiceSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"invoice"},
 	}
 	toolDataMap["nervatura_invoice_delete"] = ToolData{
-		Tool:        createDeleteTool("nervatura_invoice_delete", "invoice"),
+		Tool:        createDeleteTool("nervatura_invoice_delete", "invoice", mcp.Meta{"scopes": []string{"invoice"}}),
 		ModelSchema: InvoiceSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"invoice"},
 	}
 }
 

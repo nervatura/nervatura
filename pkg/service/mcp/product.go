@@ -19,44 +19,49 @@ func init() {
 			Name:        "nervatura_product_create",
 			Title:       "Create a new product",
 			Description: "Create a new product. Related tools: price, event.",
+			Meta: mcp.Meta{
+				"scopes": []string{"product"},
+			},
 		},
 		ModelSchema: ProductSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, productCreateHandler)
 		},
-		Scopes: []string{"product"},
 	}
 	toolDataMap["nervatura_product_query"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_product_query",
 			Title:       "Query products by parameters",
 			Description: "Query products by parameters. The result is all products that match the filter criteria.",
+			Meta: mcp.Meta{
+				"scopes": []string{"product"},
+			},
 		},
 		ModelSchema: ProductSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelQuery)
 		},
-		Scopes: []string{"product"},
 	}
 	toolDataMap["nervatura_product_update"] = ToolData{
 		Tool: mcp.Tool{
 			Name:        "nervatura_product_update",
 			Title:       "Update a product by code",
 			Description: "Update a product by code. When modifying, only the specified values change. Related tools: price, event.",
+			Meta: mcp.Meta{
+				"scopes": []string{"product"},
+			},
 		},
 		ModelSchema: ProductSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
-		Scopes: []string{"product"},
 	}
 	toolDataMap["nervatura_product_delete"] = ToolData{
-		Tool:        createDeleteTool("nervatura_product_delete", "product"),
+		Tool:        createDeleteTool("nervatura_product_delete", "product", mcp.Meta{"scopes": []string{"product"}}),
 		ModelSchema: ProductSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)
 		},
-		Scopes: []string{"product"},
 	}
 }
 

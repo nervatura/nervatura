@@ -107,6 +107,7 @@ func (e *PlaceEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 func (e *PlaceEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	var place cu.IM = cu.ToIM(data["place"], cu.IM{})
 	contact := cu.ToIMA(place["contacts"], []cu.IM{})
+	event := cu.ToIMA(place["events"], []cu.IM{})
 	placeMap := cu.ToIM(place["place_map"], cu.IM{})
 	newInput := (cu.ToInteger(place["id"], 0) == 0)
 
@@ -136,6 +137,12 @@ func (e *PlaceEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 			Label: labels["contact_view"],
 			Icon:  ct.IconMobile,
 			Badge: cu.ToString(int64(len(contact)), "0"),
+		},
+		{
+			Key:   "events",
+			Label: labels["event_view"],
+			Icon:  ct.IconCalendar,
+			Badge: cu.ToString(int64(len(event)), "0"),
 		},
 	}
 }
@@ -359,7 +366,7 @@ func (e *PlaceEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row)
 }
 
 func (e *PlaceEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
-	if !slices.Contains([]string{"contacts", "maps"}, view) {
+	if !slices.Contains([]string{"contacts", "events", "maps"}, view) {
 		return []ct.Table{}
 	}
 
@@ -412,6 +419,30 @@ func (e *PlaceEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 					FilterPlaceholder: labels["placeholder_filter"],
 					AddItem:           !newInput,
 					LabelAdd:          labels["contact_new"],
+				},
+			}
+		},
+		"events": func() []ct.Table {
+			event := cu.ToIMA(place["events"], []cu.IM{})
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "subject", Label: labels["event_subject"]},
+						{Name: "start_time", Label: labels["event_start_time"], FieldType: ct.TableFieldTypeDateTime},
+						{Name: "end_time", Label: labels["event_end_time"], FieldType: ct.TableFieldTypeDateTime},
+						{Name: "place", Label: labels["event_place"]},
+						{Name: "description", Label: labels["event_description"]},
+						//{Name: "tag_lst", Label: labels["event_tags"]},
+					},
+					Rows:              event,
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          5,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           !newInput,
+					LabelAdd:          labels["event_new"],
 				},
 			}
 		},
@@ -544,6 +575,99 @@ func (e *PlaceEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 								"value": contact.Notes,
 							},
 						}},
+					}, Full: true, BorderBottom: true},
+				},
+				FooterRows: footerRows,
+			}
+		},
+		"events": func() ct.Form {
+			var event md.Event = md.Event{}
+			ut.ConvertToType(formData, &event)
+			return ct.Form{
+				Title: labels["event_view"],
+				Icon:  ct.IconCalendar,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["event_subject"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "subject",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "subject",
+								"value": event.Subject,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true, FieldCol: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["event_start_time"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "start_time",
+							},
+							Type: ct.FieldTypeDateTime, Value: cu.IM{
+								"name":    "start_time",
+								"value":   event.StartTime.String(),
+								"is_null": false,
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["event_end_time"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "end_time",
+							},
+							Type: ct.FieldTypeDateTime, Value: cu.IM{
+								"name":    "end_time",
+								"is_null": true,
+								"value":   event.EndTime.String(),
+							},
+							FormTrigger: true,
+						}},
+						{Label: labels["event_place"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "place",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "place",
+								"value": event.Place,
+							},
+							FormTrigger: true,
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["event_description"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "description",
+							},
+							Type: ct.FieldTypeText, Value: cu.IM{
+								"name":  "description",
+								"value": event.Description,
+								"rows":  4,
+							},
+							FormTrigger: true,
+						}},
+						{
+							Label: labels["event_tags"], Value: ct.Field{
+								BaseComponent: ct.BaseComponent{
+									Name: "tags",
+								},
+								Type: ct.FieldTypeList, Value: cu.IM{
+									"name":                "tags",
+									"rows":                ut.ToTagList(event.Tags),
+									"label_value":         "tag",
+									"pagination":          ct.PaginationTypeBottom,
+									"page_size":           5,
+									"hide_paginaton_size": true,
+									"list_filter":         true,
+									"filter_placeholder":  labels["placeholder_filter"],
+									"add_item":            true,
+									"add_icon":            ct.IconTag,
+									"edit_item":           false,
+									"delete_item":         true,
+									"indicator":           ct.IndicatorSpinner,
+								},
+								FormTrigger: true,
+							},
+						},
 					}, Full: true, BorderBottom: true},
 				},
 				FooterRows: footerRows,

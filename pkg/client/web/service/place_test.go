@@ -1418,6 +1418,44 @@ func TestPlaceService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "table_add_item_events",
+			cls: &ClientService{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+					}
+				},
+			},
+			evt: ct.ResponseEvent{
+				Trigger: &ct.Client{
+					BaseComponent: ct.BaseComponent{
+						Data: cu.IM{
+							"editor": cu.IM{
+								"place": cu.IM{"id": 12345,
+									"events": []cu.IM{
+										{"id": 12345},
+									}},
+								"view": "events",
+								"events": []cu.IM{
+									{"id": 12345},
+								},
+							},
+						},
+					},
+				},
+				Name:  ct.EditorEventField,
+				Value: cu.IM{"name": ct.TableEventAddItem, "value": cu.IM{"row": cu.IM{"id": 12345}, "index": 0, "view": "events"}},
+			},
+			wantErr: false,
+		},
+		{
 			name: "table_add_item_map_field_customer",
 			cls: &ClientService{
 				Config: cu.IM{},

@@ -473,6 +473,7 @@ CREATE TABLE IF NOT EXISTS place(
   currency_code VARCHAR(255),
   address JSON NOT NULL,
   contacts JSON NOT NULL,
+  events JSON NOT NULL,
   place_meta JSON NOT NULL,
   place_map JSON NOT NULL,
   time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -507,6 +508,7 @@ CREATE VIEW place_view AS
     JSON_OBJECT(
       'id', id, 'code', code, 'place_type', place_type, 'place_name', place_name,
       'currency_code', currency_code, 'address', address, 'contacts', contacts,
+      'events', events,
       'place_meta', place_meta, 'place_map', place_map, 'time_stamp', time_stamp
     ) AS place_object
   FROM place
@@ -527,6 +529,24 @@ CREATE VIEW place_contacts AS
     jt.value->"$.contact_map" AS contact_map
   FROM place c
   CROSS JOIN JSON_TABLE(c.contacts,
+    '$[*]' COLUMNS (value JSON PATH '$')
+  ) AS jt
+  WHERE c.deleted = false;
+
+CREATE VIEW place_events AS
+  SELECT c.id AS id, c.code, 
+    place_name,
+    jt.value->>"$.uid" AS uid,
+    jt.value->>"$.subject" AS subject,
+    CASE WHEN jt.value->>"$.start_time" = '' THEN NULL ELSE STR_TO_DATE(jt.value->>"$.start_time", '%Y-%m-%dT%H:%i:%s') END AS start_time,
+    CASE WHEN jt.value->>"$.end_time" = '' THEN NULL ELSE STR_TO_DATE(jt.value->>"$.end_time", '%Y-%m-%dT%H:%i:%s') END AS end_time,
+    jt.value->>"$.place" AS place,
+    jt.value->>"$.description" AS description,
+    jt.value->"$.tags" AS tags,
+    REPLACE(REPLACE(REPLACE(jt.value->>"$.tags", '"', ''), '[', ''), ']', '') as tag_lst,
+    jt.value->"$.event_map" AS event_map
+  FROM place c
+  CROSS JOIN JSON_TABLE(c.events,
     '$[*]' COLUMNS (value JSON PATH '$')
   ) AS jt
   WHERE c.deleted = false;
