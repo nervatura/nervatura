@@ -14,13 +14,13 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_email_send"] = ToolData{
+	toolDataMap["nervatura_email_send"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_email_send",
 			Title:       "Send an email with attachments",
 			Description: "Send an email with attachments to the specified email addresses. The result is the email sent successfully.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product", "offer", "order", "invoice"},
+				"scopes": []string{"customer", "product", "employee", "offer", "order", "invoice"},
 			},
 		},
 		ModelSchema: EmailSchema(),

@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_address_create"] = ToolData{
+	toolDataMap["nervatura_address_create"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_create",
 			Title:       "Create a new address",
@@ -26,7 +26,7 @@ func init() {
 			mcp.AddTool(server, tool, extendCreate)
 		},
 	}
-	toolDataMap["nervatura_address_update"] = ToolData{
+	toolDataMap["nervatura_address_update"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_update",
 			Title:       "Update a address by code",
@@ -41,7 +41,7 @@ func init() {
 			mcp.AddTool(server, tool, extendUpdate)
 		},
 	}
-	toolDataMap["nervatura_address_query"] = ToolData{
+	toolDataMap["nervatura_address_query"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_address_query",
 			Title:       "Query addresses by parameters",
@@ -56,7 +56,7 @@ func init() {
 			mcp.AddTool(server, tool, extendQuery)
 		},
 	}
-	toolDataMap["nervatura_address_delete"] = ToolData{
+	toolDataMap["nervatura_address_delete"] = McpTool{
 		Tool:              createExtendDeleteTool("nervatura_address_delete", "address", mcp.Meta{"scopes": []string{"customer"}}),
 		Extend:            true,
 		ModelExtendSchema: AddressSchema(),

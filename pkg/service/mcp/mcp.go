@@ -27,7 +27,7 @@ type McpServer struct {
 	scopes  []string
 }
 
-var toolDataMap map[string]ToolData = map[string]ToolData{}
+var toolDataMap map[string]McpTool = map[string]McpTool{}
 
 func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	opts := &mcp.ServerOptions{
@@ -42,7 +42,7 @@ func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	for key, td := range toolDataMap {
 		scopes := ut.ToStringArray(td.Meta["scopes"])
 		if slices.Contains(scopes, scope) || len(scopes) == 0 || scope == "all" {
-			addTool(key, server, scope)
+			addMcpTool(key, server, scope)
 		}
 	}
 
@@ -250,7 +250,7 @@ func Catalog(w http.ResponseWriter, r *http.Request) {
 	tools := cu.IM{
 		"all": cu.IM{},
 	}
-	setTool := func(scope string, td ToolData) {
+	setTool := func(scope string, td McpTool) {
 		scopes := ut.ToStringArray(td.Meta["scopes"])
 		tool := cu.IM{"description": td.Description, "scopes": scopes}
 		if _, ok := tools[scope]; !ok {

@@ -34,8 +34,8 @@ type Contact struct {
 type Event struct {
 	Uid         string       `json:"uid" jsonschema:"Uid. Example: UID1731101982N123"`
 	Subject     string       `json:"subject" jsonschema:"Subject. Example: Subject."`
-	StartTime   TimeDateTime `json:"start_time" type:"string" jsonschema:"Start time. Example: 2025-01-01T00:00:00Z"`
-	EndTime     TimeDateTime `json:"end_time" type:"string" jsonschema:"End time. Example: 2025-01-01T00:00:00Z"`
+	StartTime   TimeDateTime `json:"start_time" jsonschema:"Start time. Example: 2025-01-01T00:00:00Z"`
+	EndTime     TimeDateTime `json:"end_time" jsonschema:"End time. Example: 2025-01-01T00:00:00Z"`
 	Place       string       `json:"place" jsonschema:"Place. Example: Place."`
 	Description string       `json:"description" jsonschema:"Description. Example: Description."`
 	// Additional tags for the event

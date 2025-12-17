@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_tax_create"] = ToolData{
+	toolDataMap["nervatura_tax_create"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_tax_create",
 			Title:       "Create a new tax",
@@ -29,7 +29,7 @@ func init() {
 			mcp.AddTool(server, tool, taxCreateHandler)
 		},
 	}
-	toolDataMap["nervatura_tax_query"] = ToolData{
+	toolDataMap["nervatura_tax_query"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_tax_query",
 			Title:       "Query taxes by parameters",
@@ -43,7 +43,7 @@ func init() {
 			mcp.AddTool(server, tool, modelQuery)
 		},
 	}
-	toolDataMap["nervatura_tax_update"] = ToolData{
+	toolDataMap["nervatura_tax_update"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_tax_update",
 			Title:       "Update a tax by code",
@@ -57,7 +57,7 @@ func init() {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
 	}
-	toolDataMap["nervatura_tax_delete"] = ToolData{
+	toolDataMap["nervatura_tax_delete"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_tax_delete",
 			Title:       "Delete a tax by code",

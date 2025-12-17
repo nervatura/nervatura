@@ -250,6 +250,27 @@ func Test_modelQuery(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "employee_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_employee_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+				"code":   "EMP1731101982N123",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

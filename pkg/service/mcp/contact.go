@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_contact_create"] = ToolData{
+	toolDataMap["nervatura_contact_create"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_contact_create",
 			Title:       "Create a new contact",
@@ -26,7 +26,7 @@ func init() {
 			mcp.AddTool(server, tool, extendCreate)
 		},
 	}
-	toolDataMap["nervatura_contact_update"] = ToolData{
+	toolDataMap["nervatura_contact_update"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_contact_update",
 			Title:       "Update a contact by code",
@@ -41,7 +41,7 @@ func init() {
 			mcp.AddTool(server, tool, extendUpdate)
 		},
 	}
-	toolDataMap["nervatura_contact_query"] = ToolData{
+	toolDataMap["nervatura_contact_query"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_contact_query",
 			Title:       "Query contacts by parameters",
@@ -56,7 +56,7 @@ func init() {
 			mcp.AddTool(server, tool, extendQuery)
 		},
 	}
-	toolDataMap["nervatura_contact_delete"] = ToolData{
+	toolDataMap["nervatura_contact_delete"] = McpTool{
 		Tool:              createExtendDeleteTool("nervatura_contact_delete", "contact", mcp.Meta{"scopes": []string{"customer"}}),
 		Extend:            true,
 		ModelExtendSchema: ContactSchema(),

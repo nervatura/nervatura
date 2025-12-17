@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_price_create"] = ToolData{
+	toolDataMap["nervatura_price_create"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_price_create",
 			Title:       "Create a new price",
@@ -29,7 +29,7 @@ func init() {
 			mcp.AddTool(server, tool, priceCreateHandler)
 		},
 	}
-	toolDataMap["nervatura_price_query"] = ToolData{
+	toolDataMap["nervatura_price_query"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_price_query",
 			Title:       "Query prices by parameters",
@@ -43,7 +43,7 @@ func init() {
 			mcp.AddTool(server, tool, modelQuery)
 		},
 	}
-	toolDataMap["nervatura_price_update"] = ToolData{
+	toolDataMap["nervatura_price_update"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_price_update",
 			Title:       "Update a price by code",
@@ -57,7 +57,7 @@ func init() {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
 	}
-	toolDataMap["nervatura_price_delete"] = ToolData{
+	toolDataMap["nervatura_price_delete"] = McpTool{
 		Tool:        createDeleteTool("nervatura_price_delete", "price", mcp.Meta{"scopes": []string{"product"}}),
 		ModelSchema: PriceSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {

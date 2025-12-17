@@ -11,13 +11,13 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_event_create"] = ToolData{
+	toolDataMap["nervatura_event_create"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_event_create",
 			Title:       "Event Data Create",
 			Description: "Create a new %s event.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product"},
+				"scopes": []string{"customer", "product", "employee"},
 			},
 		},
 		Extend:            true,
@@ -26,13 +26,13 @@ func init() {
 			mcp.AddTool(server, tool, extendCreate)
 		},
 	}
-	toolDataMap["nervatura_event_update"] = ToolData{
+	toolDataMap["nervatura_event_update"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_event_update",
 			Title:       "Event Data Update",
 			Description: "Update a %s event.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product"},
+				"scopes": []string{"customer", "product", "employee"},
 			},
 		},
 		Extend:            true,
@@ -41,13 +41,13 @@ func init() {
 			mcp.AddTool(server, tool, extendUpdate)
 		},
 	}
-	toolDataMap["nervatura_event_query"] = ToolData{
+	toolDataMap["nervatura_event_query"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_event_query",
 			Title:       "Event Query",
 			Description: "Query %s events by parameters. The result is all events that match the filter criteria.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product"},
+				"scopes": []string{"customer", "product", "employee"},
 			},
 		},
 		Extend:            true,
@@ -56,8 +56,8 @@ func init() {
 			mcp.AddTool(server, tool, extendQuery)
 		},
 	}
-	toolDataMap["nervatura_event_delete"] = ToolData{
-		Tool:              createExtendDeleteTool("nervatura_event_delete", "event", mcp.Meta{"scopes": []string{"customer", "product"}}),
+	toolDataMap["nervatura_event_delete"] = McpTool{
+		Tool:              createExtendDeleteTool("nervatura_event_delete", "event", mcp.Meta{"scopes": []string{"customer", "product", "employee"}}),
 		Extend:            true,
 		ModelExtendSchema: EventSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
@@ -149,6 +149,10 @@ func EventSchema() (ms *ModelExtendSchema) {
 			var err error
 			if schema, err = jsonschema.For[eventCreate](nil); err == nil {
 				schema.Description = fmt.Sprintf("Create a new %s event.", scope)
+				schema.Properties["start_time"].Type = "string"
+				schema.Properties["start_time"].Format = "date-time"
+				schema.Properties["end_time"].Type = "string"
+				schema.Properties["end_time"].Format = "date-time"
 				schema.Properties["tags"].Default = []byte(`[]`)
 				schema.Properties["event_map"].Default = []byte(`{}`)
 				schema.Required = []string{"code"}
@@ -160,6 +164,10 @@ func EventSchema() (ms *ModelExtendSchema) {
 			var err error
 			if schema, err = jsonschema.For[eventUpdate](nil); err == nil {
 				schema.Description = fmt.Sprintf("Update a %s event.", scope)
+				schema.Properties["start_time"].Type = "string"
+				schema.Properties["start_time"].Format = "date-time"
+				schema.Properties["end_time"].Type = "string"
+				schema.Properties["end_time"].Format = "date-time"
 				schema.Properties["event_map"].Default = []byte(`{}`)
 				schema.Required = []string{"code", "index"}
 			}

@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_map_create"] = ToolData{
+	toolDataMap["nervatura_map_create"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_map_create",
 			Title:       "Create a new custom field definition",
@@ -30,7 +30,7 @@ func init() {
 			mcp.AddTool(server, tool, mapCreateHandler)
 		},
 	}
-	toolDataMap["nervatura_map_query"] = ToolData{
+	toolDataMap["nervatura_map_query"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_map_query",
 			Title:       "Query map configs by parameters",
@@ -44,7 +44,7 @@ func init() {
 			mcp.AddTool(server, tool, modelQuery)
 		},
 	}
-	toolDataMap["nervatura_map_update"] = ToolData{
+	toolDataMap["nervatura_map_update"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_map_update",
 			Title:       "Update a map config by code",
@@ -58,7 +58,7 @@ func init() {
 			mcp.AddTool(server, tool, mapUpdate)
 		},
 	}
-	toolDataMap["nervatura_map_delete"] = ToolData{
+	toolDataMap["nervatura_map_delete"] = McpTool{
 		Tool: createDeleteTool("nervatura_map_delete", "config",
 			mcp.Meta{"scopes": []string{"setting"}}),
 		ModelSchema: MapSchema(),

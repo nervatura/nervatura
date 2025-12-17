@@ -105,7 +105,7 @@ func extendDelete(ctx context.Context, req *mcp.CallToolRequest, inputData map[s
 	code := cu.ToString(inputData["code"], "???")
 	index := int(cu.ToInteger(inputData["index"], 0))
 
-	var mt ToolData
+	var mt McpTool
 	var found bool
 	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)

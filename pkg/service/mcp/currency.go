@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	toolDataMap["nervatura_currency_create"] = ToolData{
+	toolDataMap["nervatura_currency_create"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_currency_create",
 			Title:       "Create a new currency",
@@ -29,7 +29,7 @@ func init() {
 			mcp.AddTool(server, tool, currencyCreateHandler)
 		},
 	}
-	toolDataMap["nervatura_currency_query"] = ToolData{
+	toolDataMap["nervatura_currency_query"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_currency_query",
 			Title:       "Query currencies by parameters",
@@ -43,7 +43,7 @@ func init() {
 			mcp.AddTool(server, tool, modelQuery)
 		},
 	}
-	toolDataMap["nervatura_currency_update"] = ToolData{
+	toolDataMap["nervatura_currency_update"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_currency_update",
 			Title:       "Update a currency by code",
@@ -57,7 +57,7 @@ func init() {
 			mcp.AddTool(server, tool, modelUpdate)
 		},
 	}
-	toolDataMap["nervatura_currency_delete"] = ToolData{
+	toolDataMap["nervatura_currency_delete"] = McpTool{
 		Tool: mcp.Tool{
 			Name:        "nervatura_currency_delete",
 			Title:       "Delete a currency by code",

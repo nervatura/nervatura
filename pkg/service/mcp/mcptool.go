@@ -15,16 +15,15 @@ import (
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
-type ToolData struct {
+type McpTool struct {
 	mcp.Tool
 	Extend            bool
 	ModelSchema       *ModelSchema
 	ModelExtendSchema *ModelExtendSchema
 	ConnectHandler    func(server *mcp.Server, tool *mcp.Tool)
-	//Scopes            []string
 }
 
-func addTool(toolName string, server *mcp.Server, scope string) {
+func addMcpTool(toolName string, server *mcp.Server, scope string) {
 	if mt, found := toolDataMap[toolName]; found {
 		stool := &mcp.Tool{
 			Name:        mt.Name,
@@ -66,7 +65,7 @@ func addTool(toolName string, server *mcp.Server, scope string) {
 func modelQuery(ctx context.Context, req *mcp.CallToolRequest, parameters cu.IM) (result *mcp.CallToolResult, response any, err error) {
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
 
-	var mt ToolData
+	var mt McpTool
 	var found bool
 	dm := toolDataMap
 	if mt, found = dm[req.Params.Name]; !found || mt.Extend {
@@ -103,7 +102,7 @@ func modelUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM)
 		return nil, UpdateResponseData{}, fmt.Errorf("code is required")
 	}
 
-	var mt ToolData
+	var mt McpTool
 	var found bool
 	if mt, found = toolDataMap[req.Params.Name]; !found || mt.Extend {
 		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
@@ -135,7 +134,7 @@ func extendQuery(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM)
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
 	baseModel := cu.ToString(inputData["model"], "")
 
-	var mt ToolData
+	var mt McpTool
 	var found bool
 	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, nil, fmt.Errorf("invalid tool: %s", req.Params.Name)
@@ -175,7 +174,7 @@ func extendUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 		return nil, UpdateResponseData{}, fmt.Errorf("code is required")
 	}
 
-	var mt ToolData
+	var mt McpTool
 	var found bool
 	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
@@ -229,7 +228,7 @@ func extendCreate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 		return nil, UpdateResponseData{}, fmt.Errorf("code is required")
 	}
 
-	var mt ToolData
+	var mt McpTool
 	var found bool
 	if mt, found = toolDataMap[req.Params.Name]; !found || !mt.Extend {
 		return nil, UpdateResponseData{}, fmt.Errorf("invalid tool: %s", req.Params.Name)
