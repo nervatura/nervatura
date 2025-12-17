@@ -81,15 +81,38 @@ func ToIntArray(arr interface{}) (result []int64) {
 	return result
 }
 
-func ToStringArray(arr interface{}) (result []string) {
+func ToStringArray(arr any) (result []string) {
 	result = []string{}
 	if result, found := arr.([]string); found {
 		return result
 	}
-	if ifa, found := arr.([]interface{}); found {
+	if ifa, found := arr.([]any); found {
 		for _, value := range ifa {
 			result = append(result, cu.ToString(value, ""))
 		}
+	}
+	return result
+}
+
+func ToAnyArray(arr any) (result []any) {
+	result = []any{}
+	if sfa, found := arr.([]string); found {
+		for _, value := range sfa {
+			result = append(result, value)
+		}
+	}
+	if sfa, found := arr.([]int64); found {
+		for _, value := range sfa {
+			result = append(result, value)
+		}
+	}
+	if sfa, found := arr.([]float64); found {
+		for _, value := range sfa {
+			result = append(result, value)
+		}
+	}
+	if ifa, found := arr.([]any); found {
+		return ifa
 	}
 	return result
 }

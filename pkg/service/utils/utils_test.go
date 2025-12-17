@@ -553,3 +553,41 @@ func TestAnyPointer(t *testing.T) {
 		})
 	}
 }
+
+func TestToAnyArray(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		arr  any
+		want []any
+	}{
+		{
+			name: "string",
+			arr:  []string{"a", "b", "c"},
+			want: []any{"a", "b", "c"},
+		},
+		{
+			name: "int64",
+			arr:  []int64{1, 2, 3},
+			want: []any{int64(1), int64(2), int64(3)},
+		},
+		{
+			name: "float64",
+			arr:  []float64{1.1, 2.2, 3.3},
+			want: []any{1.1, 2.2, 3.3},
+		},
+		{
+			name: "any",
+			arr:  []any{"a", "b", "c"},
+			want: []any{"a", "b", "c"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ToAnyArray(tt.arr)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ToAnyArray() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

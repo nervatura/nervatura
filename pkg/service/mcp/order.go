@@ -154,10 +154,10 @@ func OrderSchema() (ms *ModelSchema) {
 				schema.Properties["due_time"].Format = "date"
 				schema.Properties["due_time"].Default = []byte(`"` + time.Now().Format("2006-01-02") + `"`)
 				schema.Properties["paid_type"].Type = "string"
-				schema.Properties["paid_type"].Enum = []any{md.PaidTypeCash.String(), md.PaidTypeTransfer.String(), md.PaidTypeCard.String(), md.PaidTypeOnline.String(), md.PaidTypeOther.String()}
+				schema.Properties["paid_type"].Enum = ut.ToAnyArray(md.PaidType(0).Keys())
 				schema.Properties["paid_type"].Default = []byte(`"` + md.PaidTypeCard.String() + `"`)
 				schema.Properties["trans_state"].Type = "string"
-				schema.Properties["trans_state"].Enum = []any{md.TransStateOK.String(), md.TransStateNew.String(), md.TransStateBack.String()}
+				schema.Properties["trans_state"].Enum = ut.ToAnyArray(md.TransState(0).Keys())
 				schema.Properties["trans_state"].Default = []byte(`"` + md.TransStateOK.String() + `"`)
 				schema.Properties["tags"].Default = []byte(`[]`)
 				schema.Required = []string{"trans_date", "direction", "customer_code", "currency_code", "due_time", "paid_type"}
@@ -174,9 +174,9 @@ func OrderSchema() (ms *ModelSchema) {
 				schema.Properties["due_time"].Type = "string"
 				schema.Properties["due_time"].Format = "date"
 				schema.Properties["paid_type"].Type = "string"
-				schema.Properties["paid_type"].Enum = []any{md.PaidTypeCash.String(), md.PaidTypeTransfer.String(), md.PaidTypeCard.String(), md.PaidTypeOnline.String(), md.PaidTypeOther.String()}
+				schema.Properties["paid_type"].Enum = ut.ToAnyArray(md.PaidType(0).Keys())
 				schema.Properties["trans_state"].Type = "string"
-				schema.Properties["trans_state"].Enum = []any{md.TransStateOK.String(), md.TransStateNew.String(), md.TransStateBack.String()}
+				schema.Properties["trans_state"].Enum = ut.ToAnyArray(md.TransState(0).Keys())
 				schema.Required = []string{"code"}
 			}
 			return schema
@@ -204,13 +204,7 @@ func OrderSchema() (ms *ModelSchema) {
 			err = cu.ConvertToType(rows, &orders)
 			return orders, err
 		},
-		Validate: orderValidate,
-		Examples: map[string][]any{
-			"id":         {12345},
-			"code":       {`CUS1731101982N123`},
-			"direction":  {md.DirectionOut.String()},
-			"trans_date": {`2025-01-01`},
-		},
+		Validate:      orderValidate,
 		PrimaryFields: []string{"id", "code", "trans_type", "trans_date", "direction", "trans_code", "customer_code", "employee_code", "project_code", "currency_code", "trans_meta", "trans_map"},
 		Required:      []string{"trans_date", "direction", "customer_code", "currency_code", "due_time", "paid_type"},
 	}

@@ -100,7 +100,7 @@ func ProductSchema() (ms *ModelSchema) {
 			var err error
 			if schema, err = jsonschema.For[productCreate](nil); err == nil {
 				schema.Properties["product_type"].Type = "string"
-				schema.Properties["product_type"].Enum = []any{md.ProductTypeItem.String(), md.ProductTypeService.String(), md.ProductTypeVirtual.String()}
+				schema.Properties["product_type"].Enum = ut.ToAnyArray(md.ProductType(0).Keys())
 				schema.Properties["product_type"].Default = []byte(`"` + md.ProductTypeItem.String() + `"`)
 				schema.Properties["product_map"].Default = []byte(`{}`)
 				schema.Properties["tags"].Default = []byte(`[]`)
@@ -113,7 +113,7 @@ func ProductSchema() (ms *ModelSchema) {
 			var err error
 			if schema, err = jsonschema.For[productUpdate](nil); err == nil {
 				schema.Properties["product_type"].Type = "string"
-				schema.Properties["product_type"].Enum = []any{md.ProductTypeItem.String(), md.ProductTypeService.String(), md.ProductTypeVirtual.String()}
+				schema.Properties["product_type"].Enum = []any{md.ProductType(0).Keys()}
 				schema.Properties["product_map"].Default = []byte(`{}`)
 				schema.Required = []string{"code"}
 			}
@@ -152,13 +152,6 @@ func ProductSchema() (ms *ModelSchema) {
 			var products []md.Product = []md.Product{}
 			err = cu.ConvertToType(rows, &products)
 			return products, err
-		},
-		Examples: map[string][]any{
-			"id":           {12345},
-			"code":         {`PRD1731101982N123`},
-			"product_type": {md.ProductTypeItem.String()},
-			"product_name": {`Big product`},
-			"tax_code":     {`VAT20`},
 		},
 		PrimaryFields: []string{"id", "code", "product_type", "product_name", "tax_code", "product_map"},
 		Required:      []string{"product_name", "product_type", "tax_code"},

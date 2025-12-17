@@ -113,7 +113,7 @@ func PriceSchema() (ms *ModelSchema) {
 			var err error
 			if schema, err = jsonschema.For[priceCreate](nil); err == nil {
 				schema.Properties["price_type"].Type = "string"
-				schema.Properties["price_type"].Enum = []any{md.PriceTypeCustomer.String(), md.PriceTypeVendor.String()}
+				schema.Properties["price_type"].Enum = ut.ToAnyArray(md.PriceType(0).Keys())
 				schema.Properties["price_type"].Default = []byte(`"` + md.PriceTypeCustomer.String() + `"`)
 				schema.Properties["price_map"].Default = []byte(`{}`)
 				schema.Properties["tags"].Default = []byte(`[]`)
@@ -169,14 +169,6 @@ func PriceSchema() (ms *ModelSchema) {
 			var prices []md.Price = []md.Price{}
 			err = cu.ConvertToType(rows, &prices)
 			return prices, err
-		},
-		Examples: map[string][]any{
-			"id":            {12345},
-			"code":          {`CUS1731101982N123`},
-			"price_type":    {md.PriceTypeCustomer.String()},
-			"valid_from":    {`2025-01-01`},
-			"product_code":  {`PRD1731101982N123`},
-			"currency_code": {`EUR`},
 		},
 		PrimaryFields: []string{"id", "code", "price_type", "valid_from", "valid_to", "product_code", "currency_code", "customer_code", "qty", "price_map"},
 		Required:      []string{"price_type", "valid_from", "product_code", "currency_code"},

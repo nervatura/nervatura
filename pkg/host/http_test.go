@@ -429,28 +429,6 @@ func Test_httpServer_headerAuth(t *testing.T) {
 	}
 }
 
-func Test_httpServer_headerMcpToken(t *testing.T) {
-	tests := []struct {
-		name string // description of this test case
-		// Named input parameters for target function.
-		next http.Handler
-	}{
-		{
-			name: "ok",
-			next: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				w.WriteHeader(http.StatusOK)
-			}),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// TODO: construct the receiver type.
-			var s httpServer
-			s.headerMcpToken(tt.next).ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("GET", "/", nil))
-		})
-	}
-}
-
 func Test_httpServer_headerSession(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case

@@ -188,15 +188,7 @@ func ItemSchema() (ms *ModelSchema) {
 			err = cu.ConvertToType(rows, &values)
 			return values, err
 		},
-		Validate: itemValidate,
-		Examples: map[string][]any{
-			"id":           {12345},
-			"code":         {`CUS1731101982N123`},
-			"trans_code":   {`INV1731101982N123`},
-			"product_code": {`PRD1731101982N123`},
-			"tax_code":     {`VAT20`},
-			"input_type":   {`DEFAULT_PRICE`},
-		},
+		Validate:      itemValidate,
 		PrimaryFields: []string{"id", "code", "trans_code", "product_code", "tax_code", "item_meta", "item_map"},
 		Required:      []string{"trans_code", "product_code", "input_type"},
 	}

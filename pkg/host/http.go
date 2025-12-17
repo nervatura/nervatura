@@ -246,14 +246,6 @@ func (s *httpServer) mcpVerify(ctx context.Context, token string, req *http.Requ
 	})
 }
 
-func (s *httpServer) headerMcpToken(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		jwtAuth := auth.RequireBearerToken(s.mcpVerify,
-			&auth.RequireBearerTokenOptions{Scopes: []string{}})
-		jwtAuth(next).ServeHTTP(w, r)
-	})
-}
-
 func (s *httpServer) headerClient(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		localServer := fmt.Sprintf("http://%s", r.Host)
@@ -338,12 +330,11 @@ func (s *httpServer) mcpRoutes() {
 	s.loadResources()
 	s.mux.Handle("/mcp", mcp.NewStreamableHTTPHandler(msrv.GetServer("root", s.config, s.appLog, s.session), opt))
 	s.mux.HandleFunc("GET /mcp/catalog", msrv.Catalog)
-	s.mux.Handle("/mcp/all", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("all", s.config, s.appLog, s.session), opt)))
-	s.mux.Handle("/mcp/public", mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog, s.session), opt))
-	s.mux.Handle("/mcp/customer", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("customer", s.config, s.appLog, s.session), opt)))
-	s.mux.Handle("/mcp/product", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("product", s.config, s.appLog, s.session), opt)))
-	s.mux.Handle("/mcp/offer", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("offer", s.config, s.appLog, s.session), opt)))
-	s.mux.Handle("/mcp/invoice", s.headerMcpToken(mcp.NewStreamableHTTPHandler(msrv.GetServer("invoice", s.config, s.appLog, s.session), opt)))
+	//s.mux.Handle("/mcp/public", mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog, s.session), opt))
+	jwtAuth := auth.RequireBearerToken(s.mcpVerify, &auth.RequireBearerTokenOptions{Scopes: []string{}})
+	for _, scope := range []string{"all", "customer", "product", "offer", "order", "invoice", "setting"} {
+		s.mux.Handle("/mcp/"+scope, jwtAuth(mcp.NewStreamableHTTPHandler(msrv.GetServer(scope, s.config, s.appLog, s.session), opt)))
+	}
 }
 
 func (s *httpServer) apiRoutes() http.Handler {

@@ -551,6 +551,15 @@ func (pt ProductType) String() string {
 	return ""
 }
 
+func (pt ProductType) Keys() []string {
+	keys := []string{}
+	for k := range productTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func (pt *ProductType) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 
@@ -585,6 +594,15 @@ func (pt PriceType) String() string {
 		}
 	}
 	return ""
+}
+
+func (pt PriceType) Keys() []string {
+	keys := []string{}
+	for k := range priceTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func (pt *PriceType) UnmarshalJSON(b []byte) error {
@@ -707,6 +725,15 @@ func (pt PaidType) String() string {
 	return ""
 }
 
+func (pt PaidType) Keys() []string {
+	keys := []string{}
+	for k := range paidTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func (pt *PaidType) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 
@@ -743,6 +770,15 @@ func (tt TransState) String() string {
 		}
 	}
 	return ""
+}
+
+func (tt TransState) Keys() []string {
+	keys := []string{}
+	for k := range transStateMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func (tt *TransState) UnmarshalJSON(b []byte) error {

@@ -99,8 +99,7 @@ func CustomerSchema() (ms *ModelSchema) {
 			var err error
 			if schema, err = jsonschema.For[customerCreate](nil); err == nil {
 				schema.Properties["customer_type"].Type = "string"
-				schema.Properties["customer_type"].Enum = []any{md.CustomerTypeCompany.String(), md.CustomerTypePrivate.String(), md.CustomerTypeOther.String(),
-					md.CustomerTypeOwn.String()}
+				schema.Properties["customer_type"].Enum = ut.ToAnyArray(md.CustomerType(0).Keys())
 				schema.Properties["customer_type"].Default = []byte(`"` + md.CustomerTypeCompany.String() + `"`)
 				schema.Properties["customer_map"].Default = []byte(`{}`)
 				schema.Properties["tags"].Default = []byte(`[]`)
@@ -113,8 +112,7 @@ func CustomerSchema() (ms *ModelSchema) {
 			var err error
 			if schema, err = jsonschema.For[customerUpdate](nil); err == nil {
 				schema.Properties["customer_type"].Type = "string"
-				schema.Properties["customer_type"].Enum = []any{md.CustomerTypeCompany.String(), md.CustomerTypePrivate.String(), md.CustomerTypeOther.String(),
-					md.CustomerTypeOwn.String()}
+				schema.Properties["customer_type"].Enum = ut.ToAnyArray(md.CustomerType(0).Keys())
 				schema.Properties["customer_map"].Default = []byte(`{}`)
 				schema.Required = []string{"code"}
 			}
@@ -155,12 +153,6 @@ func CustomerSchema() (ms *ModelSchema) {
 			var customers []md.Customer = []md.Customer{}
 			err = cu.ConvertToType(rows, &customers)
 			return customers, err
-		},
-		Examples: map[string][]any{
-			"id":            {12345},
-			"code":          {`CUS1731101982N123`},
-			"customer_type": {md.CustomerTypeCompany.String()},
-			"customer_name": {`First Customer LTD`},
 		},
 		PrimaryFields: []string{"id", "code", "customer_type", "customer_name", "customer_map"},
 		Required:      []string{"customer_name", "customer_type"},

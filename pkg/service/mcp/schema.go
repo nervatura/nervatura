@@ -37,7 +37,6 @@ type ModelSchema struct {
 	LoadData          func(data any) (modelData, metaData any, err error)
 	LoadList          func(rows []cu.IM) (items any, err error)
 	Validate          func(ctx context.Context, input cu.IM) (data cu.IM, err error)
-	Examples          map[string][]any
 	PrimaryFields     []string
 	Required          []string
 }

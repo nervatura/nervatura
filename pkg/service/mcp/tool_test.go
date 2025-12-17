@@ -188,6 +188,68 @@ func Test_modelQuery(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "currency_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_currency_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+				"code":   "EUR",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "tax_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_tax_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+				"code":   "EUR",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "map_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_map_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

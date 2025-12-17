@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 
@@ -196,9 +197,7 @@ func extendUpdate(ctx context.Context, req *mcp.CallToolRequest, inputData cu.IM
 	if len(fieldValues) < index+1 {
 		return nil, UpdateResponseData{}, fmt.Errorf("index out of range: %d", index)
 	}
-	for field, value := range inputData {
-		fieldValues[index][field] = value
-	}
+	maps.Copy(fieldValues[index], inputData)
 	mapValues := cu.ToIM(inputData[ms.Model+"_map"], cu.IM{})
 	/*
 		if len(mapValues) == 0 {

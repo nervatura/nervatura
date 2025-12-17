@@ -93,31 +93,31 @@ type Auth struct {
 
 type CurrencyMeta struct {
 	// The name of the currency.
-	Description string `json:"description"`
+	Description string `json:"description" jsonschema:"The name of the currency. Example: Euro"`
 	// The number of decimal places used for recording and rounding by the program.
-	Digit int64 `json:"digit"`
+	Digit int64 `json:"digit" jsonschema:"The number of decimal places used for recording and rounding by the program. Example: 2"`
 	// Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1.
-	CashRound int64 `json:"cash_round"`
+	CashRound int64 `json:"cash_round" jsonschema:"Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1. Example: 1"`
 	// Additional tags for the currency
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the currency. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Currency struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. The ISO 4217 code of the currency. The value is always mandatory
-	Code         string       `json:"code"`
+	Code         string       `json:"code" jsonschema:"Database independent unique external key. The ISO 4217 code of the currency. The value is always mandatory. Example: EUR"`
 	CurrencyMeta CurrencyMeta `json:"currency_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	CurrencyMap cu.IM `json:"currency_map"`
+	CurrencyMap cu.IM `json:"currency_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
 	TimeStamp TimeDateTime `json:"time_stamp"`
 }
 
 type CustomerMeta struct {
-	TaxNumber string `json:"tax_number" jsonschema:"Tax number. Example: 1234567890"`
-	Account   string `json:"account" jsonschema:"Account number. Example: 1234567890"`
+	TaxNumber string `json:"tax_number" jsonschema:"Tax number."`
+	Account   string `json:"account" jsonschema:"Account number."`
 	// Tax-free
 	TaxFree bool `json:"tax_free" jsonschema:"Tax-free customer"`
 	// Payment per.
@@ -140,7 +140,7 @@ type Customer struct {
 	// Example: CUS1731101982N123 ("CUS" + UNIX Time stamp + "N" + current ID)
 	Code string `json:"code" jsonschema:"Database independent unique external key. It cannot be modified after creation."`
 	// ENUM field. Valid values: OWN, COMPANY, PRIVATE, OTHER
-	CustomerType CustomerType `json:"customer_type" jsonschema:"Customer type. Enum values."`
+	CustomerType CustomerType `json:"customer_type" jsonschema:"Customer type. Enum values. Example: CUSTOMER_COMPANY"`
 	// Full name of the customer
 	CustomerName string       `json:"customer_name" jsonschema:"Full name of the customer. Required when creating a new customer."`
 	Addresses    []Address    `json:"addresses" jsonschema:"Customer address data"`
@@ -154,29 +154,29 @@ type Customer struct {
 }
 
 type EmployeeMeta struct {
-	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
-	Inactive  bool   `json:"inactive"`
-	Notes     string `json:"notes"`
+	StartDate string `json:"start_date" jsonschema:"Employee start date. Example: 2025-01-01"`
+	EndDate   string `json:"end_date" jsonschema:"Employee end date. Example: 2025-01-01"`
+	Inactive  bool   `json:"inactive" jsonschema:"Inactive employee"`
+	Notes     string `json:"notes" jsonschema:"Additional notes for the employee."`
 	// Additional tags for the employee
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the employee. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Employee struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: EMP1731101982N123 ("EMP" + UNIX Time stamp + "N" + current ID)
-	Code         string       `json:"code"`
+	Code         string       `json:"code" jsonschema:"Database independent unique external key. It cannot be modified after creation. Example: EMP1731101982N123"`
 	Address      Address      `json:"address"`
 	Contact      Contact      `json:"contact"`
 	Events       []Event      `json:"events"`
 	EmployeeMeta EmployeeMeta `json:"employee_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	EmployeeMap cu.IM `json:"employee_map"`
+	EmployeeMap cu.IM `json:"employee_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type ItemMeta struct {
@@ -198,21 +198,21 @@ type ItemMeta struct {
 type Item struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: ITM1731101982N123 ("ITM" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. It cannot be modified after creation. Example: ITM1731101982N123"`
 	// Reference to [trans](#trans).code
-	TransCode string `json:"trans_code"`
+	TransCode string `json:"trans_code" jsonschema:"Reference to trans.code. Example: INV1731101982N123"`
 	// Reference to [product](#product).code
-	ProductCode string `json:"product_code"`
+	ProductCode string `json:"product_code" jsonschema:"Reference to product.code. Example: PRD1731101982N123"`
 	// Reference to [Tax](#tax).code
-	TaxCode  string   `json:"tax_code"`
+	TaxCode  string   `json:"tax_code" jsonschema:"Reference to tax.code. Example: VAT20"`
 	ItemMeta ItemMeta `json:"item_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	ItemMap cu.IM `json:"item_map"`
+	ItemMap cu.IM `json:"item_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type LinkMeta struct {
@@ -265,131 +265,131 @@ type Log struct {
 }
 
 type MovementMeta struct {
-	Qty    float64 `json:"qty"`
-	Notes  string  `json:"notes"`
-	Shared bool    `json:"shared"`
+	Qty    float64 `json:"qty" jsonschema:"Quantity."`
+	Notes  string  `json:"notes" jsonschema:"Additional notes for the movement."`
+	Shared bool    `json:"shared" jsonschema:"Shared movement"`
 	// Additional tags for the movement
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the movement. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Movement struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: MOV1731101982N123 ("MOV" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: MOV1731101982N123"`
 	// ENUM field. Valid values: INVENTORY, TOOL, PLAN, HEAD
-	MovementType MovementType `json:"movement_type"`
+	MovementType MovementType `json:"movement_type" jsonschema:"Movement type. Enum values. Example: MOVEMENT_INVENTORY"`
 	// Date-time
-	ShippingTime TimeDateTime `json:"shipping_time"`
+	ShippingTime TimeDateTime `json:"shipping_time" jsonschema:"Shipping time. Example: 2025-01-01T00:00:00Z"`
 	// Reference to [trans](#trans).code
-	TransCode string `json:"trans_code"`
+	TransCode string `json:"trans_code" jsonschema:"Reference to trans.code. Example: INV1731101982N123"`
 	// Reference to [Product](#product).code
-	ProductCode string `json:"product_code"`
+	ProductCode string `json:"product_code" jsonschema:"Reference to product.code. Example: PRD1731101982N123"`
 	// Reference to [Tool](#tool).code
-	ToolCode string `json:"tool_code"`
+	ToolCode string `json:"tool_code" jsonschema:"Optional reference to tool.code (MOVEMENT_TOOL). Example: SER1731101982N123"`
 	// Reference to [Place](#place).code
-	PlaceCode string `json:"place_code"`
+	PlaceCode string `json:"place_code" jsonschema:"Optional reference to place.code (MOVEMENT_INVENTORY). Example: PLA1731101982N123"`
 	// Reference to [Item](#item).code
-	ItemCode string `json:"item_code"`
+	ItemCode string `json:"item_code" jsonschema:"Optional reference to item.code (MOVEMENT_INVENTORY). Example: ITM1731101982N123"`
 	// Reference to [Movement](#movement).code
-	MovementCode string       `json:"movement_code"`
+	MovementCode string       `json:"movement_code" jsonschema:"Optional reference to movement.code (MOVEMENT_INVENTORY). Example: MOV1731101982N123"`
 	MovementMeta MovementMeta `json:"movement_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	MovementMap cu.IM `json:"movement_map"`
+	MovementMap cu.IM `json:"movement_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type PaymentMeta struct {
-	Amount float64 `json:"amount"`
-	Notes  string  `json:"notes"`
+	Amount float64 `json:"amount" jsonschema:"Bank or cash amount."`
+	Notes  string  `json:"notes" jsonschema:"Additional notes for the payment."`
 	// Additional tags for the payment
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the payment. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Payment struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: PMT1731101982N123 ("PMT" + UNIX Time stamp + "N" + current ID)
-	Code     string   `json:"code"`
-	PaidDate TimeDate `json:"paid_date"`
+	Code     string   `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: PMT1731101982N123"`
+	PaidDate TimeDate `json:"paid_date" jsonschema:"Date when payment was made. Example: 2025-01-01"`
 	// Reference to [trans](#trans).code
-	TransCode   string      `json:"trans_code"`
+	TransCode   string      `json:"trans_code" jsonschema:"Reference to trans.code. Example: INV1731101982N123"`
 	PaymentMeta PaymentMeta `json:"payment_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	PaymentMap cu.IM `json:"payment_map"`
+	PaymentMap cu.IM `json:"payment_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type PlaceMeta struct {
-	Notes    string `json:"notes"`
-	Inactive bool   `json:"inactive"`
+	Notes    string `json:"notes" jsonschema:"Additional notes for the place."`
+	Inactive bool   `json:"inactive" jsonschema:"Inactive place"`
 	// Additional tags for the place
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the place. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Place struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: PLA1731101982N123 ("PLA" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: PLA1731101982N123"`
 	// ENUM field. Valid values: BANK, CASH, WAREHOUSE, OTHER
-	PlaceType PlaceType `json:"place_type"`
+	PlaceType PlaceType `json:"place_type" jsonschema:"Place type. Enum values. Example: PLACE_WAREHOUSE"`
 	// The full name of the place.
-	PlaceName string `json:"place_name"`
+	PlaceName string `json:"place_name" jsonschema:"Place name. Example: Main warehouse"`
 	// Reference to [currency](#currency).code
-	CurrencyCode string    `json:"currency_code"`
+	CurrencyCode string    `json:"currency_code" jsonschema:"Optional reference to currency.code (PLACE_BANK, PLACE_CASH). Example: EUR"`
 	Address      Address   `json:"address"`
 	Contacts     []Contact `json:"contacts"`
 	Events       []Event   `json:"events"`
 	PlaceMeta    PlaceMeta `json:"place_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	PlaceMap cu.IM `json:"place_map"`
+	PlaceMap cu.IM `json:"place_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type PriceMeta struct {
 	// Price value
-	PriceValue float64 `json:"price_value"`
+	PriceValue float64 `json:"price_value" jsonschema:"Price value."`
 	// Additional tags for the price
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the price. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Price struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: PRC1731101982N123 ("PRC" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: PRC1731101982N123"`
 	// ENUM field. Valid values: CUSTOMER, VENDOR
-	PriceType PriceType `json:"price_type"`
+	PriceType PriceType `json:"price_type" jsonschema:"Price type. Enum values. Example: PRICE_CUSTOMER"`
 	// Start of validity, mandatory data.
-	ValidFrom TimeDate `json:"valid_from"`
+	ValidFrom TimeDate `json:"valid_from" jsonschema:"Valid from date. ISO 8601 date. Example: 2025-01-01"`
 	// End of validity, can be left empty.
-	ValidTo TimeDate `json:"valid_to"`
+	ValidTo TimeDate `json:"valid_to" jsonschema:"Valid validity date. ISO 8601 date. Example: 2025-01-01"`
 	// Reference to [Product](#product).code
-	ProductCode string `json:"product_code"`
+	ProductCode string `json:"product_code" jsonschema:"Reference to product.code. Example: PRD1731101982N123"`
 	// Reference to [Currency](#currency).code
-	CurrencyCode string `json:"currency_code"`
+	CurrencyCode string `json:"currency_code" jsonschema:"Reference to currency.code (PLACE_BANK, PLACE_CASH). Example: EUR"`
 	// Reference to [Customer](#customer).code
-	CustomerCode string `json:"customer_code"`
+	CustomerCode string `json:"customer_code" jsonschema:"Optional reference to customer.code. Example: CUS1731101982N123"`
 	// Price ranges can also be specified, thus different price can be set for a smaller and bigger quantity of the same product.
 	// The quantity should be used as the lower threshold, ie. this should be the minimum quantity for the price set.
-	Qty       float64   `json:"qty"`
+	Qty       float64   `json:"qty" jsonschema:"Quantity. Price ranges can also be specified, thus different price can be set for a smaller and bigger quantity of the same product. The quantity should be used as the lower threshold, ie. this should be the minimum quantity for the price set."`
 	PriceMeta PriceMeta `json:"price_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	PriceMap cu.IM `json:"price_map"`
+	PriceMap cu.IM `json:"price_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type ProductMeta struct {
@@ -414,11 +414,11 @@ type Product struct {
 	// Example: PRD1731101982N123 ("PRD" + UNIX Time stamp + "N" + current ID)
 	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation."`
 	// ENUM field. Valid values: ITEM, SERVICE
-	ProductType ProductType `json:"product_type" jsonschema:"Product type. Enum values."`
+	ProductType ProductType `json:"product_type" jsonschema:"Product type. Enum values. Example: PRODUCT_ITEM"`
 	// The full name of the product or short description.
 	ProductName string `json:"product_name" jsonschema:"Product name. Required when creating a new product."`
 	// Reference to [Tax](#tax).code
-	TaxCode     string      `json:"tax_code" jsonschema:"Tax code."`
+	TaxCode     string      `json:"tax_code" jsonschema:"Reference to tax.code. Example: VAT25"`
 	Events      []Event     `json:"events" jsonschema:"Product events"`
 	ProductMeta ProductMeta `json:"product_meta" jsonschema:"Product metadata"`
 	// Flexible key-value map for additional metadata. The value is any json type.
@@ -428,80 +428,80 @@ type Product struct {
 }
 
 type ProjectMeta struct {
-	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
-	Notes     string `json:"notes"`
-	Inactive  bool   `json:"inactive"`
+	StartDate string `json:"start_date" jsonschema:"Start date. ISO 8601 date. Example: 2025-01-01"`
+	EndDate   string `json:"end_date" jsonschema:"End date. ISO 8601 date. Example: 2025-01-01"`
+	Notes     string `json:"notes" jsonschema:"Additional notes for the project."`
+	Inactive  bool   `json:"inactive" jsonschema:"Inactive project"`
 	// Additional tags for the project
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the project. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Project struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: PRJ1731101982N123 ("PRJ" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: PRJ1731101982N123"`
 	// The name of the project.
-	ProjectName string `json:"project_name"`
+	ProjectName string `json:"project_name" jsonschema:"Project name. Example: Project 1"`
 	// Reference to [Customer](#customer).code
-	CustomerCode string      `json:"customer_code"`
+	CustomerCode string      `json:"customer_code" jsonschema:"Optional reference to customer.code. Example: CUS1731101982N123"`
 	Addresses    []Address   `json:"addresses"`
 	Contacts     []Contact   `json:"contacts"`
 	Events       []Event     `json:"events"`
 	ProjectMeta  ProjectMeta `json:"project_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	ProjectMap cu.IM `json:"project_map"`
+	ProjectMap cu.IM `json:"project_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type RateMeta struct {
-	RateValue float64 `json:"rate_value"`
+	RateValue float64 `json:"rate_value" jsonschema:"Rate value."`
 	// Additional tags for the rate
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the rate. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Rate struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: RAT1731101982N123 ("RAT" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: RAT1731101982N123"`
 	// ENUM field. Valid values: RATE, BUY, SELL, AVERAGE
-	RateType RateType `json:"rate_type"`
-	RateDate TimeDate `json:"rate_date"`
+	RateType RateType `json:"rate_type" jsonschema:"Rate type. Enum values. Example: RATE_RATE"`
+	RateDate TimeDate `json:"rate_date" jsonschema:"Rate date. ISO 8601 date. Example: 2025-01-01"`
 	// Reference to [Place](#place).code
-	PlaceCode string `json:"place_code"`
+	PlaceCode string `json:"place_code" jsonschema:"Optional reference to place.code (bank rate). Example: PLA1731101982N123"`
 	// Reference to [Currency](#currency).code
-	CurrencyCode string   `json:"currency_code"`
+	CurrencyCode string   `json:"currency_code" jsonschema:"Reference to currency.code. Example: EUR"`
 	RateMeta     RateMeta `json:"rate_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	RateMap cu.IM `json:"rate_map"`
+	RateMap cu.IM `json:"rate_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type TaxMeta struct {
-	Description string  `json:"description"`
-	RateValue   float64 `json:"rate_value"`
+	Description string  `json:"description" jsonschema:"Description."`
+	RateValue   float64 `json:"rate_value" jsonschema:"Rate value. Percentage value expressed between 0 and 1."`
 	// Additional tags for the tax
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the tax. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Tax struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Unique tax ID.
-	Code    string  `json:"code"`
+	Code    string  `json:"code" jsonschema:"Database independent unique external key. Required field. It cannot be modified after creation. Example: VAT25"`
 	TaxMeta TaxMeta `json:"tax_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	TaxMap cu.IM `json:"tax_map"`
+	TaxMap cu.IM `json:"tax_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type ToolMeta struct {
@@ -555,14 +555,14 @@ type TransMetaRent struct {
 }
 
 type TransMetaInvoice struct {
-	CompanyName       string `json:"company_name"`
-	CompanyAddress    string `json:"company_address"`
-	CompanyTaxNumber  string `json:"company_tax_number"`
-	CompanyAccount    string `json:"company_account"`
-	CustomerName      string `json:"customer_name"`
-	CustomerAddress   string `json:"customer_address"`
-	CustomerTaxNumber string `json:"customer_tax_number"`
-	CustomerAccount   string `json:"customer_account"`
+	CompanyName       string `json:"company_name" jsonschema:"Company name. Its value is set automatically and is read-only."`
+	CompanyAddress    string `json:"company_address" jsonschema:"Company address. Its value is set automatically and is read-only."`
+	CompanyTaxNumber  string `json:"company_tax_number" jsonschema:"Company tax number. Its value is set automatically and is read-only."`
+	CompanyAccount    string `json:"company_account" jsonschema:"Company account. Its value is set automatically and is read-only."`
+	CustomerName      string `json:"customer_name" jsonschema:"Customer name. Its value is set automatically and is read-only."`
+	CustomerAddress   string `json:"customer_address" jsonschema:"Customer address. Its value is set automatically and is read-only."`
+	CustomerTaxNumber string `json:"customer_tax_number" jsonschema:"Customer tax number. Its value is set automatically and is read-only."`
+	CustomerAccount   string `json:"customer_account" jsonschema:"Customer account. Its value is set automatically and is read-only."`
 }
 
 type TransMeta struct {
@@ -603,17 +603,17 @@ type Trans struct {
 	// ENUM field. Valid values: OUT, IN, TRANSFER
 	Direction Direction `json:"direction" jsonschema:"Direction. Enum values. Example: DIRECTION_OUT"`
 	// Reference to [Trans](#trans).code
-	TransCode string `json:"trans_code" jsonschema:"Other transaction (invoice, receipt, offer, order, worksheet, rent etc.) reference."`
+	TransCode string `json:"trans_code" jsonschema:"Optional reference to other transaction (invoice, receipt, offer, order, worksheet, rent etc.) reference. Example: ORD1731101982N123"`
 	// Reference to [Customer](#customer).code
-	CustomerCode string `json:"customer_code" jsonschema:"Customer reference. Example: CUS1731101982N123"`
+	CustomerCode string `json:"customer_code" jsonschema:"Optional reference to customer.code. Example: CUS1731101982N123"`
 	// Reference to [Employee](#employee).code
-	EmployeeCode string `json:"employee_code" jsonschema:"Employee reference. Example: EMP1731101982N123"`
+	EmployeeCode string `json:"employee_code" jsonschema:"Optional reference to employee.code. Example: EMP1731101982N123"`
 	// Reference to [Project](#project).code
-	ProjectCode string `json:"project_code" jsonschema:"Project reference. Example: PRJ1731101982N123"`
+	ProjectCode string `json:"project_code" jsonschema:"Optional reference to project.code. Example: PRJ1731101982N123"`
 	// Reference to [Place](#place).code
-	PlaceCode string `json:"place_code" jsonschema:"Place reference. Example: PLA1731101982N123"`
+	PlaceCode string `json:"place_code" jsonschema:"Optional reference to place.code. Example: PLA1731101982N123"`
 	// Reference to [currency](#currency).code
-	CurrencyCode string `json:"currency_code" jsonschema:"Currency iso code. Example: USD"`
+	CurrencyCode string `json:"currency_code" jsonschema:"Optional reference to currency.code. Example: EUR"`
 	// Reference to [Auth](#auth).code
 	AuthCode  string    `json:"auth_code" jsonschema:"Auth reference. Example: AUT1731101982N123"`
 	TransMeta TransMeta `json:"trans_meta"`
@@ -626,29 +626,29 @@ type Trans struct {
 type Config struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: CNF1731101982N123 ("CNF" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation."`
 	// ENUM field. Valid values: MAP, SHORTCUT, MESSAGE, PATTERN, REPORT, PRINT_QUEUE, DATA
-	ConfigType ConfigType   `json:"config_type"`
+	ConfigType ConfigType   `json:"config_type" jsonschema:"Config type. Enum values. Example: CONFIG_TYPE_MAP"`
 	Data       interface{}  `json:"data"`
-	TimeStamp  TimeDateTime `json:"time_stamp"`
+	TimeStamp  TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
 }
 
 type ConfigMap struct {
-	FieldName string `json:"field_name"`
+	FieldName string `json:"field_name" jsonschema:"Field name. Example: car_color"`
 	// Enum field. Valid values: BOOL, INTEGER, NUMBER, DATE, DATETIME, STRING, MEMO, ENUM, URL,
 	//	CUSTOMER, EMPLOYEE, PLACE, PRODUCT, PROJECT, TOOL, TRANS_ITEM, TRANS_MOVEMENT, TRANS_PAYMENT
-	FieldType   FieldType `json:"field_type"`
-	Description string    `json:"description"`
+	FieldType   FieldType `json:"field_type" jsonschema:"Field type. Enum values. Example: FIELD_TYPE_ENUM"`
+	Description string    `json:"description" jsonschema:"Description. Example: Car color."`
 	// ENUM list if FieldType is ENUM
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Enum list if FieldType is ENUM. The value is an array of strings. Example: [RED, BLUE]"`
 	// ENUM field. Valid values: ADDRESS, BARCODE, CONTACT, CURRENCY, CUSTOMER, EMPLOYEE, EVENT, ITEM,
 	// MOVEMENT, PAYMENT, PLACE, PRICE, PRODUCT, PROJECT, RATE, TAX, TOOL, USER, TRANS,
 	// INVOICE, RECEIPT, ORDER, OFFER, WORKSHEET, RENT, DELIVERY,
 	// INVENTORY, WAYBILL, PRODUCTION, FORMULA, BANK, CASH
-	Filter []MapFilter `json:"filter"`
+	Filter []MapFilter `json:"filter" jsonschema:"Limiting the visibility of data in the user interface. Array of enum values. Example: [FILTER_PRODUCT, FILTER_EMPLOYEE]"`
 }
 
 type ConfigShortcut struct {
