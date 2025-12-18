@@ -124,7 +124,7 @@ func (s *SearchService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err
 			Code:         sConf.Title,
 			Filters:      viewData["filters"],
 			Columns:      visibleColumns,
-			TimeStamp:    md.TimeDateTime{Time: time.Now()},
+			TimeStamp:    time.Now().Format(time.RFC3339),
 		}
 		return s.cls.addBookmark(evt, bookmark), nil
 

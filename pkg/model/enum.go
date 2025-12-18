@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"time"
-
-	cu "github.com/nervatura/component/pkg/util"
 )
 
 func JSONString(value []byte) string {
@@ -27,59 +24,6 @@ func (z *ZipCode) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 	*z = ZipCode(s)
 	return nil
-}
-
-type TimeDate struct {
-	time.Time
-}
-
-func (td *TimeDate) UnmarshalJSON(b []byte) (err error) {
-	s := JSONString(b)
-	if s == "null" || s == "" {
-		td.Time = time.Time{}
-		return
-	}
-	if len(s) > 10 {
-		s = s[:10]
-	}
-	td.Time, err = time.Parse(time.DateOnly, s)
-	return
-}
-
-func (td *TimeDate) MarshalJSON() ([]byte, error) {
-	return json.Marshal(td.String())
-}
-
-func (td *TimeDate) String() string {
-	if td.IsZero() {
-		return ""
-	}
-	return td.Format(time.DateOnly)
-}
-
-type TimeDateTime struct {
-	time.Time
-}
-
-func (td *TimeDateTime) UnmarshalJSON(b []byte) (err error) {
-	s := JSONString(b)
-	if s == "null" || s == "" {
-		td.Time = time.Time{}
-		return
-	}
-	td.Time, err = cu.StringToDateTime(s)
-	return
-}
-
-func (td *TimeDateTime) MarshalJSON() ([]byte, error) {
-	return json.Marshal(td.Format(time.RFC3339))
-}
-
-func (td *TimeDateTime) String() string {
-	if td.IsZero() {
-		return ""
-	}
-	return td.Format(TimeLayout)
 }
 
 type UserGroup int
@@ -513,6 +457,15 @@ func (pt PlaceType) String() string {
 	return ""
 }
 
+func (pt PlaceType) Keys() []string {
+	keys := []string{}
+	for k := range placeTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func (pt *PlaceType) UnmarshalJSON(b []byte) error {
 	s := JSONString(b)
 
@@ -643,6 +596,15 @@ func (rt RateType) String() string {
 		}
 	}
 	return ""
+}
+
+func (rt RateType) Keys() []string {
+	keys := []string{}
+	for k := range rateTypeMap {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 func (rt *RateType) UnmarshalJSON(b []byte) error {

@@ -49,7 +49,7 @@ var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
 		var payment cu.IM
 		ut.ConvertToType(md.Payment{
 			//TransCode: cu.ToString(trans["code"], ""),
-			PaidDate: md.TimeDate{Time: time.Now()},
+			PaidDate: time.Now().Format(time.DateOnly),
 			PaymentMeta: md.PaymentMeta{
 				Amount: 0,
 				Tags:   []string{},
@@ -62,7 +62,7 @@ var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
 		var movement cu.IM
 		ut.ConvertToType(md.Movement{
 			MovementType: md.MovementType(md.MovementTypeHead),
-			ShippingTime: md.TimeDateTime{Time: time.Now()},
+			ShippingTime: time.Now().Format(time.RFC3339),
 			MovementMeta: md.MovementMeta{
 				Qty:    0,
 				Notes:  "",
@@ -287,7 +287,7 @@ func (s *TransService) dataDefault(trans cu.IM, configData []cu.IM) (data cu.IM)
 		},
 		"default_deadline": func(value string) {
 			if transType == md.TransTypeInvoice.String() {
-				transMeta["due_time"] = md.TimeDateTime{Time: time.Now().AddDate(0, 0, int(cu.ToInteger(value, 0)))}
+				transMeta["due_time"] = time.Now().AddDate(0, 0, int(cu.ToInteger(value, 0))).Format(time.RFC3339)
 			}
 			if !slices.Contains([]string{
 				md.TransTypeInvoice.String(), md.TransTypeReceipt.String()}, transType) {
@@ -328,7 +328,7 @@ func (s *TransService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err
 		"trans": cu.IM{
 			"trans_type": cu.ToString(params["trans_type"], md.TransType(0).String()),
 			"direction":  cu.ToString(params["direction"], md.Direction(0).String()),
-			"trans_date": md.TimeDateTime{Time: time.Now()}.Format(time.DateOnly),
+			"trans_date": time.Now().Format(time.DateOnly),
 			"trans_code": cu.ToString(params["ref_trans_code"], ""),
 			"trans_meta": cu.IM{
 				"status":      md.TransStatusNormal.String(),
@@ -468,7 +468,7 @@ func (s *TransService) updatePayments(ds *api.DataStore, data cu.IM, transCode s
 	for _, it := range cu.ToIMA(data["payments"], []cu.IM{}) {
 		var payment md.Payment = md.Payment{
 			TransCode: transCode,
-			PaidDate:  md.TimeDate{Time: time.Now()},
+			PaidDate:  time.Now().Format(time.DateOnly),
 			PaymentMeta: md.PaymentMeta{
 				Tags: []string{},
 			},
@@ -477,7 +477,7 @@ func (s *TransService) updatePayments(ds *api.DataStore, data cu.IM, transCode s
 		if err = ut.ConvertToType(it, &payment); err == nil {
 			values := cu.IM{
 				"trans_code": transCode,
-				"paid_date":  payment.PaidDate.String(),
+				"paid_date":  payment.PaidDate,
 			}
 			ut.ConvertByteToIMData(payment.PaymentMeta, values, "payment_meta")
 			ut.ConvertByteToIMData(payment.PaymentMap, values, "payment_map")
@@ -551,7 +551,7 @@ func (s *TransService) updateMovements(ds *api.DataStore, data cu.IM, trans md.T
 	updateMovement := func(movement md.Movement) (movementID int64, err error) {
 		values := cu.IM{
 			"movement_type": movement.MovementType.String(),
-			"shipping_time": movement.ShippingTime.String(),
+			"shipping_time": movement.ShippingTime,
 			"trans_code":    trans.Code,
 		}
 
@@ -693,7 +693,7 @@ var transUpdateValidate = []func(trans md.Trans, data cu.IM, msgFunc func(labelI
 	},
 	func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error) {
 		errMsg := msgFunc("missing_required_field") + ": " + msgFunc("due_time")
-		return trans.TransType == md.TransTypeProduction && trans.TransMeta.DueTime.Time.IsZero(),
+		return trans.TransType == md.TransTypeProduction && trans.TransMeta.DueTime == "",
 			errors.New(errMsg)
 	},
 	func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error) {
@@ -724,7 +724,7 @@ func (s *TransService) update(ds *api.DataStore, data cu.IM, msgFunc func(labelI
 	values := cu.IM{
 		"trans_type":    trans.TransType.String(),
 		"direction":     trans.Direction.String(),
-		"trans_date":    trans.TransDate.String(),
+		"trans_date":    trans.TransDate,
 		"customer_code": nil,
 		"employee_code": nil,
 		"project_code":  nil,
@@ -1005,7 +1005,7 @@ func (s *TransService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 				Code:         cu.ToString(trans["code"], ""),
 				Filters:      []any{},
 				Columns:      map[string]bool{},
-				TimeStamp:    md.TimeDateTime{Time: time.Now()},
+				TimeStamp:    time.Now().Format(time.RFC3339),
 			}
 			return s.cls.addBookmark(evt, bookmark), nil
 		},
@@ -2319,7 +2319,7 @@ func (s *TransService) createPayments(evt ct.ResponseEvent, options cu.IM, trans
 
 	for _, pm := range payments {
 		var payment md.Payment = md.Payment{
-			PaidDate: md.TimeDate{Time: time.Now()},
+			PaidDate: time.Now().Format(time.DateOnly),
 			PaymentMeta: md.PaymentMeta{
 				Tags: []string{},
 			},
@@ -2327,7 +2327,7 @@ func (s *TransService) createPayments(evt ct.ResponseEvent, options cu.IM, trans
 		}
 		if err = ut.ConvertToType(pm, &payment); err == nil {
 			values := cu.IM{
-				"paid_date":  payment.PaidDate.String(),
+				"paid_date":  payment.PaidDate,
 				"trans_code": transCode,
 			}
 			if status == md.TransStatusCancellation.String() {
@@ -2357,7 +2357,7 @@ func (s *TransService) createMovements(evt ct.ResponseEvent, options cu.IM, tran
 	updateMovement := func(mv md.Movement) (storeID int64, err error) {
 		values := cu.IM{
 			"movement_type": mv.MovementType.String(),
-			"shipping_time": mv.ShippingTime.String(),
+			"shipping_time": mv.ShippingTime,
 			"trans_code":    transCode,
 		}
 		if mv.MovementType == md.MovementTypeTool {
@@ -2384,7 +2384,7 @@ func (s *TransService) createMovements(evt ct.ResponseEvent, options cu.IM, tran
 	getMovement := func(movement cu.IM) (mv md.Movement, err error) {
 		mv = md.Movement{
 			MovementType: md.MovementType(md.MovementTypeInventory),
-			ShippingTime: md.TimeDateTime{Time: time.Now()},
+			ShippingTime: time.Now().Format(time.RFC3339),
 			MovementMeta: md.MovementMeta{
 				Tags: []string{},
 			},
@@ -2457,7 +2457,7 @@ func (s *TransService) createTrans(evt ct.ResponseEvent, options cu.IM, trans md
 			return trans.CurrencyCode != "", trans.CurrencyCode
 		},
 		"trans_date": func() (bool, any) {
-			return status == md.TransStatusCancellation.String(), trans.TransDate.Format(time.DateOnly)
+			return status == md.TransStatusCancellation.String(), trans.TransDate
 		},
 	}
 
@@ -2468,7 +2468,7 @@ func (s *TransService) createTrans(evt ct.ResponseEvent, options cu.IM, trans md
 	}
 
 	meta := md.TransMeta{
-		DueTime:       md.TimeDateTime{Time: time.Now()},
+		DueTime:       time.Now().Format(time.RFC3339),
 		RefNumber:     "",
 		PaidType:      trans.TransMeta.PaidType,
 		TaxFree:       trans.TransMeta.TaxFree,
@@ -2504,7 +2504,7 @@ func (s *TransService) createTrans(evt ct.ResponseEvent, options cu.IM, trans md
 					if idx := slices.IndexFunc(configData, func(cf cu.IM) bool {
 						return cu.ToString(cf["config_key"], "") == "default_deadline"
 					}); idx > -1 {
-						meta.DueTime = md.TimeDateTime{Time: time.Now().AddDate(0, 0, int(cu.ToInteger(cu.ToString(configData[idx]["config_value"], ""), 0)))}
+						meta.DueTime = time.Now().AddDate(0, 0, int(cu.ToInteger(cu.ToString(configData[idx]["config_value"], ""), 0))).Format(time.RFC3339)
 					}
 				}
 			}

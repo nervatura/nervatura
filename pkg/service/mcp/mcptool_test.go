@@ -271,6 +271,90 @@ func Test_modelQuery(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "project_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_project_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+				"code":   "PRJ1731101982N123",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "tool_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_tool_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+				"code":   "SER1731101982N123",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "place_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_place_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+				"code":   "PLA1731101982N123",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
+		{
+			name: "rate_query",
+			req:  &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_rate_query"}},
+			parameters: cu.IM{
+				"limit":  10,
+				"offset": 0,
+				"code":   "RAT1731101982N123",
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1}}, nil
+						},
+					},
+				},
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

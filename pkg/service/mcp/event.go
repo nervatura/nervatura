@@ -17,7 +17,7 @@ func init() {
 			Title:       "Event Data Create",
 			Description: "Create a new %s event.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product", "employee"},
+				"scopes": []string{"customer", "product", "employee", "project", "tool", "place"},
 			},
 		},
 		Extend:            true,
@@ -32,7 +32,7 @@ func init() {
 			Title:       "Event Data Update",
 			Description: "Update a %s event.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product", "employee"},
+				"scopes": []string{"customer", "product", "employee", "project", "tool", "place"},
 			},
 		},
 		Extend:            true,
@@ -47,7 +47,7 @@ func init() {
 			Title:       "Event Query",
 			Description: "Query %s events by parameters. The result is all events that match the filter criteria.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product", "employee"},
+				"scopes": []string{"customer", "product", "employee", "project", "tool", "place"},
 			},
 		},
 		Extend:            true,
@@ -57,7 +57,8 @@ func init() {
 		},
 	}
 	toolDataMap["nervatura_event_delete"] = McpTool{
-		Tool:              createExtendDeleteTool("nervatura_event_delete", "event", mcp.Meta{"scopes": []string{"customer", "product", "employee"}}),
+		Tool: createExtendDeleteTool("nervatura_event_delete", "event",
+			mcp.Meta{"scopes": []string{"customer", "product", "employee", "project", "tool", "place"}}),
 		Extend:            true,
 		ModelExtendSchema: EventSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {

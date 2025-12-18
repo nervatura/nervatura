@@ -186,7 +186,7 @@ func (s *ShippingService) createDelivery(evt ct.ResponseEvent, movements []md.Mo
 	for _, mv := range movements {
 		values := cu.IM{
 			"movement_type": mv.MovementType.String(),
-			"shipping_time": mv.ShippingTime.Format(time.RFC3339),
+			"shipping_time": mv.ShippingTime,
 			"trans_code":    transCode,
 			"product_code":  mv.ProductCode,
 			"place_code":    shipping["place_code"],
@@ -220,7 +220,7 @@ func (s *ShippingService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 	mvRow := func(item cu.IM, qty float64) (mv md.Movement) {
 		mv = md.Movement{
 			MovementType: md.MovementTypeInventory,
-			ShippingTime: md.TimeDateTime{Time: shippingTime},
+			ShippingTime: shippingTime.Format(time.RFC3339),
 			ProductCode:  cu.ToString(item["product_code"], ""),
 			PlaceCode:    cu.ToString(shipping["place_code"], ""),
 			ItemCode:     cu.ToString(item["code"], ""),

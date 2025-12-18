@@ -24,7 +24,7 @@ func TransPost(w http.ResponseWriter, r *http.Request) {
 		Direction: md.Direction(md.DirectionOut),
 		AuthCode:  user.Code,
 		TransMeta: md.TransMeta{
-			DueTime:    md.TimeDateTime{Time: now},
+			DueTime:    now.Format(time.RFC3339),
 			Status:     md.TransStatus(md.TransStatusNormal),
 			TransState: md.TransState(md.TransStateOK),
 			Worksheet:  md.TransMetaWorksheet{},
@@ -40,7 +40,7 @@ func TransPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if data.TransDate.IsZero() {
+	if data.TransDate == "" {
 		err = errors.New("trans date is required")
 		RespondMessage(w, 0, nil, http.StatusUnprocessableEntity, err)
 		return
@@ -58,7 +58,7 @@ func TransPost(w http.ResponseWriter, r *http.Request) {
 	values := cu.IM{
 		"trans_type": data.TransType.String(),
 		"direction":  data.Direction.String(),
-		"trans_date": data.TransDate.Format(time.DateOnly),
+		"trans_date": data.TransDate,
 		"auth_code":  user.Code,
 	}
 

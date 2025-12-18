@@ -295,18 +295,8 @@ func (ds *DataStore) defaultSetValue(modelName string, itemRow cu.IM, values cu.
 		} else {
 			values[inputName] = fieldValue
 		}
-	case "shipping_time":
-		if timeValue, found := fieldValue.(md.TimeDateTime); !found {
-			values[inputName] = timeValue.Format(time.RFC3339)
-		} else {
-			values[inputName] = cu.ToString(fieldValue, "")
-		}
-	case "paid_date", "valid_from", "valid_to", "rate_date", "trans_date":
-		if timeValue, found := fieldValue.(md.TimeDate); found {
-			values[inputName] = timeValue.Format(time.DateOnly)
-		} else {
-			values[inputName] = cu.ToString(fieldValue, "")
-		}
+	case "paid_date", "valid_from", "valid_to", "rate_date", "trans_date", "shipping_time":
+		values[inputName] = cu.ToString(fieldValue, "")
 	default:
 		values[inputName] = fieldValue
 	}

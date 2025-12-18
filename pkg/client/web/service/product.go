@@ -162,7 +162,7 @@ func (s *ProductService) updatePrices(ds *api.DataStore, data cu.IM) (err error)
 		}
 		if err = ut.ConvertToType(pr, &price); err == nil {
 			values := cu.IM{
-				"valid_from":    price.ValidFrom.Format(time.DateOnly),
+				"valid_from":    price.ValidFrom,
 				"valid_to":      "",
 				"product_code":  price.ProductCode,
 				"price_type":    price.PriceType.String(),
@@ -170,8 +170,8 @@ func (s *ProductService) updatePrices(ds *api.DataStore, data cu.IM) (err error)
 				"qty":           price.Qty,
 				"customer_code": nil,
 			}
-			if !price.ValidTo.IsZero() {
-				values["valid_to"] = price.ValidTo.Format(time.DateOnly)
+			if price.ValidTo != "" {
+				values["valid_to"] = price.ValidTo
 			}
 			if price.CustomerCode != "" {
 				values["customer_code"] = price.CustomerCode
@@ -395,7 +395,7 @@ func (s *ProductService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, er
 				Code:         cu.ToString(product["code"], ""),
 				Filters:      []any{},
 				Columns:      map[string]bool{},
-				TimeStamp:    md.TimeDateTime{Time: time.Now()},
+				TimeStamp:    time.Now().Format(time.RFC3339),
 			}
 			return s.cls.addBookmark(evt, bookmark), nil
 		},
@@ -680,7 +680,7 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 						ProductCode:  cu.ToString(product["code"], ""),
 						PriceType:    md.PriceTypeCustomer,
 						CurrencyCode: cu.ToString(cu.ToIMA(stateData["currencies"], []cu.IM{})[0]["code"], ""),
-						ValidFrom:    md.TimeDate{Time: time.Now()},
+						ValidFrom:    time.Now().Format(time.RFC3339),
 						PriceMeta: md.PriceMeta{
 							Tags: []string{},
 						},

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -30,7 +29,7 @@ func (cli *CLIService) MovementInsert(options cu.IM, requestData string) string 
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
 
-	if data.ShippingTime.IsZero() || data.TransCode == "" {
+	if data.ShippingTime == "" || data.TransCode == "" {
 		err = errors.New("movement shipping_time and trans_code are required")
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
@@ -42,7 +41,7 @@ func (cli *CLIService) MovementInsert(options cu.IM, requestData string) string 
 
 	// prepare values for database update
 	values := cu.IM{
-		"shipping_time": data.ShippingTime.Format(time.RFC3339),
+		"shipping_time": data.ShippingTime,
 		"trans_code":    data.TransCode,
 	}
 

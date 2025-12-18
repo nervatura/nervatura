@@ -17,7 +17,7 @@ func init() {
 			Title:       "Create a new address",
 			Description: "Create a new %s address.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer"},
+				"scopes": []string{"customer", "project"},
 			},
 		},
 		Extend:            true,
@@ -32,7 +32,7 @@ func init() {
 			Title:       "Update a address by code",
 			Description: "Update a %s address.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer"},
+				"scopes": []string{"customer", "project"},
 			},
 		},
 		Extend:            true,
@@ -47,7 +47,7 @@ func init() {
 			Title:       "Query addresses by parameters",
 			Description: "Query %s addresses by parameters. The result is all addresses that match the filter criteria.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer"},
+				"scopes": []string{"customer", "project"},
 			},
 		},
 		Extend:            true,
@@ -57,7 +57,7 @@ func init() {
 		},
 	}
 	toolDataMap["nervatura_address_delete"] = McpTool{
-		Tool:              createExtendDeleteTool("nervatura_address_delete", "address", mcp.Meta{"scopes": []string{"customer"}}),
+		Tool:              createExtendDeleteTool("nervatura_address_delete", "address", mcp.Meta{"scopes": []string{"customer", "project"}}),
 		Extend:            true,
 		ModelExtendSchema: AddressSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {

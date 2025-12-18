@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -29,14 +28,14 @@ func (cli *CLIService) PaymentInsert(options cu.IM, requestData string) string {
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
 
-	if data.PaidDate.IsZero() || data.TransCode == "" {
+	if data.PaidDate == "" || data.TransCode == "" {
 		err = errors.New("payment paid_date and trans_code are required")
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
 
 	// prepare values for database update
 	values := cu.IM{
-		"paid_date":  data.PaidDate.Format(time.DateOnly),
+		"paid_date":  data.PaidDate,
 		"trans_code": data.TransCode,
 	}
 	if data.Code != "" {

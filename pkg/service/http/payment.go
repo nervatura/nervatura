@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -28,7 +27,7 @@ func PaymentPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if data.PaidDate.IsZero() || data.TransCode == "" {
+	if data.PaidDate == "" || data.TransCode == "" {
 		err = errors.New("payment paid_date and trans_code are required")
 		RespondMessage(w, 0, nil, http.StatusUnprocessableEntity, err)
 		return
@@ -36,7 +35,7 @@ func PaymentPost(w http.ResponseWriter, r *http.Request) {
 
 	// prepare values for database update
 	values := cu.IM{
-		"paid_date":  data.PaidDate.Format(time.DateOnly),
+		"paid_date":  data.PaidDate,
 		"trans_code": data.TransCode,
 	}
 	if data.Code != "" {

@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -29,7 +28,7 @@ func RatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if data.RateDate.IsZero() || data.PlaceCode == "" || data.CurrencyCode == "" {
+	if data.RateDate == "" || data.PlaceCode == "" || data.CurrencyCode == "" {
 		err = errors.New("rate date, place code and currency code are required")
 		RespondMessage(w, 0, nil, http.StatusUnprocessableEntity, err)
 		return
@@ -38,7 +37,7 @@ func RatePost(w http.ResponseWriter, r *http.Request) {
 	// prepare values for database update
 	values := cu.IM{
 		"rate_type":     data.RateType.String(),
-		"rate_date":     data.RateDate.Format(time.DateOnly),
+		"rate_date":     data.RateDate,
 		"place_code":    data.PlaceCode,
 		"currency_code": data.CurrencyCode,
 	}

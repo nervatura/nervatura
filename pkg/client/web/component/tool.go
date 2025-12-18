@@ -436,7 +436,7 @@ func (e *ToolEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.For
 							},
 							Type: ct.FieldTypeDateTime, Value: cu.IM{
 								"name":    "start_time",
-								"value":   event.StartTime.String(),
+								"value":   event.StartTime,
 								"is_null": false,
 							},
 							FormTrigger: true,
@@ -448,7 +448,7 @@ func (e *ToolEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.For
 							Type: ct.FieldTypeDateTime, Value: cu.IM{
 								"name":    "end_time",
 								"is_null": true,
-								"value":   event.EndTime.String(),
+								"value":   event.EndTime,
 							},
 							FormTrigger: true,
 						}},

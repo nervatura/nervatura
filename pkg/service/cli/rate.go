@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -30,7 +29,7 @@ func (cli *CLIService) RateInsert(options cu.IM, requestData string) string {
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
 
-	if data.RateDate.IsZero() || data.PlaceCode == "" || data.CurrencyCode == "" {
+	if data.RateDate == "" || data.PlaceCode == "" || data.CurrencyCode == "" {
 		err = errors.New("rate date, place code and currency code are required")
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
@@ -38,7 +37,7 @@ func (cli *CLIService) RateInsert(options cu.IM, requestData string) string {
 	// prepare values for database update
 	values := cu.IM{
 		"rate_type":     data.RateType.String(),
-		"rate_date":     data.RateDate.Format(time.DateOnly),
+		"rate_date":     data.RateDate,
 		"place_code":    data.PlaceCode,
 		"currency_code": data.CurrencyCode,
 	}

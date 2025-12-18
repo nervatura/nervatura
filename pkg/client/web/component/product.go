@@ -622,7 +622,7 @@ func (e *ProductEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.
 							},
 							Type: ct.FieldTypeDate, Value: cu.IM{
 								"name":    "valid_from",
-								"value":   price.ValidFrom.String(),
+								"value":   price.ValidFrom,
 								"is_null": false,
 							},
 							FormTrigger: true,
@@ -634,7 +634,7 @@ func (e *ProductEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.
 							Type: ct.FieldTypeDate, Value: cu.IM{
 								"name":    "valid_to",
 								"is_null": true,
-								"value":   price.ValidTo.String(),
+								"value":   price.ValidTo,
 							},
 							FormTrigger: true,
 						}},
@@ -748,7 +748,7 @@ func (e *ProductEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.
 							},
 							Type: ct.FieldTypeDateTime, Value: cu.IM{
 								"name":    "start_time",
-								"value":   event.StartTime.String(),
+								"value":   event.StartTime,
 								"is_null": false,
 							},
 							FormTrigger: true,
@@ -760,7 +760,7 @@ func (e *ProductEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.
 							Type: ct.FieldTypeDateTime, Value: cu.IM{
 								"name":    "end_time",
 								"is_null": true,
-								"value":   event.EndTime.String(),
+								"value":   event.EndTime,
 							},
 							FormTrigger: true,
 						}},

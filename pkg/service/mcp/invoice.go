@@ -264,7 +264,7 @@ func invoiceCreateHandler(ctx context.Context, req *mcp.CallToolRequest, inputDa
 	}
 
 	transMeta := md.TransMeta{
-		DueTime:    md.TimeDateTime{Time: time.Now()},
+		DueTime:    time.Now().Format(time.RFC3339),
 		Status:     md.TransStatus(md.TransStatusNormal),
 		TransState: md.TransState(md.TransStateOK),
 		Worksheet:  md.TransMetaWorksheet{},

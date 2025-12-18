@@ -592,7 +592,7 @@ func transMainHeadRow(trans md.Trans, labels cu.SM, _ cu.IM) (rows []ct.Row) {
 				Type: ct.FieldTypeDate, Value: cu.IM{
 					"name":     "time_stamp",
 					"is_null":  false,
-					"value":    trans.TimeStamp.String(),
+					"value":    trans.TimeStamp,
 					"disabled": true,
 				},
 			}},
@@ -604,7 +604,7 @@ func transMainHeadRow(trans md.Trans, labels cu.SM, _ cu.IM) (rows []ct.Row) {
 					Type: ct.FieldTypeDate, Value: cu.IM{
 						"name":    "trans_date",
 						"is_null": false,
-						"value":   trans.TransDate.String(),
+						"value":   trans.TransDate,
 					},
 				}},
 		}, Full: true, BorderBottom: true}}
@@ -728,7 +728,7 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 			Type: ct.FieldTypeDate, Value: cu.IM{
 				"name":    "due_time",
 				"is_null": false,
-				"value":   trans.TransMeta.DueTime.String(),
+				"value":   trans.TransMeta.DueTime,
 			},
 		}})
 
@@ -1469,7 +1469,7 @@ func transMainMovementRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.R
 						Type: ct.FieldTypeDate, Value: cu.IM{
 							"name":    "due_time",
 							"is_null": false,
-							"value":   trans.TransMeta.DueTime.String(),
+							"value":   trans.TransMeta.DueTime,
 						},
 					}})
 			productCode, batchNo, qty := productionHeadRow()
@@ -2445,7 +2445,7 @@ func (e *TransEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 								Type: ct.FieldTypeDate, Value: cu.IM{
 									"name":    "paid_date",
 									"is_null": false,
-									"value":   payment.PaidDate.String(),
+									"value":   payment.PaidDate,
 								},
 							}},
 						{Label: labels["payment_amount"], Value: ct.Field{
@@ -2665,7 +2665,7 @@ func (e *TransEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 								Type: ct.FieldTypeDate, Value: cu.IM{
 									"name":    "shipping_time",
 									"is_null": false,
-									"value":   movement.ShippingTime.String(),
+									"value":   movement.ShippingTime,
 								},
 							}},
 						{Label: labels["movement_batchnumber"], Value: ct.Field{
@@ -2740,7 +2740,7 @@ func (e *TransEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 								Type: ct.FieldTypeDate, Value: cu.IM{
 									"name":     "shipping_time",
 									"is_null":  false,
-									"value":    movement.ShippingTime.String(),
+									"value":    movement.ShippingTime,
 									"disabled": true,
 								},
 							}},
@@ -2816,7 +2816,7 @@ func (e *TransEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 								Type: ct.FieldTypeDateTime, Value: cu.IM{
 									"name":    "shipping_time",
 									"is_null": false,
-									"value":   movement.ShippingTime.String(),
+									"value":   movement.ShippingTime,
 								},
 							}},
 						{
@@ -2984,7 +2984,7 @@ func (e *TransEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 								Type: ct.FieldTypeDateTime, Value: cu.IM{
 									"name":    "shipping_time",
 									"is_null": false,
-									"value":   movement.ShippingTime.String(),
+									"value":   movement.ShippingTime,
 								},
 							}},
 					}, Full: true, BorderBottom: true},

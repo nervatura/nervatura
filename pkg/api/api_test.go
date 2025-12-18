@@ -936,7 +936,7 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 					"link_type_2":   "1",
 					"shipping_time": "2024-01-01T00:00:00Z",
 					"paid_date":     "2024-01-01",
-					"valid_from":    md.TimeDate{},
+					"valid_from":    "2024-01-01",
 					"default":       "value",
 					"customer_map":  cu.IM{"value1": "test"},
 				},
@@ -956,7 +956,7 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 				},
 			},
 			args: args{
-				inputData:   cu.IM{"shipping_time": md.TimeDateTime{}},
+				inputData:   cu.IM{"shipping_time": "2024-01-01T00:00:00Z"},
 				inputFields: []string{"shipping_time"},
 				setValue:    nil,
 			},

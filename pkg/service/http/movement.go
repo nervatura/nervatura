@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -29,7 +28,7 @@ func MovementPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if data.ShippingTime.IsZero() || data.TransCode == "" {
+	if data.ShippingTime == "" || data.TransCode == "" {
 		err = errors.New("movement shipping_time and trans_code are required")
 		RespondMessage(w, 0, nil, http.StatusUnprocessableEntity, err)
 		return
@@ -43,7 +42,7 @@ func MovementPost(w http.ResponseWriter, r *http.Request) {
 
 	// prepare values for database update
 	values := cu.IM{
-		"shipping_time": data.ShippingTime.Format(time.RFC3339),
+		"shipping_time": data.ShippingTime,
 		"trans_code":    data.TransCode,
 	}
 

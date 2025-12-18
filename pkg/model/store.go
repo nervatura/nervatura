@@ -32,12 +32,12 @@ type Contact struct {
 }
 
 type Event struct {
-	Uid         string       `json:"uid" jsonschema:"Uid. Example: UID1731101982N123"`
-	Subject     string       `json:"subject" jsonschema:"Subject. Example: Subject."`
-	StartTime   TimeDateTime `json:"start_time" jsonschema:"Start time. Example: 2025-01-01T00:00:00Z"`
-	EndTime     TimeDateTime `json:"end_time" jsonschema:"End time. Example: 2025-01-01T00:00:00Z"`
-	Place       string       `json:"place" jsonschema:"Place. Example: Place."`
-	Description string       `json:"description" jsonschema:"Description. Example: Description."`
+	Uid         string `json:"uid" jsonschema:"Uid. Example: UID1731101982N123"`
+	Subject     string `json:"subject" jsonschema:"Subject. Example: Subject."`
+	StartTime   string `json:"start_time" jsonschema:"Event start time. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
+	EndTime     string `json:"end_time" jsonschema:"Event end time. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
+	Place       string `json:"place" jsonschema:"Place. Example: Place."`
+	Description string `json:"description" jsonschema:"Description. Example: Description."`
 	// Additional tags for the event
 	Tags []string `json:"tags" jsonschema:"Additional tags for the event. The value is an array of strings. Example: [TAG1, TAG2]"`
 	// Flexible key-value map for additional metadata. The value is any json type.
@@ -57,7 +57,7 @@ type Bookmark struct {
 	// Browser visible columns
 	Columns map[string]bool `json:"columns"`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type AuthMeta struct {
@@ -88,7 +88,7 @@ type Auth struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	AuthMap cu.IM `json:"auth_map"`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type CurrencyMeta struct {
@@ -112,7 +112,7 @@ type Currency struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	CurrencyMap cu.IM `json:"currency_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type CustomerMeta struct {
@@ -150,7 +150,7 @@ type Customer struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	CustomerMap cu.IM `json:"customer_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type EmployeeMeta struct {
@@ -176,7 +176,7 @@ type Employee struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	EmployeeMap cu.IM `json:"employee_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type ItemMeta struct {
@@ -212,7 +212,7 @@ type Item struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	ItemMap cu.IM `json:"item_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type LinkMeta struct {
@@ -243,7 +243,7 @@ type Link struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	LinkMap cu.IM `json:"link_map"`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type Log struct {
@@ -261,7 +261,7 @@ type Log struct {
 	AuthCode string      `json:"auth_code"`
 	Data     interface{} `json:"data"`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type MovementMeta struct {
@@ -282,7 +282,7 @@ type Movement struct {
 	// ENUM field. Valid values: INVENTORY, TOOL, PLAN, HEAD
 	MovementType MovementType `json:"movement_type" jsonschema:"Movement type. Enum values. Example: MOVEMENT_INVENTORY"`
 	// Date-time
-	ShippingTime TimeDateTime `json:"shipping_time" jsonschema:"Shipping time. Example: 2025-01-01T00:00:00Z"`
+	ShippingTime string `json:"shipping_time" jsonschema:"Shipping time. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 	// Reference to [trans](#trans).code
 	TransCode string `json:"trans_code" jsonschema:"Reference to trans.code. Example: INV1731101982N123"`
 	// Reference to [Product](#product).code
@@ -299,7 +299,7 @@ type Movement struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	MovementMap cu.IM `json:"movement_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type PaymentMeta struct {
@@ -315,15 +315,15 @@ type Payment struct {
 	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: PMT1731101982N123 ("PMT" + UNIX Time stamp + "N" + current ID)
-	Code     string   `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: PMT1731101982N123"`
-	PaidDate TimeDate `json:"paid_date" jsonschema:"Date when payment was made. Example: 2025-01-01"`
+	Code     string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: PMT1731101982N123"`
+	PaidDate string `json:"paid_date" jsonschema:"Date when payment was made. ISO 8601 date. Example: 2025-01-01"`
 	// Reference to [trans](#trans).code
 	TransCode   string      `json:"trans_code" jsonschema:"Reference to trans.code. Example: INV1731101982N123"`
 	PaymentMeta PaymentMeta `json:"payment_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
 	PaymentMap cu.IM `json:"payment_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type PlaceMeta struct {
@@ -353,7 +353,7 @@ type Place struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	PlaceMap cu.IM `json:"place_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type PriceMeta struct {
@@ -373,9 +373,9 @@ type Price struct {
 	// ENUM field. Valid values: CUSTOMER, VENDOR
 	PriceType PriceType `json:"price_type" jsonschema:"Price type. Enum values. Example: PRICE_CUSTOMER"`
 	// Start of validity, mandatory data.
-	ValidFrom TimeDate `json:"valid_from" jsonschema:"Valid from date. ISO 8601 date. Example: 2025-01-01"`
+	ValidFrom string `json:"valid_from" jsonschema:"Valid from date. ISO 8601 date. Example: 2025-01-01"`
 	// End of validity, can be left empty.
-	ValidTo TimeDate `json:"valid_to" jsonschema:"Valid validity date. ISO 8601 date. Example: 2025-01-01"`
+	ValidTo string `json:"valid_to" jsonschema:"Valid validity date. ISO 8601 date. Example: 2025-01-01"`
 	// Reference to [Product](#product).code
 	ProductCode string `json:"product_code" jsonschema:"Reference to product.code. Example: PRD1731101982N123"`
 	// Reference to [Currency](#currency).code
@@ -389,7 +389,7 @@ type Price struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	PriceMap cu.IM `json:"price_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type ProductMeta struct {
@@ -424,7 +424,7 @@ type Product struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	ProductMap cu.IM `json:"product_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type ProjectMeta struct {
@@ -454,7 +454,7 @@ type Project struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	ProjectMap cu.IM `json:"project_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type RateMeta struct {
@@ -472,16 +472,16 @@ type Rate struct {
 	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: RAT1731101982N123"`
 	// ENUM field. Valid values: RATE, BUY, SELL, AVERAGE
 	RateType RateType `json:"rate_type" jsonschema:"Rate type. Enum values. Example: RATE_RATE"`
-	RateDate TimeDate `json:"rate_date" jsonschema:"Rate date. ISO 8601 date. Example: 2025-01-01"`
+	RateDate string   `json:"rate_date" jsonschema:"Rate date. ISO 8601 date. Example: 2025-01-01"`
 	// Reference to [Place](#place).code
 	PlaceCode string `json:"place_code" jsonschema:"Optional reference to place.code (bank rate). Example: PLA1731101982N123"`
 	// Reference to [Currency](#currency).code
-	CurrencyCode string   `json:"currency_code" jsonschema:"Reference to currency.code. Example: EUR"`
+	CurrencyCode string   `json:"currency_code" jsonschema:"Reference to currency.code. Example: CUS1731101982N123"`
 	RateMeta     RateMeta `json:"rate_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
 	RateMap cu.IM `json:"rate_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type TaxMeta struct {
@@ -501,35 +501,35 @@ type Tax struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	TaxMap cu.IM `json:"tax_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type ToolMeta struct {
 	// Other specific serial number for the tool. Example: IMEI-023456789, ABC-123, etc.
-	SerialNumber string `json:"serial_number"`
-	Notes        string `json:"notes"`
-	Inactive     bool   `json:"inactive"`
+	SerialNumber string `json:"serial_number" jsonschema:"Serial number or other unique identifier"`
+	Notes        string `json:"notes" jsonschema:"Tool notes"`
+	Inactive     bool   `json:"inactive" jsonschema:"Inactive tool"`
 	// Additional tags for the tool
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags" jsonschema:"Additional tags for the tax. The value is an array of strings. Example: [TAG1, TAG2]"`
 }
 
 type Tool struct {
 	// Database primary key
 	// Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
-	Id int64 `json:"id"`
+	Id int64 `json:"id" jsonschema:"Database dependent serial number type. Its value is unique only at table level and may change during data migrations."`
 	// Unique serial ID. If not specified, it is generated on creation. It cannot be modified after creation.
 	// Example: SER1731101982N123 ("SER" + UNIX Time stamp + "N" + current ID)
-	Code string `json:"code"`
+	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation. Example: SER1731101982N123"`
 	// The description of the tool.
-	Description string `json:"description"`
+	Description string `json:"description" jsonschema:"Tool name or description"`
 	// Reference to [Product](#product).code
-	ProductCode string   `json:"product_code"`
+	ProductCode string   `json:"product_code" jsonschema:"Reference to product.code. Example: PRD1731101982N12"`
 	Events      []Event  `json:"events"`
 	ToolMeta    ToolMeta `json:"tool_meta"`
 	// Flexible key-value map for additional metadata. The value is any json type.
-	ToolMap cu.IM `json:"tool_map"`
+	ToolMap cu.IM `json:"tool_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type TransMetaWorksheet struct {
@@ -566,8 +566,8 @@ type TransMetaInvoice struct {
 }
 
 type TransMeta struct {
-	DueTime   TimeDateTime `json:"due_time" jsonschema:"Due time. Example: 2025-01-01T00:00:00Z"`
-	RefNumber string       `json:"ref_number" jsonschema:"Ref number. Example: REF1731101982N123"`
+	DueTime   string `json:"due_time" jsonschema:"Due time. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
+	RefNumber string `json:"ref_number" jsonschema:"Ref number. Example: REF1731101982N123"`
 	// ENUM field. Valid values: CASH, TRANSFER, CARD, ONLINE, OTHER
 	PaidType PaidType `json:"paid_type" jsonschema:"Paid type. Enum values. Example: PAID_TYPE_CASH"`
 	TaxFree  bool     `json:"tax_free" jsonschema:"Tax free invoice"`
@@ -599,7 +599,7 @@ type Trans struct {
 	// INVOICE, RECEIPT, ORDER, OFFER, WORKSHEET, RENT, DELIVERY,
 	// INVENTORY, WAYBILL, PRODUCTION, FORMULA, BANK, CASH
 	TransType TransType `json:"trans_type" jsonschema:"Trans type. Enum values. Example: TRANS_TYPE_INVOICE"`
-	TransDate TimeDate  `json:"trans_date" jsonschema:"Trans date. Example: 2025-01-01"`
+	TransDate string    `json:"trans_date" jsonschema:"Trans date. ISO 8601 date. Example: 2025-01-01"`
 	// ENUM field. Valid values: OUT, IN, TRANSFER
 	Direction Direction `json:"direction" jsonschema:"Direction. Enum values. Example: DIRECTION_OUT"`
 	// Reference to [Trans](#trans).code
@@ -620,7 +620,7 @@ type Trans struct {
 	// Flexible key-value map for additional metadata. The value is any json type.
 	TransMap cu.IM `json:"trans_map" jsonschema:"Flexible key-value map for additional metadata. The value is any json type."`
 	// Timestamp of data creation
-	TimeStamp TimeDateTime `json:"time_stamp"`
+	TimeStamp string `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type Config struct {
@@ -631,9 +631,9 @@ type Config struct {
 	// Example: CNF1731101982N123 ("CNF" + UNIX Time stamp + "N" + current ID)
 	Code string `json:"code" jsonschema:"Database independent unique external key. If not specified, it is generated on creation. It cannot be modified after creation."`
 	// ENUM field. Valid values: MAP, SHORTCUT, MESSAGE, PATTERN, REPORT, PRINT_QUEUE, DATA
-	ConfigType ConfigType   `json:"config_type" jsonschema:"Config type. Enum values. Example: CONFIG_TYPE_MAP"`
-	Data       interface{}  `json:"data"`
-	TimeStamp  TimeDateTime `json:"time_stamp" jsonschema:"Timestamp of data creation"`
+	ConfigType ConfigType  `json:"config_type" jsonschema:"Config type. Enum values. Example: CONFIG_TYPE_MAP"`
+	Data       interface{} `json:"data"`
+	TimeStamp  string      `json:"time_stamp" jsonschema:"Timestamp of data creation. ISO 8601 date-time. Example: 2025-01-01T00:00:00Z"`
 }
 
 type ConfigMap struct {

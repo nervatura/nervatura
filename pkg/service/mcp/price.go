@@ -128,7 +128,7 @@ func PriceSchema() (ms *ModelSchema) {
 			var err error
 			if schema, err = jsonschema.For[priceUpdate](nil); err == nil {
 				schema.Properties["price_type"].Type = "string"
-				schema.Properties["price_type"].Enum = []any{md.PriceTypeCustomer.String(), md.PriceTypeVendor.String()}
+				schema.Properties["price_type"].Enum = ut.ToAnyArray(md.PriceType(0).Keys())
 				schema.Properties["price_map"].Default = []byte(`{}`)
 				schema.Properties["valid_from"].Format = "date"
 				schema.Properties["valid_to"].Format = "date"
@@ -156,7 +156,7 @@ func PriceSchema() (ms *ModelSchema) {
 		LoadData: func(data any) (modelData, metaData any, err error) {
 			var price md.Price = md.Price{
 				PriceType: md.PriceTypeCustomer,
-				ValidFrom: md.TimeDate{Time: time.Now()},
+				ValidFrom: time.Now().Format(time.RFC3339),
 				PriceMeta: md.PriceMeta{
 					Tags: []string{},
 				},

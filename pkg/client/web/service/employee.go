@@ -44,7 +44,7 @@ func (s *EmployeeService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 				"contact_map": cu.IM{},
 			},
 			"events":     []cu.IM{},
-			"time_stamp": md.TimeDateTime{Time: time.Now()},
+			"time_stamp": time.Now().Format(time.RFC3339),
 		},
 		"config_map":    cu.IM{},
 		"config_data":   cu.IM{},
@@ -220,7 +220,7 @@ func (s *EmployeeService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 				Code:         cu.ToString(employee["code"], ""),
 				Filters:      []any{},
 				Columns:      map[string]bool{},
-				TimeStamp:    md.TimeDateTime{Time: time.Now()},
+				TimeStamp:    time.Now().Format(time.RFC3339),
 			}
 			return s.cls.addBookmark(evt, bookmark), nil
 		},

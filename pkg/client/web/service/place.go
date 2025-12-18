@@ -213,7 +213,7 @@ func (s *PlaceService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 				Code:         cu.ToString(place["code"], ""),
 				Filters:      []any{},
 				Columns:      map[string]bool{},
-				TimeStamp:    md.TimeDateTime{Time: time.Now()},
+				TimeStamp:    time.Now().Format(time.RFC3339),
 			}
 			return s.cls.addBookmark(evt, bookmark), nil
 		},

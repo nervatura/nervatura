@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
@@ -30,14 +29,14 @@ func (cli *CLIService) PriceInsert(options cu.IM, requestData string) string {
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
 
-	if data.ValidFrom.IsZero() || data.CurrencyCode == "" || data.ProductCode == "" {
+	if data.ValidFrom == "" || data.CurrencyCode == "" || data.ProductCode == "" {
 		err = errors.New("valid from, currency code and product code are required")
 		return cli.respondString(http.StatusUnprocessableEntity, nil, http.StatusUnprocessableEntity, err)
 	}
 
 	// prepare values for database update
 	values := cu.IM{
-		"valid_from":    data.ValidFrom.Format(time.DateOnly),
+		"valid_from":    data.ValidFrom,
 		"product_code":  data.ProductCode,
 		"price_type":    data.PriceType.String(),
 		"currency_code": data.CurrencyCode,
@@ -46,8 +45,8 @@ func (cli *CLIService) PriceInsert(options cu.IM, requestData string) string {
 	if data.Code != "" {
 		values["code"] = data.Code
 	}
-	if !data.ValidTo.IsZero() {
-		values["valid_to"] = data.ValidTo.Format(time.DateOnly)
+	if data.ValidTo != "" {
+		values["valid_to"] = data.ValidTo
 	}
 	if data.CustomerCode != "" {
 		values["customer_code"] = data.CustomerCode

@@ -332,7 +332,7 @@ func (s *httpServer) mcpRoutes() {
 	s.mux.HandleFunc("GET /mcp/catalog", msrv.Catalog)
 	//s.mux.Handle("/mcp/public", mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog, s.session), opt))
 	jwtAuth := auth.RequireBearerToken(s.mcpVerify, &auth.RequireBearerTokenOptions{Scopes: []string{}})
-	for _, scope := range []string{"all", "customer", "product", "employee", "offer", "order", "invoice", "setting"} {
+	for _, scope := range []string{"all", "customer", "product", "employee", "project", "tool", "place", "offer", "order", "invoice", "setting"} {
 		s.mux.Handle("/mcp/"+scope, jwtAuth(mcp.NewStreamableHTTPHandler(msrv.GetServer(scope, s.config, s.appLog, s.session), opt)))
 	}
 }
