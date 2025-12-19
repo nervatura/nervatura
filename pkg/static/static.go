@@ -72,6 +72,8 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"iss":            "nervatura",
 		"exp":            "6",
 		"public_key_url": "",
+		"alg":            "HS256",
+		"user":           "user_name",
 	},
 	"smtp": {
 		"host":            "",
@@ -163,6 +165,40 @@ const TaskPage = `<!DOCTYPE html>
 	</div>
 	{{end}}
 	</div></body>
+</html>`
+
+const McpPage = `<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+		<title>{{ .title }}</title>
+		<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+		<link rel="stylesheet" href="/static/css/index.css" />
+		<link rel="stylesheet" href="/public/css/task.css" />
+	</head>
+	<body>
+	<div class="container">
+	{{if .tools}}
+		<h3>Tools</h3>
+		<ul>
+		{{range $scope, $names := .tools}}
+			<li><b>/mcp/{{ $scope }}</b>
+			<ul>
+			{{range $name, $values := $names}}
+				<li><b>{{ $name }}</b>: <i>{{ $values.description }}</i>
+				{{ if eq $scope "all" }}
+				{{ range $values.scopes }}<span style="color:rgb(var(--functional-green))">{{ . }}</span> {{ end }}
+				{{ end}}
+				</li>
+			{{end}}
+			</ul>
+			</li>
+		{{end}}
+		</ul>
+	{{end}}
+	</div>
+	</body>
 </html>`
 
 const AuthPage = `<!doctype html>

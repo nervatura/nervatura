@@ -257,6 +257,8 @@ func (app *App) setConfig(isSnap bool) {
 	app.config["NT_TOKEN_ISS"] = cu.ToString(app.getEnv("NT_TOKEN_ISS"), cu.ToString(st.DefaultConfig["token"]["iss"], "nervatura"))
 	app.config["NT_TOKEN_PRIVATE_KID"] = cu.ToString(app.getEnv("NT_TOKEN_PRIVATE_KID"), ut.GetHash("nervatura", "sha256"))
 	app.config["NT_TOKEN_PUBLIC_KID"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KID"), ut.GetHash("nervatura", "sha256"))
+	app.config["NT_TOKEN_ALG"] = cu.ToString(app.getEnv("NT_TOKEN_ALG"), cu.ToString(st.DefaultConfig["token"]["alg"], "HS256"))
+	app.config["NT_TOKEN_USER"] = cu.ToString(app.getEnv("NT_TOKEN_USER"), cu.ToString(st.DefaultConfig["token"]["user"], "user_name"))
 	app.config["NT_TOKEN_PRIVATE_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PRIVATE_KEY"), "")
 	app.config["NT_TOKEN_PUBLIC_KEY"] = cu.ToString(app.getEnv("NT_TOKEN_PUBLIC_KEY"), "")
 	if app.getEnv("NT_TOKEN_PRIVATE_KEY") == "" {

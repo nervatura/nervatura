@@ -46,6 +46,45 @@
             </h2>
           </li>
 
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#quick-start" class="text-slate-600 hover:text-slate-800">
+                Quick start
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#oauth-settings" class="text-slate-600 hover:text-slate-800">
+                OAuth settings
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#mcp-tools" class="text-slate-600 hover:text-slate-800">
+                MCP tools
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#mcp-resources" class="text-slate-600 hover:text-slate-800">
+                MCP resources
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#mcp-prompts" class="text-slate-600 hover:text-slate-800">
+                MCP prompts
+              </a>
+            </h2>
+          </li>
         </ul>
       </nav>
     </div>
@@ -62,13 +101,43 @@
           </h1>
         </header>
 
-        <p class="mt-6 mb-3">The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.</p>
-
-        <h3 id="cli-examples" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
-          CLI examples
+        <h3 id="overview" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Overview
         </h3>
 
-        <p class="mb-2">
+        <p class="mb-2 text-base text-slate-600">The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.</p>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-4">
+          <p class="mb-2">
+            MCP defines three core primitives that servers can expose:
+          </p>
+          <ul class="list-disc list-inside">
+            <li>
+              Tools: Executable functions that AI applications can invoke to perform actions
+            </li>
+            <li>
+              Resources: Data sources that provide contextual information to AI applications
+            </li>
+            <li>
+              Prompts: Reusable templates that help structure interactions with language models
+            </li>
+          </ul>
+        </div>
+        
+        <p class="mb-2 mt-4 text-base text-slate-600">
+          Nervatura supports Streamable HTTP transport. The default entry point is 
+          <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">https://your-server.com/mcp</code> which is unprotected and accessible without special permissions. This is where you will find information about using MCP and all tools, resources and prompts that can be used without any permissions. All other MCP access points require permissions and are protected by a Bearer token. MCP uses standardized OAuth authorization flows to build trust between MCP clients and MCP servers.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura MCP servers operate as part of the Nervatura HTTP server and can be enabled or disabled using the value of the <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_MCP_ENABLED</code> environment variable.
+        </p>
+
+        <h3 id="quick-start" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Quick start
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
           Start the Nervatura service with the MCP server enabled.
         </p>
         
@@ -78,26 +147,70 @@
           </code>
         </div>
 
-        <p class="mb-2">
-          Query customers by query parameters.
-        </p>
-        
-        <div class="relative overflow-x-auto">
-          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
-            npx @modelcontextprotocol/inspector --cli http://localhost:5000/mcp \ <br />
-            &nbsp;&nbsp;--transport http --method tools/call \ <br />
-            &nbsp;&nbsp;--tool-name nervatura_customer_query --tool-arg customer_type=CUSTOMER_COMPANY \ <br />
-            &nbsp;&nbsp;--header "Authorization: Bearer TEST_API_KEY"
-          </code>
-        </div>
+        <p class="mb-2 text-base text-slate-600">
+          <ul class="list-disc list-inside text-slate-600">
+            <li><strong>CLI example</strong>
+              <p class="mt-2 mb-2 text-base text-slate-600">
+                Query customers by query parameters.
+              </p>
+              <div class="relative overflow-x-auto">
+                <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                  npx @modelcontextprotocol/inspector --cli http://localhost:5000/mcp/customer \ <br />
+                  &nbsp;&nbsp;--transport http --method tools/call \ <br />
+                  &nbsp;&nbsp;--tool-name nervatura_customer_query --tool-arg customer_type=CUSTOMER_COMPANY \ <br />
+                  &nbsp;&nbsp;--header "Authorization: Bearer TEST_API_KEY"
+                </code>
+              </div>
+            </li>
 
-        <h3 id="cli-examples" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
-          MCP Inspector
+            <li class="mt-2"><strong>MCP Inspector</strong>
+              <p class="mt-2 mb-2 text-base text-slate-600">
+                The <a href="https://github.com/modelcontextprotocol/inspector" target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline" >MCP Inspector</a> is an interactive developer tool for testing and debugging MCP servers. Start Inspector React graphical interface with the following command:
+              </p>
+              <div class="relative overflow-x-auto">
+                <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">npx @modelcontextprotocol/inspector --transport http</code>
+              </div>
+              <p class="mb-2 text-base text-slate-600">
+                Set the <strong>Transport Type</strong> to <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">Streamable HTTP</code> and the <strong>URL</strong> to <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">http://localhost:5000/mcp/all</code><br />
+                Press the <strong>Authentication</strong> button and enter the <strong>Client ID:</strong> <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">nervatura</code><br />
+                Press the <strong>Open Auth Settings</strong> button and <strong>Quick OAuth Flow</strong> button to start the OAuth flow.<br />
+                Enter the <strong>Username:</strong> <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">admin</code> and the <strong>Password:</strong> <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">TEST_API_KEY</code> and press the <strong>Login</strong> button to get the Bearer token.<br />
+                Press the <strong>Connect</strong> button to connect to the MCP server.
+              </p>
+            </li>
+          </ul>
+        </p>
+
+        <h3 id="oauth-settings" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          OAuth settings
         </h3>
 
-        <p class="mb-2">
-          The MCP Inspector is an interactive developer tool for testing and debugging MCP servers.
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura uses its own authentication by default, but any other OAuth authentication server can be configured in the environment variables:
+          <ul class="list-disc list-inside text-slate-600">
+            <li>
+              <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_AUTH_SERVER</code> The URL of the OAuth authentication server (example <a href="https://www.keycloak.org" target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">Keycloak</a> server url)
+            </li>
+            <li>
+              <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_AUTH_CLIENT_ID</code> The client ID of the OAuth authentication server.
+            </li>
+            <li>
+              <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_AUTH_CLIENT_SECRET</code> The client secret of the OAuth authentication server.
+            </li>
+          </ul>
         </p>
+
+        <p class="mt-2 mb-2 text-base text-slate-600">
+          When using external authentication, the <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_TOKEN_USER</code> environment variable can be used to specify which field in the token payload contains the user's name. If the token is valid, Nervatura uses the value of this field to determine user permissions. Only users who have previously registered in the Nervatura database can log in using a valid OAuth token. To match the username, Nervatura login processing associates the token fields in the following order: <i>login.<strong>username</strong></i> = <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_TOKEN_USER</code> || <i>token.<strong>user_name</strong></i> || <i>token.<strong>username</strong></i> || <i>token.<strong>preferred_username</strong></i>.
+        </p>
+
+        <p class="mt-2 mb-2 text-base text-slate-600">
+          Users in the GROUP_GUEST permission group cannot use MCP tools. All tools, resources, and prompts are assigned to multiple scopes. The scope field of the user token can be used by specifying the scopes to which the user can use the assigned tools, separated by spaces. By default, all tools, resources, and prompts are available.
+        </p>
+
+        <h3 id="mcp-tools" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          MCP tools
+        </h3>
 
         <dl class="flex pt-6 mt-6 border-t border-slate-200">
           <div class="mr-auto text-left">

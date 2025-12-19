@@ -165,8 +165,9 @@ func ParseToken(tokenString string, keyMap []cu.SM, config cu.IM) (data cu.IM, e
 		return data, err
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userField := cu.ToString(config["NT_TOKEN_USER"], "user_name")
 		data["user_code"] = cu.ToString(claims["sub"], "")
-		data["user_name"] = cu.ToString(claims["user_name"], cu.ToString(claims["username"], cu.ToString(claims["preferred_username"], "")))
+		data["user_name"] = cu.ToString(claims[userField], cu.ToString(claims["username"], cu.ToString(claims["preferred_username"], "")))
 		data["scopes"] = strings.Split(cu.ToString(claims["scope"], ""), " ")
 		data["alias"] = cu.ToString(claims["alias"], "")
 		data["email"] = cu.ToString(claims["email"], "")

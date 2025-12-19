@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"slices"
@@ -16,6 +17,7 @@ import (
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	st "github.com/nervatura/nervatura/v6/pkg/static"
 	"golang.org/x/time/rate"
 )
 
@@ -40,6 +42,7 @@ func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	}, opts)
 
 	for key, td := range toolDataMap {
+		fmt.Println("key", key, "scope", scope)
 		scopes := ut.ToStringArray(td.Meta["scopes"])
 		if slices.Contains(scopes, scope) || len(scopes) == 0 || scope == "all" {
 			addMcpTool(key, server, scope)
@@ -252,7 +255,9 @@ func Catalog(w http.ResponseWriter, r *http.Request) {
 	}
 	setTool := func(scope string, td McpTool) {
 		scopes := ut.ToStringArray(td.Meta["scopes"])
-		tool := cu.IM{"description": td.Description, "scopes": scopes}
+		tool := cu.IM{
+			"description": strings.ReplaceAll(td.Description, "%s", scope),
+			"scopes":      scopes}
 		if _, ok := tools[scope]; !ok {
 			tools[scope] = cu.IM{}
 		}
@@ -270,8 +275,11 @@ func Catalog(w http.ResponseWriter, r *http.Request) {
 	catalog := cu.IM{
 		"tools": tools,
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if response, err := cu.ConvertToByte(catalog); err == nil {
-		w.Write(response)
-	}
+	//w.Header().Set("Content-Type", "application/json")
+	//if response, err := cu.ConvertToByte(catalog); err == nil {
+	//	w.Write(response)
+	//}
+	tmp, _ := template.New("mcp").Parse(st.McpPage)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_ = tmp.ExecuteTemplate(w, "mcp", catalog)
 }

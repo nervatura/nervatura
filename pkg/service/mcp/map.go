@@ -93,6 +93,7 @@ func MapSchema() (ms *ModelSchema) {
 				schema.Properties["field_type"].Type = "string"
 				schema.Properties["field_type"].Enum = ut.ToAnyArray(md.FieldType(0).Keys())
 				schema.Properties["field_type"].Default = []byte(`"` + md.FieldTypeString.String() + `"`)
+				schema.Properties["filter"].Types = nil
 				schema.Properties["filter"].Type = "string"
 				schema.Properties["filter"].Enum = ut.ToAnyArray(md.MapFilter(0).Keys())
 				schema.Properties["tags"].Default = []byte(`[]`)
@@ -106,6 +107,7 @@ func MapSchema() (ms *ModelSchema) {
 			if schema, err = jsonschema.For[updateMap](nil); err == nil {
 				schema.Properties["field_type"].Type = "string"
 				schema.Properties["field_type"].Enum = ut.ToAnyArray(md.FieldType(0).Keys())
+				schema.Properties["filter"].Types = nil
 				schema.Properties["filter"].Type = "string"
 				schema.Properties["filter"].Enum = ut.ToAnyArray(md.MapFilter(0).Keys())
 				schema.Required = []string{"code"}
