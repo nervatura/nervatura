@@ -23,7 +23,7 @@ func init() {
 			Title:       "Get a PDF report or XML data by parameters",
 			Description: "Get a %s PDF report or XML data by parameters. The result is the report data in the selected output format.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product", "employee", "project", "tool", "offer", "order", "invoice"},
+				"scopes": []string{"customer", "product", "employee", "project", "tool", "offer", "order", "invoice", "worksheet", "rent"},
 			},
 		},
 		ModelSchema: ReportSchema(),

@@ -571,7 +571,7 @@ jsonb_build_object(
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
   'notes', '',  'internal_notes', '', 'report_notes', '',
   'worksheet', jsonb_build_object(
-    'distance', 200, 'repair', 0, 'total', 3, 'notes', ''
+    'distance', 200, 'repair', 0, 'total', 3, 'justification', ''
   ), 'rent', '{}'::JSONB, 'invoice', '{}'::JSONB,
   'tags', jsonb_build_array('SALES')
 ), 
@@ -586,7 +586,7 @@ jsonb_build_object(
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 'notes', '', 
   'internal_notes', '', 'report_notes', '',
   'worksheet', '{}'::JSONB, 'rent', jsonb_build_object(
-    'holiday', 3, 'bad_tool', 0, 'other', 0, 'notes', ''
+    'holiday', 3, 'bad_tool', 0, 'other', 0, 'justification', ''
   ), 'invoice', '{}'::JSONB,
   'tags', jsonb_build_array('LOGISTICS')
 ), 

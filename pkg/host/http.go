@@ -334,7 +334,8 @@ func (s *httpServer) mcpRoutes() {
 	//s.mux.Handle("/mcp/public", mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog, s.session), opt))
 	jwtAuth := auth.RequireBearerToken(s.mcpVerify, &auth.RequireBearerTokenOptions{Scopes: []string{}})
 	for _, scope := range []string{
-		"all", "customer", "product", "employee", "project", "tool", "place", "offer", "order", "invoice", "setting", "stock"} {
+		"all", "customer", "product", "employee", "project", "tool", "place", "offer", "order", "invoice", "worksheet", "rent",
+		"setting", "stock"} {
 		s.mux.Handle("/mcp/"+scope, jwtAuth(mcp.NewStreamableHTTPHandler(msrv.GetServer(scope, s.config, s.appLog, s.session), opt)))
 	}
 }

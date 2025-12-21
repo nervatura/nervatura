@@ -422,13 +422,13 @@ select t.id,
 	  'distance', CAST(COALESCE(COALESCE(fld.md, json_object())->>'trans_wsdistance',0) as float),
 	  'repair', CAST(COALESCE(COALESCE(fld.md, json_object())->>'trans_wsrepair',0) as float),
 	  'total', CAST(COALESCE(COALESCE(fld.md, json_object())->>'trans_wstotal',0) as float),
-	  'notes', COALESCE(COALESCE(fld.md, json_object())->>'trans_wsnote','')
+	  'justification', COALESCE(COALESCE(fld.md, json_object())->>'trans_wsnote','')
 	 ),
 	 'rent', json_object(
 	  'holiday', CAST(COALESCE(COALESCE(fld.md, json_object())->>'trans_reholiday',0) as float),
 	  'bad_tool', CAST(COALESCE(COALESCE(fld.md, json_object())->>'trans_rebadtool',0) as float),
 	  'other', CAST(COALESCE(COALESCE(fld.md, json_object())->>'trans_reother',0) as float),
-	  'notes', COALESCE(COALESCE(fld.md, json_object())->>'trans_rentnote','')
+	  'justification', COALESCE(COALESCE(fld.md, json_object())->>'trans_rentnote','')
 	 ),
 	 'invoice', json_object(
 	  'company_name', COALESCE(COALESCE(fld.md, json_object())->>'trans_custinvoice_compname',''),

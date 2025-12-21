@@ -24,7 +24,7 @@ func init() {
 			Title:       "Create a new document item",
 			Description: "Create a new document item. Related tools: offer, order, invoice, receipt, worksheet, rental.",
 			Meta: mcp.Meta{
-				"scopes": []string{"offer", "invoice"},
+				"scopes": []string{"offer", "order", "invoice", "worksheet", "rent"},
 			},
 		},
 		ModelSchema: ItemSchema(),
@@ -38,7 +38,7 @@ func init() {
 			Title:       "Query items by parameters",
 			Description: "Query items by parameters. The result is all items that match the filter criteria.",
 			Meta: mcp.Meta{
-				"scopes": []string{"offer", "invoice"},
+				"scopes": []string{"offer", "order", "invoice", "worksheet", "rent"},
 			},
 		},
 		ModelSchema: ItemSchema(),
@@ -52,7 +52,7 @@ func init() {
 			Title:       "Update a document item by code",
 			Description: "Update a document item by code. When modifying, only the specified values change. Related tools: offer, order, invoice, receipt, worksheet, rental.",
 			Meta: mcp.Meta{
-				"scopes": []string{"offer", "invoice"},
+				"scopes": []string{"offer", "order", "invoice", "worksheet", "rent"},
 			},
 		},
 		ModelSchema: ItemSchema(),
@@ -61,7 +61,7 @@ func init() {
 		},
 	}
 	toolDataMap["nervatura_item_delete"] = McpTool{
-		Tool:        createDeleteTool("nervatura_item_delete", "item", mcp.Meta{"scopes": []string{"offer", "invoice"}}),
+		Tool:        createDeleteTool("nervatura_item_delete", "item", mcp.Meta{"scopes": []string{"offer", "order", "invoice", "worksheet", "rent"}}),
 		ModelSchema: ItemSchema(),
 		ConnectHandler: func(server *mcp.Server, tool *mcp.Tool) {
 			mcp.AddTool(server, tool, modelDelete)

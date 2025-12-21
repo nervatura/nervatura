@@ -4471,7 +4471,7 @@ func TestTransService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "worksheet_notes",
+			name: "worksheet_justification",
 			fields: fields{
 				cls: &ClientService{
 					Config: cu.IM{},
@@ -4512,7 +4512,7 @@ func TestTransService_Response(t *testing.T) {
 						},
 					},
 					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "worksheet_notes",
+					Value: cu.IM{"name": "worksheet_justification",
 						"value": "value",
 					},
 				},
@@ -4667,7 +4667,7 @@ func TestTransService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "rent_notes",
+			name: "rent_justification",
 			fields: fields{
 				cls: &ClientService{
 					Config: cu.IM{},
@@ -4708,7 +4708,7 @@ func TestTransService_Response(t *testing.T) {
 						},
 					},
 					Name: ct.EditorEventField,
-					Value: cu.IM{"name": "rent_notes",
+					Value: cu.IM{"name": "rent_justification",
 						"value": "value",
 					},
 				},

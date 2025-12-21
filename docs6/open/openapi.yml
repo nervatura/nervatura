@@ -3900,7 +3900,7 @@ components:
               type: number
               format: float
               description: Total time (hour)
-            notes:
+            justification:
               type: string
               description: Worksheet justification
         rent:
@@ -3918,7 +3918,7 @@ components:
               type: number
               format: float
               description: Other non-eligible
-            notes:
+            justification:
               type: string
               description: Rent justification
 

@@ -2057,8 +2057,8 @@ func (s *TransService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 			return resultUpdate(cu.IM{"dirty": true})
 		},
 
-		"worksheet_notes": func() (re ct.ResponseEvent, err error) {
-			transMetaWorksheet["notes"] = value
+		"worksheet_justification": func() (re ct.ResponseEvent, err error) {
+			transMetaWorksheet["justification"] = value
 			return resultUpdate(cu.IM{"dirty": true})
 		},
 
@@ -2077,8 +2077,8 @@ func (s *TransService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 			return resultUpdate(cu.IM{"dirty": true})
 		},
 
-		"rent_notes": func() (re ct.ResponseEvent, err error) {
-			transMetaRent["notes"] = value
+		"rent_justification": func() (re ct.ResponseEvent, err error) {
+			transMetaRent["justification"] = value
 			return resultUpdate(cu.IM{"dirty": true})
 		},
 

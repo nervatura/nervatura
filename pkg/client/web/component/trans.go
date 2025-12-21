@@ -951,14 +951,14 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 			ct.Row{
 				Columns: []ct.RowColumn{
 					{
-						Label: labels["trans_worksheet_notes"],
+						Label: labels["trans_worksheet_justification"],
 						Value: ct.Field{
 							BaseComponent: ct.BaseComponent{
-								Name: "worksheet_notes_" + cu.ToString(trans.Id, ""),
+								Name: "worksheet_justification_" + cu.ToString(trans.Id, ""),
 							},
 							Type: ct.FieldTypeString, Value: cu.IM{
-								"name":  "worksheet_notes",
-								"value": trans.TransMeta.Worksheet.Notes,
+								"name":  "worksheet_justification",
+								"value": trans.TransMeta.Worksheet.Justification,
 							},
 						}},
 				}, Full: true, BorderBottom: true,
@@ -1004,14 +1004,14 @@ func transMainItemRow(trans md.Trans, labels cu.SM, data cu.IM) (rows []ct.Row) 
 			ct.Row{
 				Columns: []ct.RowColumn{
 					{
-						Label: labels["trans_rent_notes"],
+						Label: labels["trans_rent_justification"],
 						Value: ct.Field{
 							BaseComponent: ct.BaseComponent{
-								Name: "rent_notes_" + cu.ToString(trans.Id, ""),
+								Name: "rent_justification_" + cu.ToString(trans.Id, ""),
 							},
 							Type: ct.FieldTypeString, Value: cu.IM{
-								"name":  "rent_notes",
-								"value": trans.TransMeta.Rent.Notes,
+								"name":  "rent_justification",
+								"value": trans.TransMeta.Rent.Justification,
 							},
 						}},
 				}, Full: true, BorderBottom: true,

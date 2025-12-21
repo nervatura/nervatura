@@ -267,11 +267,11 @@ func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
 				{Name: "worksheet_distance", Label: labels["trans_worksheet_distance"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "worksheet_repair", Label: labels["trans_worksheet_repair"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "worksheet_total", Label: labels["trans_worksheet_total"], FieldType: ct.TableFieldTypeNumber},
-				{Name: "worksheet_notes", Label: labels["trans_worksheet_notes"]},
+				{Name: "worksheet_justification", Label: labels["trans_worksheet_justification"]},
 				{Name: "rent_holiday", Label: labels["trans_rent_holiday"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "rent_bad_tool", Label: labels["trans_rent_bad_tool"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "rent_other", Label: labels["trans_rent_other"], FieldType: ct.TableFieldTypeNumber},
-				{Name: "rent_notes", Label: labels["trans_rent_notes"]},
+				{Name: "rent_justification", Label: labels["trans_rent_justification"]},
 				{Name: "auth_code", Label: labels["auth_code"]},
 			},
 			VisibleColumns: cu.IM{

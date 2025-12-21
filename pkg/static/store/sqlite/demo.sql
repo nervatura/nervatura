@@ -574,7 +574,7 @@ json_object(
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
   'notes', '',  'internal_notes', '', 'report_notes', '',
   'worksheet', json_object(
-    'distance', 200, 'repair', 0, 'total', 3, 'notes', ''
+    'distance', 200, 'repair', 0, 'total', 3, 'justification', ''
   ), 'rent', json_object(), 'invoice', json_object(),
   'tags', json_array('SALES')
 ), 
@@ -589,7 +589,7 @@ json_object(
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 'notes', '', 
   'internal_notes', '', 'report_notes', '',
   'worksheet', json_object(), 'rent', json_object(
-    'holiday', 3, 'bad_tool', 0, 'other', 0, 'notes', ''
+    'holiday', 3, 'bad_tool', 0, 'other', 0, 'justification', ''
   ), 'invoice', json_object(),
   'tags', json_array('LOGISTICS')
 ), 

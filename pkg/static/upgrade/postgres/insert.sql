@@ -443,13 +443,13 @@ select t.id,
 	  'distance', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'trans_wsdistance' as float),0),
 	  'repair', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'trans_wsrepair' as float),0),
 	  'total', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'trans_wstotal' as float),0),
-	  'notes', COALESCE(COALESCE(fld.md, '{}'::JSONB)->>'trans_wsnote','')
+	  'justification', COALESCE(COALESCE(fld.md, '{}'::JSONB)->>'trans_wsnote','')
 	 ),
 	 'rent', jsonb_build_object(
 	  'holiday', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'trans_reholiday' as float),0),
 	  'bad_tool', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'trans_rebadtool' as float),0),
 	  'other', COALESCE(CAST(COALESCE(fld.md, '{}'::JSONB)->>'trans_reother' as float),0),
-	  'notes', COALESCE(COALESCE(fld.md, '{}'::JSONB)->>'trans_rentnote','')
+	  'justification', COALESCE(COALESCE(fld.md, '{}'::JSONB)->>'trans_rentnote','')
 	 ),
 	 'invoice', jsonb_build_object(
 	  'company_name', COALESCE(COALESCE(fld.md, '{}'::JSONB)->>'trans_custinvoice_compname',''),

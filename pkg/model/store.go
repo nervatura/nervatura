@@ -540,7 +540,7 @@ type TransMetaWorksheet struct {
 	// Total time (hour)
 	Total float64 `json:"total"`
 	// Worksheet justification
-	Notes string `json:"notes"`
+	Justification string `json:"justification"`
 }
 
 type TransMetaRent struct {
@@ -551,7 +551,7 @@ type TransMetaRent struct {
 	// Other non-eligible
 	Other float64 `json:"other"`
 	// Rent justification
-	Notes string `json:"notes"`
+	Justification string `json:"justification"`
 }
 
 type TransMetaInvoice struct {

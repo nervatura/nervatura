@@ -20,7 +20,7 @@ func init() {
 			Title:       "Send an email with attachments",
 			Description: "Send an email with attachments to the specified email addresses. The result is the email sent successfully.",
 			Meta: mcp.Meta{
-				"scopes": []string{"customer", "product", "employee", "project", "tool", "offer", "order", "invoice"},
+				"scopes": []string{"customer", "product", "employee", "project", "tool", "offer", "order", "invoice", "worksheet", "rent"},
 			},
 		},
 		ModelSchema: EmailSchema(),

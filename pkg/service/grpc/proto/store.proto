@@ -1257,7 +1257,7 @@ message Worksheet {
   // Total time (hour)
   double total = 3;
   // Worksheet justification
-  string notes = 4;
+  string justification = 4;
 }
 
 // Trans Rent message
@@ -1269,7 +1269,7 @@ message Rent {
   // Other non-eligible
   double other = 3;
   // Rent justification
-  string notes = 4;
+  string justification = 4;
 }
 
 // TransInvoice message

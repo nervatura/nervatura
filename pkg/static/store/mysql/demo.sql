@@ -565,7 +565,7 @@ JSON_OBJECT(
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 
   'notes', '',  'internal_notes', '', 'report_notes', '',
   'worksheet', JSON_OBJECT(
-    'distance', 200, 'repair', 0, 'total', 3, 'notes', ''
+    'distance', 200, 'repair', 0, 'total', 3, 'justification', ''
   ), 'rent', JSON_OBJECT(), 'invoice', JSON_OBJECT(),
   'tags', JSON_ARRAY('SALES')
 ), 
@@ -580,7 +580,7 @@ JSON_OBJECT(
   'status', 'STATUS_NORMAL', 'trans_state', 'STATE_OK', 'notes', '', 
   'internal_notes', '', 'report_notes', '',
   'worksheet', JSON_OBJECT(), 'rent', JSON_OBJECT(
-    'holiday', 3, 'bad_tool', 0, 'other', 0, 'notes', ''
+    'holiday', 3, 'bad_tool', 0, 'other', 0, 'justification', ''
   ), 'invoice', JSON_OBJECT(),
   'tags', JSON_ARRAY('LOGISTICS')
 ), 
