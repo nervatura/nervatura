@@ -97,7 +97,7 @@
           </p>
 
           <h1 class="text-3xl font-bold tracking-tight text-slate-900">
-            Nervatura MCP
+            Model Context Protocol
           </h1>
         </header>
 
@@ -208,9 +208,53 @@
           Users in the GROUP_GUEST permission group cannot use MCP tools. All tools, resources, and prompts are assigned to multiple scopes. The scope field of the user token can be used by specifying the scopes to which the user can use the assigned tools, separated by spaces. By default, all tools, resources, and prompts are available.
         </p>
 
+        <p class="mb-2 text-base text-slate-600">
+          In the case of user authentication based on Nervatura, <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_PUBLIC_HOST</code> can be specified as the public address of the server. This address is used to generate the OAuth authorization callback URL and is required for the OAuth flow to work correctly. For more configuration options, see the <a href="../install/#configuration" class="text-blue-600 dark:text-blue-500 hover:underline">Configurations</a> section.
+        </p>
+
         <h3 id="mcp-tools" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           MCP tools
         </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Tools are the part of MCP that is closest in functionality to Nervatura's other server-side APIs. Basically, we can query and modify data with them in the same way. They can also perform various other tasks, such as creating reports or sending emails. The main difference compared to other protocols is in the way the protocol is used and its structure. Traditional APIs, such as <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP Open API</a> or <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a>, are primarily used and optimized for communication between applications. Other server-side applications or client-side programs use them to retrieve or send data, and then process the result. For example, a frontend application will display the received data to its user, or always validate the sent data in advance based on data security or business logic through input interfaces. In the case of MCP tools, however, the protocol functions do not communicate with the functions of other programs, but directly with the "user", who is not a human, but an AI agent. The logic and requirements of use are in some ways closer to the way user interfaces are used than to traditional server-side interfaces.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          In the case of traditional APIs, the data structure is optimized for the data storage logic, the method of use, the size of the data to be sent, and possibly the speed. In the case of MCP tools, the main aspect is simplicity, data security, and clarity of use. Tools are "hybrid logic" functions that are both server-side application functions and frontend program input interfaces implemented in json. Tools are atomized units of operation with precise and clear rules and purpose.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          The exact usage of each tool and examples are described in the JSON definition based on the MCP protocol. The tools are assigned to multiple scopes, which allows for easier filtering based on these, as well as linking them to user permissions if necessary. The <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">/mcp/all</code> path contains all available tools, resources, and prompts in one place, while the <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">/mcp/scope_name</code> path contains only the tools, resources, and prompts found in that scope. The MCP tools/list command can be used to query the list and description of available tools, but the information is also available in html format, regardless of the protocol, on the <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">/mcp/catalog</code> path.
+        </p>
+
+        <h3 id="mcp-resources" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          MCP resources
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Resources, like tools and prompts, are also assigned to scopes. Not only can Nervatura's built-in resources be queried, but additional custom resource accesses can also be defined. The server processes the valid json file specified in <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_MCP_RESOURCE</code> at startup and uses its data. The original resource json descriptor file <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/pkg/static/mcp/resource.json" target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">can be downloaded here</a>.
+        </p>
+
+        <h3 id="mcp-prompts" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          MCP prompts
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Prompts are a key element of MCP that can multiply the capabilities and effectiveness of the tools. The tools themselves only allow for the performance of elementary operations, but with the help of prompts, AI agents can also perform complex and interdependent operations. The tools main task is to support data processing and schema validation, and prompts can build more complex business logic into processes.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          The basic version of Nervatura does not include built-in prompts for using the tools. A sample json file for creating prompts is <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/pkg/static/mcp/prompt.json" target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">available for download</a>. The server processes the valid json file specified in <code class="text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 text-xs font-bold">NT_MCP_PROMPT</code> at startup and uses its data.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          For more information and support on using Nervatura MCP as a data source and writing prompts for LLM applications, see <a href="https://www.mcp-agency.com" target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">www.mcp-agency.com</a>.
+        </p>
+
+        <div class="flex items-center justify-center w-full px-4 pt-10 pb-6">
+          <img alt="MCP prompts" src="../images/mcp_prompt.jpg" />
+        </div>
 
         <dl class="flex pt-6 mt-6 border-t border-slate-200">
           <div class="mr-auto text-left">
