@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nervatura Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="../css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#overview" class="text-slate-600 hover:text-slate-800">
+                Overview
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#search" class="text-slate-600 hover:text-slate-800">
+                Search
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#document" class="text-slate-600 hover:text-slate-800">
+                Document
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#payment" class="text-slate-600 hover:text-slate-800">
+                Payment
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#stock" class="text-slate-600 hover:text-slate-800">
+                Stock Control
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#resources" class="text-slate-600 hover:text-slate-800">
+                Resources
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#settings" class="text-slate-600 hover:text-slate-800">
+                Settings
+              </a>
+            </h2>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Nervatura GUI
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            Nervatura Client
+          </h1>
+        </header>
+
+        <h3 id="overview" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Overview
+        </h3>
+
+        <p class="text-base text-slate-600">
+          The Nervatura Client currently supports the following management tasks:
+          <ul class="list-disc list-inside text-slate-600">
+            <li>
+              DOCUMENT: offer, order, worksheet, rental, invoice, receipt
+            </li>
+            <li>
+              PAYMENT: bank statement, petty cash
+            </li>
+            <li>
+              STOCK CONTROL: delivery, stock transfer, correction, tool movement, production, formula
+            </li>
+            <li>
+              RESOURCES: customer, product, employee, tool, project, place
+            </li>
+            <li>
+              SETTINGS: configuration, access rights
+            </li>
+            <li>
+              Data search and export, report editor, bookmarks
+            </li>
+          </ul>
+        </p>
+
+        <p class="mt-4 mb-2 text-base text-slate-600">
+          Start the Nervatura service and try the Nervatura Client with demo database:
+        </p>
+        
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            NT_API_KEY=TEST_API_KEY ./nervatura -tray
+          </code>
+        </div>
+
+        <p class="text-base text-slate-600">
+          Set the <strong>Username</strong> to <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">admin</code> the <strong>Password</strong> to <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">TEST_API_KEY</code> and the <strong>Database</strong> to <code class="text-green-600 dark:text-green-600 bg-white px-2 py-1 text-xs font-bold border border-slate-300">demo</code>.
+        </p>
+
+        <h3 id="search" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Search
+        </h3>
+
+        <p class="text-base text-slate-600">
+          The search screen is the main entry point for the Nervatura Client. It allows you to search for data in the database based on various criteria. You can show or hide columns, add filters, search for data and export the results. Quick summary of the result rows of number columns. If there are no number type columns in the data view then it is inactive.
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          The bookmarks help to save any number of pre-defined filters related to the data view. Later can be loaded from bookmarks at any time. The bookmark besides the selection criteria keeps also the selection of displayed columns.
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          Export data in CSV (comma-separeted value) files. The result of search will be exported including all columns, regardless whether originally those were displayed on the screen or not.
+        </p>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            The filter part of the screen can be closed or opened by clicking on its header. The Filter field in the results section will filter only among displayed result rows and will not query further data from the database!
+          </p>
+        </div>
+
+        <p class="mt-2 text-base text-slate-600">
+          Add filters to the query:
+          <ul class="list-disc list-inside text-slate-600 pl-3">
+            <li>
+              Unlimited number of conditions can be added, which are related to each other with an "and" restrictive condition
+            </li>
+            <li>
+              Condition set for a certain data view is kept till the program is exited.
+            </li>
+            <li>
+              For filtering all columns in the data view can be selected, regardless of whether they are currently displayed or not
+            </li>
+            <li>
+              All data types can be filtered with EQUAL, IS NULL, NOT EQUAL relations, as well as the numbers and dates with EQUAL TO OR GREATER and EQUAL TO OR LESS conditions.
+            </li>
+            <li>
+              In case of text the search is not case sensitive, the % sign can be used as a joker character
+            </li>
+            <li>
+              Filters can be removed by pressing the delete button at the end of the row
+            </li>
+          </ul>
+          <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+            <p>
+              Example for the joker character usage: %product (all products which have in their name the word product, anywhere)
+            </p>
+          </div>
+        </p>
+
+        <h3 id="document" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Document
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura was made for being able to store all data generated during ones working process. <strong>OFFER</strong> type forms are used to record the given (CUSTOMER) and also the received (SUPPLIER) offers/quotations. If any of the offers finally results in business deal, then its data are easy to use for further transaction types.
+        </p>
+
+        <p class="mt-4 text-base text-slate-600">
+          The <strong>ORDER</strong>, <strong>WORKSHEET</strong> and <strong>RENTAL</strong> transaction types play a significant role in the workflow. They gather all those goods/services that we either committed to deliver or we expect to be delivered by our suppliers. The data sheet screens therefore were designed to enable easy review and follow up of all physical movements of goods (inventory, asset movement), as well as the financial aspects related to a transaction.
+        </p>
+
+        <p class="text-base text-slate-600">
+          The forms were optimized to cover three different transaction types.
+          <ul class="list-disc list-inside text-slate-600 pl-3">
+            <li>
+              The <strong>ORDER</strong> is for the classic working method used in the majority of firms. We sell goods or services to our business partners or we are the ones provided with these by our suppliers.
+            </li>
+            <li>
+              The <strong>WORKSHEET</strong> is useful when our activity is rather service related. This can also be linked to a product (stock movement), however mostly product is concerned not as the subject of a sales action but used as a material and thus rather it is part of the service itself.
+            </li>
+            <li>
+              In case of <strong>RENTAL</strong> the focus moves from labor to time. We can follow that our own (or borrowed) products/tools under what conditions and at what time frame were used by our partners.
+            </li>
+          </ul>
+        </p>
+
+        <p class="mt-4 text-base text-slate-600">
+          The <strong>INVOICE</strong> is used for recording and follow up of our financial obligations.
+        </p>
+
+        <p class="mt-4 text-base text-slate-600">
+          The <strong>RECEIPT</strong> is the simplified version of the above one, with following differences:
+          <ul class="list-disc list-inside text-slate-600 pl-3">
+            <li>
+              Only CUSTOMER type (not available for SUPPLIER direction)
+            </li>
+            <li>
+              Customer cannot be defined
+            </li>
+            <li>
+              The fulfillment date (Receipt Date) and financial due date (Due Date) is always the same.
+            </li>
+            <li>
+              By default it is counted as paid (Paid).
+            </li>
+            <li>
+              Cannot be linked to a bank transfer or cash receipts.
+            </li>
+            <li>
+              Cannot be linked to TOOL movements.
+            </li>
+          </ul>
+        </p>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-4">
+          <p class="mb-2">
+            In case the invoice is created by using <strong>CORRECTIVE</strong>, <strong>CANCELLATION</strong> actions, then the field value will be the number of that document which the data originate from. The two documents become connected, the value of the field cannot be changed.
+          </p>
+          <p class="mb-2">
+            In case of <strong>CREATE FROM</strong> action it can be defined if the program should connect the two documents or not.
+          </p>
+          <p class="mb-2">
+            If <strong>COPY FROM</strong> action is used, this connection is not established, the field remains freely editable.
+          </p>
+        </div>
+
+        <p class="mt-6 text-base text-slate-900">
+          <strong>Related data</strong>
+        </p>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <strong>Document Rows</strong>
+            <p class="text-slate-600 mt-2">
+              Unlimited number of item lines can be added. When the product has been chosen the program will display on the form all available (already defined) data about the product: Description, Unit, Tax Rate, Discount, Unit Price.
+            </p>
+            <p class="text-slate-600 mt-2">
+              The price of the product is searched by taking into account the following criteria: (product and transaction side), current day, currency, volume, customer. With specified amount (if zero, then adjusted to one) calculates the Net Amount and Amount prices based on the Unit Price.
+            </p>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Description, Unit</code> By default, the Product Name and Unit, but ones are free to specify any data.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Tax Rate</code> A valid item of the TAX code. By default, the Product Tax. If it is changed the program will recalculate the values.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Own Stock</code> Technical field for creating specific reports. Usage is optional.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Option</code> OFFER. To indicate special/optional items of the offer. Usage is optional.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Deposit</code> INVOICE. To handle the item lines of the advance payment.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Discount</code> By default the value of the CUSTOMER discount field. If the product has a valid customer price, the value will always be zero!
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Quantity, Discount, Unit Price, Net Amount, Amount</code> If any of the fields is changed, based on the indicated value the program will recalculate the others.
+              </li>
+            </ul>
+          </li>
+
+          <li class="mt-4">
+            <strong>Tool Movement</strong>
+            <p class="text-slate-600">
+              ORDER, WORKSHEET, RENTAL, INVOICE. Tool movements related to the document.
+            </p>
+          </li>
+          
+          <li class="mt-4">
+            <strong>Payments</strong>
+            <p class="text-slate-600">
+              INVOICE. Bank transfers and cash receipts related to the document.
+            </p>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Payment code</code> The identity code of the bank transfers or cash receipts.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Currency</code> The currency of related amount. Cannot be changed, set by the program based on currency of Payment code
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Amount</code> The payment amount. Can be lower than the total sum of the invoice (in case of payment in installments), and can be higher as well, and also can be an amount of opposite sign (net transaction).
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Rate</code> Exchange rate in case the payment currency differs from the invoice currency. Default value: 1.
+              </li>
+            </ul>
+          </li>
+
+          <li class="mt-4">
+            <strong>Shipping</strong>
+            <p class="text-slate-600">
+              ORDER, WORKSHEET, RENTAL. The aggregate stock move of item type products of the document.
+            </p>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Item Product</code> Product description of a line item.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Shipped Product</code> Description of the product moved out from the warehouse actually. The two description fields can differ from each other when Virtual Product products are linked to the products of the document.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Shipping Quantity</code> The total amount of warehouse movements. The stock release is shown with negative, the entries with positive signs. Either way stock correction will also be summarized!
+              </li>
+            </ul>
+          </li>
+
+          <li class="mt-4">
+            <strong>Invoice Rows</strong>
+            <p class="text-slate-600">
+              ORDER, WORKSHEET, RENTAL. Item lines of invoices related to the document.
+            </p>
+            <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+              <p>
+                Invoices can be linked to the document with <strong>CREATE FROM</strong> action. For new invoices those invoice items of the document which have not been invoiced yet are offered by the program, these of course can be freely modified. The invoicing can be based on the line items of the document or related delivery notes (invoicing of completed deliveries) as well, however the two methods cannot be mixed within a single transaction.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <p class="mt-6 text-base text-slate-900">
+          <strong>Operations</strong>
+        </p>
+
+        <ul class="list-disc list-inside text-slate-600 pl-3">
+          <li class="mt-4">
+            <strong>COPY FROM</strong>
+            <p class="text-slate-600">
+              Create a new, <em>same transaction type</em> document on the basis of current document's data.
+              The dates and information related to creation gets updated and the references from the original document will not be transferred either.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <strong>CREATE FROM</strong>
+            <p class="text-slate-600">
+              Create a new, <em>different transaction type</em> document on the basis of current document's data.
+            </p>
+            <p class="text-slate-600">
+              The following documents can be created:
+              <ul class="list-inside text-slate-600 pl-3">
+                <li class="mt-2">
+                  <code class="text-black bg-white px-2 py-1 text-xs font-bold">OFFER</code> OFFER, ORDER, WORKSHEET, RENTAL. Default: ORDER.
+                </li>
+                <li class="mt-2">
+                  <code class="text-black bg-white px-2 py-1 text-xs font-bold">ORDER</code> OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT. Default: INVOICE.
+                </li>
+                <li class="mt-2">
+                  <code class="text-black bg-white px-2 py-1 text-xs font-bold">WORKSHEET</code> OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT. Default: INVOICE.
+                </li>
+                <li class="mt-2">
+                  <code class="text-black bg-white px-2 py-1 text-xs font-bold">RENTAL</code> OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT. Default: INVOICE.
+                </li>
+                <li class="mt-2">
+                  <code class="text-black bg-white px-2 py-1 text-xs font-bold">INVOICE</code> ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT. Default: ORDER.
+                </li>
+                <li class="mt-2">
+                  <code class="text-black bg-white px-2 py-1 text-xs font-bold">RECEIPT</code> ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT. Default: ORDER.
+                </li>
+              </ul>
+            </p>
+            <p class="text-slate-600 mt-4">
+              The dates and information related to creation gets updated and the references from the original document will not be transferred either. You can specify the new document type (CUSTOMER - out, SUPPLIER - in), as well as the following parameters:
+            </p>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Set Reference code</code> connecting the two documents, setting the Reference code field of the new document.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Invoiced amount deduction</code> For ORDER, WORKSHEET, RENTAL types at INVOICE and RECEIPT creation. Not all item lines are copied, if selected, the already invoiced items will be deducted from the list.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Create based on delivery</code> For ORDER, WORKSHEET, RENTAL types at INVOICE and RECEIPT creation. The item lines can be based on document items or delivery note items. The two methods cannot be mixed for a given document.
+              </li>
+            </ul>
+          </li>
+
+          <li class="mt-4">
+            <strong>CORRECTIVE</strong>
+            <p class="text-slate-600">
+              CUSTOMER INVOICE, RECEIPT. Corrective invoice creation.
+            </p>
+            <p class="text-slate-600">
+              New invoice will be created based on the document, the two will be connected. All line items are double-taken, with the pair of opposite sign, so the invoice total will be zero after it is created. If invoice correction is needed any of the lines can be simply deleted.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <strong>CANCELLATION</strong>
+            <p class="text-slate-600">
+              CUSTOMER INVOICE, RECEIPT. Cancellation invoice creation.
+            </p>
+            <p class="text-slate-600">
+          </li>
+            <p class="text-slate-600">
+              New invoice will be created based on the document, the two will be connected. The new invoice will be the exact copy of the previous invoice, but the line items will be shown with opposite sign.  The initial invoice shall have CANCELED status.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <strong>BOOKMARK</strong>
+            <p class="text-slate-600">
+              Set a bookmark for the record. Later can be loaded from bookmarks at any time.
+            </p>
+          </li>
+        </ul>
+
+        <h3 id="payment" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Payment
+        </h3>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>Related data</strong>
+        </p>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <strong>Payment Rows</strong>
+            <p class="text-slate-600 mt-2">
+              BANK. The line items of the statement.
+            </p>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Row ID</code> Unique ID of the row item. Automatic value, cannot be changed.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Payment Date</code> Accounting date of the amount. Field filling is compulsory.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Amount</code> Amount with sign. Amounts with positive sign indicate the incoming, with negative signs the outgoing items.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Description</code> Other data of the item
+              </li>
+            </ul>
+          </li>
+
+          <li class="mt-4">
+            <strong>Invoices</strong>
+            <p class="text-slate-600 mt-2">
+              Invoices which are linked to bank or cash receipt items.
+            </p>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Payment code</code> The payment row number.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Currency</code> The currency of related amount. Cannot be changed, set by the program based on currency of Payment code
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Amount</code> The payment amount. Can be lower than the total sum of the invoice (in case of payment in installments), and can be higher as well, and also can be an amount of opposite sign (net transaction).
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Rate</code> Exchange rate in case the payment currency differs from the invoice currency. Default value: 1.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Transaction Code</code> The code of the transaction which is linked to the invoice.
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <p class="mt-6 text-base text-slate-900">
+          <strong>Operations</strong>
+        </p>
+
+        <ul class="list-disc list-inside text-slate-600 pl-3">
+          <li class="mt-4">
+            <strong>COPY FROM</strong>
+            <p class="text-slate-600">
+              Create a new, <em>same transaction type</em> document on the basis of current document's data.
+              The dates and information related to creation gets updated and the references from the original document will not be transferred either.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <strong>BOOKMARK</strong>
+            <p class="text-slate-600">
+              Set a bookmark for the record. Later can be loaded from bookmarks at any time.
+            </p>
+          </li>
+        </ul>
+
+        <h3 id="stock" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Stock Control
+        </h3>
+
+        <p id="shipping" class="mt-4 text-base text-slate-900">
+          <strong>Shipping</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          In Nervatura database a product can be moved into or moved out from a warehouse only based on a certain document or action. This ensures that the origin of all the delivered products can be reliably traced if necessary.
+        </p>
+        <p class="text-slate-600 mt-2">
+          Warehouse traffic can be generated from items of ORDER, WORKSHEET and RENTAL type documents, as well as from corrective items of INVENTORY and TRANSFER documents. The SHIPPING is the stock control form of ORDER, WORKSHEET and RENTAL documents.
+        </p>
+        <p class="text-slate-600 mt-2">
+          The <strong>ADD</strong> applies only to a specific row, the <strong>ALL DIFFERENCE</strong> will perform the operation for all non-zero quantities.
+        </p>
+
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">DOCUMENT NO., DELIVERY TYPE, CUSTOMER NAME</code> Related fields of ORDER, WORKSHEET and RENTAL documents, their value cannot be changed. The value of DELIVERY TYPE is based on the type of the document. CUSTOMER type documents will receive SHIPPING OUT (stock release), SUPPLIER types will get SHIPPING IN (goods receipt) value.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Shipping Date</code> Stock movements (stock release or receipt) date. The value is valid for all line items.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Warehouse</code> A warehouse can be chosen from the search field from warehouse type items of PLACE. The value is valid for all line items.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Product Code, Product Name</code> Information about the product. Data serves just information purposes, cannot be modified in this section. The list includes the item type products of the document. If there are Virtual Product items linked, then the components of those can be seen here.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Batch No</code> The quantity is taken off from this group. Usage is optional.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Quantity</code> Quantity to be released or received. The document quantity. If there are Virtual Product items linked, then proportional quantity is shown.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Turnover</code> The aggregate turnover of products related to the document. If movements of the opposite direction have been made as well (eg. correction), then the net result.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Difference</code> The difference between the two previous columns. Amount other than zero is indicated in red by the program.
+          </li>
+        </ul>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            With <strong>Batch No.</strong> several virtual groups of the same product can be created within a certain warehouse. The program breaks down the actual stock into these groups. The warehouse turnover related to the documents (order, worksheet, rental) shows which items were released from (or were added to) which group.
+          </p>
+          <p class="mt-2">
+            Its usage is highly efficient and easy way of basic monitoring of goods. The content and structure of the Batch No. allows defining information related to a specific product group.
+          </p>
+          <p class="mt-2">
+            The two most common cases are defining of supplier/origin of the product and possibly the information related to expiry date. The first one is useful if a particular product is purchased from several sources. The group identifier helps to track even that from exactly which supplier was the product delivered to our customer received originally.
+          </p>
+          <p class="mt-2">
+            The expiry information can be useful in manging the actual stock. By using it we can have a more accurate picture of the content of the stock, at delivery we can prioritize certain groups (eg. products soon to expire), or can make pricing decisions (campaign products).
+          </p>
+        </div>
+
+        <p id="delivery" class="mt-4 text-base text-slate-900">
+          <strong>Delivery</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          In Nervatura the warehouse stock moves for the ORDER, WORKSHEET and RENTAL transaction types are handled by DELIVERY. Based on the direction this can have three types: SHIPPING IN, SHIPPING OUT (stock release) and TRANSFER (move between two warehouses).
+        </p>
+        <p class="text-slate-600 mt-2">
+          For SHIPPING IN/OUT types generated by <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#shipping">SHIPPING</a> form, cannot be changed. In case of TRANSFER type:
+        </p>
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Shipping Date</code> Stock movements (stock release or receipt) date. The value can not be modified at line item level.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Target Warehouse</code> A warehouse can be chosen from the search field from warehouse type items of <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#place">PLACE</a> code. The value is valid for all line items.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Product Code</code> One of the items of <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#product">PRODUCT</a> code. Mandatory. Value can be defined with a search field or with the barcode of the product.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Batch No.</code> The quantity is put into this group, or taken off from here. Usage is optional.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Quantity</code> The given quantity is added to the two warehoses with positive or negative directional signs.
+          </li>
+        </ul>
+
+        <p id="inventory" class="mt-4 text-base text-slate-900">
+          <strong>Inventory control</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          Warehouse stock is influenced by a wide variety of things: merchandise arrives from our supplier, we do deliver to a customer, new products are prepared from raw material, or goods are simply delivered from one warehouse to another. The program offers a user interface for all cases listed before.
+        </p>
+        <p class="text-slate-600 mt-2">
+          However in daily operation, even more situations can happen, which effect the actual quantity: scrapping, shortage of goods (ie. theft), physical damage, etc. These cases can be handled by Nervatura INVENTORY document type, and Inventory Control is used as input form.
+        </p>
+
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Shipping Date</code> Stock movements (stock release or receipt) date. The value can not be modified at line item level.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Product Code</code> One of the items of <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#product">PRODUCT</a> code. Mandatory. Value can be defined with a search field or with the barcode of the product.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Batch No.</code> The quantity is put into this group, or taken off from here. Usage is optional.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Quantity</code> The negative quantity decreases, the positive increases the warehouse stock level.
+          </li>
+        </ul>
+
+        <p id="tool_movement" class="mt-4 text-base text-slate-900">
+          <strong>Tool movement</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          The movement of <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#product">products</a> in warehouses can be tracked with INVENTORY and DELIVERY document types. To track the moves of <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#tool">tools</a> the WAYBILL type should be used. It helps to connect the tool for a certain period to a <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#customer">customer</a>, <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#employee">employee</a> or <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#document">document</a> (orders, worksheets, rental, invoice).
+        </p>
+        <p class="text-slate-600 mt-2">
+          The forms to provide easy handling are designed to enable connecting multiple tools to a customer, employee or document with one data sheet. This allows to easily manage cases like following up on equipment being handed out to or taken back from your employees, as well as tracking the tools being used for a given project.
+        </p>
+
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Shipping Date</code> Stock release or receipt date
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Serial</code> One of the items of <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#tool">TOOL</a>.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Comment</code> Other remarks, data.
+          </li>
+        </ul>
+
+        <p id="production" class="mt-4 text-base text-slate-900">
+          <strong>Production</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          PRODUCTION helps to produce new products from raw material stored in the warehouses. The inventory level will decrease by the amount of raw materials used, and the manufactured new product quantity will appear in stock. The data sheet tracks the material usage. If other costs, resource usage (eg. used energy, time spent, tool used etc.) is needed to be tracked, then through additional data it can be linked to WORKSHEET forms as well.
+        </p>
+        <p class="text-slate-600 mt-2">
+          The produced quantity will be shown in this warehouse. The program will display the FORMULA templates available for the produced product in a drop down list. The list of raw materials will be loaded according to the chosen template. If there were lines already, those will be deleted! Raw material quantity is taken proportionally to the product quantity to be produced.
+        </p>
+
+        <p id="formula" class="mt-4 text-base text-slate-900">
+          <strong>Formula</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          Production of a product in some cases might require significant amount of raw materials. It can occur as well that the same product can also be produced from different components. In these cases, the work with PRODUCTION forms can be sped up by FORMULA data sheets prepared for the products to be manufactured.
+        </p>
+        <p class="text-slate-600 mt-2">
+          These can also be imagined as production recipes for a product. All the raw material requirements of the product can be specified for a given quantity. Then on the new production form it is enough to load one of the FORMULA data lines related to the product and the program will fill in the list of raw materials in proportion to the production quantity.
+        </p>
+
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Product Code</code> Raw material used for production. Mandatory.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Quantity</code> The given raw material’s quantity that is required for production. Should not contain any directional sign, will automatically interpreted as stock decrease by the program. If negative value is given, then it will increase the stock level (eg. by-product formation).
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Not Split</code> If selected, raw material quantity in proportion to production requirement will be rounded up to whole numbers (integer).
+            <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+              <p>
+                Example: The FORMULA row data list was prepared for production of 8 products. There is one raw material on the list which was marked as “not split”. 12 products are going to be produced based on the raw material requirement specified in the FORMULA, then the program will offer 2 pieces of the marked material (vs. 1.5 pieces).
+              </p>
+            </div>
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Warehouse</code> The raw material usage will be deducted from the stock of this warehouse. Optional. If the field is not filled, then the default warehouse will be selected for production.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Comment</code> Other remarks, data.
+          </li>
+        </ul>
+
+        <h3 id="resources" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Resources
+        </h3>
+
+        <p id="customer" class="mt-4 text-base text-slate-900">
+          <strong>Customer</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          Nervatura handles all the partners, suppliers and customers of the company consistantly, at one place.
+        </p>
+        <p class="text-slate-600 mt-2">
+          If new product line is added (offer, order, invoice etc.) all products will receive the discount percentage specified in this field. If the product has a separate customer price, the value specified here will not be considered by the program.
+        </p>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Addresses</strong>
+            <p class="text-slate-600">
+              <i>Country, State, Zipcode, City, Street, Comment</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of address data can be added. The default report templates will consider the first address row being the address.
+            </p>
+          </li>
+          <li>
+            <strong>Contacts</strong>
+            <p class="text-slate-600">
+              <i>Firstname, Surname, Status, Phone, Mobile, Other, Email, Comment</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of contact data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Events</strong>
+            <p class="text-slate-600">
+              <i>Subject, Start Time, End Time, Place, Description</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of events can be added.
+            </p>
+          </li>
+        </ul>
+
+        <p id="product" class="mt-4 text-base text-slate-900">
+          <strong>Product</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          There are three types of products: product, service and virtual product. The virtual product is a special type of product that is used to group other products together. In practice this means that we create groups of some products which also exist independently and then treat these groups as separate products. We can add them to the product list, name, number and price them, use them in an offer, order or issue an invoice for them.
+        </p>
+        <p class="text-slate-600 mt-2">
+          If we produce or assemble a product, then it will usually be created physically as well. The components it is made of will be withdrawn from the warehouse and a new product is added to our stock.
+        </p>
+        <p class="text-slate-600 mt-2">
+          The virtual product may contain existing products and services, but these products will still be tracked separately (although they are not necessarily distributed separately). If the virtual product is sold (or rented out) the order and the invoice will be issued for the virtual product, but the delivery note will list all the content of the virtual product (group) and our stocks will also be reduced by these individual products.
+        </p>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Events</strong>
+            <p class="text-slate-600">
+              <i>Subject, Start Time, End Time, Place, Description</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of events can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Price Data</strong>
+            <p class="text-slate-600">
+              The product can be connected to several prices based on different schemes, which are stored by the program historically, for previous periods as well. When a new product line is added (ie. offer, order, invoice, etc.) the program will select these as defaults, also they can be used in reports, for example when making Pricelists.
+            </p>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Start Date</code> Start of validity, mandatory data.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">End Date</code> End of validity, can be left empty.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Supplier</code> Supplier (if marked) or customer price. By default the customer price.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Currency</code> By default the value given in <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#currency">currency</a> code.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Quantity</code> Price ranges can also be specified, thus different price can be set for a smaller and bigger quantity of the same product. The quantity should be used as the lower threshold, ie. this should be the minimum quantity for the price set. Default value: 0.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Price Value</code> Price value.
+              </li>
+              <li class="mt-2">
+                <code class="text-black bg-white px-2 py-1 text-xs font-bold">Customer code</code> Customer code if the price is for a specific customer.
+              </li>
+            </ul>
+            <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+              <p>
+                The program for pricing considers the following conditions: (product and transaction side), date, currency, quantity, customer. Also follows the below pricing validity rules:<br>
+                The valid price is the one set in the given currency, having a valid from date which is earlier or equal to the date when the price is used and valid till a date which is bigger or equal to the date when the price is used, or it is missing. The quantity set for the price should be lower or equal to the given quantity. These criteria should be met to have a general list price for the product. Additionally, if these criteria are also met by a specific customer price then this will be applied, otherwise the valid price will be the general list price.
+              </p>
+            </div>
+            <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+              <p>
+                It is possible to set a price valid for a certain period. The product should have a price with an earlier valid from date and undefined valid till date. If then a later valid from date and also a valid till date is given, than the product will have the set price only during this period. In periods before and after the original price with undefined ending will be valid.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <p id="employee" class="mt-4 text-base text-slate-900">
+          <strong>Employee</strong>
+        </p>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Addresses</strong>
+            <p class="text-slate-600">
+              <i>Country, State, Zipcode, City, Street, Comment</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of address data can be added. The default report templates will consider the first address row being the address.
+            </p>
+          </li>
+          <li>
+            <strong>Events</strong>
+            <p class="text-slate-600">
+              <i>Subject, Start Time, End Time, Place, Description</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of events can be added.
+            </p>
+          </li>
+        </ul>
+
+        <p id="tool" class="mt-4 text-base text-slate-900">
+          <strong>Tool</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          The stock inventory list shows the availability of goods by quantities. However in some cases it might be needed to have the possibility to follow up a certain item individually. In this case it gets a unique identifier, specific data can be connected to it through additional data, events can be assigned, and also its move can be tracked.
+        </p>
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            A typical example could be the management of company cars, which requires recording of many different data types and events. Similarly to laptops and mobile phones, in which case it is possible to track also which user owns the phone at a certain time, and not only have the static recording of the characteristics of the device.
+          </p>
+        </div>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Events</strong>
+            <p class="text-slate-600">
+              <i>Subject, Start Time, End Time, Place, Description</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of events can be added.
+            </p>
+          </li>
+        </ul>
+
+        <p id="project" class="mt-4 text-base text-slate-900">
+          <strong>Project</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#document">OFFER, ORDER, WORKSHEET, RENTAL, INVOICE, RECEIPT</a> documents could be linked to projects by setting so their Project code field.
+        </p>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Addresses</strong>
+            <p class="text-slate-600">
+              <i>Country, State, Zipcode, City, Street, Comment</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of address data can be added. The default report templates will consider the first address row being the address.
+            </p>
+          </li>
+          <li>
+            <strong>Contacts</strong>
+            <p class="text-slate-600">
+              <i>Firstname, Surname, Status, Phone, Mobile, Other, Email, Comment</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of contact data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Events</strong>
+            <p class="text-slate-600">
+              <i>Subject, Start Time, End Time, Place, Description</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of events can be added.
+            </p>
+          </li>
+        </ul>
+
+        <p id="place" class="mt-4 text-base text-slate-900">
+          <strong>Place</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          In Nervatura those logistic points where our own or someone else’s assets and resources are recorded or physically stored, belong to a special group called PLACE. These are the warehouses, but also the petty cash, where cash is stored and even a virtual place like the bank account belong to this group.
+        </p>
+
+        <ul class="mt-2 list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <strong>Metadata</strong>
+            <p class="text-slate-600">
+              Unlimited number of supplementary data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Contacts</strong>
+            <p class="text-slate-600">
+              <i>Firstname, Surname, Status, Phone, Mobile, Other, Email, Comment</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of contact data can be added.
+            </p>
+          </li>
+          <li>
+            <strong>Events</strong>
+            <p class="text-slate-600">
+              <i>Subject, Start Time, End Time, Place, Description</i>
+            </p>
+            <p class="text-slate-600">
+              Unlimited number of events can be added.
+            </p>
+          </li>
+        </ul>
+
+        <h3 id="settings" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Settings
+        </h3>
+
+        <p id="user_settings" class="mt-4 text-base text-slate-900">
+          <strong>User settings</strong>
+        </p>
+
+        <p id="config_data" class="mt-4 text-base text-slate-900">
+          <strong>Config data</strong>
+        </p>
+
+        <p id="metadata" class="mt-4 text-base text-slate-900">
+          <strong>Metadata</strong>
+        </p>
+
+        <p id="user_account" class="mt-4 text-base text-slate-900">
+          <strong>User account</strong>
+        </p>
+
+        <p id="currency" class="mt-4 text-base text-slate-900">
+          <strong>Currency</strong>
+        </p>
+
+        <p class="text-slate-600 mt-2">
+          The ISO 4217 code of the currency.
+        </p>
+        <ul class="list-disc list-inside text-slate-600 pl-3">
+          <li>
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Description</code> The name of the currency.
+          </li>
+          <li>
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Digit</code> The number of decimal places used for recording and rounding by the program. Default value: 2
+          </li>
+          <li>
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Default Rate</code> You can specify an exchange rate vs. the default currency, which will be used by the reports.
+          </li>
+          <li>
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">Round</code> Rounding value for cash. Could be used in case the smallest banknote in circulation for that certain currency is not 1.
+          </li>
+        </ul>
+
+        <p id="tax" class="mt-4 text-base text-slate-900">
+          <strong>Tax rate</strong>
+        </p>
+
+        <p id="menu_shortcut" class="mt-4 text-base text-slate-900">
+          <strong>Menu shortcut</strong>
+        </p>
+
+        <p id="report_template" class="mt-4 text-base text-slate-900">
+          <strong>Report template</strong>
+        </p>
+
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../mcp/" class="text-base font-semibold text-slate-900 hover:underline">
+                Nervatura MCP
+              </a>
+            </dd>
+          </div>
+
+          <!-- <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../github/" class="text-base font-semibold text-slate-900 hover:underline">
+                Nervatura GitHub
+              </a>
+            </dd>
+          </div> -->
+        </dl>
+      </article>
+    </div>
+</main>
+</body>
+</html>

@@ -60,7 +60,7 @@ func (e *ShippingEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath, //+ "/shipping",
+			Href:       st.DocsClientPath + "#shipping",
 			LinkTarget: "_blank",
 		},
 	}

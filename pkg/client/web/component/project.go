@@ -106,7 +106,7 @@ func (e *ProjectEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIte
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath, //+ "/project",
+			Href:       st.DocsClientPath + "#project",
 			LinkTarget: "_blank",
 		},
 	}

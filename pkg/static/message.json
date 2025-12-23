@@ -146,11 +146,11 @@
     "event_description": "Description",
     "event_tags": "Tags",
 
-    "view_customer_map": "Meta Data",
-    "map_view": "Meta Data",
+    "view_customer_map": "Metadata",
+    "map_view": "Metadata",
     "map_description": "Description",
     "map_value": "Value",
-    "map_new": "New Meta Data",
+    "map_new": "New Metadata",
     "map_fields": "Meta Fields",
     "report_print": "Print PDF",
     "report_export": "PDF Export",
@@ -181,7 +181,7 @@
     "setting_password_validation": "Password validation",
     "setting_password_ok": "Password successfully changed",
 
-    "setting_config_map": "META DATA",
+    "setting_config_map": "METADATA",
     "setting_config_data": "CONFIG DATA",
     "setting_config_code": "Code",
     "setting_config_key": "Field Name",
@@ -469,7 +469,7 @@
     "item_amount": "Amount",
     "item_vat_amount": "VAT",
     "item_own_stock": "Own Stock",
-    "item_deposit": "Deposit",
+    "item_deposit": "Deposit or Option",
     "item_action_price": "Action Price",
     "item_tags": "Tags",
 

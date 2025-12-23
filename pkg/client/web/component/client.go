@@ -85,7 +85,7 @@ func NewClientComponent() *ClientComponent {
 	return &ClientComponent{
 		languages:     st.ClientLang,
 		helpURL:       st.DocsPath,
-		clientHelpURL: st.DocsClientPath,
+		clientHelpURL: st.DocsClientPath + "#search",
 		exportURL:     st.ClientPath + "/session/export/browser/%s",
 		SearchConfig:  &SearchConfig{},
 		editorMap:     editorMap,

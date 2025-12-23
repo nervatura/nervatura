@@ -98,7 +98,7 @@ func (e *PlaceEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath, //+ "/place",
+			Href:       st.DocsClientPath + "#place",
 			LinkTarget: "_blank",
 		},
 	}

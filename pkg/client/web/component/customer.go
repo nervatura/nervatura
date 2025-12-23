@@ -106,7 +106,7 @@ func (e *CustomerEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath, //+ "/customer",
+			Href:       st.DocsClientPath + "#customer",
 			LinkTarget: "_blank",
 		},
 	}

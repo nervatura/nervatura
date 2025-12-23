@@ -403,7 +403,7 @@ func (e *TransEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath, //+ "/trans",
+			Href:       st.DocsClientPath + "#document",
 			LinkTarget: "_blank",
 		})
 	return items
