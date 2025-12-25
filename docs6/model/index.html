@@ -48,6 +48,14 @@
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#structure" class="text-slate-600 hover:text-slate-800">
+                Data structure
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
               <a href="#objects" class="text-slate-600 hover:text-slate-800">
                 Objects
               </a>
@@ -56,9 +64,26 @@
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
-              <a href="#base-objects" class="text-slate-600 hover:text-slate-800">
-                Base objects
+              <a href="#base-object" class="text-slate-600 hover:text-slate-800">
+                Base object
               </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#transaction" class="text-slate-600 hover:text-slate-800">
+                Transaction
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#database" class="text-slate-600 hover:text-slate-800">
+                Database structure
+              </a>
+            </h2>
           </li>
         </ul>
       </nav>
@@ -129,6 +154,48 @@
           a main requirement the user of the data model must not sense this at all.
         </p>
 
+        <h3 id="structure" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Data structure
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura's data structure follows a hybrid design model, which means it combines the advantages and technology of SQL and NoSQL databases for efficiency. SQL databases have the advantage of being vertically scalable, ACID-compliant and efficient for complex queries and transactions. Document-based, NoSQL databases have a flexible schema and they handle large amounts of data and high-velocity workloads better.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura is built on SQL database foundations. It contains a small number of tables, each of which has a uniform structure. The goal during the design was, in addition to easy transparency, the stability of the data structure. The content of the tables follows the business logic and covers all important elements of an average business record. They represent the logical groups that store information in business processes with their data content and their relationships to each other. It uses SQL capabilities to describe their relationships and ensure their integrity. The JSON data fields embedded in the tables are responsible for the flexible, easily modifiable or expandable description and storage of the properties of business objects.
+        </p>
+
+        <ul class="list-inside list-none text-slate-600 pl-3">
+          <li>
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">id</code> Database primary key. Database dependent serial number type. Its value is unique only at table level and may change during data migrations.
+          </li>
+          
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">code</code> Database independent, short but unique external key. If not specified, it is generated on creation. It cannot be modified after creation. The code structure contains information about the type of data, its creation time, and its order:</br> 
+            <i>3 length prefix</i> + <i>UNIX Time stamp</i> + <i>N</i> + <i>current ID</i>. Example: CUS1731101982N123
+          </li>
+
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">fk_code</code> To simplify searches and make data portability easier, database tables also use <b>code</b> field as a foreign key instead of the <b>id</b> field. Example: customer_code.
+          </li>
+
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">idx_field</code> To optimize searches for greater speed and performance, some data containing important or frequently used information has been defined directly as SQL fields instead of JSON metadata. Example: customer_name, valid_from, direction.
+          </li>
+          
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">model_meta</code> Schema validated data stored in JSON data type. The existence and type of the data defined here are always checked and guaranteed by the backend processing. The data stored here can be flexibly changed without modifying the SQL database, but their modification is always tied to the change of the program version and their backward data compatibility is ensured. Example: customer_meta.
+            <p> 
+              <i>address</i>(es), <i>contact</i>(s) and <i>event</i>(s) are special, complex schema validated metadata objects.
+            </p>
+          </li>
+
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">model_map</code> Flexible key-value map for additional user-defined metadata. The value is any json type. Client programs can use them freely to store any data, but the backend cannot verify the type and existence of their data. Regardless, their type, possible data content, description, and visibility can be defined in the config data, which the Nervatura Client can use when displaying them. Example: customer_map.
+          </li>
+        </ul>
+
         <h3 id="objects" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           Objects
         </h3>
@@ -141,8 +208,8 @@
           <img alt="Nervatura Object Model" src="../images/nom.svg" />
         </div>
 
-        <h3 id="base-objects" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
-          Base objects
+        <h3 id="base-object" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Base object
         </h3>
 
         <p class="mb-2 text-base text-slate-600">
@@ -160,7 +227,35 @@
           infrastructural conditions such as warehouses, bank account, petty cash (PLACE)
         </p>
 
-        <div class="flex items-center justify-center w-full max-w-auto mx-auto bg-gray-50 p-1">
+        <h3 id="transaction" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Transaction
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Transaction <i>is such a sort of event to which at least two base objects are joined</i>.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          An event is always attached to a given object. As a further event feature another base object can be specified but it’s just an optional additional data in this case. Events are stored as part of the given property group (object) in its table. Example: customer events.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          In the transactions the relation between the base objects is an indispensable and essential component of the given event. The transaction doesn’t belong to any of the base objects but the base objects are joined to a transaction. From these some base objects might be optional components but at least two should be indispensable part of it.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          The most common object pair is the customer and product relationship (e.g.: offer, order, invoice) but any other combination is also possible, for example product-place (stock management), customer-tool (rental), employee-customer (worksheet) etc. Transactions can also be linked to each other or can “originate” from each other, for instance offer -> order -> inventory move -> invoice.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          The object of transactions is the <b>TRANS</b> which contains the main data of transactions as well as the single object relations. <b>ITEM</b> object contains PRODUCT lines linked to transactions, <b>PAYMENT</b> object contains financial settlements, <b>MOVEMENT</b> object contains warehouse and tool movements.
+        </p>
+
+        <h3 id="database" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Database structure and relations
+        </h3>
+
+        <div class="mt-4 flex items-center justify-center w-full max-w-auto mx-auto bg-gray-50 p-1">
           <img alt="Object relations" src="../images/nom_rel.svg" />
         </div>
         

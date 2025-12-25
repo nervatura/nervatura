@@ -1579,6 +1579,16 @@
             <mxRectangle width="150" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="SrwKx2xLQq7q4VA4hsxm-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=2;strokeColor=light-dark(#788aa3, #ededed);" edge="1" parent="I7urceyLksXvDphEmNl7-361" source="I7urceyLksXvDphEmNl7-383" target="I7urceyLksXvDphEmNl7-383">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-10" y="315" />
+              <mxPoint x="-10" y="430" />
+              <mxPoint x="200" y="430" />
+              <mxPoint x="200" y="315" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="I7urceyLksXvDphEmNl7-395" value="price" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;labelBackgroundColor=none;fillColor=#B2C9AB;strokeColor=#788AA3;fontColor=#46495D;fontSize=14;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="-290" y="1810" width="180" height="390" as="geometry" />
         </mxCell>
@@ -2172,8 +2182,8 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="160" y="2083" />
-              <mxPoint x="160" y="1930" />
-              <mxPoint x="-20" y="1930" />
+              <mxPoint x="160" y="1970" />
+              <mxPoint x="-20" y="1970" />
               <mxPoint x="-20" y="1755" />
             </Array>
           </mxGeometry>

@@ -91,6 +91,16 @@
         </h3>
 
         <p class="mb-2 text-base font-bold text-slate-600">
+          CLI command
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            nervatura -c database -o "{\"alias\":\"demo\",\"demo\":true}"
+          </code>
+        </div>
+
+        <p class="mb-2 text-base font-bold text-slate-600">
           Docker
         </p>
 
@@ -170,22 +180,6 @@
           </code>
         </div>
 
-        <p class="mb-2 text-base font-bold text-slate-600">
-          Admin GUI
-        </p>
-
-        <p class="mb-2 text-base text-slate-600">
-          You can use the <a href="../admin/" class="text-blue-600 dark:text-blue-500 hover:underline">ADMIN GUI</a> Database section 
-          to create a new database.
-        </p>
-
-        <p class="mb-2">
-          <p class="text-slate-600">API Key: <code class="text-base font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
-            >NT_API_KEY</code> environment variable.</p>
-          <p class="text-slate-600">Alias name: <b>demo</b></p>
-          <p class="text-slate-600">Demo database: <b>true</b></p>
-        </p>
-
         <h3 id="drivers" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           Database drivers
         </h3>
@@ -242,24 +236,6 @@
           a blank database again. <b>All data in the database will be destroyed!</b>
         </p>
 
-        <p class="mb-2 mt-2 text-base text-slate-600">
-          Optional: Install Nervatura Report templates to the database
-        </p>
-
-        <ul class="list-disc list-inside text-slate-600 pl-6">
-          <li class="mb-2">
-            Login to the database: <a href="../admin/" class="text-blue-600 dark:text-blue-500 hover:underline">ADMIN GUI</a>
-          </li>
-          <li class="mb-2">
-            List reports: Returns all installable files from the <code 
-              class="text-base font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
-              >NT_REPORT_DIR</code> directory (empty value: all built-in Nervatura Report templates)
-          </li>
-          <li class="mb-2">
-            Install reports: Installs the selected report templates to the database
-          </li>
-        </ul>
-
         <h3 id="login" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           Login to the new database
         </h3>
@@ -274,6 +250,24 @@
             >NT_API_KEY</code> environment variable. Please change after the first login!</p>
           <p class="text-slate-600">Database: <b>alias name</b> (e.g. <b>demo</b>)</p>
         </p>
+
+        <p class="mb-2 mt-2 text-base text-slate-600">
+          Optional: Install Nervatura Report templates to the database
+        </p>
+
+        <ul class="list-disc list-inside text-slate-600 pl-6">
+          <li class="mb-2">
+            Settings -> REPORT TEMPLATE menu
+          </li>
+          <li class="mb-2">
+            Here you can see all installable files from the <code 
+              class="text-base font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+              >NT_REPORT_DIR</code> directory (empty value: all built-in Nervatura Report templates)
+          </li>
+          <li class="mb-2">
+            Install the selected report templates to the database. You can modify the report templates after installation by the REPORT EDITOR.
+          </li>
+        </ul>
 
         <dl class="flex pt-6 mt-6 border-t border-slate-200">
           <div class="mr-auto text-left">
