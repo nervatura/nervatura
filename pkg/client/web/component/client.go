@@ -168,7 +168,13 @@ func (cc *ClientComponent) SideBar(moduleKey string, labels cu.SM, data cu.IM) c
 }
 
 func (cc *ClientComponent) Search(viewName string, labels cu.SM, searchData cu.IM) ct.Search {
-	sConf := cc.SearchConfig.View(viewName, labels)
+	var sessionID string
+	config := cu.ToIM(searchData["config"], cu.IM{})
+	if ticket, found := config["ticket"].(ct.Ticket); found {
+		sessionID = ticket.SessionID
+	}
+
+	sConf := cc.SearchConfig.View(viewName, labels, sessionID)
 	rows := cu.ToIMA(searchData["rows"], []cu.IM{})
 	search := ct.Search{
 		Fields:            sConf.Fields,
@@ -182,14 +188,15 @@ func (cc *ClientComponent) Search(viewName string, labels cu.SM, searchData cu.I
 }
 
 func (cc *ClientComponent) Browser(viewName string, labels cu.SM, searchData cu.IM) ct.Browser {
-	sConf := cc.SearchConfig.View(viewName, labels)
-	rows := cu.ToIMA(searchData["rows"], []cu.IM{})
 	var sessionID string
 	config := cu.ToIM(searchData["config"], cu.IM{})
-	userConfig := cu.ToIM(searchData["user_config"], cu.IM{})
 	if ticket, found := config["ticket"].(ct.Ticket); found {
 		sessionID = ticket.SessionID
 	}
+	sConf := cc.SearchConfig.View(viewName, labels, sessionID)
+	rows := cu.ToIMA(searchData["rows"], []cu.IM{})
+	userConfig := cu.ToIM(searchData["user_config"], cu.IM{})
+
 	bro := ct.Browser{
 		Table: ct.Table{
 			TableFilter:       true,

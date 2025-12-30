@@ -204,18 +204,24 @@ func (ds *DataStore) GetReport(options cu.IM) (result cu.IM, err error) {
 	filters["@code"] = cu.ToString(options["code"], "")
 	var configs []cu.IM
 	var report, datarows, reportTemplate cu.IM
-	var jsonTemplate string
+	var jsonTemplate string = cu.ToString(options["template"], "")
 
-	if configs, err = ds.GetDataByID(
-		"config", cu.ToInteger(options["report_id"], 0), cu.ToString(options["report_key"], ""), true); err == nil {
-		report = cu.ToIM(configs[0]["data"], cu.IM{})
-		jsonTemplate = cu.ToString(options["template"], cu.ToString(report["template"], ""))
-
-		if err = ds.ConvertFromByte([]byte(jsonTemplate), &reportTemplate); err == nil {
-			sources := getDataSources(cu.ToIM(reportTemplate["sources"], cu.IM{}), strings.ReplaceAll(ds.Db.Connection().Engine, "3", ""))
-			datarows, err = ds.getReportData(reportTemplate, filters, sources)
+	if jsonTemplate == "" {
+		if configs, err = ds.GetDataByID(
+			"config", cu.ToInteger(options["report_id"], 0), cu.ToString(options["report_key"], ""), true); err == nil {
+			report = cu.ToIM(configs[0]["data"], cu.IM{})
+			jsonTemplate = cu.ToString(report["template"], "")
 		}
 	}
+	if err == nil {
+		if err = ds.ConvertFromByte([]byte(jsonTemplate), &reportTemplate); err == nil {
+			sources := getDataSources(cu.ToIM(reportTemplate["sources"], cu.IM{}), strings.ReplaceAll(ds.Db.Connection().Engine, "3", ""))
+			if len(sources) > 0 {
+				datarows, err = ds.getReportData(reportTemplate, filters, sources)
+			}
+		}
+	}
+
 	if err != nil {
 		return result, err
 	}
@@ -223,11 +229,12 @@ func (ds *DataStore) GetReport(options cu.IM) (result cu.IM, err error) {
 	if options["output"] == "data" {
 		return cu.IM{
 			"content_type": "application/json",
-			"template":     cu.ToString(report["template"], ""),
+			"template":     jsonTemplate,
 			"data":         datarows}, nil
 	}
 
-	fileType := cu.ToString(report["file_type"], "")
+	reportMeta := cu.ToIM(reportTemplate["meta"], cu.IM{})
+	fileType := cu.ToString(reportMeta["file_type"], "")
 	if fileType == md.FileTypeCSV.String() {
 		base64Encoding := (options["output"] == "base64")
 		return CreateReportCSV(reportTemplate, datarows, base64Encoding)

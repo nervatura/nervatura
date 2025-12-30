@@ -296,7 +296,7 @@ func ClientExportBrowser(w http.ResponseWriter, r *http.Request) {
 	_, stateKey, stateData := client.GetStateData()
 
 	labels := client.CustomFunctions.Labels(client.Lang)
-	sConf := cs.UI.SearchConfig.View(stateKey, labels)
+	sConf := cs.UI.SearchConfig.View(stateKey, labels, client.Ticket.SessionID)
 	browserFields := sConf.Fields
 	visibleColumns := client.GetSearchVisibleColumns(ut.ToBoolMap(sConf.VisibleColumns, map[string]bool{}))
 	fileName := fmt.Sprintf("%s.csv", stateKey)
@@ -389,4 +389,49 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write([]byte(results["template"].(string)))
+}
+
+func ClientTemplateEditor(w http.ResponseWriter, r *http.Request) {
+	sessionID := r.PathValue("session_id")
+	code := r.PathValue("code")
+	cs := r.Context().Value(md.ClientServiceCtxKey).(*cls.ClientService)
+
+	var client *ct.Client
+	var err error
+	if client, err = cs.LoadSession(sessionID); err != nil ||
+		!client.Ticket.Valid() && !client.LoginDisabled {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	ds := cs.NewDataStore(cs.Config, client.Ticket.Database, cs.AppLog)
+	var rows []cu.IM = []cu.IM{}
+	if rows, err = ds.StoreDataQuery(md.Query{
+		Fields: []string{"*"}, From: "config",
+		Filters: []md.Filter{
+			{Field: "code", Comp: "==", Value: code},
+		},
+	}, false); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var token string
+	user := client.Ticket.User
+	if token, err = ds.CreateLoginToken(
+		cu.SM{"code": cu.ToString(user["code"], ""), "user_name": cu.ToString(user["user_name"], ""), "scope": cu.ToString(user["user_group"], ""), "alias": ds.Alias}, ds.Config); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	result := cu.IM{
+		"token":  token,
+		"report": rows[0],
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if response, err := cu.ConvertToByte(result); err == nil {
+		w.Write(response)
+	}
+
 }

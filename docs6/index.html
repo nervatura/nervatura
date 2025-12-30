@@ -109,7 +109,7 @@
 
               <li>
                 <a href="./mcp" class="text-slate-600 hover:text-slate-800">
-                  Model Context Protocol
+                  MCP API
                 </a>
               </li>
             </ul>
@@ -117,10 +117,22 @@
 
           <li class="mb-4">
             <h3 class="font-semibold tracking-tight text-slate-900">
-              <a href="./client" class="text-slate-600 hover:text-slate-800">
-                Nervatura Client
-              </a>
+              Nervatura GUI
             </h3>
+
+            <ul role="list" class="pl-3 mt-1 space-y-1">
+              <li>
+                <a href="./client" class="text-slate-600 hover:text-slate-800">
+                  Nervatura Client
+                </a>
+              </li>
+
+              <li>
+                <a href="./editor" class="text-slate-600 hover:text-slate-800">
+                  Report Editor
+                </a>
+              </li>
+            </ul>
           </li>
 
           <li class="mb-4">
@@ -202,12 +214,12 @@
           <li><a href="./cli" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">CGO API</a> (C shared library)</li>
           <li>standard <a href="./open" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">HTTP OPEN API</a> for client communication</li>
           <li>HTTP/2-based <a href="./grpc" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">gRPC API</a> for server-side communication</li>
+          <li><a href="./mcp" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">MCP</a> (Model Context Protocol) for LLM integration</li>
           <li>built-in database drivers for postgres, mysql, mssql, sqlite databases</li>
           <li>a basic report generation library for creating simple PDF documents (eg. order, invoice, etc.) or CSV data files</li>
-          <li>sample report templates and <a href="#" 
+          <li>sample report templates and <a href="./editor" 
             class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Report Editor</a></li>
-          <li><a href="#" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Client</a> Component application 
-            and a basic <a href="#" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Admin</a> interface</li>
+          <li><a href="./client" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Nervatura Client</a> graphical user interface</li>
         </ul>
 
         <p class="mt-6 mb-4 text-base text-slate-600">
@@ -228,7 +240,7 @@
         </p>
 
         <p class="mt-6 mb-4 text-base text-slate-600">
-          The Nervatura <a href="#" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Client</a> is a 
+          The Nervatura <a href="" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Client</a> is a 
           server-side component application. It was created so that all the business data of the framework can be managed immediately 
           after installation through a graphical interface. The client and report interface supports multilingualism.
         </p>

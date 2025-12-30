@@ -149,7 +149,13 @@ func TestClientComponent_SideBar(t *testing.T) {
 			name:      "search",
 			moduleKey: "search",
 			labels:    cu.SM{},
-			data:      cu.IM{},
+			data: cu.IM{
+				"config": cu.IM{
+					"ticket": ct.Ticket{
+						SessionID: "123",
+					},
+				},
+			},
 		},
 		{
 			name:      "browser",
@@ -538,10 +544,16 @@ func TestClientComponent_Search(t *testing.T) {
 		searchData cu.IM
 	}{
 		{
-			name:       "customer",
-			viewName:   "customer",
-			labels:     cu.SM{},
-			searchData: cu.IM{},
+			name:     "customer",
+			viewName: "customer",
+			labels:   cu.SM{},
+			searchData: cu.IM{
+				"config": cu.IM{
+					"ticket": ct.Ticket{
+						SessionID: "123",
+					},
+				},
+			},
 		},
 	}
 	for _, tt := range tests {

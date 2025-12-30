@@ -2,6 +2,7 @@ package component
 
 import (
 	"fmt"
+	"html/template"
 	"slices"
 	"strings"
 
@@ -33,13 +34,19 @@ func (s *SearchConfig) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem
 	sideGroup := cu.ToString(data["side_group"], "")
 	authFilter := ut.ToStringArray(data["auth_filter"])
 	userGroup := cu.ToString(data["user_group"], "")
+	var sessionID string
+	config := cu.ToIM(data["config"], cu.IM{})
+	if ticket, found := config["ticket"].(ct.Ticket); found {
+		sessionID = ticket.SessionID
+	}
+
 	sideElement := func(name string) *ct.SideBarElement {
 		return &ct.SideBarElement{
 			Name:     name,
 			Value:    name,
-			Label:    " " + s.View(name, labels).Title,
-			Icon:     s.View(name, labels).Icon,
-			Disabled: s.View(name, labels).Disabled,
+			Label:    " " + s.View(name, labels, sessionID).Title,
+			Icon:     s.View(name, labels, sessionID).Icon,
+			Disabled: s.View(name, labels, sessionID).Disabled,
 			//Selected: (cu.ToString(data["view"], "") == name),
 		}
 	}
@@ -161,15 +168,14 @@ func (s *SearchConfig) SideGroups(labels cu.SM) []md.SideGroup {
 			Name:  "group_office",
 			Label: labels["office_title"],
 			Views: []string{
-				"office_report", "office_report_queue", "office_report_editor", "office_rate", "office_shortcut", "office_log",
+				"office_report", "office_report_queue", "office_template_editor", "office_rate", "office_shortcut", "office_log",
 			},
 			AuthFilter: md.AuthFilterOffice.String(),
-			Disabled:   true,
 		},
 	}
 }
 
-func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
+func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.SearchView {
 	viewMap := map[string]md.SearchView{
 		"transitem_simple": {
 			Title:    labels["quick_search"],
@@ -1319,10 +1325,28 @@ func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
 			Icon:     ct.IconPrint,
 			Disabled: true,
 		},
-		"office_report_editor": {
-			Title:    labels["office_report_editor_title"],
-			Icon:     ct.IconTextHeight,
-			Disabled: true,
+		"office_template_editor": {
+			Title:       labels["office_template_editor_title"],
+			Icon:        ct.IconTextHeight,
+			Simple:      false,
+			ReadOnly:    true,
+			LabelAdd:    "",
+			HideFilters: cu.IM{},
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["template_code"],
+					Column: &ct.TableColumn{Id: "code", Header: labels["template_code"],
+						Cell: s.CustomTemplateCell(sessionID)}},
+				{Name: "report_name", Label: labels["template_report_name"]},
+				{Name: "report_type", Label: labels["template_report_type"]},
+				{Name: "trans_type", Label: labels["template_trans_type"]},
+				{Name: "direction", Label: labels["template_direction"]},
+				{Name: "description", Label: labels["template_description"]},
+				{Name: "label", Label: labels["template_label"]},
+			},
+			VisibleColumns: cu.IM{
+				"code": true, "report_type": true, "trans_type": true, "direction": true, "report_name": true, "label": true,
+			},
+			Filters: []any{},
 		},
 		"office_rate": {
 			Title:    labels["office_rate_title"],
@@ -1341,6 +1365,20 @@ func (s *SearchConfig) View(view string, labels cu.SM) md.SearchView {
 		},
 	}
 	return viewMap[view]
+}
+
+func (s *SearchConfig) CustomTemplateCell(sessionID string) func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML {
+	return func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML {
+		lnk := ct.Link{
+			LinkStyle: ct.LinkStyleDefault,
+			Label:     cu.ToString(row["code"], ""),
+			//Icon:       ct.IconEdit,
+			Href:       fmt.Sprintf("/editor/?session=%s&code=%s", sessionID, cu.ToString(row["code"], "")),
+			LinkTarget: "_blank",
+		}
+		res, _ := lnk.Render()
+		return res
+	}
 }
 
 func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
@@ -1787,6 +1825,15 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 				Limit:   st.BrowserRowLimit,
 			}
 		},
+		"office_template_editor": func(editor string) md.Query {
+			return md.Query{
+				Fields:  []string{"id", "code", "report_key", "report_type", "trans_type", "direction", "report_name", "description", "label"},
+				From:    "config_report",
+				Filter:  fmt.Sprintf("file_type = '%s'", md.FileTypePDF.String()),
+				OrderBy: []string{"id"},
+				Limit:   st.BrowserRowLimit,
+			}
+		},
 	}
 	query = md.Query{}
 	editor := cu.ToString(params["editor"], "")
@@ -1935,6 +1982,9 @@ func (s *SearchConfig) Filter(view string, filter ct.BrowserFilter, queryFilters
 		},
 		"place_events": func() []string {
 			return s.filterPlace(view, filter, queryFilters)
+		},
+		"office_template_editor": func() []string {
+			return s.filterOffice(view, filter, queryFilters)
 		},
 	}
 
@@ -2389,6 +2439,16 @@ func (s *SearchConfig) filterTransMovement(view string, filter ct.BrowserFilter,
 		"transmovement_map": func() []string {
 			return append(queryFilters,
 				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+	}
+	return result[view]()
+}
+
+func (s *SearchConfig) filterOffice(view string, filter ct.BrowserFilter, queryFilters []string) []string {
+	result := map[string]func() []string{
+		"office_template_editor": func() []string {
+			return append(queryFilters,
+				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
 		},
 	}
 	return result[view]()

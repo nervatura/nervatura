@@ -143,14 +143,14 @@ func AuthLogin(w http.ResponseWriter, r *http.Request) {
 
 	var loginData cu.IM
 	if err := opt.ConvertFromReader(r.Body, &loginData); err != nil {
-		RespondMessage(w, 0, nil, http.StatusUnprocessableEntity, err)
+		RespondMessage(w, 0, nil, http.StatusUnauthorized, err)
 		return
 	}
 
 	ds := api.NewDataStore(opt.Config, cu.ToString(loginData["database"], ""), opt.AppLog)
 	token, err := ds.UserLogin(cu.ToString(loginData["user_name"], ""), cu.ToString(loginData["password"], ""), true)
 	result := cu.IM{"token": token, "version": cu.ToString(opt.Config["version"], "")}
-	RespondMessage(w, http.StatusOK, result, http.StatusUnprocessableEntity, err)
+	RespondMessage(w, http.StatusOK, result, http.StatusUnauthorized, err)
 }
 
 func AuthPassword(w http.ResponseWriter, r *http.Request) {
@@ -159,11 +159,11 @@ func AuthPassword(w http.ResponseWriter, r *http.Request) {
 
 	var passwordData cu.IM
 	if err := ds.ConvertFromReader(r.Body, &passwordData); err != nil {
-		RespondMessage(w, 0, nil, http.StatusUnprocessableEntity, err)
+		RespondMessage(w, 0, nil, http.StatusUnauthorized, err)
 		return
 	}
 	err := ds.UserPassword(user.Code, cu.ToString(passwordData["password"], ""), cu.ToString(passwordData["confirm"], ""))
-	RespondMessage(w, http.StatusNoContent, nil, http.StatusUnprocessableEntity, err)
+	RespondMessage(w, http.StatusNoContent, nil, http.StatusUnauthorized, err)
 }
 
 // AuthReset - Reset a user password and result a new password
@@ -194,5 +194,5 @@ func AuthToken(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value(md.AuthUserCtxKey).(md.Auth)
 	token, err := ds.TokenRefresh(user)
 	result := cu.IM{"token": token, "version": cu.ToString(ds.Config["version"], "")}
-	RespondMessage(w, http.StatusOK, result, http.StatusUnprocessableEntity, err)
+	RespondMessage(w, http.StatusOK, result, http.StatusUnauthorized, err)
 }

@@ -186,9 +186,11 @@ func (s *httpServer) setRoutes() {
 	// Register static dirs.
 	// app css files
 	var publicFS, _ = fs.Sub(st.Public, "public")
+	var editorFS, _ = fs.Sub(st.Public, "public/editor")
 	// components css files
 	var staticFS, _ = fs.Sub(cst.Static, ".")
 	s.mux.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.FS(publicFS))))
+	s.mux.Handle("/editor/", http.StripPrefix("/editor/", http.FileServer(http.FS(editorFS))))
 	s.mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))))
 	s.mux.Handle("/docs6/", http.StripPrefix("/docs6/", http.FileServer(http.FS(docs.Docs))))
 }
@@ -478,6 +480,7 @@ func (s *httpServer) clientAPIRoutes() http.Handler {
 	clientMux := http.NewServeMux()
 	clientMux.HandleFunc("GET /auth/callback", src.ClientAuthCallback)
 	clientMux.HandleFunc("POST /session", src.ClientSessionCreate)
+	clientMux.HandleFunc("POST /template/{session_id}/{code}", src.ClientTemplateEditor)
 
 	return http.StripPrefix(st.ClientPath+"/api", clientMux)
 }

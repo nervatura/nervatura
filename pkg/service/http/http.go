@@ -120,6 +120,14 @@ func Function(w http.ResponseWriter, r *http.Request) {
 
 	prms := cu.ToIM(option["values"], cu.IM{})
 	response, err := ds.Function(cu.ToString(option["name"], ""), prms)
+	if err == nil && cu.ToString(cu.ToIM(response, cu.IM{})["content_type"], "") == "application/pdf" {
+		if pdf, found := cu.ToIM(response, cu.IM{})["template"].([]uint8); found {
+			w.Header().Set("Content-Type", "application/pdf")
+			w.Header().Set("Content-Disposition", "attachment; filename=report.pdf")
+			w.Write(pdf)
+			return
+		}
+	}
 	RespondMessage(w, http.StatusOK, response, http.StatusUnprocessableEntity, err)
 }
 

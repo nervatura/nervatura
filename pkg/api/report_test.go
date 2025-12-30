@@ -444,7 +444,6 @@ func TestDataStore_GetReport(t *testing.T) {
 					"orientation": "portrait",
 					"size":        "a4",
 					"code":        "test",
-					"template":    string(pdf_json),
 					"filters":     cu.IM{},
 				},
 			},

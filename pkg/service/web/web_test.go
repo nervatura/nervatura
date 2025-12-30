@@ -722,3 +722,109 @@ func TestClientExportModalReport(t *testing.T) {
 		})
 	}
 }
+
+func TestClientTemplateEditor(t *testing.T) {
+	req1 := httptest.NewRequest("GET", "/editor/SessionID/test", nil)
+	req1.SetPathValue("session_id", "SessionID")
+	req1.SetPathValue("code", "test")
+	ses1 := &api.SessionService{
+		Config: api.SessionConfig{
+			Method: md.SessionMethodMemory,
+		},
+		Conn: &md.TestDriver{Config: cu.IM{}},
+	}
+	ses1.SaveSession("SessionID", &ct.Client{
+		Ticket: ct.Ticket{
+			SessionID: "SessionID",
+			User:      cu.IM{},
+			Expiry:    time.Now().Add(time.Duration(1) * time.Hour),
+			Database:  "test",
+		},
+	})
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		w          http.ResponseWriter
+		r          *http.Request
+		config     cu.IM
+		session    *api.SessionService
+		tokenError error
+	}{
+		{
+			name:    "success",
+			w:       httptest.NewRecorder(),
+			r:       req1,
+			session: ses1,
+			config: cu.IM{
+				"Query": func(queries []md.Query) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
+				},
+			},
+			tokenError: nil,
+		},
+		{
+			name:    "token_error",
+			w:       httptest.NewRecorder(),
+			r:       req1,
+			session: ses1,
+			config: cu.IM{
+				"Query": func(queries []md.Query) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
+				},
+			},
+			tokenError: errors.New("token error"),
+		},
+		{
+			name:    "query_error",
+			w:       httptest.NewRecorder(),
+			r:       req1,
+			session: ses1,
+			config: cu.IM{
+				"Query": func(queries []md.Query) ([]cu.IM, error) {
+					return []cu.IM{}, errors.New("query error")
+				},
+			},
+			tokenError: nil,
+		},
+		{
+			name:    "session_error",
+			w:       httptest.NewRecorder(),
+			r:       httptest.NewRequest("POST", "/editor/SessionID/test", nil),
+			session: ses1,
+			config: cu.IM{
+				"Query": func(queries []md.Query) ([]cu.IM, error) {
+					return []cu.IM{}, nil
+				},
+			},
+			tokenError: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.WithValue(context.Background(), md.ClientServiceCtxKey, &cls.ClientService{
+				Config:  tt.config,
+				AppLog:  slog.Default(),
+				Session: tt.session,
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:              &md.TestDriver{Config: tt.config},
+						Config:          config,
+						AppLog:          appLog,
+						ConvertFromByte: cu.ConvertFromByte,
+						ConvertToByte: func(v any) ([]byte, error) {
+							return nil, nil
+						},
+						ConvertToType: func(data interface{}, result any) (err error) {
+							return nil
+						},
+						CreateLoginToken: func(user cu.SM, config cu.IM) (string, error) {
+							return "token", tt.tokenError
+						},
+					}
+				},
+				UI: cp.NewClientComponent(),
+			})
+			ClientTemplateEditor(tt.w, tt.r.WithContext(ctx))
+		})
+	}
+}

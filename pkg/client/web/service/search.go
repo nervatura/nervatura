@@ -73,7 +73,7 @@ func (s *SearchService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err
 				return g.Name == evt.Value
 			}); idx > int(-1) {
 				viewName = groups[idx].Views[0]
-				simple = s.cls.UI.SearchConfig.View(viewName, client.Labels()).Simple
+				simple = s.cls.UI.SearchConfig.View(viewName, client.Labels(), client.Ticket.SessionID).Simple
 				stateData["rows"] = []cu.IM{}
 				stateData["filter_value"] = ""
 			}
@@ -83,7 +83,7 @@ func (s *SearchService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err
 	default:
 		stateData["rows"] = []cu.IM{}
 		stateData["filter_value"] = ""
-		client.SetSearch(cu.ToString(evt.Value, ""), stateData, s.cls.UI.SearchConfig.View(cu.ToString(evt.Value, ""), cu.SM{}).Simple)
+		client.SetSearch(cu.ToString(evt.Value, ""), stateData, s.cls.UI.SearchConfig.View(cu.ToString(evt.Value, ""), cu.SM{}, client.Ticket.SessionID).Simple)
 
 	}
 	return evt, err
@@ -111,7 +111,7 @@ func (s *SearchService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err
 		client.SetForm("input_string", modal, 0, true)
 
 	case ct.FormEventOK:
-		sConf := s.cls.UI.SearchConfig.View(stateKey, client.CustomFunctions.Labels(client.Lang))
+		sConf := s.cls.UI.SearchConfig.View(stateKey, client.CustomFunctions.Labels(client.Lang), client.Ticket.SessionID)
 		visibleColumns := client.GetSearchVisibleColumns(ut.ToBoolMap(sConf.VisibleColumns, map[string]bool{}))
 		viewData := cu.ToIM(stateData[stateKey], cu.IM{})
 		frmValues := cu.ToIM(evt.Value, cu.IM{})

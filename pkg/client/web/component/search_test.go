@@ -1,6 +1,7 @@
 package component_test
 
 import (
+	"html/template"
 	"reflect"
 	"testing"
 
@@ -1074,6 +1075,17 @@ func TestSearchConfig_Filter(t *testing.T) {
 			queryFilters: []string{},
 			want:         []string{"and (demo_number like '%123%')"},
 		},
+		{
+			name: "office_template_editor",
+			view: "office_template_editor",
+			filter: ct.BrowserFilter{
+				Field: "report_key",
+				Comp:  "==",
+				Value: "123",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (CAST(report_key as CHAR(255)) like '%123%')"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1689,12 +1701,55 @@ func TestSearchConfig_Query(t *testing.T) {
 				"filters": []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}},
 			},
 		},
+		{
+			name: "office_template_editor",
+			key:  "office_template_editor",
+			params: cu.IM{
+				"view": "office_template_editor",
+				"query": md.Query{
+					Filters: []md.Filter{
+						{Field: "id", Comp: "==", Value: 1},
+					},
+				},
+				"filters": []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// TODO: construct the receiver type.
 			var s component.SearchConfig
 			s.Query(tt.key, tt.params)
+		})
+	}
+}
+
+func TestSearchConfig_CustomTemplateCell(t *testing.T) {
+	type args struct {
+		sessionID string
+	}
+	tests := []struct {
+		name string
+		s    *component.SearchConfig
+		args args
+		want func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML
+	}{
+		{
+			name: "custom_template_cell",
+			s:    &component.SearchConfig{},
+			args: args{
+				sessionID: "123",
+			},
+			want: func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML {
+				return template.HTML("test")
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &component.SearchConfig{}
+			got := s.CustomTemplateCell(tt.args.sessionID)
+			got(cu.IM{"code": "123"}, ct.TableColumn{}, "123", 0)
 		})
 	}
 }

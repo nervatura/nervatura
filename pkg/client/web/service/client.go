@@ -293,7 +293,7 @@ func (cls *ClientService) editorCodeSelector(evt ct.ResponseEvent, editor, codeT
 	}
 
 	if event == ct.SelectorEventSearch {
-		sConf := cls.UI.SearchConfig.View(codeType+"_simple", client.Labels())
+		sConf := cls.UI.SearchConfig.View(codeType+"_simple", client.Labels(), client.Ticket.SessionID)
 		filters := client.ToFilters(cu.ToString(value, ""), sConf.Filters)
 		var resultData cu.IM
 		if resultData, err = cls.Modules["search"].Data(evt, cu.IM{
@@ -655,7 +655,7 @@ func (cls *ClientService) searchEvent(evt ct.ResponseEvent) (re ct.ResponseEvent
 	client := evt.Trigger.(*ct.Client)
 	_, stateKey, stateData := client.GetStateData()
 	var filter string = cu.ToString(evt.Value, "")
-	sConf := cls.UI.SearchConfig.View(stateKey, client.Labels())
+	sConf := cls.UI.SearchConfig.View(stateKey, client.Labels(), client.Ticket.SessionID)
 	var resultData cu.IM
 	if resultData, err = cls.Modules["search"].Data(evt, cu.IM{
 		"view":    stateKey,

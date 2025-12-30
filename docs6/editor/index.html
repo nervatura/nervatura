@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Report Editor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="../css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="relative flex justify-center mx-auto max-w-8xl sm:px-2 lg:px-8 xl:px-12 bg-slate-200">
+    <label for="navigation" class="fixed bottom-0 left-0 z-50 flex items-center justify-center w-12 h-12 mb-4 ml-4 bg-white border rounded-full shadow-lg cursor-pointer text-slate-600 border-slate-300 lg:hidden transition duration-200 ease-in-out active:scale-95">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16" />
+      </svg>
+    </label>
+
+    <input type="checkbox" name="navigation" id="navigation" class="hidden peer" />
+    <div class="fixed top-0 h-screen shadow-xl px-4 left-0 hidden peer-checked:block lg:relative lg:top-0 lg:h-auto lg:px-0 lg:block lg:flex-none lg:shadow-none z-40">
+      <div class="absolute inset-y-0 right-0 w-full lg:w-[50vw] bg-slate-200"></div>
+
+      <nav class="sticky top-0 pr-8 text-base lg:text-sm  xl:pr-16 w-auto">
+        <ul role="list" class="-ml-0.5 h-screen overflow-y-auto pl-0.5 space-y-8 py-4">
+          <li class="mb-4">
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">
+              <a href="../" class="text-slate-600 hover:text-slate-800">
+                <span class="inline-block w-4 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+                  </svg>                  
+                </span>
+                <span class="inline-block align-middle">
+                  Nervatura Docs
+                </span>
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#overview" class="text-slate-600 hover:text-slate-800">
+                Overview
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#operations" class="text-slate-600 hover:text-slate-800">
+                Operations
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#template" class="text-slate-600 hover:text-slate-800">
+                TEMPLATE
+              </a>
+            </h2>
+            <ul class="list-inside text-slate-600 pl-3">
+              <li class="mt-2">
+                <a href="#components" class="text-slate-600 hover:text-slate-800">
+                  Main Components
+                </a>
+              </li>
+              <li class="mt-2">
+                <a href="#elements" class="text-slate-600 hover:text-slate-800">
+                  Elements
+                </a>
+              </li>
+              <li class="mt-2">
+                <a href="#template-operations" class="text-slate-600 hover:text-slate-800">
+                  Operations
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#data" class="text-slate-600 hover:text-slate-800">
+                DATA
+              </a>
+            </h2>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex-auto max-w-2xl min-w-0 px-4 py-10 lg:max-w-none lg:pr-0 lg:pl-8 xl:px-16 bg-slate-100">
+      <article>
+        <header class="">
+          <p class="text-base font-medium text-slate-500">
+            Nervatura GUI
+          </p>
+
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            Report Editor
+          </h1>
+        </header>
+
+        <h3 id="overview" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Overview
+        </h3>
+
+        <p class="text-base text-slate-600">
+          The Report Editor is used to modify some of the Nervatura PDF Report definitions and descriptions of report templates. It defines the layout of the reports: where and how the data should appear. It will not support changes regarding what data should be displayed from the database, but will give the possibility to modify the report with additional information (eg. logo files, texts, language translations). Therefore this tool is not suitable for creating completely new reports, however the existing reports can freely be modified and by using copies additional versions can be created.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          It’s designed to help to easily customize the samples in the database with a visual tool. You can set your own logo, rename, change or skip certain data. For the same thing (eg. invoice, delivery note) you can create multiple templates, in different languages ​​or with different data content.
+        </p>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            The Nervatura Report enables you to create from your data formatted files with standardized outcome. Currently two formats are supported.
+          </p>
+          <p class="mt-2">
+            With <strong>PDF</strong> format ready-to-print documents can be created. These are locked, not modifiable files, can be sent forward as email attachments. Their usage is widely spread, supported by most of the devices. Useful for making orders, invoices, delivery notes, etc.
+          </p>
+          <p class="mt-2">
+            The <strong>XML</strong> format is useful especially in data exchange with other applications, databases. The format is well known, the content can be easily processed.
+          </p>
+        </div>
+
+        <h3 id="operations" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Operations
+        </h3>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>SAVE TEMPLATE</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Save all changes made to the template in the database.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>CREATE FROM</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Create a new template based on the existing. The currently edited template will remain unchanged, by copying it a new one is created. The template ID is given by the program, the name can be set by the user. This name will appear in the selection list.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>DELETE</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Delete the selected template from the database.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>NEW BLANK</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          A new, blank template creation. The template can not be saved to the database, only export is possible.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>NEW SAMPLE</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Creating a new template with sample data. The template can not be saved to the database, only export is possible.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>OPEN PDF</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          The print/preview of the template with sample data. The program asks for the identifier of concerned template according to its type (eg CUSTOMER DATASHEET template: CUS0000000000N2 in the demo database) and fills up the template with the data. For following run offers the identifier that was used last time.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>JSON EXPORT</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Export the PDF template to JSON file.
+        </p>
+
+        <h3 id="template" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          TEMPLATE
+        </h3>
+
+        <p class="mt-4 text-base text-slate-600">
+          The template structure is shown in hierarchical way (tree) as parent-child relation. When an element of the list is selected then only the highest level (parent) and possibly the subordinates are visible in the list. On the other (editable) page the elements’ potential attributes and their current value is shown. Under the name of the attributes a short help can be read about their possible values.
+        </p>
+        
+        <hr class="my-4 border-slate-300">
+
+        <p id="components" class="mt-4 text-base text-slate-600">
+          The template consists of the following four main components:
+        </p>
+        
+        <p class="mt-4 text-base text-slate-900">
+          <strong>REPORT</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Includes general information about the whole template: subject, data about the author, default font and colors and margin settings. Children level elements are not included.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>HEADER</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Elements placed in this section will appear at the top (header) of each page. The following types can be included: ROW, VGAP, HLINE.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>DETAILS</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          It constantly fills up the available space with data. If necessary, automatically opens a new page. The header and footer areas are skipped. The following types can be included: ROW, VGAP, HLINE, HTML, DATAGRID.
+        </p>
+        
+        <p class="mt-4 text-base text-slate-900">
+          <strong>FOOTER</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Elements placed in this section will appear in the lower part (footer) of each page. The following types can be included: ROW, VGAP, HLINE.
+        </p>
+
+        <hr class="my-4 border-slate-300">
+
+        <p id="elements" class="mt-4 text-base text-slate-600">
+          Elements to be used:
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>ROW</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Horizontal logical group. The last element width extends up to the right margin.
+        </p>
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">CELL</code> Displays data with format setting options: font, color, background, alignment, frame, etc. The value may be provided directly and also in databind (see DATA) form.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">IMAGE</code>  jpg or png image, coded in base64 form. The value may be provided directly and also in databind (see DATA) form. It is possible to select and load an image file from a specific location. In this case the coding to base64 text format is done automatically by the program.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">BARCODE</code> Interleaved 2of5, Code 39, Code 128, EAN 8, EAN 13, QR
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">SEPARATOR</code> Vertical separator line.
+          </li>
+        </ul> 
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>VGAP</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Vertical gap.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>HLINE</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Horizontal line.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>HTML</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          The text specified here can include Basic HTML format elements (bold, italic, etc.).
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>DATAGRID</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Displays data in table format. The value cannot be provided directly, just in databind (see DATA) form.
+        </p>
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">COLUMN</code> displays settings of a table column (field)
+          </li>
+        </ul>
+
+        <hr class="my-4 border-slate-300">
+        
+        <p id="template-operations" class="mt-4 text-base text-slate-900">
+          <strong>Operations</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          It shows the relative location of the selected element on the page. With the commands here you can change its location, delete it or insert a new element.
+        </p>
+        <ul class="list-inside text-slate-600 pl-3">
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">PREVIOUS, NEXT</code> Move the selection to previous or next element.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">MOVE UP, MOVE DOWN</code> Move the selected element at its own level. It allows to modify the order of the child elements. If the element itself also contains child elements then those will be moved along.
+          </li>
+          <li class="mt-2">
+            <code class="text-black bg-white px-2 py-1 text-xs font-bold">DELETE, ADD ELEMENT</code> To delete the selected element or insert a child element under it.
+          </li>
+        </ul>
+
+        <h3 id="data" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          DATA
+        </h3>
+
+        <p class="mt-4 text-base text-slate-600">
+          The elements to be used can be classified into two types:
+        </p>
+        <ul class="list-inside list-disc text-slate-600 pl-3">
+          <li class="mt-2">
+            graphic element or grouping: ROW, SEPARATOR, VGAP, HLINE
+          </li>
+          <li class="mt-2">
+            element to display data: CELL, IMAGE, BARCODE, HTML, DATAGRID(COLUMN)
+          </li>
+        </ul>
+        <p class="mt-2 text-base text-slate-600">
+          From the latter group for CELL, IMAGE, BARCODE, HTML elements the data can be defined in two ways. Alternatively, you can simply specify a value for the corresponding attribute of the element (value, src, html) in the template. In this case the report will show exactly this value in the format corresponding to the element.
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          Most of the data presented in a report however are not like this. Usually we do not know exactly what will be the value of an element, we know only what kind of information we want to be displayed. In these cases you can use the <em>databind</em> variables.
+        </p>
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            For example, a customer name will depend on what client the report is prepared for. So, not an exact customer name should be entered in the field, but a code: head.0.custname. This is a variable, which will automatically be replaced by the program with a customer name when the data is displayed.
+          </p>
+        </div>
+        <p class="mt-2 text-base text-slate-600">
+          The program will always check if the given value corresponds to any data. If it does then the data will be used, otherwise the entered value itself.
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          The data may come from two different sources. One of them is representing the data which are provided automatically by the program. These were defined by using the Nervatura Report, but fall outside the Report Editor’s scope. Other source is the possibility to specify data in the Report Template section, these are then included in its DATA part.
+        </p>
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            The easiest way to find out what variables are available for a certain type of template (besides those specified in the DATA section) is to check the original sample templates.
+          </p>
+          <p class="mt-2">
+            The name of the variables everywhere follows the same logic. Some examples:
+          </p>
+          <ul class="list-inside list-disc text-slate-600 pl-3">
+            <li class="mt-2">
+              The base data related to a template type, such as a customer's name, customer's number, an invoice duedate or an employee's user name all will have an identifier starting with <strong>head</strong>: head.0.custname, head.0.custnumber, head.0.duedate, head.0.username.
+            </li>
+            <li class="mt-2">
+              The item lines of orders, invoices, delivery notes begin with name <strong>items</strong>. The first row of the net amount of an invoice will be items.0.netamount, the third row of the quantities on an order will be items.2.qty.
+            </li>
+            <li class="mt-2">
+              All contact details of a customer will start with <strong>contact</strong>, the city of the second address will be address.1.city.
+            </li>
+            <li class="mt-2">
+              The <strong>labels</strong> are special variables, can be found in each template and include the texts of the captions: labels.lb_customer_no, labels.lb_due_date, labels.lb_comment.
+            </li>
+          </ul>
+        </div>
+
+        <p class="mt-4 text-base text-slate-600">
+          The following types of variables can be defined:
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          <strong>TEXT</strong>
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          A simple variable name-text binding, where the variable name is entered the connected text will be displayed. The text can be a single word or longer section. For example, the pictures of the IMAGE element are usually also coded with this type in a text format.
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          The variable name must be unique within the template, with the same variable name two different data types mustn’t be defined!
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>LIST</strong>
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          If we group several TEXT variable pairs together and name the group, then we’ll get the LIST type. To an element of the LIST we can refer with list_name.value_name. Typical example of the LIST type data is the general group of labels.
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          The variable names in this case must be unique within the LIST, and the LIST name should not be given to anything else within the template.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>TABLE</strong>
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          If the LIST types are organized in an orderly sequenced new list and are given a name, we get the TABLE type. Here each row is made up of lists with same column name. An item can be referred to as table_name.list_index.value_name and one of its lines as table_name.list_index.
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          Most of the preset variables are defined this way. You can create this type also using the Report Editor, in this case the column names should be separated by commas when they are created and they can not be changed later.
+        </p>
+
+        <p class="mt-4 text-base text-slate-900">
+          <strong>Operations</strong>
+        </p>
+        <p class="mt-2 text-base text-slate-600">
+          <strong>NEW DATA, DELETE</strong> To create or delete a new databind.
+        </p>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            The modified templates can be saved to the database, but we recommend to make copies of original templates and save them under a new name.
+          </p>
+          <p class="mt-2">
+            If you would like to change the captions in a template, please do not modify the <strong>labels</strong> list field names! The program will always display this list with originally specified values.
+          </p>
+          <p class="mt-2">
+            Instead, create a new list called <strong>labels_de</strong> for example. Add to the list a new field with city name and then enter text Stadt. Replace the template’s <strong>labels.city</strong> value by <strong>labels_de.city</strong>. In the reports of such modified templates instead of City labels the Stadt name will be displayed.
+          </p>
+        </div>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            The data of logo images in the original templates can be found in the DATA section. The PNG and JPG type images must be specified in base64 text encoding. If you do not know how to encode these pictures in such formats, you can also do the following:
+          </p>
+          <p>
+            Find the IMAGE element in the template. With the loading button located here please specify the destination of the image file. After loading, the src field will contain the encoded version of the image. You can choose to leave this value here or can also copy the content to the logo (or differently named) variable of the DATA section. In this case, the src field of the IMAGE should be replaced with logo value.
+          </p>
+          <p class="mt-2">
+            If the template uses the image file only at one place, then there is no difference between the two solutions. If at several places, then the latter solution is more effective because the image data should be stored only once.
+          </p>
+        </div>
+
+        <div class="panel text-sm text-slate-600 bg-gray-50 border border-slate-200 p-4 rounded-lg mt-2">
+          <p>
+            The default templates are optimized to a smaller 25-30px size logo image file. Bigger images cannot be placed there with a simple replace. In these cases you might need to restructure the other elements of the template as well.
+          </p>
+          <p class="mt-2">
+            If you would not like to use a logo in the template, it can be deleted according to below instructions.
+          </p>
+          <ul class="list-inside list-disc text-slate-600 pl-3">
+            <li class="mt-2">
+              select the template in Setting-&gt;REPORT EDITOR
+            </li>
+            <li class="mt-2">
+              choose the options in following order: Edit-&gt;LIST-&gt;HEADER-&gt;ROW-&gt;IMAGE
+            </li>
+            <li class="mt-2">
+              select the MAP group and then press the DELETE button
+            </li>
+            <li class="mt-2">
+              choose the TEMPLATE group and with SAVE TEMPLATE button save the changes
+            </li>
+          </ul>
+          <p class="mt-2">
+            If you would like to keep also the original version, create a copy by using the CREATE FROM button in TEMPLATE group before making any changes!
+          </p>
+        </div>
+
+        <dl class="flex pt-6 mt-6 border-t border-slate-200">
+          <div class="mr-auto text-left">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Previous
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../client/" class="text-base font-semibold text-slate-900 hover:underline">
+                Nervatura Client
+              </a>
+            </dd>
+          </div>
+
+          <!-- <div class="ml-auto text-right">
+            <dt class="text-sm font-normal tracking-tight text-slate-600">
+              Next
+            </dt>
+
+            <dd class="mt-1">
+              <a href="../github/" class="text-base font-semibold text-slate-900 hover:underline">
+                Nervatura GitHub
+              </a>
+            </dd>
+          </div> -->
+        </dl>
+      </article>
+    </div>
+</main>
+</body>
+</html>

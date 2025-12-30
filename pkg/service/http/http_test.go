@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"path"
 	"testing"
 
 	cu "github.com/nervatura/component/pkg/util"
@@ -258,6 +259,7 @@ func TestFunction(t *testing.T) {
 		w http.ResponseWriter
 		r *http.Request
 	}
+	pdf_json, _ := st.Report.ReadFile(path.Join("template", "ntr_customer_en.json"))
 	tests := []struct {
 		name string
 		args args
@@ -276,6 +278,43 @@ func TestFunction(t *testing.T) {
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertFromReader: func(r io.Reader, v any) error {
 					return nil
+				},
+			},
+		},
+		{
+			name: "pdf response",
+			args: args{
+				w: httptest.NewRecorder(),
+				r: httptest.NewRequest("POST", "/function", bytes.NewBufferString(`{"name": "report_get", "values": {"report_id": 1}}`)),
+			},
+			ds: &api.DataStore{
+				Db: &md.TestDriver{
+					Config: cu.IM{
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
+						},
+						"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
+						},
+					},
+				},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				ConvertFromReader: func(r io.Reader, v any) error {
+					options := cu.IM{
+						"name": "report_get",
+						"values": cu.IM{
+							"report_key":  "ntr_customer_en",
+							"orientation": "portrait",
+							"size":        "a4",
+							"code":        "test",
+							"template":    string(pdf_json),
+							"filters":     cu.IM{},
+						},
+					}
+					return cu.ConvertToType(options, v)
+				},
+				ConvertFromByte: func(data []byte, result interface{}) error {
+					return cu.ConvertFromByte(data, result)
 				},
 			},
 		},
