@@ -459,6 +459,7 @@ type Project struct {
 
 type RateMeta struct {
 	RateValue float64 `json:"rate_value" jsonschema:"Rate value."`
+	Notes     string  `json:"notes" jsonschema:"Additional notes for the rate."`
 	// Additional tags for the rate
 	Tags []string `json:"tags" jsonschema:"Additional tags for the rate. The value is an array of strings. Example: [TAG1, TAG2]"`
 }

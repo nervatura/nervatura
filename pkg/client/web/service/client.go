@@ -71,6 +71,9 @@ var moduleMap = map[string]func(cls *ClientService) ServiceModule{
 	"setting": func(cls *ClientService) ServiceModule {
 		return NewSettingService(cls)
 	},
+	"rate": func(cls *ClientService) ServiceModule {
+		return NewRateService(cls)
+	},
 }
 
 func NewClientService(config cu.IM, appLog *slog.Logger, session *api.SessionService) *ClientService {
@@ -897,6 +900,9 @@ func (cls *ClientService) MainResponse(evt ct.ResponseEvent) (re ct.ResponseEven
 					"editor_title": client.Msg("trans_waybill_new"),
 					"editor_icon":  cp.TransTypeIcon("TRANS_WAYBILL"),
 				},
+				"office_rate": cu.MergeIM(params, cu.IM{
+					"module": "rate",
+				}),
 			}
 			if prm, found := prmMap[module]; found {
 				module = cu.ToString(prm["module"], "")

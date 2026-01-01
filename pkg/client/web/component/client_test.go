@@ -526,6 +526,26 @@ func TestClientComponent_SideBar(t *testing.T) {
 				"dirty": true,
 			},
 		},
+		{
+			name:      "rate_new",
+			moduleKey: "rate",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"rate": cu.IM{
+					"id": 0,
+				},
+			},
+		},
+		{
+			name:      "rate_edit",
+			moduleKey: "rate",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"rate": cu.IM{
+					"id": 1,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -671,6 +691,24 @@ func TestClientComponent_Editor(t *testing.T) {
 			viewName:   "shipping",
 			labels:     cu.SM{},
 			editorData: cu.IM{},
+		},
+		{
+			name:      "rate",
+			editorKey: "rate",
+			viewName:  "rate",
+			labels:    cu.SM{},
+			editorData: cu.IM{
+				"currencies": []cu.IM{
+					{
+						"code": "USD",
+					},
+				},
+				"places": []cu.IM{
+					{
+						"code": "123",
+					},
+				},
+			},
 		},
 		{
 			name:      "invalid",
@@ -1009,6 +1047,17 @@ func TestClientComponent_Form(t *testing.T) {
 			labels:    cu.SM{},
 			data: cu.IM{
 				"shipping": cu.IM{
+					"id": 1,
+				},
+			},
+		},
+		{
+			name:      "rate",
+			editorKey: "rate",
+			formKey:   "rate",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"rate": cu.IM{
 					"id": 1,
 				},
 			},

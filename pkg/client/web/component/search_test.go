@@ -1086,6 +1086,39 @@ func TestSearchConfig_Filter(t *testing.T) {
 			queryFilters: []string{},
 			want:         []string{"and (CAST(report_key as CHAR(255)) like '%123%')"},
 		},
+		{
+			name: "office_rate_id",
+			view: "office_rate",
+			filter: ct.BrowserFilter{
+				Field: "id",
+				Comp:  "==",
+				Value: "123",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (id = 123)"},
+		},
+		{
+			name: "office_rate_rate_date",
+			view: "office_rate",
+			filter: ct.BrowserFilter{
+				Field: "rate_date",
+				Comp:  "==",
+				Value: "2021-01-01",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (rate_date = '2021-01-01')"},
+		},
+		{
+			name: "office_rate_place_default",
+			view: "office_rate",
+			filter: ct.BrowserFilter{
+				Field: "default",
+				Comp:  "==",
+				Value: "abc",
+			},
+			queryFilters: []string{},
+			want:         []string{"and (CAST(default as CHAR(255)) like '%abc%')"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1706,6 +1739,19 @@ func TestSearchConfig_Query(t *testing.T) {
 			key:  "office_template_editor",
 			params: cu.IM{
 				"view": "office_template_editor",
+				"query": md.Query{
+					Filters: []md.Filter{
+						{Field: "id", Comp: "==", Value: 1},
+					},
+				},
+				"filters": []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}},
+			},
+		},
+		{
+			name: "office_rate",
+			key:  "office_rate",
+			params: cu.IM{
+				"view": "office_rate",
 				"query": md.Query{
 					Filters: []md.Filter{
 						{Field: "id", Comp: "==", Value: 1},

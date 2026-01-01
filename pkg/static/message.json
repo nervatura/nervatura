@@ -550,6 +550,17 @@
     "movement_movement_code": "Reference No.",
     "movement_transfer_error": "The warehouse and the target warehouse cannot be the same!",
 
+    "rate_title": "INTEREST AND RATE",
+    "rate_view": "Interest and Rate",
+    "rate_new": "New Rate",
+    "rate_code": "Rate No.",
+    "rate_type": "Rate Type",
+    "rate_date": "Rate Date",
+    "rate_account": "Account Name",
+    "rate_value": "Value",
+    "rate_tags": "Tags",
+    "rate_notes": "Notes",
+
     "office_title": "BACK OFFICE",
     "office_report_title": "REPORT",
     "office_report_queue_title": "REPORT QUEUE",

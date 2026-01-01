@@ -42,6 +42,7 @@ var editorMap = map[string]EditorInterface{
 	"setting":  &SettingEditor{},
 	"trans":    &TransEditor{},
 	"shipping": &ShippingEditor{},
+	"rate":     &RateEditor{},
 }
 
 var modalMap = map[string]func(labels cu.SM, data cu.IM) ct.Form{

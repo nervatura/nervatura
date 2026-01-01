@@ -1349,9 +1349,26 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			Filters: []any{},
 		},
 		"office_rate": {
-			Title:    labels["office_rate_title"],
-			Icon:     ct.IconGlobe,
-			Disabled: true,
+			Title:       labels["office_rate_title"],
+			Icon:        ct.IconGlobe,
+			Simple:      false,
+			ReadOnly:    false,
+			LabelAdd:    labels["rate_new"],
+			HideFilters: cu.IM{},
+			Fields: []ct.TableField{
+				{Name: "code", Label: labels["rate_code"]},
+				{Name: "rate_type", Label: labels["rate_type"]},
+				{Name: "rate_date", Label: labels["rate_date"], FieldType: ct.TableFieldTypeDate},
+				{Name: "place_code", Label: labels["place_code"]},
+				{Name: "place_name", Label: labels["rate_account"]},
+				{Name: "currency_code", Label: labels["currency_code"]},
+				{Name: "rate_value", Label: labels["rate_value"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "tag_lst", Label: labels["rate_tags"]},
+			},
+			VisibleColumns: cu.IM{
+				"code": true, "rate_type": true, "rate_date": true, "place_name": true, "currency_code": true, "rate_value": true, "tag_lst": true,
+			},
+			Filters: []any{},
 		},
 		"office_shortcut": {
 			Title:    labels["office_shortcut_title"],
@@ -1834,6 +1851,16 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 				Limit:   st.BrowserRowLimit,
 			}
 		},
+		"office_rate": func(editor string) md.Query {
+			return md.Query{
+				Fields: []string{
+					"r.*", "p.place_name as place_name",
+					"'" + cu.ToString(editor, "rate") + "' as editor", "r.id as editor_id", "'rate' as editor_view"},
+				From:    "rate_view r left join place p on r.place_code = p.code",
+				OrderBy: []string{"r.id"},
+				Limit:   st.BrowserRowLimit,
+			}
+		},
 	}
 	query = md.Query{}
 	editor := cu.ToString(params["editor"], "")
@@ -1984,6 +2011,9 @@ func (s *SearchConfig) Filter(view string, filter ct.BrowserFilter, queryFilters
 			return s.filterPlace(view, filter, queryFilters)
 		},
 		"office_template_editor": func() []string {
+			return s.filterOffice(view, filter, queryFilters)
+		},
+		"office_rate": func() []string {
 			return s.filterOffice(view, filter, queryFilters)
 		},
 	}
@@ -2449,6 +2479,19 @@ func (s *SearchConfig) filterOffice(view string, filter ct.BrowserFilter, queryF
 		"office_template_editor": func() []string {
 			return append(queryFilters,
 				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+		},
+		"office_rate": func() []string {
+			switch filter.Field {
+			case "id", "qty", "rate_value":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			case "rate_date":
+				return append(queryFilters,
+					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
+			default:
+				return append(queryFilters,
+					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
+			}
 		},
 	}
 	return result[view]()
