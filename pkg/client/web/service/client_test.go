@@ -2049,6 +2049,41 @@ func TestClientService_MainResponse(t *testing.T) {
 			},
 		},
 		{
+			name: "browser_editor_menu",
+			fields: fields{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Name: ct.ClientEventSideMenu,
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"key": "missing",
+									"form": cu.IM{
+										"key": "contacts",
+									},
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User: cu.IM{},
+						},
+					},
+					Value: "office_queue",
+				},
+			},
+		},
+		{
 			name: "form_change_delete_bookmark_error",
 			fields: fields{
 				Config: cu.IM{},

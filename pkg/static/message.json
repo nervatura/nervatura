@@ -563,11 +563,27 @@
 
     "office_title": "BACK OFFICE",
     "office_report_title": "REPORT",
-    "office_report_queue_title": "REPORT QUEUE",
+    "office_queue_title": "REPORT QUEUE",
     "office_template_editor_title": "TEMPLATE EDITOR",
     "office_rate_title": "INTEREST AND RATE",
     "office_shortcut_title": "SERVER SHORTCUT",
-    "office_log_title": "DATABASE LOG"
+    "office_log_title": "DATABASE LOG",
+
+    "queue_title": "REPORT QUEUE",
+    "queue_filters": "Options and data filter",
+    "queue_items": "Results list",
+    "queue_report_type": "Report Type",
+    "queue_start_date": "Start Date",
+    "queue_end_date": "End Date",
+    "queue_ref_code": "Reference Code",
+    "queue_orientation": "Orient.",
+    "queue_size": "Size",
+    "queue_search": "Search",
+    "queue_copies": "Copies",
+    "queue_time_stamp": "Created",
+    "queue_pdf": "Preview",
+    "queue_download": "Download",
+    "queue_delete": "Delete"
 
   }
 }

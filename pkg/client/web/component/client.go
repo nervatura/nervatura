@@ -33,16 +33,17 @@ type SearchInterface interface {
 }
 
 var editorMap = map[string]EditorInterface{
-	"customer": &CustomerEditor{},
-	"employee": &EmployeeEditor{},
-	"place":    &PlaceEditor{},
-	"product":  &ProductEditor{},
-	"project":  &ProjectEditor{},
-	"tool":     &ToolEditor{},
-	"setting":  &SettingEditor{},
-	"trans":    &TransEditor{},
-	"shipping": &ShippingEditor{},
-	"rate":     &RateEditor{},
+	"customer":     &CustomerEditor{},
+	"employee":     &EmployeeEditor{},
+	"place":        &PlaceEditor{},
+	"product":      &ProductEditor{},
+	"project":      &ProjectEditor{},
+	"tool":         &ToolEditor{},
+	"setting":      &SettingEditor{},
+	"trans":        &TransEditor{},
+	"shipping":     &ShippingEditor{},
+	"rate":         &RateEditor{},
+	"office_queue": &QueueEditor{},
 }
 
 var modalMap = map[string]func(labels cu.SM, data cu.IM) ct.Form{

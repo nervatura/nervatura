@@ -349,6 +349,7 @@ func ClientExportBrowser(w http.ResponseWriter, r *http.Request) {
 func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 	sessionID := r.PathValue("session_id")
 	output := cu.ToString(r.URL.Query().Get("output"), "pdf")
+	queueCode := cu.ToString(r.URL.Query().Get("queue"), "")
 	disposition := "attachment"
 	if cu.ToBoolean(r.URL.Query().Get("inline"), false) {
 		disposition = "inline"
@@ -363,17 +364,40 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modal := cu.ToIM(client.Data["modal"], cu.IM{})
-	modalData := cu.ToIM(modal["data"], cu.IM{})
-
+	options := cu.IM{}
 	ds := cs.NewDataStore(cs.Config, client.Ticket.Database, cs.AppLog)
-	options := cu.IM{
-		"report_key":  modalData["template"],
-		"orientation": modalData["orientation"],
-		"size":        modalData["paper_size"],
-		"code":        modalData["code"],
-		"output":      output,
-		"filters":     cu.IM{},
+
+	if queueCode != "" {
+		var rows []cu.IM = []cu.IM{}
+		if rows, err = ds.StoreDataQuery(md.Query{
+			Fields: []string{"*"}, From: "config_print_queue",
+			Filters: []md.Filter{
+				{Field: "code", Comp: "==", Value: queueCode},
+			},
+		}, true); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		options = cu.IM{
+			"report_key":  rows[0]["report_code"],
+			"orientation": rows[0]["orientation"],
+			"size":        rows[0]["paper_size"],
+			"code":        rows[0]["ref_code"],
+			"output":      output,
+			"filters":     cu.IM{},
+			"queue_id":    rows[0]["id"],
+		}
+	} else {
+		modal := cu.ToIM(client.Data["modal"], cu.IM{})
+		modalData := cu.ToIM(modal["data"], cu.IM{})
+		options = cu.IM{
+			"report_key":  modalData["template"],
+			"orientation": modalData["orientation"],
+			"size":        modalData["paper_size"],
+			"code":        modalData["code"],
+			"output":      output,
+			"filters":     cu.IM{},
+		}
 	}
 	results, err := ds.GetReport(options)
 	if err != nil {
@@ -383,7 +407,7 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", cu.ToString(results["content_type"], ""))
 	w.Header().Set("Content-Disposition",
-		disposition+";filename="+fmt.Sprintf("%s.%s", cu.ToString(modalData["code"], ""), output))
+		disposition+";filename="+fmt.Sprintf("%s.%s", cu.ToString(options["code"], ""), output))
 	if cu.ToString(results["content_type"], "") == "application/pdf" {
 		w.Write(results["template"].([]uint8))
 		return

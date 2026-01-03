@@ -88,7 +88,7 @@ CREATE VIEW config_print_queue AS
     data->>"$.orientation" AS orientation,
     data->>"$.paper_size" AS paper_size,
     data->>"$.auth_code" AS auth_code,
-    data->>"$.time_stamp" AS time_stamp
+    time_stamp
   FROM config
   WHERE config_type = 'CONFIG_PRINT_QUEUE' AND deleted = false;
 

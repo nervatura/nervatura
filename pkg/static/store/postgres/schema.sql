@@ -183,7 +183,7 @@ CREATE OR REPLACE VIEW config_print_queue AS
     data->>'ref_type' AS ref_type, data->>'ref_code' AS ref_code,
     cast(data->>'qty' AS FLOAT) AS qty, data->>'report_code' AS report_code,
     data->>'orientation' AS orientation, data->>'paper_size' AS paper_size,
-	  data->>'auth_code' AS auth_code, data->>'time_stamp' AS time_stamp
+	  data->>'auth_code' AS auth_code, time_stamp
   FROM config
   WHERE config_type = 'CONFIG_PRINT_QUEUE' AND deleted = false;
 

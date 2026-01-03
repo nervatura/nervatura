@@ -615,6 +615,8 @@ func TestClientExportModalReport(t *testing.T) {
 	req1 := httptest.NewRequest("GET", "/session/export/report/modal/SessionID?output=pdf&inline=true", nil)
 	req2 := httptest.NewRequest("GET", "/session/export/report/modal/SessionID?output=pdf", nil)
 	req2.SetPathValue("session_id", "SessionID")
+	req3 := httptest.NewRequest("GET", "/session/export/report/modal/SessionID?output=pdf&queue=QUEUE_CODE", nil)
+	req3.SetPathValue("session_id", "SessionID")
 	ses1 := &api.SessionService{
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
@@ -692,6 +694,36 @@ func TestClientExportModalReport(t *testing.T) {
 				},
 				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
 					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_CSV"}}}, nil
+				},
+			},
+		},
+		{
+			name:    "ok_pdf_queue",
+			w:       httptest.NewRecorder(),
+			r:       req3,
+			session: ses1,
+			config: cu.IM{
+				"NT_ALIAS_TEST": "test",
+				"Query": func(queries []md.Query) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF", "template": string(pdf_json)}}}, nil
+				},
+				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
+				},
+			},
+		},
+		{
+			name:    "error_pdf_queue",
+			w:       httptest.NewRecorder(),
+			r:       req3,
+			session: ses1,
+			config: cu.IM{
+				"NT_ALIAS_TEST": "test",
+				"Query": func(queries []md.Query) ([]cu.IM, error) {
+					return []cu.IM{}, errors.New("error")
+				},
+				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
 				},
 			},
 		},

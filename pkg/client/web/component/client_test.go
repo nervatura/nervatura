@@ -546,6 +546,18 @@ func TestClientComponent_SideBar(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:      "office_queue",
+			moduleKey: "office_queue",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"print_queue": []cu.IM{
+					{
+						"id": 1,
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -706,6 +718,32 @@ func TestClientComponent_Editor(t *testing.T) {
 				"places": []cu.IM{
 					{
 						"code": "123",
+					},
+				},
+			},
+		},
+		{
+			name:      "office_queue",
+			editorKey: "office_queue",
+			viewName:  "office_queue",
+			labels:    cu.SM{},
+			editorData: cu.IM{
+				"print_queue": []cu.IM{
+					{
+						"id": 1,
+					},
+				},
+			},
+		},
+		{
+			name:      "office_queue_items",
+			editorKey: "office_queue",
+			viewName:  "items",
+			labels:    cu.SM{},
+			editorData: cu.IM{
+				"print_queue": []cu.IM{
+					{
+						"id": 1,
 					},
 				},
 			},
@@ -1063,6 +1101,19 @@ func TestClientComponent_Form(t *testing.T) {
 			},
 		},
 		{
+			name:      "office_queue",
+			editorKey: "office_queue",
+			formKey:   "office_queue",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"print_queue": []cu.IM{
+					{
+						"id": 1,
+					},
+				},
+			},
+		},
+		{
 			name:      "invalid",
 			editorKey: "invalid",
 		},
@@ -1158,6 +1209,18 @@ func TestClientComponent_Modal(t *testing.T) {
 				"trans_types":       []string{md.TransTypeOrder.String(), md.TransTypeInvoice.String(), md.TransTypeReceipt.String()},
 				"create_trans_type": md.TransTypeInvoice.String(),
 				"next":              "trans_create",
+			},
+		},
+		{
+			name:    "office_queue",
+			formKey: "office_queue",
+			labels:  cu.SM{},
+			data: cu.IM{
+				"print_queue": []cu.IM{
+					{
+						"id": 1,
+					},
+				},
 			},
 		},
 		{

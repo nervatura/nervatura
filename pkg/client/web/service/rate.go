@@ -97,9 +97,6 @@ func (s *RateService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err e
 	case ct.FormEventOK:
 		return s.formNext(evt)
 
-	case ct.ClientEventForm:
-		return evt, nil
-
 	case ct.ClientEventSideMenu:
 		return s.sideMenu(evt)
 

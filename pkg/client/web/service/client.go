@@ -71,6 +71,9 @@ var moduleMap = map[string]func(cls *ClientService) ServiceModule{
 	"setting": func(cls *ClientService) ServiceModule {
 		return NewSettingService(cls)
 	},
+	"office_queue": func(cls *ClientService) ServiceModule {
+		return NewQueueService(cls)
+	},
 	"rate": func(cls *ClientService) ServiceModule {
 		return NewRateService(cls)
 	},
@@ -834,6 +837,13 @@ func (cls *ClientService) mainResponseModuleEvent(evt ct.ResponseEvent, nextKey 
 	state, stateKey, stateData := client.GetStateData()
 
 	moduleKey := cu.ToString(nextKey, stateKey)
+	value := cu.ToString(evt.Value, "")
+	if slices.Contains([]string{"office_queue"}, value) {
+		return cls.setEditor(evt, value, cu.IM{
+			"editor_view": value,
+			"session_id":  client.Ticket.SessionID,
+		})
+	}
 	if values, ok := evt.Value.(cu.IM); ok && cu.ToString(values["name"], "") == "bookmark" {
 		if cu.ToString(values["event"], "") == "list_delete" {
 			return cls.deleteBookmark(evt)
