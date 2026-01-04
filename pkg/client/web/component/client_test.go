@@ -559,12 +559,27 @@ func TestClientComponent_SideBar(t *testing.T) {
 			},
 		},
 		{
-			name:      "shortcut",
+			name:      "shortcut_list",
+			moduleKey: "office_shortcut",
+			labels:    cu.SM{},
+			data: cu.IM{
+				"shortcut": cu.IM{},
+				"result":   "",
+				"params":   cu.IM{},
+			},
+		},
+		{
+			name:      "shortcut_url",
 			moduleKey: "office_shortcut",
 			labels:    cu.SM{},
 			data: cu.IM{
 				"shortcut": cu.IM{
-					"id": 1,
+					"address": "https://www.google.com",
+					"method":  md.ShortcutMethodGET.String(),
+				},
+				"result": "",
+				"params": cu.IM{
+					"q": "test",
 				},
 			},
 		},
@@ -765,11 +780,52 @@ func TestClientComponent_Editor(t *testing.T) {
 			labels:    cu.SM{},
 			editorData: cu.IM{
 				"shortcut": cu.IM{},
+				"result":   "",
+				"params":   cu.IM{},
 				"config_values": []cu.IM{
 					{
 						"id": 1,
 					},
 				},
+			},
+		},
+		{
+			name:      "office_shortcut_params",
+			editorKey: "office_shortcut",
+			viewName:  "shortcut",
+			labels:    cu.SM{},
+			editorData: cu.IM{
+				"shortcut": cu.IM{
+					"fields": []cu.IM{
+						{
+							"field_name":  "field_name",
+							"field_type":  md.ShortcutFieldBool.String(),
+							"description": "Demo Bool",
+						},
+						{
+							"field_name":  "field_name2",
+							"field_type":  md.ShortcutFieldInteger.String(),
+							"description": "Demo Integer",
+						},
+						{
+							"field_name":  "field_name3",
+							"field_type":  md.ShortcutFieldNumber.String(),
+							"description": "Demo Number",
+						},
+						{
+							"field_name":  "field_name4",
+							"field_type":  md.ShortcutFieldDate.String(),
+							"description": "Demo Date",
+						},
+						{
+							"field_name":  "field_name5",
+							"field_type":  md.ShortcutFieldString.String(),
+							"description": "Demo String",
+						},
+					},
+				},
+				"result": "",
+				"params": cu.IM{},
 			},
 		},
 		{
@@ -779,8 +835,36 @@ func TestClientComponent_Editor(t *testing.T) {
 			labels:    cu.SM{},
 			editorData: cu.IM{
 				"shortcut": cu.IM{
-					"result": "123",
+					"fields": []cu.IM{
+						{
+							"field_name":  "field_name",
+							"field_type":  md.ShortcutFieldBool.String(),
+							"description": "Demo Bool",
+						},
+						{
+							"field_name":  "field_name2",
+							"field_type":  md.ShortcutFieldInteger.String(),
+							"description": "Demo Integer",
+						},
+						{
+							"field_name":  "field_name3",
+							"field_type":  md.ShortcutFieldNumber.String(),
+							"description": "Demo Number",
+						},
+						{
+							"field_name":  "field_name4",
+							"field_type":  md.ShortcutFieldDate.String(),
+							"description": "Demo Date",
+						},
+						{
+							"field_name":  "field_name5",
+							"field_type":  md.ShortcutFieldString.String(),
+							"description": "Demo String",
+						},
+					},
 				},
+				"result": "123",
+				"params": cu.IM{},
 			},
 		},
 		{
@@ -1300,25 +1384,6 @@ func TestClientComponent_Modal(t *testing.T) {
 							"field_name":  "field_name",
 							"field_type":  md.ShortcutFieldString.String(),
 							"description": "Demo String",
-						},
-					},
-				},
-			},
-		},
-		{
-			name:    "office_shortcut_url",
-			formKey: "shortcut",
-			labels:  cu.SM{},
-			data: cu.IM{
-				"url": "https://www.google.com",
-				"shortcut": cu.IM{
-					"address": "https://www.google.com",
-					"method":  md.ShortcutMethodGET.String(),
-					"fields": []cu.IM{
-						{
-							"field_name":  "field_name",
-							"field_type":  md.ShortcutFieldBool.String(),
-							"description": "Demo Bool",
 						},
 					},
 				},

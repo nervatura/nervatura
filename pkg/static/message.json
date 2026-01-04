@@ -589,8 +589,10 @@
     "queue_pdf": "Preview",
     "queue_download": "Download",
     "queue_delete": "Delete",
+
+    "shortcut_title": "Shortcut list",
     "shortcut_result": "Result data",
-    "shortcut_recall": "Recall last",
+    "shortcut_call": "Call shortcut",
     "shortcut_reset": "Reset"
   }
 }

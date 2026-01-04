@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"net/url"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -27,10 +26,9 @@ func (s *ShortcutService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 	user := cu.ToIM(client.Ticket.User, cu.IM{})
 
 	data = cu.IM{
-		"shortcut": cu.IM{
-			"data":   cu.IM{},
-			"result": "",
-		},
+		"shortcut":      cu.IM{},
+		"params":        cu.IM{},
+		"result":        "",
 		"config_values": cu.IM{},
 		"user":          user,
 		"editor_icon":   ct.IconShare,
@@ -53,100 +51,30 @@ func (s *ShortcutService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 
 func (s *ShortcutService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	switch evt.Name {
-	case ct.FormEventOK:
-		return s.formNext(evt)
 
 	case ct.ClientEventSideMenu:
 		return s.sideMenu(evt)
-
-	case ct.FormEventChange:
-		return s.formEventChange(evt)
 
 	default:
 		return s.editorField(evt)
 	}
 }
 
-func (s *ShortcutService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
-	client := evt.Trigger.(*ct.Client)
-	_, _, stateData := client.GetStateData()
-
-	menuMap := map[string]func() (re ct.ResponseEvent, err error){
-		"editor_cancel": func() (re ct.ResponseEvent, err error) {
-			client.ResetEditor()
-			return evt, err
-		},
-		"shortcut_recall": func() (re ct.ResponseEvent, err error) {
-			shortcut := cu.ToIM(stateData["shortcut"], cu.IM{})
-			shortcutData := cu.ToIM(shortcut["data"], cu.IM{})
-			client.SetForm("shortcut", shortcutData, 0, true)
-			return evt, err
-		},
-		"shortcut_reset": func() (re ct.ResponseEvent, err error) {
-			stateData["shortcut"] = cu.IM{
-				"data":   cu.IM{},
-				"result": "",
-			}
-			return evt, err
-		},
-	}
-
-	if fn, ok := menuMap[cu.ToString(evt.Value, "")]; ok {
-		return fn()
-	}
-
-	return evt, err
-}
-
-func (s *ShortcutService) formEventChange(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
-	client := evt.Trigger.(*ct.Client)
-
-	frmValues := cu.ToIM(evt.Value, cu.IM{})
-	frmData := cu.ToIM(frmValues["data"], cu.IM{})
-
-	fieldName := cu.ToString(frmValues["name"], "")
-	value := cu.ToString(frmValues["value"], "")
-	params := cu.ToIM(frmData["params"], cu.IM{})
-	params[fieldName] = value
-	frmData["params"] = params
-	urlParams := url.Values{}
-	for key, pvalue := range params {
-		urlParams.Set(key, cu.ToString(pvalue, ""))
-	}
-	rowData := cu.ToIM(frmData["shortcut"], cu.IM{})
-	frmData["url"] = cu.ToString(rowData["address"], "") + "?" + urlParams.Encode()
-
-	client.SetForm("shortcut", frmData, 0, true)
-
-	return evt, err
-}
-
-func (s *ShortcutService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+func (s *ShortcutService) callData(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
 	ds := s.cls.getDataStore(client.Ticket.Database)
 
-	frmValues := cu.ToIM(evt.Value, cu.IM{})
-	frmData := cu.ToIM(frmValues["data"], cu.IM{})
+	shortcut := cu.ToIM(stateData["shortcut"], cu.IM{})
+	params := cu.ToIM(stateData["params"], cu.IM{})
 
-	shortcut := cu.ToIM(frmData["shortcut"], cu.IM{})
-	params := cu.ToIM(frmValues["value"], cu.IM{})
-	frmData["params"] = params
-
-	stateData["shortcut"] = cu.IM{
-		"data":   frmData,
-		"result": "",
-	}
-
-	url := cu.ToString(frmData["url"], "")
+	url := cu.ToString(shortcut["address"], "")
 	if url == "" {
 		var response any
 		if response, err = ds.Function(cu.ToString(shortcut["func_name"], ""), params); err == nil {
 			var jsonStr []byte
 			if jsonStr, err = s.formatJson(response, "", "  "); err == nil {
-				stateData["shortcut"] = cu.MergeIM(cu.ToIM(stateData["shortcut"], cu.IM{}), cu.IM{
-					"result": string(jsonStr),
-				})
+				stateData["result"] = string(jsonStr)
 			}
 		}
 		return evt, err
@@ -158,33 +86,61 @@ func (s *ShortcutService) formNext(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 	}
 	var result []byte
 	if result, err = ds.MakeRequest("POST", url, body, cu.SM{}); err == nil {
-		stateData["shortcut"] = cu.MergeIM(cu.ToIM(stateData["shortcut"], cu.IM{}), cu.IM{
-			"result": string(result),
-		})
+		stateData["result"] = string(result)
 	}
+	return evt, err
+}
+
+func (s *ShortcutService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
+	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
+
+	menuMap := map[string]func() (re ct.ResponseEvent, err error){
+		"editor_cancel": func() (re ct.ResponseEvent, err error) {
+			client.ResetEditor()
+			return evt, err
+		},
+		"shortcut_call": func() (re ct.ResponseEvent, err error) {
+			return s.callData(evt)
+		},
+		"shortcut_list": func() (re ct.ResponseEvent, err error) {
+			stateData["shortcut"] = cu.IM{}
+			stateData["result"] = ""
+			stateData["params"] = cu.IM{}
+			return evt, err
+		},
+		"shortcut_reset": func() (re ct.ResponseEvent, err error) {
+			stateData["result"] = ""
+			return evt, err
+		},
+	}
+
+	if fn, ok := menuMap[cu.ToString(evt.Value, "")]; ok {
+		return fn()
+	}
+
 	return evt, err
 }
 
 func (s *ShortcutService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
+	_, _, stateData := client.GetStateData()
 
 	values := cu.ToIM(evt.Value, cu.IM{})
 	fieldName := cu.ToString(values["name"], "")
-	value := cu.ToIM(values["value"], cu.IM{})
-	row := cu.ToIM(value["row"], cu.IM{})
-	rowData := cu.ToIM(row["data"], cu.IM{})
 
 	switch fieldName {
 	case "shortcut":
-		modal := cu.IM{
-			"title":    cu.ToString(rowData["description"], ""),
-			"icon":     ct.IconShare,
-			"next":     "call_shortcut",
-			"shortcut": rowData,
-			"url":      cu.ToString(rowData["address"], ""),
-			"params":   cu.IM{},
-		}
-		client.SetForm("shortcut", modal, 0, true)
+		value := cu.ToIM(values["value"], cu.IM{})
+		row := cu.ToIM(value["row"], cu.IM{})
+		rowData := cu.ToIM(row["data"], cu.IM{})
+		stateData["shortcut"] = rowData
+		stateData["result"] = ""
+		stateData["params"] = cu.IM{}
+	default:
+		params := cu.ToIM(stateData["params"], cu.IM{})
+		params[fieldName] = cu.ToString(values["value"], "")
+		stateData["params"] = params
 	}
 	return evt, err
 }

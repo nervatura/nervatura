@@ -72,9 +72,6 @@ var modalMap = map[string]func(labels cu.SM, data cu.IM) ct.Form{
 	"trans_create": func(labels cu.SM, data cu.IM) ct.Form {
 		return modalTransCreate(labels, data)
 	},
-	"shortcut": func(labels cu.SM, data cu.IM) ct.Form {
-		return modalShortcut(labels, data)
-	},
 }
 
 type ClientComponent struct {

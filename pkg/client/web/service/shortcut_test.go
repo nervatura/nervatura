@@ -148,119 +148,7 @@ func TestShortcutService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "side_shortcut_recall",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
-						Config: config,
-						AppLog: appLog,
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{
-							"editor": cu.IM{
-								"shortcut": cu.IM{"id": 12345},
-							},
-						},
-					},
-				},
-				Name:  ct.ClientEventSideMenu,
-				Value: "shortcut_recall",
-			},
-			wantErr: false,
-		},
-		{
-			name: "side_shortcut_reset",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
-						Config: config,
-						AppLog: appLog,
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{
-							"editor": cu.IM{
-								"shortcut": cu.IM{"id": 12345},
-							},
-						},
-					},
-				},
-				Name:  ct.ClientEventSideMenu,
-				Value: "shortcut_reset",
-			},
-			wantErr: false,
-		},
-		{
-			name: "side_invalid_menu",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
-						Config: config,
-						AppLog: appLog,
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{
-							"editor": cu.IM{
-								"shortcut": cu.IM{"id": 12345},
-							},
-						},
-					},
-				},
-				Name:  ct.ClientEventSideMenu,
-				Value: "invalid_menu",
-			},
-			wantErr: false,
-		},
-		{
-			name: "call_own_ok",
-			cls: &ClientService{
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
-					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
-						Config: config,
-						AppLog: appLog,
-					}
-				},
-			},
-			evt: ct.ResponseEvent{
-				Trigger: &ct.Client{
-					BaseComponent: ct.BaseComponent{
-						Data: cu.IM{
-							"editor": cu.IM{
-								"shortcut": cu.IM{},
-							},
-						},
-					},
-				},
-				Name:  ct.FormEventOK,
-				Value: cu.IM{"data": cu.IM{"shortcut": cu.IM{"func_name": "test"}, "url": ""}, "value": cu.IM{}},
-			},
-			wantErr: false,
-		},
-		{
-			name: "call_external_ok",
+			name: "side_shortcut_call_external",
 			cls: &ClientService{
 				Config: cu.IM{},
 				AppLog: slog.Default(),
@@ -297,21 +185,19 @@ func TestShortcutService_Response(t *testing.T) {
 					BaseComponent: ct.BaseComponent{
 						Data: cu.IM{
 							"editor": cu.IM{
-								"shortcut": cu.IM{},
+								"shortcut": cu.IM{"address": "https://www.google.com", "method": md.ShortcutMethodGET.String()},
+								"params":   cu.IM{"q": "test"},
 							},
 						},
 					},
 				},
-				Name: ct.FormEventOK,
-				Value: cu.IM{"data": cu.IM{"shortcut": cu.IM{"func_name": "test"}, "url": "https://www.google.com"},
-					"value": cu.IM{
-						"field_name": "field_name",
-					}},
+				Name:  ct.ClientEventSideMenu,
+				Value: "shortcut_call",
 			},
 			wantErr: false,
 		},
 		{
-			name: "form_change",
+			name: "side_shortcut_call_own",
 			cls: &ClientService{
 				Config: cu.IM{},
 				AppLog: slog.Default(),
@@ -328,14 +214,99 @@ func TestShortcutService_Response(t *testing.T) {
 					BaseComponent: ct.BaseComponent{
 						Data: cu.IM{
 							"editor": cu.IM{
-								"shortcut": cu.IM{},
+								"shortcut": cu.IM{"func_name": "test"},
 							},
 						},
 					},
 				},
-				Name:  ct.FormEventChange,
-				Value: cu.IM{"data": cu.IM{}, "value": cu.IM{}},
+				Name:  ct.ClientEventSideMenu,
+				Value: "shortcut_call",
 			},
+			wantErr: false,
+		},
+		{
+			name: "side_shortcut_reset",
+			cls: &ClientService{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			evt: ct.ResponseEvent{
+				Trigger: &ct.Client{
+					BaseComponent: ct.BaseComponent{
+						Data: cu.IM{
+							"editor": cu.IM{
+								"shortcut": cu.IM{"id": 12345},
+							},
+						},
+					},
+				},
+				Name:  ct.ClientEventSideMenu,
+				Value: "shortcut_reset",
+			},
+			wantErr: false,
+		},
+		{
+			name: "side_shortcut_list",
+			cls: &ClientService{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			evt: ct.ResponseEvent{
+				Trigger: &ct.Client{
+					BaseComponent: ct.BaseComponent{
+						Data: cu.IM{
+							"editor": cu.IM{
+								"shortcut": cu.IM{"id": 12345},
+							},
+						},
+					},
+				},
+				Name:  ct.ClientEventSideMenu,
+				Value: "shortcut_list",
+			},
+			wantErr: false,
+		},
+		{
+			name: "side_invalid_menu",
+			cls: &ClientService{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+					}
+				},
+			},
+			evt: ct.ResponseEvent{
+				Trigger: &ct.Client{
+					BaseComponent: ct.BaseComponent{
+						Data: cu.IM{
+							"editor": cu.IM{
+								"shortcut": cu.IM{"id": 12345},
+							},
+						},
+					},
+				},
+				Name:  ct.ClientEventSideMenu,
+				Value: "invalid_menu",
+			},
+			wantErr: false,
 		},
 		{
 			name: "list_event_call_shortcut",
@@ -372,6 +343,39 @@ func TestShortcutService_Response(t *testing.T) {
 							},
 						},
 					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "params",
+			cls: &ClientService{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+					}
+				},
+			},
+			evt: ct.ResponseEvent{
+				Trigger: &ct.Client{
+					BaseComponent: ct.BaseComponent{
+						Data: cu.IM{
+							"editor": cu.IM{
+								"shortcut": cu.IM{},
+							},
+						},
+					},
+				},
+				Name: ct.EditorEventField,
+				Value: cu.IM{"name": "params",
+					"value": "value",
 				},
 			},
 			wantErr: false,
