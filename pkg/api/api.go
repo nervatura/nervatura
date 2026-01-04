@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -10,7 +11,6 @@ import (
 	"os"
 	"slices"
 	"strings"
-	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
 	drv "github.com/nervatura/nervatura/v6/pkg/driver"
@@ -51,14 +51,14 @@ type DataStore struct {
 	ConvertFromReader      func(data io.Reader, result interface{}) error
 	ConvertToType          func(data interface{}, result any) (err error)
 	GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-	NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-	RequestDo              func(req *http.Request) (*http.Response, error)
 	CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 	ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 	CreatePasswordHash     func(password string) (hash string, err error)
 	ComparePasswordAndHash func(password string, hash string) (err error)
 	ReadFile               func(name string) ([]byte, error)
 	NewSmtpClient          func(conn net.Conn, host string) (md.SmtpClient, error)
+	NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
+	RequestDo              func(req *http.Request) (*http.Response, error)
 }
 
 func NewDataStore(config cu.IM, alias string, appLog *slog.Logger) *DataStore {
@@ -72,8 +72,6 @@ func NewDataStore(config cu.IM, alias string, appLog *slog.Logger) *DataStore {
 		ConvertFromByte:        cu.ConvertFromByte,
 		ConvertFromReader:      cu.ConvertFromReader,
 		GetDataField:           ut.GetDataField,
-		NewRequest:             http.NewRequest,
-		RequestDo:              (&http.Client{Timeout: time.Second * 20}).Do,
 		CreatePasswordHash:     ut.CreatePasswordHash,
 		ComparePasswordAndHash: ut.ComparePasswordAndHash,
 		ConvertToType:          ut.ConvertToType,
@@ -81,6 +79,8 @@ func NewDataStore(config cu.IM, alias string, appLog *slog.Logger) *DataStore {
 		ParseToken:             ut.ParseToken,
 		ReadFile:               os.ReadFile,
 		NewSmtpClient:          ut.SmtpClient,
+		NewRequest:             http.NewRequest,
+		RequestDo:              http.DefaultClient.Do,
 	}
 	if db, found := ds.Config["db"].(DataDriver); found {
 		ds.Db = db
@@ -418,4 +418,23 @@ func (ds *DataStore) GetData(query md.Query, result any) (err error) {
 		}
 	}
 	return err
+}
+
+func (ds *DataStore) MakeRequest(method, url string, body []byte, headers cu.SM) (result []byte, err error) {
+	var req *http.Request
+	if req, err = ds.NewRequest(method, url, bytes.NewReader(body)); err == nil {
+		for key, hvalue := range headers {
+			req.Header[key] = []string{hvalue}
+		}
+
+		var res *http.Response
+		if res, err = ds.RequestDo(req); err == nil {
+			defer res.Body.Close()
+			if res.Body != nil {
+				result, err = ds.ReadAll(res.Body)
+			}
+		}
+	}
+
+	return result, err
 }

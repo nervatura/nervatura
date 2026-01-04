@@ -38,6 +38,7 @@
     "theme_light": "Light",
     "placeholder_search": "Search",
     "placeholder_filter": "Filter",
+    "unknown_method": "Unknown method",
 
     "bookmark_new": "New bookmark",
     "bookmark_enter": "Enter bookmark name",
@@ -200,6 +201,10 @@
     "setting_shortcut_func_name": "Function Name",
     "setting_shortcut_address": "Address",
     "setting_shortcut_field": "Input Field",
+    "setting_shortcut_field_field_name": "Field Name",
+    "setting_shortcut_field_description": "Description",
+    "setting_shortcut_field_field_type": "Field Type",
+    "setting_shortcut_field_order": "Order",
 
     "setting_shortcut": "MENU SHORTCUT",
     "setting_template": "REPORT TEMPLATE",
@@ -583,7 +588,9 @@
     "queue_time_stamp": "Created",
     "queue_pdf": "Preview",
     "queue_download": "Download",
-    "queue_delete": "Delete"
-
+    "queue_delete": "Delete",
+    "shortcut_result": "Result data",
+    "shortcut_recall": "Recall last",
+    "shortcut_reset": "Reset"
   }
 }

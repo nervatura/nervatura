@@ -1371,9 +1371,8 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			Filters: []any{},
 		},
 		"office_shortcut": {
-			Title:    labels["office_shortcut_title"],
-			Icon:     ct.IconShare,
-			Disabled: true,
+			Title: labels["office_shortcut_title"],
+			Icon:  ct.IconShare,
 		},
 		"office_log": {
 			Title:    labels["office_log_title"],

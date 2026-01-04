@@ -288,7 +288,7 @@ func (e *SettingEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Ro
 							"delete_item":         true,
 						},
 					}},
-				}, Full: true, BorderBottom: false},
+				}, Full: true, BorderBottom: true},
 			}
 		},
 		"auth": func() []ct.Row {

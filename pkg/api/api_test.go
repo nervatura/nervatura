@@ -5,7 +5,9 @@ import (
 	"errors"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	cu "github.com/nervatura/component/pkg/util"
@@ -52,8 +54,6 @@ func TestDataStore_SetError(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -111,8 +111,6 @@ func TestDataStore_SetError(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -157,8 +155,6 @@ func TestDataStore_checkConnection(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -243,8 +239,6 @@ func TestDataStore_checkConnection(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -269,8 +263,6 @@ func TestDataStore_StoreDataUpdate(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -373,8 +365,6 @@ func TestDataStore_StoreDataUpdate(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -401,8 +391,6 @@ func TestDataStore_StoreDataQuery(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -482,8 +470,6 @@ func TestDataStore_StoreDataQuery(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -510,8 +496,6 @@ func TestDataStore_StoreDataQueries(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -589,8 +573,6 @@ func TestDataStore_StoreDataQueries(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -617,8 +599,6 @@ func TestDataStore_StoreDataGet(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -715,8 +695,6 @@ func TestDataStore_StoreDataGet(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -743,8 +721,6 @@ func TestDataStore_GetBodyData(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -849,8 +825,6 @@ func TestDataStore_GetBodyData(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -877,8 +851,6 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -976,8 +948,6 @@ func TestDataStore_SetUpdateValue(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -1004,8 +974,6 @@ func TestDataStore_MergeMetaData(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -1073,8 +1041,6 @@ func TestDataStore_MergeMetaData(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -1101,8 +1067,6 @@ func TestDataStore_GetDataByID(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -1169,8 +1133,6 @@ func TestDataStore_GetDataByID(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -1197,8 +1159,6 @@ func TestDataStore_UpdateData(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -1326,8 +1286,6 @@ func TestDataStore_UpdateData(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -1352,8 +1310,6 @@ func TestDataStore_DataDelete(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -1423,8 +1379,6 @@ func TestDataStore_DataDelete(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -1449,8 +1403,6 @@ func TestDataStore_GetData(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -1517,8 +1469,6 @@ func TestDataStore_GetData(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -1526,6 +1476,97 @@ func TestDataStore_GetData(t *testing.T) {
 			}
 			if err := ds.GetData(tt.args.query, tt.args.result); (err != nil) != tt.wantErr {
 				t.Errorf("DataStore.GetData() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestDataStore_MakeRequest(t *testing.T) {
+	type fields struct {
+		Db                     DataDriver
+		Alias                  string
+		Config                 cu.IM
+		AppLog                 *slog.Logger
+		ReadAll                func(r io.Reader) ([]byte, error)
+		ConvertToByte          func(data interface{}) ([]byte, error)
+		ConvertFromByte        func(data []byte, result interface{}) error
+		ConvertFromReader      func(data io.Reader, result interface{}) error
+		ConvertToType          func(data interface{}, result any) (err error)
+		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
+		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
+		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
+		CreatePasswordHash     func(password string) (hash string, err error)
+		ComparePasswordAndHash func(password string, hash string) (err error)
+		ReadFile               func(name string) ([]byte, error)
+		NewSmtpClient          func(conn net.Conn, host string) (md.SmtpClient, error)
+		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
+		RequestDo              func(req *http.Request) (*http.Response, error)
+	}
+	type args struct {
+		method  string
+		url     string
+		body    []byte
+		headers cu.SM
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				NewRequest: func(method, url string, body io.Reader) (*http.Request, error) {
+					return httptest.NewRequest("POST", "/", nil), nil
+				},
+				RequestDo: func(req *http.Request) (*http.Response, error) {
+					json := `{"code": 0, "message": "success"}`
+					recorder := httptest.NewRecorder()
+					recorder.Header().Add("Content-Type", "application/json")
+					recorder.WriteString(json)
+					expectedResponse := recorder.Result()
+					return expectedResponse, nil
+				},
+				ReadAll: func(r io.Reader) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+			args: args{
+				method:  "POST",
+				url:     "http://api.com",
+				body:    []byte{},
+				headers: cu.SM{"content-type": "application/json", "accept": "application/json"},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ds := &DataStore{
+				Db:                     tt.fields.Db,
+				Alias:                  tt.fields.Alias,
+				Config:                 tt.fields.Config,
+				AppLog:                 tt.fields.AppLog,
+				ReadAll:                tt.fields.ReadAll,
+				ConvertToByte:          tt.fields.ConvertToByte,
+				ConvertFromByte:        tt.fields.ConvertFromByte,
+				ConvertFromReader:      tt.fields.ConvertFromReader,
+				ConvertToType:          tt.fields.ConvertToType,
+				GetDataField:           tt.fields.GetDataField,
+				CreateLoginToken:       tt.fields.CreateLoginToken,
+				ParseToken:             tt.fields.ParseToken,
+				CreatePasswordHash:     tt.fields.CreatePasswordHash,
+				ComparePasswordAndHash: tt.fields.ComparePasswordAndHash,
+				ReadFile:               tt.fields.ReadFile,
+				NewSmtpClient:          tt.fields.NewSmtpClient,
+				NewRequest:             tt.fields.NewRequest,
+				RequestDo:              tt.fields.RequestDo,
+			}
+			_, err := ds.MakeRequest(tt.args.method, tt.args.url, tt.args.body, tt.args.headers)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DataStore.MakeRequest() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
 		})
 	}

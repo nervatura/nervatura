@@ -77,6 +77,9 @@ var moduleMap = map[string]func(cls *ClientService) ServiceModule{
 	"rate": func(cls *ClientService) ServiceModule {
 		return NewRateService(cls)
 	},
+	"office_shortcut": func(cls *ClientService) ServiceModule {
+		return NewShortcutService(cls)
+	},
 }
 
 func NewClientService(config cu.IM, appLog *slog.Logger, session *api.SessionService) *ClientService {
@@ -838,7 +841,7 @@ func (cls *ClientService) mainResponseModuleEvent(evt ct.ResponseEvent, nextKey 
 
 	moduleKey := cu.ToString(nextKey, stateKey)
 	value := cu.ToString(evt.Value, "")
-	if slices.Contains([]string{"office_queue"}, value) {
+	if slices.Contains([]string{"office_queue", "office_shortcut"}, value) {
 		return cls.setEditor(evt, value, cu.IM{
 			"editor_view": value,
 			"session_id":  client.Ticket.SessionID,

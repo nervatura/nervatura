@@ -6,7 +6,6 @@ import (
 	"io"
 	"log/slog"
 	"net"
-	"net/http"
 	"testing"
 
 	cu "github.com/nervatura/component/pkg/util"
@@ -25,8 +24,6 @@ func TestDataStore_ProductPrice(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -197,8 +194,6 @@ func TestDataStore_ProductPrice(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
@@ -228,8 +223,6 @@ func TestDataStore_Function(t *testing.T) {
 		ConvertFromReader      func(data io.Reader, result interface{}) error
 		ConvertToType          func(data interface{}, result any) (err error)
 		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
-		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
-		RequestDo              func(req *http.Request) (*http.Response, error)
 		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
 		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
 		CreatePasswordHash     func(password string) (hash string, err error)
@@ -340,8 +333,6 @@ func TestDataStore_Function(t *testing.T) {
 				ConvertFromReader:      tt.fields.ConvertFromReader,
 				ConvertToType:          tt.fields.ConvertToType,
 				GetDataField:           tt.fields.GetDataField,
-				NewRequest:             tt.fields.NewRequest,
-				RequestDo:              tt.fields.RequestDo,
 				CreateLoginToken:       tt.fields.CreateLoginToken,
 				ParseToken:             tt.fields.ParseToken,
 				CreatePasswordHash:     tt.fields.CreatePasswordHash,
