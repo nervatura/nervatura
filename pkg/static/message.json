@@ -567,11 +567,10 @@
     "rate_notes": "Notes",
 
     "office_title": "BACK OFFICE",
-    "office_report_title": "REPORT",
     "office_queue_title": "REPORT QUEUE",
     "office_template_editor_title": "TEMPLATE EDITOR",
     "office_rate_title": "INTEREST AND RATE",
-    "office_shortcut_title": "SERVER SHORTCUT",
+    "office_shortcut_title": "DATA EXPORT",
     "office_log_title": "DATABASE LOG",
 
     "queue_title": "REPORT QUEUE",
@@ -590,9 +589,11 @@
     "queue_download": "Download",
     "queue_delete": "Delete",
 
-    "shortcut_title": "Shortcut list",
+    "shortcut_title": "CSV reports and server shortcuts",
+    "shortcut_list": "Back to list",
     "shortcut_result": "Result data",
     "shortcut_call": "Call shortcut",
-    "shortcut_reset": "Reset"
+    "shortcut_reset": "Reset",
+    "shortcut_report": "Download CSV"
   }
 }

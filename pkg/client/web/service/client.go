@@ -368,9 +368,9 @@ func (cls *ClientService) showReportSelector(evt ct.ResponseEvent, refType, code
 		"paper_size":    cu.ToString(userConfig["paper_size"], st.DefaultPaperSize),
 		"copy":          1,
 		"auth_code":     cu.ToString(client.Ticket.User["code"], ""),
-		"url_pdf":       fmt.Sprintf(st.ClientPath+"/session/export/report/modal/%s?output=pdf&inline=true", client.Ticket.SessionID),
-		"url_export":    fmt.Sprintf(st.ClientPath+"/session/export/report/modal/%s?output=pdf", client.Ticket.SessionID),
-		"url_xml":       fmt.Sprintf(st.ClientPath+"/session/export/report/modal/%s?output=xml", client.Ticket.SessionID),
+		"url_pdf":       fmt.Sprintf(st.ClientPath+"/session/export/report/%s?output=pdf&inline=true", client.Ticket.SessionID),
+		"url_export":    fmt.Sprintf(st.ClientPath+"/session/export/report/%s?output=pdf", client.Ticket.SessionID),
+		"url_xml":       fmt.Sprintf(st.ClientPath+"/session/export/report/%s?output=xml", client.Ticket.SessionID),
 		"next":          "report_queue",
 	}
 	if len(configReport) > 0 {

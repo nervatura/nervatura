@@ -136,7 +136,7 @@ func (s *QueueEditor) CustomTemplateCell(sessionID string, label, inline string)
 			LinkStyle: ct.LinkStyleDefault,
 			Label:     label,
 			//Icon:       ct.IconEdit,
-			Href:       fmt.Sprintf(st.ClientPath+"/session/export/report/modal/%s?output=pdf&inline=%s&queue=%s", sessionID, inline, cu.ToString(row["code"], "")),
+			Href:       fmt.Sprintf(st.ClientPath+"/session/export/report/%s?output=pdf&inline=%s&queue=%s", sessionID, inline, cu.ToString(row["code"], "")),
 			LinkTarget: "_blank",
 		}
 		res, _ := lnk.Render()

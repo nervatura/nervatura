@@ -796,6 +796,7 @@ func TestClientComponent_Editor(t *testing.T) {
 			labels:    cu.SM{},
 			editorData: cu.IM{
 				"shortcut": cu.IM{
+					"lstype": "report",
 					"fields": []cu.IM{
 						{
 							"field_name":  "field_name",

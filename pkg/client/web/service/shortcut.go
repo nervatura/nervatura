@@ -2,10 +2,12 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
 type ShortcutService struct {
@@ -26,25 +28,50 @@ func (s *ShortcutService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 	user := cu.ToIM(client.Ticket.User, cu.IM{})
 
 	data = cu.IM{
-		"shortcut":      cu.IM{},
-		"params":        cu.IM{},
-		"result":        "",
-		"config_values": cu.IM{},
-		"user":          user,
-		"editor_icon":   ct.IconShare,
-		"editor_title":  client.Msg("office_shortcut_title"),
+		"shortcut":     cu.IM{},
+		"params":       cu.IM{},
+		"result":       "",
+		"items":        []cu.IM{},
+		"user":         user,
+		"editor_icon":  ct.IconShare,
+		"editor_title": client.Msg("office_shortcut_title"),
 	}
 
+	var items []cu.IM = []cu.IM{}
 	var rows []cu.IM = []cu.IM{}
+
 	if rows, err = ds.StoreDataQuery(md.Query{
-		Fields: []string{"*"}, From: "config",
+		Fields: []string{"*"}, From: "config_shortcut",
+	}, false); err != nil {
+		return data, err
+	}
+	for _, row := range rows {
+		items = append(items, cu.MergeIM(row,
+			cu.IM{
+				"lstype":  "shortcut",
+				"lslabel": cu.ToString(row["shortcut_key"], ""),
+				"lsvalue": cu.ToString(row["description"], ""),
+			}))
+	}
+
+	if rows, err = ds.StoreDataQuery(md.Query{
+		Fields: []string{"*"}, From: "config_report",
 		Filters: []md.Filter{
-			{Field: "config_type", Comp: "==", Value: md.ConfigTypeShortcut.String()},
+			{Field: "report_type", Comp: "==", Value: "REPORT"},
+			{Field: "file_type", Comp: "==", Value: md.FileTypeCSV.String()},
 		},
 	}, false); err != nil {
 		return data, err
 	}
-	data["config_values"] = rows
+	for _, row := range rows {
+		items = append(items, cu.MergeIM(row,
+			cu.IM{
+				"lstype":  "report",
+				"lslabel": cu.ToString(row["report_name"], ""),
+				"lsvalue": cu.ToString(row["description"], ""),
+			}))
+	}
+	data["items"] = items
 
 	return data, err
 }
@@ -122,6 +149,34 @@ func (s *ShortcutService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 	return evt, err
 }
 
+func (s *ShortcutService) shortcutItem(row cu.IM, sessionID string) (item cu.IM) {
+	if lstype := cu.ToString(row["lstype"], ""); lstype == "shortcut" {
+		return row
+	}
+	template := cu.ToString(row["template"], "")
+	var report cu.IM = cu.IM{}
+	var fields []cu.IM = []cu.IM{}
+	var err error
+	if err = cu.ConvertFromByte([]byte(template), &report); err == nil {
+		reportFields := cu.ToIM(report["fields"], cu.IM{})
+		for key, values := range reportFields {
+			values := cu.ToIM(values, cu.IM{})
+			fields = append(fields, cu.IM{
+				"field_name":  key,
+				"description": cu.ToString(values["description"], ""),
+				"field_type":  cu.ToString(values["fieldtype"], ""),
+				"required":    (cu.ToString(values["wheretype"], "") == "in"),
+				"order":       cu.ToInteger(values["orderby"], 0),
+			})
+		}
+	}
+	item = cu.MergeIM(row, cu.IM{
+		"url":    fmt.Sprintf(st.ClientPath+"/session/export/report/%s?output=export", sessionID),
+		"fields": fields,
+	})
+	return item
+}
+
 func (s *ShortcutService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
@@ -133,8 +188,7 @@ func (s *ShortcutService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent
 	case "shortcut":
 		value := cu.ToIM(values["value"], cu.IM{})
 		row := cu.ToIM(value["row"], cu.IM{})
-		rowData := cu.ToIM(row["data"], cu.IM{})
-		stateData["shortcut"] = rowData
+		stateData["shortcut"] = s.shortcutItem(row, client.Ticket.SessionID)
 		stateData["result"] = ""
 		stateData["params"] = cu.IM{}
 	default:

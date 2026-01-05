@@ -92,6 +92,43 @@ func TestShortcutService_Data(t *testing.T) {
 			params:  cu.IM{},
 			wantErr: true,
 		},
+		{
+			name: "report_error",
+			cls: &ClientService{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db: &md.TestDriver{Config: cu.IM{
+							"Query": func(queries []md.Query) ([]cu.IM, error) {
+								if queries[0].From == "config_report" {
+									return nil, errors.New("error")
+								}
+								return []cu.IM{{"id": 1}}, nil
+							},
+						}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToType: func(data interface{}, result any) (err error) {
+							return nil
+						},
+					}
+				},
+			},
+			evt: ct.ResponseEvent{
+				Trigger: &ct.Client{
+					BaseComponent: ct.BaseComponent{
+						Data: cu.IM{},
+					},
+					Ticket: ct.Ticket{
+						Database: "test",
+						User:     cu.IM{},
+					},
+				},
+			},
+			params:  cu.IM{},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -338,9 +375,47 @@ func TestShortcutService_Response(t *testing.T) {
 				Value: cu.IM{"name": "shortcut",
 					"value": cu.IM{
 						"row": cu.IM{
-							"data": cu.IM{
-								"func_name": "test",
+							"func_name": "test",
+							"lstype":    "shortcut",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "list_event_call_report",
+			cls: &ClientService{
+				Config: cu.IM{},
+				AppLog: slog.Default(),
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						Db:     &md.TestDriver{Config: cu.IM{}},
+						Config: config,
+						AppLog: appLog,
+						ConvertToByte: func(data interface{}) ([]byte, error) {
+							return []byte{}, nil
+						},
+					}
+				},
+			},
+			evt: ct.ResponseEvent{
+				Trigger: &ct.Client{
+					BaseComponent: ct.BaseComponent{
+						Data: cu.IM{
+							"editor": cu.IM{
+								"shortcut": cu.IM{},
 							},
+						},
+					},
+				},
+				Name: ct.EditorEventField,
+				Value: cu.IM{"name": "shortcut",
+					"value": cu.IM{
+						"row": cu.IM{
+							"report_key": "test",
+							"lstype":     "report",
+							"template":   "{\"fields\": {\"field_1\": {\"description\": \"field_1_description\", \"field_type\": \"field_type_1\"}}}",
 						},
 					},
 				},

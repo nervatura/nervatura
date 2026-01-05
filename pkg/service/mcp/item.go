@@ -261,28 +261,32 @@ func calcItemPrice(ctx context.Context, inputData cu.IM) (data cu.IM, err error)
 	}
 
 	var netAmount, vatAmount, amount, fxPrice float64
-	switch inputType {
-	case "FX_PRICE":
-		fxPrice = inputAmount
-		netAmount = roundFloat(fxPrice*(1-discount/100)*qty, digit)
-		vatAmount = roundFloat(fxPrice*(1-discount/100)*qty*rate, digit)
-		amount = roundFloat(netAmount+vatAmount, digit)
-
-	case "NET_AMOUNT":
-		netAmount = inputAmount
-		if qty != 0 {
-			fxPrice = roundFloat(netAmount/(1-discount/100)/qty, digit)
-			vatAmount = roundFloat(netAmount*rate, digit)
-		}
-		amount = roundFloat(netAmount+vatAmount, digit)
-
-	case "AMOUNT":
-		amount = inputAmount
-		if qty != 0 {
-			netAmount = roundFloat(amount/(1+rate), digit)
-			vatAmount = roundFloat(amount-netAmount, digit)
-			fxPrice = roundFloat(netAmount/(1-discount/100)/qty, digit)
-		}
+	typeMap := map[string]func(){
+		"FX_PRICE": func() {
+			fxPrice = inputAmount
+			netAmount = roundFloat(fxPrice*(1-discount/100)*qty, digit)
+			vatAmount = roundFloat(fxPrice*(1-discount/100)*qty*rate, digit)
+			amount = roundFloat(netAmount+vatAmount, digit)
+		},
+		"NET_AMOUNT": func() {
+			netAmount = inputAmount
+			if qty != 0 {
+				fxPrice = roundFloat(netAmount/(1-discount/100)/qty, digit)
+				vatAmount = roundFloat(netAmount*rate, digit)
+			}
+			amount = roundFloat(netAmount+vatAmount, digit)
+		},
+		"AMOUNT": func() {
+			amount = inputAmount
+			if qty != 0 {
+				netAmount = roundFloat(amount/(1+rate), digit)
+				vatAmount = roundFloat(amount-netAmount, digit)
+				fxPrice = roundFloat(netAmount/(1-discount/100)/qty, digit)
+			}
+		},
+	}
+	if fn, ok := typeMap[inputType]; ok {
+		fn()
 	}
 
 	return cu.IM{

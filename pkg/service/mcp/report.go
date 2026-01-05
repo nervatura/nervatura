@@ -46,7 +46,7 @@ func ReportSchema() (ms *ModelSchema) {
 					"report_key": {Type: "string",
 						Description: fmt.Sprintf("The unique key of the %s report template. If not specified, the default report template will be used. Example: ntr_invoice_en", scope),
 						Examples:    []any{`ntr_invoice_en`, `ntr_customer_en`}},
-					"output": {Type: "string", Enum: []any{"base64", "xml", "pdf"},
+					"output": {Type: "string", Enum: []any{"base64", "xml", "pdf", "auto"},
 						Description: "The output format",
 						Examples:    []any{`base64`, `xml`, `pdf`},
 						Default:     []byte(`"base64"`)},
@@ -136,7 +136,7 @@ func reportQueryHandler(ctx context.Context, req *mcp.CallToolRequest, parameter
 		baseURL := cu.ToString(config["NT_PUBLIC_HOST"], "")
 		response = cu.IM{
 			"content_type": "application/pdf",
-			"data":         fmt.Sprintf(baseURL+st.ClientPath+"/session/export/report/modal/%s?output=%s&inline=%s", sessionID, output, cu.ToString(parameters["inline"], "true")),
+			"data":         fmt.Sprintf(baseURL+st.ClientPath+"/session/export/report/%s?output=%s&inline=%s", sessionID, output, cu.ToString(parameters["inline"], "true")),
 		}
 		clientData := ct.Client{
 			Ticket: ct.Ticket{

@@ -168,7 +168,6 @@ func (s *SearchConfig) SideGroups(labels cu.SM) []md.SideGroup {
 			Name:  "group_office",
 			Label: labels["office_title"],
 			Views: []string{
-				//"office_report",
 				"office_rate", "office_queue", "office_template_editor", "office_shortcut", "office_log",
 			},
 			AuthFilter: md.AuthFilterOffice.String(),
@@ -1315,11 +1314,6 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				"place_name": true, "subject": true, "start_time": true, "end_time": true, "place": true, "tag_lst": true,
 			},
 			Filters: []any{},
-		},
-		"office_report": {
-			Title:    labels["office_report_title"],
-			Icon:     ct.IconChartBar,
-			Disabled: true,
 		},
 		"office_queue": {
 			Title: labels["office_queue_title"],

@@ -611,12 +611,14 @@ func TestClientExportBrowser(t *testing.T) {
 	}
 }
 
-func TestClientExportModalReport(t *testing.T) {
-	req1 := httptest.NewRequest("GET", "/session/export/report/modal/SessionID?output=pdf&inline=true", nil)
-	req2 := httptest.NewRequest("GET", "/session/export/report/modal/SessionID?output=pdf", nil)
+func TestClientExportReport(t *testing.T) {
+	req1 := httptest.NewRequest("GET", "/session/export/report/SessionID?output=pdf&inline=true", nil)
+	req2 := httptest.NewRequest("GET", "/session/export/report/SessionID?output=pdf", nil)
 	req2.SetPathValue("session_id", "SessionID")
-	req3 := httptest.NewRequest("GET", "/session/export/report/modal/SessionID?output=pdf&queue=QUEUE_CODE", nil)
+	req3 := httptest.NewRequest("GET", "/session/export/report/SessionID?output=pdf&queue=QUEUE_CODE", nil)
 	req3.SetPathValue("session_id", "SessionID")
+	req4 := httptest.NewRequest("GET", "/session/export/report/SessionID?output=export", nil)
+	req4.SetPathValue("session_id", "SessionID")
 	ses1 := &api.SessionService{
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
@@ -632,6 +634,12 @@ func TestClientExportModalReport(t *testing.T) {
 		},
 		BaseComponent: ct.BaseComponent{
 			Data: cu.IM{
+				"editor": cu.IM{
+					"shortcut": cu.IM{
+						"report_key": "test",
+					},
+					"params": cu.IM{},
+				},
 				"modal": cu.IM{
 					"data": cu.IM{
 						"template":    "test",
@@ -671,6 +679,21 @@ func TestClientExportModalReport(t *testing.T) {
 			name:    "ok_pdf",
 			w:       httptest.NewRecorder(),
 			r:       req2,
+			session: ses1,
+			config: cu.IM{
+				"NT_ALIAS_TEST": "test",
+				"Query": func(queries []md.Query) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF", "template": string(pdf_json)}}}, nil
+				},
+				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
+				},
+			},
+		},
+		{
+			name:    "ok_export",
+			w:       httptest.NewRecorder(),
+			r:       req4,
 			session: ses1,
 			config: cu.IM{
 				"NT_ALIAS_TEST": "test",
@@ -750,7 +773,7 @@ func TestClientExportModalReport(t *testing.T) {
 				},
 				UI: cp.NewClientComponent(),
 			})
-			ClientExportModalReport(tt.w, tt.r.WithContext(ctx))
+			ClientExportReport(tt.w, tt.r.WithContext(ctx))
 		})
 	}
 }

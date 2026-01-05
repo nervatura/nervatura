@@ -1425,7 +1425,7 @@ JSON_OBJECT());
 INSERT INTO config(config_type, data) 
 VALUES('CONFIG_SHORTCUT', json_object(
   'shortcut_key','google',
-  'description', 'Internet URL example',
+  'description', 'Internet GET URL shortcut example',
   'modul', '', 'icon', '', 'method', 'METHOD_GET',
   'func_name', 'search',
   'address', 'https://www.google.com/search',
@@ -1433,6 +1433,24 @@ VALUES('CONFIG_SHORTCUT', json_object(
     json_object(
       'field_name', 'q', 'description', 'google search',
       'field_type', 'SHORTCUT_STRING', 'order', 0
+    )
+  )
+));
+INSERT INTO config(config_type, data) 
+VALUES('CONFIG_SHORTCUT', json_object(
+  'shortcut_key','price',
+  'description', 'Price POST shortcut example. Returns the price of a product in a specific currency.',
+  'modul', '', 'icon', '', 'method', 'METHOD_POST',
+  'func_name', 'product_price',
+  'address', '',
+  'fields', json_array(
+    json_object(
+      'field_name', 'currency_code', 'description', 'Currency code. Example: EUR',
+      'field_type', 'SHORTCUT_STRING', 'order', 0
+    ),
+    json_object(
+      'field_name', 'product_code', 'description', 'Product code. Example: PRD0000000000N1',
+      'field_type', 'SHORTCUT_STRING', 'order', 1
     )
   )
 ));

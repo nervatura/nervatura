@@ -470,7 +470,7 @@ func (s *httpServer) clientUIRoutes() http.Handler {
 
 	clientMux.HandleFunc("GET /session/{session_id}", src.ClientSession)
 	clientMux.HandleFunc("GET /session/export/browser/{session_id}", src.ClientExportBrowser)
-	clientMux.HandleFunc("GET /session/export/report/modal/{session_id}", src.ClientExportModalReport)
+	clientMux.HandleFunc("GET /session/export/report/{session_id}", src.ClientExportReport)
 	clientMux.HandleFunc("POST /session/event", src.ClientSessionEvent)
 
 	return http.StripPrefix(st.ClientPath, clientMux)

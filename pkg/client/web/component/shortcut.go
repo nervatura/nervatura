@@ -2,6 +2,7 @@ package component
 
 import (
 	"net/url"
+	"strings"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -20,6 +21,7 @@ func (e *ShortcutEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 	shortcut := cu.ToIM(data["shortcut"], cu.IM{})
 	result := cu.ToString(data["result"], "")
 	params := cu.ToIM(data["params"], cu.IM{})
+	lstype := cu.ToString(shortcut["lstype"], "")
 	urlLink := (cu.ToString(shortcut["method"], "") == md.ShortcutMethodGET.String()) && (cu.ToString(shortcut["address"], "") != "")
 
 	items = []ct.SideBarItem{
@@ -35,7 +37,7 @@ func (e *ShortcutEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 		&ct.SideBarElement{
 			Name:     "shortcut_list",
 			Value:    "shortcut_list",
-			Label:    labels["shortcut_title"],
+			Label:    labels["shortcut_list"],
 			Icon:     ct.IconListUl,
 			Disabled: len(shortcut) == 0,
 		},
@@ -47,7 +49,18 @@ func (e *ShortcutEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 			Icon:     ct.IconUndo,
 			Disabled: result == "",
 		},
-		&ct.SideBarSeparator{},
+		&ct.SideBarElementLink{
+			SideBarElement: ct.SideBarElement{
+				Name:     "shortcut_report",
+				Value:    "shortcut_report",
+				Label:    labels["shortcut_report"],
+				Icon:     ct.IconDownload,
+				Disabled: lstype != "report",
+			},
+			Href: cu.ToString(shortcut["url"], ""),
+			//Download:   fmt.Sprintf("%s.csv", cu.ToString(shortcut["report_key"], "")),
+			LinkTarget: "_blank",
+		},
 	}
 
 	if urlLink {
@@ -61,7 +74,7 @@ func (e *ShortcutEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 				Value:    "shortcut_call",
 				Label:    labels["shortcut_call"],
 				Icon:     ct.IconShare,
-				Disabled: len(shortcut) == 0,
+				Disabled: lstype != "shortcut",
 			},
 			Href: cu.ToString(shortcut["address"], "") + "?" + urlParams.Encode(),
 			//Download:   fmt.Sprintf("declaration_%s.pdf", cu.ToString(submission["id"], "")),
@@ -73,7 +86,7 @@ func (e *ShortcutEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 			Value:    "shortcut_call",
 			Label:    labels["shortcut_call"],
 			Icon:     ct.IconShare,
-			Disabled: len(shortcut) == 0,
+			Disabled: lstype != "shortcut",
 		})
 	}
 	return items
@@ -81,19 +94,25 @@ func (e *ShortcutEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 
 func (e *ShortcutEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	shortcut := cu.ToIM(data["shortcut"], cu.IM{})
-	return []ct.EditorView{
+	views = []ct.EditorView{
 		{
 			Key:   "office_shortcut",
-			Label: cu.ToString(shortcut["description"], labels["shortcut_title"]),
+			Label: cu.ToString(shortcut["lslabel"], labels["shortcut_title"]),
 			Icon:  ct.IconShare,
 		},
 	}
+	if cu.ToString(shortcut["lstype"], "") == "report" {
+		views[0].Icon = ct.IconChartBar
+	}
+	return views
 }
 
 func (e *ShortcutEditor) fieldTypeMap(field, params cu.IM) ct.Field {
 	fieldName := cu.ToString(field["field_name"], "")
-	switch cu.ToString(field["field_type"], "") {
-	case md.ShortcutFieldBool.String():
+	fieldType := strings.TrimPrefix(strings.ToLower(cu.ToString(field["field_type"], "")), "shortcut_")
+	required := cu.ToBoolean(field["required"], false)
+	switch fieldType {
+	case "bool":
 		return ct.Field{
 			Type: ct.FieldTypeBool,
 			Value: cu.IM{
@@ -101,7 +120,7 @@ func (e *ShortcutEditor) fieldTypeMap(field, params cu.IM) ct.Field {
 				"value": cu.ToBoolean(params[fieldName], false),
 			},
 		}
-	case md.ShortcutFieldInteger.String():
+	case "integer":
 		return ct.Field{
 			Type: ct.FieldTypeInteger,
 			Value: cu.IM{
@@ -109,7 +128,7 @@ func (e *ShortcutEditor) fieldTypeMap(field, params cu.IM) ct.Field {
 				"value": cu.ToInteger(params[fieldName], 0),
 			},
 		}
-	case md.ShortcutFieldNumber.String():
+	case "number":
 		return ct.Field{
 			Type: ct.FieldTypeNumber,
 			Value: cu.IM{
@@ -117,20 +136,22 @@ func (e *ShortcutEditor) fieldTypeMap(field, params cu.IM) ct.Field {
 				"value": cu.ToFloat(params[fieldName], 0),
 			},
 		}
-	case md.ShortcutFieldDate.String():
+	case "date":
 		return ct.Field{
 			Type: ct.FieldTypeDate,
 			Value: cu.IM{
-				"name":  fieldName,
-				"value": cu.ToString(params[fieldName], ""),
+				"name": fieldName,
+				//"value":   cu.ToString(params[fieldName], ""),
+				"is_null": true,
 			},
 		}
 	default:
 		return ct.Field{
 			Type: ct.FieldTypeString,
 			Value: cu.IM{
-				"name":  fieldName,
-				"value": cu.ToString(params[fieldName], ""),
+				"name":    fieldName,
+				"value":   cu.ToString(params[fieldName], ""),
+				"invalid": required,
 			},
 		}
 	}
@@ -161,7 +182,16 @@ func (e *ShortcutEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 	}
 
 	if len(shortcut) > 0 {
-		rows = []ct.Row{}
+		rows = []ct.Row{
+			{Columns: []ct.RowColumn{
+				{
+					Label: cu.ToString(shortcut["lsvalue"], ""),
+					Value: ct.Field{
+						Type: ct.FieldTypeLabel,
+					},
+				},
+			}, Full: true, BorderBottom: true},
+		}
 		fields := cu.ToIMA(shortcut["fields"], []cu.IM{})
 		ut.SortIMData(fields, "order")
 		row := ct.Row{Columns: []ct.RowColumn{}, Full: true, BorderBottom: true}
@@ -179,13 +209,7 @@ func (e *ShortcutEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 		return rows
 	}
 
-	configValues := cu.ToIMA(data["config_values"], []cu.IM{})
-	mapRows := []cu.IM{}
-	for _, row := range configValues {
-		configMap := cu.ToIM(row["data"], cu.IM{})
-		mapRows = append(mapRows, cu.MergeIM(row,
-			cu.IM{"lslabel": cu.ToString(configMap["shortcut_key"], ""), "lsvalue": cu.ToString(configMap["description"], "")}))
-	}
+	items := cu.ToIMA(data["items"], []cu.IM{})
 	return []ct.Row{
 		{Columns: []ct.RowColumn{
 			{Value: ct.Field{
@@ -195,7 +219,7 @@ func (e *ShortcutEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 				Type: ct.FieldTypeList,
 				Value: cu.IM{
 					"name":                "shortcut",
-					"rows":                mapRows,
+					"rows":                items,
 					"pagination":          ct.PaginationTypeTop,
 					"page_size":           10,
 					"hide_paginaton_size": true,
@@ -203,7 +227,7 @@ func (e *ShortcutEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 					"filter_placeholder":  labels["placeholder_filter"],
 					"add_item":            false,
 					"edit_item":           true,
-					"edit_icon":           ct.IconShare,
+					"edit_icon":           ct.IconCog,
 					"delete_item":         false,
 				},
 			}},

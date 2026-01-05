@@ -346,7 +346,7 @@ func ClientExportBrowser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
+func ClientExportReport(w http.ResponseWriter, r *http.Request) {
 	sessionID := r.PathValue("session_id")
 	output := cu.ToString(r.URL.Query().Get("output"), "pdf")
 	queueCode := cu.ToString(r.URL.Query().Get("queue"), "")
@@ -355,6 +355,17 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 		disposition = "inline"
 	}
 	cs := r.Context().Value(md.ClientServiceCtxKey).(*cls.ClientService)
+
+	inputType := func() string {
+		if queueCode != "" {
+			return "queue"
+		}
+		if output == "export" {
+			output = "auto"
+			return "export"
+		}
+		return "report"
+	}
 
 	var client *ct.Client
 	var err error
@@ -367,7 +378,8 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 	options := cu.IM{}
 	ds := cs.NewDataStore(cs.Config, client.Ticket.Database, cs.AppLog)
 
-	if queueCode != "" {
+	switch inputType() {
+	case "queue":
 		var rows []cu.IM = []cu.IM{}
 		if rows, err = ds.StoreDataQuery(md.Query{
 			Fields: []string{"*"}, From: "config_print_queue",
@@ -387,7 +399,21 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 			"filters":     cu.IM{},
 			"queue_id":    rows[0]["id"],
 		}
-	} else {
+
+	case "export":
+		editor := cu.ToIM(client.Data["editor"], cu.IM{})
+		shortcut := cu.ToIM(editor["shortcut"], cu.IM{})
+		params := cu.ToIM(editor["params"], cu.IM{})
+		output = "csv"
+
+		options = cu.IM{
+			"report_key": cu.ToString(shortcut["report_key"], ""),
+			"code":       cu.ToString(shortcut["report_key"], ""),
+			"output":     output,
+			"filters":    params,
+		}
+
+	default:
 		modal := cu.ToIM(client.Data["modal"], cu.IM{})
 		modalData := cu.ToIM(modal["data"], cu.IM{})
 		options = cu.IM{
@@ -399,6 +425,7 @@ func ClientExportModalReport(w http.ResponseWriter, r *http.Request) {
 			"filters":     cu.IM{},
 		}
 	}
+
 	results, err := ds.GetReport(options)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
