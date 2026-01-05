@@ -658,6 +658,16 @@ func transMainFooterRow(trans md.Trans, labels cu.SM, _ cu.IM) (rows []ct.Row) {
 					"rows":  4,
 				},
 			}},
+			{Label: labels["trans_report_notes"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "report_notes_" + cu.ToString(trans.Id, ""),
+				},
+				Type: ct.FieldTypeText, Value: cu.IM{
+					"name":  "report_notes",
+					"value": trans.TransMeta.ReportNotes,
+					"rows":  4,
+				},
+			}},
 		}, Full: true, BorderBottom: true},
 	}
 	return rows

@@ -432,6 +432,7 @@
     "trans_status": "Status",
     "trans_state": "State",
     "trans_internal_notes": "Internal Notes",
+    "trans_report_notes": "Report Notes",
     "trans_tax_free": "Tax-free",
     "trans_paid": "Paid",
     "trans_paid_invoice": "Paid",

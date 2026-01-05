@@ -2042,6 +2042,11 @@ func (s *TransService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 			return resultUpdate(cu.IM{"dirty": true})
 		},
 
+		"report_notes": func() (re ct.ResponseEvent, err error) {
+			transMeta[fieldName] = value
+			return resultUpdate(cu.IM{"dirty": true})
+		},
+
 		"worksheet_distance": func() (re ct.ResponseEvent, err error) {
 			transMetaWorksheet["distance"] = cu.ToFloat(value, 0)
 			return resultUpdate(cu.IM{"dirty": true})

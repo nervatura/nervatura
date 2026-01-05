@@ -4324,6 +4324,55 @@ func TestTransService_Response(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "report_notes",
+			fields: fields{
+				cls: &ClientService{
+					Config: cu.IM{},
+					AppLog: slog.Default(),
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							Db:     &md.TestDriver{Config: cu.IM{}},
+							Config: config,
+							AppLog: appLog,
+							ConvertToByte: func(data interface{}) ([]byte, error) {
+								return []byte{}, nil
+							},
+						}
+					},
+				},
+			},
+			args: args{
+				evt: ct.ResponseEvent{
+					Trigger: &ct.Client{
+						BaseComponent: ct.BaseComponent{
+							Data: cu.IM{
+								"editor": cu.IM{
+									"trans": cu.IM{
+										"id": 12345,
+										"trans_meta": cu.IM{
+											"tags": []string{"tag1", "tag2"},
+										},
+										"trans_map": cu.IM{
+											"demo_string": "tag1",
+										}},
+									"view": "trans",
+								},
+							},
+						},
+						Ticket: ct.Ticket{
+							User:     cu.IM{},
+							Database: "test",
+						},
+					},
+					Name: ct.EditorEventField,
+					Value: cu.IM{"name": "report_notes",
+						"value": "value",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "worksheet_distance",
 			fields: fields{
 				cls: &ClientService{
