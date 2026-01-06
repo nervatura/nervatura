@@ -677,23 +677,7 @@ func (s *TransService) updateDeleteRows(ds *api.DataStore, data cu.IM) (err erro
 var transUpdateValidate = []func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error){
 	func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error) {
 		errMsg := msgFunc("missing_required_field") + ": " + msgFunc("customer_name")
-		return cp.TransIsItem(trans.TransType.String()) && trans.CustomerCode == "",
-			errors.New(errMsg)
-	},
-	func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error) {
-		errMsg := msgFunc("missing_required_field") + ": " + msgFunc("place_name_payment")
-		return (trans.TransType == md.TransTypeCash || trans.TransType == md.TransTypeBank) && trans.PlaceCode == "",
-			errors.New(errMsg)
-	},
-	func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error) {
-		errMsg := msgFunc("missing_required_field") + ": " + msgFunc("place_name_movement")
-		return (trans.TransType == md.TransTypeInventory || trans.TransType == md.TransTypeProduction ||
-				(trans.TransType == md.TransTypeDelivery && trans.Direction == md.DirectionTransfer)) && trans.PlaceCode == "",
-			errors.New(errMsg)
-	},
-	func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error) {
-		errMsg := msgFunc("missing_required_field") + ": " + msgFunc("due_time")
-		return trans.TransType == md.TransTypeProduction && trans.TransMeta.DueTime == "",
+		return cp.TransIsItem(trans.TransType.String()) && trans.CustomerCode == "" && (trans.TransType.String() != md.TransTypeReceipt.String()),
 			errors.New(errMsg)
 	},
 	func(trans md.Trans, data cu.IM, msgFunc func(labelID string) string) (bool, error) {

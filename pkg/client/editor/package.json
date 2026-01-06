@@ -1,0 +1,86 @@
+{
+  "name": "nervatura-editor",
+  "description": "PDF template editor",
+  "version": "1.0.0",
+  "keywords": [
+    "business management",
+    "PDF editor"
+  ],
+  "author": "Csaba Kappel <info@nervatura.com> (http://nervatura.com)",
+  "license": "LGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nervatura/nervatura.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nervatura/nervatura/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": ".",
+  "scripts": {
+    "test": "web-test-runner --node-resolve --coverage",
+    "test:watch": "web-test-runner --watch",
+    "storybook": "npm run analyze -- --exclude dist && web-dev-server -c .storybook/server.mjs",
+    "storybook:build": "npm run analyze -- --exclude dist && build-storybook",
+    "build": "rimraf dist && rollup -c rollup.config.mjs --environment APP_CONFIG:SERVER && npm run analyze -- --exclude dist",
+    "build:dev": "rimraf dist && rollup -c rollup.config.mjs --environment APP_CONFIG:DEV && npm run analyze -- --exclude dist",
+    "start:build": "web-dev-server --root-dir dist --app-index index.html --open",
+    "analyze": "cem analyze --litelement",
+    "start": "web-dev-server",
+    "coverage": "web-dev-server --root-dir coverage/lcov-report --port 1234 --open"
+  },
+  "dependencies": {
+    "lit": "^3.3.2"
+  },
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "0.11.0",
+    "@open-wc/building-rollup": "^3.0.2",
+    "@open-wc/eslint-config": "^13.0.0",
+    "@open-wc/testing": "^4.0.0",
+    "@rollup/plugin-replace": "^6.0.3",
+    "@web/dev-server": "^0.4.6",
+    "@web/dev-server-storybook": "^2.0.3",
+    "@web/test-runner": "^0.20.2",
+    "deepmerge": "^4.3.1",
+    "eslint": "9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-chai-friendly": "^1.1.0",
+    "prettier": "^3.7.4",
+    "rimraf": "6.1.2",
+    "rollup": "4.54.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "sinon": "21.0.1"
+  },
+  "eslintConfig": {
+    "rules": {
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": true,
+          "packageDir": "./"
+        }
+      ],
+      "no-nested-ternary": "off",
+      "no-case-declarations": "off",
+      "prefer-destructuring": "off",
+      "camelcase": "off",
+      "lit-a11y/click-events-have-key-events": "off",
+      "lit/no-native-attributes": "off"
+    },
+    "plugins": [
+      "chai-friendly"
+    ],
+    "extends": [
+      "@open-wc",
+      "prettier",
+      "plugin:chai-friendly/recommended"
+    ]
+  },
+  "prettier": {
+    "singleQuote": false,
+    "arrowParens": "avoid"
+  },
+  "customElements": "custom-elements.json"
+}

@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
@@ -58,7 +59,6 @@ func (s *ShortcutService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 		Fields: []string{"*"}, From: "config_report",
 		Filters: []md.Filter{
 			{Field: "report_type", Comp: "==", Value: "REPORT"},
-			{Field: "file_type", Comp: "==", Value: md.FileTypeCSV.String()},
 		},
 	}, false); err != nil {
 		return data, err
@@ -153,6 +153,7 @@ func (s *ShortcutService) shortcutItem(row cu.IM, sessionID string) (item cu.IM)
 	if lstype := cu.ToString(row["lstype"], ""); lstype == "shortcut" {
 		return row
 	}
+	output := strings.TrimPrefix(strings.ToLower(cu.ToString(row["file_type"], "pdf")), "file_")
 	template := cu.ToString(row["template"], "")
 	var report cu.IM = cu.IM{}
 	var fields []cu.IM = []cu.IM{}
@@ -171,7 +172,7 @@ func (s *ShortcutService) shortcutItem(row cu.IM, sessionID string) (item cu.IM)
 		}
 	}
 	item = cu.MergeIM(row, cu.IM{
-		"url":    fmt.Sprintf(st.ClientPath+"/session/export/report/%s?output=export", sessionID),
+		"url":    fmt.Sprintf(st.ClientPath+"/session/export/report/%s?output=%s&export=true", sessionID, output),
 		"fields": fields,
 	})
 	return item

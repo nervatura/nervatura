@@ -8,6 +8,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	st "github.com/nervatura/nervatura/v6/pkg/static"
 )
 
 type ShortcutEditor struct{}
@@ -89,6 +90,19 @@ func (e *ShortcutEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 			Disabled: lstype != "shortcut",
 		})
 	}
+
+	items = append(items,
+		&ct.SideBarSeparator{},
+		&ct.SideBarElementLink{
+			SideBarElement: ct.SideBarElement{
+				Name:  "editor_help",
+				Value: "editor_help",
+				Label: labels["editor_help"],
+				Icon:  ct.IconQuestionCircle,
+			},
+			Href:       st.DocsClientPath + "#export",
+			LinkTarget: "_blank",
+		})
 	return items
 }
 

@@ -1396,9 +1396,9 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 		"transitem_simple": func(editor string) md.Query {
 			return md.Query{
 				Fields: []string{
-					"t.*", "c.customer_name as customer_name", "COALESCE(i.amount, 0) as amount",
+					"t.*", "COALESCE(c.customer_name, '') as customer_name", "COALESCE(i.amount, 0) as amount",
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
-				From: `trans_view t inner join customer c on t.customer_code = c.code  
+				From: `trans_view t left join customer c on t.customer_code = c.code  
 			left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
 				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s','%s')",
 					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
@@ -1410,9 +1410,9 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 		"invoice_simple": func(editor string) md.Query {
 			return md.Query{
 				Fields: []string{
-					"t.*", "c.customer_name as customer_name", "COALESCE(i.amount, 0) as amount",
+					"t.*", "COALESCE(c.customer_name, '') as customer_name", "COALESCE(i.amount, 0) as amount",
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
-				From: `trans_view t inner join customer c on t.customer_code = c.code  
+				From: `trans_view t left join customer c on t.customer_code = c.code  
 			left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
 				Filter: fmt.Sprintf("trans_type in('%s','%s')",
 					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(),
@@ -1424,9 +1424,9 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 		"transitem": func(editor string) md.Query {
 			return md.Query{
 				Fields: []string{
-					"t.*", "c.customer_name", "COALESCE(i.amount, 0) as amount",
+					"t.*", "COALESCE(c.customer_name, '') as customer_name", "COALESCE(i.amount, 0) as amount",
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
-				From: `trans_view t inner join customer c on t.customer_code = c.code  
+				From: `trans_view t left join customer c on t.customer_code = c.code  
 			left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
 				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s','%s')",
 					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),

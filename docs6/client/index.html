@@ -80,6 +80,22 @@
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#office" class="text-slate-600 hover:text-slate-800">
+                Back Office
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#bookmarks" class="text-slate-600 hover:text-slate-800">
+                Bookmarks
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
               <a href="#resources" class="text-slate-600 hover:text-slate-800">
                 Resources
               </a>
@@ -724,6 +740,54 @@
           </li>
         </ul>
 
+        <h3 id="office" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Back Office
+        </h3>
+
+        <p id="rate" class="mt-4 text-base text-slate-900">
+          <strong>Interest and Rate</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Enter or search for interest or buy, average, sell rates for a given currency and period.
+        </p>
+
+        <p id="queue" class="mt-4 text-base text-slate-900">
+          <strong>Report Queue</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Items to the list can be added by REPORT command of the forms, then by the Report Queue command.
+        </p>
+
+        <p id="editor" class="mt-4 text-base text-slate-900">
+          <strong>Template Editor</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          List of data for PDF report templates <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#template">installed in the database</a>. By selecting the template code, the structure and displayed data of the PDF can be modified with the <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="../editor">Report Editor</a> extension.
+        </p>
+
+        <p id="launcher" class="mt-4 text-base text-slate-900">
+          <strong>Launcher</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          General-purpose PDF and CSV <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#template">report</a> and server side <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#shortcut">shortcut</a> launcher. Input parameters can also be set and the user will be informed about the result or download the generated PDF or CSV file.
+        </p>
+
+        <p id="log" class="mt-4 text-base text-slate-900">
+          <strong>Database Log</strong>
+        </p>
+
+        <h3 id="bookmarks" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Bookmarks
+        </h3>
+
+        <p class="mt-2 text-base text-slate-600">
+          Search and load bookmarked data. Bookmarks can be set for transactions (such as order, invoice, etc.), resources (such as customer, product, etc.) or search criteria. The search bookmarks help to save any number of pre-defined filters related to the data view. Later can be loaded from bookmarks at any time. The bookmark besides the selection criteria keeps also the selection of displayed columns.
+        </p>
+
         <h3 id="resources" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           Resources
         </h3>
@@ -996,16 +1060,44 @@
           <strong>User settings</strong>
         </p>
 
+        <p class="mt-2 text-base text-slate-600">
+          Settings for the appearance and use of the program interface, changing the user password.
+        </p>
+
         <p id="config_data" class="mt-4 text-base text-slate-900">
           <strong>Config data</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          You can set the names of some enum values ​​that appear on the interface (e.g. PDF generation orientation, paper size), as well as more commonly used default values ​​(e.g. default currency, unit, deadline, etc.).
         </p>
 
         <p id="metadata" class="mt-4 text-base text-slate-900">
           <strong>Metadata</strong>
         </p>
 
+        <p class="mt-2 text-base text-slate-600">
+          In Nervatura Client, different types of data fields can be freely defined and used. The user interface will display a data entry interface corresponding to the <strong>field type</strong> and validate the entered values. For example, a <i>FIELD_INTEGER</i> type only allows integers to be entered, or a <i>FIELD_CUSTOMER</i> field only allows valid customer codes.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          In the <strong>Filter</strong> section, you can specify the object types for which the user interface should display the field defined here in the <strong>Metadata</strong> section of the form. Multiple options can be specified.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Key-value type metadata can also be created using the program's various APIs, but the program interface only displays those whose type and rules are also defined here.
+        </p>
+
         <p id="user_account" class="mt-4 text-base text-slate-900">
           <strong>User account</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          The user access rights in Nervatura are managed through user groups. Members of the <i>GROUP_USER</i> and <i>GROUP_GUEST</i> groups only have access to the <strong>User Settings</strong> menu in the <strong>Settings</strong> section. Members of the <i>GROUP_GUEST</i> group are not allowed to create, save, or delete data.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Regardless of the group's permissions, the <strong>Filter</strong> section allows you to set the program interface parts that a given user can access. The rules specified here are only valid on the Nervatura Client interface and do not affect the user permissions of other program APIs!
         </p>
 
         <p id="currency" class="mt-4 text-base text-slate-900">
@@ -1034,12 +1126,40 @@
           <strong>Tax rate</strong>
         </p>
 
-        <p id="menu_shortcut" class="mt-4 text-base text-slate-900">
+        <p class="mt-2 text-base text-slate-600">
+          The tax rates used by the program can be defined. The tax rate value can be specified between 0 and 1.
+        </p>
+
+        <p id="shortcut" class="mt-4 text-base text-slate-900">
           <strong>Menu shortcut</strong>
         </p>
 
-        <p id="report_template" class="mt-4 text-base text-slate-900">
+        <p class="mt-2 text-base text-slate-600">
+          It is possible to create shortcuts in the program, which <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#launcher">can call remote functions</a>. Input parameters can also be set and the user will be informed about the result.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          When <strong>Method</strong> is set <i>METHOD_GET</i>, the program opens your default browser and hands over to it the given <strong>Address</strong> and also the input parameters if there were any. In case of a <i>METHOD_POST</i> value, the program will contact the server (default host URL or <strong>Address</strong>), run the specified program (<strong>Function Name</strong>) and wait for the response.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Any number of parameters can also be assigned to shortcuts. These will be requested when the shortcut is used.
+        </p>
+
+        <p id="template" class="mt-4 text-base text-slate-900">
           <strong>Report template</strong>
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Returns all installable files from the report directory (<a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="../install/#configuration">specified</a> by the <code class="text-sm text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1 font-bold">NT_REPORT_DIR</code> environment variable value). By default, all available built-in Nervatura reports are displayed. By selecting the report row, the template can be installed or deleted from the database.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Reports related to a specific transaction (eg. order, invoice, etc.) or resource (eg. customer, product, etc.) can be found at the form including the data themselves. The structure and displayed data of the PDF can be modified with the <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="../editor">Report Editor</a> extension.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Installed general-purpose reports with PDF and CSV output can be launched from the <a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" href="#launcher">LAUNCHER</a> menu.
         </p>
 
         <dl class="flex pt-6 mt-6 border-t border-slate-200">

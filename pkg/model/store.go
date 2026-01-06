@@ -535,24 +535,24 @@ type Tool struct {
 
 type TransMetaWorksheet struct {
 	// Distance (km)
-	Distance float64 `json:"distance"`
+	Distance float64 `json:"distance" jsonschema:"Distance"`
 	// Repair time (hour)
-	Repair float64 `json:"repair"`
+	Repair float64 `json:"repair" jsonschema:"Repair"`
 	// Total time (hour)
-	Total float64 `json:"total"`
+	Total float64 `json:"total" jsonschema:"Total"`
 	// Worksheet justification
-	Justification string `json:"justification"`
+	Justification string `json:"justification" jsonschema:"Justification"`
 }
 
 type TransMetaRent struct {
 	// Holidays (day)
-	Holiday float64 `json:"holiday"`
+	Holiday float64 `json:"holiday" jsonschema:"Holiday"`
 	// Bad tool / machine (hour)
-	BadTool float64 `json:"bad_tool"`
+	BadTool float64 `json:"bad_tool" jsonschema:"Bad tool"`
 	// Other non-eligible
-	Other float64 `json:"other"`
+	Other float64 `json:"other" jsonschema:"Other"`
 	// Rent justification
-	Justification string `json:"justification"`
+	Justification string `json:"justification" jsonschema:"Justification"`
 }
 
 type TransMetaInvoice struct {

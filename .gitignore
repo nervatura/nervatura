@@ -114,3 +114,4 @@ test_cover.html
 __debug*
 test_json*
 __pycache__
+coverage.*

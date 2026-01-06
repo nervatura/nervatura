@@ -617,7 +617,7 @@ func TestClientExportReport(t *testing.T) {
 	req2.SetPathValue("session_id", "SessionID")
 	req3 := httptest.NewRequest("GET", "/session/export/report/SessionID?output=pdf&queue=QUEUE_CODE", nil)
 	req3.SetPathValue("session_id", "SessionID")
-	req4 := httptest.NewRequest("GET", "/session/export/report/SessionID?output=export", nil)
+	req4 := httptest.NewRequest("GET", "/session/export/report/SessionID?output=csv&export=true", nil)
 	req4.SetPathValue("session_id", "SessionID")
 	ses1 := &api.SessionService{
 		Config: api.SessionConfig{

@@ -42,8 +42,8 @@ func (s *ShippingService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 	if cu.ToString(params["trans_id"], "") != "" || cu.ToString(params["trans_code"], "") != "" {
 		if rows, err = ds.StoreDataQuery(md.Query{
 			Fields: []string{"t.id", "t.code", "t.trans_type", "t.direction", "t.trans_date",
-				"t.customer_code", "c.customer_name"},
-			From: "trans t inner join customer c on t.customer_code = c.code",
+				"COALESCE(t.customer_code,'') as customer_code", "COALESCE(c.customer_name,'') as customer_name"},
+			From: "trans t left join customer c on t.customer_code = c.code",
 			Filters: []md.Filter{
 				{Field: "t.deleted", Comp: "==", Value: false},
 				{Field: "c.deleted", Comp: "==", Value: false},

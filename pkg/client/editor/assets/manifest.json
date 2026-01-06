@@ -1,0 +1,17 @@
+{
+  "id": "nervatura-editor",
+  "short_name": "Nervatura Report Editor",
+  "name": "Nervatura Report Editor",
+  "description": "PDF template editor",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

@@ -17,7 +17,7 @@ The main aspects of its design were:
 
 The framework is based on Nervatura Object [**MODEL**](https://nervatura.github.io/nervatura/docs/model) specification. It is a general **open-data model**, which can store all information generated in the operation of a usual corporation.
 
-The Nervatura service is small and fast. A single ~6 MB file contains all the necessary dependencies.
+The Nervatura service is small and fast. A single ~8 MB file contains all the necessary dependencies.
 The framework includes:
 - [**CLI API**](https://nervatura.github.io/nervatura/docs/service/cli#cli-api) (command line)
 - [**CGO API**](https://nervatura.github.io/nervatura/docs/service/cli#cgo-api) (C shared library)

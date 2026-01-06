@@ -350,6 +350,8 @@ func ClientExportReport(w http.ResponseWriter, r *http.Request) {
 	sessionID := r.PathValue("session_id")
 	output := cu.ToString(r.URL.Query().Get("output"), "pdf")
 	queueCode := cu.ToString(r.URL.Query().Get("queue"), "")
+	export := cu.ToBoolean(r.URL.Query().Get("export"), false)
+
 	disposition := "attachment"
 	if cu.ToBoolean(r.URL.Query().Get("inline"), false) {
 		disposition = "inline"
@@ -360,8 +362,7 @@ func ClientExportReport(w http.ResponseWriter, r *http.Request) {
 		if queueCode != "" {
 			return "queue"
 		}
-		if output == "export" {
-			output = "auto"
+		if export {
 			return "export"
 		}
 		return "report"
@@ -404,11 +405,9 @@ func ClientExportReport(w http.ResponseWriter, r *http.Request) {
 		editor := cu.ToIM(client.Data["editor"], cu.IM{})
 		shortcut := cu.ToIM(editor["shortcut"], cu.IM{})
 		params := cu.ToIM(editor["params"], cu.IM{})
-		output = "csv"
 
 		options = cu.IM{
 			"report_key": cu.ToString(shortcut["report_key"], ""),
-			"code":       cu.ToString(shortcut["report_key"], ""),
 			"output":     output,
 			"filters":    params,
 		}
@@ -432,9 +431,9 @@ func ClientExportReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fileName := fmt.Sprintf("%s.%s", sessionID, output)
 	w.Header().Set("Content-Type", cu.ToString(results["content_type"], ""))
-	w.Header().Set("Content-Disposition",
-		disposition+";filename="+fmt.Sprintf("%s.%s", cu.ToString(options["code"], ""), output))
+	w.Header().Set("Content-Disposition", disposition+";filename="+fileName)
 	if cu.ToString(results["content_type"], "") == "application/pdf" {
 		w.Write(results["template"].([]uint8))
 		return

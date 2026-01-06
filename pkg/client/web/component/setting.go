@@ -55,6 +55,19 @@ func (e *SettingEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIte
 		sb = append(sb, sideElement("shortcut", viewName == "shortcut"))
 		sb = append(sb, sideElement("template", viewName == "template"))
 	}
+
+	sb = append(sb,
+		&ct.SideBarSeparator{},
+		&ct.SideBarElementLink{
+			SideBarElement: ct.SideBarElement{
+				Name:  "editor_help",
+				Value: "editor_help",
+				Label: labels["editor_help"],
+				Icon:  ct.IconQuestionCircle,
+			},
+			Href:       st.DocsClientPath + "#settings",
+			LinkTarget: "_blank",
+		})
 	return sb
 }
 
