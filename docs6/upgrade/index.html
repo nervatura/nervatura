@@ -40,6 +40,14 @@
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#overview" class="text-slate-600 hover:text-slate-800">
+                Overview
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
               <a href="#cli" class="text-slate-600 hover:text-slate-800">
                 CLI upgrade commands
               </a>
@@ -48,8 +56,8 @@
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
-              <a href="#losing" class="text-slate-600 hover:text-slate-800">
-                Losing data
+              <a href="#release-notes" class="text-slate-600 hover:text-slate-800">
+                Important release notes
               </a>
             </h2>
           </li>
@@ -86,6 +94,26 @@
           </h1>
         </header>
 
+        <h3 id="overview" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Overview
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          The Nervatura v6 is a major upgrade that includes many new features and improvements.
+          The entire codebase has been refactored. The new codebase is now almost entirely Golang-based, which has radically reduced its size, complexity and external dependencies. The main changes are:
+          <ul class="list-disc list-inside text-slate-600">
+            <li>New hybrid <a href="../model/#structure" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">database object model</a></li>
+            <li>New/refactored <a href="../cli/#cli" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">CLI</a> (command line interface) API</li>
+            <li>New/refactored <a href="../cli/#cgo" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">CGO</a> (C shared library) API</li>
+            <li>New/refactored <a href="../open/" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">HTTP OPEN API</a> (REST) API</li>
+            <li>New/refactored <a href="../grpc/" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">gRPC API</a> API</li>
+            <li>New <a href="../mcp/" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">MCP</a> built-in server for LLM integration and AI-powered data processing</li>
+            <li>Replaced web component based Client application with a new server-side <a href="../client/" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Nervatura Client</a> graphical user interface</li>
+            <li>Added a separate <a href="../editor/" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Report Editor</a> extension for creating and editing PDF report templates</li>
+            <li>New/rewritten dependency-free static documentation</li>
+          </ul>
+        </p>
+
         <h3 id="cli" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           CLI upgrade commands
         </h3>
@@ -93,7 +121,7 @@
         <p class="mb-2 text-base text-slate-600">
           Before upgrading the database, be sure to <b>create a database backup</b>. Not only the alias name of the database, 
           but also its connection can be specified: <br />
-          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+          <code class="mt-2 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
             -o {"alias": "demo", "NT_ALIAS_DEMO": "sqlite://file:data/demo.db?cache=shared&mode=rwc"}"
           </code>
         </p>
@@ -133,13 +161,13 @@
         </p>
 
         <div class="relative overflow-x-auto">
-          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+          <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
             ./node_modules/nervatura/bin/nervatura -c upgrade -o '{\"alias\":\"demo\"}'
           </code>
         </div>
 
-        <h3 id="losing" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
-          Losing data
+        <h3 id="release-notes" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Important release notes
         </h3>
 
         <p class="mb-2 text-base text-slate-600">
@@ -150,14 +178,48 @@
             <li>log, report, printqueue and user password data are not transferred</li>
           </ul>
         </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          The new version currently supports the following database types: SQLite, PostgreSQL, MySQL. The MSSQL support has been built into the code, but the default build currently does not include the MSSQL database driver and not supported yet.
+        </p>
         
         <h3 id="password" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           User password
         </h3>
 
+        <p class="mt-2 text-base text-slate-600">
+          After the database upgrade, the admin user password will be reset to the default password. The default admin password is the value of the <code class="text-base font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+            >NT_API_KEY</code> environment variable. Please change after the first login!
+        </p>
+        
+        <p class="mt-2 text-base text-slate-600">
+          Other user passwords will not be transferred and the user login will be disabled. You can reset the user password using the CLI <a href="../cli/#cgo_reset" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">reset password</a> command.
+        </p>
+        <code class="mt-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+          ./nervatura -c reset -o '{\"alias\":\"demo\", \"code\":\"USR0000000000N2\"}'
+        </code>
+        <p class="mt-2 text-base text-slate-600">
+          Other alternative API commands to reset the user password are:
+          <ul class="list-disc list-inside text-slate-600">
+            <li>HTTP Open API PUT <a href="../open/#/auth/put_auth_reset__id_code_" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">auth/reset/{id_code}</a></li>
+            <li>gRPC API <a href="../grpc/#AuthPasswordReset" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">AuthPasswordReset</a></li>
+          </ul>
+
         <h3 id="report" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           Report upgrade
         </h3>
+
+        <p class="mt-2 text-base text-slate-600">
+          The structure of the previous Nervatura PDF and CSV reports has not changed and is basically compatible with the new versions. The problem is caused by the queries embedded in the reports, which are not compatible with the new database structure. Therefore, the reports cannot be upgraded automatically.
+        </p>
+
+        <p class="mt-2 text-base text-slate-600">
+          Suggested solution:
+          <ul class="list-disc list-inside text-slate-600">
+            <li>Install the new report template using the Nervatura Client Settings -> <a href="../client/#template" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">REPORT TEMPLATE</a> menu</li>
+            <li>Create a new report template from the installed report template and edit it using the <a href="../editor/" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Report Editor</a> extension</li>
+          </ul>
+        </p>
         
         <dl class="flex pt-6 mt-6 border-t border-slate-200">
           <div class="mr-auto text-left">
