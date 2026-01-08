@@ -5,7 +5,7 @@ import "embed"
 //go:embed public
 var Public embed.FS
 
-//go:embed store/mysql store/postgres store/sqlite upgrade/mysql upgrade/postgres upgrade/sqlite
+//go:embed store/mysql store/postgres store/sqlite store/mssql upgrade/mysql upgrade/postgres upgrade/sqlite
 var Store embed.FS
 
 //go:embed message.json template mcp

@@ -386,7 +386,7 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				{Name: "status", Label: labels["trans_status"]},
 				{Name: "ref_number", Label: labels["trans_ref_number"]},
 				{Name: "trans_date", Label: labels["trans_date"]},
-				{Name: "paid_date", Label: labels["payment_paid_date"]},
+				{Name: "paid_date", Label: labels["payment_paid_date"], FieldType: ct.TableFieldTypeDate},
 				{Name: "place_code", Label: labels["place_code"], FieldType: ct.TableFieldTypeLink},
 				{Name: "place_name", Label: labels["place_name_payment"]},
 				{Name: "currency_code", Label: labels["currency_code"]},

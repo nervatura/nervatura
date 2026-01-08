@@ -501,10 +501,12 @@ func TestSQLDriver_decodeSQL(t *testing.T) {
 		args   args
 		want   string
 		want1  []interface{}
+		engine string
 	}{
 		{
 			name:   "queries",
 			fields: fields{},
+			engine: "sqlite",
 			args: args{
 				queries: []md.Query{
 					{
@@ -550,13 +552,62 @@ func TestSQLDriver_decodeSQL(t *testing.T) {
 			want:  "select field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 union select field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 limit 10 offset 5",
 			want1: []interface{}{"value", "1", "2", "3", "value", "1", "2", "3"},
 		},
+		{
+			name:   "queries_mssql",
+			fields: fields{},
+			engine: "mssql",
+			args: args{
+				queries: []md.Query{
+					{
+						Fields: []string{"field1", "field2"},
+						From:   "table",
+						Filters: []md.Filter{
+							{
+								Field: "field1",
+								Comp:  "==",
+								Value: "value",
+							},
+							{
+								Or:    false,
+								Field: "field2",
+								Comp:  "in",
+								Value: "1,2,3",
+							},
+						},
+						OrderBy: []string{"field1"},
+					},
+					{
+						Fields: []string{"field1", "field2"},
+						From:   "table",
+						Filters: []md.Filter{
+							{
+								Field: "field1",
+								Comp:  "==",
+								Value: "value",
+							},
+							{
+								Or:    false,
+								Field: "field2",
+								Comp:  "in",
+								Value: "1,2,3",
+							},
+						},
+						OrderBy: []string{"field1"},
+						Limit:   10,
+						Offset:  5,
+					},
+				},
+			},
+			want:  "select top(10) field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 union select top(10) field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 offset 5",
+			want1: []interface{}{"value", "1", "2", "3", "value", "1", "2", "3"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ds := &SQLDriver{
 				alias:   tt.fields.alias,
 				connStr: tt.fields.connStr,
-				engine:  tt.fields.engine,
+				engine:  tt.engine,
 				Db:      tt.fields.Db,
 				closed:  tt.fields.closed,
 				Config:  tt.fields.Config,

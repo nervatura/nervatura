@@ -3,7 +3,7 @@
 
 package database
 
-//import _ "github.com/denisenkom/go-mssqldb" // mssql driver
+//import _ "github.com/microsoft/go-mssqldb" // mssql driver
 
 func init() {
 	registerDriver("mssql")

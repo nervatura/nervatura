@@ -185,7 +185,11 @@ func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []interface{}) {
 			sqlString += " order by " + order
 		}
 		if query.Limit > 0 {
-			sqlString += " limit " + cu.ToString(query.Limit, "")
+			if ds.engine == "mssql" {
+				sqlString = strings.ReplaceAll(sqlString, "select ", "select top("+cu.ToString(query.Limit, "")+") ")
+			} else {
+				sqlString += " limit " + cu.ToString(query.Limit, "")
+			}
 		}
 		if query.Offset > 0 {
 			sqlString += " offset " + cu.ToString(query.Offset, "")
@@ -231,7 +235,7 @@ func initQueryCols(engine string, cols []*sql.ColumnType) ([]interface{}, []stri
 
 func isJSON(dbtype, fname, value string) bool {
 	return dbtype == "JSONB" || dbtype == "JSON" ||
-		(dbtype == "" && json.Valid([]byte(value)) &&
+		((dbtype == "" || dbtype == "NVARCHAR") && json.Valid([]byte(value)) &&
 			!strings.Contains(fname, "_object"))
 }
 
