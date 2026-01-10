@@ -40,8 +40,40 @@
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
-              <a href="#overview" class="text-slate-600 hover:text-slate-800">
-                Overview
+              <a href="#python" class="text-slate-600 hover:text-slate-800">
+                Python
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#nodejs" class="text-slate-600 hover:text-slate-800">
+                Node.js
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#go" class="text-slate-600 hover:text-slate-800">
+                Go
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#php" class="text-slate-600 hover:text-slate-800">
+                PHP
+              </a>
+            </h2>
+          </li>
+
+          <li class="mb-2">
+            <h2 class="font-semibold tracking-tight text-slate-900">
+              <a href="#dart" class="text-slate-600 hover:text-slate-800">
+                Dart
               </a>
             </h2>
           </li>
@@ -62,13 +94,113 @@
           </h1>
         </header>
 
-        <h3 id="overview" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
-          Overview
+        <h3 id="python" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Python
         </h3>
 
         <p class="mb-2 text-base text-slate-600">
-          ...
+          Download the <a href="https://download-directory.github.io/?url=https://github.com/nervatura/nervatura/tree/master/example/python&filename=nervatura_python_example" target="_blank" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Python examples</a> and unzip it. Run the following command to install the dependencies (<a href="https://docs.astral.sh/uv/" target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">uv</a> is required):
         </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            uv sync
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura backend
+        </p>
+
+        <ul class="text-base text-slate-600 list-disc list-inside pl-6">
+          <li><strong>Linux</strong>
+            <div class="mt-2 relative overflow-x-auto">
+              <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                sudo snap install nervatura
+              </code>
+            </div>
+            <div class="relative overflow-x-auto">
+              <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                sudo systemctl stop snap.nervatura.nervatura.service
+              </code>
+            </div>
+            <p class="mb-2 text-base text-slate-600">
+              The <a href="../cli/#cli" class="text-blue-600 dark:text-blue-500 hover:underline">CLI</a> and <a href="../cli/#cgo" class="text-blue-600 dark:text-blue-500 hover:underline">CGO</a> is ready to use. To use the <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a> and <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP OPEN API</a>, start Nervatura service with the .env.example settings (nervatura_python_example directory):
+            </p>
+            <div class="relative overflow-x-auto">
+              <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                sudo /snap/nervatura/current/nervatura -env $(pwd)/.env.example
+              </code>
+            </div>
+          </li>
+
+          <li class="mt-4"><strong>Windows</strong>
+            <div class="mt-2 relative overflow-x-auto">
+              <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                winget install --id Nervatura.Nervatura --source winget
+              </code>
+            </div>
+            <ul class="text-base text-slate-600 list-disc list-inside pl-3">
+              <li>
+                change the value of the <code class="text-sm font-bold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1">NT_SERVICE_PATH</code> (<code>nervatura-examples-python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura&rdquo; -&gt; <em>&ldquo;C:/Program Files/Nervatura/nervatura.exe&rdquo;</em>
+              </li>
+              <li>
+                change the value of the <code class="text-sm font-bold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1">NT_SERVICE_LIB</code> (<code>nervatura-examples-python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura.so&rdquo; -&gt; <em>&ldquo;C:/ProgramData/Nervatura/nervatura.dll&rdquo;</em>
+              </li>
+            </ul>
+            <p class="mt-4 mb-2 text-base text-slate-600">
+              Start the Nervatura backend server (<a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a> and <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP OPEN API</a> examples) with the .env.example settings (nervatura_python_example directory):
+            </p>
+            <div class="relative overflow-x-auto">
+              <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                & "C:\Program Files\Nervatura\nervatura.exe" -env .env.example
+              </code>
+            </div>
+          </li>
+
+          <li class="mt-4"><strong>Docker</strong> (without <a href="../cli/#cgo" class="text-blue-600 dark:text-blue-500 hover:underline">CGO</a>)
+            <div class="mt-2 relative overflow-x-auto">
+              <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+              </code>
+            </div>
+            <p class="mt-4 text-base text-slate-600">
+              Change the value of the <code class="text-sm font-bold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1">NT_SERVICE_PATH</code> (<code>nervatura-examples-python/.env.example</code> file): &ldquo;/snap/nervatura/current/nervatura&rdquo; -&gt; <em>&ldquo;docker&rdquo;</em>
+            </p>
+            <p class="mt-2 mb-2 text-base text-slate-600">
+              Start the Nervatura backend server (<a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a> and <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP OPEN API</a> examples) with the .env.example settings (nervatura_python_example directory):
+            </p>
+            <div class="relative overflow-x-auto">
+              <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+                docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+              </code>
+            </div>
+          </li>
+        </ul>
+        <p class="mt-4 text-base text-slate-600">
+          Start python examples (nervatura_python_example directory):
+        </p>
+        <div class="mt-2 relative overflow-x-auto">
+          <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            uv run python example.py
+          </code>
+        </div>
+
+        <h3 id="nodejs" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Node.js
+        </h3>
+
+        <h3 id="go" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Go
+        </h3>
+
+        <h3 id="php" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          PHP
+        </h3>
+
+        <h3 id="dart" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Dart
+        </h3>
 
         <dl class="flex pt-6 mt-6 border-t border-slate-200">
           <div class="mr-auto text-left">

@@ -325,9 +325,6 @@
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
   }
-  .mr-2 {
-    margin-right: calc(var(--spacing) * 2);
-  }
   .mr-auto {
     margin-right: auto;
   }
@@ -342,9 +339,6 @@
   }
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
-  }
-  .-ml-0 {
-    margin-left: calc(var(--spacing) * -0);
   }
   .-ml-0\.5 {
     margin-left: calc(var(--spacing) * -0.5);
@@ -417,12 +411,6 @@
   .min-h-full {
     min-height: 100%;
   }
-  .w-1 {
-    width: calc(var(--spacing) * 1);
-  }
-  .w-1\/2 {
-    width: calc(1/2 * 100%);
-  }
   .w-4 {
     width: calc(var(--spacing) * 4);
   }
@@ -444,23 +432,14 @@
   .max-w-96 {
     max-width: calc(var(--spacing) * 96);
   }
-  .max-w-xs {
-    max-width: var(--container-xs);
-  }
   .min-w-0 {
     min-width: calc(var(--spacing) * 0);
   }
   .flex-auto {
     flex: auto;
   }
-  .flex-shrink {
-    flex-shrink: 1;
-  }
   .shrink {
     flex-shrink: 1;
-  }
-  .flex-grow {
-    flex-grow: 1;
   }
   .grow {
     flex-grow: 1;
@@ -651,9 +630,6 @@
   .pt-2 {
     padding-top: calc(var(--spacing) * 2);
   }
-  .pt-4 {
-    padding-top: calc(var(--spacing) * 4);
-  }
   .pt-6 {
     padding-top: calc(var(--spacing) * 6);
   }
@@ -671,9 +647,6 @@
   }
   .pb-6 {
     padding-bottom: calc(var(--spacing) * 6);
-  }
-  .pl-0 {
-    padding-left: calc(var(--spacing) * 0);
   }
   .pl-0\.5 {
     padding-left: calc(var(--spacing) * 0.5);
@@ -695,10 +668,6 @@
   }
   .align-middle {
     vertical-align: middle;
-  }
-  .text-2xl {
-    font-size: var(--text-2xl);
-    line-height: var(--tw-leading, var(--text-2xl--line-height));
   }
   .text-2xl\/9 {
     font-size: var(--text-2xl);
@@ -856,9 +825,6 @@
   .-outline-offset-1 {
     outline-offset: calc(1px * -1);
   }
-  .outline-white {
-    outline-color: var(--color-white);
-  }
   .outline-white\/10 {
     outline-color: color-mix(in srgb, #fff 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -994,11 +960,6 @@
       margin-inline: auto;
     }
   }
-  .min-sm\:w-full {
-    @media (width >= 40rem) {
-      width: 100%;
-    }
-  }
   .sm\:w-full {
     @media (width >= 40rem) {
       width: 100%;
@@ -1028,11 +989,6 @@
   .md\:w-2\/3 {
     @media (width >= 48rem) {
       width: calc(2/3 * 100%);
-    }
-  }
-  .min-md\:w-1\/2 {
-    @media (width >= 48rem) {
-      width: calc(1/2 * 100%);
     }
   }
   .md\:flex-row {
