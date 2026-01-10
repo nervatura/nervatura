@@ -31,8 +31,8 @@
       {
         "content": {
           "type": "resource_link",
-          "mimeType": "image/png",
-          "uri": "http://localhost:5000/public/images/logo.png",
+          "mimeType": "image/svg+xml",
+          "uri": "http://localhost:5000/public/images/logo.svg",
           "name": "test_link",
           "title": "Test Link",
           "description": "This is a test link."

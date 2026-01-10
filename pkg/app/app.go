@@ -440,6 +440,7 @@ func (app *App) startServer(name string, interrupt chan os.Signal, ctx context.C
 // backgroundServer - start background http and/or grpc server
 func (app *App) backgroundServer() error {
 	app.setInfoLog("skipping cli")
+	app.setInfoLog("version: " + cu.ToString(app.config["version"], ""))
 	app.setInfoLog("enabled drivers", "drivers", strings.Join(db.Drivers, ","))
 
 	if err := app.setTokenKeyRing(); err != nil {

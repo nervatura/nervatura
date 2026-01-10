@@ -68,8 +68,8 @@ func Test_promptHandler(t *testing.T) {
 							},
 							{
 								Content: &mcp.ResourceLink{
-									URI:         "http://localhost:5000/public/images/logo.png",
-									MIMEType:    "image/png",
+									URI:         "http://localhost:5000/public/images/logo.svg",
+									MIMEType:    "image/svg+xml",
 									Name:        "test_link",
 									Title:       "Test Link",
 									Description: "This is a test link.",

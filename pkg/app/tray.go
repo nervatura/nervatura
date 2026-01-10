@@ -30,6 +30,13 @@ func (st *systemTray) onReady() {
 	}
 	systray.AddSeparator()
 	mnuExit := systray.AddMenuItem("Shut down and quit", "Shut down and quit")
+	/*
+		go func() {
+			for range mnuExit.ClickedCh {
+				systray.Quit()
+			}
+		}()
+	*/
 	go func() {
 		for {
 			select {

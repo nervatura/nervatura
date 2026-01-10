@@ -1,8 +1,9 @@
 import ctypes
+import os
 
 import lib.utils as utils
 
-ntura = ctypes.cdll.LoadLibrary("dist/nervatura.so")
+ntura = ctypes.cdll.LoadLibrary(os.getenv("NT_SERVICE_LIB"))
 
 def decodeResult(resultStr):
     result = utils.checkJson(resultStr)
@@ -17,13 +18,6 @@ def Database(options):
     Database.argtypes = [ctypes.c_char_p]
     Database.restype = ctypes.c_void_p
     result = ctypes.string_at(Database(utils.encodeOptions(options))).decode("utf-8")
-    return decodeResult(result)
-
-def Function(options):
-    Function = ntura.Function
-    Function.argtypes = [ctypes.c_char_p]
-    Function.restype = ctypes.c_void_p
-    result = ctypes.string_at(Function(utils.encodeOptions(options))).decode("utf-8")
     return decodeResult(result)
 
 def ResetPassword(options):
@@ -73,4 +67,11 @@ def View(options):
     View.argtypes = [ctypes.c_char_p]
     View.restype = ctypes.c_void_p
     result = ctypes.string_at(View(utils.encodeOptions(options))).decode("utf-8")
+    return decodeResult(result)
+
+def Function(options):
+    Function = ntura.Function
+    Function.argtypes = [ctypes.c_char_p]
+    Function.restype = ctypes.c_void_p
+    result = ctypes.string_at(Function(utils.encodeOptions(options))).decode("utf-8")
     return decodeResult(result)

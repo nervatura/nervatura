@@ -96,7 +96,7 @@ Makefile
 test.db
 empty.db
 *.log
-.goreleaser.yml
+.goreleaser.*
 data/test/*.pdf
 data/test/*.xml
 data/test/*.txt
@@ -115,3 +115,5 @@ __debug*
 test_json*
 __pycache__
 coverage.*
+uv.lock
+.venv
