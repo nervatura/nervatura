@@ -71,6 +71,7 @@ func (s *httpServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, 
 		handlers.MaxAge(int(cu.ToInteger(s.config["NT_CORS_MAX_AGE"], 0))),
 	)
 
+	s.loadLabels()
 	s.setRoutes()
 
 	rootHandler := handlers.CompressHandler(handlers.RecoveryHandler()(handlers.CombinedLoggingHandler(httpLogOut, CORS(s.mux))))
@@ -103,6 +104,24 @@ func (s *httpServer) StopServer(ctx context.Context) error {
 
 func (s *httpServer) Results() string {
 	return s.result
+}
+
+func (s *httpServer) loadLabels() {
+	s.config["labels"] = map[string]cu.SM{}
+	if cu.ToString(s.config["NT_CLIENT_LABELS"], "") != "" {
+		var jsonLabels []byte
+		var labels map[string]cu.SM
+		var err error
+		if jsonLabels, err = s.ReadFile(cu.ToString(s.config["NT_CLIENT_LABELS"], "")); err != nil {
+			s.appLog.Error("error loading client labels file", "error", err)
+			return
+		}
+		if err = s.ConvertFromByte(jsonLabels, &labels); err != nil {
+			s.appLog.Error("error converting client labels file", "error", err)
+			return
+		}
+		s.config["labels"] = labels
+	}
 }
 
 func (s *httpServer) loadPrompts() {
@@ -335,9 +354,7 @@ func (s *httpServer) mcpRoutes() {
 	s.mux.HandleFunc("GET /mcp/catalog", msrv.Catalog)
 	//s.mux.Handle("/mcp/public", mcp.NewStreamableHTTPHandler(msrv.GetServer("public", s.config, s.appLog, s.session), opt))
 	jwtAuth := auth.RequireBearerToken(s.mcpVerify, &auth.RequireBearerTokenOptions{Scopes: []string{}})
-	for _, scope := range []string{
-		"all", "customer", "product", "employee", "project", "tool", "place", "offer", "order", "invoice", "worksheet", "rent",
-		"setting", "stock"} {
+	for _, scope := range msrv.McpScopes {
 		s.mux.Handle("/mcp/"+scope, jwtAuth(mcp.NewStreamableHTTPHandler(msrv.GetServer(scope, s.config, s.appLog, s.session), opt)))
 	}
 }

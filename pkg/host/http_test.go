@@ -672,3 +672,88 @@ func Test_httpServer_loadResources(t *testing.T) {
 		})
 	}
 }
+
+func Test_httpServer_loadLabels(t *testing.T) {
+	type fields struct {
+		config          cu.IM
+		appLog          *slog.Logger
+		mux             *http.ServeMux
+		server          *http.Server
+		session         *api.SessionService
+		tlsEnabled      bool
+		result          string
+		memSession      map[string]md.MemoryStore
+		ReadFile        func(name string) ([]byte, error)
+		StaticReadFile  func(name string) ([]byte, error)
+		ConvertFromByte func(data []byte, result any) error
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		{
+			name: "file_not_found",
+			fields: fields{
+				config: cu.IM{"NT_CLIENT_LABELS": "../../data/not_found.json"},
+				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				ReadFile: func(name string) ([]byte, error) {
+					return nil, errors.New("file not found")
+				},
+				ConvertFromByte: cu.ConvertFromByte,
+				StaticReadFile: func(name string) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+		},
+		{
+			name: "convert_error",
+			fields: fields{
+				config: cu.IM{"NT_CLIENT_LABELS": "../../data/client_labels.json"},
+				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				ReadFile: func(name string) ([]byte, error) {
+					return []byte(`{}`), nil
+				},
+				ConvertFromByte: func(data []byte, result interface{}) error {
+					return errors.New("convert error")
+				},
+				StaticReadFile: func(name string) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+		},
+		{
+			name: "success",
+			fields: fields{
+				config: cu.IM{"NT_CLIENT_LABELS": "../../data/client_labels.json"},
+				appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+				ReadFile: func(name string) ([]byte, error) {
+					return []byte(`{}`), nil
+				},
+				ConvertFromByte: func(data []byte, result interface{}) error {
+					return nil
+				},
+				StaticReadFile: func(name string) ([]byte, error) {
+					return []byte{}, nil
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &httpServer{
+				config:          tt.fields.config,
+				appLog:          tt.fields.appLog,
+				mux:             tt.fields.mux,
+				server:          tt.fields.server,
+				session:         tt.fields.session,
+				tlsEnabled:      tt.fields.tlsEnabled,
+				result:          tt.fields.result,
+				memSession:      tt.fields.memSession,
+				ReadFile:        tt.fields.ReadFile,
+				StaticReadFile:  tt.fields.StaticReadFile,
+				ConvertFromByte: tt.fields.ConvertFromByte,
+			}
+			s.loadLabels()
+		})
+	}
+}

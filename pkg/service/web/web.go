@@ -178,7 +178,7 @@ func ClientSessionCreate(w http.ResponseWriter, r *http.Request) {
 	cs := r.Context().Value(md.ClientServiceCtxKey).(*cls.ClientService)
 	database := cu.ToString(sessionReq.Database, cu.ToString(cs.Config["NT_DEFAULT_ALIAS"], ""))
 	if user, err = cs.AuthUser(database, sessionReq.Username); err != nil {
-		errMsg := fmt.Sprintf("%s: %s", ut.GetMessage("en", "unknown_user"), sessionReq.Username)
+		errMsg := fmt.Sprintf("%s: %s", ut.GetMessage("unknown_user"), sessionReq.Username)
 		http.Error(w, errMsg, http.StatusUnauthorized)
 		return
 	}
@@ -225,8 +225,8 @@ func ClientAuthCallback(w http.ResponseWriter, r *http.Request) {
 	loginID := r.URL.Query().Get("state")
 	cs := r.Context().Value(md.ClientServiceCtxKey).(*cls.ClientService)
 
-	errMsg := ut.GetMessage("en", "failed_authentication")
-	errTitle := ut.GetMessage("en", "error_authentication")
+	errMsg := ut.GetMessage("failed_authentication")
+	errTitle := ut.GetMessage("error_authentication")
 
 	if appLogin, err = cs.LoadSession(loginID); err != nil {
 		cpu.ErrorPage(w, errTitle, errMsg)
@@ -258,7 +258,7 @@ func ClientAuthCallback(w http.ResponseWriter, r *http.Request) {
 
 	var user cu.IM
 	if user, err = cs.AuthUser(appLogin.Ticket.Database, email); err != nil {
-		errMsg = fmt.Sprintf("%s: %s", ut.GetMessage("en", "unknown_user"), email)
+		errMsg = fmt.Sprintf("%s: %s", ut.GetMessage("unknown_user"), email)
 		cpu.ErrorPage(w, errTitle, errMsg)
 		return
 	}

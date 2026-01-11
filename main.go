@@ -44,7 +44,7 @@ https://nervatura.github.io/nervatura/docs/install/
 
 # Quick Start
 
-https://nervatura.github.io/nervatura/docs/create/
+https://nervatura.github.io/nervatura/docs/start/
 
 More info see http://www.nervatura.com.
 */

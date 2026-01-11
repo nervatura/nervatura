@@ -173,11 +173,11 @@ func (ds *DataStore) getReportData(reportTemplate, filters cu.IM, sources []cu.S
 	datarows["title"] = cu.ToString(reportMeta["report_name"], "")
 	datarows["crtime"] = time.Now().Format("2006-01-02 15:04")
 	if trows == 0 {
-		return datarows, errors.New(ut.GetMessage("en", "nodata"))
+		return datarows, errors.New(ut.GetMessage("nodata"))
 	}
 	if _, found := datarows["ds"]; found {
 		if len(datarows["ds"].([]cu.IM)) == 0 {
-			return datarows, errors.New(ut.GetMessage("en", "nodata"))
+			return datarows, errors.New(ut.GetMessage("nodata"))
 		}
 	}
 	return datarows, nil

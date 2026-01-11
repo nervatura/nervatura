@@ -93,7 +93,6 @@ func TestSessionService_saveFileSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -117,7 +116,6 @@ func TestSessionService_loadFileSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -164,7 +162,6 @@ func TestSessionService_loadFileSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -188,7 +185,6 @@ func TestSessionService_checkSessionTable(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -275,7 +271,6 @@ func TestSessionService_checkSessionTable(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -299,7 +294,6 @@ func TestSessionService_saveDbSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -364,7 +358,6 @@ func TestSessionService_saveDbSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -388,7 +381,6 @@ func TestSessionService_loadDbSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -413,9 +405,6 @@ func TestSessionService_loadDbSession(t *testing.T) {
 			fields: fields{
 				Config: SessionConfig{},
 				Conn:   &md.TestDriver{Config: cu.IM{}},
-				GetMessage: func(lang, key string) string {
-					return key
-				},
 			},
 			args:    args{},
 			wantErr: true,
@@ -450,7 +439,6 @@ func TestSessionService_loadDbSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -474,7 +462,6 @@ func TestSessionService_SaveSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -558,7 +545,6 @@ func TestSessionService_SaveSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -580,7 +566,6 @@ func TestSessionService_LoadSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -602,12 +587,8 @@ func TestSessionService_LoadSession(t *testing.T) {
 		wantErr    bool
 	}{
 		{
-			name: "nodata",
-			fields: fields{
-				GetMessage: func(lang, key string) string {
-					return key
-				},
-			},
+			name:   "nodata",
+			fields: fields{},
 			args: args{
 				sessionKey: "key",
 				data:       cu.IM{},
@@ -679,7 +660,6 @@ func TestSessionService_LoadSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -705,7 +685,6 @@ func TestSessionService_deleteFileSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -745,7 +724,6 @@ func TestSessionService_deleteFileSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -769,7 +747,6 @@ func TestSessionService_deleteDbSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -817,7 +794,6 @@ func TestSessionService_deleteDbSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -841,7 +817,6 @@ func TestSessionService_DeleteSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -921,7 +896,6 @@ func TestSessionService_DeleteSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -945,7 +919,6 @@ func TestSessionService_cleaningFileSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -991,7 +964,6 @@ func TestSessionService_cleaningFileSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -1015,7 +987,6 @@ func TestSessionService_cleaningDbSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -1053,7 +1024,6 @@ func TestSessionService_cleaningDbSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -1077,7 +1047,6 @@ func TestSessionService_cleaningMemSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -1117,7 +1086,6 @@ func TestSessionService_cleaningMemSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,
@@ -1141,7 +1109,6 @@ func TestSessionService_CleaningSession(t *testing.T) {
 		cleaningStamp   time.Time
 		Config          SessionConfig
 		Conn            DataDriver
-		GetMessage      func(lang string, key string) string
 		CreateDir       func(name string, perm fs.FileMode) error
 		CreateFile      func(name string) (*os.File, error)
 		ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -1207,7 +1174,6 @@ func TestSessionService_CleaningSession(t *testing.T) {
 				cleaningStamp:   tt.fields.cleaningStamp,
 				Config:          tt.fields.Config,
 				Conn:            tt.fields.Conn,
-				GetMessage:      tt.fields.GetMessage,
 				CreateDir:       tt.fields.CreateDir,
 				CreateFile:      tt.fields.CreateFile,
 				ReadDir:         tt.fields.ReadDir,

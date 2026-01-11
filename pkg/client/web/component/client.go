@@ -82,22 +82,34 @@ type ClientComponent struct {
 	SearchConfig  *SearchConfig
 	editorMap     map[string]EditorInterface
 	modalMap      map[string]func(labels cu.SM, data cu.IM) ct.Form
+	customLabels  map[string]cu.SM
 }
 
-func NewClientComponent() *ClientComponent {
+func NewClientComponent(labels map[string]cu.SM) *ClientComponent {
+	langs := st.ClientLang
+	for lang, values := range labels {
+		if lang != "en" {
+			langs = append(langs, lang+","+cu.ToString(values[lang], lang))
+		}
+	}
 	return &ClientComponent{
-		languages:     st.ClientLang,
+		languages:     langs,
 		helpURL:       st.DocsPath,
 		clientHelpURL: st.DocsClientPath + "#search",
 		exportURL:     st.ClientPath + "/session/export/browser/%s",
 		SearchConfig:  &SearchConfig{},
 		editorMap:     editorMap,
 		modalMap:      modalMap,
+		customLabels:  labels,
 	}
 }
 
 func (cc *ClientComponent) Labels(lang string) cu.SM {
-	return ut.GetLangMessages(lang)
+	labels := ut.GetMessages()
+	if cc.customLabels[lang] != nil {
+		labels = cu.MergeSM(labels, cc.customLabels[lang])
+	}
+	return labels
 }
 
 func (cc *ClientComponent) Menu(labels cu.SM, config cu.IM) ct.MenuBar {
@@ -152,7 +164,7 @@ func (cc *ClientComponent) Login(labels cu.SM, config cu.IM) ct.Login {
 		HideDatabase: false,
 		HidePassword: false,
 		ShowHelp:     true,
-		HelpURL:      cc.helpURL,
+		HelpURL:      cc.helpURL + "/client",
 	}
 	return login
 }

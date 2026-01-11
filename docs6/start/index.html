@@ -82,7 +82,7 @@
           </p>
 
           <h1 class="text-3xl font-bold tracking-tight text-slate-900">
-            Create a new database
+            Quick Start
           </h1>
         </header>
 
@@ -186,7 +186,7 @@
 
         <p class="mb-2">
           <p class="text-slate-600">Configure your database connection in your environment variables: <code 
-            class="text-base font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+            class="text-sm font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
             >NT_ALIAS_[ALIASNAME]</code>
           <p>
           <p class="text-slate-600">Connection string format: <code class="text-sm text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
@@ -246,7 +246,7 @@
 
         <p class="mb-2">
           <p class="text-slate-600">Username: <b>admin</b></p>
-          <p class="text-slate-600">Password: The default admin password is the <code class="text-base font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+          <p class="text-slate-600">Password: The default admin password is the <code class="text-sm font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
             >NT_API_KEY</code> environment variable. Please change after the first login!</p>
           <p class="text-slate-600">Database: <b>alias name</b> (e.g. <b>demo</b>)</p>
         </p>
@@ -261,11 +261,66 @@
           </li>
           <li class="mb-2">
             Here you can see all installable files from the <code 
-              class="text-base font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+              class="text-sm font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
               >NT_REPORT_DIR</code> directory (empty value: all built-in Nervatura Report templates)
           </li>
           <li class="mb-2">
             Install the selected report templates to the database. You can modify the report templates after installation by the REPORT EDITOR.
+          </li>
+        </ul>
+
+        <h3 id="customization" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Customization
+        </h3>
+
+        <ul class="list-disc list-inside text-slate-600">
+          <li>
+            <span class="text-base font-bold text-slate-600">
+              <a href="../client/" class="text-blue-600 dark:text-blue-500 hover:underline">Nervatura Client</a> interface language translation
+            </span>
+    
+            <p class="mt-2 text-base text-slate-600">
+              Create a file based on the <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/pkg/static/labels.json" 
+              target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">example client_labels.json</a> file. All subtitles can be found the <a href="https://raw.githubusercontent.com/nervatura/nervatura/master/pkg/static/message.json" 
+              target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">original message.json</a>.
+            </p>
+    
+            <p class="mt-2 text-base text-slate-600">
+              Set <code class="text-sm font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+                >NT_CLIENT_LABELS</code> environment variable value to <code class="text-green-600 dark:text-green-600 text-sm bg-white px-2 py-1">path/to/YOUR_CLIENT_LABELS_FILE.JSON</code>. 
+                The default login language and theme can be specified in the query parameter, for example: <code class="text-green-600 dark:text-green-600 text-sm bg-white px-2 py-1">/client/?lang=es&theme=dark</code>. For more information, see the <a href="../examples" class="text-blue-600 dark:text-blue-500 hover:underline">Examples</a> section code examples.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <span class="text-base font-bold text-slate-600">
+              <a href="../client/" class="text-blue-600 dark:text-blue-500 hover:underline">Nervatura Client</a> shortcuts and report template
+            </span>
+    
+            <p class="mt-2 text-base text-slate-600">
+              It is possible to create <a href="../client/#shortcut" class="text-blue-600 dark:text-blue-500 hover:underline">shortcuts</a> in the program, which <a href="../client/#launcher" class="text-blue-600 dark:text-blue-500 hover:underline">can call remote functions</a>. Input parameters can also be set and the user will be informed about the result.
+            </p>
+    
+            <p class="mt-2 text-base text-slate-600">
+              The PDF report templates structure, displayed data and language can be modified with the <a href="../editor/" class="text-blue-600 dark:text-blue-500 hover:underline">Report Editor</a> extension.
+            </p>
+          </li>
+
+          <li class="mt-4">
+            <span class="text-base font-bold text-slate-600">
+              Custom PDF Report font
+            </span>
+    
+            <p class="mt-2 text-base text-slate-600">
+              Set <code class="text-sm font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+                >NT_REPORT_FONT_FAMILY</code> environment variable value to <code class="text-green-600 dark:text-green-600 text-sm bg-white px-2 py-1">YOUR_FONT_FAMILY_NAME</code>. Valid font type and filename form: FAMILY_NAME-Regular.ttf, FAMILY_NAME-Italic.ttf, FAMILY_NAME-Bold.ttf, FAMILY_NAME-BoldItalic.ttf
+            </p>
+
+            <p class="mt-2 text-base text-slate-600">
+              Set <code class="text-sm font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+                >NT_REPORT_FONT_DIR</code> environment variable value to <code class="text-green-600 dark:text-green-600 text-sm bg-white px-2 py-1">path/to/YOUR_FONTS_PATH</code>. Docker container: mount local folder to the container.
+            </p>
+
           </li>
         </ul>
 

@@ -26,14 +26,20 @@ type McpServer struct {
 	config  cu.IM
 	appLog  *slog.Logger
 	session *api.SessionService
-	scopes  []string
+}
+
+var McpScopes []string = []string{
+	"all", "customer", "product", "employee", "project", "tool", "place", "offer", "order", "invoice", "worksheet", "rent",
+	"setting", "stock",
 }
 
 var toolDataMap map[string]McpTool = map[string]McpTool{}
 
 func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	opts := &mcp.ServerOptions{
-		Instructions: cu.ToString(ScopeInstruction[scope], ScopeInstruction["root"]),
+		Instructions: `Nervatura is a business management framework. It can handle any type of business related information, 
+		starting from customer details, up to shipping, stock or payment information. 
+		Quick start and more info see: https://nervatura.github.io/nervatura/docs/mcp/`,
 		GetSessionID: cu.GetComponentID,
 	}
 	server = mcp.NewServer(&mcp.Implementation{
@@ -94,7 +100,7 @@ func (ms *McpServer) receivingHandler(next mcp.MethodHandler) mcp.MethodHandler 
 
 		if extra.TokenInfo != nil {
 			for _, scope := range extra.TokenInfo.Scopes {
-				if slices.Contains(ms.scopes, scope) {
+				if slices.Contains(McpScopes, scope) {
 					if !slices.Contains(extra.TokenInfo.Scopes, ms.scope) {
 						return nil, errors.New(http.StatusText(http.StatusUnauthorized))
 					}
@@ -198,10 +204,6 @@ func GetServer(scope string, config cu.IM, appLog *slog.Logger, session *api.Ses
 			config:  config,
 			appLog:  appLog,
 			session: session,
-			scopes:  []string{},
-		}
-		for key := range ScopeInstruction {
-			ms.scopes = append(ms.scopes, key)
 		}
 		return ms.NewMCPServer(scope)
 	}

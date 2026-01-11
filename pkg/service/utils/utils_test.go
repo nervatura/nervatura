@@ -140,8 +140,7 @@ func TestToIntArray(t *testing.T) {
 
 func TestGetMessage(t *testing.T) {
 	type args struct {
-		lang string
-		key  string
+		key string
 	}
 	tests := []struct {
 		name string
@@ -165,7 +164,7 @@ func TestGetMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetMessage(tt.args.lang, tt.args.key); got != tt.want {
+			if got := GetMessage(tt.args.key); got != tt.want {
 				t.Errorf("GetMessage() = %v, want %v", got, tt.want)
 			}
 		})
@@ -362,34 +361,6 @@ func TestToStringArray(t *testing.T) {
 			if gotResult := ToStringArray(tt.args.arr); !reflect.DeepEqual(gotResult, tt.wantResult) {
 				t.Errorf("ToStringArray() = %v, want %v", gotResult, tt.wantResult)
 			}
-		})
-	}
-}
-
-func TestGetLangMessages(t *testing.T) {
-	type args struct {
-		lang string
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		{
-			name: "success",
-			args: args{
-				lang: "en",
-			},
-		},
-		{
-			name: "not_found",
-			args: args{
-				lang: "not_found",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			GetLangMessages(tt.args.lang)
 		})
 	}
 }

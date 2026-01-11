@@ -303,7 +303,6 @@ func TestMcpServer_receivingHandler(t *testing.T) {
 				},
 				appLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				scope:  "product",
-				scopes: []string{"product", "customer"},
 			}
 			ms.receivingHandler(tt.next)(context.Background(), "tools/call", &mcp.ServerRequest[*mcp.CallToolParams]{
 				Session: &mcp.ServerSession{},

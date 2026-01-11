@@ -118,32 +118,22 @@ func ToAnyArray(arr any) (result []any) {
 }
 
 // GetMessage - application error and info messages
-func GetMessage(lang, key string) string {
-	var messages map[string]map[string]string
+func GetMessage(key string) string {
+	var messages map[string]string
 	var jsonMessages, _ = st.Static.ReadFile("message.json")
 	_ = cu.ConvertFromByte(jsonMessages, &messages)
-	lang = cu.ToString(lang, "en")
-	langMsg := messages[lang]
-	if value, found := langMsg[key]; found {
+	if value, found := messages[key]; found {
 		return value
 	}
 	return ""
 }
 
 // GetMessages - get messages from message.json
-func GetMessages() map[string]map[string]string {
-	var messages map[string]map[string]string
+func GetMessages() map[string]string {
+	var messages map[string]string
 	var jsonMessages, _ = st.Static.ReadFile("message.json")
 	_ = cu.ConvertFromByte(jsonMessages, &messages)
 	return messages
-}
-
-func GetLangMessages(lang string) map[string]string {
-	msg := GetMessages()
-	if value, found := msg[lang]; found {
-		return value
-	}
-	return map[string]string{}
 }
 
 // GetDataField - get field name and value from struct

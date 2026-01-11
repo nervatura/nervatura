@@ -34,10 +34,10 @@ func ErrorPage(w http.ResponseWriter, title, msg string) {
 	var html template.HTML
 	msg = cu.ToString(msg, http.StatusText(http.StatusUnauthorized))
 	pageData := cu.IM{
-		"title":       ut.GetMessage("en", "app_title"),
+		"title":       ut.GetMessage("app_title"),
 		"error_title": title,
 		"error_msg":   msg,
-		"login":       ut.GetMessage("en", "title_login"),
+		"login":       ut.GetMessage("title_login"),
 	}
 	html, err = cu.TemplateBuilder("error", st.ErrorTemplate, map[string]any{}, pageData)
 	RespondMessage(w, html, err)
@@ -45,7 +45,7 @@ func ErrorPage(w http.ResponseWriter, title, msg string) {
 
 func Application(sessionID string, mainComponent ct.ClientComponent) (ccApp *ct.Application) {
 	return &ct.Application{
-		Title: ut.GetMessage("en", "app_title"),
+		Title: ut.GetMessage("app_title"),
 		Header: cu.SM{
 			"X-Session-Token": sessionID,
 		},

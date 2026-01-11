@@ -110,7 +110,7 @@ func TestClientComponent_Menu(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(map[string]cu.SM{})
 			cc.Menu(tt.labels, tt.config)
 		})
 	}
@@ -120,18 +120,29 @@ func TestClientComponent_Login(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
-		labels cu.SM
-		config cu.IM
+		labels       cu.SM
+		config       cu.IM
+		customLabels map[string]cu.SM
 	}{
 		{
 			name:   "default",
 			labels: cu.SM{},
 			config: cu.IM{},
+			customLabels: map[string]cu.SM{
+				"es": {
+					"es":           "Español",
+					"mnu_search":   "Buscar",
+					"mnu_bookmark": "Marcadores",
+					"mnu_setting":  "Configuración",
+					"mnu_help":     "Ayuda",
+					"mnu_logout":   "Salir",
+				},
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(tt.customLabels)
 			cc.Login(tt.labels, tt.config)
 		})
 	}
@@ -586,7 +597,7 @@ func TestClientComponent_SideBar(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(map[string]cu.SM{})
 			cc.SideBar(tt.moduleKey, tt.labels, tt.data)
 		})
 	}
@@ -615,7 +626,7 @@ func TestClientComponent_Search(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(map[string]cu.SM{})
 			cc.Search(tt.viewName, tt.labels, tt.searchData)
 		})
 	}
@@ -644,7 +655,7 @@ func TestClientComponent_Browser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(map[string]cu.SM{})
 			cc.Browser(tt.viewName, tt.labels, tt.searchData)
 		})
 	}
@@ -875,7 +886,7 @@ func TestClientComponent_Editor(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(map[string]cu.SM{})
 			cc.Editor(tt.editorKey, tt.viewName, tt.labels, tt.editorData)
 		})
 	}
@@ -1250,7 +1261,7 @@ func TestClientComponent_Form(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(map[string]cu.SM{})
 			cc.Form(tt.editorKey, tt.formKey, tt.labels, tt.data)
 		})
 	}
@@ -1399,7 +1410,7 @@ func TestClientComponent_Modal(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cc := NewClientComponent()
+			cc := NewClientComponent(map[string]cu.SM{})
 			cc.Modal(tt.formKey, tt.labels, tt.data)
 		})
 	}
@@ -3459,6 +3470,7 @@ func TestClientComponent_Labels(t *testing.T) {
 		SearchConfig  *SearchConfig
 		editorMap     map[string]EditorInterface
 		modalMap      map[string]func(labels cu.SM, data cu.IM) ct.Form
+		customLabels  map[string]cu.SM
 	}
 	type args struct {
 		lang string
@@ -3472,6 +3484,11 @@ func TestClientComponent_Labels(t *testing.T) {
 			name: "en",
 			fields: fields{
 				languages: []string{"en"},
+				customLabels: map[string]cu.SM{
+					"en": {
+						"mnu_search": "Buscar",
+					},
+				},
 			},
 			args: args{
 				lang: "en",
@@ -3488,6 +3505,7 @@ func TestClientComponent_Labels(t *testing.T) {
 				SearchConfig:  tt.fields.SearchConfig,
 				editorMap:     tt.fields.editorMap,
 				modalMap:      tt.fields.modalMap,
+				customLabels:  tt.fields.customLabels,
 			}
 			cc.Labels(tt.args.lang)
 		})

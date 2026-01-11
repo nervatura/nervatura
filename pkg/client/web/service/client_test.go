@@ -89,7 +89,7 @@ func TestClientService_GetClient(t *testing.T) {
 					},
 				},
 				AppLog: slog.Default(),
-				UI:     cp.NewClientComponent(),
+				UI:     cp.NewClientComponent(map[string]cu.SM{}),
 			},
 		},
 	}
@@ -145,7 +145,7 @@ func TestClientService_LoadSession(t *testing.T) {
 			name: "mem",
 			fields: fields{
 				Session: &ses,
-				UI:      cp.NewClientComponent(),
+				UI:      cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				sessionID: "SES012345",
@@ -181,7 +181,7 @@ func TestClientService_LoadSession(t *testing.T) {
 						return []byte{}, nil
 					},
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				sessionID: "SES012345",
@@ -863,10 +863,10 @@ func TestClientService_searchEvent(t *testing.T) {
 								AppLog: appLog,
 							}
 						},
-						UI: cp.NewClientComponent(),
+						UI: cp.NewClientComponent(map[string]cu.SM{}),
 					}),
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -914,10 +914,10 @@ func TestClientService_searchEvent(t *testing.T) {
 								AppLog: appLog,
 							}
 						},
-						UI: cp.NewClientComponent(),
+						UI: cp.NewClientComponent(map[string]cu.SM{}),
 					}),
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -1058,10 +1058,10 @@ func TestClientService_MainResponse(t *testing.T) {
 								AppLog: appLog,
 							}
 						},
-						UI: cp.NewClientComponent(),
+						UI: cp.NewClientComponent(map[string]cu.SM{}),
 					}),
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -1108,10 +1108,10 @@ func TestClientService_MainResponse(t *testing.T) {
 								AppLog: appLog,
 							}
 						},
-						UI: cp.NewClientComponent(),
+						UI: cp.NewClientComponent(map[string]cu.SM{}),
 					}),
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -1158,10 +1158,10 @@ func TestClientService_MainResponse(t *testing.T) {
 								AppLog: appLog,
 							}
 						},
-						UI: cp.NewClientComponent(),
+						UI: cp.NewClientComponent(map[string]cu.SM{}),
 					}),
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -3615,10 +3615,10 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 								AppLog: appLog,
 							}
 						},
-						UI: cp.NewClientComponent(),
+						UI: cp.NewClientComponent(map[string]cu.SM{}),
 					}),
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -3683,10 +3683,10 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 								AppLog: appLog,
 							}
 						},
-						UI: cp.NewClientComponent(),
+						UI: cp.NewClientComponent(map[string]cu.SM{}),
 					}),
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -4008,6 +4008,13 @@ func TestClientService_codeName(t *testing.T) {
 	}{
 		{
 			name: "success",
+			config: cu.IM{
+				"labels": map[string]cu.SM{
+					"en": {
+						"customer_name": "name",
+					},
+				},
+			},
 			ds: &api.DataStore{
 				Db: &md.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {

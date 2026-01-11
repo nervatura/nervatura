@@ -101,7 +101,7 @@ func (ds *DataStore) checkConnection() error {
 	if !ds.Db.Connection().Connected {
 		connStr := cu.ToString(ds.Config["NT_ALIAS_"+strings.ToUpper(ds.Alias)], os.Getenv("NT_ALIAS_"+strings.ToUpper(ds.Alias)))
 		if connStr == "" {
-			return errors.New(ut.GetMessage("en", "missing_database"))
+			return errors.New(ut.GetMessage("missing_database"))
 		}
 		err := ds.Db.CreateConnection(ds.Alias, connStr)
 		if err != nil {

@@ -89,14 +89,14 @@ func (ds *DataStore) addAttachments(b *strings.Builder, attachments []cu.IM, del
 func validateEmailOptions(options cu.IM) error {
 	emailOpt, valid := options["email"].(cu.IM)
 	if !valid {
-		return errors.New(ut.GetMessage("en", "missing_required_field") + ": email")
+		return errors.New(ut.GetMessage("missing_required_field") + ": email")
 	}
 	recipients := cu.ToIMA(emailOpt["recipients"], []cu.IM{})
 	if len(recipients) == 0 {
-		return errors.New(ut.GetMessage("en", "missing_required_field") + ": recipients")
+		return errors.New(ut.GetMessage("missing_required_field") + ": recipients")
 	}
 	if cu.ToString(options["provider"], "smtp") != "smtp" {
-		return errors.New(ut.GetMessage("en", "invalid_provider"))
+		return errors.New(ut.GetMessage("invalid_provider"))
 	}
 	return nil
 }

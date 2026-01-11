@@ -83,13 +83,17 @@ var moduleMap = map[string]func(cls *ClientService) ServiceModule{
 }
 
 func NewClientService(config cu.IM, appLog *slog.Logger, session *api.SessionService) *ClientService {
+	customLabels := map[string]cu.SM{}
+	if labels, found := config["labels"].(map[string]cu.SM); found {
+		customLabels = labels
+	}
 	cls := &ClientService{
 		Config:       config,
 		AppLog:       appLog,
 		Session:      session,
 		NewDataStore: api.NewDataStore,
 		Modules:      map[string]ServiceModule{},
-		UI:           cp.NewClientComponent(),
+		UI:           cp.NewClientComponent(customLabels),
 		ReadAll:      io.ReadAll,
 	}
 	for key, fn := range moduleMap {
@@ -713,8 +717,8 @@ func (cls *ClientService) mainResponseLogin(evt ct.ResponseEvent) (re ct.Respons
 	client.Ticket.User = user
 	client.Ticket.Expiry = time.Now().Add(time.Duration(cu.ToFloat(cls.Config["NT_SESSION_EXP"], 1)) * time.Hour)
 	userConfig := cu.ToIM(user["auth_map"], cu.IM{})
-	client.Lang = cu.ToString(userConfig["lang"], st.DefaultLang)
-	client.Theme = cu.ToString(userConfig["theme"], st.DefaultTheme)
+	client.Lang = cu.ToString(userConfig["lang"], client.Lang)
+	client.Theme = cu.ToString(userConfig["theme"], client.Theme)
 	client.SetSearch(st.DefaultSearchView, cu.IM{
 		"user_config": userConfig,
 		"auth_filter": user["auth_filter"],

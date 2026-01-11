@@ -12,7 +12,6 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	drv "github.com/nervatura/nervatura/v6/pkg/driver"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
-	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 const (
@@ -37,7 +36,6 @@ type SessionService struct {
 	cleaningStamp   time.Time
 	Config          SessionConfig
 	Conn            DataDriver
-	GetMessage      func(lang string, key string) string
 	CreateDir       func(name string, perm fs.FileMode) error
 	CreateFile      func(name string) (*os.File, error)
 	ReadDir         func(name string) ([]fs.DirEntry, error)
@@ -61,7 +59,6 @@ func NewSession(config cu.IM, alias string, method md.SessionMethod, memSession 
 			Method:      method,
 		},
 		Conn:            &drv.SQLDriver{Config: config},
-		GetMessage:      ut.GetMessage,
 		CreateDir:       os.Mkdir,
 		CreateFile:      os.Create,
 		ReadDir:         os.ReadDir,
@@ -150,16 +147,18 @@ func (ses *SessionService) cleaningFileSession(exp time.Time) (err error) {
 	return err
 }
 
+/*
 func (ses *SessionService) message(lang string, key string) string {
 	if ses.GetMessage != nil {
 		return ses.GetMessage(lang, key)
 	}
 	return key
 }
+*/
 
 func (ses *SessionService) checkSessionTable() (err error) {
 	if ses.Config.DbConn == "" {
-		return errors.New(ses.message("en", SessionErrorDriver))
+		return errors.New("missing database driver")
 	}
 	sessionTable := cu.ToString(ses.Config.DbTable, "session")
 	var sqlString string
@@ -245,7 +244,7 @@ func (ses *SessionService) loadDbSession(sessionID string, data any) (err error)
 		var rows []cu.IM
 		if rows, err = ses.getDbRows(sessionID); err == nil {
 			if len(rows) == 0 {
-				return errors.New(ses.message("en", SessionErrorData))
+				return errors.New("missing session data")
 			}
 			jdata := []byte(cu.ToString(rows[0]["value"], ""))
 			err = ses.ConvertFromByte(jdata, &data)
@@ -258,7 +257,7 @@ func (ses *SessionService) loadMemSession(sessionID string) (result any, err err
 	if result, found := ses.memSession[sessionID]; found {
 		return result.Session, nil
 	}
-	return result, errors.New(ses.message("en", SessionErrorData))
+	return result, errors.New("missing session data")
 }
 
 func (ses *SessionService) saveMemSession(sessionID string, data any) (err error) {

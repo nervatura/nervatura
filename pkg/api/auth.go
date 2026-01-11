@@ -69,15 +69,15 @@ func (ds *DataStore) UserLogin(username, password string, createToken bool) (tok
 	if pwhash == "" {
 		if user.Code == st.DefaultConfig["connection"]["default_admin"] && user.UserGroup == md.UserGroupAdmin {
 			if cu.ToString(ds.Config["NT_API_KEY"], "") != password {
-				return token, errors.New(ut.GetMessage("en", "default_admin_password"))
+				return token, errors.New(ut.GetMessage("default_admin_password"))
 			}
 			return result(user)
 		}
-		return token, errors.New(ut.GetMessage("en", "missing_password"))
+		return token, errors.New(ut.GetMessage("missing_password"))
 	}
 
 	if err := ds.ComparePasswordAndHash(password, pwhash); err != nil {
-		return token, errors.New(ut.GetMessage("en", "wrong_password"))
+		return token, errors.New(ut.GetMessage("wrong_password"))
 	}
 	return result(user)
 }
@@ -99,10 +99,10 @@ func (ds *DataStore) UserPassword(userCode, password, confirm string) (err error
 		return errors.New("missing user code")
 	}
 	if password == "" {
-		return errors.New(ut.GetMessage("en", "empty_password"))
+		return errors.New(ut.GetMessage("empty_password"))
 	}
 	if password != confirm {
-		return errors.New(ut.GetMessage("en", "verify_password"))
+		return errors.New(ut.GetMessage("verify_password"))
 	}
 
 	var pwhash string

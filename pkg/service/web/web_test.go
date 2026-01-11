@@ -46,7 +46,7 @@ func TestClientAuth(t *testing.T) {
 				Method: md.SessionMethodMemory,
 			},
 		},
-		UI:      cp.NewClientComponent(),
+		UI:      cp.NewClientComponent(map[string]cu.SM{}),
 		ReadAll: io.ReadAll,
 	}
 	for _, tt := range tests {
@@ -90,7 +90,7 @@ func TestClientAuthEvent(t *testing.T) {
 				Method: md.SessionMethodMemory,
 			},
 		},
-		UI:      cp.NewClientComponent(),
+		UI:      cp.NewClientComponent(map[string]cu.SM{}),
 		ReadAll: io.ReadAll,
 	}
 	cls.Session.SaveSession("SES012345", &ct.Client{
@@ -139,7 +139,7 @@ func TestClientSession(t *testing.T) {
 				Method: md.SessionMethodMemory,
 			},
 		},
-		UI:      cp.NewClientComponent(),
+		UI:      cp.NewClientComponent(map[string]cu.SM{}),
 		ReadAll: io.ReadAll,
 	}
 	cls.Session.SaveSession("SES012345", &ct.Client{
@@ -185,7 +185,7 @@ func TestClientSessionEvent(t *testing.T) {
 				Method: md.SessionMethodMemory,
 			},
 		},
-		UI:      cp.NewClientComponent(),
+		UI:      cp.NewClientComponent(map[string]cu.SM{}),
 		ReadAll: io.ReadAll,
 	}
 	cls1.Session.SaveSession("SES012345", &ct.Client{
@@ -336,7 +336,7 @@ func TestClientSessionCreate(t *testing.T) {
 						},
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			})
 			ClientSessionCreate(tt.w, tt.r.WithContext(ctx))
 		})
@@ -517,7 +517,7 @@ func TestClientAuthCallback(t *testing.T) {
 						},
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			})
 			ClientAuthCallback(tt.w, tt.r.WithContext(ctx))
 		})
@@ -569,7 +569,7 @@ func TestClientExportBrowser(t *testing.T) {
 			},
 		},
 		Lang:            "en",
-		CustomFunctions: cp.NewClientComponent(),
+		CustomFunctions: cp.NewClientComponent(map[string]cu.SM{}),
 	})
 	tests := []struct {
 		name string // description of this test case
@@ -604,7 +604,7 @@ func TestClientExportBrowser(t *testing.T) {
 						AppLog: appLog,
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			})
 			ClientExportBrowser(tt.w, tt.r.WithContext(ctx))
 		})
@@ -771,7 +771,7 @@ func TestClientExportReport(t *testing.T) {
 						},
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			})
 			ClientExportReport(tt.w, tt.r.WithContext(ctx))
 		})
@@ -877,7 +877,7 @@ func TestClientTemplateEditor(t *testing.T) {
 						},
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			})
 			ClientTemplateEditor(tt.w, tt.r.WithContext(ctx))
 		})

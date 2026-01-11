@@ -39,7 +39,7 @@ func (ds *DataStore) Function(functionName string, options cu.IM) (interface{}, 
 	if fn, ok := fnMap[functionName]; ok {
 		return fn(options)
 	}
-	return []byte{}, errors.New(ut.GetMessage("en", "unknown_method"))
+	return []byte{}, errors.New(ut.GetMessage("unknown_method"))
 }
 
 // ProductPrice - get product price
@@ -47,12 +47,12 @@ func (ds *DataStore) ProductPrice(options cu.IM) (results cu.IM, err error) {
 	results = cu.IM{"price": float64(0), "discount": float64(0)}
 	for _, v := range []string{"currency_code", "product_code"} {
 		if _, found := options[v]; !found {
-			return results, errors.New(ut.GetMessage("en", "missing_required_field") + ": " + v)
+			return results, errors.New(ut.GetMessage("missing_required_field") + ": " + v)
 		}
 	}
 	priceType := cu.ToString(options["price_type"], md.PriceTypeCustomer.String())
 	if !slices.Contains([]string{md.PriceTypeCustomer.String(), md.PriceTypeVendor.String()}, priceType) {
-		return results, errors.New(ut.GetMessage("en", "invalid_enum_value") + " (price_type): " + priceType)
+		return results, errors.New(ut.GetMessage("invalid_enum_value") + " (price_type): " + priceType)
 	}
 	qty := cu.ToFloat(options["qty"], 0)
 	posdate := cu.ToString(options["posdate"], time.Now().Format(time.DateOnly))

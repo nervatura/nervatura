@@ -1707,10 +1707,10 @@ func TestTransService_Response(t *testing.T) {
 									AppLog: appLog,
 								}
 							},
-							UI: cp.NewClientComponent(),
+							UI: cp.NewClientComponent(map[string]cu.SM{}),
 						}),
 					},
-					UI: cp.NewClientComponent(),
+					UI: cp.NewClientComponent(map[string]cu.SM{}),
 				},
 			},
 			args: args{

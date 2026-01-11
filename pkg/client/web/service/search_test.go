@@ -37,7 +37,7 @@ func TestSearchService_Data(t *testing.T) {
 						AppLog: appLog,
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -101,7 +101,7 @@ func TestSearchService_Response(t *testing.T) {
 						AppLog: appLog,
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Name: ct.ClientEventSideMenu,
@@ -134,7 +134,7 @@ func TestSearchService_Response(t *testing.T) {
 						AppLog: appLog,
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Name: ct.ClientEventSideMenu,
@@ -167,7 +167,7 @@ func TestSearchService_Response(t *testing.T) {
 						AppLog: appLog,
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Name: ct.ClientEventSideMenu,
@@ -209,7 +209,7 @@ func TestSearchService_Response(t *testing.T) {
 						},
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -256,7 +256,7 @@ func TestSearchService_Response(t *testing.T) {
 						},
 					}
 				},
-				UI: cp.NewClientComponent(),
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
