@@ -2337,9 +2337,10 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
-						Config: config,
-						AppLog: appLog,
+						Db:            &md.TestDriver{Config: cu.IM{}},
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 				Modules: map[string]ServiceModule{
@@ -2349,7 +2350,10 @@ func TestClientService_MainResponse(t *testing.T) {
 							AppLog: slog.Default(),
 							NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 								return &api.DataStore{
-									Db: &md.TestDriver{Config: cu.IM{}},
+									Db:            &md.TestDriver{Config: cu.IM{}},
+									Config:        config,
+									AppLog:        appLog,
+									ConvertToType: ut.ConvertToType,
 								}
 							},
 						},

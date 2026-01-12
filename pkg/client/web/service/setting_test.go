@@ -8,7 +8,9 @@ import (
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
+	cp "github.com/nervatura/nervatura/v6/pkg/client/web/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 func TestSettingService_Data(t *testing.T) {
@@ -46,6 +48,7 @@ func TestSettingService_Data(t *testing.T) {
 						},
 					}
 				},
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -83,6 +86,7 @@ func TestSettingService_Data(t *testing.T) {
 						},
 					}
 				},
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -120,6 +124,7 @@ func TestSettingService_Data(t *testing.T) {
 						},
 					}
 				},
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -157,6 +162,7 @@ func TestSettingService_Data(t *testing.T) {
 						},
 					}
 				},
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -194,6 +200,7 @@ func TestSettingService_Data(t *testing.T) {
 						},
 					}
 				},
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -231,6 +238,7 @@ func TestSettingService_Data(t *testing.T) {
 						},
 					}
 				},
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -268,6 +276,7 @@ func TestSettingService_Data(t *testing.T) {
 						},
 					}
 				},
+				UI: cp.NewClientComponent(map[string]cu.SM{}),
 			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
@@ -1522,6 +1531,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1586,6 +1596,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1650,6 +1661,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1716,6 +1728,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1782,6 +1795,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1847,6 +1861,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1918,6 +1933,7 @@ func TestSettingService_Response(t *testing.T) {
 						ConvertFromByte: func(data []byte, result interface{}) error {
 							return cu.ConvertFromByte([]byte(`{"meta": {"report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}`), result)
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -2277,6 +2293,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -2345,6 +2362,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -2423,6 +2441,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -2495,6 +2514,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -2567,6 +2587,7 @@ func TestSettingService_Response(t *testing.T) {
 						CreatePasswordHash: func(password string) (hash string, err error) {
 							return "123456", nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -3912,8 +3933,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -3953,8 +3975,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{{"id": 1}}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -3997,8 +4020,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4041,8 +4065,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4082,8 +4107,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{{"id": 1}}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4123,8 +4149,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{{"id": 1}}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4167,8 +4194,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4211,8 +4239,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4252,8 +4281,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{{"id": 1}}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4296,8 +4326,9 @@ func TestSettingService_Response(t *testing.T) {
 								return []cu.IM{}, nil
 							},
 						}},
-						Config: config,
-						AppLog: appLog,
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4329,9 +4360,10 @@ func TestSettingService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
-						Config: config,
-						AppLog: appLog,
+						Db:            &md.TestDriver{Config: cu.IM{}},
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -4374,9 +4406,10 @@ func TestSettingService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
-						Config: config,
-						AppLog: appLog,
+						Db:            &md.TestDriver{Config: cu.IM{}},
+						Config:        config,
+						AppLog:        appLog,
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},

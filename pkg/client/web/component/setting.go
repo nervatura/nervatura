@@ -105,17 +105,7 @@ func (e *SettingEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Ro
 	}
 
 	langOpt := func() (locales []ct.SelectOption) {
-		locales = []ct.SelectOption{}
-		for _, loc := range st.ClientLang {
-			lang := strings.Split(loc, ",")
-			if len(lang) > 1 {
-				locales = append(locales, ct.SelectOption{
-					Value: lang[0],
-					Text:  lang[1],
-				})
-			}
-		}
-		return locales
+		return ct.SelectOptionRangeValidation(data["locales"], []ct.SelectOption{{Value: "en", Text: "English"}})
 	}
 
 	pgOpt := func() (options []ct.SelectOption) {

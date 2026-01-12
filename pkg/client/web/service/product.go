@@ -160,7 +160,7 @@ func (s *ProductService) updatePrices(ds *api.DataStore, data cu.IM) (err error)
 			},
 			PriceMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(pr, &price); err == nil {
+		if err = ds.ConvertData(pr, &price); err == nil {
 			values := cu.IM{
 				"valid_from":    price.ValidFrom,
 				"valid_to":      "",
@@ -203,7 +203,7 @@ func (s *ProductService) updateLinks(ds *api.DataStore, data cu.IM) (err error) 
 			},
 			LinkMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(ln, &link); err == nil {
+		if err = ds.ConvertData(ln, &link); err == nil {
 			values := cu.IM{
 				"link_type_1": link.LinkType1.String(),
 				"link_code_1": link.LinkCode1,
@@ -252,7 +252,7 @@ func (s *ProductService) updateDeleteRows(ds *api.DataStore, data cu.IM) (err er
 
 func (s *ProductService) update(ds *api.DataStore, data cu.IM) (productID int64, err error) {
 	var product md.Product = md.Product{}
-	ut.ConvertToType(data["product"], &product)
+	ds.ConvertData(data["product"], &product)
 	values := cu.IM{
 		"product_type": product.ProductType.String(),
 		"product_name": product.ProductName,
@@ -675,7 +675,7 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 			typeMap := map[string]func(rc int) cu.IM{
 				"prices": func(rc int) cu.IM {
 					var price cu.IM
-					ut.ConvertToType(md.Price{
+					ds.ConvertData(md.Price{
 						Id:           -int64(rc + 1),
 						ProductCode:  cu.ToString(product["code"], ""),
 						PriceType:    md.PriceTypeCustomer,
@@ -690,7 +690,7 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 				},
 				"events": func(rc int) cu.IM {
 					var event cu.IM
-					ut.ConvertToType(md.Event{
+					ds.ConvertData(md.Event{
 						Tags:     []string{},
 						EventMap: cu.IM{},
 					}, &event)
@@ -698,7 +698,7 @@ func (s *ProductService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 				},
 				"components": func(rc int) cu.IM {
 					var link cu.IM
-					ut.ConvertToType(md.Link{
+					ds.ConvertData(md.Link{
 						Id:        -int64(rc + 1),
 						LinkType1: md.LinkTypeProduct,
 						LinkType2: md.LinkTypeProduct,

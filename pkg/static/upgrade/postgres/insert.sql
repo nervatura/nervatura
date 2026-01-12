@@ -11,6 +11,29 @@ from bck_employee e
 inner join bck_groups ug on e.usergroup = ug.id
 where ug.groupvalue in('admin','user','guest') and e.username <> 'admin' and e.username is not null;
 
+INSERT INTO config(code, config_type, data) 
+VALUES('setting', 'CONFIG_DATA', jsonb_build_object(
+  'default_bank',(select COALESCE(value,'PLA0000000000N2') from bck_fieldvalue where fieldname = 'default_bank'), 
+  'default_chest', (select COALESCE(value,'PLA0000000000N3') from bck_fieldvalue where fieldname = 'default_chest'), 
+  'default_warehouse', (select COALESCE(value,'PLA0000000000N1') from bck_fieldvalue where fieldname = 'default_warehouse'),
+  'default_country', (select COALESCE(value,'EU') from bck_fieldvalue where fieldname = 'default_country'),
+  'default_lang', (select COALESCE(value,'en') from bck_fieldvalue where fieldname = 'default_lang'),
+  'default_currency', (select COALESCE(value,'EUR') from bck_fieldvalue where fieldname = 'default_currency'),
+  'default_deadline', (select value from bck_fieldvalue where fieldname = 'default_deadline'),
+  'default_paidtype', 'PAID_TRANSFER',
+  'default_unit', (select COALESCE(value,'piece') from bck_fieldvalue where fieldname = 'default_unit'),
+  'default_taxcode', (select COALESCE(value,'VAT20') from bck_fieldvalue where fieldname = 'default_taxcode')
+));
+INSERT INTO config(code, config_type, data) 
+VALUES('orientation', 'CONFIG_DATA', jsonb_build_object(
+  'P','Portrait', 
+  'L', 'Landscape'
+));
+INSERT INTO config(code, config_type, data) 
+VALUES('paper_size', 'CONFIG_DATA', jsonb_build_object(
+  'a3','A3', 'a4', 'A4', 'a5', 'A5', 'letter', 'Letter', 'legal', 'Legal'
+));
+
 INSERT INTO config(config_type, data) 
 select 'CONFIG_MAP' as config_type, jsonb_build_object('field_name', df.fieldname, 'field_type',
   case when ft.groupvalue = 'time' then 'FIELD_DATETIME'
@@ -33,7 +56,9 @@ inner join bck_groups ft on df.fieldtype = ft.id
 left join bck_groups st on df.subtype = st.id
 where df.fieldname not in('trans_custinvoice_compname','trans_custinvoice_compaddress','trans_custinvoice_comptax',
 'trans_custinvoice_custname','trans_custinvoice_custaddress','trans_custinvoice_custtax','trans_wsdistance',
-'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote');
+'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote',
+'default_bank','default_chest','default_warehouse','default_country','default_lang','default_currency','default_deadline',
+'default_paidtype','default_unit','default_taxcode');
 
 INSERT INTO config(config_type, data) 
 select 'CONFIG_SHORTCUT' as config_type, jsonb_build_object(
@@ -87,7 +112,7 @@ left join (
 SELECT setval('currency_id_seq', (select max(id) from currency), true);
 
 INSERT INTO customer(id, code, customer_name, customer_type, addresses, contacts, events, customer_meta, customer_map)
-select c.id, 'CUS'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||c.id as code,
+select c.id, c.custnumber as code,
   c.custname as customer_name, 
   ('CUSTOMER_'||upper(ct.groupvalue))::customer_type as customer_type,
   COALESCE(addr.addresses, '[]'::JSONB) as addresses, COALESCE(cont.contacts, '[]'::JSONB) as contacts,
@@ -97,7 +122,7 @@ select c.id, 'CUS'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||c.id as
 	'terms', COALESCE(c.terms, 0), 'credit_limit', COALESCE(c.creditlimit, 0), 'discount', COALESCE(c.discount, 0),
 	'notes', COALESCE(c.notes, ''), 'inactive', (c.inactive = 1), 'tags', '[]'::JSONB
   ) as customer_meta,
-  COALESCE(fld.md, '{}'::JSONB)::JSONB||jsonb_build_object('custnumber', c.custnumber) as customer_map
+  COALESCE(fld.md, '{}'::JSONB)::JSONB as customer_map
 from bck_customer c
 inner join bck_groups ct on c.custtype = ct.id
 left join (select a.ref_id, jsonb_agg(jsonb_build_object(
@@ -188,14 +213,14 @@ where e.deleted = 0;
 SELECT setval('employee_id_seq', (select max(id) from employee), true);
 
 INSERT INTO place(id, code, place_name, place_type, currency_code, address, contacts, place_meta, place_map)
-select p.id, 'PLA'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||p.id as code,
+select p.id, p.planumber as code,
   p.description as place_name, 
   ('PLACE_'||upper(pt.groupvalue))::place_type as place_type, p.curr as currency_code,
   COALESCE(addr.addresses[0], '{}'::JSONB) as address, COALESCE(cont.contacts, '[]'::JSONB) as contacts,
   jsonb_build_object(
 	'notes', COALESCE(p.notes, ''), 'inactive', (p.inactive = 1), 'tags', '[]'::JSONB
   ) as place_meta,
-  COALESCE(fld.md, '{}'::JSONB)::JSONB||jsonb_build_object('planumber', p.planumber) as place_map
+  COALESCE(fld.md, '{}'::JSONB)::JSONB as place_map
 from bck_place p
 inner join bck_groups pt on p.placetype = pt.id
 left join (select a.ref_id, jsonb_agg(jsonb_build_object(
@@ -239,7 +264,7 @@ left join (
 SELECT setval('tax_id_seq', (select max(id) from tax), true);
 
 INSERT INTO product(id, code, product_name, product_type, tax_code, events, product_meta, product_map)
-select p.id, 'PRO'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||p.id as code,
+select p.id, p.partnumber as code,
   p.description as product_name, 
   ('PRODUCT_'||upper(pt.groupvalue))::product_type as product_type,
   tx.taxcode as tax_code,
@@ -251,7 +276,7 @@ select p.id, 'PRO'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||p.id as
 	'barcode_qty', COALESCE(CAST((bar.barcodes[0]::JSONB)->>'qty' as FLOAT), 0),
 	'notes', COALESCE(p.notes, ''), 'inactive', (p.inactive = 1), 'tags', '[]'::JSONB
   ) as product_meta,
-  COALESCE(fld.md, '{}'::JSONB)::JSONB||jsonb_build_object('partnumber', p.partnumber) as product_map
+  COALESCE(fld.md, '{}'::JSONB)::JSONB as product_map
 from bck_product p
 inner join bck_groups pt on p.protype = pt.id
 inner join bck_tax tx on p.tax_id = tx.id
@@ -425,16 +450,13 @@ SELECT setval('tool_id_seq', (select max(id) from tool), true);
 
 INSERT INTO trans(id, code, trans_type, trans_date, direction, customer_code, 
   employee_code, project_code, place_code, currency_code, auth_code, trans_meta, trans_map)
-select t.id, 
-  CASE WHEN upper(tt.groupvalue) = 'INVENTORY' then 'COR'
-  WHEN upper(tt.groupvalue) = 'DELIVERY' and upper(gd.groupvalue) = 'TRANSFER' then 'TRF'
-  else substr(upper(tt.groupvalue),1,3)end||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||t.id as code, 
+select t.id, t.transnumber as code, 
   ('TRANS_'||upper(tt.groupvalue))::trans_type as trans_type, t.transdate as trans_date,
   ('DIRECTION_'||upper(gd.groupvalue))::direction as direction, c.code as customer_code,
   e.code as employee_code, p.code as project_code, pl.code as place_code, t.curr as currency_code, a.code as auth_code,
   jsonb_build_object(
 	'due_time', t.duedate, 'ref_number', COALESCE(t.ref_transnumber, ''),
-	'paid_type', 'PAID_'||upper(gd.groupvalue), 'tax_free', (t.notax = 1), 'paid', (t.paid = 1),
+	'paid_type', 'PAID_'||upper(pt.groupvalue), 'tax_free', (t.notax = 1), 'paid', (t.paid = 1),
 	'rate', COALESCE(t.acrate, 0), 
 	'status', COALESCE('STATUS_'||upper(COALESCE(fld.md, '{}'::JSONB)->>'trans_transcast'),''),
 	'trans_state', 'STATE_'||upper(tstat.groupvalue), 'closed', (t.closed = 1),
@@ -463,7 +485,7 @@ select t.id,
 	 ),
 	'tags', json_array()
   ) as trans_meta,
-  (COALESCE(fld.md, '{}'::JSONB)::JSONB||jsonb_build_object('transnumber', t.transnumber)) as trans_map
+  COALESCE(fld.md, '{}'::JSONB)::JSONB as trans_map
 from bck_trans t
 inner join bck_groups tt on t.transtype = tt.id
 inner join bck_groups gd on t.direction = gd.id
@@ -480,7 +502,11 @@ left join (
   where fv.deleted = 0 and fv.fieldname in(
     select fieldname from bck_deffield 
 	where nervatype = (select id from bck_groups where groupname = 'nervatype' and groupvalue='trans') 
-	and deleted = 0)
+	and deleted = 0 and fv.fieldname not in(
+    'trans_custinvoice_compname','trans_custinvoice_compaddress','trans_custinvoice_comptax',
+    'trans_custinvoice_custname','trans_custinvoice_custaddress','trans_custinvoice_custtax','trans_wsdistance',
+    'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote')
+  )
   group by fv.ref_id) fld on fld.ref_id = t.id
 where t.deleted = 0;
 
@@ -587,7 +613,7 @@ where pm.deleted = 0;
 SELECT setval('payment_id_seq', (select max(id) from payment), true);
 
 INSERT INTO link(id, code, link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map)
-select l.id, 'LNK'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||l.id as code,
+select * from (select l.id, 'LNK'||EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INTEGER||'N'||l.id as code,
   ('LINK_'||upper(nt1.groupvalue))::link_type as link_type_1,
   case when nt1.groupvalue = 'customer' then cu1.code
     when nt1.groupvalue = 'employee' then e1.code
@@ -650,6 +676,8 @@ where l.deleted = 0
   and l.nervatype_1 in (select id from bck_groups where groupname = 'nervatype' 
     and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'))
   and l.nervatype_2 in (select id from bck_groups where groupname = 'nervatype' 
-    and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'));
+    and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'))
+) as foo
+where foo.link_code_1 is not null and foo.link_code_2 is not null;
 
 SELECT setval('link_id_seq', (select max(id) from link), true);

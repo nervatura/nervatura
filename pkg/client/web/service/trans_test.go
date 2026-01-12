@@ -10,6 +10,7 @@ import (
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	cp "github.com/nervatura/nervatura/v6/pkg/client/web/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 func TestTransService_Data(t *testing.T) {
@@ -540,11 +541,9 @@ func TestTransService_Response(t *testing.T) {
 									return []cu.IM{{"id": 1}}, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
-							ConvertToType: func(data interface{}, result any) (err error) {
-								return nil
-							},
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -1548,9 +1547,10 @@ func TestTransService_Response(t *testing.T) {
 					AppLog: slog.Default(),
 					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
+							Db:            &md.TestDriver{Config: cu.IM{}},
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -1592,9 +1592,10 @@ func TestTransService_Response(t *testing.T) {
 					AppLog: slog.Default(),
 					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
+							Db:            &md.TestDriver{Config: cu.IM{}},
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -1644,9 +1645,10 @@ func TestTransService_Response(t *testing.T) {
 					AppLog: slog.Default(),
 					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
+							Db:            &md.TestDriver{Config: cu.IM{}},
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -1687,9 +1689,10 @@ func TestTransService_Response(t *testing.T) {
 					AppLog: slog.Default(),
 					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 						return &api.DataStore{
-							Db:     &md.TestDriver{Config: cu.IM{}},
-							Config: config,
-							AppLog: appLog,
+							Db:            &md.TestDriver{Config: cu.IM{}},
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 					Modules: map[string]ServiceModule{
@@ -1703,8 +1706,9 @@ func TestTransService_Response(t *testing.T) {
 											return []cu.IM{{"code": "value"}}, nil
 										},
 									}},
-									Config: config,
-									AppLog: appLog,
+									Config:        config,
+									AppLog:        appLog,
+									ConvertToType: ut.ConvertToType,
 								}
 							},
 							UI: cp.NewClientComponent(map[string]cu.SM{}),
@@ -1762,6 +1766,7 @@ func TestTransService_Response(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2120,9 +2125,7 @@ func TestTransService_Response(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
-							ConvertToType: func(data interface{}, result any) (err error) {
-								return nil
-							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2186,8 +2189,9 @@ func TestTransService_Response(t *testing.T) {
 									return []cu.IM{{"id": 1}}, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2230,8 +2234,9 @@ func TestTransService_Response(t *testing.T) {
 									return []cu.IM{{"id": 1}}, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2272,8 +2277,9 @@ func TestTransService_Response(t *testing.T) {
 									return []cu.IM{{"id": 1}}, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2314,8 +2320,9 @@ func TestTransService_Response(t *testing.T) {
 									return []cu.IM{{"id": 1}}, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2611,8 +2618,9 @@ func TestTransService_Response(t *testing.T) {
 									return 1, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2696,8 +2704,9 @@ func TestTransService_Response(t *testing.T) {
 									return 1, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2797,8 +2806,9 @@ func TestTransService_Response(t *testing.T) {
 									return 1, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -2897,8 +2907,9 @@ func TestTransService_Response(t *testing.T) {
 									return 1, nil
 								},
 							}},
-							Config: config,
-							AppLog: appLog,
+							Config:        config,
+							AppLog:        appLog,
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -3355,6 +3366,7 @@ func TestTransService_Response(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -3395,6 +3407,7 @@ func TestTransService_Response(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -4827,6 +4840,7 @@ func TestTransService_Response(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -4936,6 +4950,7 @@ func TestTransService_Response(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -4987,6 +5002,7 @@ func TestTransService_Response(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -6071,6 +6087,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6119,6 +6136,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6150,10 +6168,18 @@ func TestTransService_update(t *testing.T) {
 		{
 			name: "validation_error",
 			fields: fields{
-				cls: &ClientService{},
+				cls: &ClientService{
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							ConvertToType: ut.ConvertToType,
+						}
+					},
+				},
 			},
 			args: args{
-				ds: &api.DataStore{},
+				ds: &api.DataStore{
+					ConvertToType: ut.ConvertToType,
+				},
 				data: cu.IM{
 					"trans": cu.IM{
 						"id":         int64(0),
@@ -6187,6 +6213,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6241,6 +6268,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6295,6 +6323,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6349,6 +6378,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6410,6 +6440,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6470,6 +6501,7 @@ func TestTransService_update(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"trans": cu.IM{
@@ -6570,6 +6602,7 @@ func TestTransService_updateMovements(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"movements": []cu.IM{
@@ -6612,6 +6645,7 @@ func TestTransService_updateMovements(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"movements": []cu.IM{
@@ -6659,6 +6693,7 @@ func TestTransService_updateMovements(t *testing.T) {
 					ConvertToByte: func(data interface{}) ([]byte, error) {
 						return []byte{}, nil
 					},
+					ConvertToType: ut.ConvertToType,
 				},
 				data: cu.IM{
 					"movements": []cu.IM{
@@ -7048,6 +7083,7 @@ func TestTransService_createData(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -7104,7 +7140,13 @@ func TestTransService_createData(t *testing.T) {
 		{
 			name: "validation_error",
 			fields: fields{
-				cls: &ClientService{},
+				cls: &ClientService{
+					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+						return &api.DataStore{
+							ConvertToType: ut.ConvertToType,
+						}
+					},
+				},
 			},
 			args: args{
 				evt: ct.ResponseEvent{
@@ -7148,6 +7190,7 @@ func TestTransService_createData(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -7203,6 +7246,7 @@ func TestTransService_createData(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -7267,6 +7311,7 @@ func TestTransService_createData(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -7329,6 +7374,7 @@ func TestTransService_createData(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -7391,6 +7437,7 @@ func TestTransService_createData(t *testing.T) {
 							ConvertToByte: func(data interface{}) ([]byte, error) {
 								return []byte{}, nil
 							},
+							ConvertToType: ut.ConvertToType,
 						}
 					},
 				},
@@ -7675,7 +7722,13 @@ func TestTransService_linkAdd(t *testing.T) {
 	}{
 		{
 			name: "success",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7736,7 +7789,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 	}{
 		{
 			name: "items_view",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7775,7 +7834,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "movement_delivery",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7823,7 +7888,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "movement_waybill",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7861,7 +7932,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "movement_formula",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7887,7 +7964,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "movement_default",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7925,7 +8008,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "tool_movement",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7951,7 +8040,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "tool_movement_dirty",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -7978,7 +8073,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "trans_item_shipping",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -8004,7 +8105,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "trans_item_shipping_dirty",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{
@@ -8031,7 +8138,13 @@ func TestTransService_editorFieldViewAdd(t *testing.T) {
 		},
 		{
 			name: "maps",
-			cls:  &ClientService{},
+			cls: &ClientService{
+				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
+					return &api.DataStore{
+						ConvertToType: ut.ConvertToType,
+					}
+				},
+			},
 			evt: ct.ResponseEvent{
 				Trigger: &ct.Client{
 					BaseComponent: ct.BaseComponent{

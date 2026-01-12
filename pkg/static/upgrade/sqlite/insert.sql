@@ -10,6 +10,29 @@ from bck_employee e
 inner join bck_groups ug on e.usergroup = ug.id
 where ug.groupvalue in('admin','user','guest') and e.username <> 'admin' and e.username is not null;
 
+INSERT INTO config(code, config_type, data) 
+VALUES('setting', 'CONFIG_DATA', json_object(
+  'default_bank',(select COALESCE(value,'PLA0000000000N2') from bck_fieldvalue where fieldname = 'default_bank'), 
+  'default_chest', (select COALESCE(value,'PLA0000000000N3') from bck_fieldvalue where fieldname = 'default_chest'), 
+  'default_warehouse', (select COALESCE(value,'PLA0000000000N1') from bck_fieldvalue where fieldname = 'default_warehouse'),
+  'default_country', (select COALESCE(value,'EU') from bck_fieldvalue where fieldname = 'default_country'),
+  'default_lang', (select COALESCE(value,'en') from bck_fieldvalue where fieldname = 'default_lang'),
+  'default_currency', (select COALESCE(value,'EUR') from bck_fieldvalue where fieldname = 'default_currency'),
+  'default_deadline', (select COALESCE(value,8) from bck_fieldvalue where fieldname = 'default_deadline'),
+  'default_paidtype', 'PAID_TRANSFER',
+  'default_unit', (select COALESCE(value,'piece') from bck_fieldvalue where fieldname = 'default_unit'),
+  'default_taxcode', (select COALESCE(value,'VAT20') from bck_fieldvalue where fieldname = 'default_taxcode')
+));
+INSERT INTO config(code, config_type, data) 
+VALUES('orientation', 'CONFIG_DATA', json_object(
+  'P','Portrait', 
+  'L', 'Landscape'
+));
+INSERT INTO config(code, config_type, data) 
+VALUES('paper_size', 'CONFIG_DATA', json_object(
+  'a3','A3', 'a4', 'A4', 'a5', 'A5', 'letter', 'Letter', 'legal', 'Legal'
+));
+
 INSERT INTO config(config_type, data) 
 select 'CONFIG_MAP' as config_type, json_object('field_name', df.fieldname, 'field_type',
   case when ft.groupvalue = 'time' then 'FIELD_DATETIME'
@@ -32,7 +55,9 @@ inner join bck_groups ft on df.fieldtype = ft.id
 left join bck_groups st on df.subtype = st.id
 where df.fieldname not in('trans_custinvoice_compname','trans_custinvoice_compaddress','trans_custinvoice_comptax',
 'trans_custinvoice_custname','trans_custinvoice_custaddress','trans_custinvoice_custtax','trans_wsdistance',
-'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote');
+'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote',
+'default_bank','default_chest','default_warehouse','default_country','default_lang','default_currency','default_deadline',
+'default_paidtype','default_unit','default_taxcode');
 
 INSERT INTO config(config_type, data) 
 select 'CONFIG_SHORTCUT' as config_type, json_object(
@@ -84,17 +109,19 @@ left join (
   group by fv.ref_id) fld on fld.ref_id = cu.id;
 
 INSERT INTO customer(id, code, customer_name, customer_type, addresses, contacts, events, customer_meta, customer_map)
-select c.id, 'CUS'||unixepoch()||'N'||c.id as code,
+select c.id, c.custnumber as code,
   c.custname as customer_name, 
   'CUSTOMER_'||upper(ct.groupvalue) as customer_type,
   COALESCE(addr.addresses, json_array()) as addresses, COALESCE(cont.contacts, json_array()) as contacts,
   COALESCE(evt.events, json_array()) as events,
   json_object(
-	'tax_number', COALESCE(c.taxnumber, ''), 'account', COALESCE(c.account, ''), 'tax_free', (c.notax = 1),
+	'tax_number', COALESCE(c.taxnumber, ''), 'account', COALESCE(c.account, ''), 'tax_free', 
+  json(case when c.notax = 1 then 'true' else 'false' end),
 	'terms', COALESCE(c.terms, 0), 'credit_limit', COALESCE(c.creditlimit, 0), 'discount', COALESCE(c.discount, 0),
-	'notes', COALESCE(c.notes, ''), 'inactive', (c.inactive = 1), 'tags', json_array()
+	'notes', COALESCE(c.notes, ''), 'inactive', 
+  json(case when c.inactive = 1 then 'true' else 'false' end), 'tags', json_array()
   ) as customer_meta,
-  json_patch(COALESCE(fld.md, json_object()), json_object('custnumber', c.custnumber)) as customer_map
+  COALESCE(fld.md, json_object()) as customer_map
 from bck_customer c
 inner join bck_groups ct on c.custtype = ct.id
 left join (select a.ref_id, json_group_array(json_object(
@@ -140,7 +167,7 @@ select e.id, 'EMP'||unixepoch()||'N'||e.id as code,
   COALESCE(evt.events, json_array()) as events,
   json_object(
 	'start_date', COALESCE(e.startdate, ''), 'end_date', COALESCE(e.enddate, ''),
-	'notes', '', 'inactive', (e.inactive = 1), 'tags', json_array()
+	'notes', '', 'inactive', json(case when e.inactive = 1 then 'true' else 'false' end), 'tags', json_array()
   ) as employee_meta,
   json_patch(COALESCE(fld.md, json_object()), json_object('empnumber', e.empnumber)) as employee_map
 from bck_employee e
@@ -181,14 +208,14 @@ left join (
 where e.deleted = 0;
 
 INSERT INTO place(id, code, place_name, place_type, currency_code, address, contacts, place_meta, place_map)
-select p.id, 'PLA'||unixepoch()||'N'||p.id as code,
+select p.id, p.planumber as code,
   p.description as place_name, 
   'PLACE_'||upper(pt.groupvalue) as place_type, p.curr as currency_code,
   COALESCE(json_extract(addr.addresses,'$[0]'), json_object()) as address, COALESCE(cont.contacts, json_array()) as contacts,
   json_object(
-	'notes', COALESCE(p.notes, ''), 'inactive', (p.inactive = 1), 'tags', json_array()
+	'notes', COALESCE(p.notes, ''), 'inactive', json(case when p.inactive = 1 then 'true' else 'false' end), 'tags', json_array()
   ) as place_meta,
-  json_patch(COALESCE(fld.md, json_object()), json_object('planumber', p.planumber)) as place_map
+  COALESCE(fld.md, json_object()) as place_map
 from bck_place p
 inner join bck_groups pt on p.placetype = pt.id
 left join (select a.ref_id, json_group_array(json_object(
@@ -216,7 +243,7 @@ INSERT INTO tax(id, code, tax_meta, tax_map)
 select tx.id, upper(tx.taxcode) as code,
   json_object(
 	'description', COALESCE(tx.description, ''), 'rate_value', COALESCE(tx.rate, 0),
-	'inactive', (tx.inactive = 1), 'tags', json_array()
+	'inactive', json(case when tx.inactive = 1 then 'true' else 'false' end), 'tags', json_array()
   ) as tax_meta,
   COALESCE(fld.md, json_object()) as tax_map
 from bck_tax tx
@@ -228,7 +255,7 @@ left join (
   group by fv.ref_id) fld on fld.ref_id = tx.id;
 
 INSERT INTO product(id, code, product_name, product_type, tax_code, events, product_meta, product_map)
-select p.id, 'PRO'||unixepoch()||'N'||p.id as code,
+select p.id, p.partnumber as code,
   p.description as product_name, 
   'PRODUCT_'||upper(pt.groupvalue) as product_type,
   tx.taxcode as tax_code,
@@ -238,9 +265,9 @@ select p.id, 'PRO'||unixepoch()||'N'||p.id as code,
 	'barcode_type', COALESCE(json_extract(json_extract(bar.barcodes,'$[0]'),'$.barcode_type'), ''),
 	'barcode', COALESCE(json_extract(json_extract(bar.barcodes,'$[0]'),'$.code'), ''),
 	'barcode_qty', COALESCE(json_extract(json_extract(bar.barcodes,'$[0]'),'$.qty'), 0),
-	'notes', COALESCE(p.notes, ''), 'inactive', (p.inactive = 1), 'tags', json_array()
+	'notes', COALESCE(p.notes, ''), 'inactive', json(case when p.inactive = 1 then 'true' else 'false' end), 'tags', json_array()
   ) as product_meta,
-  json_patch(COALESCE(fld.md, json_object()), json_object('partnumber', p.partnumber)) as product_map
+  COALESCE(fld.md, json_object()) as product_map
 from bck_product p
 inner join bck_groups pt on p.protype = pt.id
 inner join bck_tax tx on p.tax_id = tx.id
@@ -309,7 +336,7 @@ select p.id, 'PRJ'||unixepoch()||'N'||p.id as code,
   COALESCE(evt.events, json_array()) as events,
   json_object(
 	'start_date', COALESCE(p.startdate, ''), 'end_date', COALESCE(p.enddate, ''),
-	'notes', COALESCE(p.notes, ''), 'inactive', (p.inactive = 1), 'tags', json_array()
+	'notes', COALESCE(p.notes, ''), 'inactive', json(case when p.inactive = 1 then 'true' else 'false' end), 'tags', json_array()
   ) as project_meta,
   json_patch(COALESCE(fld.md, json_object()), json_object('pronumber', p.pronumber)) as project_map
 from bck_project p
@@ -374,7 +401,7 @@ select t.id, 'SER'||unixepoch()||'N'||t.id as code,
   COALESCE(evt.events, json_array()) as events,
   json_object(
 	'serial_number', COALESCE(t.serial, ''),
-	'notes', COALESCE(t.notes, ''), 'inactive', (t.inactive = 1), 'tags', json_array()
+	'notes', COALESCE(t.notes, ''), 'inactive', json(case when t.inactive = 1 then 'true' else 'false' end), 'tags', json_array()
   ) as tool_meta,
   COALESCE(fld.md, json_object()) as tool_map
 from bck_tool t
@@ -405,18 +432,16 @@ where t.deleted = 0;
 INSERT INTO trans(id, code, trans_type, trans_date, direction, customer_code, 
   employee_code, project_code, place_code, currency_code, auth_code, trans_meta, trans_map)
 select t.id, 
-  CASE WHEN upper(tt.groupvalue) = 'INVENTORY' then 'COR'
-    WHEN upper(tt.groupvalue) = 'DELIVERY' and upper(gd.groupvalue) = 'TRANSFER' then 'TRF' 
-    else substr(upper(tt.groupvalue),1,3)end||unixepoch()||'N'||t.id as code, 
+  t.transnumber as code,
   'TRANS_'||upper(tt.groupvalue) as trans_type, t.transdate as trans_date,
   'DIRECTION_'||upper(gd.groupvalue) as direction, c.code as customer_code,
   e.code as employee_code, p.code as project_code, pl.code as place_code, t.curr as currency_code, a.code as auth_code,
   json_object(
 	'due_time', COALESCE(t.duedate, ''), 'ref_number', COALESCE(t.ref_transnumber, ''),
-	'paid_type', 'PAID_'||upper(gd.groupvalue), 'tax_free', (t.notax = 1), 'paid', (t.paid = 1),
+	'paid_type', 'PAID_'||upper(pt.groupvalue), 'tax_free', json(case when t.notax = 1 then 'true' else 'false' end), 'paid', json(case when t.paid = 1 then 'true' else 'false' end),
 	'rate', COALESCE(t.acrate, 0), 
 	'status', COALESCE('STATUS_'||upper(COALESCE(fld.md, json_object())->>'trans_transcast'),''),
-	'trans_state', 'STATE_'||upper(tstat.groupvalue), 'closed', (t.closed = 1),
+	'trans_state', 'STATE_'||upper(tstat.groupvalue), 'closed', json(case when t.closed = 1 then 'true' else 'false' end),
 	'notes', COALESCE(t.notes, ''), 'internal_notes', COALESCE(t.intnotes, ''), 'report_notes', COALESCE(t.fnote, ''),
 	'worksheet', json_object(
 	  'distance', CAST(COALESCE(COALESCE(fld.md, json_object())->>'trans_wsdistance',0) as float),
@@ -442,7 +467,7 @@ select t.id,
 	 ),
 	'tags', json_array()
   ) as trans_meta,
-  json_patch(COALESCE(fld.md, json_object()), json_object('transnumber', t.transnumber)) as trans_map
+  COALESCE(fld.md, json_object()) as trans_map
 from bck_trans t
 inner join bck_groups tt on t.transtype = tt.id
 inner join bck_groups gd on t.direction = gd.id
@@ -459,7 +484,10 @@ left join (
   where fv.deleted = 0 and fv.fieldname in(
     select fieldname from bck_deffield 
 	where nervatype = (select id from bck_groups where groupname = 'nervatype' and groupvalue='trans') 
-	and deleted = 0)
+	and deleted = 0) and fv.fieldname not in(
+    'trans_custinvoice_compname','trans_custinvoice_compaddress','trans_custinvoice_comptax',
+    'trans_custinvoice_custname','trans_custinvoice_custaddress','trans_custinvoice_custtax','trans_wsdistance',
+    'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote')
   group by fv.ref_id) fld on fld.ref_id = t.id
 where t.deleted = 0;
 
@@ -479,8 +507,8 @@ select i.id, 'ITM'||unixepoch()||'N'||i.id as code,
   json_object(
 	'unit', i.unit, 'qty', i.qty, 'fx_price', i.fxprice, 'net_amount', i.netamount,
 	'discount', i.discount, 'vat_amount', i.vatamount, 'amount', i.amount,
-	'description', i.description, 'deposit', (i.deposit = 1),
-	'own_stock', i.ownstock, 'action_price', (i.actionprice = 1),
+	'description', i.description, 'deposit', json(case when i.deposit = 1 then 'true' else 'false' end),
+	'own_stock', i.ownstock, 'action_price', json(case when i.actionprice = 1 then 'true' else 'false' end),
 	'tags', json_array()
   ) as item_meta, COALESCE(fld.md, json_object()) as item_map
 from bck_item i
@@ -501,7 +529,7 @@ select mv.id, 'MOV'||unixepoch()||'N'||mv.id as code,
   'MOVEMENT_'||upper(mt.groupvalue) as movement_type, mv.shippingdate as shipping_time,
   t.code as trans_code, p.code as product_code, tl.code as tool_code, pl.code as place_code,
   json_object(
-	'qty', mv.qty, 'notes', COALESCE(mv.notes, ''), 'shared', (mv.shared = 1),
+	'qty', mv.qty, 'notes', COALESCE(mv.notes, ''), 'shared', json(case when mv.shared = 1 then 'true' else 'false' end),
 	'tags', json_array()
   ) as movement_meta, COALESCE(fld.md, json_object()) as movement_map
 from bck_movement mv
@@ -621,4 +649,5 @@ where l.deleted = 0
   and l.nervatype_1 in (select id from bck_groups where groupname = 'nervatype' 
     and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'))
   and l.nervatype_2 in (select id from bck_groups where groupname = 'nervatype' 
-    and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'));
+    and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'))
+  and link_code_1 is not null and link_code_2 is not null;

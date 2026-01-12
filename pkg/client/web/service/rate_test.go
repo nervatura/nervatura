@@ -9,6 +9,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 func TestRateService_Data(t *testing.T) {
@@ -516,6 +517,7 @@ func TestRateService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -551,6 +553,7 @@ func TestRateService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -589,6 +592,7 @@ func TestRateService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},

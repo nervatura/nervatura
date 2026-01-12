@@ -111,7 +111,7 @@ func (s *CustomerService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 
 func (s *CustomerService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var customer md.Customer = md.Customer{}
-	ut.ConvertToType(data["customer"], &customer)
+	ds.ConvertData(data["customer"], &customer)
 	values := cu.IM{
 		"customer_type": customer.CustomerType.String(),
 		"customer_name": customer.CustomerName,
@@ -444,7 +444,7 @@ func (s *CustomerService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent
 			typeMap := map[string]func() cu.IM{
 				"addresses": func() cu.IM {
 					var address cu.IM
-					ut.ConvertToType(md.Address{
+					ds.ConvertData(md.Address{
 						Tags:       []string{},
 						AddressMap: cu.IM{},
 					}, &address)
@@ -452,7 +452,7 @@ func (s *CustomerService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent
 				},
 				"contacts": func() cu.IM {
 					var contact cu.IM
-					ut.ConvertToType(md.Contact{
+					ds.ConvertData(md.Contact{
 						Tags:       []string{},
 						ContactMap: cu.IM{},
 					}, &contact)
@@ -460,7 +460,7 @@ func (s *CustomerService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent
 				},
 				"events": func() cu.IM {
 					var event cu.IM
-					ut.ConvertToType(md.Event{
+					ds.ConvertData(md.Event{
 						Tags:     []string{},
 						EventMap: cu.IM{},
 					}, &event)

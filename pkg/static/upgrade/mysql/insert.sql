@@ -11,6 +11,29 @@ from bck_employee e
 inner join bck_groups ug on e.usergroup = ug.id
 where ug.groupvalue in('admin','user','guest') and e.username <> 'admin' and e.username is not null;
 
+INSERT INTO config(code, config_type, data) 
+VALUES('setting', 'CONFIG_DATA', JSON_OBJECT(
+  'default_bank',(select COALESCE(value,'PLA0000000000N2') from bck_fieldvalue where fieldname = 'default_bank'), 
+  'default_chest', (select COALESCE(value,'PLA0000000000N3') from bck_fieldvalue where fieldname = 'default_chest'), 
+  'default_warehouse', (select COALESCE(value,'PLA0000000000N1') from bck_fieldvalue where fieldname = 'default_warehouse'),
+  'default_country', (select COALESCE(value,'EU') from bck_fieldvalue where fieldname = 'default_country'),
+  'default_lang', (select COALESCE(value,'en') from bck_fieldvalue where fieldname = 'default_lang'),
+  'default_currency', (select COALESCE(value,'EUR') from bck_fieldvalue where fieldname = 'default_currency'),
+  'default_deadline', (select COALESCE(value,8) from bck_fieldvalue where fieldname = 'default_deadline'),
+  'default_paidtype', 'PAID_TRANSFER',
+  'default_unit', (select COALESCE(value,'piece') from bck_fieldvalue where fieldname = 'default_unit'),
+  'default_taxcode', (select COALESCE(value,'VAT20') from bck_fieldvalue where fieldname = 'default_taxcode')
+));
+INSERT INTO config(code, config_type, data) 
+VALUES('orientation', 'CONFIG_DATA', JSON_OBJECT(
+  'P','Portrait', 
+  'L', 'Landscape'
+));
+INSERT INTO config(code, config_type, data) 
+VALUES('paper_size', 'CONFIG_DATA', JSON_OBJECT(
+  'a3','A3', 'a4', 'A4', 'a5', 'A5', 'letter', 'Letter', 'legal', 'Legal'
+));
+
 INSERT INTO config(config_type, data) 
 select 'CONFIG_MAP' as config_type, JSON_OBJECT('field_name', df.fieldname, 'field_type',
   case when ft.groupvalue = 'time' then 'FIELD_DATETIME'
@@ -33,7 +56,9 @@ inner join bck_groups ft on df.fieldtype = ft.id
 left join bck_groups st on df.subtype = st.id
 where df.fieldname not in('trans_custinvoice_compname','trans_custinvoice_compaddress','trans_custinvoice_comptax',
 'trans_custinvoice_custname','trans_custinvoice_custaddress','trans_custinvoice_custtax','trans_wsdistance',
-'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote');
+'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote',
+'default_bank','default_chest','default_warehouse','default_country','default_lang','default_currency','default_deadline',
+'default_paidtype','default_unit','default_taxcode');
 
 INSERT INTO config(config_type, data) 
 select 'CONFIG_SHORTCUT' as config_type, JSON_OBJECT(
@@ -85,7 +110,7 @@ left join (
   group by fv.ref_id) fld on fld.ref_id = cu.id;
 
 INSERT INTO customer(id, code, customer_name, customer_type, addresses, contacts, events, customer_meta, customer_map)
-select c.id, CONCAT('CUS',UNIX_TIMESTAMP(),'N',c.id) as code,
+select c.id, c.custnumber as code,
   c.custname as customer_name, 
   CONCAT('CUSTOMER_',upper(ct.groupvalue)) as customer_type,
   COALESCE(addr.addresses, JSON_ARRAY()) as addresses, COALESCE(cont.contacts, JSON_ARRAY()) as contacts,
@@ -95,7 +120,7 @@ select c.id, CONCAT('CUS',UNIX_TIMESTAMP(),'N',c.id) as code,
 	'terms', COALESCE(c.terms, 0), 'credit_limit', COALESCE(c.creditlimit, 0), 'discount', COALESCE(c.discount, 0),
 	'notes', COALESCE(c.notes, ''), 'inactive', (c.inactive = 1), 'tags', JSON_ARRAY()
   ) as customer_meta,
-  JSON_MERGE_PATCH(COALESCE(fld.md, JSON_OBJECT()), JSON_OBJECT('custnumber', c.custnumber)) as customer_map
+  COALESCE(fld.md, JSON_OBJECT()) as customer_map
 from bck_customer c
 inner join bck_groups ct on c.custtype = ct.id
 left join (select a.ref_id, JSON_ARRAYAGG(json_object(
@@ -181,15 +206,16 @@ left join (
   group by fv.ref_id) fld on fld.ref_id = e.id
 where e.deleted = 0;
 
-INSERT INTO place(id, code, place_name, place_type, currency_code, address, contacts, place_meta, place_map)
-select p.id, CONCAT('PLA',UNIX_TIMESTAMP(),'N',p.id) as code,
+INSERT INTO place(id, code, place_name, place_type, currency_code, address, contacts, events, place_meta, place_map)
+select p.id, p.planumber as code,
   p.description as place_name, 
   CONCAT('PLACE_',upper(pt.groupvalue)) as place_type, p.curr as currency_code,
   COALESCE(JSON_EXTRACT(addr.addresses,'$[0]'), JSON_OBJECT()) as address, COALESCE(cont.contacts, JSON_ARRAY()) as contacts,
+  JSON_ARRAY() as events,
   JSON_OBJECT(
 	'notes', COALESCE(p.notes, ''), 'inactive', (p.inactive = 1), 'tags', JSON_ARRAY()
   ) as place_meta,
-  JSON_MERGE_PATCH(COALESCE(fld.md, JSON_OBJECT()), JSON_OBJECT('planumber', p.planumber)) as place_map
+  COALESCE(fld.md, JSON_OBJECT()) as place_map
 from bck_place p
 inner join bck_groups pt on p.placetype = pt.id
 left join (select a.ref_id, JSON_ARRAYAGG(JSON_OBJECT(
@@ -229,7 +255,7 @@ left join (
   group by fv.ref_id) fld on fld.ref_id = tx.id;
 
 INSERT INTO product(id, code, product_name, product_type, tax_code, events, product_meta, product_map)
-select p.id, CONCAT('PRO',UNIX_TIMESTAMP(),'N',p.id) as code,
+select p.id, p.partnumber as code,
   p.description as product_name, 
   CONCAT('PRODUCT_',upper(pt.groupvalue)) as product_type,
   tx.taxcode as tax_code,
@@ -241,7 +267,7 @@ select p.id, CONCAT('PRO',UNIX_TIMESTAMP(),'N',p.id) as code,
 	'barcode_qty', COALESCE(CAST(bar.barcodes->>'$[0].qty' AS DECIMAL(10,2)), 0),
 	'notes', COALESCE(p.notes, ''), 'inactive', (p.inactive = 1), 'tags', JSON_ARRAY()
   ) as product_meta,
-  JSON_MERGE_PATCH(COALESCE(fld.md, JSON_OBJECT()), JSON_OBJECT('partnumber', p.partnumber)) as product_map
+  COALESCE(fld.md, JSON_OBJECT()) as product_map
 from bck_product p
 inner join bck_groups pt on p.protype = pt.id
 inner join bck_tax tx on p.tax_id = tx.id
@@ -408,16 +434,13 @@ where t.deleted = 0;
 
 INSERT INTO trans(id, code, trans_type, trans_date, direction, customer_code, 
   employee_code, project_code, place_code, currency_code, auth_code, trans_meta, trans_map)
-select t.id, 
-  CASE WHEN upper(tt.groupvalue) = 'INVENTORY' then CONCAT('COR',UNIX_TIMESTAMP(),'N',t.id)
-  WHEN upper(tt.groupvalue) = 'DELIVERY' and upper(gd.groupvalue) = 'TRANSFER' then CONCAT('TRF',UNIX_TIMESTAMP(),'N',t.id) 
-  else CONCAT(SUBSTR(upper(tt.groupvalue),1,3),UNIX_TIMESTAMP(),'N',t.id) end as code, 
+select t.id, t.transnumber as code, 
   CONCAT('TRANS_',upper(tt.groupvalue)) as trans_type, t.transdate as trans_date,
   CONCAT('DIRECTION_',upper(gd.groupvalue)) as direction, c.code as customer_code,
   e.code as employee_code, p.code as project_code, pl.code as place_code, t.curr as currency_code, a.code as auth_code,
   JSON_OBJECT(
 	'due_time', COALESCE(t.duedate, ''), 'ref_number', COALESCE(t.ref_transnumber, ''),
-	'paid_type', CONCAT('PAID_',upper(gd.groupvalue)), 'tax_free', (t.notax = 1), 'paid', (t.paid = 1),
+	'paid_type', CONCAT('PAID_',upper(pt.groupvalue)), 'tax_free', (t.notax = 1), 'paid', (t.paid = 1),
 	'rate', COALESCE(t.acrate, 0), 
 	'status', COALESCE(CONCAT('STATUS_',upper(COALESCE(fld.md->>'$.trans_transcast',''))),''),
 	'trans_state', CONCAT('STATE_',upper(tstat.groupvalue)), 'closed', (t.closed = 1),
@@ -446,7 +469,7 @@ select t.id,
 	 ),
 	'tags', JSON_ARRAY()
   ) as trans_meta,
-  JSON_MERGE_PATCH(COALESCE(fld.md, JSON_OBJECT()), JSON_OBJECT('transnumber', t.transnumber)) as trans_map
+  COALESCE(fld.md, JSON_OBJECT()) as trans_map
 from bck_trans t
 inner join bck_groups tt on t.transtype = tt.id
 inner join bck_groups gd on t.direction = gd.id
@@ -463,7 +486,11 @@ left join (
   where fv.deleted = 0 and fv.fieldname in(
     select fieldname from bck_deffield 
 	where nervatype = (select id from bck_groups where groupname = 'nervatype' and groupvalue='trans') 
-	and deleted = 0)
+	and deleted = 0 and fv.fieldname not in(
+    'trans_custinvoice_compname','trans_custinvoice_compaddress','trans_custinvoice_comptax',
+    'trans_custinvoice_custname','trans_custinvoice_custaddress','trans_custinvoice_custtax','trans_wsdistance',
+    'trans_wsrepair','trans_wstotal','trans_wsnote','trans_reholiday','trans_rebadtool','trans_reother','trans_rentnote')
+  )
   group by fv.ref_id) fld on fld.ref_id = t.id
 where t.deleted = 0;
 
@@ -563,7 +590,7 @@ left join (
 where pm.deleted = 0;
 
 INSERT INTO link(id, code, link_type_1, link_code_1, link_type_2, link_code_2, link_meta, link_map)
-select l.id, CONCAT('LNK',UNIX_TIMESTAMP(),'N',l.id) as code,
+select * from (select l.id, CONCAT('LNK',UNIX_TIMESTAMP(),'N',l.id) as code,
   CONCAT('LINK_',upper(nt1.groupvalue)) as link_type_1,
   case when nt1.groupvalue = 'customer' then cu1.code
     when nt1.groupvalue = 'employee' then e1.code
@@ -626,4 +653,6 @@ where l.deleted = 0
   and l.nervatype_1 in (select id from bck_groups where groupname = 'nervatype' 
     and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'))
   and l.nervatype_2 in (select id from bck_groups where groupname = 'nervatype' 
-    and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'));
+    and groupvalue in('customer', 'employee', 'item', 'movement', 'payment', 'place', 'product', 'project', 'tool', 'trans'))
+) as foo
+where foo.link_code_1 is not null and foo.link_code_2 is not null;

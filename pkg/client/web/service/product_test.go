@@ -10,6 +10,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 func TestProductService_Data(t *testing.T) {
@@ -1528,6 +1529,7 @@ func TestProductService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1563,6 +1565,7 @@ func TestProductService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1571,7 +1574,7 @@ func TestProductService_Response(t *testing.T) {
 					BaseComponent: ct.BaseComponent{
 						Data: cu.IM{
 							"editor": cu.IM{
-								"product": cu.IM{"id": 12345},
+								"product": cu.IM{"id": 12345, "code": "123456"},
 							},
 						},
 					},
@@ -1881,6 +1884,7 @@ func TestProductService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1919,6 +1923,7 @@ func TestProductService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1957,6 +1962,7 @@ func TestProductService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -3083,11 +3089,9 @@ func TestProductService_update(t *testing.T) {
 						return 1, nil
 					},
 				}},
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				ConvertToType: func(data interface{}, result any) (err error) {
-					return nil
-				},
+				Config:        cu.IM{},
+				AppLog:        slog.Default(),
+				ConvertToType: ut.ConvertToType,
 			},
 			data: cu.IM{
 				"product": cu.IM{
@@ -3143,11 +3147,9 @@ func TestProductService_update(t *testing.T) {
 						return 1, nil
 					},
 				}},
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				ConvertToType: func(data interface{}, result any) (err error) {
-					return nil
-				},
+				Config:        cu.IM{},
+				AppLog:        slog.Default(),
+				ConvertToType: ut.ConvertToType,
 			},
 			data: cu.IM{
 				"product": cu.IM{
@@ -3179,11 +3181,9 @@ func TestProductService_update(t *testing.T) {
 						return 1, nil
 					},
 				}},
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				ConvertToType: func(data interface{}, result any) (err error) {
-					return nil
-				},
+				Config:        cu.IM{},
+				AppLog:        slog.Default(),
+				ConvertToType: ut.ConvertToType,
 			},
 			data: cu.IM{
 				"product": cu.IM{
@@ -3234,11 +3234,9 @@ func TestProductService_update(t *testing.T) {
 						return 1, nil
 					},
 				}},
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				ConvertToType: func(data interface{}, result any) (err error) {
-					return nil
-				},
+				Config:        cu.IM{},
+				AppLog:        slog.Default(),
+				ConvertToType: ut.ConvertToType,
 			},
 			data: cu.IM{
 				"product": cu.IM{
@@ -3278,11 +3276,9 @@ func TestProductService_update(t *testing.T) {
 						return 1, nil
 					},
 				}},
-				Config: cu.IM{},
-				AppLog: slog.Default(),
-				ConvertToType: func(data interface{}, result any) (err error) {
-					return nil
-				},
+				Config:        cu.IM{},
+				AppLog:        slog.Default(),
+				ConvertToType: ut.ConvertToType,
 			},
 			data: cu.IM{
 				"product": cu.IM{

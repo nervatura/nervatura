@@ -9,6 +9,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 )
 
 func TestPlaceService_Data(t *testing.T) {
@@ -1073,6 +1074,7 @@ func TestPlaceService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1108,6 +1110,7 @@ func TestPlaceService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1116,7 +1119,7 @@ func TestPlaceService_Response(t *testing.T) {
 					BaseComponent: ct.BaseComponent{
 						Data: cu.IM{
 							"editor": cu.IM{
-								"place": cu.IM{"id": 12345},
+								"place": cu.IM{"id": 12345, "code": "123456"},
 							},
 						},
 					},
@@ -1357,6 +1360,7 @@ func TestPlaceService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1395,6 +1399,7 @@ func TestPlaceService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},
@@ -1430,6 +1435,7 @@ func TestPlaceService_Response(t *testing.T) {
 						ConvertToByte: func(data interface{}) ([]byte, error) {
 							return []byte{}, nil
 						},
+						ConvertToType: ut.ConvertToType,
 					}
 				},
 			},

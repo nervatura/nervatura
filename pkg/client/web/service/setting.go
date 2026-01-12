@@ -48,6 +48,7 @@ func (s *SettingService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, e
 		"tax":           []cu.IM{},
 		"auth":          []cu.IM{},
 		"template":      []cu.IM{},
+		"locales":       s.cls.UI.GetLocales(),
 		"dirty":         false,
 		"user":          user,
 		"editor_icon":   ct.IconCog,
@@ -118,7 +119,7 @@ func (s *SettingService) update(ds *api.DataStore, user, data cu.IM) (err error)
 
 func (s *SettingService) configUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var configData md.Config = md.Config{}
-	ut.ConvertToType(data, &configData)
+	ds.ConvertData(data, &configData)
 	values := cu.IM{
 		"config_type": configData.ConfigType.String(),
 	}
@@ -150,7 +151,7 @@ func (s *SettingService) currencyUpdate(ds *api.DataStore, data cu.IM) (editor c
 		},
 		CurrencyMap: cu.IM{},
 	}
-	ut.ConvertToType(data, &currencyData)
+	ds.ConvertData(data, &currencyData)
 	values := cu.IM{}
 	if currencyData.Code != "" {
 		values["code"] = currencyData.Code
@@ -219,7 +220,7 @@ func (s *SettingService) taxUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM,
 		},
 		TaxMap: cu.IM{},
 	}
-	ut.ConvertToType(data, &taxData)
+	ds.ConvertData(data, &taxData)
 	values := cu.IM{}
 	if taxData.Code != "" {
 		values["code"] = taxData.Code
@@ -286,7 +287,7 @@ func (s *SettingService) authUpdate(ds *api.DataStore, data cu.IM) (editor cu.IM
 		},
 		AuthMap: cu.IM{},
 	}
-	ut.ConvertToType(data, &authData)
+	ds.ConvertData(data, &authData)
 	values := cu.IM{}
 	if authData.UserName != "admin" {
 		values = cu.IM{

@@ -574,7 +574,7 @@ func (cls *ClientService) addBookmark(evt ct.ResponseEvent, bm md.Bookmark) ct.R
 	if authUser, err = ds.AuthUser(cu.ToString(client.Ticket.User["code"], ""), ""); err == nil {
 		authUser.AuthMeta.Bookmarks = append(authUser.AuthMeta.Bookmarks, bm)
 		var bookmarks []cu.IM
-		if err = ut.ConvertToType(authUser.AuthMeta.Bookmarks, &bookmarks); err == nil {
+		if err = ds.ConvertData(authUser.AuthMeta.Bookmarks, &bookmarks); err == nil {
 			client.Ticket.User["bookmarks"] = bookmarks
 		}
 		values := cu.IM{}

@@ -1571,3 +1571,78 @@ func TestDataStore_MakeRequest(t *testing.T) {
 		})
 	}
 }
+
+func TestDataStore_ConvertData(t *testing.T) {
+	type fields struct {
+		Db                     DataDriver
+		Alias                  string
+		Config                 cu.IM
+		AppLog                 *slog.Logger
+		ReadAll                func(r io.Reader) ([]byte, error)
+		ConvertToByte          func(data interface{}) ([]byte, error)
+		ConvertFromByte        func(data []byte, result interface{}) error
+		ConvertFromReader      func(data io.Reader, result interface{}) error
+		ConvertToType          func(data interface{}, result any) (err error)
+		GetDataField           func(data any, JSONName string) (fieldName string, fieldValue interface{})
+		CreateLoginToken       func(params cu.SM, config cu.IM) (result string, err error)
+		ParseToken             func(token string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
+		CreatePasswordHash     func(password string) (hash string, err error)
+		ComparePasswordAndHash func(password string, hash string) (err error)
+		ReadFile               func(name string) ([]byte, error)
+		NewSmtpClient          func(conn net.Conn, host string) (md.SmtpClient, error)
+		NewRequest             func(method string, url string, body io.Reader) (*http.Request, error)
+		RequestDo              func(req *http.Request) (*http.Response, error)
+	}
+	type args struct {
+		data   interface{}
+		result any
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "error converting data to type",
+			fields: fields{
+				ConvertToType: func(data interface{}, result any) (err error) {
+					return errors.New("error converting data to type")
+				},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+			},
+			args: args{
+				data:   cu.IM{"id": 1, "name": "test"},
+				result: nil,
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ds := &DataStore{
+				Db:                     tt.fields.Db,
+				Alias:                  tt.fields.Alias,
+				Config:                 tt.fields.Config,
+				AppLog:                 tt.fields.AppLog,
+				ReadAll:                tt.fields.ReadAll,
+				ConvertToByte:          tt.fields.ConvertToByte,
+				ConvertFromByte:        tt.fields.ConvertFromByte,
+				ConvertFromReader:      tt.fields.ConvertFromReader,
+				ConvertToType:          tt.fields.ConvertToType,
+				GetDataField:           tt.fields.GetDataField,
+				CreateLoginToken:       tt.fields.CreateLoginToken,
+				ParseToken:             tt.fields.ParseToken,
+				CreatePasswordHash:     tt.fields.CreatePasswordHash,
+				ComparePasswordAndHash: tt.fields.ComparePasswordAndHash,
+				ReadFile:               tt.fields.ReadFile,
+				NewSmtpClient:          tt.fields.NewSmtpClient,
+				NewRequest:             tt.fields.NewRequest,
+				RequestDo:              tt.fields.RequestDo,
+			}
+			if err := ds.ConvertData(tt.args.data, tt.args.result); (err != nil) != tt.wantErr {
+				t.Errorf("DataStore.ConvertData() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

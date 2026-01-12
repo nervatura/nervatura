@@ -103,7 +103,7 @@ func (s *EmployeeService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 
 func (s *EmployeeService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var employee md.Employee = md.Employee{}
-	ut.ConvertToType(data["employee"], &employee)
+	ds.ConvertData(data["employee"], &employee)
 	values := cu.IM{}
 	if employee.Code != "" {
 		values["code"] = employee.Code
@@ -437,7 +437,7 @@ func (s *EmployeeService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent
 			typeMap := map[string]func() cu.IM{
 				"events": func() cu.IM {
 					var event cu.IM
-					ut.ConvertToType(md.Event{
+					ds.ConvertData(md.Event{
 						Tags:     []string{},
 						EventMap: cu.IM{},
 					}, &event)

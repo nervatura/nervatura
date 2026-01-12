@@ -26,15 +26,15 @@ func NewTransService(cls *ClientService) *TransService {
 	}
 }
 
-var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
-	"items": func(stateData cu.IM) cu.IM {
+var transRowTypeMap = map[string]func(ds *api.DataStore, stateData cu.IM) cu.IM{
+	"items": func(ds *api.DataStore, stateData cu.IM) cu.IM {
 		var item cu.IM
 		defaultTax := cu.IM{}
 		taxCodes := cu.ToIMA(stateData["tax_codes"], []cu.IM{})
 		if len(taxCodes) > 0 {
 			defaultTax = cu.ToIM(taxCodes[0], cu.IM{})
 		}
-		ut.ConvertToType(md.Item{
+		ds.ConvertData(md.Item{
 			//TransCode: cu.ToString(trans["code"], ""),
 			TaxCode: cu.ToString(defaultTax["code"], ""),
 			ItemMeta: md.ItemMeta{
@@ -45,9 +45,9 @@ var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
 		}, &item)
 		return item
 	},
-	"payments": func(stateData cu.IM) cu.IM {
+	"payments": func(ds *api.DataStore, stateData cu.IM) cu.IM {
 		var payment cu.IM
-		ut.ConvertToType(md.Payment{
+		ds.ConvertData(md.Payment{
 			//TransCode: cu.ToString(trans["code"], ""),
 			PaidDate: time.Now().Format(time.DateOnly),
 			PaymentMeta: md.PaymentMeta{
@@ -58,9 +58,9 @@ var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
 		}, &payment)
 		return payment
 	},
-	"movements": func(stateData cu.IM) cu.IM {
+	"movements": func(ds *api.DataStore, stateData cu.IM) cu.IM {
 		var movement cu.IM
-		ut.ConvertToType(md.Movement{
+		ds.ConvertData(md.Movement{
 			MovementType: md.MovementType(md.MovementTypeHead),
 			ShippingTime: time.Now().Format(time.RFC3339),
 			MovementMeta: md.MovementMeta{
@@ -73,9 +73,9 @@ var transRowTypeMap = map[string]func(stateData cu.IM) cu.IM{
 		}, &movement)
 		return movement
 	},
-	"link": func(stateData cu.IM) cu.IM {
+	"link": func(ds *api.DataStore, stateData cu.IM) cu.IM {
 		var link cu.IM
-		ut.ConvertToType(md.Link{
+		ds.ConvertData(md.Link{
 			LinkType1: md.LinkType(md.LinkTypePayment),
 			LinkType2: md.LinkType(md.LinkTypeTrans),
 			LinkMeta: md.LinkMeta{
@@ -367,7 +367,7 @@ func (s *TransService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err
 		"place_name":         "",
 	}
 	if cu.ToString(params["trans_type"], md.TransType(0).String()) == md.TransTypeCash.String() {
-		data["payments"] = []cu.IM{transRowTypeMap["payments"](data)}
+		data["payments"] = []cu.IM{transRowTypeMap["payments"](ds, data)}
 	}
 
 	var rows []cu.IM = []cu.IM{}
@@ -441,7 +441,7 @@ func (s *TransService) updateItems(ds *api.DataStore, data cu.IM, transCode stri
 			},
 			ItemMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(it, &item); err == nil {
+		if err = ds.ConvertData(it, &item); err == nil {
 			values := cu.IM{
 				"trans_code":   transCode,
 				"product_code": item.ProductCode,
@@ -474,7 +474,7 @@ func (s *TransService) updatePayments(ds *api.DataStore, data cu.IM, transCode s
 			},
 			PaymentMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(it, &payment); err == nil {
+		if err = ds.ConvertData(it, &payment); err == nil {
 			values := cu.IM{
 				"trans_code": transCode,
 				"paid_date":  payment.PaidDate,
@@ -540,7 +540,7 @@ func (s *TransService) updateMovements(ds *api.DataStore, data cu.IM, trans md.T
 		isNewTransfer = (trans.TransType == md.TransTypeDelivery) && (trans.Direction == md.DirectionTransfer) && (movement.Id < 0)
 		if isNewTransfer {
 			targetMovement = md.Movement{}
-			ut.ConvertToType(movement, &targetMovement)
+			ds.ConvertData(movement, &targetMovement)
 			movement.MovementMeta.Qty = -movement.MovementMeta.Qty
 			movement.PlaceCode = trans.PlaceCode
 			return movement, targetMovement, isNewTransfer
@@ -588,7 +588,7 @@ func (s *TransService) updateMovements(ds *api.DataStore, data cu.IM, trans md.T
 			},
 			MovementMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(mv, &movement); err == nil {
+		if err = ds.ConvertData(mv, &movement); err == nil {
 
 			//validate movement data
 			for _, validate := range movementUpdateValidate {
@@ -625,7 +625,7 @@ func (s *TransService) updateLinks(ds *api.DataStore, data cu.IM) (err error) {
 			},
 			LinkMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(ln, &link); err == nil {
+		if err = ds.ConvertData(ln, &link); err == nil {
 			values := cu.IM{
 				"link_type_1": link.LinkType1.String(),
 				"link_code_1": link.LinkCode1,
@@ -697,7 +697,7 @@ var transUpdateValidate = []func(trans md.Trans, data cu.IM, msgFunc func(labelI
 func (s *TransService) update(ds *api.DataStore, data cu.IM, msgFunc func(labelID string) string) (transID int64, err error) {
 	user := cu.ToIM(data["user"], cu.IM{})
 	var trans md.Trans = md.Trans{}
-	ut.ConvertToType(data["trans"], &trans)
+	ds.ConvertData(data["trans"], &trans)
 
 	for _, validate := range transUpdateValidate {
 		if invalid, err := validate(trans, data, msgFunc); invalid {
@@ -1569,6 +1569,7 @@ func (s *TransService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 
 func (s *TransService) editorFieldExternal(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	_, _, stateData := client.GetStateData()
 
 	view := cu.ToString(stateData["view"], "")
@@ -1585,7 +1586,7 @@ func (s *TransService) editorFieldExternal(evt ct.ResponseEvent) (re ct.Response
 		mName = "payments"
 		rows = cu.ToIMA(stateData["payments"], []cu.IM{})
 		if len(rows) == 0 {
-			rows = append(rows, transRowTypeMap["payments"](stateData))
+			rows = append(rows, transRowTypeMap["payments"](ds, stateData))
 		}
 		row = rows[0]
 
@@ -1598,7 +1599,7 @@ func (s *TransService) editorFieldExternal(evt ct.ResponseEvent) (re ct.Response
 			row = rows[idx]
 			rowIndex = idx
 		} else {
-			rows = append(rows, transRowTypeMap["movements"](stateData))
+			rows = append(rows, transRowTypeMap["movements"](ds, stateData))
 			rowIndex = len(rows) - 1
 			row = rows[rowIndex]
 		}
@@ -1613,7 +1614,7 @@ func (s *TransService) editorFieldExternal(evt ct.ResponseEvent) (re ct.Response
 			row = rows[idx]
 			rowIndex = idx
 		} else {
-			rows = append(rows, transRowTypeMap["movements"](stateData))
+			rows = append(rows, transRowTypeMap["movements"](ds, stateData))
 			rowIndex = len(rows) - 1
 			row = rows[rowIndex]
 			row["movement_type"] = md.MovementTypeInventory.String()
@@ -1661,6 +1662,7 @@ func (s *TransService) editorFieldExternal(evt ct.ResponseEvent) (re ct.Response
 
 func (s *TransService) linkAdd(evt ct.ResponseEvent, params cu.IM) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	_, _, stateData := client.GetStateData()
 
 	trans := cu.ToIM(stateData["trans"], cu.IM{})
@@ -1678,7 +1680,7 @@ func (s *TransService) linkAdd(evt ct.ResponseEvent, params cu.IM) (re ct.Respon
 
 	rows := cu.ToIMA(stateData[view], []cu.IM{})
 	index := len(rows)
-	row := transRowTypeMap["link"](cu.IM{})
+	row := transRowTypeMap["link"](ds, cu.IM{})
 	row["id"] = -(index + 1)
 	if code1 != "" {
 		row["link_code_1"] = code1
@@ -1701,6 +1703,7 @@ func (s *TransService) linkAdd(evt ct.ResponseEvent, params cu.IM) (re ct.Respon
 func (s *TransService) editorFieldViewAdd(evt ct.ResponseEvent, transMap cu.IM,
 	resultUpdate func(params cu.IM) (re ct.ResponseEvent, err error)) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	_, _, stateData := client.GetStateData()
 	view := cu.ToString(stateData["view"], "")
 	trans := cu.ToIM(stateData["trans"], cu.IM{})
@@ -1708,7 +1711,7 @@ func (s *TransService) editorFieldViewAdd(evt ct.ResponseEvent, transMap cu.IM,
 
 	appendRow := func() (row cu.IM, index int64) {
 		rows := cu.ToIMA(stateData[view], []cu.IM{})
-		row = transRowTypeMap[view](stateData)
+		row = transRowTypeMap[view](ds, stateData)
 		row["id"] = -(len(rows) + 1)
 		rows = append(rows, row)
 		stateData[view] = rows
@@ -2277,7 +2280,7 @@ func (s *TransService) createItems(evt ct.ResponseEvent, options cu.IM, transCod
 			},
 			ItemMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(it, &item); err == nil {
+		if err = ds.ConvertData(it, &item); err == nil {
 			item.ItemMeta.OwnStock = 0
 			if transType == md.TransTypeInvoice.String() || transType == md.TransTypeReceipt.String() {
 				item.ItemMeta.Deposit = false
@@ -2314,7 +2317,7 @@ func (s *TransService) createPayments(evt ct.ResponseEvent, options cu.IM, trans
 			},
 			PaymentMap: cu.IM{},
 		}
-		if err = ut.ConvertToType(pm, &payment); err == nil {
+		if err = ds.ConvertData(pm, &payment); err == nil {
 			values := cu.IM{
 				"paid_date":  payment.PaidDate,
 				"trans_code": transCode,
@@ -2379,7 +2382,7 @@ func (s *TransService) createMovements(evt ct.ResponseEvent, options cu.IM, tran
 			},
 			MovementMap: cu.IM{},
 		}
-		err = ut.ConvertToType(movement, &mv)
+		err = ds.ConvertData(movement, &mv)
 		return mv, err
 	}
 
@@ -2531,10 +2534,11 @@ func (s *TransService) createTrans(evt ct.ResponseEvent, options cu.IM, trans md
 
 func (s *TransService) createData(evt ct.ResponseEvent, options cu.IM) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
+	ds := s.cls.getDataStore(client.Ticket.Database)
 	_, _, stateData := client.GetStateData()
 
 	var trans md.Trans = md.Trans{}
-	ut.ConvertToType(stateData["trans"], &trans)
+	ds.ConvertData(stateData["trans"], &trans)
 
 	// to check some things...
 	transType := cu.ToString(options["create_trans_type"], trans.TransType.String())

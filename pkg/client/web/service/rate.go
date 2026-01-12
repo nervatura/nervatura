@@ -107,7 +107,7 @@ func (s *RateService) Response(evt ct.ResponseEvent) (re ct.ResponseEvent, err e
 
 func (s *RateService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var rate md.Rate = md.Rate{}
-	ut.ConvertToType(data["rate"], &rate)
+	ds.ConvertData(data["rate"], &rate)
 	values := cu.IM{
 		"rate_type":     rate.RateType.String(),
 		"rate_date":     rate.RateDate,

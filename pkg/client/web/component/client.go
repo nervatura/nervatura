@@ -136,7 +136,7 @@ func (cc *ClientComponent) Menu(labels cu.SM, config cu.IM) ct.MenuBar {
 	return mnu
 }
 
-func (cc *ClientComponent) getLocales() (locales []ct.SelectOption) {
+func (cc *ClientComponent) GetLocales() (locales []ct.SelectOption) {
 	locales = []ct.SelectOption{}
 	for _, loc := range cc.languages {
 		lang := strings.Split(loc, ",")
@@ -155,7 +155,7 @@ func (cc *ClientComponent) Login(labels cu.SM, config cu.IM) ct.Login {
 	version := cu.ToString(config["version"], "1.0.0")
 	lang := cu.ToString(config["lang"], "en")
 	login := ct.Login{
-		Locales:      cc.getLocales(),
+		Locales:      cc.GetLocales(),
 		AuthButtons:  []ct.LoginAuthButton{},
 		Version:      version,
 		Theme:        theme,

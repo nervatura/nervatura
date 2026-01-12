@@ -87,7 +87,7 @@ func (s *ToolService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err 
 
 func (s *ToolService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var tool md.Tool = md.Tool{}
-	ut.ConvertToType(data["tool"], &tool)
+	ds.ConvertData(data["tool"], &tool)
 	values := cu.IM{
 		"description":  tool.Description,
 		"product_code": tool.ProductCode,
@@ -424,7 +424,7 @@ func (s *ToolService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, er
 			typeMap := map[string]func() cu.IM{
 				"events": func() cu.IM {
 					var event cu.IM
-					ut.ConvertToType(md.Event{
+					ds.ConvertData(md.Event{
 						Tags:     []string{},
 						EventMap: cu.IM{},
 					}, &event)

@@ -99,7 +99,7 @@ func (s *ProjectService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, e
 
 func (s *ProjectService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var project md.Project = md.Project{}
-	ut.ConvertToType(data["project"], &project)
+	ds.ConvertData(data["project"], &project)
 	values := cu.IM{
 		"project_name":  project.ProjectName,
 		"customer_code": nil,
@@ -440,7 +440,7 @@ func (s *ProjectService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 			typeMap := map[string]func() cu.IM{
 				"addresses": func() cu.IM {
 					var address cu.IM
-					ut.ConvertToType(md.Address{
+					ds.ConvertData(md.Address{
 						Tags:       []string{},
 						AddressMap: cu.IM{},
 					}, &address)
@@ -448,7 +448,7 @@ func (s *ProjectService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 				},
 				"contacts": func() cu.IM {
 					var contact cu.IM
-					ut.ConvertToType(md.Contact{
+					ds.ConvertData(md.Contact{
 						Tags:       []string{},
 						ContactMap: cu.IM{},
 					}, &contact)
@@ -456,7 +456,7 @@ func (s *ProjectService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent,
 				},
 				"events": func() cu.IM {
 					var event cu.IM
-					ut.ConvertToType(md.Event{
+					ds.ConvertData(md.Event{
 						Tags:     []string{},
 						EventMap: cu.IM{},
 					}, &event)

@@ -32,7 +32,7 @@ func (ds *DataStore) AuthUser(uid, username string) (user md.Auth, err error) {
 	}
 	var rows []cu.IM
 	if rows, err = ds.StoreDataQuery(query, true); err == nil {
-		err = ds.ConvertToType(rows[0], &user)
+		err = ds.ConvertData(rows[0], &user)
 	}
 	return user, err
 }

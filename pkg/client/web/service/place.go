@@ -93,7 +93,7 @@ func (s *PlaceService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err
 
 func (s *PlaceService) update(ds *api.DataStore, data cu.IM) (editor cu.IM, err error) {
 	var place md.Place = md.Place{}
-	ut.ConvertToType(data["place"], &place)
+	ds.ConvertData(data["place"], &place)
 	values := cu.IM{
 		"place_type": place.PlaceType.String(),
 		"place_name": place.PlaceName,
@@ -389,6 +389,8 @@ func (s *PlaceService) sideMenu(evt ct.ResponseEvent) (re ct.ResponseEvent, err 
 func (s *PlaceService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, err error) {
 	client := evt.Trigger.(*ct.Client)
 	_, _, stateData := client.GetStateData()
+	ds := s.cls.getDataStore(client.Ticket.Database)
+
 	place := cu.ToIM(stateData["place"], cu.IM{})
 	placeMeta := cu.ToIM(place["place_meta"], cu.IM{})
 	placeMap := cu.ToIM(place["place_map"], cu.IM{})
@@ -422,7 +424,7 @@ func (s *PlaceService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 			typeMap := map[string]func() cu.IM{
 				"contacts": func() cu.IM {
 					var contact cu.IM
-					ut.ConvertToType(md.Contact{
+					ds.ConvertData(md.Contact{
 						Tags:       []string{},
 						ContactMap: cu.IM{},
 					}, &contact)
@@ -430,7 +432,7 @@ func (s *PlaceService) editorField(evt ct.ResponseEvent) (re ct.ResponseEvent, e
 				},
 				"events": func() cu.IM {
 					var event cu.IM
-					ut.ConvertToType(md.Event{
+					ds.ConvertData(md.Event{
 						Tags:     []string{},
 						EventMap: cu.IM{},
 					}, &event)

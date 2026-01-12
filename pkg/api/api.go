@@ -97,6 +97,13 @@ func (ds *DataStore) SetError(sysErr error, publicErr error) error {
 	return sysErr
 }
 
+func (ds *DataStore) ConvertData(data interface{}, result any) (err error) {
+	if err = ds.ConvertToType(data, result); err != nil {
+		ds.AppLog.Error("Error converting data to type: " + err.Error())
+	}
+	return err
+}
+
 func (ds *DataStore) checkConnection() error {
 	if !ds.Db.Connection().Connected {
 		connStr := cu.ToString(ds.Config["NT_ALIAS_"+strings.ToUpper(ds.Alias)], os.Getenv("NT_ALIAS_"+strings.ToUpper(ds.Alias)))
@@ -414,7 +421,7 @@ func (ds *DataStore) GetData(query md.Query, result any) (err error) {
 	var rows []cu.IM
 	if rows, err = ds.StoreDataQuery(query, false); err == nil {
 		if len(rows) > 0 {
-			return ds.ConvertToType(rows, result)
+			return ds.ConvertData(rows, result)
 		}
 	}
 	return err
