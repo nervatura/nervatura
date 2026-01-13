@@ -3,6 +3,10 @@ Nervatura
 
 Open Source Business Management Framework
 
+The Nervatura **v6 is currently beta** version. Available for download from the [GitHub releases](https://github.com/nervatura/nervatura/releases) page. Docker image is also available in beta version:
+
+    docker pull nervatura/nervatura:beta
+
 ## Features
 
 Nervatura is a business management framework based on **open-data principle**. It can handle any type of business related information, starting from customer details, up to shipping, stock or payment information.
@@ -43,7 +47,9 @@ Nervatura Client supports the business processes that most companies may need. D
 
 You can find more information about the use of different programming languages and development environments in the [**Examples**](https://nervatura.github.io/nervatura/examples/) section.
 
-[**Installation**](https://nervatura.github.io/nervatura/install) and [**Quick Start**](https://nervatura.github.io/nervatura/start)
+[**Installation**](https://nervatura.github.io/nervatura/install/) and [**Quick Start**](https://nervatura.github.io/nervatura/start/)
+
+[**Upgrade**](https://nervatura.github.io/nervatura/upgrade/) from v5 version to v6.*
 
 More info see 
 

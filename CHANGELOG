@@ -1,3 +1,15 @@
+## 6.0.0
+The Nervatura v6 is a major upgrade that includes many new features and improvements. The main changes are:
+- new hybrid database object model
+- new/refactored CLI (command line interface) API
+- new/refactored CGO (C shared library) API
+- new/refactored HTTP OPEN API (REST) API
+- new/refactored gRPC API API
+- new MCP built-in server for LLM integration and AI-powered data processing
+- replaced web component based Client application with a new server-side Nervatura Client graphical user interface
+- added a separate Report Editor extension for creating and editing PDF report templates
+- new/rewritten dependency-free static documentation and built-in (version-based) help pages
+
 ## 5.2.13
 - service: golang (1.25.0) and dependencies upgrade
 - client: lit (3.3.1) upgrade
