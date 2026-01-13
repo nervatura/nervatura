@@ -9,21 +9,21 @@ Nervatura is a business management framework. It can handle any type of business
 starting from customer details, up to shipping, stock or payment information. Developed as open-source
 project and can be used freely under the scope of LGPLv3 License.
 
-The framework is based on Nervatura Object Model (https://nervatura.github.io/nervatura/docs/model/) specification.
+The framework is based on Nervatura Object Model (https://nervatura.github.io/nervatura/model/) specification.
 It is a general open-data model, which can store all information generated in the operation of a usual corporation.
 
 The Nervatura service is small and fast. A single ~9 MB file contains all the necessary dependencies.
 The framework includes:
 
-• CLI API (https://nervatura.github.io/nervatura/docs/cli/) (command line interface)
+• CLI API (https://nervatura.github.io/nervatura/cli/) (command line interface)
 
-• CGO API (https://nervatura.github.io/nervatura/docs/cli/) (C shared library)
+• CGO API (https://nervatura.github.io/nervatura/cli/) (C shared library)
 
-• standard HTTP OPEN API (https://nervatura.github.io/nervatura/docs/open/) for client communication
+• standard HTTP OPEN API (https://nervatura.github.io/nervatura/open/) for client communication
 
-• HTTP/2-based gRPC API (https://nervatura.github.io/nervatura/docs/grpc/) for server-side communication
+• HTTP/2-based gRPC API (https://nervatura.github.io/nervatura/grpc/) for server-side communication
 
-• MCP (Model Context Protocol) for LLM integration (https://nervatura.github.io/nervatura/docs/mcp/)
+• MCP (Model Context Protocol) for LLM integration (https://nervatura.github.io/nervatura/mcp/)
 
 • JWT generation, external token validation, SSL/TLS support and other HTTP security settings (https://github.com/nervatura/nervatura-service/blob/master/.env.example)
 
@@ -32,19 +32,19 @@ The framework includes:
 • a basic report generation library for creating simple PDF documents (eg. order, invoice, etc.)
 or CSV data files
 
-• sample report templates and Report Editor extension (https://nervatura.github.io/nervatura/docs/editor/)
+• sample report templates and Report Editor extension (https://nervatura.github.io/nervatura/editor/)
 
-• Nervatura Client (https://nervatura.github.io/nervatura/docs/client/) graphical user interface
+• Nervatura Client (https://nervatura.github.io/nervatura/client/) graphical user interface
 
 The framework can be easily extended with additional interfaces and functions in the any languages.
 
 # Installation
 
-https://nervatura.github.io/nervatura/docs/install/
+https://nervatura.github.io/nervatura/install/
 
 # Quick Start
 
-https://nervatura.github.io/nervatura/docs/start/
+https://nervatura.github.io/nervatura/start/
 
 More info see http://www.nervatura.com.
 */
