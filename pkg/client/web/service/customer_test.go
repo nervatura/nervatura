@@ -604,6 +604,24 @@ func TestCustomerService_Response(t *testing.T) {
 					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 						return &api.DataStore{
 							Db: &md.TestDriver{Config: cu.IM{
+								"Connection": func() struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								} {
+									return struct {
+										Alias     string
+										Connected bool
+										Engine    string
+									}{
+										Alias:     "test",
+										Connected: true,
+										Engine:    "sqlite",
+									}
+								},
+								"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1, "name": "test"}}, nil
+								},
 								"Update": func(data md.Update) (int64, error) {
 									return 1, nil
 								},
@@ -656,6 +674,24 @@ func TestCustomerService_Response(t *testing.T) {
 					NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 						return &api.DataStore{
 							Db: &md.TestDriver{Config: cu.IM{
+								"Connection": func() struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								} {
+									return struct {
+										Alias     string
+										Connected bool
+										Engine    string
+									}{
+										Alias:     "test",
+										Connected: true,
+										Engine:    "sqlite",
+									}
+								},
+								"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1, "name": "test"}}, nil
+								},
 								"Update": func(data md.Update) (int64, error) {
 									return 1, nil
 								},

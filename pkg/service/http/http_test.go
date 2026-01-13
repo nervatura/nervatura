@@ -86,6 +86,24 @@ func TestTokenAuth(t *testing.T) {
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}, {"user_name": "user_name"}},
 						"db": &md.TestDriver{
 							Config: cu.IM{
+								"Connection": func() struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								} {
+									return struct {
+										Alias     string
+										Connected bool
+										Engine    string
+									}{
+										Alias:     "test",
+										Connected: true,
+										Engine:    "sqlite",
+									}
+								},
+								"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1, "name": "test"}}, nil
+								},
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
 								},
@@ -173,9 +191,28 @@ func TestTokenAuth(t *testing.T) {
 					Config: cu.IM{
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}},
 						"db": &md.TestDriver{
-							Config: cu.IM{"Query": func(queries []md.Query) ([]cu.IM, error) {
-								return []cu.IM{{"user_group": md.UserGroupGuest}}, nil
-							}},
+							Config: cu.IM{
+								"Connection": func() struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								} {
+									return struct {
+										Alias     string
+										Connected bool
+										Engine    string
+									}{
+										Alias:     "test",
+										Connected: true,
+										Engine:    "sqlite",
+									}
+								},
+								"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+									return []cu.IM{{"id": 1, "name": "test"}}, nil
+								},
+								"Query": func(queries []md.Query) ([]cu.IM, error) {
+									return []cu.IM{{"user_group": md.UserGroupGuest}}, nil
+								}},
 						},
 					},
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),

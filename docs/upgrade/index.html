@@ -220,6 +220,20 @@
             <li>Create a new report template from the installed report template and edit it using the <a href="../editor/" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Report Editor</a> extension</li>
           </ul>
         </p>
+
+        <p class="mt-4 text-base text-slate-600">
+          Alternative option:
+          <ul class="list-disc list-inside text-slate-600">
+            <li>Log in to the previous version of Nervatura Client (v5) and select Setting -> DATABASE -> REPORT EDITOR.</li>
+            <li>Select the custom template and then export it using the JSON EXPORT menu.</li>
+            <li><a class="text-blue-600 font-bold dark:text-blue-500 hover:underline" target="_blank" 
+              href="https://download-directory.github.io/?url=https://github.com/nervatura/nervatura/tree/master/pkg/static/template&filename=nervatura_templates">Download</a> the new version report templates.</li>
+            <li>Select the appropriate type for your template (for example ntr_invoice_en.json) and replace the <strong>sources</strong> and <strong>meta</strong> sections of your custom template.</li>
+            <li>Change the <strong>report_key</strong>, <strong>report_name</strong>, and <strong>description</strong> fields. It is possible that some <strong>labels</strong> fields or data references in the template will also need to be modified.</li>
+            <li>Set the <code class="text-sm font-semibold text-green-600 dark:text-green-600 bg-gray-200 px-2 py-1"
+              >NT_REPORT_DIR</code> environment variable to the path of the custom template directory and <a href="../client/#template" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">install</a> it using the new version of the client application.</li>
+          </ul>
+        </p>
         
         <dl class="flex pt-6 mt-6 border-t border-slate-200">
           <div class="mr-auto text-left">

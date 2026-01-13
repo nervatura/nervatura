@@ -118,3 +118,4 @@ coverage.*
 uv.lock
 .venv
 test_*
+data/template*

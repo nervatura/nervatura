@@ -21,7 +21,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cst "github.com/nervatura/component/pkg/static"
 	cu "github.com/nervatura/component/pkg/util"
-	docs "github.com/nervatura/nervatura/v6/docs6"
+	docs "github.com/nervatura/nervatura/v6/docs"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	cl "github.com/nervatura/nervatura/v6/pkg/client/web/service"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
@@ -211,7 +211,7 @@ func (s *httpServer) setRoutes() {
 	s.mux.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.FS(publicFS))))
 	s.mux.Handle("/editor/", http.StripPrefix("/editor/", http.FileServer(http.FS(editorFS))))
 	s.mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))))
-	s.mux.Handle("/docs6/", http.StripPrefix("/docs6/", http.FileServer(http.FS(docs.Docs))))
+	s.mux.Handle("/docs/", http.StripPrefix("/docs/", http.FileServer(http.FS(docs.Docs))))
 }
 
 func (s *httpServer) homeRoute(w http.ResponseWriter, r *http.Request) {

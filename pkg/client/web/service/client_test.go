@@ -234,6 +234,24 @@ func TestClientService_AuthUser(t *testing.T) {
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
 						Db: &md.TestDriver{Config: cu.IM{
+							"Connection": func() struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							} {
+								return struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								}{
+									Alias:     "test",
+									Connected: true,
+									Engine:    "sqlite",
+								}
+							},
+							"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "name": "test"}}, nil
+							},
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "name": "test"}}, nil
 							},
@@ -299,6 +317,24 @@ func TestClientService_userLogin(t *testing.T) {
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
 						Db: &md.TestDriver{Config: cu.IM{
+							"Connection": func() struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							} {
+								return struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								}{
+									Alias:     "test",
+									Connected: true,
+									Engine:    "sqlite",
+								}
+							},
+							"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "name": "test"}}, nil
+							},
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "name": "test"}}, nil
 							},
@@ -1987,6 +2023,24 @@ func TestClientService_MainResponse(t *testing.T) {
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
 						Db: &md.TestDriver{Config: cu.IM{
+							"Connection": func() struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							} {
+								return struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								}{
+									Alias:     "test",
+									Connected: true,
+									Engine:    "sqlite",
+								}
+							},
+							"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "name": "test"}}, nil
+							},
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "user_name": "test", "auth_meta": cu.IM{
 									"tags": []string{"test"},
@@ -2527,6 +2581,24 @@ func TestClientService_MainResponse(t *testing.T) {
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
 						Db: &md.TestDriver{Config: cu.IM{
+							"Connection": func() struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							} {
+								return struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								}{
+									Alias:     "test",
+									Connected: true,
+									Engine:    "sqlite",
+								}
+							},
+							"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "name": "test"}}, nil
+							},
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
 							},
@@ -2563,6 +2635,24 @@ func TestClientService_MainResponse(t *testing.T) {
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
 						Db: &md.TestDriver{Config: cu.IM{
+							"Connection": func() struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							} {
+								return struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								}{
+									Alias:     "test",
+									Connected: true,
+									Engine:    "sqlite",
+								}
+							},
+							"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "name": "test"}}, nil
+							},
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "name": "test", "value": "test"}}, nil
 							},
@@ -2608,6 +2698,24 @@ func TestClientService_MainResponse(t *testing.T) {
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
 						Db: &md.TestDriver{Config: cu.IM{
+							"Connection": func() struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							} {
+								return struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								}{
+									Alias:     "test",
+									Connected: true,
+									Engine:    "sqlite",
+								}
+							},
+							"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "name": "test"}}, nil
+							},
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "name": "test", "value": "test"}}, nil
 							},
@@ -2649,6 +2757,24 @@ func TestClientService_MainResponse(t *testing.T) {
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
 						Db: &md.TestDriver{Config: cu.IM{
+							"Connection": func() struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							} {
+								return struct {
+									Alias     string
+									Connected bool
+									Engine    string
+								}{
+									Alias:     "test",
+									Connected: true,
+									Engine:    "sqlite",
+								}
+							},
+							"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+								return []cu.IM{{"id": 1, "name": "test"}}, nil
+							},
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "name": "test", "value": "test"}}, nil
 							},

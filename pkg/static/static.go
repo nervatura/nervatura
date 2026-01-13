@@ -17,9 +17,9 @@ var Report embed.FS
 const (
 	ApiPath        = "/api/v6"
 	ClientPath     = "/client"
-	DocsClientPath = "/docs6/client"
+	DocsClientPath = "/docs/client"
 	AdminPath      = "/admin"
-	DocsPath       = "/docs6"
+	DocsPath       = "/docs"
 
 	ClientAuthRedirectURL = "/client/api/auth/callback"
 	OAuthAuthRedirectURL  = "/oauth/callback"

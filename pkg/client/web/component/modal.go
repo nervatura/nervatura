@@ -301,6 +301,9 @@ func modalReport(labels cu.SM, data cu.IM) (form ct.Form) {
 				Columns: []ct.RowColumn{
 					{Label: labels["report_template"],
 						Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "template",
+							},
 							Type: ct.FieldTypeSelect,
 							Value: cu.IM{
 								"name":    "template",
@@ -320,6 +323,9 @@ func modalReport(labels cu.SM, data cu.IM) (form ct.Form) {
 				Columns: []ct.RowColumn{
 					{Label: labels["report_orientation"],
 						Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "orientation",
+							},
 							Type: ct.FieldTypeSelect,
 							Value: cu.IM{
 								"name":    "orientation",
@@ -331,6 +337,9 @@ func modalReport(labels cu.SM, data cu.IM) (form ct.Form) {
 						}},
 					{Label: labels["report_size"],
 						Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "paper_size",
+							},
 							Type: ct.FieldTypeSelect,
 							Value: cu.IM{
 								"name":    "paper_size",
@@ -342,6 +351,9 @@ func modalReport(labels cu.SM, data cu.IM) (form ct.Form) {
 						}},
 					{Label: labels["report_copy"],
 						Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "copy",
+							},
 							Type: ct.FieldTypeInteger,
 							Value: cu.IM{
 								"name":  "copy",

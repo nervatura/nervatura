@@ -17,7 +17,7 @@ export const store = {
     locales,
     serverURL,
     apiPath: "/api/v6",
-    helpPage: "/docs6/"
+    helpPage: "/docs/"
   },
   ui: {
     toastTimeout: 4, // sec

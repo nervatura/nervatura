@@ -118,6 +118,21 @@ func (ds *DataStore) checkConnection() error {
 	return nil
 }
 
+func (ds *DataStore) checkDatabaseVersion(tableName string) (err error) {
+	if err = ds.checkConnection(); err == nil {
+		engine := ds.Db.Connection().Engine
+		sqlString := fmt.Sprintf("select table_name from information_schema.tables where table_name = '%s' ", tableName)
+		if engine == "sqlite" {
+			sqlString = fmt.Sprintf("select name from sqlite_master where name = '%s' ", tableName)
+		}
+		var rows []cu.IM
+		if rows, err = ds.Db.QuerySQL(sqlString, []any{}, nil); err == nil && len(rows) == 0 {
+			return errors.New("Invalid, corrupted or outdated database version")
+		}
+	}
+	return err
+}
+
 /*
 func (ds *DataStore) StoreUpdateLog(resultID int64, update md.Update) {
 	if cu.ToBoolean(ds.Config["NT_UPDATE_LOG"], false) {

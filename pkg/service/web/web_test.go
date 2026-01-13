@@ -291,6 +291,24 @@ func TestClientSessionCreate(t *testing.T) {
 			w:    httptest.NewRecorder(),
 			r:    httptest.NewRequest("POST", "/", strings.NewReader(`{"database": "test", "username": "test", "lang": "en", "theme": "light", "module": "search", "request_id": "1234567890"}`)),
 			db: &md.TestDriver{Config: cu.IM{
+				"Connection": func() struct {
+					Alias     string
+					Connected bool
+					Engine    string
+				} {
+					return struct {
+						Alias     string
+						Connected bool
+						Engine    string
+					}{
+						Alias:     "test",
+						Connected: true,
+						Engine:    "sqlite",
+					}
+				},
+				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "name": "test"}}, nil
+				},
 				"Query": func(queries []md.Query) ([]cu.IM, error) {
 					return []cu.IM{{"id": 1, "code": "test", "user_name": "test", "user_group": "GROUP_ADMIN"}}, nil
 				},
@@ -301,6 +319,24 @@ func TestClientSessionCreate(t *testing.T) {
 			w:    httptest.NewRecorder(),
 			r:    httptest.NewRequest("POST", "/", strings.NewReader(`{"api_key": "invalid"}`)),
 			db: &md.TestDriver{Config: cu.IM{
+				"Connection": func() struct {
+					Alias     string
+					Connected bool
+					Engine    string
+				} {
+					return struct {
+						Alias     string
+						Connected bool
+						Engine    string
+					}{
+						Alias:     "test",
+						Connected: true,
+						Engine:    "sqlite",
+					}
+				},
+				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "name": "test"}}, nil
+				},
 				"Query": func(queries []md.Query) ([]cu.IM, error) {
 					return []cu.IM{}, errors.New("error")
 				},
@@ -463,6 +499,24 @@ func TestClientAuthCallback(t *testing.T) {
 				},
 			},
 			config: cu.IM{
+				"Connection": func() struct {
+					Alias     string
+					Connected bool
+					Engine    string
+				} {
+					return struct {
+						Alias     string
+						Connected bool
+						Engine    string
+					}{
+						Alias:     "test",
+						Connected: true,
+						Engine:    "sqlite",
+					}
+				},
+				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "name": "test"}}, nil
+				},
 				"Query": func(queries []md.Query) ([]cu.IM, error) {
 					return []cu.IM{}, errors.New("error")
 				},
@@ -484,6 +538,24 @@ func TestClientAuthCallback(t *testing.T) {
 				},
 			},
 			config: cu.IM{
+				"Connection": func() struct {
+					Alias     string
+					Connected bool
+					Engine    string
+				} {
+					return struct {
+						Alias     string
+						Connected bool
+						Engine    string
+					}{
+						Alias:     "test",
+						Connected: true,
+						Engine:    "sqlite",
+					}
+				},
+				"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+					return []cu.IM{{"id": 1, "name": "test"}}, nil
+				},
 				"Query": func(queries []md.Query) ([]cu.IM, error) {
 					if queries[0].From == "user_view" {
 						return []cu.IM{{"id": 1, "code": "test", "user_name": "test", "user_group": "GROUP_ADMIN"}}, nil

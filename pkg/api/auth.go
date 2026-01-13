@@ -22,6 +22,9 @@ func (ds *DataStore) TokenRefresh(user md.Auth) (token string, err error) {
 }
 
 func (ds *DataStore) AuthUser(uid, username string) (user md.Auth, err error) {
+	if err = ds.checkDatabaseVersion("auth"); err != nil {
+		return user, err
+	}
 	query := md.Query{
 		Fields: []string{"*"}, From: "auth",
 		Filters: []md.Filter{
