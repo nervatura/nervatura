@@ -9,6 +9,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func Test_modelDelete(t *testing.T) {
@@ -29,7 +30,7 @@ func Test_modelDelete(t *testing.T) {
 			wantErr:   false,
 			resultErr: nil,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456"}}, nil
@@ -112,7 +113,7 @@ func Test_extendDelete(t *testing.T) {
 			resultErr: nil,
 			toolName:  "nervatura_contact_delete",
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"id": 1, "surname": "Doe"}}}}, nil
@@ -133,7 +134,7 @@ func Test_extendDelete(t *testing.T) {
 			resultErr: errors.New("eliciting failed: context canceled"),
 			toolName:  "nervatura_contact_delete",
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"id": 1, "surname": "Doe"}}}}, nil
@@ -155,7 +156,7 @@ func Test_extendDelete(t *testing.T) {
 			resultErr: nil,
 			toolName:  "nervatura_contact_delete",
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"id": 1, "surname": "Doe"}}}}, nil
@@ -177,7 +178,7 @@ func Test_extendDelete(t *testing.T) {
 			resultErr: nil,
 			toolName:  "nervatura_contact_delete",
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil
@@ -199,7 +200,7 @@ func Test_extendDelete(t *testing.T) {
 			resultErr: nil,
 			toolName:  "nervatura_contact_delete",
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil
@@ -221,7 +222,7 @@ func Test_extendDelete(t *testing.T) {
 			resultErr: nil,
 			toolName:  "nervatura_customer_delete",
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil

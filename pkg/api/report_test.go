@@ -10,6 +10,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestDataStore_ReportInstall(t *testing.T) {
@@ -44,7 +45,7 @@ func TestDataStore_ReportInstall(t *testing.T) {
 		{
 			name: "success",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil
@@ -74,7 +75,7 @@ func TestDataStore_ReportInstall(t *testing.T) {
 		{
 			name: "exists template",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -99,7 +100,7 @@ func TestDataStore_ReportInstall(t *testing.T) {
 		{
 			name: "invalid template",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				ReadFile: func(name string) ([]byte, error) {
@@ -119,7 +120,7 @@ func TestDataStore_ReportInstall(t *testing.T) {
 		{
 			name: "convert error",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				ReadFile: func(name string) ([]byte, error) {
@@ -139,7 +140,7 @@ func TestDataStore_ReportInstall(t *testing.T) {
 		{
 			name: "missing template",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				ReadFile: func(name string) ([]byte, error) {
@@ -219,7 +220,7 @@ func TestDataStore_ReportList(t *testing.T) {
 		{
 			name: "success",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}, nil
@@ -242,7 +243,7 @@ func TestDataStore_ReportList(t *testing.T) {
 		{
 			name: "report dir list",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}, nil
@@ -323,7 +324,7 @@ func TestDataStore_GetReport(t *testing.T) {
 		{
 			name: "success_pdf",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
@@ -352,7 +353,7 @@ func TestDataStore_GetReport(t *testing.T) {
 		{
 			name: "data_output",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
@@ -382,7 +383,7 @@ func TestDataStore_GetReport(t *testing.T) {
 		{
 			name: "csv_output",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_CSV"}}}, nil
@@ -413,7 +414,7 @@ func TestDataStore_GetReport(t *testing.T) {
 		{
 			name: "error",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
@@ -513,7 +514,7 @@ func TestDataStore_getReportData(t *testing.T) {
 		{
 			name: "ds_nodata",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"QuerySQL": func(sqlString string) ([]cu.IM, error) {
 							if sqlString == "ds" {
@@ -548,7 +549,7 @@ func TestDataStore_getReportData(t *testing.T) {
 		{
 			name: "nodata",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil

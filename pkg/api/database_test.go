@@ -6,6 +6,7 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestCreateDatabase(t *testing.T) {
@@ -23,7 +24,7 @@ func TestCreateDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": testConn,
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
@@ -50,7 +51,7 @@ func TestCreateDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": testConn,
 							"BeginTransaction": func() (interface{}, error) {
@@ -67,7 +68,7 @@ func TestCreateDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": testConn,
 							"UpdateSQL": func(sqlString string, transaction interface{}) error {
@@ -84,7 +85,7 @@ func TestCreateDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{},
 					},
 				},
@@ -96,7 +97,7 @@ func TestCreateDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": testConn,
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
@@ -130,7 +131,7 @@ func TestUpgradeDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": testConn,
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
@@ -157,7 +158,7 @@ func TestUpgradeDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": testConn,
 							"BeginTransaction": func() (interface{}, error) {
@@ -174,7 +175,7 @@ func TestUpgradeDatabase(t *testing.T) {
 				options: cu.IM{"alias": "test", "demo": true},
 				config: cu.IM{
 					"NT_ALIAS_TEST": "test",
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": testConn,
 							"UpdateSQL": func(sqlString string, transaction interface{}) error {

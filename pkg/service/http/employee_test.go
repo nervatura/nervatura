@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestEmployeePost(t *testing.T) {
@@ -32,7 +33,7 @@ func TestEmployeePost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/employee", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -64,7 +65,7 @@ func TestEmployeePost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/employee", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -102,7 +103,7 @@ func TestEmployeePut(t *testing.T) {
 				r: httptest.NewRequest("PUT", "/employee/1", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -156,7 +157,7 @@ func TestEmployeeDelete(t *testing.T) {
 				r: httptest.NewRequest("DELETE", "/employee/1", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -207,7 +208,7 @@ func TestEmployeeQuery(t *testing.T) {
 				r: httptest.NewRequest("GET", "/employee/query?limit=10&offset=0&tag=test", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -257,7 +258,7 @@ func TestEmployeeGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -286,7 +287,7 @@ func TestEmployeeGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil

@@ -11,6 +11,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestDataStore_TokenRefresh(t *testing.T) {
@@ -42,7 +43,7 @@ func TestDataStore_TokenRefresh(t *testing.T) {
 		{
 			name: "TestTokenRefresh",
 			fields: fields{
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				Alias:  "test",
 				Config: cu.IM{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -61,7 +62,7 @@ func TestDataStore_TokenRefresh(t *testing.T) {
 		{
 			name: "TestTokenRefreshError",
 			fields: fields{
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				Alias:  "test",
 				Config: cu.IM{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -135,7 +136,7 @@ func TestDataStore_AuthUser(t *testing.T) {
 		{
 			name: "success",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -176,7 +177,7 @@ func TestDataStore_AuthUser(t *testing.T) {
 		{
 			name: "invalid database",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -274,7 +275,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 		{
 			name: "success",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -327,7 +328,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 				Config: cu.IM{
 					"NT_API_KEY": "test",
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -374,7 +375,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 				Config: cu.IM{
 					"NT_API_KEY": "test",
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -418,7 +419,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 		{
 			name: "wrong password",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -466,7 +467,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 		{
 			name: "missing user",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -517,7 +518,7 @@ func TestDataStore_UserLogin(t *testing.T) {
 		{
 			name: "missing password",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -628,7 +629,7 @@ func TestDataStore_TokenLogin(t *testing.T) {
 		{
 			name: "success",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -672,7 +673,7 @@ func TestDataStore_TokenLogin(t *testing.T) {
 		{
 			name: "missing token",
 			fields: fields{
-				Db: &md.TestDriver{},
+				Db: &td.TestDriver{},
 			},
 			args: args{
 				token: "",
@@ -682,7 +683,7 @@ func TestDataStore_TokenLogin(t *testing.T) {
 		{
 			name: "invalid token",
 			fields: fields{
-				Db: &md.TestDriver{},
+				Db: &td.TestDriver{},
 				Config: cu.IM{
 					"tokenKeys": []cu.SM{{"user_code": "user_code"}, {"user_name": "user_name"}},
 				},
@@ -755,7 +756,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		{
 			name: "success update",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"value": "test"}}, nil
@@ -780,7 +781,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		{
 			name: "success insert",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil
@@ -805,7 +806,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		{
 			name: "query error",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, errors.New("error")
@@ -827,7 +828,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		{
 			name: "create password hash error",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -845,7 +846,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		{
 			name: "verify password error",
 			fields: fields{
-				Db: &md.TestDriver{},
+				Db: &td.TestDriver{},
 			},
 			args: args{
 				userCode: "test",
@@ -857,7 +858,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		{
 			name: "empty password error",
 			fields: fields{
-				Db: &md.TestDriver{},
+				Db: &td.TestDriver{},
 			},
 			args: args{
 				userCode: "test",
@@ -869,7 +870,7 @@ func TestDataStore_UserPassword(t *testing.T) {
 		{
 			name: "missing user code error",
 			fields: fields{
-				Db: &md.TestDriver{},
+				Db: &td.TestDriver{},
 			},
 			args: args{
 				userCode: "",

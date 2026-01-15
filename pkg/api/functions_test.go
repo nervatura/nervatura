@@ -10,6 +10,7 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestDataStore_ProductPrice(t *testing.T) {
@@ -44,7 +45,7 @@ func TestDataStore_ProductPrice(t *testing.T) {
 		{
 			name: "success",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							cn++
@@ -70,7 +71,7 @@ func TestDataStore_ProductPrice(t *testing.T) {
 		{
 			name: "query error 1",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return nil, errors.New("test")
@@ -93,7 +94,7 @@ func TestDataStore_ProductPrice(t *testing.T) {
 		{
 			name: "query error 2",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							cn++
@@ -120,7 +121,7 @@ func TestDataStore_ProductPrice(t *testing.T) {
 		{
 			name: "query error 3",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							cn++
@@ -147,7 +148,7 @@ func TestDataStore_ProductPrice(t *testing.T) {
 		{
 			name: "missing product code",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 			},
@@ -164,7 +165,7 @@ func TestDataStore_ProductPrice(t *testing.T) {
 		{
 			name: "invalid price type",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 			},
@@ -269,7 +270,7 @@ func TestDataStore_Function(t *testing.T) {
 		{
 			name: "report_list",
 			fields: fields{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "report_key": "ntr_customer_en", "report_name": "test", "report_type": "test", "file_type": "FILE_CSV"}}, nil

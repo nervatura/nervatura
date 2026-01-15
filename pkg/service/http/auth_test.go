@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestAuthPost(t *testing.T) {
@@ -34,7 +35,7 @@ func TestAuthPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -64,7 +65,7 @@ func TestAuthPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 			},
 			user: md.Auth{
@@ -79,7 +80,7 @@ func TestAuthPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertFromReader: func(data io.Reader, v any) error {
 					return errors.New("unprocessable entity")
@@ -97,7 +98,7 @@ func TestAuthPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertFromReader: func(data io.Reader, v any) error {
 					return cu.ConvertFromByte([]byte(`{"user_group": "GROUP_ADMIN"}`), v)
@@ -139,7 +140,7 @@ func TestAuthPut(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -172,7 +173,7 @@ func TestAuthPut(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 			},
 			user: md.Auth{
@@ -210,7 +211,7 @@ func TestAuthQuery(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -240,7 +241,7 @@ func TestAuthQuery(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 			},
 			user: md.Auth{
@@ -278,7 +279,7 @@ func TestAuthGet(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -310,7 +311,7 @@ func TestAuthGet(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil
@@ -410,7 +411,7 @@ func TestAuthPassword(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -437,7 +438,7 @@ func TestAuthPassword(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertFromReader: func(data io.Reader, v any) error {
 					return errors.New("unprocessable entity")
@@ -473,7 +474,7 @@ func TestAuthReset(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -526,7 +527,7 @@ func TestAuthToken(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				CreateLoginToken: func(params cu.SM, config cu.IM) (string, error) {
 					return "token", nil

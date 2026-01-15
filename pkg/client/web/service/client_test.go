@@ -20,6 +20,7 @@ import (
 	cp "github.com/nervatura/nervatura/v6/pkg/client/web/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 	"golang.org/x/oauth2"
 )
 
@@ -132,7 +133,7 @@ func TestClientService_LoadSession(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses.SaveSession("SES012345", client)
 	tests := []struct {
@@ -233,7 +234,7 @@ func TestClientService_AuthUser(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
 								Connected bool
@@ -316,7 +317,7 @@ func TestClientService_userLogin(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
 								Connected bool
@@ -402,7 +403,7 @@ func TestClientService_moduleData(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, nil
 							},
@@ -443,7 +444,7 @@ func TestClientService_moduleData(t *testing.T) {
 			},
 			args: args{
 				ds: &api.DataStore{
-					Db: &md.TestDriver{Config: cu.IM{
+					Db: &td.TestDriver{Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
 						},
@@ -527,7 +528,7 @@ func TestClientService_moduleResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{}},
+						Db: &td.TestDriver{Config: cu.IM{}},
 					}
 				},
 			},
@@ -559,7 +560,7 @@ func TestClientService_moduleResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{}},
+						Db: &td.TestDriver{Config: cu.IM{}},
 					}
 				},
 			},
@@ -591,7 +592,7 @@ func TestClientService_moduleResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{}},
+						Db: &td.TestDriver{Config: cu.IM{}},
 					}
 				},
 			},
@@ -623,7 +624,7 @@ func TestClientService_moduleResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{}},
+						Db: &td.TestDriver{Config: cu.IM{}},
 					}
 				},
 			},
@@ -655,7 +656,7 @@ func TestClientService_moduleResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{}},
+						Db: &td.TestDriver{Config: cu.IM{}},
 					}
 				},
 			},
@@ -770,7 +771,7 @@ func TestClientService_SetEditor(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
 							},
@@ -808,7 +809,7 @@ func TestClientService_SetEditor(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, nil
 							},
@@ -879,7 +880,7 @@ func TestClientService_searchEvent(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -890,7 +891,7 @@ func TestClientService_searchEvent(t *testing.T) {
 						AppLog: slog.Default(),
 						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 							return &api.DataStore{
-								Db: &md.TestDriver{Config: cu.IM{
+								Db: &td.TestDriver{Config: cu.IM{
 									"Query": func(queries []md.Query) ([]cu.IM, error) {
 										return []cu.IM{}, errors.New("error")
 									},
@@ -930,7 +931,7 @@ func TestClientService_searchEvent(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -941,7 +942,7 @@ func TestClientService_searchEvent(t *testing.T) {
 						AppLog: slog.Default(),
 						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 							return &api.DataStore{
-								Db: &md.TestDriver{Config: cu.IM{
+								Db: &td.TestDriver{Config: cu.IM{
 									"Query": func(queries []md.Query) ([]cu.IM, error) {
 										return []cu.IM{{"id": 1}}, nil
 									},
@@ -1017,7 +1018,7 @@ func TestClientService_insertPrintQueue(t *testing.T) {
 			},
 			args: args{
 				ds: &api.DataStore{
-					Db: &md.TestDriver{Config: cu.IM{
+					Db: &td.TestDriver{Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
 						},
@@ -1074,7 +1075,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -1085,7 +1086,7 @@ func TestClientService_MainResponse(t *testing.T) {
 						AppLog: slog.Default(),
 						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 							return &api.DataStore{
-								Db: &md.TestDriver{Config: cu.IM{
+								Db: &td.TestDriver{Config: cu.IM{
 									"Query": func(queries []md.Query) ([]cu.IM, error) {
 										return []cu.IM{}, errors.New("error")
 									},
@@ -1124,7 +1125,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -1135,7 +1136,7 @@ func TestClientService_MainResponse(t *testing.T) {
 						AppLog: slog.Default(),
 						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 							return &api.DataStore{
-								Db: &md.TestDriver{Config: cu.IM{
+								Db: &td.TestDriver{Config: cu.IM{
 									"Query": func(queries []md.Query) ([]cu.IM, error) {
 										return []cu.IM{}, nil
 									},
@@ -1174,7 +1175,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -1185,7 +1186,7 @@ func TestClientService_MainResponse(t *testing.T) {
 						AppLog: slog.Default(),
 						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 							return &api.DataStore{
-								Db: &md.TestDriver{Config: cu.IM{
+								Db: &td.TestDriver{Config: cu.IM{
 									"Query": func(queries []md.Query) ([]cu.IM, error) {
 										return []cu.IM{}, nil
 									},
@@ -1224,7 +1225,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1260,7 +1261,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1276,7 +1277,7 @@ func TestClientService_MainResponse(t *testing.T) {
 							AppLog: slog.Default(),
 							NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 								return &api.DataStore{
-									Db: &md.TestDriver{Config: cu.IM{
+									Db: &td.TestDriver{Config: cu.IM{
 										"Query": func(queries []md.Query) ([]cu.IM, error) {
 											return []cu.IM{}, errors.New("error")
 										},
@@ -1315,7 +1316,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1351,7 +1352,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1387,7 +1388,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1423,7 +1424,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1459,7 +1460,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1495,7 +1496,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
 							},
@@ -1532,7 +1533,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1566,7 +1567,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1600,7 +1601,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1642,7 +1643,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1676,7 +1677,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1712,7 +1713,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1746,7 +1747,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1786,7 +1787,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1828,7 +1829,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1844,7 +1845,7 @@ func TestClientService_MainResponse(t *testing.T) {
 							AppLog: slog.Default(),
 							NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 								return &api.DataStore{
-									Db: &md.TestDriver{Config: cu.IM{}},
+									Db: &td.TestDriver{Config: cu.IM{}},
 								}
 							},
 						},
@@ -1875,7 +1876,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1914,7 +1915,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -1953,7 +1954,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "user_name": "test", "auth_meta": cu.IM{
 									"tags": []string{"test"},
@@ -2022,7 +2023,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
 								Connected bool
@@ -2109,7 +2110,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -2144,7 +2145,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "user_name": "test", "auth_meta": cu.IM{
 									"tags": []string{"test"},
@@ -2213,7 +2214,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "user_name": "test", "auth_meta": cu.IM{
 									"tags": []string{"test"},
@@ -2282,7 +2283,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "user_name": "test", "auth_meta": cu.IM{
 									"tags": []string{"test"},
@@ -2352,7 +2353,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
 							},
@@ -2391,7 +2392,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:            &md.TestDriver{Config: cu.IM{}},
+						Db:            &td.TestDriver{Config: cu.IM{}},
 						Config:        config,
 						AppLog:        appLog,
 						ConvertToType: ut.ConvertToType,
@@ -2404,7 +2405,7 @@ func TestClientService_MainResponse(t *testing.T) {
 							AppLog: slog.Default(),
 							NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 								return &api.DataStore{
-									Db:            &md.TestDriver{Config: cu.IM{}},
+									Db:            &td.TestDriver{Config: cu.IM{}},
 									Config:        config,
 									AppLog:        appLog,
 									ConvertToType: ut.ConvertToType,
@@ -2446,7 +2447,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -2478,7 +2479,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -2511,7 +2512,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -2547,7 +2548,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -2580,7 +2581,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
 								Connected bool
@@ -2634,7 +2635,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
 								Connected bool
@@ -2697,7 +2698,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
 								Connected bool
@@ -2756,7 +2757,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
 								Connected bool
@@ -2815,7 +2816,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -2843,7 +2844,7 @@ func TestClientService_MainResponse(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -2906,7 +2907,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -2952,7 +2953,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -3001,7 +3002,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -3054,7 +3055,7 @@ func TestClientService_editorFormTags(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -3138,7 +3139,7 @@ func TestClientService_editorFormOK(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -3246,7 +3247,7 @@ func TestClientService_addMapField(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3288,7 +3289,7 @@ func TestClientService_addMapField(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3368,7 +3369,7 @@ func TestClientService_updateMapField(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, errors.New("error")
 							},
@@ -3416,7 +3417,7 @@ func TestClientService_updateMapField(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, errors.New("error")
 							},
@@ -3502,7 +3503,7 @@ func TestClientService_showReportSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3578,7 +3579,7 @@ func TestClientService_editorTags(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3629,7 +3630,7 @@ func TestClientService_editorTags(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3722,7 +3723,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3736,7 +3737,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 						AppLog: slog.Default(),
 						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 							return &api.DataStore{
-								Db: &md.TestDriver{Config: cu.IM{
+								Db: &td.TestDriver{Config: cu.IM{
 									"Query": func(queries []md.Query) ([]cu.IM, error) {
 										return []cu.IM{}, errors.New("error")
 									},
@@ -3790,7 +3791,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3804,7 +3805,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 						AppLog: slog.Default(),
 						NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 							return &api.DataStore{
-								Db: &md.TestDriver{Config: cu.IM{
+								Db: &td.TestDriver{Config: cu.IM{
 									"Query": func(queries []md.Query) ([]cu.IM, error) {
 										return []cu.IM{{"code": "value"}}, nil
 									},
@@ -3858,7 +3859,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3907,7 +3908,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -3956,7 +3957,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -4005,7 +4006,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"code": "value"}}, nil
 							},
@@ -4057,7 +4058,7 @@ func TestClientService_editorCodeSelector(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"code": "value"}}, nil
 							},
@@ -4146,7 +4147,7 @@ func TestClientService_codeName(t *testing.T) {
 				},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{{"customer_name": "name"}}, nil
 					},

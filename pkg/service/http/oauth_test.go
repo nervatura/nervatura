@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestProtectedResource(t *testing.T) {
@@ -150,7 +151,7 @@ func TestOAuthToken(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses.SaveSession("SES012345", cu.IM{})
 
@@ -267,7 +268,7 @@ func TestOAuthCallback(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses.SaveSession("SES012345", cu.IM{})
 	for _, tt := range tests {
@@ -320,7 +321,7 @@ func TestOAuthValidate(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses1.SaveSession("SES012345", cu.IM{})
 
@@ -328,7 +329,7 @@ func TestOAuthValidate(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses2.SaveSession("SES012345", cu.SM{
 		"redirect_uri": "https://example.com",
@@ -352,7 +353,7 @@ func TestOAuthValidate(t *testing.T) {
 				Config: cu.IM{
 					"NT_API_KEY": "test",
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -398,7 +399,7 @@ func TestOAuthValidate(t *testing.T) {
 				Config: cu.IM{
 					"NT_API_KEY": "test",
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -444,7 +445,7 @@ func TestOAuthValidate(t *testing.T) {
 				Config: cu.IM{
 					"NT_API_KEY": "test",
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -490,7 +491,7 @@ func TestOAuthValidate(t *testing.T) {
 				Config: cu.IM{
 					"NT_API_KEY": "test",
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),

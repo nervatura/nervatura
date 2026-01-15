@@ -13,6 +13,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestGService_TokenAuth(t *testing.T) {
@@ -39,7 +40,7 @@ func TestGService_TokenAuth(t *testing.T) {
 					"tokenKeys": []cu.SM{
 						{"type": "private", "value": "SECRET_KEY"},
 					},
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{
 							"Connection": func() struct {
 								Alias     string
@@ -83,7 +84,7 @@ func TestGService_TokenAuth(t *testing.T) {
 					"tokenKeys": []cu.SM{
 						{"type": "private", "value": "SECRET_KEY"},
 					},
-					"db": &md.TestDriver{
+					"db": &td.TestDriver{
 						Config: cu.IM{},
 					},
 				},
@@ -251,7 +252,7 @@ func TestGService_Delete(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "CUS0000000000N1"}}, nil
@@ -288,7 +289,7 @@ func TestGService_Delete(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "CONFIG_PRINT_QUEUE"}}, nil
@@ -325,7 +326,7 @@ func TestGService_Delete(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupUser},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "CONFIG_MAP"}}, nil
@@ -362,7 +363,7 @@ func TestGService_Delete(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupUser},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
@@ -396,7 +397,7 @@ func TestGService_Delete(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 2, "code": "USR0000000000N2", "auth_object": `{"id": 2, "code": "USR0000000000N2"}`}}, nil
@@ -433,7 +434,7 @@ func TestGService_Delete(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
@@ -467,7 +468,7 @@ func TestGService_Delete(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{},
 					},
 				},
@@ -527,7 +528,7 @@ func TestGService_Function(t *testing.T) {
 				ctx: context.Background(),
 				req: &pb.RequestFunction{Function: "test", Args: cu.SM{"key": "value"}},
 				ds: &api.DataStore{
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{},
 					},
 				},
@@ -577,7 +578,7 @@ func TestGService_Database(t *testing.T) {
 				ctx: context.Background(),
 				req: &pb.RequestDatabase{Alias: "test", Demo: false},
 				ds: &api.DataStore{
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{},
 					},
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -634,7 +635,7 @@ func TestGService_View(t *testing.T) {
 				ctx: context.Background(),
 				req: &pb.RequestView{Name: pb.ViewName_VIEW_CURRENCY_VIEW, Filter: "", OrderBy: []string{"id"}, Limit: 10, Offset: 0},
 				ds: &api.DataStore{
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{},
 					},
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),

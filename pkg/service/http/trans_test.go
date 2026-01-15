@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestTransPost(t *testing.T) {
@@ -33,7 +34,7 @@ func TestTransPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/trans", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -75,7 +76,7 @@ func TestTransPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/trans", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -104,7 +105,7 @@ func TestTransPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/trans", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -133,7 +134,7 @@ func TestTransPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/trans", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -180,7 +181,7 @@ func TestTransPut(t *testing.T) {
 				r: httptest.NewRequest("PUT", "/trans/123456", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -237,7 +238,7 @@ func TestTransDelete(t *testing.T) {
 				r: httptest.NewRequest("DELETE", "/trans/123456", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -294,7 +295,7 @@ func TestTransQuery(t *testing.T) {
 				r: httptest.NewRequest("GET", "/trans?limit=10&offset=0&trans_type=TRANS_INVOICE&direction=DIRECTION_OUT&trans_date=2024-01-01&tag=test", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -350,7 +351,7 @@ func TestTransGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -383,7 +384,7 @@ func TestTransGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil

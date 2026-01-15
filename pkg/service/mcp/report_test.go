@@ -13,6 +13,7 @@ import (
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func Test_reportQueryHandler(t *testing.T) {
@@ -36,7 +37,7 @@ func Test_reportQueryHandler(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "report_key": "ntr_customer_en", "data": cu.IM{"file_type": "FILE_PDF", "template": string(pdf_json)}}}, nil
@@ -69,7 +70,7 @@ func Test_reportQueryHandler(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "report_key": "ntr_customer_en", "data": cu.IM{"file_type": "FILE_PDF", "template": string(pdf_json)}}}, nil
@@ -109,7 +110,7 @@ func Test_reportQueryHandler(t *testing.T) {
 				Config: api.SessionConfig{
 					Method: md.SessionMethodMemory,
 				},
-				Conn: &md.TestDriver{Config: cu.IM{}},
+				Conn: &td.TestDriver{Config: cu.IM{}},
 			})
 			ctx = context.WithValue(ctx, md.ConfigCtxKey, cu.IM{})
 			_, _, gotErr := reportQueryHandler(ctx, tt.req, tt.parameters)
@@ -139,7 +140,7 @@ func Test_getDefaultReportKey(t *testing.T) {
 			code:    "INV1731101982N123",
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "report_key": "ntr_invoice_en", "trans_type": "TRANS_INVOICE", "direction": "DIRECTION_OUT"}}, nil
@@ -153,7 +154,7 @@ func Test_getDefaultReportKey(t *testing.T) {
 			code:    "INV1731101982N123",
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							if queries[0].From == "config_report" {
@@ -170,7 +171,7 @@ func Test_getDefaultReportKey(t *testing.T) {
 			code:    "INV1731101982N123",
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 			},
@@ -180,7 +181,7 @@ func Test_getDefaultReportKey(t *testing.T) {
 			code:    "XXX1731101982N123",
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 			},

@@ -13,6 +13,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestGService_CurrencyUpdate(t *testing.T) {
@@ -41,7 +42,7 @@ func TestGService_CurrencyUpdate(t *testing.T) {
 				req: &pb.Currency{Id: 0, Code: "123456"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "currency_object": `{"id": 1, "code": "123456"}`}}, nil
@@ -90,7 +91,7 @@ func TestGService_CurrencyUpdate(t *testing.T) {
 				req: &pb.Currency{Id: 1, Code: "123456"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, errors.New("error")
@@ -172,7 +173,7 @@ func TestGService_CurrencyGet(t *testing.T) {
 				req: &pb.RequestGet{Id: 1, Code: ""},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, nil
@@ -239,7 +240,7 @@ func TestGService_CurrencyQuery(t *testing.T) {
 				req: &pb.RequestQuery{Limit: 10, Offset: 0, Filters: []*pb.RequestQueryFilter{{Field: "tag", Value: "1"}}},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "currency_object": `{"id": 1, "code": "123456"}`}}, nil

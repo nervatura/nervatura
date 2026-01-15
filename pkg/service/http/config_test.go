@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestConfigPost(t *testing.T) {
@@ -34,7 +35,7 @@ func TestConfigPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -67,7 +68,7 @@ func TestConfigPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil
@@ -97,7 +98,7 @@ func TestConfigPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertFromReader: func(r io.Reader, v any) error {
 					return cu.ConvertFromByte([]byte(`{"code": "123456", "user_name": "test", "user_group": "GROUP_USER", "config_type": "CONFIG_MAP"}`), v)
@@ -121,7 +122,7 @@ func TestConfigPost(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertFromReader: func(r io.Reader, v any) error {
 					return cu.ConvertFromByte([]byte(`{"code": "123456", "user_name": "test", "user_group": "GROUP_ADMIN", "config_type": "CONFIG_MAP"}`), v)
@@ -166,7 +167,7 @@ func TestConfigPut(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -199,7 +200,7 @@ func TestConfigPut(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return []byte(`{"code": "123456", "user_group": "GROUP_ADMIN"}`), nil
@@ -223,7 +224,7 @@ func TestConfigPut(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return []byte(`{"code": "123456", "user_group": "GROUP_ADMIN", "config_type": "CONFIG_MAP"}`), nil
@@ -270,7 +271,7 @@ func TestConfigDelete(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -306,7 +307,7 @@ func TestConfigDelete(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -354,7 +355,7 @@ func TestConfigQuery(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -407,7 +408,7 @@ func TestConfigGet(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -434,7 +435,7 @@ func TestConfigGet(t *testing.T) {
 			},
 			ds: &api.DataStore{
 				Config: cu.IM{},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil

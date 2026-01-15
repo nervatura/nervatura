@@ -9,6 +9,7 @@ import (
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	cp "github.com/nervatura/nervatura/v6/pkg/client/web/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestSearchService_Data(t *testing.T) {
@@ -28,7 +29,7 @@ func TestSearchService_Data(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "name": "test"}}, nil
 							},
@@ -96,7 +97,7 @@ func TestSearchService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -129,7 +130,7 @@ func TestSearchService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -162,7 +163,7 @@ func TestSearchService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -194,7 +195,7 @@ func TestSearchService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Update": func(data md.Update) (int64, error) {
 								return 1, nil
 							},
@@ -241,7 +242,7 @@ func TestSearchService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Update": func(data md.Update) (int64, error) {
 								return 1, nil
 							},

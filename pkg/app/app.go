@@ -232,11 +232,13 @@ func (app *App) setConfig(isSnap bool) {
 	}
 
 	app.config["NT_CLIENT_LABELS"] = cu.ToString(args["NT_CLIENT_LABELS"], app.getEnv("NT_CLIENT_LABELS"))
-	if cu.ToString(app.config["NT_CLIENT_LABELS"], "") == "" {
-		if _, err := app.stat(dataDir + "/client_labels.json"); err == nil {
-			app.config["NT_CLIENT_LABELS"] = dataDir + "/client_labels.json"
+	/*
+		if cu.ToString(app.config["NT_CLIENT_LABELS"], "") == "" {
+			if _, err := app.stat(dataDir + "/client_labels.json"); err == nil {
+				app.config["NT_CLIENT_LABELS"] = dataDir + "/client_labels.json"
+			}
 		}
-	}
+	*/
 
 	app.config["NT_GRPC_ENABLED"] = cu.ToBoolean(args["NT_GRPC_ENABLED"], cu.ToBoolean(app.getEnv("NT_GRPC_ENABLED"), cu.ToBoolean(st.DefaultConfig["grpc"]["enabled"], true)))
 	app.config["NT_GRPC_PORT"] = cu.ToInteger(app.getEnv("NT_GRPC_PORT"), cu.ToInteger(st.DefaultConfig["grpc"]["port"], 9200))

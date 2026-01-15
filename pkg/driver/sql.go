@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -67,9 +68,7 @@ func (ds *SQLDriver) CreateConnection(alias, connStr string) error {
 	}
 	engine := strings.Split(connStr, "://")[0]
 	conn := connStr
-	if engine == "sqlite" {
-		conn = strings.ReplaceAll(connStr, "sqlite://", "")
-	}
+	conn = strings.ReplaceAll(connStr, "sqlite://", "")
 	if engine == "mysql" {
 		conn = strings.TrimPrefix(connStr, engine+"://")
 		ccs := "?"
@@ -93,7 +92,7 @@ func (ds *SQLDriver) CreateConnection(alias, connStr string) error {
 	db.SetMaxOpenConns(int(cu.ToInteger(ds.Config["SQL_MAX_OPEN_CONNS"], 10)))
 	db.SetMaxIdleConns(int(cu.ToInteger(ds.Config["SQL_MAX_IDLE_CONNS"], 3)))
 	db.SetConnMaxLifetime(time.Minute * time.Duration(int(cu.ToInteger(ds.Config["SQL_CONN_MAX_LIFETIME"], 15))))
-	if engine == "sqlite" {
+	if slices.Contains([]string{"sqlite", "sqltest"}, engine) {
 		db.Exec("PRAGMA foreign_keys = ON;")
 	}
 	ds.Db = db
@@ -225,7 +224,7 @@ func initQueryCols(engine string, cols []*sql.ColumnType) ([]interface{}, []stri
 		case "DOUBLE", "FLOAT8", "DECIMAL(19,4)", "DECIMAL", "NUMERIC":
 			values[i] = new(sql.NullFloat64)
 		case "DATETIME", "TIMESTAMP", "DATE":
-			if engine == "postgres" || engine == "sqlite" {
+			if slices.Contains([]string{"postgres", "sqlite", "sqltest"}, engine) {
 				values[i] = new(sql.NullTime)
 			}
 		}

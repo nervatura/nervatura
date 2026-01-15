@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 type smtpConfig struct {
@@ -119,7 +120,7 @@ func (ds *DataStore) setupSmtpConnection(config smtpConfig) (conn net.Conn, clie
 			return tls.Dial("tcp", fmt.Sprintf("%s:%d", config.host, config.port), tlsConfig)
 		},
 		"test": func() (net.Conn, error) {
-			return md.NewTestConn(), nil
+			return td.NewTestConn(), nil
 		},
 	}
 

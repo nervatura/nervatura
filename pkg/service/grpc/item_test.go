@@ -13,6 +13,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestGService_ItemUpdate(t *testing.T) {
@@ -41,7 +42,7 @@ func TestGService_ItemUpdate(t *testing.T) {
 				req: &pb.Item{Id: 1, Code: "1234", ProductCode: "1234", TaxCode: "1234", TransCode: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "item_object": `{"id": 1, "code": "1234"}`}}, nil
@@ -79,7 +80,7 @@ func TestGService_ItemUpdate(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, nil
@@ -116,7 +117,7 @@ func TestGService_ItemUpdate(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
@@ -160,7 +161,7 @@ func TestGService_ItemUpdate(t *testing.T) {
 				req: &pb.Item{Id: 0, Code: "1234", ProductCode: "P1234", TaxCode: "T1234", TransCode: "T1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
@@ -229,7 +230,7 @@ func TestGService_ItemQuery(t *testing.T) {
 				}},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234", "item_object": `{"id": 1, "code": "1234"}`}}, nil

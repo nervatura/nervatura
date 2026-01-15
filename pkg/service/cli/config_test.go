@@ -10,6 +10,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestCLIService_ConfigInsert(t *testing.T) {
@@ -33,7 +34,7 @@ func TestCLIService_ConfigInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db:     &md.TestDriver{},
+						Db:     &td.TestDriver{},
 						AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 						ConvertFromByte: func(data []byte, v any) error {
 							return errors.New("test error")
@@ -51,7 +52,7 @@ func TestCLIService_ConfigInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db:     &md.TestDriver{},
+						Db:     &td.TestDriver{},
 						AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 						ConvertFromByte: func(data []byte, v any) error {
 							strData := string(data)
@@ -76,7 +77,7 @@ func TestCLIService_ConfigInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Update": func(data md.Update) (int64, error) {
 									return 1, nil
@@ -133,7 +134,7 @@ func TestCLIService_ConfigUpdate(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Update": func(data md.Update) (int64, error) {
 									return 1, nil
@@ -171,7 +172,7 @@ func TestCLIService_ConfigUpdate(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db:     &md.TestDriver{},
+						Db:     &td.TestDriver{},
 						AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 						ReadAll: func(r io.Reader) ([]byte, error) {
 							return []byte(`{"code": "123456", "data": {}}`), nil
@@ -224,7 +225,7 @@ func TestCLIService_ConfigDelete(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Update": func(data md.Update) (int64, error) {
 									return 1, nil
@@ -277,7 +278,7 @@ func TestCLIService_ConfigQuery(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -326,7 +327,7 @@ func TestCLIService_ConfigGet(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -347,7 +348,7 @@ func TestCLIService_ConfigGet(t *testing.T) {
 			args: args{
 				options: cu.IM{
 					"ds": &api.DataStore{
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{}, nil

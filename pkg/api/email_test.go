@@ -14,6 +14,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 // Mock SMTP Client
@@ -120,7 +121,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
 					return &MockSMTPClient{}, nil
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{
@@ -421,7 +422,7 @@ func TestDataStore_SendEmail(t *testing.T) {
 				NewSmtpClient: func(conn net.Conn, host string) (md.SmtpClient, error) {
 					return &MockSMTPClient{}, nil
 				},
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{

@@ -9,6 +9,7 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	_ "github.com/nervatura/nervatura/v6/test/sqltest"
 )
 
 func Test_registerDriver(t *testing.T) {
@@ -164,28 +165,28 @@ func TestSQLDriver_CreateConnection(t *testing.T) {
 			name: "db_close_error",
 			fields: fields{
 				Db: func() *sql.DB {
-					db, _ := sql.Open("error", "test")
+					db, _ := sql.Open("sqltest", "close_error")
 					db.Ping()
 					return db
 				}(),
 			},
 			args: args{
 				alias:   "test",
-				connStr: "sqlite3://:memory:",
+				connStr: "sqltest://:memory:",
 			},
 			wantErr: true,
 		},
 		{
-			name: "sqlite",
+			name: "sqlite_pragma",
 			fields: fields{
 				Db: func() *sql.DB {
-					db, _ := sql.Open("sqlite", "file::memory:")
+					db, _ := sql.Open("sqltest", "test")
 					return db
 				}(),
 			},
 			args: args{
 				alias:   "test",
-				connStr: "sqlite://file::memory:",
+				connStr: "sqltest://test",
 			},
 			wantErr: false,
 		},
@@ -636,7 +637,7 @@ func TestSQLDriver_Query(t *testing.T) {
 		queries []md.Query
 		trans   interface{}
 	}
-	db, _ := sql.Open("sqlite", "file::memory:")
+	db, _ := sql.Open("sqltest", "query_error")
 	trans, _ := db.Begin()
 	tests := []struct {
 		name    string
@@ -647,7 +648,7 @@ func TestSQLDriver_Query(t *testing.T) {
 		{
 			name: "query",
 			fields: fields{
-				engine: "sqlite",
+				engine: "sqltest",
 				Db:     db,
 			},
 			args: args{
@@ -718,19 +719,9 @@ func TestSQLDriver_QuerySQL(t *testing.T) {
 		{
 			name: "query",
 			fields: fields{
-				engine: "sqlite",
+				engine: "sqltest",
 				Db: func() *sql.DB {
-					db, _ := sql.Open("sqlite", "file::memory:")
-					_, _ = db.Exec(`CREATE TABLE test(id INTEGER PRIMARY KEY AUTOINCREMENT,
-						int_field INTEGER DEFAULT 0,
-						float_field DOUBLE DEFAULT 0,
-						bool_field BOOLEAN DEFAULT FALSE,
-						datetime_field TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						date_field DATE,
-						json_field JSON,
-						string_field TEXT DEFAULT '')`)
-					_, _ = db.Exec("INSERT INTO test(float_field,string_field,json_field,date_field,bool_field,int_field) VALUES(1.1,'value','{}','2021-12-24',true,null)")
-					_, _ = db.Exec("INSERT INTO test(float_field,string_field,json_field,date_field,bool_field,int_field) VALUES(null,null,null,null,null,null)")
+					db, _ := sql.Open("sqltest", "test")
 					return db
 				}(),
 			},
@@ -794,7 +785,7 @@ func TestSQLDriver_lastInsertID(t *testing.T) {
 		result sql.Result
 		trans  interface{}
 	}
-	db, _ := sql.Open("sqlite", "file::memory:")
+	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
 	tests := []struct {
 		name    string
@@ -871,8 +862,7 @@ func TestSQLDriver_Update(t *testing.T) {
 	type args struct {
 		options md.Update
 	}
-	db, _ := sql.Open("sqlite", "file::memory:")
-	_, _ = db.Exec(`CREATE TABLE test(id INTEGER PRIMARY KEY,value TEXT)`)
+	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
 	tests := []struct {
 		name    string
@@ -893,7 +883,11 @@ func TestSQLDriver_Update(t *testing.T) {
 					Values: cu.IM{
 						"value": "insert",
 					},
-					Trans: trans,
+					Trans: func() any {
+						db, _ := sql.Open("sqltest", "rows_affected")
+						trans, _ := db.Begin()
+						return trans
+					}(),
 				},
 			},
 			wantErr: false,
@@ -911,7 +905,11 @@ func TestSQLDriver_Update(t *testing.T) {
 					Values: cu.IM{
 						"value": "update",
 					},
-					Trans: trans,
+					Trans: func() any {
+						db, _ := sql.Open("sqltest", "rows_affected")
+						trans, _ := db.Begin()
+						return trans
+					}(),
 				},
 			},
 			wantErr: false,
@@ -938,7 +936,10 @@ func TestSQLDriver_Update(t *testing.T) {
 			name: "delete",
 			fields: fields{
 				engine: "sqlite",
-				Db:     db,
+				Db: func() *sql.DB {
+					db, _ := sql.Open("sqltest", "exec_error")
+					return db
+				}(),
 			},
 			args: args{
 				options: md.Update{
@@ -1003,7 +1004,7 @@ func TestSQLDriver_BeginTransaction(t *testing.T) {
 			name: "begin",
 			fields: fields{
 				Db: func() *sql.DB {
-					db, _ := sql.Open("sqlite", "file::memory:")
+					db, _ := sql.Open("sqltest", "test")
 					return db
 				}(),
 			},
@@ -1041,7 +1042,7 @@ func TestSQLDriver_CommitTransaction(t *testing.T) {
 	type args struct {
 		trans interface{}
 	}
-	db, _ := sql.Open("sqlite", "file::memory:")
+	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
 	tests := []struct {
 		name    string
@@ -1099,7 +1100,7 @@ func TestSQLDriver_RollbackTransaction(t *testing.T) {
 	type args struct {
 		trans interface{}
 	}
-	db, _ := sql.Open("sqlite", "file::memory:")
+	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
 	tests := []struct {
 		name    string
@@ -1158,8 +1159,7 @@ func TestSQLDriver_UpdateSQL(t *testing.T) {
 		sqlString   string
 		transaction interface{}
 	}
-	db, _ := sql.Open("sqlite", "file::memory:")
-	_, _ = db.Exec(`CREATE TABLE test(id INTEGER PRIMARY KEY,value TEXT)`)
+	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
 	tests := []struct {
 		name    string
@@ -1189,7 +1189,7 @@ func TestSQLDriver_UpdateSQL(t *testing.T) {
 				sqlString:   "update test set value = 'update' where id = 1",
 				transaction: nil,
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name: "invalid_trans",

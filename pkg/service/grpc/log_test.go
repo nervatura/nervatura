@@ -12,6 +12,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestGService_LogGet(t *testing.T) {
@@ -39,7 +40,7 @@ func TestGService_LogGet(t *testing.T) {
 				req: &pb.RequestGet{Id: 1, Code: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "1234", "log_object": `{"id": 1, "code": "1234"}`}}, nil
 						}},
@@ -69,7 +70,7 @@ func TestGService_LogGet(t *testing.T) {
 				req: &pb.RequestGet{Id: 1, Code: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "1234"}}, nil
 						}},
@@ -137,7 +138,7 @@ func TestGService_LogQuery(t *testing.T) {
 				req: &pb.RequestQuery{Limit: 10, Offset: 0, Filters: []*pb.RequestQueryFilter{{Field: "log_type", Value: "1"}}},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "1234", "log_object": `{"id": 1, "code": "1234"}`}}, nil
 						}},

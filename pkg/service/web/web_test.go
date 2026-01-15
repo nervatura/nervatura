@@ -19,6 +19,7 @@ import (
 	cls "github.com/nervatura/nervatura/v6/pkg/client/web/service"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 	"golang.org/x/oauth2"
 )
 
@@ -175,7 +176,7 @@ func TestClientSessionEvent(t *testing.T) {
 		AppLog: slog.Default(),
 		NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 			return &api.DataStore{
-				Db:     &md.TestDriver{Config: cu.IM{}},
+				Db:     &td.TestDriver{Config: cu.IM{}},
 				Config: config,
 				AppLog: appLog,
 			}
@@ -201,7 +202,7 @@ func TestClientSessionEvent(t *testing.T) {
 		AppLog: slog.Default(),
 		NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 			return &api.DataStore{
-				Db:     &md.TestDriver{Config: cu.IM{}},
+				Db:     &td.TestDriver{Config: cu.IM{}},
 				Config: config,
 				AppLog: appLog,
 			}
@@ -284,13 +285,13 @@ func TestClientSessionCreate(t *testing.T) {
 			name: "convert error",
 			w:    httptest.NewRecorder(),
 			r:    httptest.NewRequest("POST", "/", strings.NewReader("invalid")),
-			db:   &md.TestDriver{Config: cu.IM{}},
+			db:   &td.TestDriver{Config: cu.IM{}},
 		},
 		{
 			name: "ok",
 			w:    httptest.NewRecorder(),
 			r:    httptest.NewRequest("POST", "/", strings.NewReader(`{"database": "test", "username": "test", "lang": "en", "theme": "light", "module": "search", "request_id": "1234567890"}`)),
-			db: &md.TestDriver{Config: cu.IM{
+			db: &td.TestDriver{Config: cu.IM{
 				"Connection": func() struct {
 					Alias     string
 					Connected bool
@@ -318,7 +319,7 @@ func TestClientSessionCreate(t *testing.T) {
 			name: "api key error",
 			w:    httptest.NewRecorder(),
 			r:    httptest.NewRequest("POST", "/", strings.NewReader(`{"api_key": "invalid"}`)),
-			db: &md.TestDriver{Config: cu.IM{
+			db: &td.TestDriver{Config: cu.IM{
 				"Connection": func() struct {
 					Alias     string
 					Connected bool
@@ -406,7 +407,7 @@ func TestClientAuthCallback(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses1.SaveSession("SessionID", &ct.Client{BaseComponent: ct.BaseComponent{
 		Data: cu.IM{
@@ -423,7 +424,7 @@ func TestClientAuthCallback(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses2.SaveSession("SessionID", &ct.Client{
 		BaseComponent: ct.BaseComponent{
@@ -574,7 +575,7 @@ func TestClientAuthCallback(t *testing.T) {
 				AuthConfig: tt.authConfig,
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: tt.config},
+						Db:     &td.TestDriver{Config: tt.config},
 						Config: config,
 						AppLog: appLog,
 						ConvertFromByte: func(b []byte, i interface{}) error {
@@ -604,7 +605,7 @@ func TestClientExportBrowser(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses1.SaveSession("SessionID", &ct.Client{
 		BaseComponent: ct.BaseComponent{
@@ -621,7 +622,7 @@ func TestClientExportBrowser(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses2.SaveSession("SessionID", &ct.Client{
 		Ticket: ct.Ticket{
@@ -671,7 +672,7 @@ func TestClientExportBrowser(t *testing.T) {
 				Session: tt.session,
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -695,7 +696,7 @@ func TestClientExportReport(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses1.SaveSession("SessionID", &ct.Client{
 		Ticket: ct.Ticket{
@@ -831,7 +832,7 @@ func TestClientExportReport(t *testing.T) {
 				Session: tt.session,
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:              &md.TestDriver{Config: tt.config},
+						Db:              &td.TestDriver{Config: tt.config},
 						Config:          config,
 						AppLog:          appLog,
 						ConvertFromByte: cu.ConvertFromByte,
@@ -858,7 +859,7 @@ func TestClientTemplateEditor(t *testing.T) {
 		Config: api.SessionConfig{
 			Method: md.SessionMethodMemory,
 		},
-		Conn: &md.TestDriver{Config: cu.IM{}},
+		Conn: &td.TestDriver{Config: cu.IM{}},
 	}
 	ses1.SaveSession("SessionID", &ct.Client{
 		Ticket: ct.Ticket{
@@ -934,7 +935,7 @@ func TestClientTemplateEditor(t *testing.T) {
 				Session: tt.session,
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:              &md.TestDriver{Config: tt.config},
+						Db:              &td.TestDriver{Config: tt.config},
 						Config:          config,
 						AppLog:          appLog,
 						ConvertFromByte: cu.ConvertFromByte,

@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestCurrencyPost(t *testing.T) {
@@ -32,7 +33,7 @@ func TestCurrencyPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/currency", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -64,7 +65,7 @@ func TestCurrencyPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/currency", nil),
 			},
 			ds: &api.DataStore{
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return []byte(`{"user_group": "GROUP_ADMIN"}`), nil
@@ -81,7 +82,7 @@ func TestCurrencyPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/currency", nil),
 			},
 			ds: &api.DataStore{
-				Db:     &md.TestDriver{},
+				Db:     &td.TestDriver{},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return []byte(`{"user_group": "GROUP_ADMIN"}`), nil
@@ -117,7 +118,7 @@ func TestCurrencyPut(t *testing.T) {
 				r: httptest.NewRequest("PUT", "/currency/123456", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -165,7 +166,7 @@ func TestCurrencyDelete(t *testing.T) {
 				r: httptest.NewRequest("DELETE", "/currency/123456", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -210,7 +211,7 @@ func TestCurrencyQuery(t *testing.T) {
 				r: httptest.NewRequest("GET", "/currency?limit=10&offset=0&tag=test", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -260,7 +261,7 @@ func TestCurrencyGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -289,7 +290,7 @@ func TestCurrencyGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, errors.New(http.StatusText(http.StatusNotFound))

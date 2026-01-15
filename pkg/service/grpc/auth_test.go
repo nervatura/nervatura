@@ -13,6 +13,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestGService_AuthLogin(t *testing.T) {
@@ -92,7 +93,7 @@ func TestGService_AuthUpdate(t *testing.T) {
 				req: &pb.Auth{Id: 1, Code: "1234", UserName: "test"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234", "auth_object": `{"id": 1, "code": "1234"}`}}, nil
@@ -137,7 +138,7 @@ func TestGService_AuthUpdate(t *testing.T) {
 				req: &pb.Auth{Id: 1, Code: "1234", UserName: "test"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234"}}, nil
@@ -182,7 +183,7 @@ func TestGService_AuthUpdate(t *testing.T) {
 				req: &pb.Auth{Id: 0, Code: "1234", UserName: "test"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Update": func(data md.Update) (int64, error) {
 								return 0, errors.New("error")
@@ -227,7 +228,7 @@ func TestGService_AuthUpdate(t *testing.T) {
 				req: &pb.Auth{Id: 2, Code: "2222", UserName: "test"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, nil
@@ -269,7 +270,7 @@ func TestGService_AuthUpdate(t *testing.T) {
 				req: &pb.Auth{Id: 0, Code: "1234", UserName: "test"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
@@ -357,7 +358,7 @@ func TestGService_AuthPassword(t *testing.T) {
 				req: &pb.RequestPasswordChange{Password: "test", Confirm: "test"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234"}}, nil
@@ -405,7 +406,7 @@ func TestGService_AuthPassword(t *testing.T) {
 				req: &pb.RequestPasswordChange{Password: "test", Confirm: "test"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Update": func(data md.Update) (int64, error) {
 								return 1, nil
@@ -487,7 +488,7 @@ func TestGService_AuthPasswordReset(t *testing.T) {
 				req: &pb.RequestGet{Id: 1, Code: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234", "auth_object": `{"id": 1, "code": "1234"}`}}, nil
@@ -535,7 +536,7 @@ func TestGService_AuthPasswordReset(t *testing.T) {
 				req: &pb.RequestGet{Id: 1, Code: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234"}}, nil
@@ -578,7 +579,7 @@ func TestGService_AuthPasswordReset(t *testing.T) {
 				req: &pb.RequestGet{Id: 2, Code: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 2, "code": "1234", "auth_object": `{"id": 2, "code": "1234"}`}}, nil
 						}},

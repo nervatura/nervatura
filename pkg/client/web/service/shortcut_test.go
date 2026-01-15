@@ -12,6 +12,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestShortcutService_Data(t *testing.T) {
@@ -31,7 +32,7 @@ func TestShortcutService_Data(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, nil
 							},
@@ -65,7 +66,7 @@ func TestShortcutService_Data(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return nil, errors.New("error")
 							},
@@ -99,7 +100,7 @@ func TestShortcutService_Data(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								if queries[0].From == "config_report" {
 									return nil, errors.New("error")
@@ -163,7 +164,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -191,7 +192,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ReadAll: func(r io.Reader) ([]byte, error) {
@@ -240,7 +241,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -268,7 +269,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -296,7 +297,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -324,7 +325,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -352,7 +353,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -390,7 +391,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -429,7 +430,7 @@ func TestShortcutService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {

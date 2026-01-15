@@ -15,6 +15,7 @@ import (
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestApiKeyAuth(t *testing.T) {
@@ -84,7 +85,7 @@ func TestTokenAuth(t *testing.T) {
 					Request: req,
 					Config: cu.IM{
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}, {"user_name": "user_name"}},
-						"db": &md.TestDriver{
+						"db": &td.TestDriver{
 							Config: cu.IM{
 								"Connection": func() struct {
 									Alias     string
@@ -169,7 +170,7 @@ func TestTokenAuth(t *testing.T) {
 					Request: req,
 					Config: cu.IM{
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}},
-						"db": &md.TestDriver{
+						"db": &td.TestDriver{
 							Config: cu.IM{"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return nil, errors.New("error querying")
 							}},
@@ -190,7 +191,7 @@ func TestTokenAuth(t *testing.T) {
 					Request: req,
 					Config: cu.IM{
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}},
-						"db": &md.TestDriver{
+						"db": &td.TestDriver{
 							Config: cu.IM{
 								"Connection": func() struct {
 									Alias     string
@@ -251,7 +252,7 @@ func TestDatabase(t *testing.T) {
 				r: httptest.NewRequest("POST", "/database", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -270,7 +271,7 @@ func TestDatabase(t *testing.T) {
 				r: httptest.NewRequest("POST", "/database", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -309,7 +310,7 @@ func TestFunction(t *testing.T) {
 				r: httptest.NewRequest("POST", "/function", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -325,7 +326,7 @@ func TestFunction(t *testing.T) {
 				r: httptest.NewRequest("POST", "/function", bytes.NewBufferString(`{"name": "report_get", "values": {"report_id": 1}}`)),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "data": cu.IM{"file_type": "FILE_PDF"}}}, nil
@@ -362,7 +363,7 @@ func TestFunction(t *testing.T) {
 				r: httptest.NewRequest("POST", "/function", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -397,7 +398,7 @@ func TestView(t *testing.T) {
 				r: httptest.NewRequest("POST", "/view", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),

@@ -10,6 +10,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	st "github.com/nervatura/nervatura/v6/pkg/static"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestSessionService_saveFileSession(t *testing.T) {
@@ -212,7 +213,7 @@ func TestSessionService_checkSessionTable(t *testing.T) {
 				Config: SessionConfig{
 					DbConn: "test",
 				},
-				Conn: &md.TestDriver{
+				Conn: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -240,7 +241,7 @@ func TestSessionService_checkSessionTable(t *testing.T) {
 				Config: SessionConfig{
 					DbConn: "test",
 				},
-				Conn: &md.TestDriver{
+				Conn: &td.TestDriver{
 					Config: cu.IM{
 						"Connection": func() struct {
 							Alias     string
@@ -317,7 +318,7 @@ func TestSessionService_saveDbSession(t *testing.T) {
 			name: "insert",
 			fields: fields{
 				Config: SessionConfig{},
-				Conn:   &md.TestDriver{Config: cu.IM{}},
+				Conn:   &td.TestDriver{Config: cu.IM{}},
 				ConvertToByte: func(data interface{}) ([]byte, error) {
 					return []byte{}, nil
 				},
@@ -332,7 +333,7 @@ func TestSessionService_saveDbSession(t *testing.T) {
 			name: "update",
 			fields: fields{
 				Config: SessionConfig{},
-				Conn: &md.TestDriver{Config: cu.IM{
+				Conn: &td.TestDriver{Config: cu.IM{
 					"QuerySQL": func(sqlString string) ([]cu.IM, error) {
 						return []cu.IM{
 							{"id": int64(1)},
@@ -404,7 +405,7 @@ func TestSessionService_loadDbSession(t *testing.T) {
 			name: "nodata",
 			fields: fields{
 				Config: SessionConfig{},
-				Conn:   &md.TestDriver{Config: cu.IM{}},
+				Conn:   &td.TestDriver{Config: cu.IM{}},
 			},
 			args:    args{},
 			wantErr: true,
@@ -413,7 +414,7 @@ func TestSessionService_loadDbSession(t *testing.T) {
 			name: "ok",
 			fields: fields{
 				Config: SessionConfig{},
-				Conn: &md.TestDriver{Config: cu.IM{
+				Conn: &td.TestDriver{Config: cu.IM{
 					"QuerySQL": func(sqlString string) ([]cu.IM, error) {
 						return []cu.IM{
 							{"id": int64(1)},
@@ -504,7 +505,7 @@ func TestSessionService_SaveSession(t *testing.T) {
 				Config: SessionConfig{
 					DbConn: "test",
 				},
-				Conn: &md.TestDriver{Config: cu.IM{}},
+				Conn: &td.TestDriver{Config: cu.IM{}},
 				ConvertToByte: func(data interface{}) ([]byte, error) {
 					return []byte{}, errors.New("error")
 				},
@@ -634,7 +635,7 @@ func TestSessionService_LoadSession(t *testing.T) {
 				Config: SessionConfig{
 					Method: md.SessionMethodDatabase,
 				},
-				Conn: &md.TestDriver{Config: cu.IM{
+				Conn: &td.TestDriver{Config: cu.IM{
 					"QuerySQL": func(sqlString string) ([]cu.IM, error) {
 						return []cu.IM{
 							{"id": int64(1)},
@@ -769,7 +770,7 @@ func TestSessionService_deleteDbSession(t *testing.T) {
 			name: "delete",
 			fields: fields{
 				Config: SessionConfig{},
-				Conn: &md.TestDriver{Config: cu.IM{
+				Conn: &td.TestDriver{Config: cu.IM{
 					"QuerySQL": func(sqlString string) ([]cu.IM, error) {
 						return []cu.IM{
 							{"id": int64(1)},
@@ -856,7 +857,7 @@ func TestSessionService_DeleteSession(t *testing.T) {
 				Config: SessionConfig{
 					Method: md.SessionMethodDatabase,
 				},
-				Conn: &md.TestDriver{Config: cu.IM{
+				Conn: &td.TestDriver{Config: cu.IM{
 					"QuerySQL": func(sqlString string) ([]cu.IM, error) {
 						return []cu.IM{
 							{"id": int64(1)},
@@ -1008,7 +1009,7 @@ func TestSessionService_cleaningDbSession(t *testing.T) {
 		{
 			name: "clean",
 			fields: fields{
-				Conn: &md.TestDriver{Config: cu.IM{}},
+				Conn: &td.TestDriver{Config: cu.IM{}},
 			},
 			args: args{
 				exp: time.Now(),
@@ -1149,7 +1150,7 @@ func TestSessionService_CleaningSession(t *testing.T) {
 					Cleaning: true,
 					Method:   md.SessionMethodDatabase,
 				},
-				Conn: &md.TestDriver{Config: cu.IM{}},
+				Conn: &td.TestDriver{Config: cu.IM{}},
 			},
 			wantErr: false,
 		},
@@ -1161,7 +1162,7 @@ func TestSessionService_CleaningSession(t *testing.T) {
 					Method:   md.SessionMethodAuto,
 					DbConn:   "test",
 				},
-				Conn: &md.TestDriver{Config: cu.IM{}},
+				Conn: &td.TestDriver{Config: cu.IM{}},
 			},
 			wantErr: false,
 		},

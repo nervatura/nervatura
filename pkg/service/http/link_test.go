@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestLinkPost(t *testing.T) {
@@ -32,7 +33,7 @@ func TestLinkPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/link", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -64,7 +65,7 @@ func TestLinkPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/link", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -83,7 +84,7 @@ func TestLinkPost(t *testing.T) {
 				r: httptest.NewRequest("POST", "/link", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{},
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -127,7 +128,7 @@ func TestLinkPut(t *testing.T) {
 				r: httptest.NewRequest("PUT", "/link/123456", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -178,7 +179,7 @@ func TestLinkDelete(t *testing.T) {
 				r: httptest.NewRequest("DELETE", "/link/123456", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -229,7 +230,7 @@ func TestLinkQuery(t *testing.T) {
 				r: httptest.NewRequest("GET", "/link?limit=10&offset=0&link_type_1=LINK_ITEM&link_code_1=123456&link_type_2=LINK_ITEM&link_code_2=123456&tag=tag1", nil),
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -279,7 +280,7 @@ func TestLinkGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -308,7 +309,7 @@ func TestLinkGet(t *testing.T) {
 				r: req,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil

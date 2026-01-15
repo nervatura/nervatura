@@ -15,6 +15,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 	"golang.org/x/time/rate"
 )
 
@@ -37,7 +38,7 @@ func TestTokenAuth(t *testing.T) {
 					Request:     req,
 					Config: cu.IM{
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}, {"user_name": "user_name"}},
-						"db": &md.TestDriver{
+						"db": &td.TestDriver{
 							Config: cu.IM{
 								"Connection": func() struct {
 									Alias     string
@@ -91,7 +92,7 @@ func TestTokenAuth(t *testing.T) {
 					Request:     req,
 					Config: cu.IM{
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}, {"user_name": "user_name"}},
-						"db": &md.TestDriver{
+						"db": &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -115,7 +116,7 @@ func TestTokenAuth(t *testing.T) {
 					Request:     req,
 					Config: cu.IM{
 						"tokenKeys": []cu.SM{{"alias": "alias"}, {"user_code": "user_code"}, {"user_name": "user_name"}},
-						"db": &md.TestDriver{
+						"db": &td.TestDriver{
 							Config: cu.IM{},
 						},
 					},

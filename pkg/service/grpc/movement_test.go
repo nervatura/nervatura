@@ -13,6 +13,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestGService_MovementUpdate(t *testing.T) {
@@ -41,7 +42,7 @@ func TestGService_MovementUpdate(t *testing.T) {
 				req: &pb.Movement{Id: 1, Code: "1234", TransCode: "1234", ShippingTime: "2024-01-01", ProductCode: "1234", ToolCode: "1234", PlaceCode: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234", "movement_object": `{"id": 1, "code": "1234"}`}}, nil
@@ -77,7 +78,7 @@ func TestGService_MovementUpdate(t *testing.T) {
 				req: &pb.Movement{Id: 1, Code: "1234", TransCode: "1234", ShippingTime: "2024-01-01", ProductCode: "1234", ToolCode: "1234", PlaceCode: "1234"},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1}}, nil
@@ -115,7 +116,7 @@ func TestGService_MovementUpdate(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Update": func(data md.Update) (int64, error) {
 								return 0, errors.New("error")
@@ -152,7 +153,7 @@ func TestGService_MovementUpdate(t *testing.T) {
 				user: md.Auth{UserGroup: md.UserGroupAdmin},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
@@ -238,7 +239,7 @@ func TestGService_MovementQuery(t *testing.T) {
 				req: &pb.RequestQuery{Limit: 10, Offset: 0, Filters: []*pb.RequestQueryFilter{{Field: "movement_type", Value: "1"}}},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234", "movement_object": `{"id": 1, "code": "1234"}`}}, nil

@@ -10,6 +10,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestCLIService_ProductInsert(t *testing.T) {
@@ -33,7 +34,7 @@ func TestCLIService_ProductInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -63,7 +64,7 @@ func TestCLIService_ProductInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{}, nil
@@ -93,7 +94,7 @@ func TestCLIService_ProductInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{}, nil
@@ -147,7 +148,7 @@ func TestCLIService_ProductUpdate(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Update": func(data md.Update) (int64, error) {
 									return 1, nil
@@ -211,7 +212,7 @@ func TestCLIService_ProductDelete(t *testing.T) {
 			args: args{
 				options: cu.IM{
 					"ds": &api.DataStore{
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Update": func(data md.Update) (int64, error) {
 									return 1, nil
@@ -272,7 +273,7 @@ func TestCLIService_ProductQuery(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -332,7 +333,7 @@ func TestCLIService_ProductGet(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -363,7 +364,7 @@ func TestCLIService_ProductGet(t *testing.T) {
 			args: args{
 				options: cu.IM{
 					"ds": &api.DataStore{
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{}, nil

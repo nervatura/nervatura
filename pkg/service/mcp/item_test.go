@@ -13,6 +13,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func Test_itemCreateHandler(t *testing.T) {
@@ -53,7 +54,7 @@ func Test_itemCreateHandler(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -95,7 +96,7 @@ func Test_itemCreateHandler(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -140,7 +141,7 @@ func Test_itemCreateHandler(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -185,7 +186,7 @@ func Test_itemCreateHandler(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -230,7 +231,7 @@ func Test_itemCreateHandler(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -274,7 +275,7 @@ func Test_itemCreateHandler(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Update": func(data md.Update) (int64, error) {
 							return 1, nil
@@ -358,7 +359,7 @@ func Test_calcItemPrice(t *testing.T) {
 				"tax_code":     "VAT20",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456"}}, nil
@@ -378,7 +379,7 @@ func Test_calcItemPrice(t *testing.T) {
 				"discount":   0,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456"}}, nil
@@ -399,7 +400,7 @@ func Test_calcItemPrice(t *testing.T) {
 				"discount":   10,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456"}}, nil
@@ -420,7 +421,7 @@ func Test_calcItemPrice(t *testing.T) {
 				"discount":   10,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							if strings.Contains(queries[0].From, "tax_view") {
@@ -445,7 +446,7 @@ func Test_calcItemPrice(t *testing.T) {
 				"discount":   10,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							if strings.Contains(queries[0].From, "currency_view") {
@@ -471,7 +472,7 @@ func Test_calcItemPrice(t *testing.T) {
 				"discount":   10,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return nil, errors.New("error")
@@ -492,7 +493,7 @@ func Test_calcItemPrice(t *testing.T) {
 				"discount":   10,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return nil, errors.New("error")
@@ -538,7 +539,7 @@ func Test_itemValidate(t *testing.T) {
 				"tax_code":     "VAT20",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456"}}, nil
@@ -555,7 +556,7 @@ func Test_itemValidate(t *testing.T) {
 				"notes": "Test Item",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456"}}, nil
@@ -574,7 +575,7 @@ func Test_itemValidate(t *testing.T) {
 				"tax_code":     "VAT20",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							if strings.Contains(queries[0].From, "currency_view") {
@@ -595,7 +596,7 @@ func Test_itemValidate(t *testing.T) {
 				"notes": "Test Item",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "status": md.TransStatusDeleted.String()}}, nil
@@ -613,7 +614,7 @@ func Test_itemValidate(t *testing.T) {
 				"notes": "Test Item",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return nil, errors.New("error")

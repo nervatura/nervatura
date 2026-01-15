@@ -7,6 +7,7 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestSMToJS(t *testing.T) {
@@ -261,7 +262,7 @@ func TestSmtpClient(t *testing.T) {
 		{
 			name: "test",
 			args: args{
-				conn: md.NewTestConn(),
+				conn: td.NewTestConn(),
 				host: "localhost",
 			},
 			wantErr: true,

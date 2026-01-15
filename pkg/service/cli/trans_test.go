@@ -10,6 +10,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestCLIService_TransInsert(t *testing.T) {
@@ -35,7 +36,7 @@ func TestCLIService_TransInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -67,7 +68,7 @@ func TestCLIService_TransInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -100,7 +101,7 @@ func TestCLIService_TransInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -133,7 +134,7 @@ func TestCLIService_TransInsert(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -195,7 +196,7 @@ func TestCLIService_TransUpdate(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -262,7 +263,7 @@ func TestCLIService_TransDelete(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -325,7 +326,7 @@ func TestCLIService_TransQuery(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -384,7 +385,7 @@ func TestCLIService_TransGet(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{{"id": 1}}, nil
@@ -412,7 +413,7 @@ func TestCLIService_TransGet(t *testing.T) {
 				options: cu.IM{
 					"ds": &api.DataStore{
 						Config: cu.IM{},
-						Db: &md.TestDriver{
+						Db: &td.TestDriver{
 							Config: cu.IM{
 								"Query": func(queries []md.Query) ([]cu.IM, error) {
 									return []cu.IM{}, nil

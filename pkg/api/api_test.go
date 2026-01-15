@@ -12,6 +12,7 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestNewDataStore(t *testing.T) {
@@ -28,7 +29,7 @@ func TestNewDataStore(t *testing.T) {
 			name: "test_new_datastore",
 			args: args{
 				config: cu.IM{
-					"db": &md.TestDriver{},
+					"db": &td.TestDriver{},
 				},
 				alias:  "test",
 				appLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
@@ -169,7 +170,7 @@ func TestDataStore_checkConnection(t *testing.T) {
 			name: "connected",
 			fields: fields{
 				Alias:  "test",
-				Db:     &md.TestDriver{Config: cu.IM{}},
+				Db:     &td.TestDriver{Config: cu.IM{}},
 				Config: cu.IM{},
 			},
 			wantErr: false,
@@ -178,7 +179,7 @@ func TestDataStore_checkConnection(t *testing.T) {
 			name: "create_connection",
 			fields: fields{
 				Alias: "test",
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Connection": testConn,
 				}},
 				Config: cu.IM{
@@ -191,7 +192,7 @@ func TestDataStore_checkConnection(t *testing.T) {
 			name: "missing_alias",
 			fields: fields{
 				Alias: "test",
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Connection": testConn,
 				}},
 				Config: cu.IM{},
@@ -202,7 +203,7 @@ func TestDataStore_checkConnection(t *testing.T) {
 			name: "missing_conn_str",
 			fields: fields{
 				Alias: "test",
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Connection": testConn,
 				}},
 				Config: cu.IM{},
@@ -213,7 +214,7 @@ func TestDataStore_checkConnection(t *testing.T) {
 			name: "create_connection_error",
 			fields: fields{
 				Alias: "test",
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Connection": testConn,
 					"CreateConnection": func() error {
 						return errors.New("error")
@@ -280,7 +281,7 @@ func TestDataStore_StoreDataUpdate(t *testing.T) {
 		{
 			name: "create_connection_error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Connection": testConn,
 					"CreateConnection": func() error {
 						return errors.New("error")
@@ -297,7 +298,7 @@ func TestDataStore_StoreDataUpdate(t *testing.T) {
 		{
 			name: "update_error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Update": func(data md.Update) (int64, error) {
 						return 0, errors.New("error")
 					},
@@ -316,7 +317,7 @@ func TestDataStore_StoreDataUpdate(t *testing.T) {
 		{
 			name: "not_found",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Update": func(data md.Update) (int64, error) {
 						return 0, nil
 					},
@@ -335,7 +336,7 @@ func TestDataStore_StoreDataUpdate(t *testing.T) {
 		{
 			name: "ok",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Update": func(data md.Update) (int64, error) {
 						return 100, nil
 					},
@@ -409,7 +410,7 @@ func TestDataStore_StoreDataQuery(t *testing.T) {
 		{
 			name: "create_connection_error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Connection": testConn,
 					"CreateConnection": func() error {
 						return errors.New("error")
@@ -426,7 +427,7 @@ func TestDataStore_StoreDataQuery(t *testing.T) {
 		{
 			name: "query_error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{}, errors.New("error")
 					},
@@ -442,7 +443,7 @@ func TestDataStore_StoreDataQuery(t *testing.T) {
 		{
 			name: "ok",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{}, nil
 					},
@@ -513,7 +514,7 @@ func TestDataStore_StoreDataQueries(t *testing.T) {
 		{
 			name: "create_connection_error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Connection": testConn,
 					"CreateConnection": func() error {
 						return errors.New("error")
@@ -530,7 +531,7 @@ func TestDataStore_StoreDataQueries(t *testing.T) {
 		{
 			name: "query_error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{}, errors.New("error")
 					},
@@ -546,7 +547,7 @@ func TestDataStore_StoreDataQueries(t *testing.T) {
 		{
 			name: "ok",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{}, nil
 					},
@@ -618,7 +619,7 @@ func TestDataStore_StoreDataGet(t *testing.T) {
 			name: "sqlite",
 			fields: fields{
 				Alias: "test",
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"alias":  "test",
 					"engine": "sqlite",
 					"Get": func(params cu.IM) ([]cu.IM, error) {
@@ -646,7 +647,7 @@ func TestDataStore_StoreDataGet(t *testing.T) {
 		{
 			name: "postgres",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"alias":  "test",
 					"engine": "postgres",
 				}},
@@ -665,7 +666,7 @@ func TestDataStore_StoreDataGet(t *testing.T) {
 		{
 			name: "mysql",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"alias":  "test",
 					"engine": "mysql",
 				}},
@@ -740,7 +741,7 @@ func TestDataStore_GetBodyData(t *testing.T) {
 		{
 			name: "ok",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{}},
+				Db: &td.TestDriver{Config: cu.IM{}},
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return []byte(`{"id": 1, "name": "test"}`), nil
 				},
@@ -757,7 +758,7 @@ func TestDataStore_GetBodyData(t *testing.T) {
 		{
 			name: "model convert error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{}},
+				Db: &td.TestDriver{Config: cu.IM{}},
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return []byte(`{"id": 1, "name": "test"}`), nil
 				},
@@ -778,7 +779,7 @@ func TestDataStore_GetBodyData(t *testing.T) {
 		{
 			name: "body convert error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{}},
+				Db: &td.TestDriver{Config: cu.IM{}},
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return []byte(`{"id": 1, "name": "test"}`), nil
 				},
@@ -799,7 +800,7 @@ func TestDataStore_GetBodyData(t *testing.T) {
 		{
 			name: "read all error",
 			fields: fields{
-				Db: &md.TestDriver{Config: cu.IM{}},
+				Db: &td.TestDriver{Config: cu.IM{}},
 				ReadAll: func(r io.Reader) ([]byte, error) {
 					return nil, errors.New("error")
 				},
@@ -1088,7 +1089,7 @@ func TestDataStore_GetDataByID(t *testing.T) {
 			name: "ok_id",
 			fields: fields{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{Config: cu.IM{}},
+				Db:     &td.TestDriver{Config: cu.IM{}},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 			},
 			args: args{
@@ -1103,7 +1104,7 @@ func TestDataStore_GetDataByID(t *testing.T) {
 			name: "ok_code",
 			fields: fields{
 				Config: cu.IM{},
-				Db:     &md.TestDriver{Config: cu.IM{}},
+				Db:     &td.TestDriver{Config: cu.IM{}},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 			},
 			args: args{
@@ -1177,7 +1178,7 @@ func TestDataStore_UpdateData(t *testing.T) {
 			name: "ok",
 			fields: fields{
 				Config: cu.IM{},
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{{"id": 1, "name": "test"}}, nil
 					},
@@ -1210,7 +1211,7 @@ func TestDataStore_UpdateData(t *testing.T) {
 			name: "merge meta data error",
 			fields: fields{
 				Config: cu.IM{},
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{{"id": 1, "name": "test"}}, nil
 					},
@@ -1243,7 +1244,7 @@ func TestDataStore_UpdateData(t *testing.T) {
 			name: "get data by id error",
 			fields: fields{
 				Config: cu.IM{},
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{{"id": 1, "name": "test"}}, errors.New("error")
 					},
@@ -1330,7 +1331,7 @@ func TestDataStore_DataDelete(t *testing.T) {
 			name: "ok",
 			fields: fields{
 				Config: cu.IM{},
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{{"id": 1, "trans_type": "TRANS_INVOICE", "direction": "DIRECTION_OUT", "trans_meta": cu.IM{"status": "STATUS_OK"}}}, nil
 					},
@@ -1351,7 +1352,7 @@ func TestDataStore_DataDelete(t *testing.T) {
 			name: "get data by id error",
 			fields: fields{
 				Config: cu.IM{},
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{{"id": 1, "name": "test"}}, errors.New("error")
 					},
@@ -1422,7 +1423,7 @@ func TestDataStore_GetData(t *testing.T) {
 			name: "ok",
 			fields: fields{
 				Config: cu.IM{},
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{{"id": 1, "name": "test"}}, nil
 					},
@@ -1442,7 +1443,7 @@ func TestDataStore_GetData(t *testing.T) {
 			name: "no data",
 			fields: fields{
 				Config: cu.IM{},
-				Db: &md.TestDriver{Config: cu.IM{
+				Db: &td.TestDriver{Config: cu.IM{
 					"Query": func(queries []md.Query) ([]cu.IM, error) {
 						return []cu.IM{}, nil
 					},

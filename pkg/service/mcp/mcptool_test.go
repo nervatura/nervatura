@@ -12,6 +12,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func Test_modelQuery(t *testing.T) {
@@ -41,7 +42,7 @@ func Test_modelQuery(t *testing.T) {
 				"customer_type": "CUSTOMER_COMPANY",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -62,7 +63,7 @@ func Test_modelQuery(t *testing.T) {
 				"product_type": "PRODUCT_ITEM",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -85,7 +86,7 @@ func Test_modelQuery(t *testing.T) {
 				"currency_code": "USD",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -107,7 +108,7 @@ func Test_modelQuery(t *testing.T) {
 				"customer_code": "CUS123456",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -132,7 +133,7 @@ func Test_modelQuery(t *testing.T) {
 				"tax_code":     "VAT20",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -154,7 +155,7 @@ func Test_modelQuery(t *testing.T) {
 				"customer_code": "CUS123456",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -176,7 +177,7 @@ func Test_modelQuery(t *testing.T) {
 				"customer_code": "CUS123456",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -197,7 +198,7 @@ func Test_modelQuery(t *testing.T) {
 				"code":   "EUR",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -218,7 +219,7 @@ func Test_modelQuery(t *testing.T) {
 				"code":   "EUR",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -238,7 +239,7 @@ func Test_modelQuery(t *testing.T) {
 				"offset": 0,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -259,7 +260,7 @@ func Test_modelQuery(t *testing.T) {
 				"code":   "EMP1731101982N123",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -280,7 +281,7 @@ func Test_modelQuery(t *testing.T) {
 				"code":   "PRJ1731101982N123",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -301,7 +302,7 @@ func Test_modelQuery(t *testing.T) {
 				"code":   "SER1731101982N123",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -322,7 +323,7 @@ func Test_modelQuery(t *testing.T) {
 				"code":   "PLA1731101982N123",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -343,7 +344,7 @@ func Test_modelQuery(t *testing.T) {
 				"code":   "RAT1731101982N123",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -363,7 +364,7 @@ func Test_modelQuery(t *testing.T) {
 				"offset": 0,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -385,7 +386,7 @@ func Test_modelQuery(t *testing.T) {
 				"customer_code": "CUS123456",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -407,7 +408,7 @@ func Test_modelQuery(t *testing.T) {
 				"customer_code": "CUS123456",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1}}, nil
@@ -470,7 +471,7 @@ func Test_modelUpdate(t *testing.T) {
 				"code": "123456",
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -510,7 +511,7 @@ func Test_modelUpdate(t *testing.T) {
 				"paid":          true,
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456", "trans_meta": cu.IM{"status": md.TransStatusDeleted.String()}}}, nil
@@ -581,7 +582,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "customer", "limit": 10, "offset": 0, "surname": "Doe"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -600,7 +601,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "project", "limit": 10, "offset": 0, "surname": "Doe"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -619,7 +620,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "place", "limit": 10, "offset": 0, "surname": "Doe"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -638,7 +639,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "invalid", "limit": 10, "offset": 0, "surname": "Doe"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -657,7 +658,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "customer", "limit": 10, "offset": 0, "city": "New York"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -676,7 +677,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "project", "limit": 10, "offset": 0, "city": "New York"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -695,7 +696,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "invalid", "limit": 10, "offset": 0, "city": "New York"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -714,7 +715,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "customer", "limit": 10, "offset": 0, "subject": "Meeting"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -733,7 +734,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "project", "limit": 10, "offset": 0, "subject": "Meeting"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -752,7 +753,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "employee", "limit": 10, "offset": 0, "subject": "Meeting"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -771,7 +772,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "product", "limit": 10, "offset": 0, "subject": "Meeting"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -790,7 +791,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "tool", "limit": 10, "offset": 0, "subject": "Meeting"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -809,7 +810,7 @@ func Test_extendQuery(t *testing.T) {
 				inputData: cu.IM{"model": "invalid", "limit": 10, "offset": 0, "subject": "Meeting"},
 			},
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "123456"}}, nil
@@ -870,7 +871,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"surname": "Doe"}}}}, nil
@@ -892,7 +893,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil
@@ -914,7 +915,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"surname": "Doe"}}}}, nil
@@ -936,7 +937,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"surname": "Doe"}}}}, nil
@@ -958,7 +959,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "addresses": []cu.IM{{"city": "New York"}}}}, nil
@@ -980,7 +981,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "addresses": []cu.IM{{"city": "New York"}}}}, nil
@@ -1002,7 +1003,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "addresses": []cu.IM{{"city": "New York"}}}}, nil
@@ -1024,7 +1025,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
@@ -1046,7 +1047,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
@@ -1068,7 +1069,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
@@ -1090,7 +1091,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
@@ -1112,7 +1113,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
@@ -1134,7 +1135,7 @@ func Test_extendUpdate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
@@ -1197,7 +1198,7 @@ func Test_extendCreate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"surname": "Doe"}}}}, nil
@@ -1219,7 +1220,7 @@ func Test_extendCreate(t *testing.T) {
 			},
 			wantErr: false,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "PRD123456", "events": []cu.IM{{"subject": "Meeting"}}}}, nil
@@ -1241,7 +1242,7 @@ func Test_extendCreate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{{"id": 1, "code": "CUS123456", "contacts": []cu.IM{{"surname": "Doe"}}}}, nil
@@ -1263,7 +1264,7 @@ func Test_extendCreate(t *testing.T) {
 			},
 			wantErr: true,
 			ds: &api.DataStore{
-				Db: &md.TestDriver{
+				Db: &td.TestDriver{
 					Config: cu.IM{
 						"Query": func(queries []md.Query) ([]cu.IM, error) {
 							return []cu.IM{}, nil

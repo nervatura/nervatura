@@ -9,6 +9,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestQueueService_Data(t *testing.T) {
@@ -76,7 +77,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -104,7 +105,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 12345}}, nil
 							},
@@ -153,7 +154,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{}, errors.New("error")
 							},
@@ -202,7 +203,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 					}
@@ -230,7 +231,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Update": func(data md.Update) (int64, error) {
 								return 1, nil
 							},
@@ -267,7 +268,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db: &md.TestDriver{Config: cu.IM{
+						Db: &td.TestDriver{Config: cu.IM{
 							"Update": func(data md.Update) (int64, error) {
 								return 1, nil
 							},
@@ -304,7 +305,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -339,7 +340,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -374,7 +375,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -409,7 +410,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -444,7 +445,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {
@@ -479,7 +480,7 @@ func TestQueueService_Response(t *testing.T) {
 				AppLog: slog.Default(),
 				NewDataStore: func(config cu.IM, alias string, appLog *slog.Logger) *api.DataStore {
 					return &api.DataStore{
-						Db:     &md.TestDriver{Config: cu.IM{}},
+						Db:     &td.TestDriver{Config: cu.IM{}},
 						Config: config,
 						AppLog: appLog,
 						ConvertToByte: func(data interface{}) ([]byte, error) {

@@ -1,4 +1,6 @@
-package model
+/* Nervatura test database driver
+ */
+package driver
 
 import (
 	"io"
@@ -6,6 +8,7 @@ import (
 	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
+	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 
 type TestDriver struct {
@@ -54,8 +57,8 @@ func (ds *TestDriver) CloseConnection() error {
 	return nil
 }
 
-func (ds *TestDriver) Query(queries []Query, transaction interface{}) ([]map[string]interface{}, error) {
-	if value, found := ds.Config["Query"].(func([]Query) ([]map[string]interface{}, error)); found {
+func (ds *TestDriver) Query(queries []md.Query, transaction interface{}) ([]map[string]interface{}, error) {
+	if value, found := ds.Config["Query"].(func([]md.Query) ([]map[string]interface{}, error)); found {
 		return value(queries)
 	}
 	return []map[string]interface{}{}, nil
@@ -68,8 +71,8 @@ func (ds *TestDriver) QuerySQL(sqlString string, params []interface{}, transacti
 	return []map[string]interface{}{}, nil
 }
 
-func (ds *TestDriver) Update(options Update) (int64, error) {
-	if value, found := ds.Config["Update"].(func(Update) (int64, error)); found {
+func (ds *TestDriver) Update(options md.Update) (int64, error) {
+	if value, found := ds.Config["Update"].(func(md.Update) (int64, error)); found {
 		return value(options)
 	}
 	return 0, nil

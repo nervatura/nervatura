@@ -12,6 +12,7 @@ import (
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	td "github.com/nervatura/nervatura/v6/test/driver"
 )
 
 func TestGService_TokenLogin(t *testing.T) {
@@ -40,7 +41,7 @@ func TestGService_TokenLogin(t *testing.T) {
 				req: &pb.RequestEmpty{},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234", "auth_object": `{"id": 1, "code": "1234"}`}}, nil
@@ -117,7 +118,7 @@ func TestGService_TokenRefresh(t *testing.T) {
 				req: &pb.RequestEmpty{},
 				ds: &api.DataStore{
 					AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
-					Db: &md.TestDriver{
+					Db: &td.TestDriver{
 						Config: cu.IM{
 							"Query": func(queries []md.Query) ([]cu.IM, error) {
 								return []cu.IM{{"id": 1, "code": "1234", "auth_object": `{"id": 1, "code": "1234"}`}}, nil
