@@ -84,7 +84,7 @@ type customerUpdate struct {
 type customerParameter struct {
 	Code         string `json:"code,omitempty" jsonschema:"Database independent unique key."`
 	CustomerType string `json:"customer_type,omitempty" jsonschema:"Customer type. Enum values."`
-	CustomerName string `json:"customer_name,omitempty" jsonschema:"Full name of the customer."`
+	CustomerName string `json:"like_customer_name,omitempty" jsonschema:"Full name of the customer. It is not case sensitive and partial values ​​can be specified."`
 	Tag          string `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit        int64  `json:"limit,omitempty" jsonschema:"Limit."`
 	Offset       int64  `json:"offset,omitempty" jsonschema:"Offset."`

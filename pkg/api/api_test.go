@@ -640,6 +640,7 @@ func TestDataStore_StoreDataGet(t *testing.T) {
 					"tag":        "test",
 					"fieldNames": "value",
 					"filter":     "name = 'test'",
+					"like_job":   "test",
 				},
 			},
 			wantErr: false,

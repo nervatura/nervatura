@@ -236,7 +236,13 @@ func (ds *DataStore) StoreDataGet(params cu.IM, foundErr bool) (result []cu.IM, 
 	}
 	for key, value := range params {
 		if !slices.Contains([]string{"model", "fields", "tag", "limit", "offset", "filter"}, key) {
-			query.Filters = append(query.Filters, md.Filter{Field: key, Comp: "==", Value: value})
+			if strings.HasPrefix(key, "like_") {
+				query.Filters = append(query.Filters, md.Filter{
+					Field: "lower(" + strings.TrimPrefix(key, "like_") + ")", Comp: "like",
+					Value: "%" + strings.ToLower(cu.ToString(value, "")) + "%"})
+			} else {
+				query.Filters = append(query.Filters, md.Filter{Field: key, Comp: "==", Value: value})
+			}
 		}
 		if key == "tag" {
 			queryFilters = append(queryFilters,

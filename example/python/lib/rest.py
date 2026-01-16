@@ -23,9 +23,9 @@ def Get(token, path, query):
   set_headers(token)
   try:
     path = service_url+"/"+path
-    query = "&".join([f"{k}={v}" for k, v in query.items()])
-    if query != "":
-      path += "?"+query
+    query_str = "&".join([f"{k}={v}" for k, v in query.items()])
+    if query_str != "":
+      path += "?"+query_str
     response = requests.get(path, headers=headers)
     return decodeResult(response.text, response.status_code)
   except requests.ConnectionError:

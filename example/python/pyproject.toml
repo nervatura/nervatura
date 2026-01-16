@@ -1,6 +1,6 @@
 [project]
 name = "nervatura-python-example"
-version = "0.1.0"
+version = "1.0.0"
 description = "Nervatura Framework Python examples"
 readme = "README.md"
 requires-python = ">=3.13"
