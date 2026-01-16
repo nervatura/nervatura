@@ -1,4 +1,4 @@
-package web
+package client
 
 import (
 	"html/template"
@@ -7,7 +7,7 @@ import (
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
 type SessionRequest struct {

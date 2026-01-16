@@ -13,10 +13,10 @@ import (
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
-	cp "github.com/nervatura/nervatura/v6/pkg/client/web/component"
+	cp "github.com/nervatura/nervatura/v6/pkg/client/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 	"golang.org/x/oauth2"
 )
 

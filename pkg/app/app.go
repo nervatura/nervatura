@@ -25,7 +25,7 @@ import (
 	db "github.com/nervatura/nervatura/v6/pkg/driver"
 	ht "github.com/nervatura/nervatura/v6/pkg/host"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 	"golang.org/x/sync/errgroup"
 )
 

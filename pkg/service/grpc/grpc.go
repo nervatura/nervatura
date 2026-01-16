@@ -11,7 +11,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
-	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
+	pb "github.com/nervatura/nervatura/v6/proto"
 )
 
 // GService implements the Nervatura gRPC API service

@@ -1,4 +1,4 @@
-package web
+package client
 
 import (
 	"context"
@@ -15,10 +15,10 @@ import (
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
-	cp "github.com/nervatura/nervatura/v6/pkg/client/web/component"
-	cls "github.com/nervatura/nervatura/v6/pkg/client/web/service"
+	cp "github.com/nervatura/nervatura/v6/pkg/client/component"
+	cls "github.com/nervatura/nervatura/v6/pkg/client/service"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 	td "github.com/nervatura/nervatura/v6/test/driver"
 	"golang.org/x/oauth2"
 )

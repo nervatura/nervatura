@@ -8,7 +8,7 @@ import (
 	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
 func createDatabaseReports(ds *DataStore, reportDir string, log []cu.SM) (logData []cu.SM) {

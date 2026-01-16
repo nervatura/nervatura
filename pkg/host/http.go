@@ -23,13 +23,13 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	docs "github.com/nervatura/nervatura/v6/docs"
 	"github.com/nervatura/nervatura/v6/pkg/api"
-	cl "github.com/nervatura/nervatura/v6/pkg/client/web/service"
+	cl "github.com/nervatura/nervatura/v6/pkg/client/service"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
+	src "github.com/nervatura/nervatura/v6/pkg/service/client"
 	srv "github.com/nervatura/nervatura/v6/pkg/service/http"
 	msrv "github.com/nervatura/nervatura/v6/pkg/service/mcp"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	src "github.com/nervatura/nervatura/v6/pkg/service/web"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
 type httpServer struct {

@@ -1,4 +1,4 @@
-package web_test
+package client
 
 import (
 	"errors"
@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	ct "github.com/nervatura/component/pkg/component"
-	"github.com/nervatura/nervatura/v6/pkg/client/web"
 )
 
 func TestRespondMessage(t *testing.T) {
@@ -34,7 +33,7 @@ func TestRespondMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			web.RespondMessage(tt.w, tt.html, tt.err)
+			RespondMessage(tt.w, tt.html, tt.err)
 		})
 	}
 }
@@ -62,7 +61,7 @@ func TestErrorPage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			web.ErrorPage(tt.w, tt.title, tt.msg)
+			ErrorPage(tt.w, tt.title, tt.msg)
 		})
 	}
 }
@@ -82,7 +81,7 @@ func TestApplication(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			web.Application(tt.sessionID, tt.mainComponent)
+			Application(tt.sessionID, tt.mainComponent)
 
 		})
 	}

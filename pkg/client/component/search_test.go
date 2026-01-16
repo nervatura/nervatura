@@ -7,7 +7,7 @@ import (
 
 	ct "github.com/nervatura/component/pkg/component"
 	cu "github.com/nervatura/component/pkg/util"
-	"github.com/nervatura/nervatura/v6/pkg/client/web/component"
+	"github.com/nervatura/nervatura/v6/pkg/client/component"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 

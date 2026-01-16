@@ -7,30 +7,33 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
-type EmployeeEditor struct{}
+type ToolEditor struct{}
 
-func (e *EmployeeEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
-	return cu.ToString(data["editor_title"], labels["employee_title"]),
-		cu.ToString(data["editor_icon"], ct.IconUser)
+func (e *ToolEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["tool_title"]),
+		cu.ToString(data["editor_icon"], ct.IconWrench)
 }
 
-func (e *EmployeeEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
-	var employee cu.IM = cu.ToIM(data["employee"], cu.IM{"employee_meta": cu.IM{}})
+func (e *ToolEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+	var tool cu.IM = cu.ToIM(data["tool"], cu.IM{"tool_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})
 
-	dirty := cu.ToBoolean(data["dirty"], false)
 	readonly := (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String())
-	newInput := (cu.ToInteger(employee["id"], 0) == 0)
+	dirty := cu.ToBoolean(data["dirty"], false)
+	newInput := (cu.ToInteger(tool["id"], 0) == 0)
 	updateLabel := labels["editor_save"]
 	if newInput {
 		updateLabel = labels["editor_create"]
 	}
+	updateDisabled := func() (disabled bool) {
+		return (cu.ToString(tool["description"], "") == "") || (cu.ToString(tool["product_code"], "") == "") || readonly
+	}
 
 	smState := func() *ct.SideBarStatic {
-		if cu.ToBoolean(employee["inactive"], false) {
+		if cu.ToBoolean(tool["inactive"], false) {
 			return &ct.SideBarStatic{
 				Icon: ct.IconLock, Label: labels["state_closed"], Color: "brown",
 			}
@@ -63,7 +66,7 @@ func (e *EmployeeEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 			Label:    updateLabel,
 			Icon:     ct.IconUpload,
 			Selected: dirty,
-			Disabled: readonly,
+			Disabled: updateDisabled(),
 		},
 		&ct.SideBarElement{
 			Name:     "editor_delete",
@@ -76,7 +79,7 @@ func (e *EmployeeEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 		&ct.SideBarElement{
 			Name:     "editor_new",
 			Value:    "editor_new",
-			Label:    labels["employee_new"],
+			Label:    labels["tool_new"],
 			Icon:     ct.IconUser,
 			Disabled: newInput || dirty || readonly,
 		},
@@ -90,10 +93,11 @@ func (e *EmployeeEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{
-			Name:  "editor_bookmark",
-			Value: "editor_bookmark",
-			Label: labels["editor_bookmark"],
-			Icon:  ct.IconStar,
+			Name:     "editor_bookmark",
+			Value:    "editor_bookmark",
+			Label:    labels["editor_bookmark"],
+			Icon:     ct.IconStar,
+			Disabled: newInput,
 		},
 		&ct.SideBarElementLink{
 			SideBarElement: ct.SideBarElement{
@@ -102,48 +106,38 @@ func (e *EmployeeEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath + "#employee",
+			Href:       st.DocsClientPath + "#tool",
 			LinkTarget: "_blank",
 		},
 	}
 }
 
-func (e *EmployeeEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
-	var employee cu.IM = cu.ToIM(data["employee"], cu.IM{})
-	employeeMap := cu.ToIM(employee["employee_map"], cu.IM{})
-	event := cu.ToIMA(employee["events"], []cu.IM{})
-	newInput := (cu.ToInteger(employee["id"], 0) == 0)
+func (e *ToolEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+	var tool cu.IM = cu.ToIM(data["tool"], cu.IM{})
+	toolMap := cu.ToIM(tool["tool_map"], cu.IM{})
+	event := cu.ToIMA(tool["events"], []cu.IM{})
+	newInput := (cu.ToInteger(tool["id"], 0) == 0)
 
 	if newInput {
 		return []ct.EditorView{
 			{
-				Key:   "employee",
-				Label: labels["employee_view"],
-				Icon:  ct.IconClock,
+				Key:   "tool",
+				Label: labels["tool_view"],
+				Icon:  ct.IconWrench,
 			},
 		}
 	}
 	return []ct.EditorView{
 		{
-			Key:   "employee",
-			Label: labels["employee_view"],
-			Icon:  ct.IconClock,
-		},
-		{
-			Key:   "contact",
-			Label: labels["contact_view"],
-			Icon:  ct.IconMobile,
-		},
-		{
-			Key:   "address",
-			Label: labels["address_view"],
-			Icon:  ct.IconHome,
+			Key:   "tool",
+			Label: labels["tool_view"],
+			Icon:  ct.IconWrench,
 		},
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
 			Icon:  ct.IconDatabase,
-			Badge: cu.ToString(int64(len(employeeMap)), "0"),
+			Badge: cu.ToString(int64(len(toolMap)), "0"),
 		},
 		{
 			Key:   "events",
@@ -154,29 +148,31 @@ func (e *EmployeeEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) 
 	}
 }
 
-func (e *EmployeeEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
-	if !slices.Contains([]string{"employee", "maps", "address", "contact"}, view) {
+func (e *ToolEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	if !slices.Contains([]string{"tool", "maps"}, view) {
 		return []ct.Row{}
 	}
 
-	var employee md.Employee = md.Employee{}
-	ut.ConvertToType(data["employee"], &employee)
-
-	var address md.Address = md.Address{}
-	ut.ConvertToType(cu.ToIM(data["employee"], cu.IM{})["address"], &address)
-
-	var contact md.Contact = md.Contact{}
-	ut.ConvertToType(cu.ToIM(data["employee"], cu.IM{})["contact"], &contact)
+	var tool md.Tool = md.Tool{}
+	ut.ConvertToType(data["tool"], &tool)
 
 	configMap := cu.ToIMA(data["config_map"], []cu.IM{})
 	selectedField := cu.ToString(data["map_field"], "")
+	productSelectorRows := cu.ToIMA(data["product_selector"], []cu.IM{})
+
+	var productSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["product_code"]},
+		{Name: "product_name", Label: labels["product_name"]},
+		{Name: "product_type", Label: labels["product_type"]},
+		{Name: "tag_lst", Label: labels["product_tags"]},
+	}
 
 	mapFieldOpt := func() (opt []ct.SelectOption) {
 		opt = []ct.SelectOption{}
 		for _, field := range configMap {
 			filter := ut.ToStringArray(field["filter"])
-			if slices.Contains(filter, "FILTER_EMPLOYEE") || len(filter) == 0 {
-				if _, ok := employee.EmployeeMap[cu.ToString(field["field_name"], "")]; !ok {
+			if slices.Contains(filter, "FILTER_TOOL") || len(filter) == 0 {
+				if _, ok := tool.ToolMap[cu.ToString(field["field_name"], "")]; !ok {
 					opt = append(opt, ct.SelectOption{
 						Value: cu.ToString(field["field_name"], ""), Text: cu.ToString(field["description"], ""),
 					})
@@ -186,151 +182,12 @@ func (e *EmployeeEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 		return opt
 	}
 
-	if view == "address" {
-		return []ct.Row{
-			{Columns: []ct.RowColumn{
-				{Label: labels["address_country"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "country",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "country",
-						"value": address.Country,
-					},
-				}},
-				{Label: labels["address_state"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "state",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "state",
-						"value": address.State,
-					},
-				}},
-				{Label: labels["address_zip_code"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "zip_code",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "zip_code",
-						"value": address.ZipCode,
-					},
-				}},
-			}, Full: true, BorderBottom: true},
-			{Columns: []ct.RowColumn{
-				{Label: labels["address_city"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "city",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "city",
-						"value": address.City,
-					},
-				}},
-				{Label: labels["address_street"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "street",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "street",
-						"value": address.Street,
-					},
-				}},
-			}, Full: true, BorderBottom: true},
-			{Columns: []ct.RowColumn{
-				{Label: labels["address_notes"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "address_notes",
-					},
-					Type: ct.FieldTypeText, Value: cu.IM{
-						"name":  "address_notes",
-						"value": address.Notes,
-					},
-				}},
-			}, Full: true, BorderBottom: true},
-		}
-	}
-
-	if view == "contact" {
-		return []ct.Row{
-			{Columns: []ct.RowColumn{
-				{Label: labels["contact_first_name"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "first_name",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "first_name",
-						"value": contact.FirstName,
-					},
-				}},
-				{Label: labels["contact_surname"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "surname",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "surname",
-						"value": contact.Surname,
-					},
-				}},
-				{Label: labels["contact_status"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "status",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "status",
-						"value": contact.Status,
-					},
-				}},
-			}, Full: true, BorderBottom: true},
-			{Columns: []ct.RowColumn{
-				{Label: labels["contact_phone"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "phone",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "phone",
-						"value": contact.Phone,
-					},
-				}},
-				{Label: labels["contact_mobile"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "mobile",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "mobile",
-						"value": contact.Mobile,
-					},
-				}},
-				{Label: labels["contact_email"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "email",
-					},
-					Type: ct.FieldTypeString, Value: cu.IM{
-						"name":  "email",
-						"value": contact.Email,
-					},
-				}},
-			}, Full: true, BorderBottom: true},
-			{Columns: []ct.RowColumn{
-				{Label: labels["contact_notes"], Value: ct.Field{
-					BaseComponent: ct.BaseComponent{
-						Name: "contact_notes",
-					},
-					Type: ct.FieldTypeText, Value: cu.IM{
-						"name":  "contact_notes",
-						"value": contact.Notes,
-					},
-				}},
-			}, Full: true, BorderBottom: true},
-		}
-	}
-
 	if view == "maps" {
 		return []ct.Row{
 			{Columns: []ct.RowColumn{
 				{Label: labels["map_fields"], Value: ct.Field{
 					BaseComponent: ct.BaseComponent{
-						Name: "map_field_" + cu.ToString(employee.Id, ""),
+						Name: "map_field_" + cu.ToString(tool.Id, ""),
 					},
 					Type: ct.FieldTypeSelect, Value: cu.IM{
 						"name":    "map_field",
@@ -345,65 +202,87 @@ func (e *EmployeeEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 
 	return []ct.Row{
 		{Columns: []ct.RowColumn{
-			{Label: labels["employee_code"], Value: ct.Field{
+			{Label: labels["tool_serial_number"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "code_" + cu.ToString(employee.Id, ""),
+					Name: "serial_number_" + cu.ToString(tool.Id, ""),
 				},
 				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":     "code",
-					"value":    employee.Code,
-					"disabled": true,
+					"name":  "serial_number",
+					"value": tool.ToolMeta.SerialNumber,
 				},
 			}},
-			{Label: labels["employee_start_date"], Value: ct.Field{
+			{Label: labels["tool_description"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "start_date",
+					Name: "description_" + cu.ToString(tool.Id, ""),
 				},
-				Type: ct.FieldTypeDate, Value: cu.IM{
-					"name":    "start_date",
-					"is_null": true,
-					"value":   employee.EmployeeMeta.StartDate,
-				},
-			}},
-			{Label: labels["employee_end_date"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "end_date",
-				},
-				Type: ct.FieldTypeDate, Value: cu.IM{
-					"name":    "end_date",
-					"is_null": true,
-					"value":   employee.EmployeeMeta.EndDate,
-				},
-			}},
-			{Label: labels["employee_inactive"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "inactive_" + cu.ToString(employee.Id, ""),
-				},
-				Type: ct.FieldTypeBool, Value: cu.IM{
-					"name":  "inactive",
-					"value": cu.ToBoolean(employee.EmployeeMeta.Inactive, false),
+				Type: ct.FieldTypeString, Value: cu.IM{
+					"name":        "description",
+					"invalid":     (tool.Description == ""),
+					"placeholder": labels["mandatory_data"],
+					"value":       tool.Description,
 				},
 			}},
 		}, Full: true, BorderBottom: true},
 		{Columns: []ct.RowColumn{
-			{Label: labels["employee_notes"], Value: ct.Field{
+			{Label: labels["tool_code"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "notes_" + cu.ToString(employee.Id, ""),
+					Name: "code_" + cu.ToString(tool.Id, ""),
+				},
+				Type: ct.FieldTypeString, Value: cu.IM{
+					"name":     "code",
+					"value":    tool.Code,
+					"disabled": true,
+				},
+			}},
+			{
+				Label: labels["product_code"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "product_code_" + cu.ToString(tool.Id, ""),
+					},
+					Type: ct.FieldTypeSelector, Value: cu.IM{
+						"name":  "product_code",
+						"title": labels["view_product"],
+						"value": ct.SelectOption{
+							Value: tool.ProductCode,
+							Text:  tool.ProductCode,
+						},
+						"fields":  productSelectorFields,
+						"rows":    productSelectorRows,
+						"link":    true,
+						"is_null": false,
+					},
+					FormTrigger: true,
+				},
+			},
+			{Label: labels["tool_inactive"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "inactive_" + cu.ToString(tool.Id, ""),
+				},
+				Type: ct.FieldTypeBool, Value: cu.IM{
+					"name":  "inactive",
+					"value": cu.ToBoolean(tool.ToolMeta.Inactive, false),
+				},
+			}},
+		}, Full: true, BorderBottom: true},
+		{Columns: []ct.RowColumn{
+			{Label: labels["tool_notes"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "notes_" + cu.ToString(tool.Id, ""),
 				},
 				Type: ct.FieldTypeText, Value: cu.IM{
 					"name":  "notes",
-					"value": employee.EmployeeMeta.Notes,
+					"value": tool.ToolMeta.Notes,
 					"rows":  4,
 				},
 			}},
 			{
-				Label: labels["employee_tags"], Value: ct.Field{
+				Label: labels["tool_tags"], Value: ct.Field{
 					BaseComponent: ct.BaseComponent{
-						Name: "tags_" + cu.ToString(employee.Id, ""),
+						Name: "tags_" + cu.ToString(tool.Id, ""),
 					},
 					Type: ct.FieldTypeList, Value: cu.IM{
 						"name":                "tags",
-						"rows":                ut.ToTagList(employee.EmployeeMeta.Tags),
+						"rows":                ut.ToTagList(tool.ToolMeta.Tags),
 						"label_value":         "tag",
 						"pagination":          ct.PaginationTypeBottom,
 						"page_size":           5,
@@ -422,24 +301,24 @@ func (e *EmployeeEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 	}
 }
 
-func (e *EmployeeEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
+func (e *ToolEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 	if !slices.Contains([]string{"maps", "events"}, view) {
 		return []ct.Table{}
 	}
 
-	var employee cu.IM = cu.ToIM(data["employee"], cu.IM{})
-	newInput := (cu.ToInteger(employee["id"], 0) == 0)
+	var tool cu.IM = cu.ToIM(data["tool"], cu.IM{})
+	newInput := (cu.ToInteger(tool["id"], 0) == 0)
 	tblMap := map[string]func() []ct.Table{
 		"maps": func() []ct.Table {
 			configMap := cu.ToIMA(data["config_map"], []cu.IM{})
-			employeeMap := cu.ToIM(employee["employee_map"], cu.IM{})
+			toolMap := cu.ToIM(tool["tool_map"], cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
 						{Name: "description", Label: labels["map_description"], ReadOnly: true},
 						{Name: "value", Label: labels["map_value"], FieldType: ct.TableFieldTypeMeta, Required: true},
 					},
-					Rows:              mapTableRows(employeeMap, configMap),
+					Rows:              mapTableRows(toolMap, configMap),
 					Pagination:        ct.PaginationTypeTop,
 					PageSize:          5,
 					HidePaginatonSize: true,
@@ -454,7 +333,7 @@ func (e *EmployeeEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table
 			}
 		},
 		"events": func() []ct.Table {
-			event := cu.ToIMA(employee["events"], []cu.IM{})
+			event := cu.ToIMA(tool["events"], []cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
@@ -481,7 +360,7 @@ func (e *EmployeeEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table
 	return tblMap[view]()
 }
 
-func (e *EmployeeEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *ToolEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := []ct.Row{
 		{

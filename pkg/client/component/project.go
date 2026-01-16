@@ -7,33 +7,33 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
-type CustomerEditor struct{}
+type ProjectEditor struct{}
 
-func (e *CustomerEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
-	return cu.ToString(data["editor_title"], labels["customer_title"]),
-		cu.ToString(data["editor_icon"], ct.IconUser)
+func (e *ProjectEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["project_title"]),
+		cu.ToString(data["editor_icon"], ct.IconClock)
 }
 
-func (e *CustomerEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
-	var customer cu.IM = cu.ToIM(data["customer"], cu.IM{"customer_meta": cu.IM{}})
+func (e *ProjectEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+	var project cu.IM = cu.ToIM(data["project"], cu.IM{"project_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})
 
-	dirty := cu.ToBoolean(data["dirty"], false)
 	readonly := (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String())
-	newInput := (cu.ToInteger(customer["id"], 0) == 0)
+	dirty := cu.ToBoolean(data["dirty"], false)
+	newInput := (cu.ToInteger(project["id"], 0) == 0)
 	updateLabel := labels["editor_save"]
 	if newInput {
 		updateLabel = labels["editor_create"]
 	}
 	updateDisabled := func() (disabled bool) {
-		return (cu.ToString(customer["customer_name"], "") == "") || readonly
+		return (cu.ToString(project["project_name"], "") == "") || readonly
 	}
 
 	smState := func() *ct.SideBarStatic {
-		if cu.ToBoolean(customer["inactive"], false) {
+		if cu.ToBoolean(project["inactive"], false) {
 			return &ct.SideBarStatic{
 				Icon: ct.IconLock, Label: labels["state_closed"], Color: "brown",
 			}
@@ -79,7 +79,7 @@ func (e *CustomerEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 		&ct.SideBarElement{
 			Name:     "editor_new",
 			Value:    "editor_new",
-			Label:    labels["customer_new"],
+			Label:    labels["project_new"],
 			Icon:     ct.IconUser,
 			Disabled: newInput || dirty || readonly,
 		},
@@ -106,40 +106,40 @@ func (e *CustomerEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarIt
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath + "#customer",
+			Href:       st.DocsClientPath + "#project",
 			LinkTarget: "_blank",
 		},
 	}
 }
 
-func (e *CustomerEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
-	var customer cu.IM = cu.ToIM(data["customer"], cu.IM{})
-	address := cu.ToIMA(customer["addresses"], []cu.IM{})
-	contact := cu.ToIMA(customer["contacts"], []cu.IM{})
-	customerMap := cu.ToIM(customer["customer_map"], cu.IM{})
-	event := cu.ToIMA(customer["events"], []cu.IM{})
-	newInput := (cu.ToInteger(customer["id"], 0) == 0)
+func (e *ProjectEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+	var project cu.IM = cu.ToIM(data["project"], cu.IM{})
+	address := cu.ToIMA(project["addresses"], []cu.IM{})
+	contact := cu.ToIMA(project["contacts"], []cu.IM{})
+	projectMap := cu.ToIM(project["project_map"], cu.IM{})
+	event := cu.ToIMA(project["events"], []cu.IM{})
+	newInput := (cu.ToInteger(project["id"], 0) == 0)
 
 	if newInput {
 		return []ct.EditorView{
 			{
-				Key:   "customer",
-				Label: labels["customer_view"],
-				Icon:  ct.IconUser,
+				Key:   "project",
+				Label: labels["project_view"],
+				Icon:  ct.IconClock,
 			},
 		}
 	}
 	return []ct.EditorView{
 		{
-			Key:   "customer",
-			Label: labels["customer_view"],
-			Icon:  ct.IconUser,
+			Key:   "project",
+			Label: labels["project_view"],
+			Icon:  ct.IconClock,
 		},
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
 			Icon:  ct.IconDatabase,
-			Badge: cu.ToString(int64(len(customerMap)), "0"),
+			Badge: cu.ToString(int64(len(projectMap)), "0"),
 		},
 		{
 			Key:   "addresses",
@@ -162,33 +162,31 @@ func (e *CustomerEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) 
 	}
 }
 
-func (e *CustomerEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
-	if !slices.Contains([]string{"customer", "maps"}, view) {
+func (e *ProjectEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	if !slices.Contains([]string{"project", "maps"}, view) {
 		return []ct.Row{}
 	}
 
-	var customer md.Customer = md.Customer{}
-	ut.ConvertToType(data["customer"], &customer)
+	var project md.Project = md.Project{}
+	ut.ConvertToType(data["project"], &project)
 
 	configMap := cu.ToIMA(data["config_map"], []cu.IM{})
 	selectedField := cu.ToString(data["map_field"], "")
+	customerSelectorRows := cu.ToIMA(data["customer_selector"], []cu.IM{})
+	customerName := cu.ToString(data["customer_name"], "")
 
-	custtypeOpt := func() (opt []ct.SelectOption) {
-		opt = []ct.SelectOption{}
-		for _, ctype := range []md.CustomerType{md.CustomerTypeCompany, md.CustomerTypePrivate, md.CustomerTypeOther} {
-			opt = append(opt, ct.SelectOption{
-				Value: ctype.String(), Text: labels[ctype.String()],
-			})
-		}
-		return opt
+	var customerSelectorFields []ct.TableField = []ct.TableField{
+		{Name: "code", Label: labels["customer_code"]},
+		{Name: "customer_name", Label: labels["customer_name"]},
+		{Name: "tax_number", Label: labels["customer_tax_number"]},
 	}
 
 	mapFieldOpt := func() (opt []ct.SelectOption) {
 		opt = []ct.SelectOption{}
 		for _, field := range configMap {
 			filter := ut.ToStringArray(field["filter"])
-			if slices.Contains(filter, "FILTER_CUSTOMER") || len(filter) == 0 {
-				if _, ok := customer.CustomerMap[cu.ToString(field["field_name"], "")]; !ok {
+			if slices.Contains(filter, "FILTER_PROJECT") || len(filter) == 0 {
+				if _, ok := project.ProjectMap[cu.ToString(field["field_name"], "")]; !ok {
 					opt = append(opt, ct.SelectOption{
 						Value: cu.ToString(field["field_name"], ""), Text: cu.ToString(field["description"], ""),
 					})
@@ -203,7 +201,7 @@ func (e *CustomerEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 			{Columns: []ct.RowColumn{
 				{Label: labels["map_fields"], Value: ct.Field{
 					BaseComponent: ct.BaseComponent{
-						Name: "map_field_" + cu.ToString(customer.Id, ""),
+						Name: "map_field_" + cu.ToString(project.Id, ""),
 					},
 					Type: ct.FieldTypeSelect, Value: cu.IM{
 						"name":    "map_field",
@@ -218,131 +216,98 @@ func (e *CustomerEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 
 	return []ct.Row{
 		{Columns: []ct.RowColumn{
-			{Label: labels["customer_name"], Value: ct.Field{
+			{Label: labels["project_name"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "customer_name_" + cu.ToString(customer.Id, ""),
+					Name: "project_name_" + cu.ToString(project.Id, ""),
 				},
 				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":        "customer_name",
-					"invalid":     (customer.CustomerName == ""),
+					"name":        "project_name",
+					"invalid":     (project.ProjectName == ""),
 					"placeholder": labels["mandatory_data"],
-					"value":       customer.CustomerName,
+					"value":       project.ProjectName,
 				},
 			}},
-		}, Full: true, BorderBottom: true, FieldCol: true},
+			{
+				Label: labels["customer_code"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "customer_code_" + cu.ToString(project.Id, ""),
+					},
+					Type: ct.FieldTypeSelector, Value: cu.IM{
+						"name":  "customer_code",
+						"title": labels["view_customer"],
+						"value": ct.SelectOption{
+							Value: project.CustomerCode,
+							Text:  customerName,
+						},
+						"fields":  customerSelectorFields,
+						"rows":    customerSelectorRows,
+						"link":    true,
+						"is_null": true,
+					},
+					FormTrigger: true,
+				},
+			},
+		}, Full: true, BorderBottom: true},
 		{Columns: []ct.RowColumn{
-			{Label: labels["customer_code"], Value: ct.Field{
+			{Label: labels["project_code"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "code_" + cu.ToString(customer.Id, ""),
+					Name: "code_" + cu.ToString(project.Id, ""),
 				},
 				Type: ct.FieldTypeString, Value: cu.IM{
 					"name":     "code",
-					"value":    customer.Code,
+					"value":    project.Code,
 					"disabled": true,
 				},
 			}},
-			{Label: labels["customer_tax_number"], Value: ct.Field{
+			{Label: labels["project_start_date"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "tax_number_" + cu.ToString(customer.Id, ""),
+					Name: "start_date",
 				},
-				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":  "tax_number",
-					"value": customer.CustomerMeta.TaxNumber,
+				Type: ct.FieldTypeDate, Value: cu.IM{
+					"name":    "start_date",
+					"is_null": true,
+					"value":   project.ProjectMeta.StartDate,
 				},
 			}},
-			{Label: labels["customer_account"], Value: ct.Field{
+			{Label: labels["project_end_date"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "account_" + cu.ToString(customer.Id, ""),
+					Name: "end_date",
 				},
-				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":  "account",
-					"value": customer.CustomerMeta.Account,
+				Type: ct.FieldTypeDate, Value: cu.IM{
+					"name":    "end_date",
+					"is_null": true,
+					"value":   project.ProjectMeta.EndDate,
 				},
 			}},
-		}, Full: true, BorderBottom: true},
-		{Columns: []ct.RowColumn{
-			{Label: labels["customer_credit_limit"], Value: ct.Field{
+			{Label: labels["project_inactive"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "credit_limit_" + cu.ToString(customer.Id, ""),
-				},
-				Type: ct.FieldTypeNumber, Value: cu.IM{
-					"name":  "credit_limit",
-					"value": customer.CustomerMeta.CreditLimit,
-				},
-			}},
-			{Label: labels["customer_terms"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "terms_" + cu.ToString(customer.Id, ""),
-				},
-				Type: ct.FieldTypeInteger, Value: cu.IM{
-					"name":  "terms",
-					"value": customer.CustomerMeta.Terms,
-				},
-			}},
-			{Label: labels["customer_discount"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "discount_" + cu.ToString(customer.Id, ""),
-				},
-				Type: ct.FieldTypeNumber, Value: cu.IM{
-					"name":      "discount",
-					"value":     customer.CustomerMeta.Discount,
-					"set_max":   true,
-					"max_value": 100,
-					"set_min":   true,
-					"min_value": 0,
-				},
-			}},
-		}, Full: true, BorderBottom: true},
-		{Columns: []ct.RowColumn{
-			{Label: labels["customer_type"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "customer_type_" + cu.ToString(customer.Id, ""),
-				},
-				Type: ct.FieldTypeSelect, Value: cu.IM{
-					"name":    "customer_type",
-					"options": custtypeOpt(),
-					"is_null": false,
-					"value":   customer.CustomerType.String(),
-				},
-			}},
-			{Label: labels["customer_inactive"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "inactive_" + cu.ToString(customer.Id, ""),
+					Name: "inactive_" + cu.ToString(project.Id, ""),
 				},
 				Type: ct.FieldTypeBool, Value: cu.IM{
 					"name":  "inactive",
-					"value": cu.ToBoolean(customer.CustomerMeta.Inactive, false),
-				},
-			}},
-			{Label: labels["customer_tax_free"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "tax_free_" + cu.ToString(customer.Id, ""),
-				},
-				Type: ct.FieldTypeBool, Value: cu.IM{
-					"name":  "tax_free",
-					"value": cu.ToBoolean(customer.CustomerMeta.TaxFree, false),
+					"value": cu.ToBoolean(project.ProjectMeta.Inactive, false),
 				},
 			}},
 		}, Full: true, BorderBottom: true},
 		{Columns: []ct.RowColumn{
-			{Label: labels["customer_notes"], Value: ct.Field{
+			{Label: labels["project_notes"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "notes_" + cu.ToString(customer.Id, ""),
+					Name: "notes_" + cu.ToString(project.Id, ""),
 				},
 				Type: ct.FieldTypeText, Value: cu.IM{
 					"name":  "notes",
-					"value": customer.CustomerMeta.Notes,
+					"value": project.ProjectMeta.Notes,
 					"rows":  4,
 				},
 			}},
 			{
-				Label: labels["customer_tags"], Value: ct.Field{
+				Label: labels["project_tags"], Value: ct.Field{
 					BaseComponent: ct.BaseComponent{
-						Name: "tags_" + cu.ToString(customer.Id, ""),
+						Name: "tags_" + cu.ToString(project.Id, ""),
 					},
 					Type: ct.FieldTypeList, Value: cu.IM{
 						"name":                "tags",
-						"rows":                ut.ToTagList(customer.CustomerMeta.Tags),
+						"rows":                ut.ToTagList(project.ProjectMeta.Tags),
 						"label_value":         "tag",
 						"pagination":          ct.PaginationTypeBottom,
 						"page_size":           5,
@@ -361,24 +326,24 @@ func (e *CustomerEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.R
 	}
 }
 
-func (e *CustomerEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
+func (e *ProjectEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 	if !slices.Contains([]string{"addresses", "contacts", "maps", "events"}, view) {
 		return []ct.Table{}
 	}
 
-	var customer cu.IM = cu.ToIM(data["customer"], cu.IM{})
-	newInput := (cu.ToInteger(customer["id"], 0) == 0)
+	var project cu.IM = cu.ToIM(data["project"], cu.IM{})
+	newInput := (cu.ToInteger(project["id"], 0) == 0)
 	tblMap := map[string]func() []ct.Table{
 		"maps": func() []ct.Table {
 			configMap := cu.ToIMA(data["config_map"], []cu.IM{})
-			customerMap := cu.ToIM(customer["customer_map"], cu.IM{})
+			projectMap := cu.ToIM(project["project_map"], cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
 						{Name: "description", Label: labels["map_description"], ReadOnly: true},
 						{Name: "value", Label: labels["map_value"], FieldType: ct.TableFieldTypeMeta, Required: true},
 					},
-					Rows:              mapTableRows(customerMap, configMap),
+					Rows:              mapTableRows(projectMap, configMap),
 					Pagination:        ct.PaginationTypeTop,
 					PageSize:          5,
 					HidePaginatonSize: true,
@@ -393,7 +358,7 @@ func (e *CustomerEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table
 			}
 		},
 		"addresses": func() []ct.Table {
-			address := cu.ToIMA(customer["addresses"], []cu.IM{})
+			address := cu.ToIMA(project["addresses"], []cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
@@ -417,7 +382,7 @@ func (e *CustomerEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table
 			}
 		},
 		"contacts": func() []ct.Table {
-			contact := cu.ToIMA(customer["contacts"], []cu.IM{})
+			contact := cu.ToIMA(project["contacts"], []cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
@@ -443,7 +408,7 @@ func (e *CustomerEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table
 			}
 		},
 		"events": func() []ct.Table {
-			event := cu.ToIMA(customer["events"], []cu.IM{})
+			event := cu.ToIMA(project["events"], []cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
@@ -470,7 +435,7 @@ func (e *CustomerEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table
 	return tblMap[view]()
 }
 
-func (e *CustomerEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *ProjectEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := []ct.Row{
 		{

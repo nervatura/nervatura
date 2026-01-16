@@ -10,7 +10,7 @@ import (
 	"github.com/MicahParks/keyfunc/v3"
 	"github.com/golang-jwt/jwt/v5"
 	cu "github.com/nervatura/component/pkg/util"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
 var TokenAlg cu.SM = cu.SM{

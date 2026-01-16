@@ -7,33 +7,33 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
-type PlaceEditor struct{}
+type CustomerEditor struct{}
 
-func (e *PlaceEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
-	return cu.ToString(data["editor_title"], labels["place_title"]),
-		cu.ToString(data["editor_icon"], ct.IconHome)
+func (e *CustomerEditor) Frame(labels cu.SM, data cu.IM) (title, icon string) {
+	return cu.ToString(data["editor_title"], labels["customer_title"]),
+		cu.ToString(data["editor_icon"], ct.IconUser)
 }
 
-func (e *PlaceEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
-	var place cu.IM = cu.ToIM(data["place"], cu.IM{"place_meta": cu.IM{}})
+func (e *CustomerEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
+	var customer cu.IM = cu.ToIM(data["customer"], cu.IM{"customer_meta": cu.IM{}})
 	user := cu.ToIM(data["user"], cu.IM{})
 
 	dirty := cu.ToBoolean(data["dirty"], false)
 	readonly := (cu.ToString(user["user_group"], "") == md.UserGroupGuest.String())
-	newInput := (cu.ToInteger(place["id"], 0) == 0)
+	newInput := (cu.ToInteger(customer["id"], 0) == 0)
 	updateLabel := labels["editor_save"]
 	if newInput {
 		updateLabel = labels["editor_create"]
 	}
 	updateDisabled := func() (disabled bool) {
-		return (cu.ToString(place["place_name"], "") == "") || readonly
+		return (cu.ToString(customer["customer_name"], "") == "") || readonly
 	}
 
 	smState := func() *ct.SideBarStatic {
-		if cu.ToBoolean(place["inactive"], false) {
+		if cu.ToBoolean(customer["inactive"], false) {
 			return &ct.SideBarStatic{
 				Icon: ct.IconLock, Label: labels["state_closed"], Color: "brown",
 			}
@@ -79,9 +79,17 @@ func (e *PlaceEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 		&ct.SideBarElement{
 			Name:     "editor_new",
 			Value:    "editor_new",
-			Label:    labels["place_new"],
-			Icon:     ct.IconHome,
+			Label:    labels["customer_new"],
+			Icon:     ct.IconUser,
 			Disabled: newInput || dirty || readonly,
+		},
+		&ct.SideBarSeparator{},
+		&ct.SideBarElement{
+			Name:     "editor_report",
+			Value:    "editor_report",
+			Label:    labels["editor_report"],
+			Icon:     ct.IconChartBar,
+			Disabled: newInput || dirty,
 		},
 		&ct.SideBarSeparator{},
 		&ct.SideBarElement{
@@ -98,39 +106,46 @@ func (e *PlaceEditor) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem)
 				Label: labels["editor_help"],
 				Icon:  ct.IconQuestionCircle,
 			},
-			Href:       st.DocsClientPath + "#place",
+			Href:       st.DocsClientPath + "#customer",
 			LinkTarget: "_blank",
 		},
 	}
 }
 
-func (e *PlaceEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
-	var place cu.IM = cu.ToIM(data["place"], cu.IM{})
-	contact := cu.ToIMA(place["contacts"], []cu.IM{})
-	event := cu.ToIMA(place["events"], []cu.IM{})
-	placeMap := cu.ToIM(place["place_map"], cu.IM{})
-	newInput := (cu.ToInteger(place["id"], 0) == 0)
+func (e *CustomerEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
+	var customer cu.IM = cu.ToIM(data["customer"], cu.IM{})
+	address := cu.ToIMA(customer["addresses"], []cu.IM{})
+	contact := cu.ToIMA(customer["contacts"], []cu.IM{})
+	customerMap := cu.ToIM(customer["customer_map"], cu.IM{})
+	event := cu.ToIMA(customer["events"], []cu.IM{})
+	newInput := (cu.ToInteger(customer["id"], 0) == 0)
 
 	if newInput {
 		return []ct.EditorView{
 			{
-				Key:   "place",
-				Label: labels["place_view"],
-				Icon:  ct.IconHome,
+				Key:   "customer",
+				Label: labels["customer_view"],
+				Icon:  ct.IconUser,
 			},
 		}
 	}
 	return []ct.EditorView{
 		{
-			Key:   "place",
-			Label: labels["place_view"],
-			Icon:  ct.IconHome,
+			Key:   "customer",
+			Label: labels["customer_view"],
+			Icon:  ct.IconUser,
 		},
 		{
 			Key:   "maps",
 			Label: labels["map_view"],
 			Icon:  ct.IconDatabase,
-			Badge: cu.ToString(int64(len(placeMap)), "0"),
+			Badge: cu.ToString(int64(len(customerMap)), "0"),
+		},
+		{
+			Key:   "addresses",
+			Label: labels["address_view"],
+			Icon:  ct.IconHome,
+			Badge: cu.ToString(int64(len(address)), "0"),
 		},
 		{
 			Key:   "contacts",
@@ -147,36 +162,22 @@ func (e *PlaceEditor) View(labels cu.SM, data cu.IM) (views []ct.EditorView) {
 	}
 }
 
-func (e *PlaceEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
-	if !slices.Contains([]string{"place", "maps"}, view) {
+func (e *CustomerEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row) {
+	if !slices.Contains([]string{"customer", "maps"}, view) {
 		return []ct.Row{}
 	}
 
-	var place md.Place = md.Place{}
-	ut.ConvertToType(data["place"], &place)
-
-	var address md.Address = md.Address{}
-	ut.ConvertToType(cu.ToIM(data["place"], cu.IM{})["address"], &address)
+	var customer md.Customer = md.Customer{}
+	ut.ConvertToType(data["customer"], &customer)
 
 	configMap := cu.ToIMA(data["config_map"], []cu.IM{})
-	currencies := cu.ToIMA(data["currencies"], []cu.IM{})
 	selectedField := cu.ToString(data["map_field"], "")
 
-	placetypeOpt := func() (opt []ct.SelectOption) {
+	custtypeOpt := func() (opt []ct.SelectOption) {
 		opt = []ct.SelectOption{}
-		for _, ptype := range []md.PlaceType{md.PlaceTypeBank, md.PlaceTypeCash, md.PlaceTypeWarehouse, md.PlaceTypeOther} {
+		for _, ctype := range []md.CustomerType{md.CustomerTypeCompany, md.CustomerTypePrivate, md.CustomerTypeOther} {
 			opt = append(opt, ct.SelectOption{
-				Value: ptype.String(), Text: labels[ptype.String()],
-			})
-		}
-		return opt
-	}
-
-	currencyOpt := func() (opt []ct.SelectOption) {
-		opt = []ct.SelectOption{}
-		for _, currency := range currencies {
-			opt = append(opt, ct.SelectOption{
-				Value: cu.ToString(currency["code"], ""), Text: cu.ToString(currency["code"], ""),
+				Value: ctype.String(), Text: labels[ctype.String()],
 			})
 		}
 		return opt
@@ -186,8 +187,8 @@ func (e *PlaceEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row)
 		opt = []ct.SelectOption{}
 		for _, field := range configMap {
 			filter := ut.ToStringArray(field["filter"])
-			if slices.Contains(filter, "FILTER_PLACE") || len(filter) == 0 {
-				if _, ok := place.PlaceMap[cu.ToString(field["field_name"], "")]; !ok {
+			if slices.Contains(filter, "FILTER_CUSTOMER") || len(filter) == 0 {
+				if _, ok := customer.CustomerMap[cu.ToString(field["field_name"], "")]; !ok {
 					opt = append(opt, ct.SelectOption{
 						Value: cu.ToString(field["field_name"], ""), Text: cu.ToString(field["description"], ""),
 					})
@@ -202,7 +203,7 @@ func (e *PlaceEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row)
 			{Columns: []ct.RowColumn{
 				{Label: labels["map_fields"], Value: ct.Field{
 					BaseComponent: ct.BaseComponent{
-						Name: "map_field_" + cu.ToString(place.Id, ""),
+						Name: "map_field_" + cu.ToString(customer.Id, ""),
 					},
 					Type: ct.FieldTypeSelect, Value: cu.IM{
 						"name":    "map_field",
@@ -215,174 +216,169 @@ func (e *PlaceEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row)
 		}
 	}
 
-	rows = []ct.Row{
+	return []ct.Row{
 		{Columns: []ct.RowColumn{
-			{Label: labels["place_name"], Value: ct.Field{
+			{Label: labels["customer_name"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "place_name_" + cu.ToString(place.Id, ""),
+					Name: "customer_name_" + cu.ToString(customer.Id, ""),
 				},
 				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":        "place_name",
-					"invalid":     (place.PlaceName == ""),
+					"name":        "customer_name",
+					"invalid":     (customer.CustomerName == ""),
 					"placeholder": labels["mandatory_data"],
-					"value":       place.PlaceName,
+					"value":       customer.CustomerName,
 				},
 			}},
-			{Label: labels["place_code"], Value: ct.Field{
+		}, Full: true, BorderBottom: true, FieldCol: true},
+		{Columns: []ct.RowColumn{
+			{Label: labels["customer_code"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "code_" + cu.ToString(place.Id, ""),
+					Name: "code_" + cu.ToString(customer.Id, ""),
 				},
 				Type: ct.FieldTypeString, Value: cu.IM{
 					"name":     "code",
-					"value":    place.Code,
+					"value":    customer.Code,
 					"disabled": true,
 				},
 			}},
-		}, Full: true, BorderBottom: true},
-		{Columns: []ct.RowColumn{
-			{Label: labels["address_country"], Value: ct.Field{
+			{Label: labels["customer_tax_number"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "country",
+					Name: "tax_number_" + cu.ToString(customer.Id, ""),
 				},
 				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":  "country",
-					"value": address.Country,
+					"name":  "tax_number",
+					"value": customer.CustomerMeta.TaxNumber,
 				},
 			}},
-			{Label: labels["address_state"], Value: ct.Field{
+			{Label: labels["customer_account"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "state",
+					Name: "account_" + cu.ToString(customer.Id, ""),
 				},
 				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":  "state",
-					"value": address.State,
-				},
-			}},
-			{Label: labels["address_zip_code"], Value: ct.Field{
-				BaseComponent: ct.BaseComponent{
-					Name: "zip_code",
-				},
-				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":  "zip_code",
-					"value": address.ZipCode,
+					"name":  "account",
+					"value": customer.CustomerMeta.Account,
 				},
 			}},
 		}, Full: true, BorderBottom: true},
 		{Columns: []ct.RowColumn{
-			{Label: labels["address_city"], Value: ct.Field{
+			{Label: labels["customer_credit_limit"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "city",
+					Name: "credit_limit_" + cu.ToString(customer.Id, ""),
 				},
-				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":  "city",
-					"value": address.City,
+				Type: ct.FieldTypeNumber, Value: cu.IM{
+					"name":  "credit_limit",
+					"value": customer.CustomerMeta.CreditLimit,
 				},
 			}},
-			{Label: labels["address_street"], Value: ct.Field{
+			{Label: labels["customer_terms"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "street",
+					Name: "terms_" + cu.ToString(customer.Id, ""),
 				},
-				Type: ct.FieldTypeString, Value: cu.IM{
-					"name":  "street",
-					"value": address.Street,
+				Type: ct.FieldTypeInteger, Value: cu.IM{
+					"name":  "terms",
+					"value": customer.CustomerMeta.Terms,
+				},
+			}},
+			{Label: labels["customer_discount"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "discount_" + cu.ToString(customer.Id, ""),
+				},
+				Type: ct.FieldTypeNumber, Value: cu.IM{
+					"name":      "discount",
+					"value":     customer.CustomerMeta.Discount,
+					"set_max":   true,
+					"max_value": 100,
+					"set_min":   true,
+					"min_value": 0,
 				},
 			}},
 		}, Full: true, BorderBottom: true},
-	}
-
-	row := ct.Row{Columns: []ct.RowColumn{
-		{Label: labels["place_type"], Value: ct.Field{
-			BaseComponent: ct.BaseComponent{
-				Name: "place_type_" + cu.ToString(place.Id, ""),
-			},
-			Type: ct.FieldTypeSelect, Value: cu.IM{
-				"name":    "place_type",
-				"options": placetypeOpt(),
-				"is_null": false,
-				"value":   place.PlaceType.String(),
-			},
-		}},
-		{Label: labels["place_inactive"], Value: ct.Field{
-			BaseComponent: ct.BaseComponent{
-				Name: "inactive_" + cu.ToString(place.Id, ""),
-			},
-			Type: ct.FieldTypeBool, Value: cu.IM{
-				"name":  "inactive",
-				"value": cu.ToBoolean(place.PlaceMeta.Inactive, false),
-			},
-		}},
-	}, Full: true, BorderBottom: true}
-	if place.PlaceType == md.PlaceTypeCash || place.PlaceType == md.PlaceTypeBank {
-		row.Columns = append(row.Columns, ct.RowColumn{Label: labels["currency_code"], Value: ct.Field{
-			BaseComponent: ct.BaseComponent{
-				Name: "currency_code_" + cu.ToString(place.Id, ""),
-			},
-			Type: ct.FieldTypeSelect, Value: cu.IM{
-				"name":    "currency_code",
-				"options": currencyOpt(),
-				"is_null": false,
-				"value":   place.CurrencyCode,
-			},
-		}})
-	}
-	rows = append(rows, row)
-
-	rows = append(rows, ct.Row{Columns: []ct.RowColumn{
-		{Label: labels["place_notes"], Value: ct.Field{
-			BaseComponent: ct.BaseComponent{
-				Name: "notes_" + cu.ToString(place.Id, ""),
-			},
-			Type: ct.FieldTypeText, Value: cu.IM{
-				"name":  "notes",
-				"value": place.PlaceMeta.Notes,
-				"rows":  4,
-			},
-		}},
-		{
-			Label: labels["place_tags"], Value: ct.Field{
+		{Columns: []ct.RowColumn{
+			{Label: labels["customer_type"], Value: ct.Field{
 				BaseComponent: ct.BaseComponent{
-					Name: "tags_" + cu.ToString(place.Id, ""),
+					Name: "customer_type_" + cu.ToString(customer.Id, ""),
 				},
-				Type: ct.FieldTypeList, Value: cu.IM{
-					"name":                "tags",
-					"rows":                ut.ToTagList(place.PlaceMeta.Tags),
-					"label_value":         "tag",
-					"pagination":          ct.PaginationTypeBottom,
-					"page_size":           5,
-					"hide_paginaton_size": true,
-					"list_filter":         true,
-					"filter_placeholder":  labels["placeholder_filter"],
-					"add_item":            true,
-					"add_icon":            ct.IconTag,
-					"edit_item":           false,
-					"delete_item":         true,
-					"indicator":           ct.IndicatorSpinner,
+				Type: ct.FieldTypeSelect, Value: cu.IM{
+					"name":    "customer_type",
+					"options": custtypeOpt(),
+					"is_null": false,
+					"value":   customer.CustomerType.String(),
+				},
+			}},
+			{Label: labels["customer_inactive"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "inactive_" + cu.ToString(customer.Id, ""),
+				},
+				Type: ct.FieldTypeBool, Value: cu.IM{
+					"name":  "inactive",
+					"value": cu.ToBoolean(customer.CustomerMeta.Inactive, false),
+				},
+			}},
+			{Label: labels["customer_tax_free"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "tax_free_" + cu.ToString(customer.Id, ""),
+				},
+				Type: ct.FieldTypeBool, Value: cu.IM{
+					"name":  "tax_free",
+					"value": cu.ToBoolean(customer.CustomerMeta.TaxFree, false),
+				},
+			}},
+		}, Full: true, BorderBottom: true},
+		{Columns: []ct.RowColumn{
+			{Label: labels["customer_notes"], Value: ct.Field{
+				BaseComponent: ct.BaseComponent{
+					Name: "notes_" + cu.ToString(customer.Id, ""),
+				},
+				Type: ct.FieldTypeText, Value: cu.IM{
+					"name":  "notes",
+					"value": customer.CustomerMeta.Notes,
+					"rows":  4,
+				},
+			}},
+			{
+				Label: labels["customer_tags"], Value: ct.Field{
+					BaseComponent: ct.BaseComponent{
+						Name: "tags_" + cu.ToString(customer.Id, ""),
+					},
+					Type: ct.FieldTypeList, Value: cu.IM{
+						"name":                "tags",
+						"rows":                ut.ToTagList(customer.CustomerMeta.Tags),
+						"label_value":         "tag",
+						"pagination":          ct.PaginationTypeBottom,
+						"page_size":           5,
+						"hide_paginaton_size": true,
+						"list_filter":         true,
+						"filter_placeholder":  labels["placeholder_filter"],
+						"add_item":            true,
+						"add_icon":            ct.IconTag,
+						"edit_item":           false,
+						"delete_item":         true,
+						"indicator":           ct.IndicatorSpinner,
+					},
 				},
 			},
-		},
-	}, Full: true, BorderBottom: true})
-
-	return rows
+		}, Full: true, BorderBottom: true},
+	}
 }
 
-func (e *PlaceEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
-	if !slices.Contains([]string{"contacts", "events", "maps"}, view) {
+func (e *CustomerEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
+	if !slices.Contains([]string{"addresses", "contacts", "maps", "events"}, view) {
 		return []ct.Table{}
 	}
 
-	var place cu.IM = cu.ToIM(data["place"], cu.IM{})
-	newInput := (cu.ToInteger(place["id"], 0) == 0)
+	var customer cu.IM = cu.ToIM(data["customer"], cu.IM{})
+	newInput := (cu.ToInteger(customer["id"], 0) == 0)
 	tblMap := map[string]func() []ct.Table{
 		"maps": func() []ct.Table {
 			configMap := cu.ToIMA(data["config_map"], []cu.IM{})
-			placeMap := cu.ToIM(place["place_map"], cu.IM{})
+			customerMap := cu.ToIM(customer["customer_map"], cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
 						{Name: "description", Label: labels["map_description"], ReadOnly: true},
 						{Name: "value", Label: labels["map_value"], FieldType: ct.TableFieldTypeMeta, Required: true},
 					},
-					Rows:              mapTableRows(placeMap, configMap),
+					Rows:              mapTableRows(customerMap, configMap),
 					Pagination:        ct.PaginationTypeTop,
 					PageSize:          5,
 					HidePaginatonSize: true,
@@ -396,8 +392,32 @@ func (e *PlaceEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 				},
 			}
 		},
+		"addresses": func() []ct.Table {
+			address := cu.ToIMA(customer["addresses"], []cu.IM{})
+			return []ct.Table{
+				{
+					Fields: []ct.TableField{
+						{Name: "country", Label: labels["address_country"]},
+						{Name: "state", Label: labels["address_state"]},
+						{Name: "zip_code", Label: labels["address_zip_code"]},
+						{Name: "city", Label: labels["address_city"]},
+						{Name: "street", Label: labels["address_street"]},
+						{Name: "notes", Label: labels["address_notes"]},
+					},
+					Rows:              address,
+					Pagination:        ct.PaginationTypeTop,
+					PageSize:          5,
+					HidePaginatonSize: true,
+					RowSelected:       true,
+					TableFilter:       true,
+					FilterPlaceholder: labels["placeholder_filter"],
+					AddItem:           !newInput,
+					LabelAdd:          labels["address_new"],
+				},
+			}
+		},
 		"contacts": func() []ct.Table {
-			contact := cu.ToIMA(place["contacts"], []cu.IM{})
+			contact := cu.ToIMA(customer["contacts"], []cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
@@ -423,7 +443,7 @@ func (e *PlaceEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 			}
 		},
 		"events": func() []ct.Table {
-			event := cu.ToIMA(place["events"], []cu.IM{})
+			event := cu.ToIMA(customer["events"], []cu.IM{})
 			return []ct.Table{
 				{
 					Fields: []ct.TableField{
@@ -450,7 +470,7 @@ func (e *PlaceEditor) Table(view string, labels cu.SM, data cu.IM) []ct.Table {
 	return tblMap[view]()
 }
 
-func (e *PlaceEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
+func (e *CustomerEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Form) {
 	formData := cu.ToIM(data, cu.IM{})
 	footerRows := []ct.Row{
 		{
@@ -500,6 +520,77 @@ func (e *PlaceEditor) Form(formKey string, labels cu.SM, data cu.IM) (form ct.Fo
 		},
 	}
 	frmMap := map[string]func() ct.Form{
+		"addresses": func() ct.Form {
+			var address md.Address = md.Address{}
+			ut.ConvertToType(formData, &address)
+			return ct.Form{
+				Title: labels["address_view"],
+				Icon:  ct.IconHome,
+				BodyRows: []ct.Row{
+					{Columns: []ct.RowColumn{
+						{Label: labels["address_country"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "country",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "country",
+								"value": address.Country,
+							},
+						}},
+						{Label: labels["address_state"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "state",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "state",
+								"value": address.State,
+							},
+						}},
+						{Label: labels["address_zip_code"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "zip_code",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "zip_code",
+								"value": address.ZipCode,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["address_city"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "city",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "city",
+								"value": address.City,
+							},
+						}},
+						{Label: labels["address_street"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "street",
+							},
+							Type: ct.FieldTypeString, Value: cu.IM{
+								"name":  "street",
+								"value": address.Street,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+					{Columns: []ct.RowColumn{
+						{Label: labels["address_notes"], Value: ct.Field{
+							BaseComponent: ct.BaseComponent{
+								Name: "notes",
+							},
+							Type: ct.FieldTypeText, Value: cu.IM{
+								"name":  "notes",
+								"value": address.Notes,
+							},
+						}},
+					}, Full: true, BorderBottom: true},
+				},
+				FooterRows: footerRows,
+			}
+		},
 		"contacts": func() ct.Form {
 			var contact md.Contact = md.Contact{}
 			ut.ConvertToType(formData, &contact)

@@ -9,8 +9,8 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
-	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	pb "github.com/nervatura/nervatura/v6/proto"
 )
 
 func (s *GService) RateUpdate(ctx context.Context, req *pb.Rate) (pbRate *pb.Rate, err error) {

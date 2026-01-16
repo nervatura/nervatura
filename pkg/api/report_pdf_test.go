@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	cu "github.com/nervatura/component/pkg/util"
-	st "github.com/nervatura/nervatura/v6/pkg/static"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
 func TestCreateReportPDF(t *testing.T) {

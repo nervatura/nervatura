@@ -6,7 +6,7 @@ import (
 
 	"fyne.io/systray"
 	cu "github.com/nervatura/component/pkg/util"
-	"github.com/nervatura/nervatura/v6/pkg/static/icon"
+	"github.com/nervatura/nervatura/v6/static/icon"
 )
 
 // systemTray implements the Nervatura system tray icon and menu
