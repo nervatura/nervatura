@@ -120,28 +120,28 @@ type SmtpClient interface {
 }
 
 func JSONBMap(fieldName, value string) any {
-	typeMap := map[string]func() any{
-		/*
-			"tags": func() any {
-				var result []string
-				_ = cu.ConvertFromByte([]byte(value), &result)
-				return result
-			},
-				"address": func() any {
-					var result Address
-					_ = ut.ConvertFromByte([]byte(value), &result)
+	/*
+		typeMap := map[string]func() any{
+				"tags": func() any {
+					var result []string
+					_ = cu.ConvertFromByte([]byte(value), &result)
 					return result
 				},
-				"addresses": func() any {
-					var result []Address = []Address{}
-					_ = ut.ConvertFromByte([]byte(value), &result)
-					return result
-				},
-		*/
-	}
-	if resultData, found := typeMap[fieldName]; found {
-		return resultData()
-	}
+					"address": func() any {
+						var result Address
+						_ = ut.ConvertFromByte([]byte(value), &result)
+						return result
+					},
+					"addresses": func() any {
+						var result []Address = []Address{}
+						_ = ut.ConvertFromByte([]byte(value), &result)
+						return result
+					},
+		}
+		if resultData, found := typeMap[fieldName]; found {
+			return resultData()
+		}
+	*/
 	var result interface{}
 	_ = cu.ConvertFromByte([]byte(value), &result)
 	return result
