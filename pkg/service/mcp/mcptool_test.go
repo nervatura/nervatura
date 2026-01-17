@@ -867,7 +867,7 @@ func Test_extendUpdate(t *testing.T) {
 			name: "contact_customer",
 			args: args{
 				req:       &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_contact_update"}},
-				inputData: cu.IM{"code": "CUS123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fiels": "value"}},
+				inputData: cu.IM{"code": "CUS123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fields": "value"}},
 			},
 			wantErr: false,
 			ds: &api.DataStore{
@@ -1194,7 +1194,7 @@ func Test_extendCreate(t *testing.T) {
 			name: "contact_customer",
 			args: args{
 				req:       &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_contact_update"}},
-				inputData: cu.IM{"code": "CUS123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fiels": "value"}},
+				inputData: cu.IM{"code": "CUS123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fields": "value"}},
 			},
 			wantErr: false,
 			ds: &api.DataStore{
@@ -1216,7 +1216,7 @@ func Test_extendCreate(t *testing.T) {
 			name: "event_product",
 			args: args{
 				req:       &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_event_update"}},
-				inputData: cu.IM{"code": "PRD123456", "index": 0, "subject": "Meeting", "event_map": cu.IM{"fiels": "value"}},
+				inputData: cu.IM{"code": "PRD123456", "index": 0, "subject": "Meeting", "event_map": cu.IM{"fields": "value"}},
 			},
 			wantErr: false,
 			ds: &api.DataStore{
@@ -1238,7 +1238,7 @@ func Test_extendCreate(t *testing.T) {
 			name: "invalid_code",
 			args: args{
 				req:       &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_contact_update"}},
-				inputData: cu.IM{"code": "XXX123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fiels": "value"}},
+				inputData: cu.IM{"code": "XXX123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fields": "value"}},
 			},
 			wantErr: true,
 			ds: &api.DataStore{
@@ -1260,7 +1260,7 @@ func Test_extendCreate(t *testing.T) {
 			name: "missing_code",
 			args: args{
 				req:       &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{Name: "nervatura_contact_update"}},
-				inputData: cu.IM{"code": "CUS123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fiels": "value"}},
+				inputData: cu.IM{"code": "CUS123456", "index": 0, "surname": "Doe", "contact_map": cu.IM{"fields": "value"}},
 			},
 			wantErr: true,
 			ds: &api.DataStore{

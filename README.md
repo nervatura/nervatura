@@ -1,5 +1,9 @@
 Nervatura
 =========
+![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nervatura/nervatura/v6)](https://goreportcard.com/report/github.com/nervatura/nervatura/v6)
+[![GoDoc](https://godoc.org/github.com/nervatura/nervatura?status.svg)](https://pkg.go.dev/github.com/nervatura/nervatura/v6)
+[![Release](https://img.shields.io/github/v/release/nervatura/nervatura)](https://github.com/nervatura/nervatura/releases)
 
 Open Source Business Management Framework
 
