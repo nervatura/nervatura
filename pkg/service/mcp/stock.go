@@ -37,9 +37,9 @@ type stockData struct {
 
 type stockParameter struct {
 	PlaceCode   string  `json:"place_code,omitempty" jsonschema:"Place code."`
-	PlaceName   string  `json:"place_name,omitempty" jsonschema:"Place name."`
+	PlaceName   string  `json:"like_place_name,omitempty" jsonschema:"Place name. It is not case sensitive and partial values ​​can be specified."`
 	ProductCode string  `json:"product_code,omitempty" jsonschema:"Product code."`
-	ProductName string  `json:"product_name,omitempty" jsonschema:"Product name."`
+	ProductName string  `json:"like_product_name,omitempty" jsonschema:"Product name. It is not case sensitive and partial values ​​can be specified."`
 	Qty         float64 `json:"qty,omitempty" jsonschema:"Quantity."`
 	Tag         string  `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit       int64   `json:"limit,omitempty" jsonschema:"Limit."`

@@ -83,7 +83,7 @@ type toolUpdate struct {
 
 type toolParameter struct {
 	Code        string `json:"code,omitempty" jsonschema:"Database independent unique key."`
-	Description string `json:"description,omitempty" jsonschema:"Tool name or description."`
+	Description string `json:"like_description,omitempty" jsonschema:"Tool name or description. It is not case sensitive and partial values ​​can be specified."`
 	ProductCode string `json:"product_code,omitempty" jsonschema:"Reference to product.code. Example: PRD1731101982N12"`
 	Tag         string `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit       int64  `json:"limit,omitempty" jsonschema:"Limit."`

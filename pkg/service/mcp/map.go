@@ -74,11 +74,13 @@ type updateMap struct {
 }
 
 type mapParameter struct {
-	Code      string `json:"code,omitempty" jsonschema:"Database independent unique key."`
-	FieldType string `json:"field_type,omitempty" jsonschema:"Field type. Enum values."`
-	Tag       string `json:"tag,omitempty" jsonschema:"Tag."`
-	Limit     int64  `json:"limit,omitempty" jsonschema:"Limit."`
-	Offset    int64  `json:"offset,omitempty" jsonschema:"Offset."`
+	Code        string `json:"code,omitempty" jsonschema:"Database independent unique key."`
+	FieldType   string `json:"field_type,omitempty" jsonschema:"Field type. Enum values."`
+	FieldName   string `json:"like_field_name,omitempty" jsonschema:"Field name. It is not case sensitive and partial values ​​can be specified."`
+	Description string `json:"like_description,omitempty" jsonschema:"Description. It is not case sensitive and partial values ​​can be specified."`
+	Tag         string `json:"tag,omitempty" jsonschema:"Tag."`
+	Limit       int64  `json:"limit,omitempty" jsonschema:"Limit."`
+	Offset      int64  `json:"offset,omitempty" jsonschema:"Offset."`
 }
 
 func MapSchema() (ms *ModelSchema) {

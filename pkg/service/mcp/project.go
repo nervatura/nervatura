@@ -83,7 +83,7 @@ type projectUpdate struct {
 
 type projectParameter struct {
 	Code         string `json:"code,omitempty" jsonschema:"Database independent unique key."`
-	ProjectName  string `json:"project_name,omitempty" jsonschema:"Full name of the project."`
+	ProjectName  string `json:"like_project_name,omitempty" jsonschema:"Full name of the project. It is not case sensitive and partial values ​​can be specified."`
 	CustomerCode string `json:"customer_code,omitempty" jsonschema:"Optional customer reference. Example: CUS1731101982N123"`
 	Tag          string `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit        int64  `json:"limit,omitempty" jsonschema:"Limit."`

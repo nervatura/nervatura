@@ -112,8 +112,8 @@ type eventTool struct {
 type eventParameter struct {
 	Code    string `json:"code,omitempty" jsonschema:"Database independent unique external key. Example: CUS1731101982N123"`
 	Model   string `json:"model" jsonschema:"Model. Enum values. Required."`
-	Subject string `json:"subject,omitempty" jsonschema:"Subject."`
-	Place   string `json:"place,omitempty" jsonschema:"Place."`
+	Subject string `json:"like_subject,omitempty" jsonschema:"Subject. It is not case sensitive and partial values ​​can be specified."`
+	Place   string `json:"like_place,omitempty" jsonschema:"Place. It is not case sensitive and partial values ​​can be specified."`
 	Tag     string `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit   int64  `json:"limit,omitempty" jsonschema:"Limit."`
 	Offset  int64  `json:"offset,omitempty" jsonschema:"Offset."`

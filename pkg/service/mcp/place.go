@@ -98,7 +98,7 @@ type placeUpdate struct {
 type placeParameter struct {
 	Code         string       `json:"code,omitempty" jsonschema:"Database independent unique key."`
 	PlaceType    md.PlaceType `json:"place_type,omitempty" jsonschema:"Place type. Enum values. Example: PLACE_WAREHOUSE"`
-	PlaceName    string       `json:"place_name,omitempty" jsonschema:"Place name. Example: Main warehouse"`
+	PlaceName    string       `json:"like_place_name,omitempty" jsonschema:"Place name. It is not case sensitive and partial values ​​can be specified. Example: Main warehouse"`
 	CurrencyCode string       `json:"currency_code,omitempty" jsonschema:"Optional reference to currency.code (PLACE_BANK, PLACE_CASH). Example: EUR"`
 	Tag          string       `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit        int64        `json:"limit,omitempty" jsonschema:"Limit."`

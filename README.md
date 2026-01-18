@@ -43,7 +43,7 @@ The Nervatura Backend is a simple interface layer that provides multiple, well-d
 
 The Nervatura Service has a modular structure, where most modules are optional. The default service includes all modules, but you [can build a customized service from them](https://nervatura.github.io/nervatura/install/#custom).
 
-The Nervatura Client is a server-side responsive component application. It was created so that all the business data of the framework can be managed immediately after installation through a graphical interface. The client and report interface supports [multilingual interface](https://nervatura.github.io/nervatura/start/#customization).
+The Nervatura Client is a [server-side responsive component](https://github.com/nervatura/component) application. It was created so that all the business data of the framework can be managed immediately after installation through a graphical interface. The client and report interface supports [multilingual interface](https://nervatura.github.io/nervatura/start/#customization).
 
 The Nervatura Framework **can be used independently**, but it is basically designed to provide a stable and secure foundation for self-developed, customized enterprise business systems. The framework **can be easily extended** with additional user interfaces or data management functions in **any programming language** or technology. Using the data from the framework, you can easily create your own web stores, user input interfaces or data interfaces for other systems. The framework is **ready for LLM integration and AI-powered data processing** with a purpose-built, secure and fast built-in [**MCP**](https://nervatura.github.io/nervatura/mcp/) server.
 

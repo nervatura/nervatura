@@ -92,10 +92,10 @@ type addressProject struct {
 type addressParameter struct {
 	Code    string `json:"code,omitempty" jsonschema:"Database independent unique external key. Example: CUS1731101982N123"`
 	Model   string `json:"model" jsonschema:"Model. Enum values. Required."`
-	City    string `json:"city,omitempty" jsonschema:"City."`
-	State   string `json:"state,omitempty" jsonschema:"State."`
+	City    string `json:"like_city,omitempty" jsonschema:"City. It is not case sensitive and partial values ​​can be specified."`
+	State   string `json:"like_state,omitempty" jsonschema:"State. It is not case sensitive and partial values ​​can be specified."`
 	ZipCode string `json:"zip_code,omitempty" jsonschema:"Zip code."`
-	Street  string `json:"street,omitempty" jsonschema:"Street."`
+	Street  string `json:"like_street,omitempty" jsonschema:"Street. It is not case sensitive and partial values ​​can be specified."`
 	Tag     string `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit   int64  `json:"limit,omitempty" jsonschema:"Limit."`
 	Offset  int64  `json:"offset,omitempty" jsonschema:"Offset."`

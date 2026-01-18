@@ -85,7 +85,7 @@ type productUpdate struct {
 type productParameter struct {
 	Code        string `json:"code,omitempty" jsonschema:"Database independent unique key."`
 	ProductType string `json:"product_type,omitempty" jsonschema:"Product type. Enum values."`
-	ProductName string `json:"product_name,omitempty" jsonschema:"Full name of the product."`
+	ProductName string `json:"like_product_name,omitempty" jsonschema:"Full name of the product. It is not case sensitive and partial values ​​can be specified."`
 	Tag         string `json:"tag,omitempty" jsonschema:"Tag."`
 	Limit       int64  `json:"limit,omitempty" jsonschema:"Limit."`
 	Offset      int64  `json:"offset,omitempty" jsonschema:"Offset."`
