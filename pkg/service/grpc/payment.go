@@ -10,7 +10,7 @@ import (
 	api "github.com/nervatura/nervatura/v6/pkg/api"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	pb "github.com/nervatura/nervatura/v6/proto"
+	pb "github.com/nervatura/nervatura/v6/protos/go"
 )
 
 func (s *GService) PaymentUpdate(ctx context.Context, req *pb.Payment) (pbPayment *pb.Payment, err error) {

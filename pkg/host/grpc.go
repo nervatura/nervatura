@@ -16,7 +16,7 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 	srv "github.com/nervatura/nervatura/v6/pkg/service/grpc"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
-	pb "github.com/nervatura/nervatura/v6/proto"
+	pb "github.com/nervatura/nervatura/v6/protos/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"

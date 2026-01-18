@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.14.0
-// source: pkg/service/grpc/proto/store.proto
+// source: protos/store.proto
 
 package proto
 
@@ -2645,5 +2645,5 @@ var API_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/service/grpc/proto/store.proto",
+	Metadata: "protos/store.proto",
 }
