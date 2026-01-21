@@ -1,0 +1,17 @@
+{
+    "name": "nervatura/example",
+    "description": "Nervatura PHP examples",
+    "version": "1.0.0",
+    "type": "project",
+    "require": {
+        "vlucas/phpdotenv": "^4.3",
+        "symfony/http-client": "^8.0"
+    },
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Csaba Kappel",
+            "email": "csaba.kappel@nervatura.com"
+        }
+    ]
+}

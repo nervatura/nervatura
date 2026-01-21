@@ -56,16 +56,16 @@
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
-              <a href="#go" class="text-slate-600 hover:text-slate-800">
-                Go
+              <a href="#php" class="text-slate-600 hover:text-slate-800">
+                PHP
               </a>
             </h2>
           </li>
 
           <li class="mb-2">
             <h2 class="font-semibold tracking-tight text-slate-900">
-              <a href="#php" class="text-slate-600 hover:text-slate-800">
-                PHP
+              <a href="#go" class="text-slate-600 hover:text-slate-800">
+                Go
               </a>
             </h2>
           </li>
@@ -210,12 +210,46 @@
           </code>
         </div>
 
-        <h3 id="go" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
-          Go
-        </h3>
-
         <h3 id="php" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           PHP
+        </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          Download the <a href="https://download-directory.github.io/?url=https://github.com/nervatura/nervatura/tree/master/example/php&filename=nervatura_php_example" target="_blank" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">PHP examples</a> and unzip it. Run the following command to install the dependencies:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            composer install
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura backend - Docker (nervatura-examples/php directory):
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+          </code>
+        </div>
+
+        <p class="mt-4 text-base text-slate-600">
+          Linux and Windows: follow the instructions in the <a href="#python" class="text-blue-600 dark:text-blue-500 hover:underline">python example</a>.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          Start PHP examples (nervatura_php_example directory):
+        </p>
+
+        <div class="mt-2 relative overflow-x-auto">
+          <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            php -f ./example.php
+          </code>
+        </div>
+
+        <h3 id="go" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
+          Go
         </h3>
 
         <h3 id="dart" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
