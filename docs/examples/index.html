@@ -99,6 +99,11 @@
         </h3>
 
         <p class="mb-2 text-base text-slate-600">
+          API examples: <a href="../cli/#cli" class="text-blue-600 dark:text-blue-500 hover:underline">CLI</a>, <a href="../cli/#cgo" class="text-blue-600 dark:text-blue-500 hover:underline">CGO</a>,
+           <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a>, <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP</a>
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
           Download the <a href="https://download-directory.github.io/?url=https://github.com/nervatura/nervatura/tree/master/example/python&filename=nervatura_python_example" target="_blank" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Python examples</a> and unzip it. Run the following command to install the dependencies (<a href="https://docs.astral.sh/uv/" target="_blank" class="text-blue-600 dark:text-blue-500 hover:underline">uv</a> is required):
         </p>
 
@@ -125,7 +130,7 @@
               </code>
             </div>
             <p class="mb-2 text-base text-slate-600">
-              The <a href="../cli/#cli" class="text-blue-600 dark:text-blue-500 hover:underline">CLI</a> and <a href="../cli/#cgo" class="text-blue-600 dark:text-blue-500 hover:underline">CGO</a> is ready to use. To use the <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a> and <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP OPEN API</a>, start Nervatura service with the .env.example settings (nervatura_python_example directory):
+              The <a href="../cli/#cli" class="text-blue-600 dark:text-blue-500 hover:underline">CLI</a> and <a href="../cli/#cgo" class="text-blue-600 dark:text-blue-500 hover:underline">CGO</a> is ready to use. To use the <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a> and <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP</a>, start Nervatura service with the .env.example settings (nervatura_python_example directory):
             </p>
             <div class="relative overflow-x-auto">
               <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
@@ -191,6 +196,10 @@
         </h3>
 
         <p class="mb-2 text-base text-slate-600">
+          API examples: <a href="../cli/" class="text-blue-600 dark:text-blue-500 hover:underline">CLI</a>, <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a>, <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP</a>
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
           Download the <a href="https://download-directory.github.io/?url=https://github.com/nervatura/nervatura/tree/master/example/node&filename=nervatura_nodejs_example" target="_blank" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Node.js examples</a> and unzip it. Run the following command to install the dependencies:
         </p>
 
@@ -213,6 +222,10 @@
         <h3 id="php" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           PHP
         </h3>
+        
+        <p class="mb-2 text-base text-slate-600">
+          API examples: <a href="../cli/" class="text-blue-600 dark:text-blue-500 hover:underline">CLI</a>, <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP</a>
+        </p>
 
         <p class="mb-2 text-base text-slate-600">
           Download the <a href="https://download-directory.github.io/?url=https://github.com/nervatura/nervatura/tree/master/example/php&filename=nervatura_php_example" target="_blank" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">PHP examples</a> and unzip it. Run the following command to install the dependencies:
@@ -235,7 +248,7 @@
         </div>
 
         <p class="mt-4 text-base text-slate-600">
-          Linux and Windows: follow the instructions in the <a href="#python" class="text-blue-600 dark:text-blue-500 hover:underline">python example</a>.
+          Linux or Windows backend usage: follow the instructions in the <a href="#python" class="text-blue-600 dark:text-blue-500 hover:underline">python example</a>.
         </p>
 
         <p class="mb-2 text-base text-slate-600">
@@ -251,6 +264,44 @@
         <h3 id="go" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           Go
         </h3>
+
+        <p class="mb-2 text-base text-slate-600">
+          API examples: <a href="../cli/" class="text-blue-600 dark:text-blue-500 hover:underline">CLI</a>, <a href="../grpc/" class="text-blue-600 dark:text-blue-500 hover:underline">gRPC</a>, <a href="../open/" class="text-blue-600 dark:text-blue-500 hover:underline">HTTP</a>
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          Download the <a href="https://download-directory.github.io/?url=https://github.com/nervatura/nervatura/tree/master/example/go&filename=nervatura_go_example" target="_blank" class="text-blue-600 font-bold dark:text-blue-500 hover:underline">Go examples</a> and unzip it. Run the following command to install the dependencies:
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="mb-3 w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            go mod vendor
+          </code>
+        </div>
+
+        <p class="mb-2 text-base text-slate-600">
+          Nervatura backend - Docker (nervatura-examples/php directory):
+        </p>
+
+        <div class="relative overflow-x-auto">
+          <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            docker run -i -t --rm --name nervatura --env-file .env.example -p 5000:5000 -p 9200:9200 -v $(pwd)/data:/data nervatura/nervatura:latest
+          </code>
+        </div>
+
+        <p class="mt-4 text-base text-slate-600">
+          Linux or Windows backend usage: follow the instructions in the <a href="#python" class="text-blue-600 dark:text-blue-500 hover:underline">python example</a>.
+        </p>
+
+        <p class="mb-2 text-base text-slate-600">
+          Start Go examples (nervatura_go_example directory):
+        </p>
+
+        <div class="mt-2 relative overflow-x-auto">
+          <code class="w-auto text-xs text-wrap inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg px-4 py-2">
+            go run ./main.go
+          </code>
+        </div>
 
         <h3 id="dart" class="mt-6 mb-3 text-xl font-bold tracking-tight text-slate-900">
           Dart

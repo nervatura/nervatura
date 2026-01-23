@@ -1,0 +1,30 @@
+{
+  "es": {
+    "es": "Español",
+    "mnu_search": "Buscar",
+    "mnu_bookmark": "Marcadores",
+    "mnu_setting": "Configuración",
+    "mnu_help": "Ayuda",
+    "mnu_logout": "Salir",
+    "login_username": "Usuario",
+    "login_password": "Contraseña",
+    "login_database": "Base de datos",
+    "login_lang": "Idioma",
+    "login_login": "Iniciar sesión",
+    "login_theme": "Tema"
+  },
+  "de": {
+    "de": "Deutsch",
+    "mnu_search": "Suchen",
+    "mnu_bookmark": "Bookmarks",
+    "mnu_setting": "Einstellungen",
+    "mnu_help": "Hilfe",
+    "mnu_logout": "Abmelden",
+    "login_username": "Benutzername",
+    "login_password": "Passwort",
+    "login_database": "Datenbank",
+    "login_lang": "Sprache",
+    "login_login": "Anmelden",
+    "login_theme": "Thema"
+  }
+}
