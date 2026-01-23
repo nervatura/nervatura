@@ -6,7 +6,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/jsonschema-go v0.4.2
 	github.com/lib/pq v1.10.9
-	github.com/nervatura/component v1.7.48
+	github.com/nervatura/component v1.7.50
 	golang.org/x/crypto v0.47.0
 	golang.org/x/time v0.14.0
 	google.golang.org/grpc v1.78.0
@@ -25,13 +25,13 @@ require (
 	github.com/phpdave11/gofpdi v1.0.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/signintech/gopdf v0.34.0 // indirect
+	github.com/signintech/gopdf v0.35.0 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	golang.org/x/exp v0.0.0-20260112195511-716be5621a96 // indirect
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
 	golang.org/x/text v0.33.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260114163908-3f89685c29c3 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260122232226-8e98ce8d340d // indirect
 	modernc.org/libc v1.67.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
@@ -47,5 +47,5 @@ require (
 	github.com/nervatura/report v1.5.1
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/sync v0.19.0
-	modernc.org/sqlite v1.44.1
+	modernc.org/sqlite v1.44.3
 )
