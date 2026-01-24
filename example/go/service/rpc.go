@@ -5,9 +5,9 @@ import (
 	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
-	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
+	//pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
 
-	// pb "github.com/nervatura/nervatura/v6/protos/go"
+	pb "github.com/nervatura/nervatura/v6/protos/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"

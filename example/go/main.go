@@ -8,8 +8,9 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/example/go/service"
-	pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
-	// pb "github.com/nervatura/nervatura/v6/protos/go"
+
+	//pb "github.com/nervatura/nervatura/v6/pkg/service/grpc/proto"
+	pb "github.com/nervatura/nervatura/v6/protos/go"
 )
 
 // loadEnvFile reads a .env file and returns a map of key/value pairs

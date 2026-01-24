@@ -7,10 +7,6 @@ Nervatura
 
 Open Source Business Management Framework
 
-The Nervatura **v6 is currently beta** version. Available for download from the [GitHub releases](https://github.com/nervatura/nervatura/releases) page. Docker image is also available in beta version:
-
-    docker pull nervatura/nervatura:beta
-
 ## Features
 
 Nervatura is a business management framework based on **open-data principle**. It can handle any type of business related information, starting from customer details, up to shipping, stock or payment information.
@@ -22,9 +18,10 @@ The main aspects of its design were:
 * effective, easily expandable and secure data storage
 * support of several database types
 * well documented, easy data management
-* ready for LLM integration and AI-assisted data processing
 
 The framework is based on Nervatura Object [**MODEL**](https://nervatura.github.io/nervatura/model) specification. It is a general **open-data model**, which can store all information generated in the operation of a usual corporation.
+
+The Nervatura is **ready for LLM integration and AI-powered data processing** with a purpose-built, secure and fast built-in [**MCP**](https://nervatura.github.io/nervatura/mcp/) server. [**See how we transformed Nervatura**](https://www.mcp-agency.com/nervatura-case-study) into a ChatGPT-like experience that exposes full service functionality.
 
 The Nervatura service is small and fast. A single ~9 MB file contains all the necessary dependencies.
 The framework includes:
@@ -45,11 +42,11 @@ The Nervatura Service has a modular structure, where most modules are optional. 
 
 The Nervatura Client is a [server-side responsive component](https://github.com/nervatura/component) application. It was created so that all the business data of the framework can be managed immediately after installation through a graphical interface. The client and report interface supports [multilingual interface](https://nervatura.github.io/nervatura/start/#customization).
 
-The Nervatura Framework **can be used independently**, but it is basically designed to provide a stable and secure foundation for self-developed, customized enterprise business systems. The framework **can be easily extended** with additional user interfaces or data management functions in **any programming language** or technology. Using the data from the framework, you can easily create your own web stores, user input interfaces or data interfaces for other systems. The framework is **ready for LLM integration and AI-powered data processing** with a purpose-built, secure and fast built-in [**MCP**](https://nervatura.github.io/nervatura/mcp/) server.
+The Nervatura Framework **can be used independently**, but it is basically designed to provide a stable and secure foundation for self-developed, customized enterprise business systems. The framework **can be easily extended** with additional user interfaces or data management functions in **any programming language** or technology. Using the data from the framework, you can easily create your own web stores, user input interfaces or data interfaces for other systems.
 
 Nervatura Client supports the business processes that most companies may need. During your own developments, you can only focus on those that really require unique solutions, and you can use the technology that best suits the purpose. This type of development means greater **technological independence and security**, since your self-developed applications are only connected to other systems through well-documented interfaces, so unnecessary external technological dependencies cannot develop.
 
-You can find more information about the use of different programming languages and development environments in the [**Examples**](https://nervatura.github.io/nervatura/examples/) section.
+You can find more information about the use of different programming languages and development environments in the [**Examples**](https://nervatura.github.io/nervatura/examples/) section (Python, Node.js, Go, PHP).
 
 [**Installation**](https://nervatura.github.io/nervatura/install/) and [**Quick Start**](https://nervatura.github.io/nervatura/start/)
 
