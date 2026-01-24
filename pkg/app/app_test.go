@@ -14,6 +14,7 @@ import (
 	"strings"
 	"testing"
 
+	"fyne.io/systray"
 	cu "github.com/nervatura/component/pkg/util"
 	ht "github.com/nervatura/nervatura/v6/pkg/host"
 )
@@ -844,7 +845,7 @@ func TestApp_backgroundServer(t *testing.T) {
 			fields: fields{
 				config: cu.IM{
 					"tokenKeys":       []cu.SM{},
-					"NT_HTTP_ENABLED": "false",
+					"NT_HTTP_ENABLED": "true",
 					"NT_GRPC_ENABLED": "true",
 					"NT_MCP_ENABLED":  "false",
 					"NT_HTTP_PORT":    5000,
@@ -863,10 +864,16 @@ func TestApp_backgroundServer(t *testing.T) {
 					},
 				},
 				traySrv: &systemTray{
-					app:          &App{},
+					app: &App{
+						config: cu.IM{},
+						appLog: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+					},
 					interrupt:    nil,
 					ctx:          context.Background(),
-					httpDisabled: true,
+					httpDisabled: false,
+					mnuConfig:    systray.AddMenuItem("Configuration values", "Configuration values"),
+					mnuAdmin:     systray.AddMenuItem("Open Admin GUI", "Open Admin GUI"),
+					mnuExit:      systray.AddMenuItem("Shut down and quit", "Shut down and quit"),
 				},
 				appLog:   slog.New(slog.NewTextHandler(os.Stdout, nil)),
 				showTray: true,
