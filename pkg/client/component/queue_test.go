@@ -34,7 +34,7 @@ func TestQueueEditor_CustomTemplateCell(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &QueueEditor{}
 			got := s.CustomTemplateCell(tt.args.sessionID, tt.args.label, tt.args.inline)
-			got(cu.IM{"code": "123"}, ct.TableColumn{}, "123", 0)
+			got(cu.IM{"code": "123"}, ct.TableColumn{}, "123", 0, nil)
 		})
 	}
 }

@@ -130,8 +130,8 @@ func (e *QueueEditor) Row(view string, labels cu.SM, data cu.IM) (rows []ct.Row)
 	}
 }
 
-func (s *QueueEditor) CustomTemplateCell(sessionID string, label, inline string) func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML {
-	return func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML {
+func (s *QueueEditor) CustomTemplateCell(sessionID string, label, inline string) func(row cu.IM, col ct.TableColumn, value any, rowIndex int64, parent *ct.Table) template.HTML {
+	return func(row cu.IM, col ct.TableColumn, value any, rowIndex int64, parent *ct.Table) template.HTML {
 		lnk := ct.Link{
 			LinkStyle: ct.LinkStyleDefault,
 			Label:     label,

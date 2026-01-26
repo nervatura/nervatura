@@ -31,8 +31,7 @@ The framework includes:
 - HTTP/2-based [**gRPC API**](https://nervatura.github.io/nervatura/grpc/) for server-side communication
 - [**MCP**](https://nervatura.github.io/nervatura/mcp/) (Model Context Protocol) for LLM integration
 - built-in database drivers for postgres, mysql, mssql, sqlite databases
-- a basic report generation library for creating simple PDF documents (eg. order, invoice, etc.) 
-or CSV data files
+- a basic report generation library for creating simple PDF documents (eg. order, invoice, etc.) or CSV data files
 - sample report templates and [**Report Editor**](https://nervatura.github.io/nervatura/editor/) extension
 - [**Nervatura Client**](https://nervatura.github.io/nervatura/client/) responsive graphical user interface
 

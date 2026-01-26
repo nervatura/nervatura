@@ -1795,7 +1795,7 @@ func TestSearchConfig_CustomTemplateCell(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &component.SearchConfig{}
 			got := s.CustomTemplateCell(tt.args.sessionID)
-			got(cu.IM{"code": "123"}, ct.TableColumn{}, "123", 0)
+			got(cu.IM{"code": "123"}, ct.TableColumn{}, "123", 0, nil)
 		})
 	}
 }

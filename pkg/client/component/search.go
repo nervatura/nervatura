@@ -1377,8 +1377,8 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 	return viewMap[view]
 }
 
-func (s *SearchConfig) CustomTemplateCell(sessionID string) func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML {
-	return func(row cu.IM, col ct.TableColumn, value any, rowIndex int64) template.HTML {
+func (s *SearchConfig) CustomTemplateCell(sessionID string) func(row cu.IM, col ct.TableColumn, value any, rowIndex int64, parent *ct.Table) template.HTML {
+	return func(row cu.IM, col ct.TableColumn, value any, rowIndex int64, parent *ct.Table) template.HTML {
 		lnk := ct.Link{
 			LinkStyle: ct.LinkStyleDefault,
 			Label:     cu.ToString(row["code"], ""),
