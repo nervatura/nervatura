@@ -46,6 +46,7 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"allow_headers":   "Accept,Authorization,Content-Type,X-CSRF-Token,X-Api-Key,x-payload-digest,Stripe-Signature,Mcp-Session-Id,Mcp-Protocol-Version",
 		"expose_headers":  "",
 		"trusted_origins": "http://localhost:5000,http://localhost:5500",
+		"max_age":         "0",
 	},
 	"http": {
 		"http_enabled":  "true",
@@ -97,7 +98,6 @@ var DefaultConfig map[string]map[string]string = map[string]map[string]string{
 		"conn_max_lifetime": "15",
 	},
 	"connection": {
-		"auth_callback": "http://%s/api/auth/callback",
 		"tls_cert_file": "",
 		"tls_key_file":  "",
 		"default_alias": "demo",
@@ -213,7 +213,7 @@ const AuthPage = `<!doctype html>
 <body class="h-full">
   <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <img src="/public/images/logo.svg" alt="Nervatura" class="mx-auto h-24 w-auto" />
+      <img src="/public/images/logo.png" alt="Nervatura" class="mx-auto h-24 w-auto" />
       <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">{{ .subtitle }}</h2>
     </div>
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

@@ -275,13 +275,11 @@ func (app *App) setConfig(isSnap bool) {
 	}
 	app.config["NT_TOKEN_EXP"] = cu.ToFloat(app.getEnv("NT_TOKEN_EXP"), cu.ToFloat(st.DefaultConfig["token"]["exp"], 6))
 
-	app.config["NT_CORS_ENABLED"] = cu.ToBoolean(app.getEnv("NT_CORS_ENABLED"), true)
 	app.config["NT_CORS_ALLOW_ORIGINS"] = strings.Split(cu.ToString(app.getEnv("NT_CORS_ALLOW_ORIGINS"), st.DefaultConfig["cors"]["allow_origins"]), ",")
 	app.config["NT_CORS_ALLOW_METHODS"] = strings.Split(cu.ToString(app.getEnv("NT_CORS_ALLOW_METHODS"), st.DefaultConfig["cors"]["allow_methods"]), ",")
 	app.config["NT_CORS_ALLOW_HEADERS"] = strings.Split(cu.ToString(app.getEnv("NT_CORS_ALLOW_HEADERS"), st.DefaultConfig["cors"]["allow_headers"]), ",")
 	app.config["NT_CORS_EXPOSE_HEADERS"] = strings.Split(cu.ToString(app.getEnv("NT_CORS_EXPOSE_HEADERS"), st.DefaultConfig["cors"]["expose_headers"]), ",")
-	app.config["NT_CORS_ALLOW_CREDENTIALS"] = cu.ToBoolean(app.getEnv("NT_CORS_ALLOW_CREDENTIALS"), false)
-	app.config["NT_CORS_MAX_AGE"] = cu.ToInteger(app.getEnv("NT_CORS_MAX_AGE"), 0)
+	app.config["NT_CORS_MAX_AGE"] = cu.ToInteger(app.getEnv("NT_CORS_MAX_AGE"), cu.ToInteger(st.DefaultConfig["cors"]["max_age"], 0))
 
 	app.config["NT_CSRF_TRUSTED_ORIGINS"] = strings.Split(cu.ToString(app.getEnv("NT_CSRF_TRUSTED_ORIGINS"), st.DefaultConfig["cors"]["trusted_origins"]), ",")
 
