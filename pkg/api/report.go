@@ -146,9 +146,11 @@ func (ds *DataStore) getReportData(reportTemplate, filters cu.IM, sources []cu.S
 	// Determine where clause once
 	isReport := cu.ToString(reportMeta["report_type"], "") == "REPORT"
 	whereStr := cu.SM{}
-	SetPDFWhere(filters, sources)
+	params := make(map[string][]any)
 	if isReport {
-		whereStr = SetReportWhere(reportTemplate, filters, sources)
+		whereStr = SetReportWhere(reportTemplate, filters, sources, params)
+	} else {
+		SetPDFWhere(filters, sources, params)
 	}
 
 	trows := 0
@@ -160,10 +162,10 @@ func (ds *DataStore) getReportData(reportTemplate, filters cu.IM, sources []cu.S
 		}
 		if _, found := whereStr["nods"]; found {
 			dsc["sqlstr"] = strings.ReplaceAll(dsc["sqlstr"], whereKey, whereStr["nods"])
+			params[dsc["dataset"]] = append(params[dsc["dataset"]], params["nods"]...)
 		}
 		dsc["sqlstr"] = strings.ReplaceAll(dsc["sqlstr"], whereKey, "")
-		params := make([]interface{}, 0)
-		datarows[dsc["dataset"]], err = ds.Db.QuerySQL(dsc["sqlstr"], params, nil)
+		datarows[dsc["dataset"]], err = ds.Db.QuerySQL(dsc["sqlstr"], params[dsc["dataset"]], nil)
 		if err != nil {
 			return datarows, err
 		}

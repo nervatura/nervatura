@@ -3,7 +3,6 @@ package mcp
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
 	"slices"
 	"strings"
@@ -116,12 +115,18 @@ func ItemSchema() (ms *ModelSchema) {
 		Name:   "item",
 		Prefix: "ITM",
 		CustomParameters: func(params cu.IM) cu.IM {
-			filter := "select code from trans where deleted = false"
+			query := md.Query{
+				Fields: []string{"code"},
+				From:   "trans",
+				Filters: []md.Filter{
+					{Field: "deleted", Comp: "==", Value: false},
+				},
+			}
 			if _, found := params["trans_type"]; found {
-				filter += fmt.Sprintf(" and trans_type = '%s'", cu.ToString(params["trans_type"], ""))
+				query.Filters = append(query.Filters, md.Filter{Field: "trans_type", Comp: "==", Value: cu.ToString(params["trans_type"], "")})
 				delete(params, "trans_type")
 			}
-			params["filter"] = "trans_code in (" + filter + ")"
+			params["in_trans_code"] = query
 			return params
 		},
 		CreateInputSchema: func(scope string) (schema *jsonschema.Schema) {
@@ -401,7 +406,13 @@ func itemValidate(ctx context.Context, input cu.IM) (data cu.IM, err error) {
 	if rows, err = ds.StoreDataQuery(md.Query{
 		Fields: []string{"*"},
 		From:   `trans_view`,
-		Filter: fmt.Sprintf("code in(select trans_code from item where code = '%s')", input["code"]),
+		Filters: []md.Filter{
+			{Field: "code", Comp: "in", Value: md.Query{
+				Fields:  []string{"trans_code"},
+				From:    "item",
+				Filters: []md.Filter{{Field: "code", Comp: "==", Value: input["code"]}},
+			}},
+		},
 	}, true); err != nil {
 		return input, err
 	}

@@ -283,17 +283,16 @@ func (app *App) setConfig(isSnap bool) {
 
 	app.config["NT_CSRF_TRUSTED_ORIGINS"] = strings.Split(cu.ToString(app.getEnv("NT_CSRF_TRUSTED_ORIGINS"), st.DefaultConfig["cors"]["trusted_origins"]), ",")
 
+	app.config["NT_TASK_SEC_KEY"] = cu.ToString(app.getEnv("NT_TASK_SEC_KEY"), app.taskSecKey)
+
 	app.config["NT_SMTP_HOST"] = cu.ToString(app.getEnv("NT_SMTP_HOST"), cu.ToString(st.DefaultConfig["smtp"]["host"], ""))
 	app.config["NT_SMTP_PORT"] = cu.ToInteger(app.getEnv("NT_SMTP_PORT"), cu.ToInteger(st.DefaultConfig["smtp"]["port"], 465))
 	app.config["NT_SMTP_TLS_MIN_VERSION"] = cu.ToInteger(app.getEnv("NT_SMTP_TLS_MIN_VERSION"), cu.ToInteger(st.DefaultConfig["smtp"]["tls_min_version"], 0))
 	app.config["NT_SMTP_USER"] = cu.ToString(app.getEnv("NT_SMTP_USER"), cu.ToString(st.DefaultConfig["smtp"]["user"], ""))
 	app.config["NT_SMTP_PASSWORD"] = cu.ToString(app.getEnv("NT_SMTP_PASSWORD"), "")
 
-	info := []string{"NT_API_KEY"}
-	for i := 0; i < len(info); i++ {
-		if app.getEnv(info[i]) == "" && len(args) == 0 {
-			log.Println(info[i] + ": " + app.config[info[i]].(string))
-		}
+	if app.getEnv("NT_API_KEY") == "" && len(args) == 0 {
+		log.Println("NT_API_KEY: auto-generated (set NT_API_KEY env to override)")
 	}
 }
 
@@ -481,16 +480,16 @@ func (app *App) backgroundServer() error {
 
 func (app *App) setupHTTPServer(g *errgroup.Group, interrupt chan os.Signal, ctx context.Context) (bool, string) {
 	httpDisabled := false
-	configURL := "http://localhost:" + cu.ToString(app.config["NT_HTTP_PORT"], "") + "/admin/task/config/" + app.taskSecKey
+	configURL := "http://localhost:" + cu.ToString(app.config["NT_HTTP_PORT"], "") + "/config/" + cu.ToString(app.config["NT_TASK_SEC_KEY"], app.taskSecKey)
 
 	if _, found := app.hosts["http"]; found && cu.ToBoolean(app.config["NT_HTTP_ENABLED"], false) {
 		g.Go(func() error {
 			return app.startServer("http", interrupt, ctx)
 		})
+		app.setInfoLog("Application settings available at", "url", configURL)
 	} else {
 		httpDisabled = true
 		configURL = "http disabled"
-		app.setInfoLog(configURL)
 	}
 	return httpDisabled, configURL
 }

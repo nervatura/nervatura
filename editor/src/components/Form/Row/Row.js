@@ -73,7 +73,26 @@ export class Row extends LitElement {
         }
       }
     }
-    return imgValue
+    return this.safeImageSrc(imgValue)
+  }
+
+  /**
+   * Restricts img src to safe schemes to prevent XSS (e.g. data:image/svg+xml can execute script).
+   * Allows: blob:, https:, http:, and data:image/ for non-SVG types (png, jpeg, gif, webp, ico, bmp).
+   */
+  safeImageSrc(value) {
+    if (!value || typeof value !== "string") return ""
+    const v = value.trim()
+    if (v === "") return ""
+    const lower = v.toLowerCase()
+    if (lower.startsWith("blob:")) return v
+    if (lower.startsWith("https:") || lower.startsWith("http:")) return v
+    if (lower.startsWith("data:image/")) {
+      const after = lower.slice(11)
+      const safeTypes = ["png", "jpeg", "jpg", "gif", "webp", "ico", "bmp"]
+      if (safeTypes.some((t) => after.startsWith(t + ";") || after.startsWith(t + ","))) return v
+    }
+    return ""
   }
 
   flipItem(){

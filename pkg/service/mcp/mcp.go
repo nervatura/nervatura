@@ -48,7 +48,6 @@ func (ms *McpServer) NewMCPServer(scope string) (server *mcp.Server) {
 	}, opts)
 
 	for key, td := range toolDataMap {
-		fmt.Println("key", key, "scope", scope)
 		scopes := ut.ToStringArray(td.Meta["scopes"])
 		if slices.Contains(scopes, scope) || len(scopes) == 0 || scope == "all" {
 			addMcpTool(key, server, scope)

@@ -4,11 +4,15 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"unicode"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	cu "github.com/nervatura/component/pkg/util"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
+
+// maxPromptArgLen limits argument length to mitigate prompt injection and DoS.
+const maxPromptArgLen = 4096
 
 type PromptData struct {
 	Name              string                `json:"name,omitempty" jsonschema:"Prompt name."`
@@ -20,11 +24,33 @@ type PromptData struct {
 	PromptMessages    []*mcp.PromptMessage  `json:"prompt_messages,omitempty" jsonschema:"Prompt messages."`
 }
 
+// sanitizePromptArg restricts argument values to mitigate prompt injection.
+// Applies length limit, replaces newlines with spaces, and strips control characters.
+func sanitizePromptArg(value string) string {
+	if len(value) > maxPromptArgLen {
+		value = value[:maxPromptArgLen]
+	}
+	var b strings.Builder
+	b.Grow(len(value))
+	for _, r := range value {
+		switch {
+		case r == '\n' || r == '\r':
+			b.WriteRune(' ')
+		case unicode.IsControl(r):
+			// skip other control chars
+			continue
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
 func promptHandler(ctx context.Context, req *mcp.GetPromptRequest) (result *mcp.GetPromptResult, err error) {
 	config := ctx.Value(md.ConfigCtxKey).(cu.IM)
 	texReplace := func(text string) string {
 		for key, value := range req.Params.Arguments {
-			text = strings.ReplaceAll(text, "{{"+key+"}}", value)
+			text = strings.ReplaceAll(text, "{{"+key+"}}", sanitizePromptArg(value))
 		}
 		return text
 	}

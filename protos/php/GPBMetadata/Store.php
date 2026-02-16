@@ -16,7 +16,7 @@ class Store
         }
         $pool->internalAddGeneratedFile(
             '
-ð“
+‘”
 store.proto	nervatura"
 RequestEmpty"2
 ResponseStatus
@@ -62,10 +62,10 @@ RequestGet
 args (2$.nervatura.RequestFunction.ArgsEntry+
 	ArgsEntry
 key (	
-value (	:8"q
+value (	:8"‘
 RequestView!
-name (2.nervatura.ViewName
-filter (	
+name (2.nervatura.ViewName.
+filters (2.nervatura.RequestQueryFilter
 order_by (	
 limit (
 offset (".

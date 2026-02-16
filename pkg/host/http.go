@@ -74,7 +74,7 @@ func (s *httpServer) StartServer(config cu.IM, appLogOut, httpLogOut io.Writer, 
 	s.loadLabels()
 	s.setRoutes()
 
-	rootHandler := handlers.CompressHandler(handlers.RecoveryHandler()(handlers.CombinedLoggingHandler(httpLogOut, CORS(s.mux))))
+	rootHandler := handlers.CompressHandler(handlers.RecoveryHandler()(s.securityHeaders(handlers.CombinedLoggingHandler(httpLogOut, CORS(s.mux)))))
 	s.server = &http.Server{
 		Handler:      rootHandler,
 		Addr:         fmt.Sprintf(":%d", cu.ToInteger(s.config["NT_HTTP_PORT"], 0)),
@@ -214,6 +214,16 @@ func (s *httpServer) setRoutes() {
 	s.mux.Handle("/docs/", http.StripPrefix("/docs/", http.FileServer(http.FS(docs.Docs))))
 }
 
+func (s *httpServer) securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		w.Header().Set("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (s *httpServer) homeRoute(w http.ResponseWriter, r *http.Request) {
 	home := cu.ToString(s.config["NT_HTTP_HOME"], "/")
 	if home != "/" {
@@ -221,6 +231,15 @@ func (s *httpServer) homeRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, st.ClientPath+"/auth/", http.StatusSeeOther)
+}
+
+// sensitiveConfigKeys - keys whose values must not be exposed via /config endpoint
+var sensitiveConfigKeys = map[string]bool{
+	"NT_API_KEY": true, "NT_AUTH_CLIENT_SECRET": true, "NT_SMTP_PASSWORD": true,
+	"NT_TOKEN_PRIVATE_KEY": true, "NT_TOKEN_PUBLIC_KEY": true,
+	"NT_TOKEN_PRIVATE_KID": true, "NT_TOKEN_PUBLIC_KID": true,
+	"NT_TASK_SEC_KEY": true, "NT_TLS_KEY_FILE": true, "NT_TLS_CERT_FILE": true,
+	"tokenKeys": true,
 }
 
 func (s *httpServer) envList() []cu.IM {
@@ -233,14 +252,24 @@ func (s *httpServer) envList() []cu.IM {
 	}
 	for _, env := range os.Environ() {
 		if strings.HasPrefix(env, "NT_ALIAS_") {
-			keys = append(keys, strings.Split(env, "=")[0])
-			configs[strings.Split(env, "=")[0]] = strings.Split(env, "=")[1]
+			parts := strings.SplitN(env, "=", 2)
+			if len(parts) == 2 {
+				keys = append(keys, parts[0])
+				configs[parts[0]] = parts[1]
+			}
 		}
 	}
 
 	sort.Strings(keys)
 	for _, key := range keys {
-		envResult = append(envResult, cu.IM{"envkey": strings.ToUpper(key), "envvalue": cu.ToString(configs[key], "")})
+		upperKey := strings.ToUpper(key)
+		val := cu.ToString(configs[key], "")
+		if sensitiveConfigKeys[upperKey] || strings.HasPrefix(upperKey, "NT_ALIAS_") {
+			if val != "" {
+				val = "***"
+			}
+		}
+		envResult = append(envResult, cu.IM{"envkey": upperKey, "envvalue": val})
 	}
 	return envResult
 }

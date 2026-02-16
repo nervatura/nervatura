@@ -4,12 +4,19 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/csv"
+	"regexp"
 	"strings"
 
 	cu "github.com/nervatura/component/pkg/util"
 )
 
-func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM) cu.SM {
+// sqlInjectionPattern matches common SQL injection attempts for filter value sanitization.
+// Uses RE2-compatible escapes: \x00 (null), \x08 (backspace).
+var sqlInjectionPattern = regexp.MustCompile(
+	`(\s*([\x00\x08\'\"\n\r\t\%\_\\]*\s*(((select\s*.+\s*from\s*.+)|(insert\s*.+\s*into\s*.+)|(update\s*.+\s*set\s*.+)|(delete\s*.+\s*from\s*.+)|(drop\s*.+)|(truncate\s*.+)|(alter\s*.+)|(exec\s*.+)|(\s*(all|any|not|and|between|in|like|or|some|contains|containsall|containskey)\s*.+[=><!~]+.+)|(let\s+.+[\=]\s*.*)|(begin\s*.*\s*end)|(\s*[\/\*]+\s*.*\s*[\*\/]+)|(\s*(\-\-)\s*.*\s+)|(\s*(contains|containsall|containskey)\s+.*)))(\s*[\;]\s*)*)+)`,
+)
+
+func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM, params map[string][]any) cu.SM {
 	// Pre-allocate maps with initial capacity
 	whereStr := make(cu.SM, len(filters))
 	fields := cu.ToIM(reportTemplate["fields"], cu.IM{})
@@ -17,13 +24,18 @@ func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM) cu.SM {
 	setWhere := func(wkey, fieldname, rel string, filterValue interface{}) {
 		field := cu.ToIM(fields[fieldname], cu.IM{})
 		sqlStr := cu.ToString(field["sqlstr"], "")
-		filterStr := cu.ToString(filterValue, "")
 
 		var fstr string
+		params[wkey] = make([]any, 0)
 		if sqlStr == "" {
-			fstr = fieldname + rel + filterStr
+			fstr = fieldname + rel + "?"
+			params[wkey] = append(params[wkey], filterValue)
 		} else {
-			fstr = strings.ReplaceAll(sqlStr, "@"+fieldname, filterStr)
+			count := strings.Count(sqlStr, "@"+fieldname)
+			for i := 0; i < count; i++ {
+				params[wkey] = append(params[wkey], filterValue)
+			}
+			fstr = strings.ReplaceAll(sqlStr, "@"+fieldname, "?")
 		}
 
 		if existing, found := whereStr[wkey]; found {
@@ -33,19 +45,10 @@ func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM) cu.SM {
 		}
 	}
 
-	for fieldname, filterValue := range filters {
+	for fieldname := range filters {
 		if field, found := fields[fieldname]; found {
 			fieldMap := cu.ToIM(field, cu.IM{})
 			fieldtype := cu.ToString(fieldMap["fieldtype"], "")
-
-			// Process filter value based on field type
-			switch fieldtype {
-			case "date", "string":
-				strValue := cu.ToString(filterValue, "")
-				if !strings.HasPrefix(strValue, "'") {
-					filters[fieldname] = "'" + strValue + "'"
-				}
-			}
 
 			rel := " = "
 			if fieldtype == "string" {
@@ -68,14 +71,29 @@ func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM) cu.SM {
 				continue
 			}
 
+			sanitizeFilterValue := func(filterValue string) string {
+				// Return SQL-injection-safe filter value.
+				return sqlInjectionPattern.ReplaceAllString(filterValue, "''")
+			}
+
 			// Handle non-where conditions
 			for _, ds := range sources {
 				sqlStr := cu.ToString(fieldMap["sqlstr"], "")
-				filterStr := cu.ToString(filters[fieldname], "")
+				filterStr := sanitizeFilterValue(cu.ToString(filters[fieldname], ""))
 
+				/*
+					count := strings.Count(ds["sqlstr"], "@"+fieldname)
+					for i := 0; i < count; i++ {
+						params[ds["dataset"]] = append(params[ds["dataset"]], []any{filters[fieldname]}...)
+					}
+				*/
 				if sqlStr == "" {
 					ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, filterStr)
+					//ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, "?")
 				} else {
+					//fstr := strings.ReplaceAll(sqlStr, "@"+fieldname, "?")
+					//ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, fstr)
+
 					fstr := strings.ReplaceAll(sqlStr, "@"+fieldname, filterStr)
 					ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, fstr)
 				}

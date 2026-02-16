@@ -146,19 +146,15 @@ func (s *GService) Database(ctx context.Context, req *pb.RequestDatabase) (*pb.J
 func (s *GService) View(ctx context.Context, req *pb.RequestView) (response *pb.JsonBytes, err error) {
 	ds := ctx.Value(md.DataStoreCtxKey).(*api.DataStore)
 
-	query := md.Query{
-		Fields:  []string{"*"},
-		From:    strings.ToLower(strings.TrimPrefix(req.Name.String(), "VIEW_")),
-		Filter:  req.Filter,
-		Filters: []md.Filter{},
-		OrderBy: req.OrderBy,
-		Limit:   req.Limit,
-		Offset:  req.Offset,
+	var params cu.IM = cu.IM{
+		"model": strings.ToLower(strings.TrimPrefix(req.Name.String(), "VIEW_")),
+		"limit": req.Limit, "offset": req.Offset, "order_by": req.OrderBy}
+	for _, filter := range req.Filters {
+		params[filter.Field] = filter.Value
 	}
-
 	var rows []cu.IM
 	response = &pb.JsonBytes{Data: []byte{}}
-	if rows, err = ds.StoreDataQuery(query, false); err == nil {
+	if rows, err = ds.StoreDataGet(params, false); err == nil {
 		response.Data, err = cu.ConvertToByte(rows)
 	}
 	return response, err

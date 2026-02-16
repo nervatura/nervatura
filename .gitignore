@@ -120,3 +120,4 @@ uv.lock
 test_*
 data/template*
 *.lock
+docs/security

@@ -20,11 +20,11 @@ class RequestView extends \Google\Protobuf\Internal\Message
      */
     protected $name = 0;
     /**
-     * Valid SQL WHERE clause
+     * Fieldname and filter value
      *
-     * Generated from protobuf field <code>string filter = 2;</code>
+     * Generated from protobuf field <code>repeated .nervatura.RequestQueryFilter filters = 2;</code>
      */
-    protected $filter = '';
+    private $filters;
     /**
      * Valid SQL ORDER BY clause
      *
@@ -52,8 +52,8 @@ class RequestView extends \Google\Protobuf\Internal\Message
      *
      *     @type int $name
      *           Predefined view name
-     *     @type string $filter
-     *           Valid SQL WHERE clause
+     *     @type \Nervatura\RequestQueryFilter[]|\Google\Protobuf\Internal\RepeatedField $filters
+     *           Fieldname and filter value
      *     @type string[]|\Google\Protobuf\Internal\RepeatedField $order_by
      *           Valid SQL ORDER BY clause
      *     @type int|string $limit
@@ -94,27 +94,27 @@ class RequestView extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Valid SQL WHERE clause
+     * Fieldname and filter value
      *
-     * Generated from protobuf field <code>string filter = 2;</code>
-     * @return string
+     * Generated from protobuf field <code>repeated .nervatura.RequestQueryFilter filters = 2;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
      */
-    public function getFilter()
+    public function getFilters()
     {
-        return $this->filter;
+        return $this->filters;
     }
 
     /**
-     * Valid SQL WHERE clause
+     * Fieldname and filter value
      *
-     * Generated from protobuf field <code>string filter = 2;</code>
-     * @param string $var
+     * Generated from protobuf field <code>repeated .nervatura.RequestQueryFilter filters = 2;</code>
+     * @param \Nervatura\RequestQueryFilter[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
-    public function setFilter($var)
+    public function setFilters($var)
     {
-        GPBUtil::checkString($var, True);
-        $this->filter = $var;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Nervatura\RequestQueryFilter::class);
+        $this->filters = $arr;
 
         return $this;
     }

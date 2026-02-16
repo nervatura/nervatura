@@ -138,15 +138,16 @@ func View(w http.ResponseWriter, r *http.Request) {
 	var response []cu.IM
 	var err error
 	if err = ds.ConvertFromReader(r.Body, &view); err == nil {
-		query := md.Query{
-			Fields:  []string{"*"},
-			From:    strings.ToLower(strings.TrimPrefix(view.Name.String(), "VIEW_")),
-			Filter:  view.Filter,
-			OrderBy: view.OrderBy,
-			Limit:   view.Limit,
-			Offset:  view.Offset,
+		params := cu.IM{
+			"model":    strings.ToLower(strings.TrimPrefix(view.Name.String(), "VIEW_")),
+			"limit":    view.Limit,
+			"offset":   view.Offset,
+			"order_by": view.OrderBy,
 		}
-		response, err = ds.StoreDataQuery(query, false)
+		for _, filter := range view.Filters {
+			params[cu.ToString(filter["field"], "")] = filter["value"]
+		}
+		response, err = ds.StoreDataGet(params, false)
 	}
 
 	RespondMessage(w, http.StatusOK, response, http.StatusUnprocessableEntity, err)

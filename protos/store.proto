@@ -541,13 +541,17 @@ message RequestDelete {
 }
 
 message RequestQueryFilter {
+  // Fieldname. If it starts with like_, gte_, lte_, gt_, lt_, in_, not_, the value is a string and the filter is applied to the field as a LIKE, GTE, LTE, GT, LT, IN, NOT operation.
   string field = 1;
   string value = 2;
 }
 
 message RequestQuery {
+  // Fieldname and filter value
   repeated RequestQueryFilter filters = 1;
+  // Limit the number of records
   int64 limit = 2;
+  // Skip the first N records
   int64 offset = 3;
 }
 
@@ -562,8 +566,8 @@ message RequestFunction {
 message RequestView {
   // Predefined view name
   ViewName name = 1;
-  // Valid SQL WHERE clause
-  string filter = 2;
+  // Fieldname and filter value
+  repeated RequestQueryFilter filters = 2;
   // Valid SQL ORDER BY clause
   repeated string order_by = 3;
   // Limit the number of records

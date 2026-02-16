@@ -91,9 +91,10 @@ def Function(token, options):
 
 def View(token, options):
   try:
+    filters = [pb.RequestQueryFilter(field=filter["field"], value=filter["value"]) for filter in options["filters"]]
     response = client().View(pb.RequestView(
       name=pb.ViewName.Value(options["name"].upper()),
-      filter=options["filter"],
+      filters=filters,
       limit=options["limit"],
     ), metadata=metadata(token))
     result = utils.checkJson(response.data)

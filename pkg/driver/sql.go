@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -126,7 +127,7 @@ func (ds *SQLDriver) getPrmString(index int) string {
 	return "?"
 }
 
-func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString string, params []interface{}) (string, []interface{}) {
+func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString string, params []any) (string, []any) {
 	if start {
 		sqlString += "("
 	} else if !filter.Or {
@@ -143,7 +144,7 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 		params = append(params, filter.Value)
 		sqlString += " " + filter.Comp + " " + ds.getPrmString(len(params))
 	case "is":
-		sqlString += " " + filter.Comp + " " + filter.Value.(string)
+		sqlString += " " + filter.Comp + " " + cu.ToString(filter.Value, "")
 	case "in":
 		if filterValue, valid := filter.Value.(string); valid {
 			values := strings.Split(filterValue, ",")
@@ -154,6 +155,11 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 			}
 			sqlString += " in(" + strings.Join(prmStr, ",") + ")"
 		}
+		if filterValue, valid := filter.Value.(md.Query); valid {
+			queryString, queryParams := ds.decodeSQL([]md.Query{filterValue})
+			sqlString += " in(" + queryString + ")"
+			params = append(params, queryParams...)
+		}
 	}
 	if !filter.Or {
 		sqlString += ")"
@@ -161,9 +167,9 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 	return sqlString, params
 }
 
-func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []interface{}) {
+func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []any) {
 	sqlString := ""
-	params := make([]interface{}, 0)
+	params := make([]any, 0)
 	for qi := 0; qi < len(queries); qi++ {
 		query := queries[qi]
 		if qi > 0 {
@@ -198,13 +204,13 @@ func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []interface{}) {
 }
 
 // Query is a basic nosql friendly queries the database
-func (ds *SQLDriver) Query(queries []md.Query, trans interface{}) ([]cu.IM, error) {
+func (ds *SQLDriver) Query(queries []md.Query, trans any) ([]cu.IM, error) {
 	sqlString, params := ds.decodeSQL(queries)
 	return ds.QuerySQL(sqlString, params, trans)
 }
 
-func initQueryCols(engine string, cols []*sql.ColumnType) ([]interface{}, []string, []string) {
-	values := make([]interface{}, len(cols))
+func initQueryCols(engine string, cols []*sql.ColumnType) ([]any, []string, []string) {
+	values := make([]any, len(cols))
 	fields := make([]string, len(cols))
 	dbtypes := make([]string, len(cols))
 	for i := range cols {
@@ -238,8 +244,8 @@ func isJSON(dbtype, fname, value string) bool {
 			!strings.Contains(fname, "_object"))
 }
 
-func getQueryRowValue(value interface{}, dbtype, fname string) interface{} {
-	var vresult interface{} = nil
+func getQueryRowValue(value any, dbtype, fname string) any {
+	var vresult any = nil
 	switch v := value.(type) {
 	case *sql.NullBool:
 		if v.Valid {
@@ -275,8 +281,30 @@ func getQueryRowValue(value interface{}, dbtype, fname string) interface{} {
 	return vresult
 }
 
+func (ds *SQLDriver) checkParams(sqlString string, params []any) (string, []any, error) {
+	if len(params) > 0 && ds.engine == "postgres" {
+		prmCount := 0
+		for {
+			regex := regexp.MustCompile(`\?`)
+			index := regex.FindStringIndex(sqlString)
+			if index == nil {
+				break
+			}
+			if prmCount >= len(params) {
+				return sqlString, params, errors.New("too many parameters in sqlString")
+			}
+			prmCount++
+			sqlString = sqlString[:index[0]] + "$" + strconv.Itoa(prmCount) + sqlString[index[1]:]
+		}
+	}
+	return sqlString, params, nil
+}
+
 // QuerySQL executes a SQL query
-func (ds *SQLDriver) QuerySQL(sqlString string, params []interface{}, trans interface{}) (result []cu.IM, err error) {
+func (ds *SQLDriver) QuerySQL(sqlString string, params []any, trans any) (result []cu.IM, err error) {
+	if sqlString, params, err = ds.checkParams(sqlString, params); err != nil {
+		return result, err
+	}
 	result = make([]cu.IM, 0)
 	var rows *sql.Rows
 	if trans != nil {
@@ -318,7 +346,7 @@ func (ds *SQLDriver) QuerySQL(sqlString string, params []interface{}, trans inte
 	return result, err
 }
 
-func (ds *SQLDriver) lastInsertID(model string, result sql.Result, trans interface{}) (int64, error) {
+func (ds *SQLDriver) lastInsertID(model string, result sql.Result, trans any) (int64, error) {
 	var sqlString string
 	resid, err := result.LastInsertId()
 	if err != nil {
@@ -346,7 +374,7 @@ func (ds *SQLDriver) lastInsertID(model string, result sql.Result, trans interfa
 func (ds *SQLDriver) Update(options md.Update) (int64, error) {
 	sqlString := ""
 	id := options.IDKey
-	params := make([]interface{}, 0)
+	params := make([]any, 0)
 	fields := make([]string, 0)
 	values := make([]string, 0)
 	sets := make([]string, 0)
@@ -403,7 +431,7 @@ func (ds *SQLDriver) Update(options md.Update) (int64, error) {
 }
 
 // UpdateSQL executes a SQL query string
-func (ds *SQLDriver) UpdateSQL(sqlString string, transaction interface{}) (err error) {
+func (ds *SQLDriver) UpdateSQL(sqlString string, transaction any) (err error) {
 	ds.checkConnection()
 	if transaction != nil {
 		if trans, ok := transaction.(*sql.Tx); ok {
@@ -419,13 +447,13 @@ func (ds *SQLDriver) UpdateSQL(sqlString string, transaction interface{}) (err e
 }
 
 // BeginTransaction begins a transaction and returns an *sql.Tx
-func (ds *SQLDriver) BeginTransaction() (interface{}, error) {
+func (ds *SQLDriver) BeginTransaction() (any, error) {
 	ds.checkConnection()
 	return ds.Db.Begin()
 }
 
 // CommitTransaction commit a *sql.Tx transaction
-func (ds *SQLDriver) CommitTransaction(trans interface{}) error {
+func (ds *SQLDriver) CommitTransaction(trans any) error {
 	switch trans.(type) {
 	case *sql.Tx:
 	default:
@@ -435,7 +463,7 @@ func (ds *SQLDriver) CommitTransaction(trans interface{}) error {
 }
 
 // RollbackTransaction rollback a *sql.Tx transaction
-func (ds *SQLDriver) RollbackTransaction(trans interface{}) error {
+func (ds *SQLDriver) RollbackTransaction(trans any) error {
 	switch trans.(type) {
 	case *sql.Tx:
 	default:

@@ -7,11 +7,15 @@ import (
 	"github.com/nervatura/report"
 )
 
-func SetPDFWhere(filters cu.IM, sources []cu.SM) {
+func SetPDFWhere(filters cu.IM, sources []cu.SM, params map[string][]any) {
 	codeValue := cu.ToString(filters["@code"], "")
-	for index := 0; index < len(sources); index++ {
-		ds := sources[index]
-		ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@code", "'"+codeValue+"'")
+	for _, ds := range sources {
+		params[ds["dataset"]] = make([]any, 0)
+		count := strings.Count(ds["sqlstr"], "@code")
+		for i := 0; i < count; i++ {
+			params[ds["dataset"]] = append(params[ds["dataset"]], codeValue)
+		}
+		ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@code", "?")
 	}
 }
 

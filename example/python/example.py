@@ -17,7 +17,7 @@ fn_map = {
      "Update": ["customer", {"alias": "demo", "code": "CGO0000000000N1"}, {"customer_meta": {"account": "1234567890"}}],
      "Get": ["customer", {"alias": "demo", "code": "CGO0000000000N1"}],
      "Query": ["customer", {"alias": "demo", "customer_type": "CUSTOMER_COMPANY"}],
-     "View": [{"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filter":"subject like '%visit%' and place='City1'", "limit":10}],
+     "View": [{"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filters": {"like_subject": "visit", "place": "City1"}, "limit":10}],
      "Delete": ["customer", {"alias": "demo", "code": "CGO0000000000N1"}],
    },
   "cli": {
@@ -28,7 +28,7 @@ fn_map = {
     "Update": ["customer", {"alias": "demo", "code": "CLI0000000000N1"}, {"customer_meta": {"account": "1234567890"}}],
     "Get": ["customer", {"alias": "demo", "code": "CLI0000000000N1"}],
     "Query": ["customer", {"alias": "demo", "customer_type": "CUSTOMER_COMPANY"}],
-    "View": [{"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filter":"subject like '%visit%' and place='City1'", "limit":10}],
+    "View": [{"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filters": {"like_subject": "visit", "place": "City1"}, "limit":10}],
     "Delete": ["customer", {"alias": "demo", "code": "CLI0000000000N1"}],
   },
    "rest": {
@@ -44,13 +44,13 @@ fn_map = {
     "CustomerQuery": ["", {"customer_type": "CUSTOMER_COMPANY"}],
     "Delete": ["", {"code": "RPC0000000000N1", "model": "customer"}],
     "Function": ["", {"name": "product_price", "values": {"product_code":"PRD0000000000N1", "currency_code":"EUR", "price_type":"PRICE_CUSTOMER"}}],
-    "View": ["", {"name": "VIEW_CUSTOMER_EVENTS", "filter":"subject like '%visit%' and place='City1'", "limit":10}],
+    "View": ["", {"name": "VIEW_CUSTOMER_EVENTS", "filters": [{"field":"like_subject","value":"visit"}, {"field":"place","value":"City1"}], "limit":10}],
    }
 }
 for api_key in api_map:
   for fn_key in fn_map[api_key]:
     result, err = api_map[api_key].__dict__[fn_key](*fn_map[api_key][fn_key])
     if err:
-      print(api_key+" "+fn_key+" error: "+err)
+      print(api_key+" "+fn_key+" error: "+str(err))
     else:
       print(api_key+" "+fn_key+" OK")

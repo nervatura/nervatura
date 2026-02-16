@@ -389,14 +389,14 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 		filter    md.Filter
 		start     bool
 		sqlString string
-		params    []interface{}
+		params    []any
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 		want   string
-		want1  []interface{}
+		want1  []any
 	}{
 		{
 			name:   "start_eq",
@@ -404,7 +404,7 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 			args: args{
 				start:     true,
 				sqlString: "",
-				params:    []interface{}{},
+				params:    []any{},
 				filter: md.Filter{
 					Field: "fieldname",
 					Comp:  "==",
@@ -412,14 +412,14 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 				},
 			},
 			want:  "(fieldname=?)",
-			want1: []interface{}{"value"},
+			want1: []any{"value"},
 		},
 		{
 			name:   "and_like",
 			fields: fields{},
 			args: args{
 				sqlString: "",
-				params:    []interface{}{},
+				params:    []any{},
 				filter: md.Filter{
 					Or:    false,
 					Field: "fieldname",
@@ -428,14 +428,14 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 				},
 			},
 			want:  " and (fieldname like ?)",
-			want1: []interface{}{"value"},
+			want1: []any{"value"},
 		},
 		{
 			name:   "or_is",
 			fields: fields{},
 			args: args{
 				sqlString: "",
-				params:    []interface{}{},
+				params:    []any{},
 				filter: md.Filter{
 					Or:    true,
 					Field: "fieldname",
@@ -444,14 +444,14 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 				},
 			},
 			want:  " or fieldname is null",
-			want1: []interface{}{},
+			want1: []any{},
 		},
 		{
 			name:   "and_in",
 			fields: fields{},
 			args: args{
 				sqlString: "",
-				params:    []interface{}{},
+				params:    []any{},
 				filter: md.Filter{
 					Or:    false,
 					Field: "fieldname",
@@ -460,7 +460,32 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 				},
 			},
 			want:  " and (fieldname in(?,?,?))",
-			want1: []interface{}{"value1", "value2", "value3"},
+			want1: []any{"value1", "value2", "value3"},
+		},
+		{
+			name:   "and_in_query",
+			fields: fields{},
+			args: args{
+				sqlString: "",
+				params:    []any{},
+				filter: md.Filter{
+					Field: "fieldname",
+					Comp:  "in",
+					Value: md.Query{
+						Fields: []string{"field1", "field2"},
+						From:   "table",
+						Filters: []md.Filter{
+							{
+								Field: "field1",
+								Comp:  "==",
+								Value: "value",
+							},
+						},
+					},
+				},
+			},
+			want:  " and (fieldname in(select field1,field2 from table where (field1=?)))",
+			want1: []any{"value"},
 		},
 	}
 	for _, tt := range tests {
@@ -501,7 +526,7 @@ func TestSQLDriver_decodeSQL(t *testing.T) {
 		fields fields
 		args   args
 		want   string
-		want1  []interface{}
+		want1  []any
 		engine string
 	}{
 		{
@@ -551,7 +576,7 @@ func TestSQLDriver_decodeSQL(t *testing.T) {
 				},
 			},
 			want:  "select field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 union select field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 limit 10 offset 5",
-			want1: []interface{}{"value", "1", "2", "3", "value", "1", "2", "3"},
+			want1: []any{"value", "1", "2", "3", "value", "1", "2", "3"},
 		},
 		{
 			name:   "queries_mssql",
@@ -600,7 +625,7 @@ func TestSQLDriver_decodeSQL(t *testing.T) {
 				},
 			},
 			want:  "select top(10) field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 union select top(10) field1,field2 from table where (field1=?) and (field2 in(?,?,?)) order by field1 offset 5",
-			want1: []interface{}{"value", "1", "2", "3", "value", "1", "2", "3"},
+			want1: []any{"value", "1", "2", "3", "value", "1", "2", "3"},
 		},
 	}
 	for _, tt := range tests {
@@ -635,7 +660,7 @@ func TestSQLDriver_Query(t *testing.T) {
 	}
 	type args struct {
 		queries []md.Query
-		trans   interface{}
+		trans   any
 	}
 	db, _ := sql.Open("sqltest", "query_error")
 	trans, _ := db.Begin()
@@ -707,8 +732,8 @@ func TestSQLDriver_QuerySQL(t *testing.T) {
 	}
 	type args struct {
 		sqlString string
-		params    []interface{}
-		trans     interface{}
+		params    []any
+		trans     any
 	}
 	tests := []struct {
 		name    string
@@ -719,23 +744,38 @@ func TestSQLDriver_QuerySQL(t *testing.T) {
 		{
 			name: "query",
 			fields: fields{
-				engine: "sqltest",
+				engine: "postgres",
 				Db: func() *sql.DB {
 					db, _ := sql.Open("sqltest", "test")
 					return db
 				}(),
 			},
 			args: args{
-				sqlString: "select *, 3 as count from test",
-				params:    []interface{}{},
+				sqlString: "select *, 3 as count from test where id=? and name=?",
+				params:    []any{"1", "test"},
 			},
 			wantErr: false,
+		},
+		{
+			name: "too many parameters",
+			fields: fields{
+				engine: "postgres",
+				Db: func() *sql.DB {
+					db, _ := sql.Open("sqltest", "test")
+					return db
+				}(),
+			},
+			args: args{
+				sqlString: "select *, 3 as count from test where id=? and name=? and id=?",
+				params:    []any{"1", "test"},
+			},
+			wantErr: true,
 		},
 		{
 			name: "invalid_trans",
 			args: args{
 				sqlString: "",
-				params:    []interface{}{},
+				params:    []any{},
 				trans:     "trans",
 			},
 			wantErr: true,
@@ -783,7 +823,7 @@ func TestSQLDriver_lastInsertID(t *testing.T) {
 	type args struct {
 		model  string
 		result sql.Result
-		trans  interface{}
+		trans  any
 	}
 	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
@@ -1040,7 +1080,7 @@ func TestSQLDriver_CommitTransaction(t *testing.T) {
 		Config  cu.IM
 	}
 	type args struct {
-		trans interface{}
+		trans any
 	}
 	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
@@ -1098,7 +1138,7 @@ func TestSQLDriver_RollbackTransaction(t *testing.T) {
 		Config  cu.IM
 	}
 	type args struct {
-		trans interface{}
+		trans any
 	}
 	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()
@@ -1157,7 +1197,7 @@ func TestSQLDriver_UpdateSQL(t *testing.T) {
 	}
 	type args struct {
 		sqlString   string
-		transaction interface{}
+		transaction any
 	}
 	db, _ := sql.Open("sqltest", "test")
 	trans, _ := db.Begin()

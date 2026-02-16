@@ -14,14 +14,20 @@ use Google\Protobuf\Internal\GPBUtil;
 class RequestQuery extends \Google\Protobuf\Internal\Message
 {
     /**
+     * Fieldname and filter value
+     *
      * Generated from protobuf field <code>repeated .nervatura.RequestQueryFilter filters = 1;</code>
      */
     private $filters;
     /**
+     * Limit the number of records
+     *
      * Generated from protobuf field <code>int64 limit = 2;</code>
      */
     protected $limit = 0;
     /**
+     * Skip the first N records
+     *
      * Generated from protobuf field <code>int64 offset = 3;</code>
      */
     protected $offset = 0;
@@ -33,8 +39,11 @@ class RequestQuery extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type \Nervatura\RequestQueryFilter[]|\Google\Protobuf\Internal\RepeatedField $filters
+     *           Fieldname and filter value
      *     @type int|string $limit
+     *           Limit the number of records
      *     @type int|string $offset
+     *           Skip the first N records
      * }
      */
     public function __construct($data = NULL) {
@@ -43,6 +52,8 @@ class RequestQuery extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Fieldname and filter value
+     *
      * Generated from protobuf field <code>repeated .nervatura.RequestQueryFilter filters = 1;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
@@ -52,6 +63,8 @@ class RequestQuery extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Fieldname and filter value
+     *
      * Generated from protobuf field <code>repeated .nervatura.RequestQueryFilter filters = 1;</code>
      * @param \Nervatura\RequestQueryFilter[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
@@ -65,6 +78,8 @@ class RequestQuery extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Limit the number of records
+     *
      * Generated from protobuf field <code>int64 limit = 2;</code>
      * @return int|string
      */
@@ -74,6 +89,8 @@ class RequestQuery extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Limit the number of records
+     *
      * Generated from protobuf field <code>int64 limit = 2;</code>
      * @param int|string $var
      * @return $this
@@ -87,6 +104,8 @@ class RequestQuery extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Skip the first N records
+     *
      * Generated from protobuf field <code>int64 offset = 3;</code>
      * @return int|string
      */
@@ -96,6 +115,8 @@ class RequestQuery extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Skip the first N records
+     *
      * Generated from protobuf field <code>int64 offset = 3;</code>
      * @param int|string $var
      * @return $this

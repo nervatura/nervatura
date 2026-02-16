@@ -4073,10 +4073,21 @@ components:
             - "VIEW_TRANS_VIEW"
           description: The name of the view.
           example: "VIEW_CUSTOMER_EVENTS"
-        filter:
-          type: string
-          description: The filter string. Any valid SQL WHERE clause.
-          example: "subject like '%visit%' and place='City1'"
+        filters:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: The field name.
+                example: "like_subject"
+              value:
+                type: string
+                description: The value of the field.
+                example: "visit"
+          description: The filters array. Each object contains a field and value property. The field can be a field name or a field name with a prefix like like_, gte_, lte_, gt_, lt_, in_, not_.
+          example: [{"field": "like_subject", "value": "visit"}, {"field": "place", "value": "City1"}]
         order_by:
           type: array
           items:

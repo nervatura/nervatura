@@ -237,13 +237,30 @@ export class AppController {
   signOut() {
     const { data, setData } = this.store
     /* c8 ignore next 4 */
-    if(data[APP_MODULE.LOGIN].callback){
-      window.location.replace(data[APP_MODULE.LOGIN].callback)
+    const callback = data[APP_MODULE.LOGIN]?.callback
+    if (callback && this.isSafeRedirectUrl(callback)) {
+      window.location.replace(callback)
       return
     }
     setData(APP_MODULE.LOGIN, { 
       data: null, token: null 
     })
+  }
+
+  /**
+   * Validates that a URL is safe for redirect (same-origin or relative).
+   * Prevents open redirect to external/phishing sites.
+   */
+  isSafeRedirectUrl(url) {
+    if (!url || typeof url !== "string") return false
+    const trimmed = url.trim()
+    if (trimmed === "" || trimmed.startsWith("javascript:") || trimmed.startsWith("data:")) return false
+    try {
+      const parsed = new URL(trimmed, window.location.origin)
+      return parsed.origin === window.location.origin
+    } catch {
+      return trimmed.startsWith("/") && !trimmed.startsWith("//")
+    }
   }
 
 }

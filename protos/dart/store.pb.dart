@@ -741,9 +741,11 @@ class RequestQuery extends $pb.GeneratedMessage {
   static RequestQuery getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RequestQuery>(create);
   static RequestQuery? _defaultInstance;
 
+  /// Fieldname and filter value
   @$pb.TagNumber(1)
   $core.List<RequestQueryFilter> get filters => $_getList(0);
 
+  /// Limit the number of records
   @$pb.TagNumber(2)
   $fixnum.Int64 get limit => $_getI64(1);
   @$pb.TagNumber(2)
@@ -753,6 +755,7 @@ class RequestQuery extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearLimit() => clearField(2);
 
+  /// Skip the first N records
   @$pb.TagNumber(3)
   $fixnum.Int64 get offset => $_getI64(2);
   @$pb.TagNumber(3)
@@ -827,7 +830,7 @@ class RequestFunction extends $pb.GeneratedMessage {
 class RequestView extends $pb.GeneratedMessage {
   factory RequestView({
     ViewName? name,
-    $core.String? filter,
+    $core.Iterable<RequestQueryFilter>? filters,
     $core.Iterable<$core.String>? orderBy,
     $fixnum.Int64? limit,
     $fixnum.Int64? offset,
@@ -836,8 +839,8 @@ class RequestView extends $pb.GeneratedMessage {
     if (name != null) {
       $result.name = name;
     }
-    if (filter != null) {
-      $result.filter = filter;
+    if (filters != null) {
+      $result.filters.addAll(filters);
     }
     if (orderBy != null) {
       $result.orderBy.addAll(orderBy);
@@ -856,7 +859,7 @@ class RequestView extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'RequestView', package: const $pb.PackageName(_omitMessageNames ? '' : 'nervatura'), createEmptyInstance: create)
     ..e<ViewName>(1, _omitFieldNames ? '' : 'name', $pb.PbFieldType.OE, defaultOrMaker: ViewName.VIEW_CONFIG_DATA, valueOf: ViewName.valueOf, enumValues: ViewName.values)
-    ..aOS(2, _omitFieldNames ? '' : 'filter')
+    ..pc<RequestQueryFilter>(2, _omitFieldNames ? '' : 'filters', $pb.PbFieldType.PM, subBuilder: RequestQueryFilter.create)
     ..pPS(3, _omitFieldNames ? '' : 'orderBy')
     ..aInt64(4, _omitFieldNames ? '' : 'limit')
     ..aInt64(5, _omitFieldNames ? '' : 'offset')
@@ -894,15 +897,9 @@ class RequestView extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearName() => clearField(1);
 
-  /// Valid SQL WHERE clause
+  /// Fieldname and filter value
   @$pb.TagNumber(2)
-  $core.String get filter => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set filter($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasFilter() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearFilter() => clearField(2);
+  $core.List<RequestQueryFilter> get filters => $_getList(1);
 
   /// Valid SQL ORDER BY clause
   @$pb.TagNumber(3)

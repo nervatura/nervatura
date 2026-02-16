@@ -749,7 +749,7 @@ const RequestView$json = {
   '1': 'RequestView',
   '2': [
     {'1': 'name', '3': 1, '4': 1, '5': 14, '6': '.nervatura.ViewName', '10': 'name'},
-    {'1': 'filter', '3': 2, '4': 1, '5': 9, '10': 'filter'},
+    {'1': 'filters', '3': 2, '4': 3, '5': 11, '6': '.nervatura.RequestQueryFilter', '10': 'filters'},
     {'1': 'order_by', '3': 3, '4': 3, '5': 9, '10': 'orderBy'},
     {'1': 'limit', '3': 4, '4': 1, '5': 3, '10': 'limit'},
     {'1': 'offset', '3': 5, '4': 1, '5': 3, '10': 'offset'},
@@ -758,9 +758,10 @@ const RequestView$json = {
 
 /// Descriptor for `RequestView`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List requestViewDescriptor = $convert.base64Decode(
-    'CgtSZXF1ZXN0VmlldxInCgRuYW1lGAEgASgOMhMubmVydmF0dXJhLlZpZXdOYW1lUgRuYW1lEh'
-    'YKBmZpbHRlchgCIAEoCVIGZmlsdGVyEhkKCG9yZGVyX2J5GAMgAygJUgdvcmRlckJ5EhQKBWxp'
-    'bWl0GAQgASgDUgVsaW1pdBIWCgZvZmZzZXQYBSABKANSBm9mZnNldA==');
+    'CgtSZXF1ZXN0VmlldxInCgRuYW1lGAEgASgOMhMubmVydmF0dXJhLlZpZXdOYW1lUgRuYW1lEj'
+    'cKB2ZpbHRlcnMYAiADKAsyHS5uZXJ2YXR1cmEuUmVxdWVzdFF1ZXJ5RmlsdGVyUgdmaWx0ZXJz'
+    'EhkKCG9yZGVyX2J5GAMgAygJUgdvcmRlckJ5EhQKBWxpbWl0GAQgASgDUgVsaW1pdBIWCgZvZm'
+    'ZzZXQYBSABKANSBm9mZnNldA==');
 
 @$core.Deprecated('Use requestDatabaseDescriptor instead')
 const RequestDatabase$json = {

@@ -623,18 +623,18 @@ class RequestFunction(_message.Message):
     def __init__(self, function: _Optional[str] = ..., args: _Optional[_Mapping[str, str]] = ...) -> None: ...
 
 class RequestView(_message.Message):
-    __slots__ = ("name", "filter", "order_by", "limit", "offset")
+    __slots__ = ("name", "filters", "order_by", "limit", "offset")
     NAME_FIELD_NUMBER: _ClassVar[int]
-    FILTER_FIELD_NUMBER: _ClassVar[int]
+    FILTERS_FIELD_NUMBER: _ClassVar[int]
     ORDER_BY_FIELD_NUMBER: _ClassVar[int]
     LIMIT_FIELD_NUMBER: _ClassVar[int]
     OFFSET_FIELD_NUMBER: _ClassVar[int]
     name: ViewName
-    filter: str
+    filters: _containers.RepeatedCompositeFieldContainer[RequestQueryFilter]
     order_by: _containers.RepeatedScalarFieldContainer[str]
     limit: int
     offset: int
-    def __init__(self, name: _Optional[_Union[ViewName, str]] = ..., filter: _Optional[str] = ..., order_by: _Optional[_Iterable[str]] = ..., limit: _Optional[int] = ..., offset: _Optional[int] = ...) -> None: ...
+    def __init__(self, name: _Optional[_Union[ViewName, str]] = ..., filters: _Optional[_Iterable[_Union[RequestQueryFilter, _Mapping]]] = ..., order_by: _Optional[_Iterable[str]] = ..., limit: _Optional[int] = ..., offset: _Optional[int] = ...) -> None: ...
 
 class RequestDatabase(_message.Message):
     __slots__ = ("alias", "demo")

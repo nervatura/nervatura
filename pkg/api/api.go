@@ -212,6 +212,46 @@ func (ds *DataStore) StoreDataQueries(queries []md.Query) (rows []cu.IM, err err
 	return rows, err
 }
 
+func (ds *DataStore) StoreDataGetFilter(name string, value any) (filter md.Filter) {
+	fieldCheck := []func() (bool, string, string, any){
+		func() (bool, string, string, any) {
+			field := fmt.Sprintf("lower(%s)", strings.TrimPrefix(name, "like_"))
+			likeValue := "%" + strings.ToLower(cu.ToString(value, "")) + "%"
+			return strings.HasPrefix(name, "like_"), field, "like", likeValue
+		},
+		func() (bool, string, string, any) {
+			field := strings.TrimPrefix(name, "gte_")
+			return strings.HasPrefix(name, "gte_"), field, ">=", value
+		},
+		func() (bool, string, string, any) {
+			field := strings.TrimPrefix(name, "lte_")
+			return strings.HasPrefix(name, "lte_"), field, "<=", value
+		},
+		func() (bool, string, string, any) {
+			field := strings.TrimPrefix(name, "gt_")
+			return strings.HasPrefix(name, "gt_"), field, ">", value
+		},
+		func() (bool, string, string, any) {
+			field := strings.TrimPrefix(name, "lt_")
+			return strings.HasPrefix(name, "lt_"), field, "<", value
+		},
+		func() (bool, string, string, any) {
+			field := strings.TrimPrefix(name, "in_")
+			return strings.HasPrefix(name, "in_"), field, "in", value
+		},
+		func() (bool, string, string, any) {
+			field := strings.TrimPrefix(name, "not_")
+			return strings.HasPrefix(name, "not_"), field, "!=", value
+		},
+	}
+	for _, check := range fieldCheck {
+		if found, field, comp, val := check(); found {
+			return md.Filter{Field: field, Comp: comp, Value: val}
+		}
+	}
+	return md.Filter{Field: name, Comp: "==", Value: value}
+}
+
 func (ds *DataStore) StoreDataGet(params cu.IM, foundErr bool) (result []cu.IM, err error) {
 	query := md.Query{
 		Fields:  []string{"*"},
@@ -224,36 +264,27 @@ func (ds *DataStore) StoreDataGet(params cu.IM, foundErr bool) (result []cu.IM, 
 	if offset := cu.ToInteger(params["offset"], 0); offset > 0 {
 		query.Offset = offset
 	}
+	if orderBy, found := params["order_by"].([]string); found {
+		query.OrderBy = orderBy
+	}
 	if !strings.Contains(query.From, "_") {
 		query.Filters = append(query.Filters, md.Filter{Field: "deleted", Comp: "==", Value: false})
 	}
 	if fields, found := params["fields"].([]string); found {
 		query.Fields = fields
 	}
-	queryFilters := []string{}
-	if filter, found := params["filter"].(string); found {
-		queryFilters = append(queryFilters, filter)
-	}
 	for key, value := range params {
-		if !slices.Contains([]string{"model", "fields", "tag", "limit", "offset", "filter"}, key) {
-			if strings.HasPrefix(key, "like_") {
-				query.Filters = append(query.Filters, md.Filter{
-					Field: "lower(" + strings.TrimPrefix(key, "like_") + ")", Comp: "like",
-					Value: "%" + strings.ToLower(cu.ToString(value, "")) + "%"})
-			} else {
-				query.Filters = append(query.Filters, md.Filter{Field: key, Comp: "==", Value: value})
-			}
+		if !slices.Contains([]string{"model", "fields", "tag", "limit", "offset", "filter", "order_by"}, key) {
+			query.Filters = append(query.Filters, ds.StoreDataGetFilter(key, value))
 		}
 		if key == "tag" {
-			queryFilters = append(queryFilters,
-				fmt.Sprintf("code in (select code from %s_tags where tag='%s')",
-					strings.Split(strings.Split(query.From, "_")[0], " ")[0], cu.ToString(value, "")))
-		}
-	}
-	if len(queryFilters) > 0 {
-		query.Filter = "(" + strings.Join(queryFilters, " and ") + ")"
-		if len(query.Filters) > 0 {
-			query.Filter = " and " + query.Filter
+			query.Filters = append(query.Filters, md.Filter{Field: "code", Comp: "in", Value: md.Query{
+				Fields: []string{"code"},
+				From:   fmt.Sprintf("%s_tags", strings.Split(strings.Split(query.From, "_")[0], " ")[0]),
+				Filters: []md.Filter{
+					{Field: "tag", Comp: "==", Value: cu.ToString(value, "")},
+				},
+			}})
 		}
 	}
 	return ds.StoreDataQuery(query, foundErr)

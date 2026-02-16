@@ -82,7 +82,7 @@ type AuthOptions struct {
 
 type View struct {
 	Name    ViewName `json:"name"`
-	Filter  string   `json:"filter"`
+	Filters []cu.IM  `json:"filters"`
 	OrderBy []string `json:"order_by"`
 	Limit   int64    `json:"limit"`
 	Offset  int64    `json:"offset"`

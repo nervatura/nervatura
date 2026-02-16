@@ -250,19 +250,18 @@ describe('AppController', () => {
     app.store = { data: {...storeData}, setData: sinon.spy() }
     app.signOut()
     sinon.assert.callCount(app.store.setData, 1);
-  
-    /*
-    storeData = {
-      ...storeConfig,
-      [APP_MODULE.LOGIN]: {
-        ...storeConfig[APP_MODULE.LOGIN],
-        callback: "/"
-      }
-    }
-    app.store = { data: {...storeData}, setData: sinon.spy() }
-    app.signOut()
-    sinon.assert.callCount(app.store.setData, 0);
-    */
+  })
+
+  it('isSafeRedirectUrl validates URLs', () => {
+    const app = new AppController(host)
+    expect(app.isSafeRedirectUrl("/")).to.be.true
+    expect(app.isSafeRedirectUrl("/client/auth/")).to.be.true
+    expect(app.isSafeRedirectUrl(window.location.origin + "/")).to.be.true
+    expect(app.isSafeRedirectUrl("https://evil.com")).to.be.false
+    expect(app.isSafeRedirectUrl("//evil.com")).to.be.false
+    expect(app.isSafeRedirectUrl("javascript:alert(1)")).to.be.false
+    expect(app.isSafeRedirectUrl("data:text/html,<script>")).to.be.false
+    expect(app.isSafeRedirectUrl("")).to.be.false
   })
 
 })

@@ -1,2 +1,7 @@
 *_test.go
 nervatura
+.env
+.env.*
+*.pem
+data/
+docs/security

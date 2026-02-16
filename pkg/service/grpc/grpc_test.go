@@ -633,7 +633,7 @@ func TestGService_View(t *testing.T) {
 			name: "success",
 			args: args{
 				ctx: context.Background(),
-				req: &pb.RequestView{Name: pb.ViewName_VIEW_CURRENCY_VIEW, Filter: "", OrderBy: []string{"id"}, Limit: 10, Offset: 0},
+				req: &pb.RequestView{Name: pb.ViewName_VIEW_CURRENCY_VIEW, Filters: []*pb.RequestQueryFilter{{Field: "id", Value: "1"}}, OrderBy: []string{"id"}, Limit: 10, Offset: 0},
 				ds: &api.DataStore{
 					Db: &td.TestDriver{
 						Config: cu.IM{},

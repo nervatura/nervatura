@@ -1400,6 +1400,13 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t left join customer c on t.customer_code = c.code  
 			left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
+				/*
+					Filters: []md.Filter{
+							{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s,%s,%s,%s,%s",
+								md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
+								md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String())},
+						},
+				*/
 				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s','%s')",
 					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
 					md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()),

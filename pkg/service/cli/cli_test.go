@@ -181,6 +181,12 @@ func TestCLIService_View(t *testing.T) {
 							},
 						},
 					},
+					"name": "VIEW_CUSTOMER_EVENTS",
+					"filters": []any{
+						map[string]any{"field": "like_subject", "value": "visit"},
+						map[string]any{"field": "place", "value": "City1"},
+					},
+					"limit": 10,
 				},
 			},
 			want: `{"code":200,"data":[{"id":1}]}`,

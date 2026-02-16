@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	cu "github.com/nervatura/component/pkg/util"
@@ -25,17 +24,28 @@ func (ds *DataStore) AuthUser(uid, username string) (user md.Auth, err error) {
 	if err = ds.checkDatabaseVersion("auth"); err != nil {
 		return user, err
 	}
-	query := md.Query{
-		Fields: []string{"*"}, From: "auth",
-		Filters: []md.Filter{
-			{Field: "deleted", Comp: "==", Value: false},
-			{Field: "disabled", Comp: "==", Value: false},
+	queries := []md.Query{
+		{Fields: []string{"*"}, From: "auth",
+			Filters: []md.Filter{
+				{Field: "deleted", Comp: "==", Value: false},
+				{Field: "disabled", Comp: "==", Value: false},
+				{Field: "code", Comp: "==", Value: uid},
+			},
 		},
-		Filter: fmt.Sprintf("and (code='%s' or user_name='%s')", uid, username),
+		{Fields: []string{"*"}, From: "auth",
+			Filters: []md.Filter{
+				{Field: "deleted", Comp: "==", Value: false},
+				{Field: "disabled", Comp: "==", Value: false},
+				{Field: "user_name", Comp: "==", Value: username},
+			},
+		},
 	}
 	var rows []cu.IM
-	if rows, err = ds.StoreDataQuery(query, true); err == nil {
+	if rows, err = ds.StoreDataQueries(queries); err == nil && len(rows) > 0 {
 		err = ds.ConvertData(rows[0], &user)
+	}
+	if len(rows) == 0 {
+		err = errors.New(http.StatusText(http.StatusNotFound))
 	}
 	return user, err
 }

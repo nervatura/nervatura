@@ -137,7 +137,7 @@ func InvoiceSchema() (ms *ModelSchema) {
 		Name:       "trans",
 		CustomFrom: "trans t left join(select trans_code as invoice_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.invoice_code",
 		CustomParameters: func(params cu.IM) cu.IM {
-			params["filter"] = "trans_type = '" + md.TransTypeInvoice.String() + "'"
+			params["trans_type"] = md.TransTypeInvoice.String()
 			return params
 		},
 		Prefix: "INV",

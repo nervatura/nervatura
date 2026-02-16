@@ -403,7 +403,14 @@ func TestView(t *testing.T) {
 				},
 				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
 				ConvertFromReader: func(r io.Reader, v any) error {
-					return nil
+					view := md.View{
+						Name:    md.ViewName(0),
+						Filters: []cu.IM{{"field": "like_subject", "value": "visit"}, {"field": "place", "value": "City1"}},
+						OrderBy: []string{"id"},
+						Limit:   10,
+						Offset:  0,
+					}
+					return cu.ConvertToType(view, v)
 				},
 			},
 		},

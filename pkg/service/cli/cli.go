@@ -7,7 +7,6 @@ import (
 
 	cu "github.com/nervatura/component/pkg/util"
 	"github.com/nervatura/nervatura/v6/pkg/api"
-	md "github.com/nervatura/nervatura/v6/pkg/model"
 )
 
 // CLIService implements the Nervatura API service
@@ -67,17 +66,23 @@ func (cli *CLIService) Function(options cu.IM, requestData string) string {
 func (cli *CLIService) View(options cu.IM, requestData string) string {
 	ds := options["ds"].(*api.DataStore)
 
+	params := cu.IM{
+		"model":    strings.ToLower(strings.TrimPrefix(cu.ToString(options["name"], ""), "VIEW_")),
+		"limit":    cu.ToInteger(options["limit"], 0),
+		"offset":   cu.ToInteger(options["offset"], 0),
+		"order_by": strings.Split(cu.ToString(options["order_by"], ""), ","),
+	}
+	if filters, found := options["filters"].([]any); found {
+		for _, filter := range filters {
+			if filterMap, ok := filter.(map[string]any); ok {
+				params[cu.ToString(filterMap["field"], "")] = filterMap["value"]
+			}
+		}
+	}
+
 	var response []cu.IM
 	var err error
-	query := md.Query{
-		Fields:  []string{"*"},
-		From:    strings.ToLower(strings.TrimPrefix(cu.ToString(options["name"], ""), "VIEW_")),
-		Filter:  cu.ToString(options["filter"], ""),
-		OrderBy: strings.Split(cu.ToString(options["order_by"], ""), ","),
-		Limit:   cu.ToInteger(options["limit"], 0),
-		Offset:  cu.ToInteger(options["offset"], 0),
-	}
-	response, err = ds.StoreDataQuery(query, false)
+	response, err = ds.StoreDataGet(params, false)
 
 	return cli.respondString(http.StatusOK, response, http.StatusUnprocessableEntity, err)
 }

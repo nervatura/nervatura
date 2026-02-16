@@ -175,6 +175,47 @@ func TestDataStore_AuthUser(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "missing user",
+			fields: fields{
+				Db: &td.TestDriver{
+					Config: cu.IM{
+						"Connection": func() struct {
+							Alias     string
+							Connected bool
+							Engine    string
+						} {
+							return struct {
+								Alias     string
+								Connected bool
+								Engine    string
+							}{
+								Alias:     "test",
+								Connected: true,
+								Engine:    "sqlite",
+							}
+						},
+						"QuerySQL": func(sqlString string) ([]cu.IM, error) {
+							return []cu.IM{{"id": 1, "name": "test"}}, nil
+						},
+						"Query": func(queries []md.Query) ([]cu.IM, error) {
+							return []cu.IM{}, nil
+						},
+					},
+				},
+				Alias:  "test",
+				Config: cu.IM{},
+				AppLog: slog.New(slog.NewTextHandler(bytes.NewBufferString(""), nil)),
+				ConvertToType: func(data interface{}, result any) (err error) {
+					return nil
+				},
+			},
+			args: args{
+				uid:      "test",
+				username: "test",
+			},
+			wantErr: true,
+		},
+		{
 			name: "invalid database",
 			fields: fields{
 				Db: &td.TestDriver{

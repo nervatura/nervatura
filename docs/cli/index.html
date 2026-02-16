@@ -430,8 +430,9 @@
                 Its optional content is the alias field, the value of which is the alias name of the database. If not specified, 
                 the value of the NT_DEFAULT_ALIAS environment variable will be used, or an error message will be returned if none is provided. 
                 The contents of options can be used to override the value of any config setting and its environment variables. <br />
+                The filters parameter is an array of objects with field and value properties. The field can be a field name or a field name with a prefix like like_, gte_, lte_, gt_, lt_, in_, not_. <br />
                 Example: <code class="text-green-600 dark:text-green-600">
-                  '{"alias":"demo", "name": "VIEW_CUSTOMER_EVENTS", "filter":"subject like '%visit%' and place='City1'", "limit":10}'
+                  '{"alias":"demo", "name": "VIEW_CUSTOMER_EVENTS", "filters": [{"field":"like_subject", "value":"visit"}, {"field":"place", "value":"City1"}], "limit":10}'
                 </code>
               </li>
 

@@ -205,15 +205,14 @@ func (ses *SessionService) saveDbSession(sessionID string, data any) (err error)
 		var bin []byte
 		bin, err = ses.ConvertToByte(data)
 		if err == nil {
-			var sqlString string = fmt.Sprintf(
-				"INSERT INTO %s(id, value, stamp) VALUES('%s', '%s', %d)",
-				sessionTable, sessionID, bin, time.Now().Unix())
+			var params []any = []any{sessionID, bin, time.Now().Unix()}
+			var sqlString string = fmt.Sprintf("INSERT INTO %s(id, value, stamp) VALUES(?, ?, ?)", sessionTable)
 			var rows []cu.IM
 			if rows, err = ses.getDbRows(sessionID); err == nil && (len(rows) > 0) {
-				sqlString = fmt.Sprintf(
-					"UPDATE %s SET value='%s' WHERE id='%s'", sessionTable, bin, sessionID)
+				params = []any{bin, sessionID}
+				sqlString = fmt.Sprintf("UPDATE %s SET value=? WHERE id=?", sessionTable)
 			}
-			_, err = ses.Conn.QuerySQL(sqlString, []interface{}{}, nil)
+			_, err = ses.Conn.QuerySQL(sqlString, params, nil)
 		}
 	}
 	return err
@@ -222,9 +221,10 @@ func (ses *SessionService) saveDbSession(sessionID string, data any) (err error)
 func (ses *SessionService) deleteDbSession(sessionID string) (err error) {
 	sessionTable := cu.ToString(ses.Config.DbTable, "session")
 	if err = ses.Conn.CreateConnection("session", ses.Config.DbConn); err == nil {
+		var params []any = []any{sessionID}
 		sqlString := fmt.Sprintf(
-			"DELETE FROM %s WHERE ID='%s'", sessionTable, sessionID)
-		_, err = ses.Conn.QuerySQL(sqlString, []interface{}{}, nil)
+			"DELETE FROM %s WHERE ID=?", sessionTable)
+		_, err = ses.Conn.QuerySQL(sqlString, params, nil)
 	}
 	return err
 }

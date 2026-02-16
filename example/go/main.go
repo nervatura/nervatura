@@ -110,7 +110,7 @@ func main() {
 			},
 			func() (string, any, error) {
 				result, err := cli.View(cu.IM{
-					"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filter": "subject like '%visit%' and place='City1'", "limit": 10,
+					"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filters": cu.IM{"like_subject": "visit", "place": "City1"}, "limit": 10,
 				})
 				return "View", result, err
 			},

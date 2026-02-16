@@ -153,6 +153,28 @@ func Test_httpServer_Results(t *testing.T) {
 	}
 }
 
+func Test_httpServer_securityHeaders(t *testing.T) {
+	s := &httpServer{}
+	handler := s.securityHeaders(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	req := httptest.NewRequest("GET", "/", nil)
+	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+	if got := rr.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+		t.Errorf("X-Content-Type-Options = %v, want nosniff", got)
+	}
+	if got := rr.Header().Get("X-Frame-Options"); got != "DENY" {
+		t.Errorf("X-Frame-Options = %v, want DENY", got)
+	}
+	if got := rr.Header().Get("Referrer-Policy"); got != "strict-origin-when-cross-origin" {
+		t.Errorf("Referrer-Policy = %v, want strict-origin-when-cross-origin", got)
+	}
+	if got := rr.Header().Get("Permissions-Policy"); got == "" {
+		t.Error("Permissions-Policy header should be set")
+	}
+}
+
 func Test_httpServer_homeRoute(t *testing.T) {
 	type fields struct {
 		config     cu.IM
@@ -230,8 +252,8 @@ func Test_httpServer_envList(t *testing.T) {
 				},
 			},
 			want: []cu.IM{
-				{"envkey": "NT_ALIAS_KALEVALA", "envvalue": "sqlite5://file:../data/empty.db"},
-				{"envkey": "NT_API_KEY", "envvalue": "EXAMPLE_API_KEY"},
+				{"envkey": "NT_ALIAS_KALEVALA", "envvalue": "***"},
+				{"envkey": "NT_API_KEY", "envvalue": "***"},
 			},
 		},
 	}

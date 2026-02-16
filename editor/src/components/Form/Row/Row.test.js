@@ -34,6 +34,21 @@ import { Template, Default, FlipStringOn, FlipStringOff, FlipTextOn, FlipTextOff
       sinon.assert.calledOnce(onEdit);
     })
 
+    it('safeImageSrc blocks data:image/svg+xml (XSS vector)', () => {
+      const element = document.createElement('form-row')
+      element.row = { name: 'img' }
+      element.values = { img: 'data:image/svg+xml,<svg onload=alert(1)>' }
+      element.data = { dataset: {}, current: {}, audit: 'all' }
+      expect(element.safeImageSrc('data:image/svg+xml,<svg onload=alert(1)>')).to.equal('')
+    })
+
+    it('safeImageSrc allows data:image/png and blob:', () => {
+      const element = document.createElement('form-row')
+      expect(element.safeImageSrc('data:image/png;base64,abc')).to.equal('data:image/png;base64,abc')
+      expect(element.safeImageSrc('blob:http://localhost/abc')).to.equal('blob:http://localhost/abc')
+      expect(element.safeImageSrc('https://example.com/img.png')).to.equal('https://example.com/img.png')
+    })
+
     it('renders in the FlipStringOff state', async () => {
       const element = await fixture(Template({
         ...FlipStringOff.args

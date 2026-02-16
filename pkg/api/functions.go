@@ -2,9 +2,7 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"slices"
-	"strings"
 	"time"
 
 	cu "github.com/nervatura/component/pkg/util"
@@ -59,12 +57,6 @@ func (ds *DataStore) ProductPrice(options cu.IM) (results cu.IM, err error) {
 	tag := cu.ToString(options["tag"], "")
 
 	// the best listprice
-	queryFilters := []string{
-		fmt.Sprintf(" and ((valid_to is null) or (valid_to >= '%s'))", posdate),
-	}
-	if tag != "" {
-		queryFilters = append(queryFilters, fmt.Sprintf(" and code in (select code from price_tags where tag='%s')", tag))
-	}
 	query := md.Query{
 		Fields: []string{"min(price_value) as mp"},
 		From:   "price_view",
@@ -76,8 +68,18 @@ func (ds *DataStore) ProductPrice(options cu.IM) (results cu.IM, err error) {
 			{Field: "qty", Comp: "<=", Value: qty},
 			{Field: "valid_from", Comp: "<=", Value: posdate},
 			{Field: "customer_code", Comp: "is", Value: "null"},
+			{Field: "valid_to", Comp: "is", Value: "null"},
+			{Or: true, Field: "valid_to", Comp: ">=", Value: posdate},
 		},
-		Filter: strings.Join(queryFilters, " "),
+	}
+	if tag != "" {
+		query.Filters = append(query.Filters, md.Filter{Field: "code", Comp: "in", Value: md.Query{
+			Fields: []string{"code"},
+			From:   "price_tags",
+			Filters: []md.Filter{
+				{Field: "tag", Comp: "==", Value: tag},
+			},
+		}})
 	}
 	var prices []cu.IM
 	if prices, err = ds.StoreDataQuery(query, false); err != nil {
@@ -116,8 +118,18 @@ func (ds *DataStore) ProductPrice(options cu.IM) (results cu.IM, err error) {
 				{Field: "qty", Comp: "<=", Value: qty},
 				{Field: "valid_from", Comp: "<=", Value: posdate},
 				{Field: "customer_code", Comp: "==", Value: options["customer_code"]},
+				{Field: "valid_to", Comp: "is", Value: "null"},
+				{Or: true, Field: "valid_to", Comp: ">=", Value: posdate},
 			},
-			Filter: strings.Join(queryFilters, " "),
+		}
+		if tag != "" {
+			query.Filters = append(query.Filters, md.Filter{Field: "code", Comp: "in", Value: md.Query{
+				Fields: []string{"code"},
+				From:   "price_tags",
+				Filters: []md.Filter{
+					{Field: "tag", Comp: "==", Value: tag},
+				},
+			}})
 		}
 		if prices, err = ds.StoreDataQuery(query, false); err != nil {
 			return results, err
