@@ -16,6 +16,7 @@ import (
 	drv "github.com/nervatura/nervatura/v6/pkg/driver"
 	md "github.com/nervatura/nervatura/v6/pkg/model"
 	ut "github.com/nervatura/nervatura/v6/pkg/service/utils"
+	st "github.com/nervatura/nervatura/v6/static"
 )
 
 // DataDriver a general database interface
@@ -259,10 +260,10 @@ func (ds *DataStore) StoreDataGet(params cu.IM, foundErr bool) (result []cu.IM, 
 		Filters: []md.Filter{},
 	}
 	if limit := cu.ToInteger(params["limit"], 0); limit > 0 {
-		query.Limit = limit
+		query.Limit = min(limit, st.MaxQueryLimit)
 	}
 	if offset := cu.ToInteger(params["offset"], 0); offset > 0 {
-		query.Offset = offset
+		query.Offset = min(offset, st.MaxQueryOffset)
 	}
 	if orderBy, found := params["order_by"].([]string); found {
 		query.OrderBy = orderBy

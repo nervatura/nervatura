@@ -157,12 +157,16 @@ func (ds *DataStore) getReportData(reportTemplate, filters cu.IM, sources []cu.S
 	const whereKey = "@where_str"
 	for index := 0; index < len(sources); index++ {
 		dsc := sources[index]
+		whereIdx := strings.Index(dsc["sqlstr"], whereKey)
 		if _, found := whereStr[dsc["dataset"]]; found {
 			dsc["sqlstr"] = strings.ReplaceAll(dsc["sqlstr"], whereKey, whereStr[dsc["dataset"]])
 		}
-		if _, found := whereStr["nods"]; found {
+		if _, found := whereStr["nods"]; found && whereIdx > -1 {
 			dsc["sqlstr"] = strings.ReplaceAll(dsc["sqlstr"], whereKey, whereStr["nods"])
 			params[dsc["dataset"]] = append(params[dsc["dataset"]], params["nods"]...)
+		}
+		if _, found := params[dsc["dataset"]+"_aw"]; found {
+			params[dsc["dataset"]] = append(params[dsc["dataset"]], params[dsc["dataset"]+"_aw"]...)
 		}
 		dsc["sqlstr"] = strings.ReplaceAll(dsc["sqlstr"], whereKey, "")
 		datarows[dsc["dataset"]], err = ds.Db.QuerySQL(dsc["sqlstr"], params[dsc["dataset"]], nil)

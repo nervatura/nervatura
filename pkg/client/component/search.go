@@ -21,13 +21,6 @@ var compMapString = cu.SM{
 	"==": "like", "!=": "not like",
 }
 
-var pre = func(or bool) string {
-	if or {
-		return "or"
-	}
-	return "and"
-}
-
 type SearchConfig struct{}
 
 func (s *SearchConfig) SideBar(labels cu.SM, data cu.IM) (items []ct.SideBarItem) {
@@ -195,12 +188,12 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "t.code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "t.code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "trans_type", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "direction", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "trans_date", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "customer_name", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "currency_code", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "currency_code", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["trans_code"], labels["trans_date"],
@@ -226,12 +219,12 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "t.code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "t.code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "trans_type", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "direction", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "trans_date", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "customer_name", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "currency_code", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "currency_code", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["trans_code"], labels["trans_date"],
@@ -249,7 +242,7 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				{Name: "code", Label: labels["transitem_code"]},
 				{Name: "trans_type", Label: labels["trans_type"]},
 				{Name: "direction", Label: labels["trans_direction"]},
-				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "trans_date", Label: labels["trans_date"], FieldType: ct.TableFieldTypeDate},
 				{Name: "customer_code", Label: labels["customer_code"], FieldType: ct.TableFieldTypeLink},
 				{Name: "customer_name", Label: labels["customer_name"]},
 				{Name: "currency_code", Label: labels["currency_code"]},
@@ -325,7 +318,7 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				{Name: "qty", Label: labels["item_qty"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "currency_code", Label: labels["currency_code"]},
 				{Name: "fx_price", Label: labels["item_fx_price"], FieldType: ct.TableFieldTypeNumber},
-				{Name: "discount", Label: labels["item_discount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "discount", Label: labels["item_discount"], FieldType: ct.TableFieldTypeInteger},
 				{Name: "net_amount", Label: labels["item_net_amount"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "vat_amount", Label: labels["item_vat_amount"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "amount", Label: labels["item_amount"], FieldType: ct.TableFieldTypeNumber},
@@ -359,12 +352,12 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "t.code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "t.code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "trans_type", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "direction", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "trans_date", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "place_name", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "p.currency_code", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "p.currency_code", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["trans_code"], labels["trans_date"],
@@ -385,7 +378,7 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				{Name: "direction", Label: labels["trans_direction"]},
 				{Name: "status", Label: labels["trans_status"]},
 				{Name: "ref_number", Label: labels["trans_ref_number"]},
-				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "trans_date", Label: labels["trans_date"], FieldType: ct.TableFieldTypeDate},
 				{Name: "paid_date", Label: labels["payment_paid_date"], FieldType: ct.TableFieldTypeDate},
 				{Name: "place_code", Label: labels["place_code"], FieldType: ct.TableFieldTypeLink},
 				{Name: "place_name", Label: labels["place_name_payment"]},
@@ -418,7 +411,7 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				{Name: "code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
 				{Name: "trans_type", Label: labels["trans_type"]},
 				{Name: "direction", Label: labels["trans_direction"]},
-				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "trans_date", Label: labels["trans_date"], FieldType: ct.TableFieldTypeDate},
 				{Name: "description", Label: labels["map_description"]},
 				{Name: "value", Label: labels["map_value"], FieldType: ct.TableFieldTypeMeta},
 			},
@@ -470,10 +463,10 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "t.code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "t.code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "trans_type", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "direction", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "trans_date", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "trans_date", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["trans_code"], labels["trans_date"], labels["trans_type"], labels["trans_direction"],
@@ -599,7 +592,7 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				{Name: "code", Label: labels["trans_code"], FieldType: ct.TableFieldTypeLink},
 				{Name: "trans_type", Label: labels["trans_type"]},
 				{Name: "direction", Label: labels["trans_direction"]},
-				{Name: "trans_date", Label: labels["trans_date"]},
+				{Name: "trans_date", Label: labels["trans_date"], FieldType: ct.TableFieldTypeDate},
 				{Name: "description", Label: labels["map_description"]},
 				{Name: "value", Label: labels["map_value"], FieldType: ct.TableFieldTypeMeta},
 			},
@@ -623,10 +616,10 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "customer_name", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "tax_number", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "customer_type", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "customer_type", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["customer_code"], labels["customer_name"],
@@ -647,7 +640,7 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 				{Name: "tax_free", Label: labels["customer_tax_free"], FieldType: ct.TableFieldTypeBool},
 				{Name: "terms", Label: labels["customer_terms"], FieldType: ct.TableFieldTypeNumber},
 				{Name: "credit_limit", Label: labels["customer_credit_limit"], FieldType: ct.TableFieldTypeNumber},
-				{Name: "discount", Label: labels["customer_discount"], FieldType: ct.TableFieldTypeNumber},
+				{Name: "discount", Label: labels["customer_discount"], FieldType: ct.TableFieldTypeInteger},
 				{Name: "notes", Label: labels["customer_notes"]},
 				{Name: "tag_lst", Label: labels["customer_tags"]},
 				{Name: "inactive", Label: labels["customer_inactive"], FieldType: ct.TableFieldTypeBool},
@@ -785,10 +778,10 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "product_name", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "product_type", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "tag_lst", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "tag_lst", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["product_code"], labels["product_name"],
@@ -899,11 +892,11 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "description", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "product_code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "serial_number", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "tag_lst", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "tag_lst", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["tool_code"], labels["tool_description"],
@@ -985,9 +978,9 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "project_name", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "customer_code", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "customer_code", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["project_code"], labels["project_name"],
@@ -1117,12 +1110,12 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "first_name", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "surname", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "status", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "email", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "tag_lst", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "tag_lst", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["employee_code"], labels["contact_first_name"],
@@ -1216,9 +1209,9 @@ func (s *SearchConfig) View(view string, labels cu.SM, sessionID string) md.Sear
 			VisibleColumns: cu.IM{},
 			HideFilters:    cu.IM{},
 			Filters: []any{
-				cu.IM{"or": true, "field": "code", "comp": "==", "value": ""},
+				cu.IM{"block_start": true, "field": "code", "comp": "==", "value": ""},
 				cu.IM{"or": true, "field": "place_name", "comp": "==", "value": ""},
-				cu.IM{"or": true, "field": "place_type", "comp": "==", "value": ""},
+				cu.IM{"or": true, "block_end": true, "field": "place_type", "comp": "==", "value": ""},
 			},
 			FilterPlaceholder: strings.Join([]string{
 				labels["place_code"], labels["place_name"],
@@ -1400,16 +1393,11 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t left join customer c on t.customer_code = c.code  
 			left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
-				/*
-					Filters: []md.Filter{
-							{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s,%s,%s,%s,%s",
-								md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
-								md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String())},
-						},
-				*/
-				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s','%s')",
-					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
-					md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s,%s,%s,%s,%s",
+						md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
+						md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String())},
+				},
 				OrderBy: []string{"t.id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1421,9 +1409,10 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t left join customer c on t.customer_code = c.code  
 			left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
-				Filter: fmt.Sprintf("trans_type in('%s','%s')",
-					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(),
-				),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
+						md.TransTypeInvoice.String(), md.TransTypeReceipt.String())},
+				},
 				OrderBy: []string{"t.id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1435,9 +1424,11 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t left join customer c on t.customer_code = c.code  
 			left join(select trans_code, sum(amount) as amount from item_view group by trans_code) i on t.code = i.trans_code`,
-				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s','%s')",
-					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
-					md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s,%s,%s,%s,%s",
+						md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
+						md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String())},
+				},
 				OrderBy: []string{"t.id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1447,9 +1438,11 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 				Fields: []string{"*", "map_key as field_name", "map_value as value",
 					"id as trans_id", "'trans' as editor", "'maps' as editor_view"},
 				From: "trans_map",
-				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s','%s')",
-					md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
-					md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s,%s,%s,%s,%s",
+						md.TransTypeInvoice.String(), md.TransTypeReceipt.String(), md.TransTypeOrder.String(),
+						md.TransTypeOffer.String(), md.TransTypeWorksheet.String(), md.TransTypeRent.String())},
+				},
 				OrderBy: []string{"id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1471,8 +1464,10 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t inner join place p on t.place_code = p.code  
 			left join(select trans_code, sum(amount) as amount from payment_view group by trans_code) pm on t.code = pm.trans_code`,
-				Filter: fmt.Sprintf("trans_type in('%s','%s')",
-					md.TransTypeBank.String(), md.TransTypeCash.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
+						md.TransTypeBank.String(), md.TransTypeCash.String())},
+				},
 				OrderBy: []string{"t.id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1486,8 +1481,10 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"t.closed", "'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t inner join place p on t.place_code = p.code  
 			inner join payment_view pm on t.code = pm.trans_code`,
-				Filter: fmt.Sprintf("trans_type in('%s','%s')",
-					md.TransTypeBank.String(), md.TransTypeCash.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
+						md.TransTypeBank.String(), md.TransTypeCash.String())},
+				},
 				OrderBy: []string{"t.id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1497,8 +1494,10 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 				Fields: []string{"*", "map_key as field_name", "map_value as value",
 					"id as trans_id", "'" + cu.ToString(editor, "trans") + "' as editor", "'maps' as editor_view"},
 				From: "trans_map",
-				Filter: fmt.Sprintf("trans_type in('%s','%s')",
-					md.TransTypeBank.String(), md.TransTypeCash.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s",
+						md.TransTypeBank.String(), md.TransTypeCash.String())},
+				},
 				OrderBy: []string{"id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1517,9 +1516,11 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 					"t.id", "t.code", "t.trans_date", "t.trans_type", "t.direction",
 					"'" + cu.ToString(editor, "trans") + "' as editor", "t.id as editor_id", "'trans' as editor_view"},
 				From: `trans_view t`,
-				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s')",
-					md.TransTypeDelivery.String(), md.TransTypeInventory.String(), md.TransTypeWaybill.String(),
-					md.TransTypeProduction.String(), md.TransTypeFormula.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s,%s,%s,%s",
+						md.TransTypeDelivery.String(), md.TransTypeInventory.String(), md.TransTypeWaybill.String(),
+						md.TransTypeProduction.String(), md.TransTypeFormula.String())},
+				},
 				OrderBy: []string{"t.id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1561,9 +1562,11 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 				Fields: []string{"*", "map_key as field_name", "map_value as value",
 					"id as trans_id", "'" + cu.ToString(editor, "trans") + "' as editor", "'maps' as editor_view"},
 				From: "trans_map",
-				Filter: fmt.Sprintf("trans_type in('%s','%s','%s','%s','%s')",
-					md.TransTypeDelivery.String(), md.TransTypeInventory.String(), md.TransTypeWaybill.String(),
-					md.TransTypeProduction.String(), md.TransTypeFormula.String()),
+				Filters: []md.Filter{
+					{Field: "trans_type", Comp: "in", Value: fmt.Sprintf("%s,%s,%s,%s,%s",
+						md.TransTypeDelivery.String(), md.TransTypeInventory.String(), md.TransTypeWaybill.String(),
+						md.TransTypeProduction.String(), md.TransTypeFormula.String())},
+				},
 				OrderBy: []string{"id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1844,9 +1847,14 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 		},
 		"office_template_editor": func(editor string) md.Query {
 			return md.Query{
-				Fields:  []string{"id", "code", "report_key", "report_type", "trans_type", "direction", "report_name", "description", "label"},
-				From:    "config_report",
-				Filter:  fmt.Sprintf("file_type = '%s'", md.FileTypePDF.String()),
+				Fields: []string{"id", "code", "report_key", "report_type", "trans_type", "direction", "report_name", "description", "label"},
+				From:   "config_report",
+				Filters: []md.Filter{
+					{Field: "file_type", Comp: "==", Value: md.FileTypePDF.String()},
+				},
+				/*
+					Filter:  fmt.Sprintf("file_type = '%s'", md.FileTypePDF.String()),
+				*/
 				OrderBy: []string{"id"},
 				Limit:   st.BrowserRowLimit,
 			}
@@ -1870,629 +1878,77 @@ func (s *SearchConfig) Query(key string, params cu.IM) (query md.Query) {
 	return query
 }
 
-func (s *SearchConfig) Filter(view string, filter ct.BrowserFilter, queryFilters []string) (filters []string) {
-	result := map[string]func() []string{
-		"customer_simple": func() []string {
-			return s.filterCustomer(view, filter, queryFilters)
-		},
-		"customer": func() []string {
-			return s.filterCustomer(view, filter, queryFilters)
-		},
-		"customer_map": func() []string {
-			return s.filterCustomer(view, filter, queryFilters)
-		},
-		"customer_addresses": func() []string {
-			return s.filterCustomer(view, filter, queryFilters)
-		},
-		"customer_contacts": func() []string {
-			return s.filterCustomer(view, filter, queryFilters)
-		},
-		"customer_events": func() []string {
-			return s.filterCustomer(view, filter, queryFilters)
-		},
-		"product_simple": func() []string {
-			return s.filterProduct(view, filter, queryFilters)
-		},
-		"product": func() []string {
-			return s.filterProduct(view, filter, queryFilters)
-		},
-		"product_map": func() []string {
-			return s.filterProduct(view, filter, queryFilters)
-		},
-		"product_events": func() []string {
-			return s.filterProduct(view, filter, queryFilters)
-		},
-		"product_prices": func() []string {
-			return s.filterProduct(view, filter, queryFilters)
-		},
-		"product_components": func() []string {
-			return s.filterProduct(view, filter, queryFilters)
-		},
-		"tool_simple": func() []string {
-			return s.filterTool(view, filter, queryFilters)
-		},
-		"tool": func() []string {
-			return s.filterTool(view, filter, queryFilters)
-		},
-		"tool_map": func() []string {
-			return s.filterTool(view, filter, queryFilters)
-		},
-		"tool_events": func() []string {
-			return s.filterTool(view, filter, queryFilters)
-		},
-		"project_simple": func() []string {
-			return s.filterProject(view, filter, queryFilters)
-		},
-		"project": func() []string {
-			return s.filterProject(view, filter, queryFilters)
-		},
-		"project_map": func() []string {
-			return s.filterProject(view, filter, queryFilters)
-		},
-		"project_addresses": func() []string {
-			return s.filterProject(view, filter, queryFilters)
-		},
-		"project_contacts": func() []string {
-			return s.filterProject(view, filter, queryFilters)
-		},
-		"project_events": func() []string {
-			return s.filterProject(view, filter, queryFilters)
-		},
-		"employee_simple": func() []string {
-			return s.filterEmployee(view, filter, queryFilters)
-		},
-		"employee": func() []string {
-			return s.filterEmployee(view, filter, queryFilters)
-		},
-		"employee_map": func() []string {
-			return s.filterEmployee(view, filter, queryFilters)
-		},
-		"employee_events": func() []string {
-			return s.filterEmployee(view, filter, queryFilters)
-		},
-		"transitem_simple": func() []string {
-			return s.filterTransItem(view, filter, queryFilters)
-		},
-		"invoice_simple": func() []string {
-			return s.filterTransItem(view, filter, queryFilters)
-		},
-		"transitem": func() []string {
-			return s.filterTransItem(view, filter, queryFilters)
-		},
-		"transitem_map": func() []string {
-			return s.filterTransItem(view, filter, queryFilters)
-		},
-		"transitem_item": func() []string {
-			return s.filterTransItem(view, filter, queryFilters)
-		},
-		"transpayment_simple": func() []string {
-			return s.filterTransPayment(view, filter, queryFilters)
-		},
-		"transpayment": func() []string {
-			return s.filterTransPayment(view, filter, queryFilters)
-		},
-		"transpayment_map": func() []string {
-			return s.filterTransPayment(view, filter, queryFilters)
-		},
-		"transpayment_invoice": func() []string {
-			return s.filterTransPayment(view, filter, queryFilters)
-		},
-		"transmovement_simple": func() []string {
-			return s.filterTransMovement(view, filter, queryFilters)
-		},
-		"transmovement_stock": func() []string {
-			return s.filterTransMovement(view, filter, queryFilters)
-		},
-		"transmovement": func() []string {
-			return s.filterTransMovement(view, filter, queryFilters)
-		},
-		"transmovement_waybill": func() []string {
-			return s.filterTransMovement(view, filter, queryFilters)
-		},
-		"transmovement_formula": func() []string {
-			return s.filterTransMovement(view, filter, queryFilters)
-		},
-		"transmovement_map": func() []string {
-			return s.filterTransMovement(view, filter, queryFilters)
-		},
-		"place_simple": func() []string {
-			return s.filterPlace(view, filter, queryFilters)
-		},
-		"place": func() []string {
-			return s.filterPlace(view, filter, queryFilters)
-		},
-		"place_map": func() []string {
-			return s.filterPlace(view, filter, queryFilters)
-		},
-		"place_contacts": func() []string {
-			return s.filterPlace(view, filter, queryFilters)
-		},
-		"place_events": func() []string {
-			return s.filterPlace(view, filter, queryFilters)
-		},
-		"office_template_editor": func() []string {
-			return s.filterOffice(view, filter, queryFilters)
-		},
-		"office_rate": func() []string {
-			return s.filterOffice(view, filter, queryFilters)
-		},
+func (s *SearchConfig) Filter(view string, filter ct.BrowserFilter, filters []md.Filter) []md.Filter {
+	getField := func() ct.TableField {
+		fld := ct.TableField{}
+		vdef := s.View(view, cu.SM{}, "")
+		for _, field := range vdef.Fields {
+			if field.Name == filter.Field {
+				fld = field
+				break
+			}
+		}
+		return fld
 	}
 
-	filters = []string{}
-	if f, found := result[view]; found {
-		filters = f()
+	fieldAlias := cu.SM{
+		"end_time": "start_time",
 	}
-	return filters
-}
 
-func (s *SearchConfig) filterCustomer(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"customer_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"customer": func() []string {
-			switch filter.Field {
-			case "tax_free", "inactive":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "code", "customer_name", "customer_type", "tax_number", "account", "notes", "tag_lst":
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			case "id", "terms", "credit_limit", "discount":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return queryFilters
-			}
-
-		},
-		"customer_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"customer_addresses": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"customer_contacts": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"customer_events": func() []string {
-			switch filter.Field {
-			case "start_time", "end_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (start_time %s '%s')", pre(filter.Or), compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
+	tf := getField()
+	fieldName := filter.Field
+	if alias, found := fieldAlias[filter.Field]; found {
+		fieldName = alias
 	}
-	return result[view]()
-}
+	switch tf.FieldType {
+	case ct.TableFieldTypeNumber:
+		return append(filters, md.Filter{
+			Or:         filter.Or,
+			BlockStart: filter.BlockStart,
+			BlockEnd:   filter.BlockEnd,
+			Field:      fieldName,
+			Comp:       cu.ToString(compMap[filter.Comp], "=="),
+			Value:      cu.ToFloat(filter.Value, 0),
+		})
 
-func (s *SearchConfig) filterProduct(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"product_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"product": func() []string {
-			switch filter.Field {
-			case "inactive":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "code", "product_name", "product_type", "tax_code", "unit", "notes", "tag_lst", "barcode_type", "barcode":
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			case "id", "barcode_qty":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return queryFilters
-			}
-		},
-		"product_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"product_events": func() []string {
-			switch filter.Field {
-			case "start_time", "end_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (start_time %s '%s')", pre(filter.Or), compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"product_prices": func() []string {
-			switch filter.Field {
-			case "valid_from", "valid_to":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "id", "qty", "price_value":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"product_components": func() []string {
-			switch filter.Field {
-			case "id", "qty":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-	}
-	return result[view]()
-}
+	case ct.TableFieldTypeInteger:
+		return append(filters, md.Filter{
+			Or:         filter.Or,
+			BlockStart: filter.BlockStart,
+			BlockEnd:   filter.BlockEnd,
+			Field:      fieldName,
+			Comp:       cu.ToString(compMap[filter.Comp], "=="),
+			Value:      cu.ToInteger(filter.Value, 0),
+		})
 
-func (s *SearchConfig) filterTool(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"tool_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"tool": func() []string {
-			switch filter.Field {
-			case "inactive":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "code", "description", "product_code", "notes", "tag_lst", "serial_number":
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			case "id":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return queryFilters
-			}
-		},
-		"tool_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"tool_events": func() []string {
-			switch filter.Field {
-			case "start_time", "end_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (start_time %s '%s')", pre(filter.Or), compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-	}
-	return result[view]()
-}
+	case ct.TableFieldTypeBool:
+		return append(filters, md.Filter{
+			Or:         filter.Or,
+			BlockStart: filter.BlockStart,
+			BlockEnd:   filter.BlockEnd,
+			Field:      fieldName,
+			Comp:       cu.ToString(compMap[filter.Comp], "=="),
+			Value:      cu.ToBoolean(filter.Value, false),
+		})
 
-func (s *SearchConfig) filterProject(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"project_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"project": func() []string {
-			switch filter.Field {
-			case "inactive":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "start_date", "end_date":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "code", "project_name", "customer_code", "notes", "tag_lst":
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			case "id":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return queryFilters
-			}
-		},
-		"project_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"project_addresses": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"project_contacts": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"project_events": func() []string {
-			switch filter.Field {
-			case "start_time", "end_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (start_time %s '%s')", pre(filter.Or), compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-	}
-	return result[view]()
-}
+	case ct.TableFieldTypeDate, ct.TableFieldTypeDateTime:
+		return append(filters, md.Filter{
+			Or:         filter.Or,
+			BlockStart: filter.BlockStart,
+			BlockEnd:   filter.BlockEnd,
+			Field:      fieldName,
+			Comp:       cu.ToString(compMap[filter.Comp], "=="),
+			Value:      cu.ToString(filter.Value, ""),
+		})
 
-func (s *SearchConfig) filterEmployee(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"employee_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"employee": func() []string {
-			switch filter.Field {
-			case "inactive":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "start_date", "end_date":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "code", "notes", "tag_lst",
-				"first_name", "surname", "status", "email", "phone", "mobile",
-				"street", "city", "state", "zip_code", "country":
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			case "id":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return queryFilters
-			}
-		},
-		"employee_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"employee_events": func() []string {
-			switch filter.Field {
-			case "start_time", "end_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (start_time %s '%s')", pre(filter.Or), compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
+	default:
+		return append(filters, md.Filter{
+			Or:         filter.Or,
+			BlockStart: filter.BlockStart,
+			BlockEnd:   filter.BlockEnd,
+			Field:      "CAST(" + fieldName + " as CHAR(255))",
+			Comp:       cu.ToString(compMapString[filter.Comp], "like"),
+			Value:      "%" + cu.ToString(filter.Value, "") + "%",
+		})
 	}
-	return result[view]()
-}
-
-func (s *SearchConfig) filterPlace(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"place_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"place": func() []string {
-			switch filter.Field {
-			case "inactive":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "code", "place_name", "place_type", "currency_code", "notes", "tag_lst",
-				"country", "state", "zip_code", "city", "street":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			case "id":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return queryFilters
-			}
-		},
-		"place_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"place_contacts": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"place_events": func() []string {
-			switch filter.Field {
-			case "start_time", "end_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (start_time %s '%s')", pre(filter.Or), compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-	}
-	return result[view]()
-}
-
-func (s *SearchConfig) filterTransItem(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"transitem_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"invoice_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"transitem": func() []string {
-			switch filter.Field {
-			case "tax_free", "paid", "closed":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "trans_date", "due_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "id", "rate", "worksheet_distance", "worksheet_repair", "worksheet_total", "rent_holiday", "rent_bad_tool", "rent_other", "amount":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "customer_name":
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(t.%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"transitem_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"transitem_item": func() []string {
-			switch filter.Field {
-			case "deposit", "action_price":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "id", "qty", "fx_price", "net_amount", "discount", "vat_amount", "amount", "own_stock":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-	}
-	return result[view]()
-}
-
-func (s *SearchConfig) filterTransPayment(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"transpayment_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"transpayment": func() []string {
-			switch filter.Field {
-			case "closed":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			case "trans_date", "paid_date":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "id", "amount":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "code":
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(t.%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"transpayment_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"transpayment_invoice": func() []string {
-			switch filter.Field {
-			case "id", "paid_amount", "paid_rate", "invoice_amount":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "trans_date", "payment_date":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-	}
-	return result[view]()
-}
-
-func (s *SearchConfig) filterTransMovement(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"transmovement_simple": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"transmovement_stock": func() []string {
-			switch filter.Field {
-			case "posdate":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "id", "qty":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"transmovement": func() []string {
-			switch filter.Field {
-			case "id", "qty":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "shipping_date":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"transmovement_waybill": func() []string {
-			switch filter.Field {
-			case "id":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "shipping_time":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"transmovement_formula": func() []string {
-			switch filter.Field {
-			case "id", "qty":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "shared":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %t)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToBoolean(filter.Value, false)))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-		"transmovement_map": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-	}
-	return result[view]()
-}
-
-func (s *SearchConfig) filterOffice(view string, filter ct.BrowserFilter, queryFilters []string) []string {
-	result := map[string]func() []string{
-		"office_template_editor": func() []string {
-			return append(queryFilters,
-				fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-		},
-		"office_rate": func() []string {
-			switch filter.Field {
-			case "id", "qty", "rate_value":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s %s)", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			case "rate_date":
-				return append(queryFilters,
-					fmt.Sprintf("%s (%s %s '%s')", pre(filter.Or), filter.Field, compMap[filter.Comp], cu.ToString(filter.Value, "")))
-			default:
-				return append(queryFilters,
-					fmt.Sprintf("%s (CAST(%s as CHAR(255)) %s '%s')", pre(filter.Or), filter.Field, compMapString[filter.Comp], "%"+cu.ToString(filter.Value, "")+"%"))
-			}
-		},
-	}
-	return result[view]()
 }

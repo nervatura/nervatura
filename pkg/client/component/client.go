@@ -29,7 +29,7 @@ type SearchInterface interface {
 	SideGroups(labels cu.SM) []md.SideGroup
 	View(view string, labels cu.SM) md.SearchView
 	Query(key string, params cu.IM) md.Query
-	Filter(view string, filter ct.BrowserFilter, queryFilters []string) []string
+	Filter(view string, filter ct.BrowserFilter, filters []md.Filter) []md.Filter
 }
 
 var editorMap = map[string]EditorInterface{

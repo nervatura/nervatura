@@ -36,20 +36,8 @@ func (s *SearchService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, er
 		filters = pf
 	}
 
-	queryFilters := []string{}
 	for _, filter := range filters {
-		queryFilters = s.cls.UI.SearchConfig.Filter(view, filter, queryFilters)
-	}
-
-	if len(queryFilters) > 0 {
-		queryFilter := strings.Join(queryFilters, " ")
-		queryFilter, _ = strings.CutPrefix(queryFilter, "or ")
-		queryFilter, _ = strings.CutPrefix(queryFilter, "and ")
-		queryFilter = "(" + queryFilter + ")"
-		if len(query.Filter) > 0 {
-			queryFilter = " and " + queryFilter
-		}
-		query.Filter += queryFilter
+		query.Filters = s.cls.UI.SearchConfig.Filter(view, filter, query.Filters)
 	}
 
 	data["result"], err = ds.StoreDataQuery(query, false)

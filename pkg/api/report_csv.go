@@ -4,16 +4,9 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/csv"
-	"regexp"
 	"strings"
 
 	cu "github.com/nervatura/component/pkg/util"
-)
-
-// sqlInjectionPattern matches common SQL injection attempts for filter value sanitization.
-// Uses RE2-compatible escapes: \x00 (null), \x08 (backspace).
-var sqlInjectionPattern = regexp.MustCompile(
-	`(\s*([\x00\x08\'\"\n\r\t\%\_\\]*\s*(((select\s*.+\s*from\s*.+)|(insert\s*.+\s*into\s*.+)|(update\s*.+\s*set\s*.+)|(delete\s*.+\s*from\s*.+)|(drop\s*.+)|(truncate\s*.+)|(alter\s*.+)|(exec\s*.+)|(\s*(all|any|not|and|between|in|like|or|some|contains|containsall|containskey)\s*.+[=><!~]+.+)|(let\s+.+[\=]\s*.*)|(begin\s*.*\s*end)|(\s*[\/\*]+\s*.*\s*[\*\/]+)|(\s*(\-\-)\s*.*\s+)|(\s*(contains|containsall|containskey)\s+.*)))(\s*[\;]\s*)*)+)`,
 )
 
 func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM, params map[string][]any) cu.SM {
@@ -71,30 +64,26 @@ func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM, params map[s
 				continue
 			}
 
-			sanitizeFilterValue := func(filterValue string) string {
-				// Return SQL-injection-safe filter value.
-				return sqlInjectionPattern.ReplaceAllString(filterValue, "''")
-			}
-
 			// Handle non-where conditions
 			for _, ds := range sources {
 				sqlStr := cu.ToString(fieldMap["sqlstr"], "")
-				filterStr := sanitizeFilterValue(cu.ToString(filters[fieldname], ""))
 
-				/*
-					count := strings.Count(ds["sqlstr"], "@"+fieldname)
-					for i := 0; i < count; i++ {
-						params[ds["dataset"]] = append(params[ds["dataset"]], []any{filters[fieldname]}...)
-					}
-				*/
+				whereIdx := strings.Index(ds["sqlstr"], "@where_str")
+				count := strings.Count(ds["sqlstr"], "@"+fieldname)
+				countAfterWhere := 0
+				if whereIdx > -1 {
+					countAfterWhere = strings.Count(ds["sqlstr"][whereIdx:], "@"+fieldname)
+				}
+				for i := 0; i < count-countAfterWhere; i++ {
+					params[ds["dataset"]] = append(params[ds["dataset"]], []any{filters[fieldname]}...)
+				}
+				for i := 0; i < countAfterWhere; i++ {
+					params[ds["dataset"]+"_aw"] = append(params[ds["dataset"]+"_aw"], filters[fieldname])
+				}
 				if sqlStr == "" {
-					ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, filterStr)
-					//ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, "?")
+					ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, "?")
 				} else {
-					//fstr := strings.ReplaceAll(sqlStr, "@"+fieldname, "?")
-					//ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, fstr)
-
-					fstr := strings.ReplaceAll(sqlStr, "@"+fieldname, filterStr)
+					fstr := strings.ReplaceAll(sqlStr, "@"+fieldname, "?")
 					ds["sqlstr"] = strings.ReplaceAll(ds["sqlstr"], "@"+fieldname, fstr)
 				}
 			}

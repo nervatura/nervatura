@@ -24,6 +24,8 @@ const (
 	ClientAuthRedirectURL = "/client/api/auth/callback"
 	OAuthAuthRedirectURL  = "/oauth/callback"
 	BrowserRowLimit       = 100
+	MaxQueryLimit         = 10000
+	MaxQueryOffset        = 100000
 
 	DefaultModule      = "search"
 	DefaultSearchView  = "transitem_simple"

@@ -49,8 +49,8 @@ func (s *RateService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err 
 			Fields: []string{"*"}, From: "rate",
 			Filters: []md.Filter{
 				{Field: "deleted", Comp: "==", Value: false},
-				{Field: "id", Comp: "==", Value: cu.ToInteger(params["rate_id"], 0)},
-				{Or: true, Field: "code", Comp: "==", Value: cu.ToString(params["rate_code"], "")},
+				{BlockStart: true, Field: "id", Comp: "==", Value: cu.ToInteger(params["rate_id"], 0)},
+				{Or: true, BlockEnd: true, Field: "code", Comp: "==", Value: cu.ToString(params["rate_code"], "")},
 			},
 		}, false); err != nil {
 			return data, err

@@ -195,8 +195,8 @@ func (ses *SessionService) checkSessionTable() (err error) {
 
 func (ses *SessionService) getDbRows(rowID string) (rows []cu.IM, err error) {
 	sessionTable := cu.ToString(ses.Config.DbTable, "session")
-	sqlString := fmt.Sprintf("SELECT * FROM %s WHERE id='%s'", sessionTable, rowID)
-	return ses.Conn.QuerySQL(sqlString, []interface{}{}, nil)
+	sqlString := fmt.Sprintf("SELECT * FROM %s WHERE id=?", sessionTable)
+	return ses.Conn.QuerySQL(sqlString, []any{rowID}, nil)
 }
 
 func (ses *SessionService) saveDbSession(sessionID string, data any) (err error) {

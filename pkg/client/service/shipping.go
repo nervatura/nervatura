@@ -47,8 +47,8 @@ func (s *ShippingService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 			Filters: []md.Filter{
 				{Field: "t.deleted", Comp: "==", Value: false},
 				{Field: "c.deleted", Comp: "==", Value: false},
-				{Field: "t.id", Comp: "==", Value: cu.ToInteger(params["trans_id"], 0)},
-				{Or: true, Field: "t.code", Comp: "==", Value: cu.ToString(params["trans_code"], "")},
+				{BlockStart: true, Field: "t.id", Comp: "==", Value: cu.ToInteger(params["trans_id"], 0)},
+				{Or: true, BlockEnd: true, Field: "t.code", Comp: "==", Value: cu.ToString(params["trans_code"], "")},
 			},
 		}, false); err != nil {
 			return data, err

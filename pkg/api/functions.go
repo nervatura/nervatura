@@ -68,8 +68,8 @@ func (ds *DataStore) ProductPrice(options cu.IM) (results cu.IM, err error) {
 			{Field: "qty", Comp: "<=", Value: qty},
 			{Field: "valid_from", Comp: "<=", Value: posdate},
 			{Field: "customer_code", Comp: "is", Value: "null"},
-			{Field: "valid_to", Comp: "is", Value: "null"},
-			{Or: true, Field: "valid_to", Comp: ">=", Value: posdate},
+			{BlockStart: true, Field: "valid_to", Comp: "is", Value: "null"},
+			{Or: true, BlockEnd: true, Field: "valid_to", Comp: ">=", Value: posdate},
 		},
 	}
 	if tag != "" {
@@ -118,8 +118,8 @@ func (ds *DataStore) ProductPrice(options cu.IM) (results cu.IM, err error) {
 				{Field: "qty", Comp: "<=", Value: qty},
 				{Field: "valid_from", Comp: "<=", Value: posdate},
 				{Field: "customer_code", Comp: "==", Value: options["customer_code"]},
-				{Field: "valid_to", Comp: "is", Value: "null"},
-				{Or: true, Field: "valid_to", Comp: ">=", Value: posdate},
+				{BlockStart: true, Field: "valid_to", Comp: "is", Value: "null"},
+				{Or: true, BlockEnd: true, Field: "valid_to", Comp: ">=", Value: posdate},
 			},
 		}
 		if tag != "" {

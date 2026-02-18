@@ -133,19 +133,22 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 	} else if !filter.Or {
 		sqlString += " and ("
 	} else {
-		sqlString += " or "
+		sqlString += " or ("
+	}
+	if filter.BlockStart {
+		sqlString += "("
 	}
 	sqlString += filter.Field
 	switch filter.Comp {
-	case "==":
+	case "==", "=":
 		params = append(params, filter.Value)
 		sqlString += "=" + ds.getPrmString(len(params))
-	case "like", "!=", "<", "<=", ">", ">=":
+	case "like", "not like", "!=", "<", "<=", ">", ">=", "<>":
 		params = append(params, filter.Value)
 		sqlString += " " + filter.Comp + " " + ds.getPrmString(len(params))
 	case "is":
 		sqlString += " " + filter.Comp + " " + cu.ToString(filter.Value, "")
-	case "in":
+	case "in", "not in":
 		if filterValue, valid := filter.Value.(string); valid {
 			values := strings.Split(filterValue, ",")
 			prmStr := make([]string, 0)
@@ -161,7 +164,8 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 			params = append(params, queryParams...)
 		}
 	}
-	if !filter.Or {
+	sqlString += ")"
+	if filter.BlockEnd {
 		sqlString += ")"
 	}
 	return sqlString, params
@@ -178,13 +182,12 @@ func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []any) {
 			sqlString += "select "
 		}
 		sqlString += strings.Join(query.Fields, ",") + " from " + query.From
-		if len(query.Filters) > 0 || query.Filter != "" {
+		if len(query.Filters) > 0 {
 			sqlString += " where "
 		}
 		for wi := 0; wi < len(query.Filters); wi++ {
 			sqlString, params = ds.getFilterString(query.Filters[wi], (wi == 0), sqlString, params)
 		}
-		sqlString += query.Filter
 		order := strings.Join(query.OrderBy, ",")
 		if order != "" {
 			sqlString += " order by " + order

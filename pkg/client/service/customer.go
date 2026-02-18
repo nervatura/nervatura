@@ -53,8 +53,8 @@ func (s *CustomerService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 			Fields: []string{"*"}, From: "customer",
 			Filters: []md.Filter{
 				{Field: "deleted", Comp: "==", Value: false},
-				{Field: "id", Comp: "==", Value: cu.ToInteger(params["customer_id"], 0)},
-				{Or: true, Field: "code", Comp: "==", Value: cu.ToString(params["customer_code"], "")},
+				{BlockStart: true, Field: "id", Comp: "==", Value: cu.ToInteger(params["customer_id"], 0)},
+				{Or: true, BlockEnd: true, Field: "code", Comp: "==", Value: cu.ToString(params["customer_code"], "")},
 			},
 		}, false); err != nil {
 			return data, err

@@ -61,8 +61,8 @@ func (s *EmployeeService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, 
 			Fields: []string{"*"}, From: "employee",
 			Filters: []md.Filter{
 				{Field: "deleted", Comp: "==", Value: false},
-				{Field: "id", Comp: "==", Value: cu.ToInteger(params["employee_id"], 0)},
-				{Or: true, Field: "code", Comp: "==", Value: cu.ToString(params["employee_code"], "")},
+				{BlockStart: true, Field: "id", Comp: "==", Value: cu.ToInteger(params["employee_id"], 0)},
+				{Or: true, BlockEnd: true, Field: "code", Comp: "==", Value: cu.ToString(params["employee_code"], "")},
 			},
 		}, false); err != nil {
 			return data, err

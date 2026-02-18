@@ -35,29 +35,30 @@ type MemoryStore struct {
 
 // Filter query filter type
 type Filter struct {
-	Or    bool   // and (False) or (True)
-	Field string //Fieldname and alias
-	Comp  string //==,!=,<,<=,>,>=,in,is
-	Value interface{}
+	Or         bool   `json:"or"`          // and (False) or (True)
+	BlockStart bool   `json:"block_start"` // extra ( character at the beginning of the filter
+	BlockEnd   bool   `json:"block_end"`   // extra ) character at the end of the filter
+	Field      string `json:"field"`       //Fieldname and alias
+	Comp       string `json:"comp"`        //==,!=,<,<=,>,>=,in,is,like,not like
+	Value      any    `json:"value"`
 }
 
 // Query data desc. type
 type Query struct {
-	Fields  []string //Returns fields
-	From    string   //Table or doc. name and alias
-	Filters []Filter
-	Filter  string //filter string (eg. "id=1 and field='value'")
-	OrderBy []string
-	Limit   int64
-	Offset  int64
+	Fields  []string `json:"fields"` //Returns fields
+	From    string   `json:"from"`   //Table or doc. name and alias
+	Filters []Filter `json:"filters"`
+	OrderBy []string `json:"order_by"`
+	Limit   int64    `json:"limit"`
+	Offset  int64    `json:"offset"`
 }
 
 // Update data desc. type
 type Update struct {
 	Values cu.IM
 	Model  string
-	IDKey  int64       //Update, delete or insert exec
-	Trans  interface{} //Transaction
+	IDKey  int64 //Update, delete or insert exec
+	Trans  any   //Transaction
 }
 
 type UpdateDataOptions struct {
@@ -68,7 +69,7 @@ type UpdateDataOptions struct {
 	Meta       any
 	Fields     []string
 	MetaFields []string
-	SetValue   func(modelName string, itemRow cu.IM, values cu.IM, inputName string, fieldValue interface{}) cu.IM
+	SetValue   func(modelName string, itemRow cu.IM, values cu.IM, inputName string, fieldValue any) cu.IM
 }
 
 type AuthOptions struct {
@@ -76,7 +77,7 @@ type AuthOptions struct {
 	Config            cu.IM
 	AppLog            *slog.Logger
 	ParseToken        func(tokenString string, keyMap []cu.SM, config cu.IM) (cu.IM, error)
-	ConvertFromReader func(data io.Reader, result interface{}) error
+	ConvertFromReader func(data io.Reader, result any) error
 	TokenString       string
 }
 
@@ -142,12 +143,12 @@ func JSONBMap(fieldName, value string) any {
 			return resultData()
 		}
 	*/
-	var result interface{}
+	var result any
 	_ = cu.ConvertFromByte([]byte(value), &result)
 	return result
 }
 
-func GetEnumString(enumType string, enumValue interface{}) string {
+func GetEnumString(enumType string, enumValue any) string {
 	enumMap := map[string]func() string{
 		"user_group": func() string {
 			if value, found := enumValue.(UserGroup); found {

@@ -56,8 +56,8 @@ func (s *ProjectService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, e
 			Fields: []string{"*"}, From: "project",
 			Filters: []md.Filter{
 				{Field: "deleted", Comp: "==", Value: false},
-				{Field: "id", Comp: "==", Value: cu.ToInteger(params["project_id"], 0)},
-				{Or: true, Field: "code", Comp: "==", Value: cu.ToString(params["project_code"], "")},
+				{BlockStart: true, Field: "id", Comp: "==", Value: cu.ToInteger(params["project_id"], 0)},
+				{Or: true, BlockEnd: true, Field: "code", Comp: "==", Value: cu.ToString(params["project_code"], "")},
 			},
 		}, false); err != nil {
 			return data, err

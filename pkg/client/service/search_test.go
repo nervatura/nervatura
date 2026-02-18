@@ -56,10 +56,10 @@ func TestSearchService_Data(t *testing.T) {
 				"query": md.Query{
 					Filters: []md.Filter{
 						{Field: "id", Comp: "==", Value: 1},
+						{Field: "name", Comp: "like", Value: "abc"},
 					},
-					Filter: "field like 'abc'",
 				},
-				"filters": []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}},
+				"filters": []ct.BrowserFilter{{Field: "id", Comp: "==", Value: 1}, {Field: "name", Comp: "like", Value: "abc"}},
 			},
 			wantErr: false,
 		},

@@ -53,8 +53,8 @@ func (s *PlaceService) Data(evt ct.ResponseEvent, params cu.IM) (data cu.IM, err
 			Fields: []string{"*"}, From: "place",
 			Filters: []md.Filter{
 				{Field: "deleted", Comp: "==", Value: false},
-				{Field: "id", Comp: "==", Value: cu.ToInteger(params["place_id"], 0)},
-				{Or: true, Field: "code", Comp: "==", Value: cu.ToString(params["place_code"], "")},
+				{BlockStart: true, Field: "id", Comp: "==", Value: cu.ToInteger(params["place_id"], 0)},
+				{Or: true, BlockEnd: true, Field: "code", Comp: "==", Value: cu.ToString(params["place_code"], "")},
 			},
 		}, false); err != nil {
 			return data, err
