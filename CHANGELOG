@@ -2,6 +2,7 @@
 - security and stability fixes and improvements
 - client UI search filter optimization and code refactoring
 - cli/cgo/http/grpc API View function: Filter parameter changed to Filters
+- update pdf nervatura/report package to v2.0.0
 - documentation and examples updates
 - golang (1.26.0) and dependencies upgrade
 

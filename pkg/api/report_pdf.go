@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	cu "github.com/nervatura/component/pkg/util"
-	"github.com/nervatura/report"
+	"github.com/nervatura/report/v2"
 )
 
 func SetPDFWhere(filters cu.IM, sources []cu.SM, params map[string][]any) {
