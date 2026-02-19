@@ -1,13 +1,13 @@
 [project]
 name = "nervatura-python-example"
-version = "1.0.0"
+version = "1.0.1"
 description = "Nervatura Framework Python examples"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "grpcio>=1.76.0",
     "grpcio-tools>=1.76.0",
-    "nervatura>=6.0.1",
+    "nervatura>=6.0.2",
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
 ]

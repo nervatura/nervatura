@@ -1,3 +1,10 @@
+## 6.0.2
+- security and stability fixes and improvements
+- client UI search filter optimization and code refactoring
+- cli/cgo/http/grpc API View function: Filter parameter changed to Filters
+- documentation and examples updates
+- golang (1.26.0) and dependencies upgrade
+
 ## 6.0.0
 The Nervatura v6 is a major upgrade that includes many new features and improvements. The main changes are:
 - new hybrid database object model

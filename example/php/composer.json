@@ -1,7 +1,7 @@
 {
     "name": "nervatura/example",
     "description": "Nervatura PHP examples",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "project",
     "require": {
         "vlucas/phpdotenv": "^4.3",

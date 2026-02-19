@@ -24,7 +24,7 @@ fn_map = {
     Update: ["customer", {alias: "demo", code: "CLI0000000000N1"}, {customer_meta: {account: "1234567890"}}],
     Get: ["customer", {alias: "demo", code: "CLI0000000000N1"}],
     Query: ["customer", {alias: "demo", customer_type: "CUSTOMER_COMPANY"}],
-    View: [{alias: "demo", name: "VIEW_CUSTOMER_EVENTS", filter:"subject like '%visit%' and place='City1'", limit:10}],
+    View: [{alias: "demo", name: "VIEW_CUSTOMER_EVENTS", filters:[{field:"like_subject", value:"visit"}, {field:"place", value:"City1"}], limit:10}],
     Delete: ["customer", {alias: "demo", code: "CLI0000000000N1"}],
   },
   http: {
@@ -40,7 +40,7 @@ fn_map = {
     CustomerQuery: ["", {customer_type: "CUSTOMER_COMPANY"}],
     Delete: ["", {code: "RPC0000000000N1", model: "customer"}],
     Function: ["", {function: "product_price", args: {product_code:"PRD0000000000N1", currency_code:"EUR", price_type:"PRICE_CUSTOMER"}}],
-    View: ["", {name: "VIEW_CUSTOMER_EVENTS", filter:"subject like '%visit%' and place='City1'", limit:10}],
+    View: ["", {name: "VIEW_CUSTOMER_EVENTS", filters:[{field:"like_subject", value:"visit"}, {field:"place", value:"City1"}], limit:10}],
   }
 }
 

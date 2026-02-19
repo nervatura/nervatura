@@ -1,6 +1,6 @@
 {
   "name": "nervatura-nodejs-examples",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Nervatura Node.js examples",
   "main": "example.js",
   "scripts": {
@@ -15,6 +15,6 @@
     "@grpc/proto-loader": "^0.8.0",
     "async": "^3.2.6",
     "dotenv": "^17.2.3",
-    "nervatura": "^6.0.0"
+    "nervatura": "^6.0.2"
   }
 }

@@ -66,7 +66,7 @@ $func_map = array(
       return $api->View(array(
         'alias' => 'demo',
         'name' => 'VIEW_CUSTOMER_EVENTS',
-        'filter' => "subject like '%visit%' and place='City1'",
+        'filters' => array(array("field" => "like_subject", "value" => "visit"), array("field" => "place", "value" => "City1")),
         'limit' => 10,
       ));
     },

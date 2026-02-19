@@ -110,7 +110,10 @@ func main() {
 			},
 			func() (string, any, error) {
 				result, err := cli.View(cu.IM{
-					"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filters": cu.IM{"like_subject": "visit", "place": "City1"}, "limit": 10,
+					"alias": "demo", "name": "VIEW_CUSTOMER_EVENTS", "filters": []any{
+						map[string]any{"field": "like_subject", "value": "visit"},
+						map[string]any{"field": "place", "value": "City1"},
+					}, "limit": 10,
 				})
 				return "View", result, err
 			},
@@ -195,7 +198,10 @@ func main() {
 			},
 			func() (string, any, error) {
 				result, err := rpc.View("", &pb.RequestView{
-					Name: pb.ViewName_VIEW_CUSTOMER_EVENTS, Filter: "subject like '%visit%' and place='City1'", Limit: 10,
+					Name: pb.ViewName_VIEW_CUSTOMER_EVENTS,
+					// TODO: change to filters
+					Filter: "subject like '%visit%' and place='City1'",
+					Limit:  10,
 				})
 				return "View", result, err
 			},
