@@ -14,6 +14,8 @@ use Google\Protobuf\Internal\GPBUtil;
 class RequestQueryFilter extends \Google\Protobuf\Internal\Message
 {
     /**
+     * Fieldname. If it starts with like_, gte_, lte_, gt_, lt_, in_, not_, the value is a string and the filter is applied to the field as a LIKE, GTE, LTE, GT, LT, IN, NOT operation.
+     *
      * Generated from protobuf field <code>string field = 1;</code>
      */
     protected $field = '';
@@ -29,6 +31,7 @@ class RequestQueryFilter extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $field
+     *           Fieldname. If it starts with like_, gte_, lte_, gt_, lt_, in_, not_, the value is a string and the filter is applied to the field as a LIKE, GTE, LTE, GT, LT, IN, NOT operation.
      *     @type string $value
      * }
      */
@@ -38,6 +41,8 @@ class RequestQueryFilter extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Fieldname. If it starts with like_, gte_, lte_, gt_, lt_, in_, not_, the value is a string and the filter is applied to the field as a LIKE, GTE, LTE, GT, LT, IN, NOT operation.
+     *
      * Generated from protobuf field <code>string field = 1;</code>
      * @return string
      */
@@ -47,6 +52,8 @@ class RequestQueryFilter extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     * Fieldname. If it starts with like_, gte_, lte_, gt_, lt_, in_, not_, the value is a string and the filter is applied to the field as a LIKE, GTE, LTE, GT, LT, IN, NOT operation.
+     *
      * Generated from protobuf field <code>string field = 1;</code>
      * @param string $var
      * @return $this
