@@ -1,5 +1,5 @@
 ## 6.0.3
-- golang dependencies upgrade
+- golang (1.26.1) and dependencies upgrade
 
 ## 6.0.2
 - security and stability fixes and improvements

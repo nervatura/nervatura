@@ -9,7 +9,7 @@ require (
 	github.com/nervatura/component v1.7.56
 	golang.org/x/crypto v0.48.0
 	golang.org/x/time v0.14.0
-	google.golang.org/grpc v1.79.1
+	google.golang.org/grpc v1.79.2
 	google.golang.org/protobuf v1.36.11
 )
 
