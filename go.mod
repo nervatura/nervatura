@@ -8,7 +8,7 @@ require (
 	github.com/lib/pq v1.11.2
 	github.com/nervatura/component v1.7.56
 	golang.org/x/crypto v0.48.0
-	golang.org/x/time v0.14.0
+	golang.org/x/time v0.15.0
 	google.golang.org/grpc v1.79.2
 	google.golang.org/protobuf v1.36.11
 )
@@ -29,10 +29,10 @@ require (
 	github.com/segmentio/encoding v0.5.3 // indirect
 	github.com/signintech/gopdf v0.36.0 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
-	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
 	golang.org/x/net v0.51.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/tools v0.42.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
 	modernc.org/libc v1.69.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
@@ -47,7 +47,7 @@ require (
 	github.com/gorilla/handlers v1.5.2
 	github.com/modelcontextprotocol/go-sdk v1.4.0
 	github.com/nervatura/report/v2 v2.0.0
-	golang.org/x/oauth2 v0.35.0
-	golang.org/x/sync v0.19.0
+	golang.org/x/oauth2 v0.36.0
+	golang.org/x/sync v0.20.0
 	modernc.org/sqlite v1.46.1
 )
