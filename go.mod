@@ -1,22 +1,32 @@
 module github.com/nervatura/nervatura/v6
 
-go 1.26
+go 1.27
 
 require (
-	github.com/go-sql-driver/mysql v1.10.0
+	fyne.io/systray v1.12.2
+	github.com/MicahParks/keyfunc/v3 v3.8.2
+	github.com/go-sql-driver/mysql v1.10.1
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/jsonschema-go v0.4.3
+	github.com/gorilla/handlers v1.5.2
 	github.com/lib/pq v1.12.3
+	github.com/modelcontextprotocol/go-sdk v1.6.1
 	github.com/nervatura/component v1.7.56
-	golang.org/x/crypto v0.55.0
-	golang.org/x/time v0.15.0
-	google.golang.org/grpc v1.83.2
+	github.com/nervatura/report/v2 v2.0.0
+	golang.org/x/crypto v0.57.0
+	golang.org/x/oauth2 v0.37.0
+	golang.org/x/sync v0.23.0
+	golang.org/x/time v0.16.0
+	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12
+	modernc.org/sqlite v1.59.0
 )
 
 require (
+	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/MicahParks/jwkset v0.11.3 // indirect
 	github.com/boombuler/barcode v1.1.0 // indirect
-	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/dustin/go-humanize v1.1.0 // indirect
 	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/godbus/dbus/v5 v5.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -27,27 +37,13 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
-	github.com/signintech/gopdf v0.38.0 // indirect
+	github.com/signintech/gopdf v0.38.1 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260825221802-da73d73af1c5 // indirect
-	modernc.org/libc v1.75.6 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260918162117-cecb64721679 // indirect
+	modernc.org/libc v1.77.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
-)
-
-require (
-	filippo.io/edwards25519 v1.2.0 // indirect
-	fyne.io/systray v1.12.2
-	github.com/MicahParks/keyfunc/v3 v3.8.1
-	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/gorilla/handlers v1.5.2
-	github.com/modelcontextprotocol/go-sdk v1.6.1
-	github.com/nervatura/report/v2 v2.0.0
-	golang.org/x/oauth2 v0.36.0
-	golang.org/x/sync v0.22.0
-	modernc.org/sqlite v1.57.0
 )
