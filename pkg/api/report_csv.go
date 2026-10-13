@@ -9,33 +9,33 @@ import (
 	cu "github.com/nervatura/component/pkg/util"
 )
 
+func setReportWhereFunc(fields cu.IM, params map[string][]any, whereStr cu.SM, wkey, fieldname, rel string, filterValue any) {
+	field := cu.ToIM(fields[fieldname], cu.IM{})
+	sqlStr := cu.ToString(field["sqlstr"], "")
+
+	var fstr string
+	params[wkey] = make([]any, 0)
+	if sqlStr == "" {
+		fstr = fieldname + rel + "?"
+		params[wkey] = append(params[wkey], filterValue)
+	} else {
+		count := strings.Count(sqlStr, "@"+fieldname)
+		for i := 0; i < count; i++ {
+			params[wkey] = append(params[wkey], filterValue)
+		}
+		fstr = strings.ReplaceAll(sqlStr, "@"+fieldname, "?")
+	}
+
+	whereStr[wkey] = " and " + fstr
+	if existing, found := whereStr[wkey]; found {
+		whereStr[wkey] = existing + " and " + fstr
+	}
+}
+
 func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM, params map[string][]any) cu.SM {
 	// Pre-allocate maps with initial capacity
 	whereStr := make(cu.SM, len(filters))
 	fields := cu.ToIM(reportTemplate["fields"], cu.IM{})
-
-	setWhere := func(wkey, fieldname, rel string, filterValue interface{}) {
-		field := cu.ToIM(fields[fieldname], cu.IM{})
-		sqlStr := cu.ToString(field["sqlstr"], "")
-
-		var fstr string
-		params[wkey] = make([]any, 0)
-		if sqlStr == "" {
-			fstr = fieldname + rel + "?"
-			params[wkey] = append(params[wkey], filterValue)
-		} else {
-			count := strings.Count(sqlStr, "@"+fieldname)
-			for i := 0; i < count; i++ {
-				params[wkey] = append(params[wkey], filterValue)
-			}
-			fstr = strings.ReplaceAll(sqlStr, "@"+fieldname, "?")
-		}
-
-		whereStr[wkey] = " and " + fstr
-		if existing, found := whereStr[wkey]; found {
-			whereStr[wkey] = existing + " and " + fstr
-		}
-	}
 
 	for fieldname := range filters {
 		if field, found := fields[fieldname]; found {
@@ -51,12 +51,12 @@ func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM, params map[s
 			if cu.ToString(fieldMap["wheretype"], "") == "where" {
 				dataset := cu.ToString(fieldMap["dataset"], "")
 				if dataset == "" {
-					setWhere("nods", fieldname, rel, filters[fieldname])
+					setReportWhereFunc(fields, params, whereStr, "nods", fieldname, rel, filters[fieldname])
 				} else {
 					// Process sources
 					for _, ds := range sources {
 						if dataset == ds["dataset"] {
-							setWhere(dataset, fieldname, rel, filters[fieldname])
+							setReportWhereFunc(fields, params, whereStr, dataset, fieldname, rel, filters[fieldname])
 						}
 					}
 				}
