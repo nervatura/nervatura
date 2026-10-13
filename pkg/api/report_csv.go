@@ -31,10 +31,9 @@ func SetReportWhere(reportTemplate, filters cu.IM, sources []cu.SM, params map[s
 			fstr = strings.ReplaceAll(sqlStr, "@"+fieldname, "?")
 		}
 
+		whereStr[wkey] = " and " + fstr
 		if existing, found := whereStr[wkey]; found {
 			whereStr[wkey] = existing + " and " + fstr
-		} else {
-			whereStr[wkey] = " and " + fstr
 		}
 	}
 

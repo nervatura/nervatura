@@ -127,7 +127,7 @@ func (ds *SQLDriver) getPrmString(index int) string {
 	return "?"
 }
 
-func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString string, params []any) (string, []any) {
+func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString string, params []any, prmIndex int) (string, []any) {
 	if start {
 		sqlString += "("
 	} else if !filter.Or {
@@ -142,10 +142,10 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 	switch filter.Comp {
 	case "==", "=":
 		params = append(params, filter.Value)
-		sqlString += "=" + ds.getPrmString(len(params))
+		sqlString += "=" + ds.getPrmString(len(params)+prmIndex)
 	case "like", "not like", "!=", "<", "<=", ">", ">=", "<>":
 		params = append(params, filter.Value)
-		sqlString += " " + filter.Comp + " " + ds.getPrmString(len(params))
+		sqlString += " " + filter.Comp + " " + ds.getPrmString(len(params)+prmIndex)
 	case "is":
 		sqlString += " " + filter.Comp + " " + cu.ToString(filter.Value, "")
 	case "in", "not in":
@@ -154,12 +154,12 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 			prmStr := make([]string, 0)
 			for _, value := range values {
 				params = append(params, value)
-				prmStr = append(prmStr, ds.getPrmString(len(params)))
+				prmStr = append(prmStr, ds.getPrmString(len(params)+prmIndex))
 			}
 			sqlString += " in(" + strings.Join(prmStr, ",") + ")"
 		}
 		if filterValue, valid := filter.Value.(md.Query); valid {
-			queryString, queryParams := ds.decodeSQL([]md.Query{filterValue})
+			queryString, queryParams := ds.decodeSQL([]md.Query{filterValue}, len(params)+prmIndex)
 			sqlString += " in(" + queryString + ")"
 			params = append(params, queryParams...)
 		}
@@ -171,7 +171,7 @@ func (ds *SQLDriver) getFilterString(filter md.Filter, start bool, sqlString str
 	return sqlString, params
 }
 
-func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []any) {
+func (ds *SQLDriver) decodeSQL(queries []md.Query, prmIndex int) (string, []any) {
 	sqlString := ""
 	params := make([]any, 0)
 	for qi := 0; qi < len(queries); qi++ {
@@ -186,7 +186,7 @@ func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []any) {
 			sqlString += " where "
 		}
 		for wi := 0; wi < len(query.Filters); wi++ {
-			sqlString, params = ds.getFilterString(query.Filters[wi], (wi == 0), sqlString, params)
+			sqlString, params = ds.getFilterString(query.Filters[wi], (wi == 0), sqlString, params, prmIndex)
 		}
 		order := strings.Join(query.OrderBy, ",")
 		if order != "" {
@@ -208,7 +208,7 @@ func (ds *SQLDriver) decodeSQL(queries []md.Query) (string, []any) {
 
 // Query is a basic nosql friendly queries the database
 func (ds *SQLDriver) Query(queries []md.Query, trans any) ([]cu.IM, error) {
-	sqlString, params := ds.decodeSQL(queries)
+	sqlString, params := ds.decodeSQL(queries, 0)
 	return ds.QuerySQL(sqlString, params, trans)
 }
 

@@ -255,6 +255,11 @@ CREATE OR REPLACE VIEW auth_map AS
   FROM auth, jsonb_each(auth.auth_map) LEFT JOIN config_map cf on key = cf.field_name
   WHERE deleted = false;
 
+CREATE OR REPLACE VIEW auth_tags AS
+  SELECT auth.id AS id, code, value as tag
+  FROM auth, jsonb_array_elements_text(auth.auth_meta->'tags')
+  WHERE deleted = false;
+
 CREATE TABLE IF NOT EXISTS currency(
   id SERIAL NOT NULL,
   code VARCHAR NOT NULL,

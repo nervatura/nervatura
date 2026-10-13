@@ -390,6 +390,7 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 		start     bool
 		sqlString string
 		params    []any
+		prmIndex  int
 	}
 	tests := []struct {
 		name   string
@@ -500,7 +501,7 @@ func TestSQLDriver_getFilterString(t *testing.T) {
 				closed:  tt.fields.closed,
 				Config:  tt.fields.Config,
 			}
-			got, got1 := ds.getFilterString(tt.args.filter, tt.args.start, tt.args.sqlString, tt.args.params)
+			got, got1 := ds.getFilterString(tt.args.filter, tt.args.start, tt.args.sqlString, tt.args.params, tt.args.prmIndex)
 			if got != tt.want {
 				t.Errorf("SQLDriver.getFilterString() got = %v, want %v", got, tt.want)
 			}
@@ -521,7 +522,8 @@ func TestSQLDriver_decodeSQL(t *testing.T) {
 		Config  cu.IM
 	}
 	type args struct {
-		queries []md.Query
+		queries  []md.Query
+		prmIndex int
 	}
 	tests := []struct {
 		name   string
@@ -640,7 +642,7 @@ func TestSQLDriver_decodeSQL(t *testing.T) {
 				closed:  tt.fields.closed,
 				Config:  tt.fields.Config,
 			}
-			got, got1 := ds.decodeSQL(tt.args.queries)
+			got, got1 := ds.decodeSQL(tt.args.queries, tt.args.prmIndex)
 			if got != tt.want {
 				t.Errorf("SQLDriver.decodeSQL() got = %v, want %v", got, tt.want)
 			}
